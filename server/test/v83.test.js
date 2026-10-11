@@ -1,7 +1,7 @@
 /* v0.83 (protocol 6): ranks, gear levels, the treasury, offerings, gear loss + loot, the used market, gifts, named weapons, the countdown,
    trophies, profiles + follow, the wagers tab, Ludi Infames. node server/test/v83.test.js (also run by npm test) */
 'use strict';
-const assert=require('assert');const store=require('../src/store.js');const catalog=require('../src/catalog.json');const C=require('../src/onlcore.js');
+const assert=require('assert');const store=require('../src/store.js');const catalog=require('../src/catalog.json');const C=require('../src/onlcore.js');C.SLOT100.start=4; /* v1.0: these checks predate the Domus slots */
 const ok=r=>r.status==='fulfilled';
 function seeded(seed){let s=seed>>>0;return ()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
 
@@ -173,11 +173,15 @@ async function routes(){
 
   /* ── THE WAGERS TAB ── */
   await cid.req('lobby.join',{id:RF.id});await setC(cid.ch.id,{wallet:100});await setC(bob.ch.id,{wallet:0});
-  const hal=await client('hal');await setC(hal.ch.id,{wallet:100});await hal.req('bet.place',{id:RF.id,seat:C.seatOf(RF,ann.acct),amt:20});await cid.req('bet.place',{id:RF.id,seat:1,amt:10});
-  let wl=await hal.req('wager.list',{});const op=wl.open.find(x=>x.id===RF.id);assert.strictEqual(op.pool,30);assert.strictEqual(op.seats[0].stake,20);assert.strictEqual(op.seats[0].odds,Math.round((30-1)/20*100)/100);
+  const hal=await client('hal');await setC(hal.ch.id,{wallet:100});
+  /* v1.0: online wagers are closed — bet.place is refused; bets placed BEFORE v1.0 (written here as bet.place wrote them) still settle */
+  await rejects(hal.req('bet.place',{id:RF.id,seat:C.seatOf(RF,ann.acct),amt:20}),'wager_off');
+  {const X=await db.get('LOBBY#'+RF.id,'LOBBY');const old=[[hal,C.seatOf(RF,ann.acct),20],[cid,1,10]].map(([cl,seat,amt],i)=>({by:cl.acct,char:cl.ch.id,seat,amt,bk:'B#000000000000'+i+'#'+RF.id+'#old'}));
+    X.bets=old;X.pool=30;await db.put('LOBBY#'+RF.id,'LOBBY',X);for(const b of old)await db.put('BETS#'+b.by,b.bk,{room:RF.id,ev:'egidious',loc:0,ranked:false,seat:b.seat,amt:b.amt,target:'x',at:T,res:'open',pay:0})}
+  let wl=await hal.req('wager.list',{});const op=wl.open.find(x=>x.id===RF.id);assert.strictEqual(op.pool,30);assert.strictEqual(op.seats[0].stake,20);
   assert.strictEqual(wl.mine[0].res,'open');assert.strictEqual(wl.mine[0].amt,20);
   let RFs=await ann.req('lobby.start',{id:RF.id});T=RFs.startAt+1;RFs=await ann.req('lobby.start',{id:RF.id,go:1});const tw=[0,1,2,3].map(i=>({seat:i,won:i===0,f:i?2:9}));for(const x of [ann,cid])await x.req('match.result',{id:RF.id,table:tw,hash:'w'});
-  wl=await hal.req('wager.list',{});assert.strictEqual(wl.mine[0].res,'won');assert.strictEqual(wl.mine[0].pay,29);assert.strictEqual(wl.top[0].name,'Hal Gladius');assert.strictEqual(wl.top[0].net,9);
+  wl=await hal.req('wager.list',{});assert.strictEqual(wl.mine[0].res,'won');assert.strictEqual(wl.mine[0].pay,29);assert.strictEqual(wl.top[0].net,9);
   assert.strictEqual((await cid.req('wager.list',{})).mine[0].res,'lost');assert.ok(!wl.open.some(x=>x.id===RF.id),'a settled room leaves the open pots');
   /* ── VICTOR OF THE DAY: the next day's first hello gives yesterday's best win its trophy ── */
   const best=(await ann.req('hello',{all:1})).today.wins[0];assert.ok(best.dom,'Today entries carry the house id');T+=86400e3;await hal.req('hello',{all:1});

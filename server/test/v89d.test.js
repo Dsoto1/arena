@@ -2,7 +2,7 @@
    keep home (out of Ranked kits), saved loadouts, the treasury ledger, the memorial wall, colours + crest, upgrades, tester grants to the house.
    node server/test/v89d.test.js (also run by npm test) */
 'use strict';
-const assert=require('assert');const store=require('../src/store.js');const catalog=require('../src/catalog.json');const C=require('../src/onlcore.js');
+const assert=require('assert');const store=require('../src/store.js');const catalog=require('../src/catalog.json');const C=require('../src/onlcore.js');C.SLOT100.start=4; /* v1.0: these checks predate the Domus slots */
 
 /* ── 1. the shared rules ── */
 function rules(){C.setCatalog(catalog);

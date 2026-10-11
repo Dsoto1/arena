@@ -28,6 +28,7 @@ const f1=await A.evaluate(()=>({card:!!document.querySelector('#onl .dom82-found
 ok(f1.card&&f1.grey>5&&!f1.live&&f1.need,'found-your-house card, everything else greyed');await shot(A,'found');
 ok(/^need_domus\|/.test(await err(A,o=>NET.req('char.create',o),{name:'Too Soon',cls:'hero'})),'char.create refused without a house');
 await A.fill('#dom82Name','ab');await A.click('[data-onl82="found"]');await A.waitForFunction(()=>/3–24/.test(document.querySelector('#onl .onl-err')?.textContent||''),null,{timeout:10300}).catch(()=>{});ok(await A.evaluate(()=>/3–24/.test(document.querySelector('#onl .onl-err')?.textContent||'')),'short name refused');
+await A.evaluate(()=>{ONLC.SLOT100.start=4}); /* v1.0: a house of four slots (the pre-v1.0 rule this check needs) */
 await A.fill('#dom82Name','Vettii');await A.click('[data-onl82="found"]');await A.waitForFunction(()=>!ONL.needDomus&&ONL.domus&&ONL.domus.name==='Vettii'&&!!document.querySelector('#onl .onl-create'),null,{timeout:20000}).catch(()=>{});
 const f2=await A.evaluate(()=>({need:ONL.needDomus,name:ONL.domus&&ONL.domus.name,creator:!!document.querySelector('#onl .onl-create')}));ok(!f2.need&&f2.name==='Vettii'&&f2.creator,'house founded → the creator opens');
 /* B: a taken name, then its own */
@@ -97,7 +98,7 @@ const hd=await A.evaluate(async()=>(await NET.req('domus.get',{})).domus);ok(hd.
 await sync(A,C);await C.evaluate(async()=>{localStorage.removeItem('flavius_onlacct');menuHide();onlineOpen('play')});await C.waitForFunction(()=>!!document.querySelector('#onl [data-onl82="guest"]'),null,{timeout:20000}).catch(()=>{});ok(await C.evaluate(()=>!!document.querySelector('#onl [data-onl82="guest"]')),'sign-in card offers Watch as a guest');
 await C.click('#onl [data-onl82="guest"]');await C.waitForFunction(()=>!!document.querySelector('#onl .g82card')&&!!(document.querySelector('#onl #g82left')||{}).textContent,null,{timeout:20000}).catch(()=>{});await C.waitForTimeout(300);
 const gl=await C.evaluate(()=>{const o=document.getElementById('onl');return {g:ONL.acct&&ONL.acct.guest,id:ONL.acct&&ONL.acct.id,tabs:[...o.querySelectorAll('.onl-rail [data-onl="tab"]')].map(b=>b.dataset.v),quick:o.querySelectorAll('[data-onl="quick"]').length,gq:o.querySelectorAll('[data-g82="quick"]').length,card:!!o.querySelector('.g82card'),left:(o.querySelector('#g82left')||{}).textContent||''}});
-ok(gl.g&&/^guest-g[a-z0-9]{8,}/.test(gl.id)&&gl.tabs.join()==='play,lobby,spect,auction,wagers,hall,prof' /* v0.84: guests read the auction too; v0.89: Profile (sign-in note + Find by FID) */&&!gl.quick&&gl.gq>0&&gl.card&&/h|min/.test(gl.left),'guest landing, read-only');await shot(C,'guest');
+ok(gl.g&&/^guest-g[a-z0-9]{8,}/.test(gl.id)&&gl.tabs.join()==='play,lobby,spect,auction,hall,prof' /* v1.0: no Wagers tab */ /* v0.84: guests read the auction too; v0.89: Profile (sign-in note + Find by FID) */&&!gl.quick&&gl.gq>0&&gl.card&&/h|min/.test(gl.left),'guest landing, read-only');await shot(C,'guest');
 await C.click('#onl [data-g82="quick"]',{force:true});ok(await pv(C,()=>T82.some(t=>/Sign in to fight/.test(t)),x=>x),'a guest control says Sign in to …');
 ok(/^guest\|\|Sign in to speak in the Forum/.test(await err(C,o=>NET.req('forum.say',o),{q:'ave'})),'server-side refusal for guests');
 ok(Array.isArray(await C.evaluate(()=>NET.req('lobby.list'))),'guests read the lobby list');

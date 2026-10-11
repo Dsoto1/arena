@@ -121,8 +121,8 @@ async function routes(){
   const champ=C.KIT_TIERS92.champ.reduce((a,b)=>a+C.priceOf(catalog[b]),0);const bp=C.priceOf(catalog.bracers);assert.strictEqual(t0-await tre(ann),bp-Math.round(bp*0.15*bp/(C.restockList92({items:c.kits89[0].items}).reduce((a,b)=>a+C.priceOf(catalog[b]),0))));
   assert.ok(champ>0);await rejects(ann.req('market.kit',{char:ann.ch.id,kit:'restock',i:3}),null,/No such loadout/);
   /* the free daily kit: once an online day a house; Issued pieces */
-  const bc=await getC(bob2.id);assert.ok(bc&&bc.alive);const dk=await bob.req('market.kit',{char:bob2.id,kit:'daily'});assert.strictEqual(dk.cost,0);assert.ok(dk.issued);assert.deepStrictEqual(dk.bought,C.DAILY92);
-  c=await getC(bob2.id);const isd=c.gear.filter(it=>C.isIssued92(c,it));assert.strictEqual(isd.length,3,'three Issued pieces');assert.ok(isd.every(it=>C.equipOf(c).includes(it)),'worn');assert.strictEqual(dk.domus.kitDay92,C.dayKey(T));
+  const bc=await getC(bob2.id);assert.ok(bc&&bc.alive);const dk=await bob.req('market.kit',{char:bob2.id,kit:'daily'});assert.strictEqual(dk.cost,0);assert.ok(dk.issued);assert.deepStrictEqual(dk.bought.filter(b=>catalog[b].kind==='a'),C.DAILY92,'v1.0: the padding (+ his class’s Level 1 weapons when his hands are empty)');
+  c=await getC(bob2.id);const isd=c.gear.filter(it=>C.isIssued92(c,it));assert.strictEqual(isd.length,dk.bought.length,'every issued piece is Issued');assert.ok(isd.every(it=>C.equipOf(c).includes(it)),'worn');assert.strictEqual(dk.domus.kitDay92,C.dayKey(T));
   await rejects(bob.req('market.kit',{char:bob2.id,kit:'daily'}),'kit_day',/tomorrow/);
   /* Issued: never repaired */
   {const x=await getC(bob2.id);C.damageItem91(x,isd[0],0.5);await db.put('CHAR#'+x.id,'CHAR',x)}c=await getC(bob2.id);const dIt=c.gear.find(it=>C.isIssued92(c,it)&&C.pcOf(c,it).st==='damaged');

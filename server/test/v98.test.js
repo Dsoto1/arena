@@ -3,7 +3,7 @@
    events, privacy), the DOMUS RANK (best 4 living + 20% of the fallen, never drops, members carry their tier), a silent Find me a fight,
    Golden Eagle as Custom only (Ludus refused: not online), Damnatio only at creation, the bonus renames. node server/test/v98.test.js (also run by npm test) */
 'use strict';
-const assert=require('assert');const store=require('../src/store.js');const C=require('../src/onlcore.js');const crypto=require('crypto');
+const assert=require('assert');const store=require('../src/store.js');const C=require('../src/onlcore.js');C.SLOT100.start=4; /* v1.0: these checks predate the Domus slots */const crypto=require('crypto');
 
 function units(){
   for(const s of ['','abc','x'.repeat(55),'x'.repeat(56),'x'.repeat(64),'Ave, héllo 🔒'.repeat(11)])assert.strictEqual(C.sha256hex98(s),crypto.createHash('sha256').update(s,'utf8').digest('hex'),'sha256 '+s.length);

@@ -1372,4 +1372,75 @@ const ONLC=(function(){
     const x={...d};delete x.turnT;if(Object.keys(x).some(k=>k!=='id'&&k!=='rid'))return base.call(this,L,by,x,now);return ''}}
   C.VER=8;
   Object.assign(C,{TT100,ttOf100,dropNeed100,turnT100})})(ONLC);
+/* ===== v1.0 SERVER BATCH A ===== (his picks 2026-10-09/11; the server: the "v1.0 SERVER BATCH A" block of routes.js; the page: 292-v100srvA;
+   docs/backend.md "v1.0 server batch A")
+   1 · RANKED = EQUIPPED GEAR ONLY: a Ranked gladiator brings what he wears and holds (kitOf already lists only that); the page no longer adds the
+       class's weapons on top in Ranked (Custom keeps the class loadout). The opening snapshot is the host's, so no protocol change.
+   2 · ONE ISSUED KIT PER HOUSE, REFILLED DAILY (market.kit 'daily'): the plain set issueList100 = the old DAILY92 padding + the class's Level 1 weapons
+       (ISSUE_W100: a Level 1 stand-in where the class weapon is Level 2). Issued pieces (pc.iss) are worth 0: never sold, auctioned, sent, repaired or
+       looted, and they vanish when lost — also the ones a dead gladiator left at home. ONE set a house: a claim takes back every Issued piece the
+       house holds elsewhere (the shelf, its other gladiators — refused while one of them is in a match) and refills only what this gladiator lacks
+       (armor only on bare points; weapons only when he holds no weapon of his own). Once an online day a house (D.kitDay92, as v0.92).
+   3 · ONLINE WAGERS CLOSED: betOK always refuses (WAGER_OFF100); the server's bet.place answers code 'wager_off'. Settlement code stays for old data.
+   5 · DOMUS SLOTS: a new house opens with SLOT100.start (1) gladiator slot; slots 2–4 open for the house's Glory (its best Domus-rank score, dr98)
+       AND coin from the treasury (SLOT100.steps). Houses founded before v1.0 (no slots100 on the house) keep all four. The coin-only 5th slot
+       (UPG89.slot5) needs the four first.
+   6 · WATCHERS ARE NOT PLAYERS: the landing's counts (hereSummary) count a ticket holder in a live match as watching, not fighting; Who's online
+       shows a ticket holder as watching (live) / in a room (waiting).
+   7 · GOOFY TAUNTS: a few light Roman taunts join the room / match / after phrase sets (QC, QC_TEXT). */
+(function(C){
+  const SLOT100={start:1,steps:[{n:2,glory:150,coin:200},{n:3,glory:600,coin:500},{n:4,glory:1500,coin:1000}]}; /* TWEAK: his numbers (backlog 2026-10-09) */
+  const ISSUE_W100={soldier:['gladius'],royalty:['gladius'],hero:['sica','thracian'],slave:['trident'],veteranus:['rudis'],amazonia:['mace'],venatore:['hasta'],damnatio:['stones']}; /* TWEAK: Level 1 only */
+  const WAGER_OFF100='Online wagers are closed — Flavius keeps no book.';
+  /* ── 5 · slots ── */
+  const slotsOf100=D=>{if(!D||D.slots100==null)return C.GLAD_MAX;const n=D.slots100|0;return Math.max(1,Math.min(C.GLAD_MAX,n))};
+  const slotNext100=D=>SLOT100.steps.find(s=>s.n>slotsOf100(D))||null;
+  /* glory = the house's Domus-rank score (the best ever, D.dr98, or a fresher one the caller passes) */
+  const slotGlory100=(D,g)=>Math.floor(Math.max(+((D&&D.dr98)||0)||0,+g||0));
+  function slotWhy100(D,g){if(!D)return 'Name your house first.';const s=slotNext100(D);if(!s)return 'Every slot of the house is open.';const have=slotGlory100(D,g);
+    if(have<s.glory)return `Slot ${s.n} opens at ${s.glory} Glory — your house has ${have}.`;if((D.treasury|0)<s.coin)return `The treasury needs ${s.coin} coin.`;return ''}
+  function slotBuy100(D,g,t){const why=slotWhy100(D,g);if(why)throw new Error(why);const s=slotNext100(D);D.treasury=(D.treasury|0)-s.coin;D.slots100=s.n;C.ledAdd(D,'upg',s.coin,null,t);return s}
+  C.gladMax=D=>slotsOf100(D)+(((D&&D.upg89)||{}).slot5?1:0);
+  {const base=C.upgWhy;C.upgWhy=function(D,k){if(k==='slot5'&&slotsOf100(D)<C.GLAD_MAX)return 'Open the four slots first.';return base.apply(this,arguments)}}
+  {const base=C.newDomus;C.newDomus=function(){const D=base.apply(this,arguments);if(D)D.slots100=SLOT100.start;return D}}
+  {const base=C.domusRow;C.domusRow=function(D){const r=base.apply(this,arguments);if(r&&D){r.gmax=C.gladMax(D);r.slots100=slotsOf100(D);const s=slotNext100(D);r.slotNext100=s?{...s}:null}return r}}
+  {const base=C.domusPub89;if(base)C.domusPub89=function(D){const r=base.apply(this,arguments);if(r)delete r.slotNext100;return r}}
+  /* ── 2 · the Issued kit ── */
+  const issueList100=cls=>[...C.DAILY92,...(ISSUE_W100[cls]||['gladius'])];
+  {const base=C.kitList92;C.kitList92=function(k,cls){if(k==='daily')return issueList100(cls);return base.apply(this,arguments)}}
+  const isIss100=(h,it)=>{const p=C.pcOf(h,it);return !!(p&&p.iss)};
+  const issOf100=h=>((h&&h.gear)||[]).filter(it=>isIss100(h,it));
+  /* the plan for his claim: have = his Issued pieces of the set, buy = the bases issued now, drop = his Issued pieces outside his set (taken back) */
+  function issuePlan100(ch,catalog){catalog=catalog||{};const list=issueList100(ch&&ch.cls);const kind=b=>(catalog[b]||{}).kind;const left=issOf100(ch);const have=[],buy=[],cover=[];
+    const worn=C.equipOf(ch);const ownW=worn.some(it=>!isIss100(ch,it)&&!C.isBroken(ch,it)&&kind(C.itemBase(it))==='w');
+    for(const b of list){if(!catalog[b])continue;const i=left.findIndex(it=>C.itemBase(it)===b);if(i>=0){have.push(left.splice(i,1)[0]);continue}
+      if(kind(b)==='w'){if(ownW){cover.push(b);continue}buy.push(b);continue}
+      if(C.armFit(ch,[...worn,...buy.filter(x=>kind(x)!=='w'),b],catalog).pop()===false){cover.push(b);continue}buy.push(b)}
+    const full=list.filter(b=>catalog[b]).reduce((a,b)=>a+C.priceOf(catalog[b]),0);
+    return {have,take:[],buy,cover,drop:left,full,part:0,disc:0,cost:0,share:0}}
+  /* every Issued piece the house holds outside this gladiator: [{holder:'house'|char id, item}] (the claim takes them back — one set a house) */
+  function issueElsewhere100(D,others,chId){const out=[];for(const it of issOf100(D))out.push({holder:'house',item:it});
+    for(const c of others||[])if(c&&c.id!==chId&&c.alive!==false)for(const it of issOf100(c))out.push({holder:c.id,item:it});return out}
+  /* the dead's pieces left at home: Issued ones vanish with him */
+  {const base=C.gearAfter;C.gearAfter=function(){const out=base.apply(this,arguments);try{if(out&&Array.isArray(out.left)&&out.left.length){const keep=[];
+      for(const P of out.left){if(P&&P.pc&&P.pc.iss){(out.vanish=out.vanish||[]).push(C.itemBase(P.item))}else keep.push(P)}out.left=keep}}catch(e){}return out}}
+  /* never worth a coin anywhere (the used market, repairs) */
+  {const base=C.usedPrice;C.usedPrice=function(I){if(I&&I.iss)return 0;return base.apply(this,arguments)}}
+  {const base=C.repairCost;C.repairCost=function(I){if(I&&I.iss)return 0;return base.apply(this,arguments)}}
+  /* ── 3 · wagers closed ── */
+  C.betOK=function(){return WAGER_OFF100};
+  /* ── 6 · watchers are not players ── */
+  {const base=C.hereSummary;C.hereSummary=function(here,rooms){const out=base.apply(this,arguments);try{const spec=new Set();
+      for(const L of rooms||[])if(L&&L.status==='live')for(const s of L.stands||[])if(s&&s.id&&!(L.players||[]).some(p=>p&&p.id===s.id))spec.add(s.id+'|'+L.id);
+      let w=0;for(const h of here||[])if(h&&h.match&&spec.has(h.id+'|'+h.match))w++;out.watch=w;if(w)out.fight=Math.max(0,(out.fight|0)-w)}catch(e){}return out}}
+  {const base=C.whoMaps100;C.whoMaps100=function(rooms){const m=base.apply(this,arguments);m.spec=new Map();try{for(const L of rooms||[]){if(!L||!L.id)continue;
+      for(const s of L.stands||[]){if(!s||!s.id)continue;if(L.status==='live')m.spec.set(s.id,L.id);else if(L.status==='waiting'&&!m.room.has(s.id))m.room.set(s.id,L.id)}}}catch(e){}return m}}
+  {const base=C.whoStatus100;C.whoStatus100=function(A,maps){const r=base.apply(this,arguments);if(r&&r.st==='idle'&&A&&maps&&maps.spec&&maps.spec.has(A.id))return {st:'watch',m:maps.spec.get(A.id)};return r}}
+  /* ── 7 · taunts (codes only; the page translates QC_TEXT) ── */
+  Object.assign(C.QC_TEXT,{lions:'🦁 The lions are hungry — for you!',senate:'🏛 Even the Senate moves faster!',garum:'🐟 You smell of cheap garum.',
+    tickle:'Was that a tickle?',granny:'My grandmother hits harder!',yawn:'😴 Flavius is yawning.',sandal:'Sand in your sandals?',bigger:'Next time, bring a bigger sword!'});
+  for(const [sc,ks] of [['room',['lions','senate','garum']],['match',['tickle','granny','yawn','sandal']],['after',['bigger']]])for(const k of ks)if(!C.QC[sc].includes(k))C.QC[sc].push(k);
+  /* the new paying request runs once per request id */
+  if(Array.isArray(C.IDEM93)&&!C.IDEM93.includes('domus.slot'))C.IDEM93.push('domus.slot');
+  Object.assign(C,{SLOT100,ISSUE_W100,WAGER_OFF100,slotsOf100,slotNext100,slotGlory100,slotWhy100,slotBuy100,issueList100,isIss100,issOf100,issuePlan100,issueElsewhere100})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

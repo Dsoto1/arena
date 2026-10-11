@@ -1021,82 +1021,214 @@
  },
  {
   "k": "CPU",
-  "w": "290-v100tt.js:182"
+  "w": "290-v100tt.js:184"
  },
  {
   "k": "their turn",
-  "w": "290-v100tt.js:182"
+  "w": "290-v100tt.js:184"
  },
  {
   "k": "Command",
-  "w": "290-v100tt.js:182"
+  "w": "290-v100tt.js:184"
  },
  {
   "k": "<b>{0}</b> is choosing…",
-  "w": "290-v100tt.js:183"
+  "w": "290-v100tt.js:185"
  },
  {
   "k": "⌛ {0} timed out twice",
-  "w": "290-v100tt.js:184"
+  "w": "290-v100tt.js:186"
  },
  {
   "k": "Hand the seat to a CPU for the rest of the bout? He still faces the Fate.",
-  "w": "290-v100tt.js:184"
+  "w": "290-v100tt.js:186"
  },
  {
   "k": "Wait",
-  "w": "290-v100tt.js:184"
- },
- {
-  "k": "⏳ Turn",
-  "w": "290-v100tt.js:213"
+  "w": "290-v100tt.js:186"
  },
  {
   "k": "Handed to a CPU.",
-  "w": "290-v100tt.js:235"
+  "w": "290-v100tt.js:216"
  },
  {
   "k": "Your vote is in · {0} of {1}",
-  "w": "290-v100tt.js:235"
+  "w": "290-v100tt.js:216"
  },
  {
   "k": "close",
-  "w": "290-v100tt.js:242"
+  "w": "290-v100tt.js:223"
  },
  {
   "k": "Step {0}",
-  "w": "290-v100tt.js:243"
+  "w": "290-v100tt.js:224"
  },
  {
   "k": "No answer in <b class=\"s2\"></b> → {0}",
-  "w": "290-v100tt.js:243"
+  "w": "290-v100tt.js:224"
  },
  {
   "k": "⏱ Turn timer",
-  "w": "290-v100tt.js:258"
+  "w": "290-v100tt.js:239"
  },
  {
   "k": "🔒 60 s · decisions 20 s",
-  "w": "290-v100tt.js:258"
+  "w": "290-v100tt.js:239"
  },
  {
   "k": "With a timer on, each decision gets 20 s; time out → the default answer, a turn out of time → the CPU finishes it.",
-  "w": "290-v100tt.js:259"
+  "w": "290-v100tt.js:240"
  },
  {
   "k": "⏱ {0} s turns · {1} s decisions",
-  "w": "290-v100tt.js:261"
+  "w": "290-v100tt.js:242"
  },
  {
   "k": "⏱ No turn timer",
-  "w": "290-v100tt.js:261"
+  "w": "290-v100tt.js:242"
  },
  {
   "k": "Only after a second timeout.",
-  "w": "290-v100tt.js:287"
+  "w": "290-v100tt.js:268"
  },
  {
   "k": "⌛ Too late — the CPU finished your turn.",
-  "w": "290-v100tt.js:300"
+  "w": "290-v100tt.js:281"
+ },
+ {
+  "k": "The house’s Issued kit is with {0} in a match — claim it when he is back.",
+  "w": "292-v100srvA.js:27"
+ },
+ {
+  "k": "Every slot of your house is taken — open slot {0} in the Domus ({1} Glory + {2} coin).",
+  "w": "292-v100srvA.js:40"
+ },
+ {
+  "k": "🎁 Issued kit",
+  "w": "292-v100srvA.js:45"
+ },
+ {
+  "k": "Free once a day for your house: padding and his class’s Level 1 weapons. Issued gear is worth nothing — it cannot be sold, sent or repaired, and it is gone when lost. One set a house.",
+  "w": "292-v100srvA.js:45"
+ },
+ {
+  "k": "<i>recruit kit · Custom only</i>",
+  "w": "292-v100srvA.js:51"
+ },
+ {
+  "k": "In Ranked he fights with only what he wears — the class weapons come in Custom.",
+  "w": "292-v100srvA.js:53"
+ },
+ {
+  "k": "⚖ Void",
+  "w": "292-v100srvA.js:74"
+ },
+ {
+  "k": "✓ Settled",
+  "w": "292-v100srvA.js:74"
+ },
+ {
+  "k": "⏳ Waiting for the other lanistas to confirm…",
+  "w": "292-v100srvA.js:74"
+ },
+ {
+  "k": "🏆 Victory",
+  "w": "292-v100srvA.js:75"
+ },
+ {
+  "k": "☠ Fallen",
+  "w": "292-v100srvA.js:75"
+ },
+ {
+  "k": "✓ Survived",
+  "w": "292-v100srvA.js:75"
+ },
+ {
+  "k": "The lanistas did not agree on the result — the match is void: no pay, no deaths.",
+  "w": "292-v100srvA.js:78"
+ },
+ {
+  "k": "<span>{0} to the house treasury</span>",
+  "w": "292-v100srvA.js:79"
+ },
+ {
+  "k": "Custom bout — no coin is paid. Lifetime CF still counts.",
+  "w": "292-v100srvA.js:80"
+ },
+ {
+  "k": "Fallen in a Ranked bout — nothing is paid; the house keeps what he left at home.",
+  "w": "292-v100srvA.js:80"
+ },
+ {
+  "k": "lifetime CF",
+  "w": "292-v100srvA.js:81"
+ },
+ {
+  "k": "✦ +{0} Glory",
+  "w": "292-v100srvA.js:81"
+ },
+ {
+  "k": "⚔ now <b>{0}</b>",
+  "w": "292-v100srvA.js:82"
+ },
+ {
+  "k": "small table ×{0}",
+  "w": "292-v100srvA.js:82"
+ },
+ {
+  "k": "Coin and Glory are paid once every lanista has reported the same result.",
+  "w": "292-v100srvA.js:83"
+ },
+ {
+  "k": "CF this bout",
+  "w": "292-v100srvA.js:84"
+ },
+ {
+  "k": "You watched this match — the fighters' results are below.",
+  "w": "292-v100srvA.js:86"
+ },
+ {
+  "k": "⚔ Your Ranked match",
+  "w": "292-v100srvA.js:89"
+ },
+ {
+  "k": "Your Custom match",
+  "w": "292-v100srvA.js:89"
+ },
+ {
+  "k": "CF",
+  "w": "292-v100srvA.js:90"
+ },
+ {
+  "k": "Open this slot",
+  "w": "292-v100srvA.js:105"
+ },
+ {
+  "k": "✦ {0} / {1} Glory",
+  "w": "292-v100srvA.js:106"
+ },
+ {
+  "k": "{0} from the treasury",
+  "w": "292-v100srvA.js:106"
+ },
+ {
+  "k": "style=\"--n:{0}\"",
+  "w": "292-v100srvA.js:107"
+ },
+ {
+  "k": "🔓 Open slot {0}?",
+  "w": "292-v100srvA.js:111"
+ },
+ {
+  "k": "Your house has {0} Glory (needs {1}). The treasury pays {2}: {3}.",
+  "w": "292-v100srvA.js:111"
+ },
+ {
+  "k": "Open · {0}",
+  "w": "292-v100srvA.js:111"
+ },
+ {
+  "k": "🔓 Slot {0} is open — raise a new gladiator.",
+  "w": "292-v100srvA.js:113"
  }
 ]

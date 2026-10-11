@@ -95,17 +95,17 @@ const P2=await ctx.newPage();P2.on('pageerror',e=>errs.push('P2:'+e.message));aw
 /* ── 9 · the countdown + ✕ Hold; 12 · the Wagers tab ── */
 await A.evaluate(()=>localStorage.setItem('flavius_onlcd83','60000'));
 const L1=await A.evaluate(async()=>(await onlReq80('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false,cry:false})));await B.evaluate(async id=>await NET.req('lobby.join',{id}),L1.id);
-await world(C,(w,cid)=>{w.chars[cid].wallet=100},sc.ch);await C.evaluate(async id=>{await NET.req('bet.place',{id,seat:0,amt:12})},L1.id);
+/* v1.0: online wagers are closed — the mock refuses bet.place (wager_off) like the server */
+const bet100=await C.evaluate(async id=>{try{await NET.req('bet.place',{id,seat:0,amt:12});return 'ok'}catch(e){return e.code||e.message}},L1.id);ok(bet100==='wager_off','12 bet.place is refused ('+bet100+')');
 await A.evaluate(()=>{ONL.tab='play';onlRedraw()});await A.waitForTimeout(300);await A.evaluate(id=>{NET.req('lobby.start',{id}).catch(()=>{})},L1.id);for(const t0=Date.now();Date.now()-t0<40000&&!(await A.evaluate(()=>!!document.getElementById('cd83')));){await A.waitForTimeout(400);await redraw(A)}
 const cd=await A.evaluate(()=>({box:!!document.getElementById('cd83'),n:+((document.getElementById('cd83n')||{}).textContent||0),seats:document.querySelectorAll('#cd83 .cd83-s').length,hold:!!document.querySelector('#cd83 [data-onl83="hold"]'),gear:/Cassis|Galea|Pectorale|recruit/i.test((document.getElementById('cd83')||{}).textContent||'')}));
 ok(cd.box&&cd.n>30&&cd.seats===4&&cd.hold,'the countdown with the line-up and ✕ Hold '+JSON.stringify(cd));await shot(A,'countdown');
 await A.click('#cd83 [data-onl83="hold"]');for(const t0=Date.now();Date.now()-t0<30000&&!(await A.evaluate(()=>!!document.querySelector('.cd83.stop')));){await A.waitForTimeout(100);await redraw(A)}ok(await A.evaluate(()=>!document.getElementById('cd83')&&!!document.querySelector('.cd83.stop'))," '⏸ Countdown stopped' after ✕ Hold");
 await A.evaluate(()=>localStorage.setItem('flavius_onlcd83','0'));
 await open(C,'wagers');
-/* cross-window storage lags and an idle window's background refresh can write back a copy that predates the bet (a lost bet = no pot): the bet is re-asserted
-   from inside the poll while the lobby still holds none (only then, so a stake is never doubled) */
-const wg=await pv(C,async(id)=>{try{const w0=mockLoad(),L0=w0.lobbies[id];if(L0&&!(L0.bets||[]).length&&!(L0.pot|0)){const w=mockLoad();w.chars[ONL.char.id].wallet=Math.max(100,w.chars[ONL.char.id].wallet|0);mockSave(w);await NET.req('bet.place',{id,seat:0,amt:12})}}catch(e){}await onlRefresh();ONL83U.wlAt=0;onlRedraw();return {tab:!!document.querySelector('#onl .onl-rail [data-v="wagers"].on'),pots:document.querySelectorAll('#onl .wg83-pot').length,odds:(document.querySelector('#onl .wg83-odds')||{}).textContent||'',mine:document.querySelectorAll('#onl .wg83-side tr').length}},v=>v.tab&&v.pots===1&&/×/.test(v.odds)&&v.mine>=1,L1.id);
-ok(wg.tab&&wg.pots===1&&/×/.test(wg.odds)&&wg.mine>=1,'the Wagers tab: open pot with odds, my bets '+JSON.stringify(wg));await shot(C,'wagers');
+/* v1.0: no Wagers tab — asking for it lands on Play; no wager buttons anywhere */
+const wg=await C.evaluate(()=>({tab:ONL.tab,btn:document.querySelectorAll('#onl [data-v="wagers"],#onl [data-onl="bet"]').length}));
+ok(wg.tab!=='wagers'&&wg.btn===0,'12 no Wagers tab, no wager buttons '+JSON.stringify(wg));await shot(C,'wagers');
 await A.evaluate(async id=>{await NET.req('lobby.leave',{id})},L1.id).catch(()=>{});await B.evaluate(async id=>{try{await NET.req('lobby.leave',{id})}catch(e){}},L1.id);
 
 /* ── 13 · gifts outlive a gladiator: Gamma (Fabii) holds a house gift and falls in a Ranked bout ── */

@@ -712,28 +712,48 @@
   "w": "server/src/routes.js:1369"
  },
  {
+  "k": "Only after a second timeout.",
+  "w": "server/src/routes.js:1445"
+ },
+ {
+  "k": "Every slot of your house is taken — open slot {0} in the Domus ({1} Glory + {2} coin).",
+  "w": "server/src/routes.js:1483"
+ },
+ {
+  "k": "The house’s Issued kit is with {0} in a match — claim it when he is back.",
+  "w": "server/src/routes.js:1491"
+ },
+ {
+  "k": "He already has all of it.",
+  "w": "server/src/routes.js:1492"
+ },
+ {
+  "k": "That request was not understood.",
+  "w": "server/src/routes.js:1525"
+ },
+ {
   "k": "Unknown request:",
-  "w": "server/src/routes.js:1378"
+  "w": "server/src/routes.js:1529"
  },
  {
   "k": "Too many requests — wait a moment.",
-  "w": "server/src/routes.js:1379"
+  "w": "server/src/routes.js:1530"
  },
  {
   "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1381"
+  "w": "server/src/routes.js:1532"
  },
  {
   "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1382"
+  "w": "server/src/routes.js:1533"
  },
  {
   "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1385"
+  "w": "server/src/routes.js:1536"
  },
  {
   "k": "Test houses play Custom only.",
-  "w": "server/src/routes.js:1389"
+  "w": "server/src/routes.js:1540"
  },
  {
   "k": "The arena hit a snag — try again (ref {0}).",
@@ -1284,10 +1304,6 @@
   "w": "src/111-onlcore.js:1054"
  },
  {
-  "k": "He already has all of it.",
-  "w": "src/111-onlcore.js:1092"
- },
- {
   "k": "That token picture is not a token sheet.",
   "w": "src/111-onlcore.js:1147"
  },
@@ -1382,5 +1398,61 @@
  {
   "k": "Velox II",
   "w": "src/111-onlcore.js:1274"
+ },
+ {
+  "k": "Ranked turns are always 60 seconds.",
+  "w": "src/111-onlcore.js:1370"
+ },
+ {
+  "k": "Turn timer: Off, 30, 60, 90 or 120 seconds.",
+  "w": "src/111-onlcore.js:1371"
+ },
+ {
+  "k": "Online wagers are closed — Flavius keeps no book.",
+  "w": "src/111-onlcore.js:1394"
+ },
+ {
+  "k": "Every slot of the house is open.",
+  "w": "src/111-onlcore.js:1400"
+ },
+ {
+  "k": "Slot {0} opens at {1} Glory — your house has {2}.",
+  "w": "src/111-onlcore.js:1401"
+ },
+ {
+  "k": "Open the four slots first.",
+  "w": "src/111-onlcore.js:1404"
+ },
+ {
+  "k": "🦁 The lions are hungry — for you!",
+  "w": "src/111-onlcore.js:1440"
+ },
+ {
+  "k": "🏛 Even the Senate moves faster!",
+  "w": "src/111-onlcore.js:1440"
+ },
+ {
+  "k": "🐟 You smell of cheap garum.",
+  "w": "src/111-onlcore.js:1440"
+ },
+ {
+  "k": "Was that a tickle?",
+  "w": "src/111-onlcore.js:1441"
+ },
+ {
+  "k": "My grandmother hits harder!",
+  "w": "src/111-onlcore.js:1441"
+ },
+ {
+  "k": "😴 Flavius is yawning.",
+  "w": "src/111-onlcore.js:1441"
+ },
+ {
+  "k": "Sand in your sandals?",
+  "w": "src/111-onlcore.js:1441"
+ },
+ {
+  "k": "Next time, bring a bigger sword!",
+  "w": "src/111-onlcore.js:1441"
  }
 ]
