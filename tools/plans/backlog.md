@@ -132,3 +132,10 @@ E stats = grade rows, no chart · Recruiting round 3: newly painted mural-like a
 Lobby: user list stretched to the bottom (aligned with table settings) + goofy quick chats (server phrase codes → deploy + translations)
 Banners: ONE designer (flag/banner/pennant/tapestry/crest = kinds of one design), dr98 quality as the standard offline → banner.html mock
 Online gear: asked (today class weapons are added on top of the equipped kit; class armor replaced)
+
+## His answers 2026-10-11 (round 3)
+ONLINE GEAR (a): Ranked = equipped only (no class weapons on top); safety net = daily Issued kit (worth 0: no sell, no auction, no gift/send, no repair, never looted, vanishes when lost — must not become a coin source); Custom keeps the class loadout. Server batch v1.0.
+BANNERS: 1a 2a 3a 4a 5c ("Heraldry" — Roman alternatives offered); make it ANCIENT ROMAN (vexillum, signum, parma/scutum emblem, velarium, tabula ansata; meander/clavi/clipeus patterns), not medieval → mock round 2.
+RECRUITING r3 approved so far; Offer right side → contract tablet (was decoration).
+BUBBLES: only if performance does not suffer — build gated on tv91r draw time + a zoom frame test, bubbles on vs off.
+MY LUDUS: unsure about the Fight Night card → compare variant; show Advisors room + an opened letter.
