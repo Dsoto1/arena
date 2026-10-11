@@ -6,7 +6,7 @@
    • The summa rudis medallions (assets/sr_<key>.webp): beside Flavius's box while they officiate, in the event briefing, the
      status chip, the festival picker and on Manager's Grand Games line.
    • The Mandata Flavi card back (assets/mandata_back.webp) on hidden objectives; "Mandati" → "Mandata" across the game.
-   • The round marker (assets/round.webp, "ROUND :" baked in, the number on top) in the status bar.
+   • The round marker (assets/round.webp, "ROUND" baked (v1.0: his sharper plate, tools/art/round100/make.py) in, the number on top) in the status bar.
    • The stands line moves from under the arena into the arena log as a pinned top row (#slogPin, click → Stands).
    • A gold wager bubble pops above whoever places a live wager (spectators, gladiators, you). */
 const SR_KEYS=['democritus','egidious','cassian'];
@@ -64,7 +64,7 @@ setInterval(()=>{try{wagerWatch();slogPinApply()}catch(e){}},300);
 .brsr{display:flex;align-items:center;gap:8px;margin:0 0 4px}.brsr b{color:var(--gold2)}
 .roundchip{display:inline-flex;align-items:center;gap:6px}
 .roundmk{position:relative;display:inline-block;height:30px;margin:-5px 0;flex:none}.roundmk img{height:30px;width:auto;display:block}
-.roundmk b{position:absolute;left:76.2%;top:50%;transform:translate(-50%,-48%);font:700 17px/1 var(--display);color:#f0e8d6;text-shadow:0 0 2px #96703c,0 1px 1px #000}
+.roundmk b{position:absolute;left:73.5%;top:50%;transform:translate(-50%,-48%);font:700 17px/1 var(--display);color:#f0e8d6;text-shadow:0 0 2px #96703c,0 1px 1px #000}
 .item .mfback{width:30px;height:auto;border-radius:3px;margin-right:8px;box-shadow:0 1px 4px rgba(0,0,0,.5)}
 #log li.slogpin{position:sticky;top:-10px;z-index:2;display:flex;gap:8px;align-items:baseline;cursor:pointer;background:var(--panel2);border-bottom:2px solid var(--line2);margin:-10px -14px 4px;padding:6px 14px;font-size:14px;color:var(--bone)}
 #log li.slogpin:hover{background:#33261b}#log li.slogpin .tkr{color:var(--dim);font:11px var(--mono);flex:none}#log li.slogpin .tk{flex:none}
