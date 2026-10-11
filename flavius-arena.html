@@ -22657,8 +22657,7 @@ function cityDrawBldg(c2,[k,r0,r1,c0,c1,h,label,icon],dress){const TWc=CITY.TW;
 function cityAt(ev){const rect=CITY.cv.getBoundingClientRect();const x=ev.clientX-rect.left,y=ev.clientY-rect.top;const TWc=CITY.TW;
   // sponsor balcony?
   if(CITY.spBox&&x>=CITY.spBox[0]&&x<=CITY.spBox[0]+CITY.spBox[2]&&y>=CITY.spBox[1]&&y<=CITY.spBox[1]+CITY.spBox[3])return {sponsor:true};
-  let best=null,bd=1e9;for(const n of CITY.npcs){if(n._x==null)continue;const d=Math.hypot(x-n._x,y-(n._y-TWc*0.45));if(d<TWc*0.5&&d<bd){bd=d;best=n}}
-  if(best)return {npc:best};
+  /* v1.0 (280): the crowd is ambient life only — no figure hit-test; their actions live in the right sidebar (People / Arena tabs) */
   const cB=Math.round(((x-CITY.OX)/(TWc/2)+(y-CITY.OY)/(TWc/4))/2),rB=Math.round(((y-CITY.OY)/(TWc/4)-(x-CITY.OX)/(TWc/2))/2);
   return {r:rB,c:cB}}
 /* cityMove — pointer move over the square: hover and cursor. */
@@ -43922,7 +43921,7 @@ cityDraw=function(){const c2=CITY.c2;if(!c2||!CITY.TW)return;const W=CITY.W||CIT
   if(CITY.sponsorHere&&CITY.balc89&&typeof flavFaceURL==='function'){const im=CITY.imgs['spB']||(()=>{const i2=new Image();i2.src=flavFaceURL('calm',CITY.sponsorHere);CITY.imgs['spB']=i2;return i2})();
     if(im.complete&&im.naturalWidth){const w=T*0.62,h=w*0.8;const bx=CITY.balc89.x-w/2,by=CITY.balc89.y-h*0.92;c2.drawImage(im,bx,by,w,h);CITY.spBox=[bx,by,w,h]}}
   if(CITY.mgr&&typeof flagImg==='function'&&typeof mgrFlagOf==='function'){try{const fl=mgrFlagOf(me());const im=fl?flagImg(fl):null;const p=P89(CITY_GATE[0]-0.2,CITY_GATE[1]+1.0,0);
-    c2.strokeStyle='#5a4a34';c2.lineWidth=2;c2.beginPath();c2.moveTo(p.x,p.y);c2.lineTo(p.x,p.y-T*1.5);c2.stroke();const wv=Math.sin(now/500)*T*0.02;if(im&&im.complete)c2.drawImage(im,p.x,p.y-T*1.5+wv,T*0.5,T*0.3)}catch(e){}}
+    c2.strokeStyle='#5a4a34';c2.lineWidth=2;c2.beginPath();c2.moveTo(p.x,p.y);c2.lineTo(p.x,p.y-T*1.5);c2.stroke();const wv=(typeof city100Calm==='function'&&city100Calm()?0:Math.sin(now/500))*T*0.02;if(im&&im.complete)c2.drawImage(im,p.x,p.y-T*1.5+wv,T*0.5,T*0.3)}catch(e){}}
   /* hover tile and your path */
   if(CITY.hov89&&!cityBlocked(CITY.hov89.r,CITY.hov89.c)){const {r,c}=CITY.hov89;
     c2.strokeStyle='rgba(240,207,125,.85)';c2.lineWidth=1.5;c2.beginPath();const q=[P89(r-0.5,c-0.5,0),P89(r-0.5,c+0.5,0),P89(r+0.5,c+0.5,0),P89(r+0.5,c-0.5,0)];q.forEach((p,i)=>i?c2.lineTo(p.x,p.y):c2.moveTo(p.x,p.y));c2.closePath();c2.stroke()}
@@ -58279,6 +58278,31 @@ function city100Reveal(){const W=CITY.warm100;CITY.warm100=null;const now=perfor
   CITY.raf=requestAnimationFrame(cityLoop)}}
 /* leaving during the warm-up: drop the cover's hold so closeCity's own fade works */
 {const base=closeCity;closeCity=function(){try{if(CITY.warm100){CITY.warm100=null;const fd=document.getElementById('cityFade');if(fd)fd.classList.remove('hold100')}}catch(e){}return base.apply(this,arguments)}}
+/* 280-v100citycalm (v1.0, his note: the City Square crowd ignored Reduce motion; display only — rules, dice, saves untouched)
+   Under Reduce motion (SETTINGS.calm / reduceMotion()) or Animations Off (SETTINGS.anim88 'off') the square is shown placed but STILL:
+   no wandering (townsfolk and animals), no glides (every figure, YOURS too, jumps to its tile), no bobbing / tail / water / steam /
+   yard-lunge / flag-wave motion (the live painters and animal89 get a fixed clock), no chatter bubbles, no beast parade.
+   Your own walk is input, so it still runs (a jump per step). Horns: the crowd still files toward the gate (a jump per step).
+   Read live every frame, so switching the setting with the square open takes effect at once; switching back re-seeds the timers. */
+function city100Calm(){try{return (typeof reduceMotion==='function'&&!!reduceMotion())||(typeof SETTINGS!=='undefined'&&SETTINGS.anim88==='off')}catch(e){return false}}
+{const base=glide89;glide89=function(o,now,dur){if(!city100Calm())return base.apply(this,arguments);o._tr=o.r;o._tc=o.c;o._dr=o.r;o._dc=o.c;o._fr=o.r;o._fc=o.c;return [o.r,o.c]}}
+{const base=animal89;animal89=function(c2,a,x,y,T,now){return base.call(this,c2,a,x,y,T,city100Calm()?0:now)}}
+{const base=yardLive89;yardLive89=function(c2,B,now){return base.call(this,c2,B,city100Calm()?0:now)}}
+{const base=templeLive89;templeLive89=function(c2,B,now){return base.call(this,c2,B,city100Calm()?0:now)}}
+{const base=bathLive89;bathLive89=function(c2,B,now){return base.call(this,c2,B,city100Calm()?0:now)}}
+{const base=fountainLive89;fountainLive89=function(c2,B,now){return base.call(this,c2,B,city100Calm()?0:now)}}
+{const base=cityLoop;cityLoop=function(ts){if(!CITY.open)return base.apply(this,arguments);
+  if(!city100Calm()){if(CITY.calm100){CITY.calm100=false;const t=performance.now();
+    try{for(const n of CITY.npcs)if(!n.static&&!n.leaving)n.t0=t-Math.random()*(n.wt||2000);for(const a of CITY.anim89||[])a.t0=t+Math.random()*3000;
+      CITY.chatT=t+1200+Math.random()*2500;CITY.beastT=t+9000+Math.random()*9000}catch(e){console.error(e)}}
+    return base.apply(this,arguments)}
+  CITY.calm100=true;const now=performance.now();
+  try{for(const n of CITY.npcs){if(n.say)n.say=null;if(!n.static&&!n.leaving)n.t0=now}
+    for(const a of CITY.anim89||[])a.t0=now+1e9;
+    CITY.chatT=now+1e9;if(CITY.mode!=='filing')CITY.beastT=now+1e9}catch(e){console.error(e)}
+  return base.apply(this,arguments)}}
+/* the reveal spreads walker phases; under calm nobody may be due in that frame */
+{const base=city100Reveal;city100Reveal=function(){const r=base.apply(this,arguments);try{if(city100Calm()){const t=performance.now();for(const n of CITY.npcs)if(!n.static&&!n.leaving)n.t0=t;for(const a of CITY.anim89||[])a.t0=t+1e9;CITY.chatT=t+1e9;CITY.beastT=t+1e9}}catch(e){console.error(e)}return r}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

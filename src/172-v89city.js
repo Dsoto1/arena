@@ -561,7 +561,7 @@ cityDraw=function(){const c2=CITY.c2;if(!c2||!CITY.TW)return;const W=CITY.W||CIT
   if(CITY.sponsorHere&&CITY.balc89&&typeof flavFaceURL==='function'){const im=CITY.imgs['spB']||(()=>{const i2=new Image();i2.src=flavFaceURL('calm',CITY.sponsorHere);CITY.imgs['spB']=i2;return i2})();
     if(im.complete&&im.naturalWidth){const w=T*0.62,h=w*0.8;const bx=CITY.balc89.x-w/2,by=CITY.balc89.y-h*0.92;c2.drawImage(im,bx,by,w,h);CITY.spBox=[bx,by,w,h]}}
   if(CITY.mgr&&typeof flagImg==='function'&&typeof mgrFlagOf==='function'){try{const fl=mgrFlagOf(me());const im=fl?flagImg(fl):null;const p=P89(CITY_GATE[0]-0.2,CITY_GATE[1]+1.0,0);
-    c2.strokeStyle='#5a4a34';c2.lineWidth=2;c2.beginPath();c2.moveTo(p.x,p.y);c2.lineTo(p.x,p.y-T*1.5);c2.stroke();const wv=Math.sin(now/500)*T*0.02;if(im&&im.complete)c2.drawImage(im,p.x,p.y-T*1.5+wv,T*0.5,T*0.3)}catch(e){}}
+    c2.strokeStyle='#5a4a34';c2.lineWidth=2;c2.beginPath();c2.moveTo(p.x,p.y);c2.lineTo(p.x,p.y-T*1.5);c2.stroke();const wv=(typeof city100Calm==='function'&&city100Calm()?0:Math.sin(now/500))*T*0.02;if(im&&im.complete)c2.drawImage(im,p.x,p.y-T*1.5+wv,T*0.5,T*0.3)}catch(e){}}
   /* hover tile and your path */
   if(CITY.hov89&&!cityBlocked(CITY.hov89.r,CITY.hov89.c)){const {r,c}=CITY.hov89;
     c2.strokeStyle='rgba(240,207,125,.85)';c2.lineWidth=1.5;c2.beginPath();const q=[P89(r-0.5,c-0.5,0),P89(r-0.5,c+0.5,0),P89(r+0.5,c+0.5,0),P89(r+0.5,c-0.5,0)];q.forEach((p,i)=>i?c2.lineTo(p.x,p.y):c2.moveTo(p.x,p.y));c2.closePath();c2.stroke()}
