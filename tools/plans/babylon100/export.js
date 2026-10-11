@@ -20,6 +20,7 @@ const KITS = {
 const BEASTS = { leo: ['idle0'], ursa: ['idle0'] };
 
 const f32 = (s) => { const b = Buffer.from(s, 'base64'); return new Float32Array(b.buffer, b.byteOffset, b.byteLength / 4).slice(); };
+const u16f = (s) => { const b = Buffer.from(s, 'base64'); return Float32Array.from(new Uint16Array(b.buffer, b.byteOffset, b.byteLength / 2)); };
 const u32 = (s) => { const b = Buffer.from(s, 'base64'); return new Uint32Array(b.buffer, b.byteOffset, b.byteLength / 4).slice(); };
 
 /* simplify + compact; returns {idx, keep(remap old→new), nv} */
@@ -116,7 +117,7 @@ function skinToJoints(pos, joints) {
     stats.init = await pg.evaluate(() => window.EXP.init()); console.log('token engine', stats.init);
     for (const [k, kit] of Object.entries(KITS)) {
       const r = await pg.evaluate(([l, g]) => window.EXP.glad(l, g), [kit.look, kit.gear]);
-      const src = { pos: f32(r.pos), col: f32(r.col), idx: u32(r.idx), sj: Float32Array.from(Buffer.from(r.sj, 'base64').length ? new Uint16Array(Buffer.from(r.sj, 'base64').buffer.slice(Buffer.from(r.sj, 'base64').byteOffset, Buffer.from(r.sj, 'base64').byteOffset + Buffer.from(r.sj, 'base64').length)) : []), sw: f32(r.sw) };
+      const src = { pos: f32(r.pos), col: f32(r.col), idx: u32(r.idx), sj: u16f(r.sj), sw: f32(r.sw) };
       const L0 = lod(SIMP, k + '_lod0', src, GLAD_TRIS), L1 = lod(SIMP, k + '_lod1', src, GLAD_LO);
       const buf = glb(r.bones, [L0, L1]); fs.writeFileSync(path.join(OUT, `glad_${k}.glb`), buf);
       stats.glad[k] = { trisFull: r.nt, vertsFull: r.nv, lod0: { tris: L0.tris, verts: L0.verts }, lod1: { tris: L1.tris, verts: L1.verts }, bones: r.bones.length, kb: +(buf.length / 1024).toFixed(1), bakeMs: r.ms, parts: r.names.length };
