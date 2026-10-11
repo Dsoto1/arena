@@ -309,7 +309,7 @@ const FIG6 = [[-0.07, 1.36], [-0.035, 1.38], [0.04, 1.37], [0.08, 1.35], [-0.06,
 function figs6(x, y) { let r = 0; for (const [fx, fy] of FIG6) { r = Math.max(r, bump6(x, y, fx, fy + 0.03, 0.01, 0.011) , bump6(x, y, fx, fy, 0.014, 0.024), bump6(x, y, fx + 0.012, fy + 0.008, 0.016, 0.004) * 0.8, bump6(x, y, fx - 0.006, fy - 0.028, 0.005, 0.016), bump6(x, y, fx + 0.006, fy - 0.028, 0.005, 0.016)); } return r; }
 export const CUIR6 = {
   musculata: { base: 'bronze', rim: 'gold', boss: [[0, 1.405, 0.135], [0.03, 0.026, 0.02]], bossM: 'gold', feat: (x, y, z) => ({ h: muscles6(x, y, z, 1) + (z > 0 ? 0.0022 : 0), m: null }) },
-  thorax: { base: 'iron', rim: 'iron', high: 1, paul: 'scale', cell: 0.0112, feat: (x, y, z) => { const f = ((1.52 - y) * 15) % 1; let h = f * 0.0055;
+  thorax: { base: 'iron', rim: 'iron', high: 1, paul: 'scale', cell: 0.0121, feat: (x, y, z) => { const f = ((1.52 - y) * 15) % 1; let h = f * 0.0055;
     /* a rivet row along each lame's upper edge */ const ly = 1.52 - Math.floor((1.52 - y) * 15) / 15 - 0.008; const ux = around6(x, z) / 0.035, fu = ux - Math.round(ux); const rv = hyp(fu * 0.035, y - ly); if (rv < 0.0034) h += 0.004 * Math.sqrt(1 - (rv / 0.0034) ** 2);
     return { h, m: null }; } },
   pectorale: { base: 'bronze', rim: 'bronze', feat: (x, y, z) => ({ h: muscles6(x, y, z, 0.45), m: null }) },
