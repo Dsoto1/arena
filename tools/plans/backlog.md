@@ -254,3 +254,4 @@ Fate is recorded, while his lanista (who abandoned) may already be in another ro
 4a count listed only. CHANGES: NO who's-online panel on the Online landing (Lobby Browser tab only); the follow-house search leaves the landing → Profile & Settings;
 Acta of the day merged INTO the biggest winner / biggest loser boxes; re-fit the landing.
 WORLD TABS: W1–W9 all a. Calendar: more contrast between the schedule tablets and the light background; the current week ALWAYS clearly highlighted. Build in the Manager wave.
+WORLD TABS: city card = information only (his 'a for now', 2026-10-11) — no Plan a trip; Walk the square only when reachable this week.
