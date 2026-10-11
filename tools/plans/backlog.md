@@ -208,3 +208,7 @@ Snake: root, head, neck + a chain of spine segments · Eagle (Zora): root, neck,
 Performance: reuse geometry + materials; share animation logic between similar quadrupeds adapted to proportions; skeletal animation (no
 per-part updates); shadows/transparency/dynamic lights limited; lower-detail models for distant/small creatures; never a new mesh or
 material per turn. (Board today = render-once sheets, so most of this governs the sheet renderer + the Babylon prototype.)
+
+## CLEAN LAYERS — his picks (2026-10-11): 1a after v1.0 · 2b INCLUDING the server Ranked check (phases 0, A, B, C, D1, E; not D2) · 3c mismatches only logged the first month, then decide · 4c CPUs make NO truce/trade offers to humans online (Familia is the legit team-up) — FIX, next build. Plan: tools/plans/layers100/PLAN.md.
+TAME BOND (his rule 2026-10-11): Meat Lure breaks a tame bond (any beast except Commodus / humanoid beasts / human NPCs); Ursa/Brutum "charges you" arena cards break a tamed BEAR's bond only. Building (tv100t). Open: Tholo (printed lure card says it works on him).
+CROWD CHEERS: today's sculpted crowd (193/209) cheers in bursts (arms up, fist shake) but never stands. The 3D token crowd (look tests only, not in the game yet) MUST keep the cheers AND stand up from the seat on big moments.
