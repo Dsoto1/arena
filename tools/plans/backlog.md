@@ -187,3 +187,12 @@ Problem: every point change pops its own floating number (#fx95) — noise witho
 - Q3a: hits taken between your turns stay as tick marks on your avatar until your turn; hover = "Leo: −3 left leg".
 - Q4a: coin/CF never pop on the board — the icon flies to its counter and the counter ticks (like cf95Fly).
 - Fast: no pop-ups; avatar marks + log carry it. Reduce motion / Off honoured; online = display only (no S/hash).
+
+## v1.0 LOOK ANSWERS (his picks 2026-10-11)
+ARENA round 2: 1a piers only at the ends · 2b accent band on ALL 12 arenas · 3b Capua gets the gilt parapet (grand arena) · 4a all four
+palette changes · 5a bronze rail colour per arena (gilt Roma, bronze Arles, dark Nemausus, verdigris Pola). Build into the game with v1.0.
+BEASTS round 2: 1a Leo idle+walk split from the actions · 2 (no letter; keep render sizes) — SNAKE far too thick ("like a turd"): much
+slimmer profile · 3a bigger lighter mane locks framing the face · 4a Commodus lion-pelt hood + segmented armour · 5a Tholo cape = cloth
+that swings with the walk · 6a Zora smaller + perched like his mini. → beasts round 3.
+3D GEAR integration: 1a keep the ~300 KB simplified bake · 2a pre-bake the body the same way · 3a bow string drawn · 4a base 0.8 tile
+("best fit": keep 0.8 but nothing may spill out of the tile — check every class/pose/facing).
