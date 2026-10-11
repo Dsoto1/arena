@@ -39,6 +39,8 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
   small immediate code changes go to a Sonnet sub-agent (Agent tool `model: "sonnet"`) to save tokens. Big feature builds stay with the lead's
   default model unless he says otherwise.
 
+- **OFFLOAD TO GITHUB ACTIONS (his call 2026-10-11):** regression runs go to GitHub Actions whenever possible — agents run only their own NEW test once locally (plus a build); the lead merges, then triggers `regression.yml` (workflow_dispatch, mode smart/full) on the branch and fixes from the job logs. Merge commits keep `[skip ci]` so they don't cancel a running dispatch.
+
 - **VISUAL POLISH RULE (his, 2026-10-07):** preserve gameplay clarity, responsiveness, accessibility, localization, save compatibility, network
   authority and the existing desktop + mobile experiences — never improve a beauty shot while making the game harder to read or slower to play.
   Every visual change must keep passing: draw-cost budgets (tv91r "draw time", tv92p soak/idle), clarity (tv91r nothing over the sand/pieces),
