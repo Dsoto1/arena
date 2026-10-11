@@ -280,3 +280,4 @@ ENTER ANY EVENT built (296-v100any, merged). HIS ANSWERS: 1a 2a (own days) 3a 4a
 BEASTS ROUND 4 ANSWERS (his 2026-10-11): 1b Tholo's cape closer to the back + a darker linen colour · 2b bigger clasp discs, no chain · 3a Commodus: lion's jaw higher so his face shows ·
 4a Zora's pillar chunk as is · 5a split other beasts only if memory is needed later. → round 5 look test.
 MY LUDUS ROUND 2 ANSWERS: Consilium lights only on a warning or a decision (loan due, risky entry, rival challenge); the Armory building moves to the Barracks master (Barracks, Shrine, Armory; Clerk = Stables + Ledger).
+BEASTS ROUND 5 ANSWERS (his 2026-10-11): 1a clasps as is · 2a cape stands off in swings as is · 3a Commodus: lift the lion head higher so it sits like a hat and his eyes show — NO MOCK NEEDED (apply directly in the look files; the beasts are then FINAL for the 3D-animation integration wave).
