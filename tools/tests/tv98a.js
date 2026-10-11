@@ -91,7 +91,7 @@ const t1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   for(const [t,want] of [['hist','new'],['learn','tut'],['guide','strat'],['gloss','ref']]){CUR_MODAL&&CUR_MODAL.done(null);await W8(250);showRules(t);await W8(500);o['map_'+t]=(document.getElementById('tac98')||{dataset:{}}).dataset.page===want}
   CUR_MODAL&&CUR_MODAL.done(null);await W8(250);return o});
 ok(t1.title==='Tactics'&&t1.full,'Tactics: the window title, full screen');
-ok(JSON.stringify(t1.tabs)===JSON.stringify(['tut','build','new','strat','ref'])&&t1.link,'tabs Tutorials · Rules at a Glance · What\'s New · Strategy · Reference, the rulebook link last '+JSON.stringify(t1.tabs));
+ok(JSON.stringify(t1.tabs)===JSON.stringify(['tut','build','new','strat','ref','onl'])&&t1.link,'tabs Tutorials · Rules at a Glance · What\'s New · Strategy · Reference · Online (293), the rulebook link last '+JSON.stringify(t1.tabs));
 ok(t1.open==='build'&&t1.cards===10&&t1.dg>=7&&t1.oneScreen,'Rules at a Glance: ten cards on one screen with ◆ DIGITAL marks '+JSON.stringify([t1.open,t1.cards,t1.dg,t1.oneScreen]));
 ok(t1.beasts==='15,20,12,10,6,3','the beasts table reads the real NPCT HP '+t1.beasts);
 ok(Object.entries(t1.panes).every(([k,v])=>k===v),'each tab shows its own pane '+JSON.stringify(t1.panes));
