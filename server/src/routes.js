@@ -970,7 +970,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     'char.kitapply':async(d,ctx)=>{const {D}=await myHouse89(ctx.acct);const ch=await ownChar(ctx.acct,d.char);if(ch.domus!==D.id)throw new Error('Not of your house.');
       const K=(ch.kits89||[])[d.i|0];if(!K)throw new Error('No such loadout.');const P=await kitPlan89(ctx.acct,D,ch,K);const r=await dress89(ctx.acct,D,ch,P.equip,P.take);
       return {...r,skipped:P.skipped,kit:K.n}},
-    /* 🏗 treasury upgrades: a 5th gladiator slot, a bigger offerings shelf (once each) */
+    /* 🏗 treasury upgrades: a bigger offerings shelf (once; the 5th slot is no longer sold, v1.0) */
     'domus.upgrade':async(d,ctx)=>{const {D}=await myHouse89(ctx.acct);const k=String(d.k||'');const why=C.upgWhy(D,k);if(why)throw (/treasury/.test(why)?fail('no_coin',why,{cost:(C.UPG89[k]||{}).cost}):new Error(why));
       let err=null;const X=await editDomus(D.id,Y=>{err=C.upgWhy(Y,k);if(err)return false;C.upgBuy(Y,k,now())});if(!X)throw new Error(err||'Try again.');return {domus:C.domusRow(X)}},
     /* 🎨 the house colours + crest (a printed banner device) */

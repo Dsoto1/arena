@@ -701,10 +701,10 @@ const ONLC=(function(){
    • the Domus dresses a gladiator (dressApply: what he wears; everything else he holds goes to the house shelf);
    • KEEP HOME: a piece flagged pcs[uid].home is listed in kit.home and left out of every Ranked kit (kitStrip in roomJoin / seatGroup / startRoom);
    • saved loadouts (cleanKits), the treasury LEDGER by totals (ledAdd / ledgerOf), the MEMORIAL wall (memoEntry / memoAdd), house colours + crest
-     (cleanLook89, CREST89 = the printed banner devices), treasury UPGRADES (UPG89: a 5th gladiator slot, a bigger offerings shelf). */
+     (cleanLook89, CREST89 = the printed banner devices), treasury UPGRADES (UPG89: a bigger offerings shelf; the 5th-slot upgrade is no longer sold, v1.0). */
 (function(C){
   const CLASS_FEE89=100; /* TWEAK: a class change, from the treasury */
-  const UPG89={slot5:{cost:1500},shelf:{cost:400,add:4}}; /* TWEAK: once each, from the treasury */
+  const UPG89={shelf:{cost:400,add:4}}; /* TWEAK: once each, from the treasury */
   const CREST89=['eagle','horse','mount','tri','olive','croc','tower','goat','sun','lion','wave','moon','wolf','owl','trident','laurel','boar','ship','thunder','column'];
   const MEMO_MAX89=60, KITS_MAX89=3, KIT_ITEMS89=16, DRESS_W89=2, LED_BY89=40;
   const LED_IN89=['cut','gift','sale','refund','grant'], LED_OUT89=['gear','repair','class','upg'];
@@ -1384,7 +1384,7 @@ const ONLC=(function(){
    3 · ONLINE WAGERS CLOSED: betOK always refuses (WAGER_OFF100); the server's bet.place answers code 'wager_off'. Settlement code stays for old data.
    5 · DOMUS SLOTS: a new house opens with SLOT100.start (1) gladiator slot; slots 2–4 open for the house's Glory (its best Domus-rank score, dr98)
        AND coin from the treasury (SLOT100.steps). A house founded before v1.0 (no slots100 yet) keeps as many slots as it has LIVING gladiators when first touched (at least 1; slotsMigrate100, once, stored on the house); the rest are locked like a new house's. The coin-only 5th slot
-       (UPG89.slot5) needs the four first.
+       (UPG89.slot5) is REMOVED (his call 2026-10-11): never offered or bought (upgWhy refuses, mcode), max online = 4; a house that already built it keeps it.
    6 · WATCHERS ARE NOT PLAYERS: the landing's counts (hereSummary) count a ticket holder in a live match as watching, not fighting; Who's online
        shows a ticket holder as watching (live) / in a room (waiting).
    7 · GOOFY TAUNTS: a few light Roman taunts join the room / match / after phrase sets (QC, QC_TEXT). */
@@ -1403,7 +1403,7 @@ const ONLC=(function(){
   /* once per house: a pre-v1.0 house (no slots100) keeps one slot per living gladiator (min 1); returns true when it changed */
   const slotsMigrate100=(D,living)=>{if(!D||D.slots100!=null)return false;D.slots100=Math.max(1,Math.min(C.GLAD_MAX,living|0));return true};
   C.gladMax=D=>slotsOf100(D)+(((D&&D.upg89)||{}).slot5?1:0);
-  {const base=C.upgWhy;C.upgWhy=function(D,k){if(k==='slot5'&&slotsOf100(D)<C.GLAD_MAX)return 'Open the four slots first.';return base.apply(this,arguments)}}
+  {const base=C.upgWhy;C.upgWhy=function(D,k){if(k==='slot5')return 'The fifth gladiator slot is no longer sold.';return base.apply(this,arguments)}} /* a house that already built it keeps D.upg89.slot5 (gladMax still counts it) */
   {const base=C.newDomus;C.newDomus=function(){const D=base.apply(this,arguments);if(D)D.slots100=SLOT100.start;return D}}
   {const base=C.domusRow;C.domusRow=function(D){const r=base.apply(this,arguments);if(r&&D){r.gmax=C.gladMax(D);r.slots100=slotsOf100(D);const s=slotNext100(D);r.slotNext100=s?{...s}:null}return r}}
   {const base=C.domusPub89;if(base)C.domusPub89=function(D){const r=base.apply(this,arguments);if(r)delete r.slotNext100;return r}}

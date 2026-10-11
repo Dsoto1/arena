@@ -12,7 +12,7 @@ function units(){
   assert.strictEqual(C.gladMax({id:'old'}),4,'a house from before v1.0 keeps four');assert.strictEqual(C.domusRow({id:'old',name:'Old',owner:'o'}).gmax,4);
   assert.match(C.slotWhy100(D,100),/opens at 150 Glory — your house has 100/);assert.match(C.slotWhy100({...D,treasury:10},150),/treasury needs 200/);
   const D2={...D,treasury:250};C.slotBuy100(D2,160,5);assert.ok(D2.slots100===2&&D2.treasury===50&&C.gladMax(D2)===2,'slot 2 bought');assert.strictEqual(D2.led89.out.upg,200,'the ledger');
-  assert.match(C.upgWhy({...D2,treasury:5000},'slot5'),/four slots first/);assert.strictEqual(C.upgWhy({id:'old',treasury:5000},'slot5'),'','a pre-v1.0 house may still buy the fifth');
+  assert.match(C.upgWhy({...D2,treasury:5000},'slot5'),/no longer sold/);assert.match(C.upgWhy({id:'old',treasury:5000},'slot5'),/no longer sold/,'nobody buys the fifth');assert.strictEqual(C.gladMax({id:'old',upg89:{slot5:1}}),5,'an old fifth slot stays');
   /* the Issued kit */
   const ch=C.newChar({name:'Issa',cls:'amazonia'},'o','g1',1);ch.gear=[];ch.equip=[];const p=C.issuePlan100(ch,catalog);
   assert.deepStrictEqual(p.buy,[...C.DAILY92,'mace'],'padding + the Level 1 stand-in for the axe');assert.ok(p.buy.every(b=>catalog[b]&&(catalog[b].kind==='a'||catalog[b].lv===1)),'Level 1 weapons only');
@@ -54,7 +54,7 @@ async function routes(){
   const r1b=await ann.req('domus.slot',{rid:'slotrid100a'});assert.strictEqual(r1b.slot,2,'a replay gets the stored reply');assert.strictEqual((await getD(ann)).treasury,60,'paid once');
   assert.deepStrictEqual(r1.domus.slotNext100,{n:3,glory:600,coin:500},'the next step rides on the house row');
   const a2=await ann.req('char.create',{name:'Ann Two',cls:'hero'});assert.ok(a2&&a2.alive,'the second gladiator');
-  await rejects(ann.req('domus.upgrade',{k:'slot5'}),null,/four slots first/);
+  await rejects(ann.req('domus.upgrade',{k:'slot5'}),null,/no longer sold/);
   /* a house from before v1.0 (no slots100) keeps one slot per LIVING gladiator, once, on first touch */
   const unslot=async cl=>{const X=await getD(cl);delete X.slots100;await db.put('DOMUS#'+X.id,'DOMUS',X)};
   await setD(cat,{slots100:4});const cc2=await cat.req('char.create',{name:'Cat Two',cls:'hero'});const cc3=await cat.req('char.create',{name:'Cat Three',cls:'hero'});await setC(cc3.id,{alive:false});await unslot(cat);

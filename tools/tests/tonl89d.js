@@ -124,11 +124,11 @@ ok(await P.evaluate(()=>!document.querySelector('#onl .kt89,#onl [data-d89="kits
 await P.evaluate(()=>{const d=document.querySelector('#onl [data-fd89="look"]');d.open=true});await W(150);await P.click('#onl [data-crest89="wolf"]');await W(200);await P.click('#onl [data-d89="look"]');await idle();
 A=await peek((w,dom)=>w.domus82[dom].look89,ids.dom);ok(A&&A.crest==='wolf'&&/^#[0-9a-f]{6}$/.test(A.c1),'colours + crest saved '+JSON.stringify(A));
 ok(await P.evaluate(()=>/^data:image/.test((document.querySelector('#onl .db89-crest')||{}).src||'')&&!!document.querySelector('#onl .db89').style.getPropertyValue('--hc1')),'the banner wears them');
-/* ── 11 · upgrades: the fifth slot ── */
-await P.evaluate(()=>{const d=document.querySelector('#onl [data-fd89="upg"]');d.open=true});await W(150);await P.click('#onl [data-upg89="slot5"]');await idle();
-A=await peek((w,dom)=>({u:w.domus82[dom].upg89,t:w.domus82[dom].treasury}),ids.dom);ok(A.u&&A.u.slot5,'the fifth slot built '+JSON.stringify(A));
+/* ── 11 · upgrades: the fifth slot is no longer sold (v1.0) ── */
+await P.evaluate(()=>{const d=document.querySelector('#onl [data-fd89="upg"]');d.open=true});await W(150);
+ok(await P.evaluate(()=>!document.querySelector('#onl [data-upg89="slot5"]')&&!document.querySelector('#onl [data-d89="upg"].gc89')),'no fifth-slot offer');
 const five=await P.evaluate(async()=>{for(const n of ['Gamma','Delta','Epsilon','Zeta'])await NET.req('char.create',{name:n,cls:'slave'}).catch(()=>null);let r='';try{await NET.req('char.create',{name:'Eta',cls:'slave'})}catch(e){r=e.message}return r});
-await open();const nC=await P.evaluate(()=>document.querySelectorAll('#onl .gc89-row .gc89:not(.empty)').length);ok(/Up to 5/.test(five)&&nC===5,'five living gladiators, no sixth ('+five+', '+nC+')');
+await open();const nC=await P.evaluate(()=>document.querySelectorAll('#onl .gc89-row .gc89:not(.empty)').length);ok(/Up to 4/.test(five)&&nC===4,'four living gladiators, no fifth ('+five+', '+nC+')');
 await shot('desk_full');
 /* ── 12 · phones ── */
 for(const [vw,vh,n] of [[390,844,'phone_390'],[844,390,'phone_land']]){await P.setViewportSize({width:vw,height:vh});await W(400);await P.evaluate(()=>onlRedraw());await W(300);

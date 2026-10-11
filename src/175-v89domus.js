@@ -5,7 +5,7 @@
    still serves the no-house / guest cases). Top to bottom:
    1 · THE BANNER `.db89` in the house colours + crest: name, record, the TREASURY with an ⓘ (the ledger by source and by gladiator,
        "since v0.89" — `led89` on the domus row), 🏆 Trophies (a popup), Flavius's gifts, and folds 🎨 Colours & crest · 👤 Patron ·
-       🏗 Upgrades (5th slot 1500 / shelf +4 400, from the treasury) · 🧪 Tester. No gladiator purses here.
+       🏗 Upgrades (shelf +4 400, from the treasury) · 🧪 Tester. No gladiator purses here.
    2 · THE SHOWCASE `.sc89` = the ACTIVE gladiator: his weapon cards in full (right / left hand, drop targets), the avatar wearing his armor
        (a drop target; the worn pieces listed under it — click one to take it off), name ✎, class 🔄 (100 coin from the treasury, a
        popup with the 8 printed cards), rank, record, HIS PURSE (only here and on his card), the Ranked stake, the offerings in his
@@ -169,7 +169,7 @@ function d89LookHTML(){const L=V89D.look||(V89D.look={...d89Look()});
     <div class="acts"><button type="button" class="btn primary tksm" data-d89="look">${_T`💾 Fly these colours`}</button><small class="rc-sub">${_T`The printed banner devices only.`}</small></div></div></div>`}
 function d89UpgHTML(){const D=ONL.domus||{};const U=D.upg89||{};const T=D.treasury|0;
   const row=(k,t,d)=>{const c=ONLC.UPG89[k].cost;const have=!!U[k];return `<div class="up89"><div><b>${t}</b><small class="rc-sub">${d}</small></div>${have?`<span class="badge gold">${_T`✓ Built`}</span>`:`<button type="button" class="btn tksm ${T>=c?'primary':''}" data-upg89="${k}" ${T<c?'disabled':''}>${_T`Build · ${d89Coin(c)}`}</button>`}</div>`};
-  return `${row('slot5',_T('A fifth gladiator slot'),_T`Raise up to ${GLAD_BASE89+1} living gladiators.`)}${row('shelf',_T('A bigger offerings shelf'),_T`${ONLC.OFF_SHELF} → ${ONLC.OFF_SHELF+ONLC.UPG89.shelf.add} places.`)}<small class="rc-sub">${_T`Paid from the treasury · once each.`}</small>`}
+  return `${row('shelf',_T('A bigger offerings shelf'),_T`${ONLC.OFF_SHELF} → ${ONLC.OFF_SHELF+ONLC.UPG89.shelf.add} places.`)}<small class="rc-sub">${_T`Paid from the treasury · once.`}</small>`}
 function d89Banner(){const D=ONL.domus||{};const G=ONL82.dg||{};const L=d89Look();const glads=Math.max(D.glads|0,G.glads|0,(ONL.chars||[]).length);const Wh=onlW81();
   const rec=[[_T('Bouts'),D.bouts|0],[_T('Won'),D.wins|0],[_T('Survived'),D.survived|0],[_T('Fallen'),D.fallen|0],[_T('Fame'),`✦ ${D.fame|0}`],[_T('Lifetime CF'),`${Wh} ${D.lifeCF|0}`]];
   const tro=(G.trophies||[]).length;const since=D.founded?new Date(D.founded).toLocaleDateString():'';
@@ -233,7 +233,7 @@ function d89Cards(live,busy){const act=ONL.char&&ONL.char.id;const D=ONL.domus||
       <small class="gc89-w">⚔ ${wn.join(' · ')||_T('bare hands')}</small><small>${_T`Purse ${d89Coin(c.wallet)}`}</small><small class="gc89-s">${_T`Stake ${d89Coin(st.all)}`}</small>${busy.has(c.id)?_T('<small class="lk89t">🔒 In a match</small>'):''}
       ${on?_T('<span class="badge gold">⚔ Active</span>'):''}</span></button>`};
   const empty=Array.from({length:Math.max(0,max-live.length)},()=>`<button type="button" class="gc89 empty" data-onl="gnew">${_T`<span class="gc89-plus">＋</span><b>New gladiator</b><small>starts as a Tiro</small>`}</button>`).join('');
-  const lockd=!(D.upg89||{}).slot5&&live.length>=max?`<button type="button" class="gc89 empty up" data-d89="upg">${_T`<span class="gc89-plus">🔒</span><b>A fifth slot</b><small>${d89Coin(ONLC.UPG89.slot5.cost)} from the treasury</small>`}</button>`:'';
+  const lockd='';
   return `<div class="gc89-row" style="--n:${Math.max(max,live.length)+(lockd?1:0)}">${live.map(card).join('')}${empty}${lockd}</div>`}
 
 /* ---------------- 5 · the memorial wall ---------------- */
@@ -308,7 +308,7 @@ document.addEventListener('click',e=>{const t=e.target;if(!t||!t.closest)return;
   if((b=t.closest('[data-d89kit]'))){return d89KitApply(+b.dataset.d89kit)}
   if((b=t.closest('[data-d89kx]'))){const ch=d89Act();if(!ch)return;const K=(ch.kits89||[]).filter((x,i)=>i!==+b.dataset.d89kx);return onlDo(async()=>{d89Put(await NET.req('char.kits',{char:ch.id,kits:K}))})}
   if((b=t.closest('[data-crest89]'))){V89D.look={...(V89D.look||d89Look()),crest:b.dataset.crest89};onlRedraw();return}
-  if((b=t.closest('[data-upg89]'))){const k=b.dataset.upg89;return onlDo(async()=>{const r=await NET.req('domus.upgrade',{k});d89Put(r);onlToast80(k==='slot5'?_T('🏗 A fifth gladiator slot is built.'):_T('🏗 The offerings shelf is bigger.'))})}
+  if((b=t.closest('[data-upg89]'))){const k=b.dataset.upg89;return onlDo(async()=>{const r=await NET.req('domus.upgrade',{k});d89Put(r);onlToast80(_T('🏗 The offerings shelf is bigger.'))})}
   if((b=t.closest('[data-d89]'))){const a=b.dataset.d89;const ch=d89Act();
     if(a==='led'){return d89LedShow(b,true)}
     if(a==='tro'){const G=ONL82.dg||{};onl83Pop('tr89pop',`${typeof onl83Trophies==='function'?onl83Trophies(G.trophies):''}<div class="acts"><button type="button" class="btn" onclick="this.closest('.pop83').remove()">${_T`Close`}</button></div>`);return}

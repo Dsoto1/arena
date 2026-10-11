@@ -219,7 +219,7 @@ either server-side or decided by the host's opening snapshot.
 - **Domus slots** (`domus.slot {}` — in `IDEM93`, so a replayed request pays once). `D.slots100` = slots opened; a house WITHOUT the field predates v1.0:
   on first touch (`domusGet` → `C.slotsMigrate100`, once, stored) it keeps one slot per LIVING gladiator (min 1); the rest are locked like a new house's. A new house (`C.newDomus`) opens with `SLOT100.start` = 1. Steps (`SLOT100.steps`, his numbers): slot 2 = 150 Glory + 200 coin,
   slot 3 = 600 + 500, slot 4 = 1500 + 1000. Glory = the house's best Domus-rank score (`D.dr98`, recomputed by `dr98Upd` before the check; it never
-  drops). The coin leaves the treasury (ledger `upg`). `gladMax(D)` = slots + the coin-only 5th slot (`UPG89.slot5`, now only after the four).
+  drops). The coin leaves the treasury (ledger `upg`). `gladMax(D)` = slots (+1 only for a house that bought the coin-only 5th slot `UPG89.slot5` before it was REMOVED, 2026-10-11: no longer offered or bought — `domus.upgrade {k:'slot5'}` is refused with "The fifth gladiator slot is no longer sold." (stable mcode), no refund logic; max online = 4 for everyone else).
   `char.create` beyond the slots → `slot_full` naming the next step. `domusRow` carries `gmax`, `slots100`, `slotNext100` (not on the public row).
 - **Watchers are not players.** `hereSummary`: a ticket holder in a live match is counted in `watch`, not `fight`. Who's online: a ticket holder is
   `watch` (live) / `room` (waiting). The table factor and `canStart` already counted only seated humans.

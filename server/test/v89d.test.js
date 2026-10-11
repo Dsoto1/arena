@@ -110,9 +110,10 @@ async function routes(){
   await rejects(ann.req('char.kitapply',{char:ann.ch.id,i:2}),null,/No such loadout/);
 
   /* ── upgrades ── */
-  await setD(ann.domus.id,{treasury:100});await rejects(ann.req('domus.upgrade',{k:'slot5'}),'no_coin');await setD(ann.domus.id,{treasury:2000});
-  let up=await ann.req('domus.upgrade',{k:'slot5'});assert.strictEqual(up.domus.gmax,5);assert.strictEqual(up.domus.treasury,500);await rejects(ann.req('domus.upgrade',{k:'slot5'}),null,/Already built/);
-  up=await ann.req('domus.upgrade',{k:'shelf'});assert.strictEqual(up.domus.smax,34);assert.strictEqual(up.domus.led89.out.upg,1900);
+  await setD(ann.domus.id,{treasury:2000});await rejects(ann.req('domus.upgrade',{k:'slot5'}),null,/no longer sold/);
+  /* a house that built the 5th slot before v1.0 keeps it (seeded here) */
+  await setD(ann.domus.id,{upg89:{slot5:1}});
+  let up=await ann.req('domus.upgrade',{k:'shelf'});assert.strictEqual(up.domus.gmax,5);assert.strictEqual(up.domus.smax,34);assert.strictEqual(up.domus.treasury,1600);
   for(const n of ['Tertia','Quarta','Quinta'])await ann.req('char.create',{name:'Ann '+n,cls:'slave'});await rejects(ann.req('char.create',{name:'Ann Sexta',cls:'slave'}),null,/Up to 5/);
   await rejects(bob.req('char.create',{name:'Bob B',cls:'slave'}).then(()=>bob.req('char.create',{name:'Bob C',cls:'slave'})).then(()=>bob.req('char.create',{name:'Bob D',cls:'slave'})).then(()=>bob.req('char.create',{name:'Bob E',cls:'slave'})),null,/Up to 4/);
 
