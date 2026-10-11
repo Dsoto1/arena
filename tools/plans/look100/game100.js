@@ -17,7 +17,7 @@
      api.pose() / api.setPose(json) / api.pins(L,R) / api.dispose() */
 import * as THREE from 'three';
 import { buildBodyAsync } from './body100.js';
-import { JOINTS, JK, HANDLE_COL, applyPose, poseToJSON, poseFromJSON, readPose, emptyPose, jointPos, endPos, solveArm, rotateJointWorld, footNow, solveTwoBone, resolveSpec, BASE_R, BASE_H, MM_PER_M, ANKLE_H } from '../../art/rig92/rig.js';
+import { JOINTS, JK, HANDLE_COL, applyPose, poseToJSON, poseFromJSON, readPose, emptyPose, jointPos, jointQ, endPos, ENDS, solveArm, rotateJointWorld, footNow, solveTwoBone, resolveSpec, BASE_R, BASE_H, MM_PER_M, ANKLE_H } from './rig100.js';
 import { PRESETS, PRESET_ORDER, PRESET_GROUPS } from '../../art/rig92/presets.js';
 import { makeGear } from './gear100.js';
 
@@ -49,6 +49,11 @@ export async function createToken(opts = {}) {
   /* ---------- the body (time-sliced build) ---------- */
   const B = await buildBodyAsync(Object.assign({ res: o.res, hair: 'cap' }, o.body || {}), o.slice, o.onStep);
   turn.add(B.group);
+  /* look100 round 2: the figure +15% against its base (his minis' heroic scale; the base stays 25.4 mm = 0.8 tile) */
+  if (o.scale) B.group.scale.setScalar(o.scale);
+  /* look100 round 2: the painted pass — a 4-band ramp with deeper shade, less ambient, a stronger warm sun */
+  if (o.paint) { const d = new Uint8Array([58, 120, 186, 255]); B.mats.gm.image = { data: d, width: 4, height: 1 }; B.mats.gm.needsUpdate = true;
+    scene.children.forEach(l => { if (l.isAmbientLight) l.intensity = 0.33 * Math.PI; if (l.isDirectionalLight) { l.intensity = 0.8 * Math.PI; l.color.set(0xffe8cc); } }); }
   const rig = B.rig, gear = makeGear(B);
   const presets = PRESET_ORDER.map(k => [k, PRESETS[k].label, poseToJSON(resolveSpec(rig, PRESETS[k].spec))]);
   const groups = PRESET_GROUPS.map(([g, l, ks]) => [g, l, ks.slice()]);
@@ -313,8 +318,21 @@ export async function createToken(opts = {}) {
     let c = grab(r, W, H); for (let k = h.ss; k > 1; k /= 2) c = halve(c); return c;
   }
   const specPose = (spec) => poseToJSON(resolveSpec(rig, spec));
+  /* look100 round 2: a GRIP CONSTRAINT after the pose — turn the hand about its forearm so the back of the hand (shield face) looks
+     along `o`, or bend it so the blade (hand forward axis) points along `f` (figure space, y up, +z forward) */
+  function align(sd, want) {
+    const sx = sd === 'L' ? 1 : -1, W0 = new THREE.Vector3(...JK['w' + sd].pos), tip = new THREE.Vector3(...ENDS['w' + sd]);
+    const u = tip.clone().sub(W0).normalize(), z = new THREE.Vector3(0, 0, 1); const f = z.clone().sub(u.clone().multiplyScalar(z.dot(u))).normalize();
+    let ov = new THREE.Vector3().crossVectors(u, f); if (ov.x * sx < 0) ov.negate();
+    const qE = jointQ(rig, 'e' + sd); const u1 = u.clone().applyQuaternion(qE), o1 = ov.clone().applyQuaternion(qE), f1 = f.clone().applyQuaternion(qE);
+    let q = qE.clone();
+    if (want.o) { const od = new THREE.Vector3(...want.o); od.sub(u1.clone().multiplyScalar(od.dot(u1))).normalize();
+      const ang = Math.atan2(new THREE.Vector3().crossVectors(o1, od).dot(u1), o1.dot(od)); q = new THREE.Quaternion().setFromAxisAngle(u1, ang).multiply(qE); }
+    if (want.f) { const fd = new THREE.Vector3(...want.f).normalize(); q = new THREE.Quaternion().setFromUnitVectors(f1, fd).multiply(qE); }
+    rig.bones['w' + sd].quaternion.copy(qE.clone().invert().multiply(q)); rig.bones['w' + sd].updateMatrixWorld(true);
+  }
   return {
-    hero, specPose, B, rig, turn, scene, baseG,
+    hero, specPose, align, B, rig, turn, scene, baseG,
     apply, setPose, pose: poseJSON, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },
     dispose() { gear.clear(); if (R) { R.dispose(); R.forceContextLoss(); R = null; } },
   };

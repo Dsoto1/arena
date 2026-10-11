@@ -11,7 +11,7 @@ const ROOT = path.resolve(__dirname, '../../..'), PORT = 8794 + Math.floor(Math.
     await pg.waitForFunction(() => window.LOOK_READY, null, { timeout: 60000 });
     const url = await pg.evaluate(`(async()=>{ const cs = await (async()=>{ ${fs.readFileSync(process.argv[3], 'utf8')} })();
       const W = cs.reduce((s,c)=>s+c.width,0), H = Math.max(...cs.map(c=>c.height)); const o = document.createElement('canvas'); o.width=W; o.height=H; const g=o.getContext('2d'); g.fillStyle='#e9e1cf'; g.fillRect(0,0,W,H); let x=0; for(const c of cs){g.drawImage(c,x,0); x+=c.width} return o.toDataURL('image/png'); })()`);
-    fs.writeFileSync(path.join(__dirname, 'out', `_iter_${process.argv[2]}.png`), Buffer.from(url.split(',')[1], 'base64'));
+    fs.writeFileSync(path.join(process.env.ITER_OUT || __dirname, `_iter_${process.argv[2]}.png`), Buffer.from(url.split(',')[1], 'base64'));
     console.log('ok', errs.slice(0, 8).join('\n'));
   } catch (e) { console.error('FAIL', e.message); } finally { await browser.close(); srv.kill(); }
 })();

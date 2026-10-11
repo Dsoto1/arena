@@ -16,7 +16,7 @@
    opt.grip  {L,R: 'open' | 'hilt' | 'bar'} — fingers + thumb closed round a bar along the hand's forward axis (a hilt or a shield handle)
    kit.sever(side, t)  cut the forearm away below t (0 elbow … 1 wrist) and return the cut frame for a stump cap */
 import * as THREE from 'three';
-import { JK, ENDS, makeBones, SOLE_Y } from '../../art/rig92/rig.js';
+import { JK, ENDS, makeBones, SOLE_Y } from './rig100.js';
 
 /* ---------- colours sampled from assets/avatar.png (sRGB) ---------- */
 export const COL = {
@@ -159,22 +159,22 @@ export function sculpt(opt = {}) {
   const h = (x, y, z) => add(HO, [x * hs, y * hs, z * hs]);
   const Hd = (k = 0.02, op = 'add') => ({ g: 'H', b: 'he', k, op });
   add_(E(h(0, 0.150, -0.012), [0.077 * hs, 0.095 * hs, 0.098 * hs], Hd(0.02)));     /* cranium */
-  add_(E(h(0, 0.078, 0.022), [0.056 * hs, 0.070 * hs, 0.068 * hs], Hd(0.022)));     /* face mass */
-  add_(E(h(0, 0.012, 0.072), [0.025 * hs, 0.019 * hs, 0.018 * hs], Hd(0.016)));     /* chin */
+  add_(E(h(0, opt.fem ? 0.082 : 0.078, 0.022), opt.fem ? [0.050 * hs, 0.064 * hs, 0.064 * hs] : [0.056 * hs, 0.070 * hs, 0.068 * hs], Hd(0.022)));     /* face mass (look100: a narrower, shorter female face) */
+  add_(E(h(0, opt.fem ? 0.02 : 0.012, opt.fem ? 0.068 : 0.072), opt.fem ? [0.019 * hs, 0.015 * hs, 0.015 * hs] : [0.025 * hs, 0.019 * hs, 0.018 * hs], Hd(0.016)));     /* chin */
   for (const sx of [1, -1]) {
     add_(C(h(sx * 0.050, 0.064, -0.018), h(sx * 0.024, 0.014, 0.056), (opt.fem ? 0.012 : 0.015) * hs, (opt.fem ? 0.011 : 0.015) * hs, Hd(0.02)));    /* jaw line */
-    add_(E(h(sx * 0.046, 0.094, 0.058), [0.022 * hs, 0.014 * hs, 0.020 * hs], Hd(0.014)));                 /* cheekbone */
+    add_(E(h(sx * (opt.fem ? 0.043 : 0.046), opt.fem ? 0.098 : 0.094, 0.058), [0.022 * hs, 0.014 * hs, 0.020 * hs], Hd(0.014)));                 /* cheekbone */
     add_(C(h(sx * 0.050, 0.123, 0.074), h(sx * 0.006, 0.126, 0.091), (opt.fem ? 0.008 : 0.011) * hs, (opt.fem ? 0.007 : 0.010) * hs, Hd(0.012)));  /* brow ridge */
     add_(E(h(sx * 0.031, 0.100, 0.094), [0.017 * hs, 0.010 * hs, 0.013 * hs], Hd(0.008, 'sub')));         /* eye socket */
   }
   for (const sx of [1, -1]) {
-    add_(S(h(sx * 0.031, 0.100, 0.080), 0.0115 * hs, Hd(0.003)));                                           /* eyeball */
+    add_(S(h(sx * 0.031, 0.100, 0.080), (opt.fem ? 0.0125 : 0.0115) * hs, Hd(0.003)));                                           /* eyeball */
     add_(S(h(sx * 0.011, 0.073, 0.100), 0.0085 * hs, Hd(0.006)));                                           /* nostril wing */
-    add_(E(h(sx * 0.079, 0.092, -0.012), [0.010 * hs, 0.030 * hs, 0.018 * hs], Hd(0.006), 0, sx * -14));   /* ear */
+    add_(E(h(sx * (opt.fem ? 0.074 : 0.079), 0.092, -0.012), opt.fem ? [0.008 * hs, 0.024 * hs, 0.015 * hs] : [0.010 * hs, 0.030 * hs, 0.018 * hs], Hd(0.006), 0, sx * -14));   /* ear */
   }
   add_(C(h(0, 0.112, 0.094), h(0, 0.074, 0.111), (opt.fem ? 0.006 : 0.0075) * hs, (opt.fem ? 0.0085 : 0.0105) * hs, Hd(0.008)));                    /* nose */
-  add_(E(h(0, 0.046, 0.087), [0.018 * hs, 0.0058 * hs, 0.0070 * hs], Hd(0.010)));                           /* upper lip */
-  add_(E(h(0, 0.035, 0.085), [0.015 * hs, 0.0058 * hs, 0.0070 * hs], Hd(0.010)));                           /* lower lip */
+  add_(E(h(0, 0.046, 0.087), opt.fem ? [0.017 * hs, 0.0075 * hs, 0.0088 * hs] : [0.018 * hs, 0.0058 * hs, 0.0070 * hs], Hd(0.010)));                           /* upper lip */
+  add_(E(h(0, 0.034, 0.085), opt.fem ? [0.0145 * hs, 0.0082 * hs, 0.0092 * hs] : [0.015 * hs, 0.0058 * hs, 0.0070 * hs], Hd(0.010)));                           /* lower lip */
   add_(E(h(0, 0.0405, 0.0935), [0.017 * hs, 0.0013 * hs, 0.007 * hs], Hd(0.002, 'sub')));                 /* mouth line */
 
   /* ---------------- arms (AL / AR) ---------------- */
@@ -249,6 +249,11 @@ export function sculpt(opt = {}) {
     add_(E([A0[0] + sx * 0.004, fy + 0.034, A0[2] + 0.060], [0.042, 0.032, 0.095], Lg(aa, 0.02), 0, sx * 4));   /* foot */
     add_(E([A0[0] + sx * 0.002, fy + 0.017, A0[2] + 0.150], [0.044, 0.017, 0.036], Lg(aa, 0.012), 0, sx * 4));  /* toes */
     add_(C([A0[0] - sx * 0.012, fy + 0.050, A0[2] + 0.02], [A0[0] - sx * 0.020, fy + 0.026, A0[2] + 0.13], 0.016, 0.012, Lg(aa, 0.014)));  /* instep */
+  }
+  if (opt.fem) {   /* look100 round 2: the torso follows her skeleton table — upper chest narrower, hips wider (x only) */
+    const kx = (y) => y > 1.33 ? 0.92 : y > 1.12 ? 0.92 + (1.33 - y) / 0.21 * 0.08 : y > 1.02 ? 1.0 : 1.05;
+    const sx3 = (v) => v && [v[0] * kx(v[1]), v[1], v[2]];
+    for (const p of prims) if (p.g === 'T') { if (p.c) p.c = sx3(p.c); if (p.a) p.a = sx3(p.a); if (p.b2) p.b2 = sx3(p.b2); }
   }
   for (const p of prims) { p.gi = GI[p.g]; p.box = primBox(p, Math.max(p.k, 0.006) + 0.012); }
   return prims;
@@ -423,7 +428,8 @@ function* buildSteps(opts = {}) {
     let c = L.skin;
     if (grp[i] === GI.H) {
       for (const ec of eyeC) { const d = Math.hypot(...sub(p, ec)); if (d < 0.0155 * hs) { const fwd = (p[2] - ec[2]) / d; c = fwd > 0.62 ? L.iris : L.eyeW; vk[i] = fwd > 0.62 ? 1 : 2; } }
-      for (const bl of browL) if (polyDist(p, bl) < 0.0050 * hs && n[2] > 0.2) { c = L.brow; vk[i] = 3; }
+      for (const bl of browL) if (polyDist(p, bl) < (o.fem ? 0.0034 : 0.0050) * hs && n[2] > 0.2) { c = L.brow; vk[i] = 3; }
+      if (o.fem) for (const ec of eyeC) { const d = Math.hypot(...sub(p, ec)); if (d > 0.0118 * hs && d < 0.0165 * hs && p[1] > ec[1] + 0.003 * hs && n[2] > 0.3) { c = L.brow; vk[i] = 3; } }   /* lashes: a dark upper lid */
       const ly = p[1] - HO[1];
       if (Math.abs(p[0]) < 0.016 * hs && ly > 0.031 * hs && ly < 0.050 * hs && p[2] > 0.088 * hs + HO[2]) { c = L.lip; vk[i] = 4; }
     }

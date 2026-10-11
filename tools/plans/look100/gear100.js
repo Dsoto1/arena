@@ -16,7 +16,7 @@
    with the weapons held in a gripping fist (body100.js opt.grip). */
 import * as THREE from 'three';
 import { gripBar } from './body100.js';
-import { JK, ENDS } from '../../art/rig92/rig.js';
+import { JK, ENDS } from './rig100.js';
 
 const METAL = '#a7adb3', BRONZE = '#b0813a', GOLD = '#d6ab4c', LEATHER = '#7a4a2a', CLOTH = '#d9cfb6', WOOD = '#7a5a36', RED = '#a3281f';
 /* the colour a printed piece is made of */
@@ -355,31 +355,9 @@ export function murmKit(B, o = {}) {
     const sd = o.shieldSide || 'L', E0 = P('e' + sd), W0 = P('w' + sd), gi = GI['A' + sd];
     const m = K.shellFrom('g_wraps', (p, g) => g === gi ? Math.min(tAl(p, E0, W0) - 0.25, 0.97 - tAl(p, E0, W0)) * 0.25 : -1, (p) => { const v = 0.8 + 0.2 * (Math.sin(tAl(p, E0, W0) * 46) > 0 ? 1 : 0); return lin3(CLOTH).map(c => c * v); }, 0.0045, {}); out.push(m);
   }
-  /* ---- the Gladius (his card: steel leaf blade, dark grip, bronze guard, round pommel) in the closed right fist ---- */
-  const held = (sd, kind) => { const W0 = P('w' + sd), tip = ENDS['w' + sd], sx = sd === 'L' ? 1 : -1; return gripBar(W0, tip, sx, kind); };
-  if (o.sword !== false) {
-    const sd = o.swordSide || 'R', b = held(sd, o.gripR === 'open' ? 'hilt' : 'hilt');
-    const blade = plate([[-0.027, 0.06], [0.027, 0.06], [0.03, 0.2], [0.024, 0.46], [0, 0.56], [-0.024, 0.46], [-0.03, 0.2]], 0.008);
-    const fuller = plate([[-0.006, 0.08], [0.006, 0.08], [0.004, 0.44], [-0.004, 0.44]], 0.0095);
-    const geo = merge([[cyl(0.0145, 0.0145, 0.1, 0, 10), '#2a1d16'], ...[-0.03, 0, 0.03].map(y => [at(new THREE.TorusGeometry(0.0155, 0.003, 4, 12).rotateX(Math.PI / 2), 0, y, 0), '#4a3424']),
-      [at(new THREE.SphereGeometry(0.028, 14, 10).scale(1, 0.8, 1), 0, -0.066, 0), '#3a2a20'], [box(0.084, 0.024, 0.038, 0, 0.058), DARKBR], [box(0.09, 0.008, 0.042, 0, 0.069), BRASS],
-      [blade, '#d3d8dc'], [fuller, '#8e979e']]);
-    const q = basisQ(b.u, b.f);   /* edge along the hand, point along the hand's forward axis */
-    rig_(geo, toon('#ffffff', { vertexColors: true, side: THREE.DoubleSide }), 'w' + sd, o.gripR === 'open' ? [b.c[0] - b.o3[0] * 0.02, b.c[1], b.c[2]] : b.c, q);
-  }
-  /* ---- the Scutum on the shield hand: the fist round the handle behind the boss, the board just past the knuckles ---- */
-  if (o.shield !== false && !o.severL) {
-    const sd = o.shieldSide || 'L', b = held(sd, 'bar');
-    const W = 0.66, Hh = 1.02, geo = boardGeo(W, Hh, 0.07, 0.6, 0.026);
-    const face = toon('#ffffff', { map: scutumTex() }), back = toon('#6e4a2c');
-    const c = [b.c[0] + b.o3[0] * 0.05, b.c[1] + b.o3[1] * 0.05, b.c[2] + b.o3[2] * 0.05];
-    const q = basisQ(b.f, b.u.map(v => -v));   /* width along the hand's forward axis, height along the hand, face out past the knuckles */
-    const m = rig_(geo, [face, back], 'w' + sd, c, q);
-    const boss = new THREE.SphereGeometry(0.06, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2); boss.rotateX(Math.PI / 2);
-    const bm = rig_(boss, toon(GOLD2), 'w' + sd, [c[0] + b.o3[0] * 0.012, c[1] + b.o3[1] * 0.012, c[2] + b.o3[2] * 0.012], q);
-    if (o.handle) { /* the handle bar alone (close-up) */ m.visible = bm.visible = false; if (m.userData.ink) m.userData.ink.visible = false; if (bm.userData.ink) bm.userData.ink.visible = false;
-      const bar = cyl(0.011, 0.011, 0.16, 0, 10); rig_(colorize(bar, '#6e4a2c'), toon('#ffffff', { vertexColors: true }), 'w' + sd, b.c, basisQ(b.u, b.f)); }
-  }
+  /* ---- weapons + shield (round 2: one mount for every class) ---- */
+  if (o.sword !== false) out.push(...weaponKit(B, { R: 'gladius' }, out));
+  if (o.shield !== false && !o.severL) out.push(...weaponKit(B, { L: 'scutum', handle: o.handle }, out));
   /* ---- a severed forearm: the cut + a stump cap (flesh, bone, a dark rim) ---- */
   if (o.severL) {
     const cut = K.sever('L', 0.32); const r = cut.r + 0.008;
@@ -390,6 +368,57 @@ export function murmKit(B, o = {}) {
     rig_(ring, toon('#5a0d0b', { side: THREE.DoubleSide }), 'eL', at2(0.001), q);
     rig_(bone, toon('#efe3c8', { side: THREE.DoubleSide }), 'eL', at2(0.0015), q);
     for (const [k, rr, dx] of [[0.014, 0.012, 0.01], [0.034, 0.009, -0.008], [0.058, 0.007, 0.004], [0.08, 0.005, -0.002]]) rig_(new THREE.SphereGeometry(rr, 8, 6).scale(1, 1.6, 1), toon('#8a1612'), 'eL', [cut.at[0] + dx, cut.at[1] - k, cut.at[2] + 0.01], null);
+  }
+  return out;
+}
+
+/* ===================== look100 round 2: weapons + shields in the fist, for every class ===================== */
+const W_ALIAS = { gladius: 'gladius', pugio: 'dagger', sica: 'sica', trident: 'trident', rudis: 'rudis', axe: 'axe', hasta: 'spear', sling: 'sling', falcata: 'falcata', mace: 'mace' };
+const thracianTex = () => canvasTex(200, 260, (g, w, h) => { g.fillStyle = '#3f7a52'; g.fillRect(0, 0, w, h); g.strokeStyle = GOLD2; g.lineWidth = 12; g.strokeRect(8, 8, w - 16, h - 16);
+  g.lineWidth = 6; for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; g.beginPath(); g.moveTo(w / 2, h / 2); g.lineTo(w / 2 + Math.cos(a) * 70, h / 2 + Math.sin(a) * 95); g.stroke(); }
+  g.fillStyle = GOLD2; g.beginPath(); g.arc(w / 2, h / 2, 24, 0, 7); g.fill(); });
+export function weaponKit(B, spec, sink) {
+  const K = B.kit, P = K.P, out = [];
+  const toon = (c, ex) => K.makeToon(c, ex);
+  const rig_ = (geo, mat, bone, at, q) => { const m = K.rigid(geo, mat, bone, at, null); const bp = P(bone); m.position.set(at[0] - bp[0], at[1] - bp[1], at[2] - bp[2]); if (q) m.quaternion.copy(q);
+    m.userData.ownMat = 1; const ink = m.userData.ink; if (ink) { ink.position.copy(m.position); ink.quaternion.copy(m.quaternion); } out.push(m); return m; };
+  const held = (sd, kind) => { const W0 = P('w' + sd), tip = ENDS['w' + sd], sx = sd === 'L' ? 1 : -1; return gripBar(W0, tip, sx, kind); };
+  const vmat = () => toon('#ffffff', { vertexColors: true, side: THREE.DoubleSide });
+  const geoOf = (t) => {
+    if (t === 'gladius' || t === 'rudis' || t === 'falcata') {
+      const wood = t === 'rudis', curve = t === 'falcata';
+      const blade = curve ? plate([[-0.026, 0.06], [0.024, 0.06], [0.034, 0.25], [0.05, 0.42], [0.0, 0.58], [-0.02, 0.4], [-0.026, 0.2]], 0.008)
+        : plate([[-0.027, 0.06], [0.027, 0.06], [0.03, 0.2], [0.024, 0.46], [0, 0.56], [-0.024, 0.46], [-0.03, 0.2]], 0.008);
+      const fuller = plate([[-0.006, 0.08], [0.006, 0.08], [0.004, 0.44], [-0.004, 0.44]], 0.0095);
+      return merge([[cyl(0.0145, 0.0145, 0.1, 0, 10), wood ? '#8a6234' : '#2a1d16'], ...[-0.03, 0, 0.03].map(y => [at(new THREE.TorusGeometry(0.0155, 0.003, 4, 12).rotateX(Math.PI / 2), 0, y, 0), wood ? '#6d4a26' : '#4a3424']),
+        [at(new THREE.SphereGeometry(0.028, 14, 10).scale(1, 0.8, 1), 0, -0.066, 0), wood ? '#8a6234' : '#3a2a20'], [box(0.084, 0.024, 0.038, 0, 0.058), wood ? '#8a6234' : DARKBR], [box(0.09, 0.008, 0.042, 0, 0.069), BRASS],
+        [blade, wood ? '#c79a5a' : '#d3d8dc'], ...(wood ? [] : [[fuller, '#8e979e']])]);
+    }
+    return weaponGeo(t);
+  };
+  for (const sd of ['R', 'L']) {
+    const t0 = spec[sd]; if (!t0) continue;
+    if (t0 === 'scutum' || t0 === 'thracian') {
+      /* STRAPPED + HELD: the forearm runs along the back of the board (a strap round it), the fist holds the handle behind the boss;
+         board plane = forearm × hand-forward, face = the back of the hand (the pose's grip constraint turns that forward) */
+      const b = held(sd, 'bar'), big = t0 === 'scutum', W = big ? 0.66 : 0.46, Hh = big ? 1.02 : 0.62;
+      const ctr = [0, 1, 2].map(i => b.c[i] - b.u[i] * (big ? 0.07 : 0.03) + b.o3[i] * 0.058);
+      let q = basisQ(b.u, b.f); { const zz = new THREE.Vector3(0, 0, 1).applyQuaternion(q); if (zz.dot(new THREE.Vector3(...b.o3)) < 0) q = basisQ(b.u.map(v => -v), b.f); }
+      const geo = boardGeo(W, Hh, big ? 0.07 : 0.05, big ? 0.6 : 0.5, 0.026);
+      const m = rig_(geo, [toon('#ffffff', { map: big ? scutumTex() : thracianTex() }), toon('#6e4a2c')], 'w' + sd, ctr, q);
+      const boss = new THREE.SphereGeometry(big ? 0.06 : 0.045, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2); boss.rotateX(Math.PI / 2);
+      const bm = rig_(boss, toon(GOLD2), 'w' + sd, [0, 1, 2].map(i => b.c[i] + b.o3[i] * 0.07), q);
+      /* the handle in the fist + the forearm strap (leather band round the forearm, riveted to the board) */
+      rig_(colorize(cyl(0.011, 0.011, 0.16, 0, 10), '#6e4a2c'), vmat(), 'w' + sd, b.c, basisQ(b.u, b.f));
+      const E0 = P('e' + sd), W0 = P('w' + sd), ax = [W0[0] - E0[0], W0[1] - E0[1], W0[2] - E0[2]], st = [E0[0] + ax[0] * 0.42, E0[1] + ax[1] * 0.42, E0[2] + ax[2] * 0.42];
+      const band = new THREE.TorusGeometry(0.044, 0.009, 6, 20); const bq = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(...ax).normalize());
+      rig_(band, toon('#5a3a22'), 'e' + sd, st, bq);
+      const tab = box(0.03, 0.028, 0.05); rig_(colorize(tab, '#5a3a22'), vmat(), 'e' + sd, [0, 1, 2].map(i => st[i] + b.o3[i] * 0.05), basisQ(b.u, b.f));
+      if (spec.handle) for (const x of [m, bm]) { x.visible = false; if (x.userData.ink) x.userData.ink.visible = false; }
+    } else {
+      const t = W_ALIAS[t0] || t0, b = held(sd, 'hilt');
+      rig_(geoOf(t), vmat(), 'w' + sd, b.c, basisQ(b.u, b.f));
+    }
   }
   return out;
 }

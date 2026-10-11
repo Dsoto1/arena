@@ -1,0 +1,1 @@
+window.COMP2={};

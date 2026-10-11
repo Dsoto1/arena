@@ -14,7 +14,8 @@ import { resolveSpec, MM_PER_M } from '../../art/rig92/rig.js';
 
 const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45];
 const D2R = Math.PI / 180;
-let TOK, B, GM, PROPS, REND, WOUND = null, BASE = null;
+let TOK, B, GM, PROPS, REND, WOUND = null, BASE = null, BENCH = null;
+const TIMES = { render: 0, post: 0, cells: 0 };
 
 /* ---------------- the murmillo's frames ---------------- */
 const RD = { L: [240, 1060, 260], R: [-210, 990, 280] }, HP0 = { L: [1, -0.6, -0.3], R: [1, -1, -0.3] };
@@ -106,7 +107,7 @@ const RET_ROWS = [
 ];
 
 /* ---------------- spectators ---------------- */
-const SEAT = (cheer, fist) => ({ p: [0, -455, -120], j: { hL: [-84, 0, 4], kL: [84, 0, 0], hR: [-84, 0, -4], kR: [84, 0, 0], he: cheer ? [-14, 0, 0] : [4, 0, 0] }, f: {},
+const SEAT = (cheer, fist) => ({ bench: 1, p: [0, -455, -120], j: { hL: [-84, 0, 4], kL: [84, 0, 0], hR: [-84, 0, -4], kR: [84, 0, 0], he: cheer ? [-14, 0, 0] : [4, 0, 0] }, f: {},
   h: cheer ? { L: [250, 1500, -20], R: [-250, 1500, -20] } : fist ? { L: [140, 620, 160], R: [-230, 1420, 20] } : { L: [120, 600, 170], R: [-120, 600, 170] },
   hp: cheer ? { L: [1, 0, -1], R: [1, 0, -1] } : { L: [1, -1, -0.3], R: [1, -1, -0.3] } });
 const STANDP = (cheer) => ({ p: [0, -6, 0], j: { he: cheer ? [-16, 0, 0] : [0, 0, 0], sL: [-4, 0, -12], eL: [-14, 0, 0], sR: [-4, 0, 12], eR: [-14, 0, 0] }, f: { L: [118, -10, 8], R: [-118, -10, -8] },
@@ -144,7 +145,7 @@ function inkOf(mesh, w) {
 /* put one frame on the rig (group tilt for the fall, a severed forearm) */
 function setFrame(spec) {
   B.group.rotation.set(0, 0, 0); B.group.position.set(0, 0, 0); B.group.updateMatrixWorld(true);
-  const bones = B.rig.bones; bones.eR.scale.set(1, 1, 1); if (WOUND) WOUND.visible = false;
+  const bones = B.rig.bones; bones.eR.scale.set(1, 1, 1); if (WOUND) WOUND.visible = false; if (BENCH) BENCH.visible = !!spec.bench;
   TOK.setPose(resolveSpec(B.rig, spec));
   if (spec.sever) { bones.eR.scale.set(0.02, 0.02, 0.02); if (WOUND) WOUND.visible = true; }
   if (spec.rot) {
@@ -171,10 +172,11 @@ async function renderFrames(frames, o = {}) {
   for (const fr of frames) {
     const t1 = performance.now(); if (o.set) o.set(fr); const row = [];
     for (const yaw of yaws) {
-      turn.rotation.y = yaw * D2R; turn.updateMatrixWorld(true); r.render(scene, cam);
+      const q0 = performance.now(); turn.rotation.y = yaw * D2R; turn.updateMatrixWorld(true); r.render(scene, cam);
       let c = document.createElement('canvas'); c.width = S; c.height = S; c.getContext('2d').drawImage(r.domElement, 0, 0);
-      for (let k = ss; k > 1; k /= 2) { const d = document.createElement('canvas'); d.width = Math.ceil(c.width / 2); d.height = Math.ceil(c.height / 2); const g = d.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(c, 0, 0, d.width, d.height); c = d; }
-      row.push({ c, box: alphaBox(c) }); await new Promise(ok => setTimeout(ok, 0));
+      const q1 = performance.now(); TIMES.render += q1 - q0; TIMES.cells++;
+      for (let k = ss; k > 1; k /= 2) { const d = document.createElement('canvas'); d.width = Math.ceil(c.width / 2); d.height = Math.ceil(c.height / 2); const g = d.getContext('2d'); g.imageSmoothingQuality = 'high'; if (o.shade && k === 2) g.filter = o.shade; g.drawImage(c, 0, 0, d.width, d.height); c = d; }
+      row.push({ c, box: alphaBox(c) }); TIMES.post += performance.now() - q1; await new Promise(ok => setTimeout(ok, 0));
     }
     turn.rotation.y = 0; turn.updateMatrixWorld(true); cells.push(row); per.push(performance.now() - t1);
   }
@@ -308,4 +310,84 @@ window.LOOK100 = {
     return { metas: res.map(r => r.meta), ms, bytesOneLook: w.bytes, looks: SPEC_LOOKS.length, poses: SPEC_POSES.map(p => p[0]), png: res.map(r => r.canvas.toDataURL('image/png')) };
   },
 };
+
+/* ---------------- round 2 ---------------- */
+/* printed-class stand-ins (approximate loadouts from 02-data CLASSES + the 103/106/123 edits) */
+export const CLASS_STAND = {
+  soldier: { look: { skin: '#c99a72', hair: '#2a1d14', hs: 'crop', bs: 'stubble', cloth: '#c0433a' }, gear: { head: { t: 'centurion' }, belt: { t: 'balteus' }, arm: { L: { wraps: 1 }, R: { wraps: 1 } }, leg: { L: { upper: { t: 'legwrapsU' } }, R: { upper: { t: 'legwrapsU' } } }, wR: { t: 'sword' } } },
+  royalty: { look: { skin: '#e0b48e', hair: '#5a3b20', hs: 'curly', cloth: '#4f7fc4' }, gear: { head: { t: 'cassis' }, chest: { t: 'ornate' }, arm: { L: { wraps: 1 }, R: { wraps: 1 } }, wR: { t: 'dagger' } } },
+  hero: { look: { skin: '#c08a64', hair: '#2a1c12', hs: 'crop', cloth: '#4f9a57' }, gear: { head: { t: 'thrachelm' }, arm: { L: { lower: { t: 'provmanica' } }, R: { wraps: 1 } }, leg: { L: { upper: { t: 'legwrapsU' } }, R: { upper: { t: 'legwrapsU' } } }, wR: { t: 'sica' }, wL: { t: 'scutum', c: '#3f7a46' } } },
+  slave: { look: { skin: '#8f6040', hair: '#141010', hs: 'curly', bs: 'goatee', cloth: '#d4b13c' }, gear: { head: { t: 'galea' }, arm: { L: { lower: { t: 'manica' } }, R: { wraps: 1 } }, leg: { L: { upper: { t: 'legwrapsU' } }, R: { upper: { t: 'legwrapsU' } } }, wR: { t: 'trident' } } },
+  veteranus: { look: { skin: '#c48e66', hair: '#8a8580', hs: 'crop', bs: 'full', cloth: '#cfc6b4' }, gear: { head: { t: 'flavhelm' }, chest: { t: 'musculata' }, arm: { L: { wraps: 1 }, R: { wraps: 1 } }, leg: { L: { lower: { t: 'legwraps' } }, R: { lower: { t: 'legwraps' } } }, wR: { t: 'club' } } },
+  amazonia: { look: { skin: '#b7835d', hair: '#22160e', hs: 'long', fem: 1, band: '#dc7a34', cloth: '#dc7a34' }, gear: { chest: { t: 'amazon' }, arm: { R: { cestus: 1 } }, leg: { L: { lower: { t: 'greaves' } }, R: { lower: { t: 'greaves' } } }, wR: { t: 'axe' }, wL: { t: 'sica' } } },
+  venatore: { look: { skin: '#d8a882', hair: '#3a2a1e', hs: 'crop', bs: 'stubble', cloth: '#8a5cc0' }, gear: { head: { t: 'galea' }, belt: { t: 'balteus' }, arm: { L: { wraps: 1 }, R: { wraps: 1 } }, leg: { L: { lower: { t: 'legwraps' } }, R: { lower: { t: 'legwraps' } } }, wR: { t: 'spear' } } },
+  damnatio: { look: { skin: '#a8754e', hair: '#141010', hs: 'cap', bs: 'stubble', cloth: '#9a8f84' }, gear: { arm: { L: { wraps: 1 }, R: { wraps: 1 } }, leg: { L: { lower: { t: 'legwraps' } }, R: { lower: { t: 'legwraps' } } }, wR: { t: 'sling' } } },
+};
+const CLASS_FRAMES = [['idle', 0], ['walk', 0], ['walk', 3], ['attack', 1], ['attack', 3], ['block', 1], ['hit', 0], ['cower', 1]];
+/* townsfolk walking: 4 frames, empty hands swinging */
+function townWalk(t) { const w = walk([0, 2, 3, 5][t]); const sw = [1, 0, -1, 0][t]; w.h = { L: [210, 880, 120 * sw], R: [-210, 880, -120 * sw] }; w.hp = { L: [1, -1, -0.2], R: [1, -1, -0.2] }; delete w.j.wR; return w; }
+export const SPEC2_POSES = [['sit', SEAT(0, 0)], ['sitcheer', SEAT(1, 0)], ['sitfist', SEAT(0, 1)], ['stand', STANDP(0)], ['standcheer', STANDP(1)], ['walk0', townWalk(0)], ['walk1', townWalk(1)], ['walk2', townWalk(2)], ['walk3', townWalk(3)]];
+/* base looks: the tunic in a KEY grey (recoloured at runtime), togas cream with a coloured border; hair never grey (the key) */
+export const SPEC2_LOOKS = [
+  { look: { skin: '#c99a72', hair: '#2a1d14', hs: 'crop', bs: 'full' }, tunic: '#d8d8d8', toga: null },
+  { look: { skin: '#e0b48e', hair: '#6a3b18', hs: 'curly' }, tunic: '#d8d8d8', toga: null },
+  { look: { skin: '#a8754e', hair: '#141010', hs: 'long', fem: 1, band: '#e8dcc0' }, tunic: '#d8d8d8', toga: null },
+  { look: { skin: '#d8a882', hair: '#4a2c18', hs: 'crop', bs: 'stubble' }, tunic: '#d8d8d8', toga: '#efe3c0', border: '#7a1e2a' },
+  { look: { skin: '#8a5a3a', hair: '#121010', hs: 'curly', bs: 'goatee' }, tunic: '#d8d8d8', toga: null },
+  { look: { skin: '#e8c0a0', hair: '#9a5a2a', hs: 'long', fem: 1, band: '#3a6ab0' }, tunic: '#d8d8d8', toga: '#efe3c0', border: '#c9a23e' },
+];
+const SHADE = 'brightness(0.8) contrast(1.14) saturate(0.88)';   /* the darker painted tone of his minis */
+const dump = (S) => ({ meta: S.meta, ms: S.ms, png: S.canvas.toDataURL('image/png') });
+Object.assign(window.LOOK100, {
+  /* per-cell time split on this renderer: GPU-side work (render + readback) vs the page's JS (downscale + crop scan) */
+  async timing() {
+    TOK.apply({ look: { skin: '#c08a64', hair: '#2a1c12', hs: 'crop', bs: 'stubble', cloth: '#b8933c' },
+      gear: { head: { t: 'murmillo' }, belt: { t: 'balteus' }, arm: { R: { lower: { t: 'manica' } } }, leg: { L: { lower: { t: 'ocrea' } } }, wR: { t: 'sword' }, wL: { t: 'scutum', c: '#9c2f25' } } });
+    BASE.visible = true; Object.assign(TIMES, { render: 0, post: 0, cells: 0 }); const t0 = performance.now();
+    const fr = [GLAD_ROWS[1][1][0], GLAD_ROWS[2][1][3], GLAD_ROWS[4][1][0]];
+    await renderFrames(fr, { set: (x) => setFrame(x), box: 4.4, ty: 0.85 });
+    const t1 = performance.now(); const p0 = performance.now(); setFrame(GLAD_ROWS[2][1][2]); const poseMs = performance.now() - p0;
+    const { scene } = TOK._dbg; let tris = 0; scene.traverse(o => { if (o.isMesh && o.visible && o.geometry) { const g = o.geometry; tris += (g.index ? g.index.count : g.attributes.position.count) / 3; } });
+    const gl = renderer(8, 8).getContext(); const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    return { cells: TIMES.cells, msPerCellRender: +(TIMES.render / TIMES.cells).toFixed(1), msPerCellPost: +(TIMES.post / TIMES.cells).toFixed(1), totalMs: Math.round(t1 - t0), poseMs: +poseMs.toFixed(1), tris: Math.round(tris), gpu: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : '?' };
+  },
+
+  /* a cleaner split: GPU raster forced to finish (gl.finish + a 1-px readPixels), then the full-frame readback, then the 2D work */
+  async timing2(n = 8) {
+    const { scene, turn } = TOK._dbg; const ss = 2, ppm = 3.143 * MM_PER_M * ss, S = Math.ceil(4.4 * ppm / 4) * 4; const hw = S / 2 / ppm;
+    const cam = new THREE.OrthographicCamera(-hw, hw, hw, -hw, 0.01, 50); cam.position.set(0, 0.85 + 5, 8.66); cam.lookAt(0, 0.85, 0); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+    const r = renderer(S, S), gl = r.getContext(), px = new Uint8Array(4); setFrame(GLAD_ROWS[2][1][3]); let tr = 0, tb = 0, tp = 0;
+    r.render(scene, cam); gl.finish(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    for (let i = 0; i < n; i++) {
+      turn.rotation.y = MINI_YAW[i % 8] * D2R; turn.updateMatrixWorld(true);
+      const a = performance.now(); r.render(scene, cam); gl.finish(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); const b = performance.now();
+      const big = new Uint8Array(S * S * 4); gl.readPixels(0, 0, S, S, gl.RGBA, gl.UNSIGNED_BYTE, big); const c = performance.now();
+      let cv = document.createElement('canvas'); cv.width = S; cv.height = S; const g0 = cv.getContext('2d', { willReadFrequently: true }); g0.putImageData(new ImageData(new Uint8ClampedArray(big.buffer), S, S), 0, 0);
+      const d = document.createElement('canvas'); d.width = S / 2; d.height = S / 2; const g = d.getContext('2d', { willReadFrequently: true }); g.imageSmoothingQuality = 'high'; g.drawImage(cv, 0, 0, d.width, d.height); alphaBox(d); const e = performance.now();
+      tr += b - a; tb += c - b; tp += e - c;
+    }
+    turn.rotation.y = 0; turn.updateMatrixWorld(true);
+    return { px: S, raster: +(tr / n).toFixed(1), readback: +(tb / n).toFixed(1), post2d: +(tp / n).toFixed(1) };
+  },
+  async classes() {
+    const out = {}; const yaws = [45, 135];
+    for (const [k, C] of Object.entries(CLASS_STAND)) {
+      TOK.apply({ look: C.look, gear: C.gear }); BASE.visible = true;
+      const frs = CLASS_FRAMES.map(([r, i]) => GLAD_ROWS.find(x => x[0] === r)[1][i]);
+      const S = await renderFrames(frs, { set: (x) => setFrame(x), box: 4.6, ty: 0.85, yaws });
+      out[k] = dump(S);
+    }
+    setFrame({ p: [0, 0, 0], j: {}, f: {} }); out.frames = CLASS_FRAMES.map(x => x.join('')); return out;
+  },
+  async spectators2() {
+    BASE.visible = false; TOK.apply({ look: {}, gear: {} });
+    if (!BENCH) { const wood = toon('#6e2a20'), top = toon('#8a3a2a'); BENCH = new THREE.Group(); const a = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.42, 0.42), wood); a.position.set(0, 0.21, -0.17); const b = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.05, 0.46), top); b.position.set(0, 0.445, -0.17);
+      for (const m of [a, b]) { BENCH.add(m); const i = inkOf(m, 0.01); BENCH.add(i); INKS.push(i); } PROPS.add(BENCH); }
+    const res = []; let ms = 0;
+    for (const V of SPEC2_LOOKS) { dressSpec(V); for (const m of INKS) m.material.userData.u.value = 0.85 * 2 / (3.143 * MM_PER_M * 2);
+      const S = await renderFrames(SPEC2_POSES, { set: ([, s]) => setFrame(s), box: 3.8, ty: 0.9, shade: SHADE }); ms += S.ms; res.push(dump(S)); }
+    undress(); BENCH.visible = false; BASE.visible = true;
+    return { looks: res, ms, poses: SPEC2_POSES.map(p => p[0]) };
+  },
+});
 window.LOOK100_READY = true;

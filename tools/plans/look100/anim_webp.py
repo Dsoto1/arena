@@ -3,7 +3,8 @@
 import sys, glob, os
 from PIL import Image
 d, out, ms = sys.argv[1], sys.argv[2], int(sys.argv[3])
-fs = sorted(glob.glob(os.path.join(d, 'frame_clip_*.png')))
+pre = sys.argv[4] if len(sys.argv) > 4 else 'frame_clip_'
+fs = sorted(glob.glob(os.path.join(d, pre + '*.png')))
 ims = [Image.open(f).convert('RGB') for f in fs]
 durs = [ms] * len(ims)
 ims[0].save(out, save_all=True, append_images=ims[1:], duration=durs, loop=0, quality=80, method=6)
