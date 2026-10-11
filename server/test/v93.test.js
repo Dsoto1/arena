@@ -103,7 +103,7 @@ async function routes(){
   await bob.req('char.buy',{char:bob.ch.id,item:'gladius',rid:rf});assert.strictEqual(await tre(bob),5000-C.priceOf(catalog.gladius),'a refused rid may be asked again');
   /* an old rid (past 10 minutes) runs again; requests without a rid are never cached */
   const ro=rid();const t1=await tre(bob);await bob.req('offer.buy',{char:bob.ch.id,key:'ap2',rid:ro});T+=C.IDEM_MS93+1000;await bob.req('offer.buy',{char:bob.ch.id,key:'ap2',rid:ro});assert.strictEqual(t1-await tre(bob),80,'expired: a new request');
-  const t2=await tre(ann);await ann.req('offer.buy',{char:ann.ch.id,key:'cf1'});await ann.req('offer.buy',{char:ann.ch.id,key:'cf1'}).catch(()=>{});assert.ok(t2-await tre(ann)>=40);
+  await setC(ann.ch.id,{offers:[]});/* gift.open above rolls a random reward (sometimes an offering on the gladiator) */const t2=await tre(ann);await ann.req('offer.buy',{char:ann.ch.id,key:'cf1'});await ann.req('offer.buy',{char:ann.ch.id,key:'cf1'}).catch(()=>{});assert.ok(t2-await tre(ann)>=40);
 
   /* ── races: two requests of one account at once (different rids) ── */
   {await setD(cat,{treasury:C.priceOf(catalog.gladius)+10});const p=C.priceOf(catalog.gladius);
