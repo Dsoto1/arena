@@ -1037,6 +1037,23 @@ One global script; files are concatenated in order. Later "version modules" patc
   on the light parchment, current week gold ring + THIS WEEK (scrolled into view), switcher This season · Next · The one after (seasonSchedule; TBA),
   listed schedule = dark ink on striped near-white rows (AA ≥ 4.5), current row highlighted. The lesson's "rival" step lights the new row/card.
   Display only. Kill switch localStorage flavius_world100off=1. Test `tv100w2`.
+- **v1.0 ONLINE TURN FLOW + TIMERS (290-v100tt + 113 edits + the v1.0 section of 111-onlcore + routes.js "v1.0 TURN TIMERS"; PROTOCOL 8; docs/backend.md
+  "v1.0 turn timers"; his picks 1a 2b 3a 4a 5b+c 6a 7a 8c, mock tools/plans/mock100/turn.html):** 1a online, a window with ≤1 button, no grid/onOpen and nothing
+  clickable in its body is a NOTICE: every client answers it at once (no input), the owner gets a toast. 2b my decision windows dock beside the board
+  (`#modal.dock100` over the right column, phones `.sheet100` bottom sheet) with `#dk100` (step dots, clock, "No answer in N s → default", `.def100`
+  marked) — same modal() underneath. 3a `#tt100` = the TURN PANEL (top of `.side`; phones a strip above #actions): face in a ring, bar, next, seats
+  with rings, "<name> is choosing… <title>" (never the options), the BIG number in the ring in the last 10 s, `#tt100edge` four 6 px red strips at the
+  screen edges on my own late turn (never over the board), `tt100Tick` soft two-knock tick each second of my last 5 s (SFX bus). #onlWait hidden while
+  the panel shows. TIMERS `ONLC.ttOf100(L)`: Ranked 60 s + 20 s decisions (locked), Custom `L.turnT` Off/30/60/90/120 (host's room select
+  `[data-onlrs="turnT"]`, `lobby.set {turnT}`), decisions clocked only with a timer on. SERVER-ORDERED: pages report clocks (`match.clock` turn/end/dec,
+  first report wins, server time) and `match.tick` when their estimate passed; the server orders `{k:'dto',seat,d}` (lock DEC#d — the answer takes the
+  same lock; a late answer → void + `late`) and `{k:'timeout',seat,t,n}` (lock TO#t; late tile/act of that turn carry `tn` → void). Decisions are
+  numbered `S.dn100` (in S → snapshots); with clocks on my own answer is applied when its seq comes round (113 pump `ONLM.ownq`/`ownHold`). A timeout is a
+  MARK (S.tt100x, p.cpu, `p._tt100`) at a wait point; the CPU finishes THAT turn (`tt100Finish`) at the next settled point; human again at the next
+  beginTurn. Another seat's window pauses the turn clock (server `tc100.pz/x`, page mirrors). Two applied timeouts → the others get "Hand to CPU / Wait"
+  (`match.vote100`, majority `dropNeed100`) → server `{k:'drop',tt:1,until}` = a mark (`ONLM.left` 'tt100', the CPU plays from that seat's next decision;
+  139 reclaim window). Mock: one clock keeper (lowest live human) reports/ticks; test hook localStorage flavius_onltest100='{"t":14,"d":5}'.
+  Tests `tonl100tt` (2 windows), server `v100tt.test.js`.
 - **v1.0 FREE AGENTS HEAL (17-manager endWeek, his pick a 2026-10-11):** a free agent's surgeon wound never festers — the city physician closes it on its due week (history line); contracted fighters unchanged. Test tv100f.
 - **v1.0 CITY SQUARE WARM-UP (279-v100city):** the square opens under a black cover (`#cityFade.hold100`): paint → bake89 → one cityDraw (figure images requested) → wait for decodes (≤ `WARM100.cap` 1.8 s) → priming draw → reveal; walkers get random start phases (Math.random), animals/chatter/beast timers fresh starts; Reduce motion = cover cuts (`cut100`). Root cause: the 600 ms bake ran in the first loop frame and no walker had t0, so all stepped together. Kill switch flavius_city100off=1. Test tv100c.
 - **v1.0 FIXES FROM HIS v0.99 TEST NOTES (284-v100fix + small edits; header lists F1-F4, C1-C3; test `tv100x`, shots tools/plans/fix100/):** F1 196 srv91Chip needs #onl on screen and
