@@ -194,3 +194,131 @@ async function renderFrames(frames, o = {}) {
 }
 const enc = (c, type, q) => { const u = c.toDataURL(type, q); return { url: u, bytes: Math.round((u.length - u.indexOf(',') - 1) * 0.75) }; };
 
+
+/* ============================ round 3 ============================ */
+import { peltGeo, pawsGeo } from './beast3_rig.js';
+const lin3 = (h) => { const c = new THREE.Color(h); return [c.r, c.g, c.b]; };   /* THREE.Color(hex) is already linear in r152+ colour management */
+const frac = (v) => v - Math.floor(v);
+let BODYV = null;   /* per body vertex: dominant bone name (for the leg check + head bbox) */
+function bodyInfo() {
+  if (BODYV) return BODYV; const body = B.body, g = body.geometry, si = g.attributes.skinIndex, sw = g.attributes.skinWeight, n = g.attributes.position.count, bones = body.skeleton.bones;
+  const dom = new Array(n); for (let i = 0; i < n; i++) { let bi = 0, bw = -1; for (let q = 0; q < 4; q++) { const w = sw.getComponent(i, q); if (w > bw) { bw = w; bi = si.getComponent(i, q); } } dom[i] = bones[bi].name; }
+  const legs = []; for (let i = 0; i < n; i++) if (/^(hip|knee|ankle)_/.test(dom[i])) legs.push(i);
+  BODYV = { n, dom, legs }; return BODYV;
+}
+function posed() { const body = B.body, n = body.geometry.attributes.position.count, v = new THREE.Vector3(), out = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) { body.getVertexPosition(i, v); out[i * 3] = v.x; out[i * 3 + 1] = v.y; out[i * 3 + 2] = v.z; } return out; }
+const boneLocal = (k) => { const p = new THREE.Vector3(); B.rig.bones[k].getWorldPosition(p); return B.group.worldToLocal(p); };
+
+/* ---------- Tholo's cloth cape ---------- */
+const CAPE = { NU: 22, NT: 34, cell: 0.02, margin: 0.03, th: 0.008, outer: '#9a2a20', inner: '#5c1410', hw0: 0.17, hw1: 0.27 };
+let CAPEM = null;
+function capeSwing(fr) { const i = fr.i, k = fr.k;
+  if (k === 'walk') { const ph = i / 6 * Math.PI * 2; return { z: 0.035 + 0.03 * Math.sin(ph), x: 0.04 * Math.sin(ph + 0.9), ph }; }
+  if (k === 'idle') { const ph = i / 4 * Math.PI * 2; return { z: 0.012 + 0.008 * Math.sin(ph), x: 0.008 * Math.cos(ph), ph }; }
+  if (k === 'attack') return { z: [0.03, 0.05, 0.1, 0.14, 0.06][i], x: [0, -0.02, 0.03, 0.04, 0.01][i], ph: i };
+  if (k === 'hit') return { z: [0.07, 0.09, 0.04][i], x: [0.04, -0.05, 0.01][i], ph: i * 2 };
+  return { z: 0.03, x: 0, ph: 0 }; }
+function capeBuild(fr) {
+  const { NU, NT, cell } = CAPE; const P = posed(); const n = P.length / 3;
+  /* the body's z-height-map: for each 2 cm (x,y) cell the backmost body point */
+  const HM = new Map(); for (let i = 0; i < n; i++) { const key = Math.floor(P[i * 3] / cell) + ',' + Math.floor(P[i * 3 + 1] / cell); const z = P[i * 3 + 2]; const o = HM.get(key); if (o === undefined || z < o) HM.set(key, z); }
+  const limit = (x, y) => { const ix = Math.floor(x / cell), iy = Math.floor(y / cell); let m = Infinity; for (let dy = -2; dy <= 2; dy++) for (let dx = -1; dx <= 1; dx++) { const z = HM.get((ix + dx) + ',' + (iy + dy)); if (z !== undefined && z < m) m = z; } return m - CAPE.margin; };
+  const sL = boneLocal('sL'), sR = boneLocal('sR'), kL = boneLocal('kL'), kR = boneLocal('kR');
+  const yTop = (sL.y + sR.y) / 2 + 0.035, yHem = Math.min(kL.y, kR.y) - 0.07, xc0 = (sL.x + sR.x) / 2, span = Math.abs(sL.x - sR.x) / 0.38;
+  const sw = capeSwing(fr); const geom = { yTop, yHem, xc0, span, sw };
+  const xcOf = (t) => xc0 + sw.x * Math.pow(t, 1.5), hwOf = (t) => (CAPE.hw0 + (CAPE.hw1 - CAPE.hw0) * t) * span;
+  let zA = Infinity; for (let a = 0; a <= NU; a++) { const u = a / NU * 2 - 1; zA = Math.min(zA, limit(xcOf(0) + u * hwOf(0), yTop - 0.02)); }
+  if (!isFinite(zA)) zA = Math.min(sL.z, sR.z) - 0.12;
+  const X = [], Y = [], Z = [], LIM = [];
+  for (let b = 0; b <= NT; b++) { const t = b / NT; const y = yTop - t * (yTop - yHem);
+    for (let a = 0; a <= NU; a++) { const u = a / NU * 2 - 1; const x = xcOf(t) + u * hwOf(t);
+      const fold = 0.016 * t * Math.sin(u * Math.PI * 2.5 + sw.ph * 0.6) + 0.006 * Math.sin(u * Math.PI * 6 + t * 3);
+      const zDes = zA - 0.012 - 0.05 * t - sw.z * Math.pow(t, 1.4) + fold + 0.035 * u * u * (1 - t);
+      const L = limit(x, y); X.push(x); Y.push(y); LIM.push(L); Z.push(Math.min(zDes, L)); } }
+  /* smooth under the constraint (a cloth can't crease round every knuckle), re-clamped each pass */
+  const W = NU + 1; for (let it = 0; it < 6; it++) { const Z2 = Z.slice(); for (let b = 1; b <= NT; b++) for (let a = 0; a <= NU; a++) { const i = b * W + a; const nb = [Z[i - W], b < NT ? Z[i + W] : Z[i], a > 0 ? Z[i - 1] : Z[i], a < NU ? Z[i + 1] : Z[i]]; Z2[i] = Math.min(LIM[i], 0.5 * Z[i] + 0.125 * (nb[0] + nb[1] + nb[2] + nb[3])); } for (let i = 0; i < Z.length; i++) Z[i] = Z2[i]; }
+  return { X, Y, Z, geom, P, xcOf, hwOf };
+}
+function capeMesh(c) {
+  const { NU, NT, th } = CAPE, W = NU + 1, NV = W * (NT + 1);
+  if (!CAPEM) { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(NV * 2 * 3), 3)); const col = new Float32Array(NV * 2 * 3);
+    const ci = lin3(CAPE.inner), co = lin3(CAPE.outer); for (let i = 0; i < NV; i++) { col.set(ci, i * 3); col.set(co, (NV + i) * 3); } g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    const idx = []; for (let b = 0; b < NT; b++) for (let a = 0; a < NU; a++) { const i = b * W + a; idx.push(i, i + W, i + 1, i + 1, i + W, i + W + 1); const j = NV + i; idx.push(j, j + 1, j + W, j + 1, j + W + 1, j + W); }
+    const edge = []; for (let a = 0; a <= NU; a++) edge.push(a); for (let b = 1; b <= NT; b++) edge.push(b * W + NU); for (let a = NU - 1; a >= 0; a--) edge.push(NT * W + a); for (let b = NT - 1; b >= 1; b--) edge.push(b * W);
+    for (let e = 0; e < edge.length; e++) { const p = edge[e], q = edge[(e + 1) % edge.length]; idx.push(p, NV + p, q, q, NV + p, NV + q); }
+    g.setIndex(idx); const m = new THREE.Mesh(g, B.kit.makeToon('#ffffff', { vertexColors: true, side: THREE.DoubleSide })); m.userData.ownMat = 1; B.group.add(m); B.kit.addOutline(m, false); CAPEM = m; }
+  const pa = CAPEM.geometry.attributes.position.array;
+  for (let i = 0; i < NV; i++) { pa[i * 3] = c.X[i]; pa[i * 3 + 1] = c.Y[i]; pa[i * 3 + 2] = c.Z[i]; pa[(NV + i) * 3] = c.X[i]; pa[(NV + i) * 3 + 1] = c.Y[i]; pa[(NV + i) * 3 + 2] = c.Z[i] - th; }
+  CAPEM.geometry.attributes.position.needsUpdate = true; CAPEM.geometry.computeVertexNormals(); CAPEM.geometry.computeBoundingSphere();
+}
+/* THE CHECK (his 5a): every leg vertex inside the cape's footprint must be in FRONT of the cape's inner surface; else the render fails */
+function capeCheck(c, name) {
+  const { NU, NT } = CAPE, W = NU + 1, { yTop, yHem } = c.geom; const legs = bodyInfo().legs; let min = Infinity, bad = 0, inside = 0;
+  for (const i of legs) { const x = c.P[i * 3], y = c.P[i * 3 + 1], z = c.P[i * 3 + 2]; const t = (yTop - y) / (yTop - yHem); if (t < 0 || t > 1) continue; const u = (x - c.xcOf(t)) / c.hwOf(t); if (u < -1 || u > 1) continue;
+    inside++; const fb = t * NT, fa = (u + 1) / 2 * NU; const b0 = Math.min(NT - 1, Math.floor(fb)), a0 = Math.min(NU - 1, Math.floor(fa)), tb = fb - b0, ta = fa - a0;
+    const zc = (c.Z[b0 * W + a0] * (1 - ta) + c.Z[b0 * W + a0 + 1] * ta) * (1 - tb) + (c.Z[(b0 + 1) * W + a0] * (1 - ta) + c.Z[(b0 + 1) * W + a0 + 1] * ta) * tb;
+    const d = z - zc; if (d < min) min = d; if (d < 0) bad++; }
+  if (bad) throw new Error(`CAPE CHECK FAILED in ${name}: ${bad} leg points pass through the cape (min clearance ${(min * 1000).toFixed(1)} mm)`);
+  return { inside, minMM: isFinite(min) ? +(min * 1000).toFixed(1) : null };
+}
+
+/* ---------- Commodus: segmented armour + pelt ---------- */
+function commodusDress(extra) {
+  const K = B.kit, GI = K.GI;
+  /* lorica segmentata: silver lames with dark gaps, each lame a touch proud at its lower edge; shoulder guards in the same lames */
+  const lam = K.maskedMat(); lam.color.set('#ffffff'); lam.userData.ownMat = 1; lam.userData.hem = { w: 0.006, col: [201, 154, 62], bw: 0, bcol: [0, 0, 0] };
+  const isArm = (g) => g === GI.AL || g === GI.AR;
+  const mask = (p, g) => { if (g === GI.T) return Math.min(p[1] - 0.99, 1.47 - p[1], 0.03); if (isArm(g)) return Math.min(p[1] - 1.23, 0.03); return -1; };
+  const step = (p, g) => isArm(g) ? 0.034 : 0.04;
+  const LT = lin3('#e4e8ee'), DK = lin3('#2a2c32'), MD = lin3('#8a909a'), BR = lin3('#b88a3a');
+  extra.push(K.shellFrom('seg3', mask, (p, m, g) => { const f = frac(p[1] / step(p, g)); if (f < 0.16) return DK; if (g === GI.T && Math.abs(p[0]) < 0.007 && p[2] > 0) return BR;
+    const k = (f - 0.16) / 0.84; return [LT[0] + (MD[0] - LT[0]) * (1 - k), LT[1] + (MD[1] - LT[1]) * (1 - k), LT[2] + (MD[2] - LT[2]) * (1 - k)]; },
+    (p, m) => 0.017 + 0.007 * frac(p[1] / 0.04), { mat: lam }));
+  /* pteruges: leather/linen strips below the armour */
+  const pt = K.maskedMat(); pt.color.set('#ffffff'); pt.userData.ownMat = 1; const W1 = lin3('#f2ece0'), W2 = lin3('#cfc4ac'), GP = lin3('#3a3026');
+  extra.push(K.shellFrom('pter3', (p, g) => { if (g === GI.T) return Math.min(p[1] - 0.8, 1.0 - p[1], 0.03); if (g === GI.LL || g === GI.LR) return Math.min(p[1] - 0.76, 0.03); return -1; },
+    (p) => { const a = Math.atan2(p[0], p[2]); const f = frac(a / Math.PI * 9); return f < 0.12 ? GP : (Math.floor(a / Math.PI * 9) % 2 ? W1 : W2); }, 0.015, { mat: pt }));
+  /* the lion's hide down the back (over the armour) */
+  const hide = K.maskedMat(); hide.color.set('#ffffff'); hide.userData.ownMat = 1; const H1 = lin3('#b08a58'), H2 = lin3('#8a6a40');
+  extra.push(K.shellFrom('hide3', (p, g) => { if (g !== GI.T && g !== GI.H) return -1; if (g === GI.H) return Math.min(-p[2] - 0.03, 1.66 - p[1], 0.03); return Math.min(-p[2] - 0.035, p[1] - 0.86 + p[0] * p[0] * 3, 0.03); },
+    (p) => { const s = 0.5 + 0.5 * Math.sin(p[0] * 90 + Math.sin(p[1] * 40) * 3) * Math.sin(p[1] * 70); return [H2[0] + (H1[0] - H2[0]) * s, H2[1] + (H1[1] - H2[1]) * s, H2[2] + (H1[2] - H2[2]) * s]; },
+    0.036, { mat: hide }));
+  /* the hood + paws (sculpted) */
+  const vb = posed(); const inf = bodyInfo(); let hb = { x0: 1e9, x1: -1e9, y0: 1e9, y1: -1e9, z0: 1e9, z1: -1e9 };
+  for (let i = 0; i < inf.n; i++) if (inf.dom[i] === 'head') { const x = vb[i * 3] * 1000, y = vb[i * 3 + 1] * 1000, z = vb[i * 3 + 2] * 1000; hb.x0 = Math.min(hb.x0, x); hb.x1 = Math.max(hb.x1, x); hb.y0 = Math.min(hb.y0, y); hb.y1 = Math.max(hb.y1, y); hb.z0 = Math.min(hb.z0, z); hb.z1 = Math.max(hb.z1, z); }
+  hb.eye = K.HO[1] * 1000 + 14; const hood = peltGeo(hb);
+  extra.push(K.rigid(hood.geo, K.makeToon('#ffffff', { vertexColors: true }), 'he', [0, 0, 0], null));
+  const sk = (x, y) => { const h = K.hitSkin([x, y, 0.4], [0, 0, -1]); return h ? h.map(v => v * 1000) : [x * 1000, y * 1000, 120]; };
+  const paws = pawsGeo({ L: sk(0.12, 1.42), R: sk(-0.12, 1.42), knot: sk(0, 1.31), out: [0, 0.15, 1] });
+  extra.push(K.rigid(paws.geo, K.makeToon('#ffffff', { vertexColors: true }), 'ch', [0, 0, 0], null));
+  return { hb, hoodTris: hood.tris, pawTris: paws.tris };
+}
+
+window.LOOK300 = {
+  async init(res = 0.005) { TOK = await createToken({ res }); B = TOK._dbg.B; GM = B.mats.gm; const { turn } = TOK._dbg; BASE = turn.children[0]; PROPS = new THREE.Group(); turn.add(PROPS); return B.stats; },
+  async humanoid3(key) {
+    const H = {
+      glad: { look: { skin: '#c08a64', hair: '#2a1c12', hs: 'crop', bs: 'stubble', cloth: '#b8933c' }, gear: { head: { t: 'murmillo' }, belt: { t: 'balteus' }, arm: { R: { lower: { t: 'manica' } } }, leg: { L: { lower: { t: 'ocrea' } } }, wR: { t: 'sword' }, wL: { t: 'scutum', c: '#9c2f25' } }, sc: [1.15, 1.15, 1.15] },
+      tholo: { look: { skin: '#b07a52', hair: '#8a847c', hs: 'crop', bs: 'full', cloth: '#7a3a22' }, gear: { helm: 'laurel', arm: { L: { wraps: 1 }, R: { wraps: 1 } }, wR: { t: 'club' } }, sc: [1.15 * 1.24, 1.15 * 1.13, 1.15 * 1.2], tunic: '#7a3a22', cape: 1 },
+      commodus: { look: { skin: '#e0b48e', hair: '#5a3b20', hs: 'curly', bs: 'full', cloth: '#ece6da' }, gear: { arm: { R: { lower: { t: 'manica', c: '#cfd2d8' } } }, leg: { L: { lower: { t: 'ocrea', c: '#cfd2d8' } }, R: { lower: { t: 'ocrea', c: '#cfd2d8' } } }, wR: { t: 'sword' } }, sc: [1.21, 1.21, 1.21], tunic: '#ece6da', pelt: 1 } }[key];
+    TOK.apply({ look: H.look, gear: H.gear }); BASE.visible = true; const K = B.kit, GI = K.GI; const extra = []; let info = {};
+    if (H.tunic) { const m = K.maskedMat(); m.color.set(H.tunic); m.userData.ownMat = 1;
+      extra.push(K.shellFrom('tun3_' + key, (p, g) => { if (g === GI.T) return Math.min(p[1] - 0.68, 1.47 - p[1], 0.03); if (g === GI.LL || g === GI.LR) return Math.min(p[1] - 0.64, 0.03); return -1; },
+        (p) => { const f = Math.sin(p[0] * 60 + p[1] * 22) * 0.5 + 0.5; return [0.82 + 0.18 * f, 0.82 + 0.18 * f, 0.82 + 0.18 * f]; }, 0.011, { mat: m })); }
+    setFrame({ p: [0, 0, 0], j: {}, f: {} });
+    if (H.pelt) info = commodusDress(extra);
+    B.group.scale.set(...H.sc);
+    const rows = [GLAD_ROWS[0], GLAD_ROWS[1], GLAD_ROWS[2], GLAD_ROWS[4], FALL_ROWS[0]];
+    const fr = rows.flatMap(([k, fs]) => fs.map((s, i) => ({ k: k === 'fall' ? 'die' : k, i, s })));
+    const cape = H.cape ? { clear: {}, inside: {}, ms: 0 } : null;
+    const S = await renderFrames(fr, { box: 6.2, ty: 0.85, set: (x) => { setFrame(x.s);
+      if (cape) { const t0 = performance.now(); const c = capeBuild(x); capeMesh(c); const nm = x.k + x.i; if (x.k !== 'die') { const r = capeCheck(c, nm); cape.clear[nm] = r.minMM; cape.inside[nm] = r.inside; } cape.ms += performance.now() - t0; } } });
+    B.group.scale.set(1, 1, 1); for (const m of extra) K.kill(m); if (CAPEM) { K.kill(CAPEM); CAPEM = null; } setFrame({ p: [0, 0, 0], j: {}, f: {} });
+    const rowsN = fr.map(x => x.k + x.i); const w = enc(S.canvas, 'image/webp', 0.8);
+    if (cape) { const v = Object.values(cape.clear).filter(x => x != null); cape.minMM = Math.min(...v); cape.ms = Math.round(cape.ms); cape.checked = Object.keys(cape.clear).length; cape.note = 'leg points inside the cape footprint must be in front of its inner surface (die frames lie down: not checked)'; }
+    return { key, meta: S.meta, rows: rowsN, ms: S.ms, kb: +(w.bytes / 1024).toFixed(1), png: S.canvas.toDataURL('image/png'), cape, info,
+      decodedMB: +(S.meta[0] * S.meta[1] * 4 * 8 * rowsN.length / 1048576).toFixed(2), idleWalkMB: +(S.meta[0] * S.meta[1] * 4 * 8 * 10 / 1048576).toFixed(2), frames: rowsN.length, pxmm: 3.143 };
+  },
+};
+window.LOOK300_READY = true;
