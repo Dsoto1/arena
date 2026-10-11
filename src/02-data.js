@@ -1389,7 +1389,7 @@ const CARDS = {
   lure: {
     n: 'Meat Lure',
     type: 'declare',
-    d: _T('Throw a meat lure (range 4): aggro any 1 NPC in play onto another player. Works on Tholo; breaks a tame bond.'),
+    d: _T('Throw a meat lure (range 4): aggro any 1 NPC in play onto another player. Works on any beast but Commodus and humanoids; breaks a tame bond.'),
     q: _T('Accept without conceit, relinquish without reluctance'),
     img: 23
   },
@@ -1426,7 +1426,7 @@ const CARDS = {
   ursa: {
     n: 'Ursa Aggros You!',
     type: 'instant',
-    d: _T("Ursa's aggro token moves to you. If Ursa is already eliminated or tamed, gain 2 CF."),
+    d: _T("Ursa's aggro token moves to you and breaks any tame bond. If Ursa is already eliminated, gain 2 CF."),
     q: _T('Devote yourself to inevitable death'),
     img: 28,
     bear: _T('Ursa')
@@ -1434,7 +1434,7 @@ const CARDS = {
   brutum: {
     n: 'Brutum Aggros You!',
     type: 'instant',
-    d: _T("Brutum's aggro token moves to you. If Brutum is already eliminated or tamed, gain 2 CF."),
+    d: _T("Brutum's aggro token moves to you and breaks any tame bond. If Brutum is already eliminated, gain 2 CF."),
     q: _T('Devote yourself to inevitable death'),
     img: 29,
     bear: _T('Brutum')
