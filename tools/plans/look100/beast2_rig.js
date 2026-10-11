@@ -431,23 +431,24 @@ function makeBase(dims, rim) {
 function alphaBox(c) { const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1; for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) if (d[(y * c.width + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } return [x0, y0, x1, y1]; }
 /* frames → sheet (rows = frames, 8 MINI_YAW cells), cropped round the base centre (anchor) like minis8 */
 async function sheet(build, frames, o) {
-  setup(); const t0 = performance.now(); const ss = 2, ppm = PXMM * ss, S = Math.ceil(o.box * ppm / 4) * 4, hw = S / 2 / ppm; const ty = o.ty || 10;
+  setup(); const t0 = performance.now(); const ss = 2, ppm = (o.pxmm || PXMM) * ss, S = Math.ceil(o.box * ppm / 4) * 4, hw = S / 2 / ppm; const ty = o.ty || 10;
   const cam = new THREE.OrthographicCamera(-hw, hw, hw, -hw, 0.1, 2000); cam.position.set(0, ty + Math.sin(30 * D2R) * 500, Math.cos(30 * D2R) * 500); cam.lookAt(0, ty, 0); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
   const dir = new THREE.Vector3(-0.55, 0.85, 0.55).applyQuaternion(cam.quaternion); SUN.position.copy(cam.position).add(dir.multiplyScalar(300)); SUN.target.position.copy(cam.position).add(new THREE.Vector3(0, 0, -500).applyQuaternion(cam.quaternion)); SUN.target.updateMatrixWorld();
   MATS.ink.userData.u.value = (o.ink || 0.85) * ss / ppm;
   makeBase(o.base, o.rim || '#4a3a2a');
   REND.setSize(S, S, false);
   const anc = new THREE.Vector3(0, 0, 0).project(cam); const AX = (anc.x * 0.5 + 0.5) * S / ss, AY = (-anc.y * 0.5 + 0.5) * S / ss;
-  const cells = [], st = { sculpt: 0, render: 0, tris: 0, verts: 0 };
+  const cells = [], JR = [], st = { sculpt: 0, render: 0, tris: 0, verts: 0 };
   for (const f of frames) { const q0 = performance.now(); const prims = build(f); const r = meshOf(prims, o.h); MESH.scale.setScalar(o.sc || 1); INK.scale.setScalar(o.sc || 1); MESH.geometry.dispose(); MESH.geometry = r.geo; INK.geometry = r.geo; st.tris = Math.max(st.tris, r.tris); st.verts = Math.max(st.verts, r.verts);
-    const q1 = performance.now(); st.sculpt += q1 - q0; const row = [];
+    const q1 = performance.now(); st.sculpt += q1 - q0; const row = []; const jl = JL.slice(); const jrow = [];
+    for (const yaw of MINI_YAW) { const Y = new THREE.Vector3(0, 1, 0); jrow.push(jl.map(j => { const v = new THREE.Vector3(...j.p).multiplyScalar(o.sc || 1).applyAxisAngle(Y, yaw * D2R).project(cam); return { n: j.n, par: j.par, cat: j.cat, x: +((v.x * 0.5 + 0.5) * S / ss - AX).toFixed(1), y: +((-v.y * 0.5 + 0.5) * S / ss - AY).toFixed(1) }; })); } JR.push(jrow);
     for (const yaw of MINI_YAW) { TURN.rotation.y = yaw * D2R; TURN.updateMatrixWorld(true); REND.render(SCENE, cam); let c = document.createElement('canvas'); c.width = S; c.height = S; c.getContext('2d').drawImage(REND.domElement, 0, 0);
       const d = document.createElement('canvas'); d.width = S / 2; d.height = S / 2; const g = d.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(c, 0, 0, d.width, d.height); row.push({ c: d, box: alphaBox(d) }); }
     TURN.rotation.y = 0; st.render += performance.now() - q1; cells.push(row); await new Promise(ok => setTimeout(ok, 0)); }
   let L = 0, Rr = 0, Tt = 0, Bm = 0; for (const row of cells) for (const { box } of row) { if (box[2] < 0) continue; L = Math.max(L, AX - box[0]); Rr = Math.max(Rr, box[2] + 1 - AX); Tt = Math.max(Tt, AY - box[1]); Bm = Math.max(Bm, box[3] + 1 - AY); }
   const half = Math.ceil(Math.max(L, Rr)) + 1, w = half * 2, top = Math.ceil(Tt) + 1, h = top + Math.ceil(Bm) + 1, x0 = Math.floor(AX) - half, y0 = Math.floor(AY) - top;
   const out = document.createElement('canvas'); out.width = w * 8; out.height = h * cells.length; const g = out.getContext('2d'); cells.forEach((row, j) => row.forEach(({ c }, i) => g.drawImage(c, x0, y0, w, h, i * w, j * h, w, h)));
-  return { canvas: out, meta: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1), cells.length], rows: frames.map(f => f.n), ms: Math.round(performance.now() - t0), sculptMs: Math.round(st.sculpt), renderMs: Math.round(st.render), tris: st.tris, verts: st.verts };
+  return { canvas: out, joints: JR, meta: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1), cells.length], rows: frames.map(f => f.n), ms: Math.round(performance.now() - t0), sculptMs: Math.round(st.sculpt), renderMs: Math.round(st.render), tris: st.tris, verts: st.verts };
 }
 const enc = (c, q = 0.8) => { const u = c.toDataURL('image/webp', q); return { url: u, bytes: Math.round((u.length - u.indexOf(',') - 1) * 0.75) }; };
 /* the beasts to render: key → [builder, frames, options] */
