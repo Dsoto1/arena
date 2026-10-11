@@ -18,7 +18,7 @@ function srv91State(){const X=typeof SRV_EXPECT91!=='undefined'?SRV_EXPECT91:{};
   if(X.hash&&B.hash!==X.hash)return {k:'old',txt:_T`⚠ Server v${B.v} · this page needs v${X.v} — some actions won't work until it's updated`};
   if(SRV91.unknown)return {k:'old',txt:_T`⚠ Server v${B.v} is missing "${SRV91.unknown}" — it needs an update`};
   return {k:'ok',txt:_T`Server v${B.v}`}}
-function srv91Chip(){let c=document.getElementById('srv91');const on=!!document.getElementById('onl');const st=on?srv91State():null;
+function srv91Chip(){let c=document.getElementById('srv91');const oe=document.getElementById('onl');const mm=document.getElementById('mainMenu');const on=!!oe&&oe.getClientRects().length>0&&!(mm&&mm.getClientRects().length>0&&getComputedStyle(mm).visibility!=='hidden'&&!document.getElementById('modal')?.contains(oe));/* v1.00: never over the main menu */const st=on?srv91State():null;
   if(!st){if(c)c.remove();return}
   if(!c){c=document.createElement('div');c.id='srv91';c.setAttribute('translate','no');document.body.appendChild(c)}
   c.className='srv91 '+st.k;if(c.textContent!==st.txt)c.textContent=st.txt;c.title=st.k==='ok'?_T('The online server is up to date with this page.'):''}

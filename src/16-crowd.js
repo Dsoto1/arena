@@ -485,6 +485,7 @@ function spearTargets(player){
 /* doSpear — throws the spear: 2 hit dice, any hit carries the spectator out (and the stands remember). */
 async function doSpear(player,spect){
   cfWhy(_T('spearing a spectator'));player.cf-=3;player.spearUsed=true;const h=rollHits(2);
+  if(!cnt(h))(spect.t100=spect.t100||{}).sur=(spect.t100.sur||0)+1; /* v1.00: a spear that missed — he survived */
   if(cnt(h)){spect.gone=true;spect.goneBy=player.name;log(_T`${nm(player)} hurls a spear into ${SECTIONS[spect.sec].n} ${diceHtml(h)}: <b>${esc(spect.name)}</b> is carried out of the arena!`,'big');slog(_T`<b>${esc(spect.name)}</b> is speared by ${esc(player.name)} and carried out of the arena. The stands will remember.`,'big');duoSay(_T('front row'));crowdReact('spear',{p:player,s:spect});stat(player,'spear')}
   else{log(_T`${nm(player)} hurls a spear into ${SECTIONS[spect.sec].n} ${diceHtml(h)} and misses ${esc(spect.name)}.`);slog(_T`${esc(player.name)}'s spear misses <b>${esc(spect.name)}</b> by a hand's width.`);crowdReact('spear',{p:player,s:null})}
 }
@@ -536,7 +537,7 @@ async function spectatorsAct(){
     const thrift=s.temper==='miser'?4:0;
     // offering to a favorite in reach
     if(fav&&inQ.includes(fav)&&s.cf>=8+thrift&&(s.temper==='generous'||s.mood>35)&&rand()<(s.temper==='generous'?.7:.35)*crowdA()){
-      s.cf-=8;const off=drawOffer();fav.items.push(mkOffer(off));stat(fav,'spectOffers');stat(fav,'spectVal',OFFER_VAL[off]||4);emote(s,'🎁',_T('For you!'));log(_T`${esc(s.name)} (${SECTIONS[s.sec].n}) throws ${nm(fav)} an offering: <b>${OFFER[off].n}</b> (${OFFER[off].s}).`);slog(_T`<b>${esc(s.name)}</b> pays ${cfAmt87(8)} to throw ${esc(fav.name)} an offering: ${OFFER[off].n}.`,'big');continue}
+      s.cf-=8;(s.t100=s.t100||{}).off=(s.t100.off||0)+1;const off=drawOffer();fav.items.push(mkOffer(off));stat(fav,'spectOffers');stat(fav,'spectVal',OFFER_VAL[off]||4);emote(s,'🎁',_T('For you!'));log(_T`${esc(s.name)} (${SECTIONS[s.sec].n}) throws ${nm(fav)} an offering: <b>${OFFER[off].n}</b> (${OFFER[off].s}).`);slog(_T`<b>${esc(s.name)}</b> pays ${cfAmt87(8)} to throw ${esc(fav.name)} an offering: ${OFFER[off].n}.`,'big');continue}
     // a stone at the one they hate (or at whoever is beating their favorite)
     const tgt=grudge&&inQ.includes(grudge)?grudge:inQ.filter(p=>p!==fav).sort((a,b)=>(s.taste==='underdog'?perfScore(b)-perfScore(a):b.cf-a.cf))[0];
     const anger=s.mood<-20||(grudge&&tgt===grudge);
@@ -551,7 +552,7 @@ async function spectatorsAct(){
 }
 /* spectStone — a spectator's stone: 1 hit die, 1 damage to a rolled location; a stone that finishes a gladiator collects all their CF. */
 async function spectStone(spect,target){
-  S.stonesThrown=(S.stonesThrown||0)+1;
+  S.stonesThrown=(S.stonesThrown||0)+1;(spect.t100=spect.t100||{}).st=(spect.t100.st||0)+1; /* v1.00: per-spectator tally for the Acta's rabble-rousers */
   const h=rollHits(1);const cfBefore=target.cf;emote(spect,'🪨',pickOne(SHOUTS.angry));const who=spect.human?_T('You hurl'):_T`${esc(spect.name)} (${SECTIONS[spect.sec].n}) hurls`;
   if(h[0]){await hurt(target,rollLoc(target),1,{type:'env',spect:spect},_T`${who} a stone at ${target.name} ${diceHtml(h)}`);slog(_T`<b>${esc(spect.name)}</b> pays ${cfAmt87(2)} and hits ${esc(target.name)} with a stone.`);
     if(!target.alive){spect.cf+=Math.max(0,cfBefore);log(_T`${spect.human?_T('Your'):esc(spect.name)+"'s"} stone finishes ${nm(target)}. ${spect.human?_T('You collect'):_T('The spectator collects')} all ${Math.max(0,cfBefore)} of their Crowd Favor.`,'big');slog(_T`<b>${esc(spect.name)}</b>'s stone finishes ${esc(target.name)} — they collect all ${Math.max(0,cfBefore)} of their CF.`,'big')}}

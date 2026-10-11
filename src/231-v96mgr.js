@@ -97,17 +97,19 @@ function lp96Podium(L,n,pos){const cup=(()=>{try{const d=trophyDef('palm_roma');
       <div class="lp96ban" style="--hc:${m.color||'#c9a14a'}"><span class="lp96fl">${typeof flagChip==='function'?flagChip(m,16):''}</span><b>${esc(m.ludus)}</b><small>${sp.pts} ${_T('pts')} · ${sp.w}-${Math.max(0,sp.b-sp.w)}</small></div>
       <div class="lp96step"><span>${i+1}</span></div></div>`};
   return `<div class="lp96pod" role="group" aria-label="${_T('The top three houses')}">${slot(1,'p2')}${slot(0,'p1')}${slot(2,'p3')}</div>`}
+/* v1.00: how league points are earned (leaguePtsAfterBout in 23-ludus: a win 3, a runner-up finish 1; ties by win rate, then fame) */
+const LP100_TIP=()=>_T('League points are earned per bout your fighters take part in: a win scores 3 points, finishing runner-up 1, anything else 0. Ties in the table go to the better win rate, then to fame. The top four houses at week 12 are invited to the Flavius Superbus.');
 lp90StakesHTML=function(){const w=W_(),pm=me();const L=leagueSort(w.mgrs);const n=L.length;const pos=L.indexOf(pm)+1;
   const row=(p,lab,m)=>{const me2=!lab&&p===pos;
-    if(!m)return `<tr><td class="n"><b>${lab}</b></td><td colspan="5" class="rc-sub">…</td></tr>`;const sp=msp(m);
+    if(!m)return `<tr><td class="n"><b>${lab}</b></td><td colspan="6" class="rc-sub">…</td></tr>`;const sp=msp(m);
     return `<tr class="${me2?'me':''}" title="${esc(lp96Tip(p,n))}"><td class="n"><b>${lp90Ord(p)}</b></td>
-      <td>${typeof flagChip==='function'?flagChip(m,14):`<span style="color:${m.color}">■</span>`} <b style="color:${m.color}">${esc(m.ludus)}</b>${me2?` <span class="rc-sub">${_T('◀ you')}</span>`:''}<br><span class="rc-sub">${esc(m.name)} · ${sp.pts} ${_T('pts')}</span></td>
-      <td>${lp96Top(m)}</td><td class="n"><b>${sp.w}-${Math.max(0,sp.b-sp.w)}</b></td><td>${lp96Latest(m)}</td><td class="n">${p<=4?'🏛':'<span class="rc-sub">—</span>'}</td></tr>`};
+      <td>${typeof flagChip==='function'?flagChip(m,14):`<span style="color:${m.color}">■</span>`} <b style="color:${m.color}">${esc(m.ludus)}</b>${me2?` <span class="rc-sub">${_T('◀ you')}</span>`:''}<br><span class="rc-sub">${esc(m.name)}</span></td>
+      <td class="n lp100pt"><b>${sp.pts}</b></td><td>${lp96Top(m)}</td><td class="n"><b>${sp.w}-${Math.max(0,sp.b-sp.w)}</b></td><td>${lp96Latest(m)}</td><td class="n">${p<=4?'🏛':'<span class="rc-sub">—</span>'}</td></tr>`};
   const K=LP90.length;let rows=L.slice(0,K).map((m,i)=>row(i+1,'',m)).join('');
-  if(n>K){if(pos>K)rows+=row(pos,'',pm);const rest=n-K-(pos>K?1:0);if(rest>0)rows+=`<tr><td class="n"><b>${K+1}–${n}</b></td><td colspan="5" class="rc-sub">${_T`the other ${rest} houses`}</td></tr>`}
-  return `<details class="card2 lp90 lp96" open><summary>${_T`<b>🏆 Standings</b>`} <span class="rc-sub">${_T`hover a place for its season-finish prizes`}</span></summary>
+  if(n>K){if(pos>K)rows+=row(pos,'',pm);const rest=n-K-(pos>K?1:0);if(rest>0)rows+=`<tr><td class="n"><b>${K+1}–${n}</b></td><td colspan="6" class="rc-sub">${_T`the other ${rest} houses`}</td></tr>`}
+  return `<details class="card2 lp90 lp96" open><summary>${_T`<b>🏆 Standings</b>`} <span class="rc-sub">${_T`hover a place for its season-finish prizes`}</span> <span class="qi lp100i" tabindex="0" data-tip="${esc(LP100_TIP())}">ⓘ</span></summary>
     ${lp96Podium(L,n,pos)}${lp90NextHTML('in')}
-    <table class="tally compact lp90t lp96t"><tr><th>${_T`Place`}</th><th>${_T`Ludus`}</th><th>${_T`Top gladiator`}</th><th title="${_T`This season's bouts: won-lost`}">${_T`Record`}</th><th>${_T`Latest event`}</th><th title="${_T`The top four are invited to the Flavius Superbus`}">${_T`Superbus`}</th></tr>${rows}</table></details>`};
+    <table class="tally compact lp90t lp96t"><tr><th>${_T`Place`}</th><th>${_T`Ludus`}</th><th class="n" title="${esc(LP100_TIP())}">${_T`Points`}</th><th>${_T`Top gladiator`}</th><th title="${_T`This season's bouts: won-lost`}">${_T`Record`}</th><th>${_T`Latest event`}</th><th title="${_T`The top four are invited to the Flavius Superbus`}">${_T`Superbus`}</th></tr>${rows}</table></details>`};
 
 /* ---------------- 11 · invitational Answer = pick the fighters and accept ---------------- */
 function iv96Ask(iv){const w=W_(),pm=me();const D=specDef(iv.sid);if(!w||!pm||!D)return;for(const o of document.querySelectorAll('.iv96bg'))o.remove();

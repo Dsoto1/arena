@@ -31,9 +31,9 @@ const r3=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   o.tip=(B.querySelector('.lp96p.p1')||{}).title||'';o.tip2=(B.querySelector('.lp96p.p2')||{}).title||'';
   const th=[...B.querySelectorAll('.lp96t tr:first-child th')].map(x=>x.textContent.trim());o.th=th;o.txt=B.querySelector('.lp96').textContent;
   o.rows=B.querySelectorAll('.lp96t tr').length-1;o.me=!!B.querySelector('.lp96t tr.me');o.latest=/won/.test(B.querySelector('.lp96t tr:nth-child(2)').textContent);
-  o.rec=/^\d+-\d+$/.test(B.querySelector('.lp96t tr:nth-child(2) td:nth-child(4)').textContent.trim());return o});
+  o.rec=/^\d+-\d+$/.test(B.querySelector('.lp96t tr:nth-child(2) td:nth-child(5)').textContent.trim());return o});
 ok(r3.box&&r3.pod.join()==='p2,p1,p3'&&r3.cup,'3 podium 2nd-1st-3rd with the cup on 1st '+JSON.stringify(r3.pod));ok(/120/.test(r3.tip)&&/Superbus/.test(r3.tip)&&/Quaestor/.test(r3.tip)&&/80/.test(r3.tip2),'3 hover = the season-finish prizes '+r3.tip);
-ok(r3.th.join('|')==='Place|Ludus|Top gladiator|Record|Latest event|Superbus','3 table columns '+r3.th.join('|'));ok(!/Quaestor|League prize/.test(r3.txt.replace(/Quaestor's/g,'')===r3.txt?r3.txt:r3.txt),'3 no Quaestor / prize column');
+ok(r3.th.join('|')==='Place|Ludus|Points|Top gladiator|Record|Latest event|Superbus','3 table columns '+r3.th.join('|'));ok(!/Quaestor|League prize/.test(r3.txt.replace(/Quaestor's/g,'')===r3.txt?r3.txt:r3.txt),'3 no Quaestor / prize column');
 ok(r3.rows>=Math.min(6,4)&&r3.rows<=8&&r3.me&&r3.latest&&r3.rec,'3 rows, your row lit, record + latest event '+JSON.stringify(r3));
 if(SHOT){await W(300);await pg.screenshot({path:SHOT+'/tv96m_league.png'})}
 /* ---- 4 · Acta card per finished week ---- */

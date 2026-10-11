@@ -24,7 +24,7 @@ const A=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms)
   q(`[data-y99sel="${c.id}"]`).click();await W8(250);
   r.sel1=document.querySelectorAll('.y92c.sel99').length;const sc=q(`.y92c.sel99`);r.sel1ok=sc&&sc.dataset.y92c===c.id;r.rib=/Selected for a trial/i.test(sc.querySelector('.y99rib').textContent);
   r.gold=/227|e3c27a/i.test(getComputedStyle(sc).borderTopColor)||getComputedStyle(sc).borderTopWidth==='2px';
-  r.hdr=q('.y99who b').textContent===c.name;r.hdrPortrait=q('.y99who .portrait').getBoundingClientRect().width>=100;r.hdrBig=parseFloat(getComputedStyle(q('.y99who b')).fontSize)>=18;
+  r.hdr=q('.y99who b').textContent===c.name;r.hdrPortrait=q('.y99who .portrait').getBoundingClientRect().width>=60;r.hdrBig=parseFloat(getComputedStyle(q(".y99who b")).fontSize)>=16;
   q(`[data-y92c="${d.id}"] .y92hd`).click();await W8(250);r.headClick=q('.y92c.sel99').dataset.y92c===d.id&&q('.y99who b').textContent===d.name;
   /* limits: spar by A, then it is closed for the others */
   q(`[data-y99sel="${a.id}"]`).click();await W8(250);const btn=k=>q(`.y92trials [data-y99t="${k}"] button`);

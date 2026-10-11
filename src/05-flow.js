@@ -471,7 +471,7 @@ async function startEvent(config) {
         p.coin += s.boost.coin;
         coinLog(p, s.boost.coin, _T('training boost'));
       }
-      if (s.boost.ap) await distributeAP(p, s.boost.ap, _T`+${s.boost.ap} AP (training)`);
+      if (s.boost.ap) await trainAP100(p, s.boost.ap, _T`+${s.boost.ap} AP (training)`);
       if (s.boost.cf) p.cf += s.boost.cf;
     }
   }
@@ -2072,4 +2072,23 @@ async function simToEnd(skipAsk) {
   await settle();
   if (G !== S || S.over) return;
   await endTurn();
+}
+
+/* trainAP100 (v1.00) — the Manager start bonus (+AP from training, temple, walk the sand, gear, armory...) only goes onto locations that already have armor; bare locations never get it. Lowest AP first, HEAL_ORDER breaks ties; no armor at all = nothing is placed. */
+async function trainAP100(p, n, why) {
+  const locs = LOCS.filter(l => p.hp[l] > 0 && p.ap[l] > 0 && p.ap[l] < 7);
+  if (!locs.length) return;
+  const plan = {};
+  LOCS.forEach(l => plan[l] = 0);
+  for (let i = 0; i < n; i++) {
+    const c = locs.filter(l => p.ap[l] + plan[l] < 7).sort((a, b) => p.ap[a] + plan[a] - (p.ap[b] + plan[b]) || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b));
+    if (!c.length) break;
+    plan[c[0]]++;
+  }
+  const parts = [];
+  for (const l of LOCS) if (plan[l]) {
+    p.ap[l] = Math.min(7, p.ap[l] + plan[l]);
+    parts.push(_T`${LOCN[l]} +${plan[l]} AP`);
+  }
+  if (parts.length) log(_T`${nm(p)} gains ${why}: ${parts.join(', ')}.`);
 }

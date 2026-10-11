@@ -620,6 +620,7 @@ async function endWeek(){
      const solo=g.ptrain&&pm.coin>=PTRAIN_COST?(pm.coin-=PTRAIN_COST,typeof devNote==='function'&&devNote(pm,PTRAIN_COST),true):false;delete g.ptrain;
      if(!teamOn&&!solo)continue;
      if(g.inj){w.lastTraining.push({n:g.name,txt:_T`sat out — ${g.inj.label}`});continue}
+     if(typeof inBed76==='function'&&inBed76(g)){w.lastTraining.push({n:g.name,txt:_T`sat out — in bed`});continue} /* v1.00: bed patients never train */
      const yl=typeof facLvl==='function'?facLvl(pm,'yard'):0;
      const gain=((teamOn?R.gain:0)+(solo?.24:0)+pm.p.discipline/450+yl*.05)*RL(w,'gain');
      const injc=((teamOn?R.inj:0)+(solo?.035:0))*(omenBad?1.8:1)*RL(w,'inj')*(1-.2*yl);
