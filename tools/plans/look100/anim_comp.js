@@ -54,21 +54,22 @@
 
   /* ------------------------------------------------ 2. the clip: walk two tiles + attack ------------------------------------------------ */
   /* a tile is clear when nothing stands on it and no piece in front of it (lower on screen, within a tile sideways) can hide a token there */
-  function clear(B, r, c) { for (const [or, oc] of B.occ) { const dx = (oc - or) - (c - r), dy = (oc + or) - (c + r); if (dx === 0 && dy === 0) return false; if (Math.abs(dx) <= 1 && dy >= 1 && dy <= 4) return false; } return r >= 0 && c >= 0 && r < B.N && c < B.N; }
-  function pickPath(B, len, extra = 1) {
-    const free = freeSet(B); let best = null;
-    for (let r = 0; r < B.N - 1; r++) for (let c0 = 0; c0 + len <= B.N; c0++) {
-      let ok = true; for (let k = 0; k < len; k++) if (!clear(B, r, c0 + k)) ok = false;
-      if (!ok) continue; const a = T(B, r, c0), b = T(B, r, c0 + len - 1); if (!inView(B, a, 70) || !inView(B, b, 70)) continue;
+  function clear(B, r, c) { for (const [or, oc] of B.occ) { const dx = (oc - or) - (c - r), dy = (oc + or) - (c + r); if (dx === 0 && dy === 0) return false; if (Math.abs(dx) <= 2 && dy >= 1 && dy <= 5) return false; } return r >= 0 && c >= 0 && r < B.N && c < B.N; }
+  const DIRS = [[0, 1, 1, 5, 0], [1, 0, 7, 3, 40], [-1, 0, 3, 7, 60], [0, -1, 5, 1, 80]];   /* dr, dc, facing forward, facing back, penalty px */
+  function pickPath(B, len) {
+    let best = null;
+    for (const [dr, dc, fw, bk, pen] of DIRS) for (let r = 0; r < B.N; r++) for (let c = 0; c < B.N; c++) {
+      let ok = true; for (let k = 0; k < len; k++) if (!clear(B, r + dr * k, c + dc * k)) ok = false; if (!ok) continue;
+      const a = T(B, r, c), b = T(B, r + dr * (len - 1), c + dc * (len - 1)); if (!inView(B, a, 70) || !inView(B, b, 70)) continue;
       const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; const cx = B.canvas.x + B.canvas.w / 2, cy = B.canvas.y + B.canvas.h / 2;
-      const d = Math.hypot(mid.x - cx, mid.y - cy); if (!best || d < best.d) best = { r, c0, d };
+      const d = Math.hypot(mid.x - cx, mid.y - cy) + pen; if (!best || d < best.d) best = { r, c, dr, dc, fw, bk, d, at: (k) => T(B, r + dr * k, c + dc * k) };
     }
     return best;
   }
   function clip(B, shot) {
     const P = pickPath(B, 4); if (!P) throw new Error('no free path for the clip');
     const A = SHEETS.main, R = SHEETS.ret; const s = 0.8 * B.tw / (25.4 * PXMM);
-    const t0 = T(B, P.r, P.c0), t1 = T(B, P.r, P.c0 + 1), t2 = T(B, P.r, P.c0 + 2), te = T(B, P.r, P.c0 + 3);
+    const t0 = P.at(0), t1 = P.at(1), t2 = P.at(2), te = P.at(3);
     const x0 = Math.min(t0.x, te.x) - B.tw * 1.0, x1 = Math.max(t0.x, te.x) + B.tw * 1.0, y0 = Math.min(t0.y, te.y) - B.tw * 1.55, y1 = Math.max(t0.y, te.y) + B.tw * 0.55;
     const W = Math.round(x1 - x0), H = Math.round(y1 - y0); const frames = [];
     const seq = [];   /* [murmillo row, x, y, ret row] */
@@ -78,11 +79,11 @@
     seq.push(['idle0', t2.x, t2.y, 'rhit2'], ['idle1', t2.x, t2.y, 'rhit2'], ['idle2', t2.x, t2.y, 'ridle0'], ['idle3', t2.x, t2.y, 'ridle0']);
     for (const [mr, mx, my, rr] of seq) {
       const c = cnv(W, H); const g = c.getContext('2d'); g.drawImage(shot, x0, y0, W, H, 0, 0, W, H);
-      const list = [[A, rowOf(A, mr), 1, mx - x0, my - y0], [R, rowOf(R, rr), 5, te.x - x0, te.y - y0]].sort((p, q) => p[4] - q[4]);
+      const list = [[A, rowOf(A, mr), P.fw, mx - x0, my - y0], [R, rowOf(R, rr), P.bk, te.x - x0, te.y - y0]].sort((p, q) => p[4] - q[4]);
       for (const [S, row, col, x, y] of list) { shadow(g, x + 3, y + 2, B.tw * 0.36); cell(g, S, row, col, x, y, s); }
       frames.push(c);
     }
-    return { frames, info: { tiles: [P.r, P.c0], scale: +s.toFixed(3), w: W, h: H, n: frames.length } };
+    return { frames, info: { tiles: [P.r, P.c, P.dr, P.dc], facing: P.fw, scale: +s.toFixed(3), w: W, h: H, n: frames.length } };
   }
   const row5 = (frames, gap = 6, title) => {   /* frames side by side with numbers */
     const w = frames[0].width, h = frames[0].height, top = title ? 26 : 0; const c = cnv(frames.length * (w + gap) - gap, h + top + 18); const g = c.getContext('2d');
@@ -108,6 +109,7 @@
     for (const pass of [0, 1]) { q.strokeStyle = pass ? '#dcc89c' : 'rgba(40,26,14,.9)'; q.lineWidth = pass ? 1.1 : 2.4;
       for (let k = -c.height; k < c.width + c.height; k += step) { q.beginPath(); q.moveTo(k, 0); q.lineTo(k - c.height * 0.7, c.height); q.stroke(); q.beginPath(); q.moveTo(k - c.height * 0.7, 0); q.lineTo(k, c.height); q.stroke(); } }
     q.globalCompositeOperation = 'destination-in'; for (const [dx, dy] of [[0, 0], [2, 0], [-2, 0], [0, 2], [0, -2]]) q.drawImage(S.canvas, col * w, row * h, w, h, 4 + dx, 4 + dy, w * s, h * s);
+    q.clearRect(0, 4 + AY * s - 12 * s, c.width, c.height);   /* the base stays bare */
     g.drawImage(c, x - AX * s - 4, y - AY * s - 4);
     /* the skirt and the weights on the sand round his feet */
     g.save(); g.strokeStyle = 'rgba(40,26,14,.85)'; g.lineWidth = 1.6; const rx = 26 * s, ry = 12 * s;
@@ -116,24 +118,24 @@
   }
   function rete(B, shot) {
     const free = freeSet(B); const P = pickPath(B, 3); const A = SHEETS.main, R = SHEETS.ret; const s = 0.8 * B.tw / (25.4 * PXMM);
-    const ta = T(B, P.r, P.c0), tb = T(B, P.r, P.c0 + 2);
-    const x0 = ta.x - B.tw * 0.9, y0 = Math.min(ta.y, tb.y) - B.tw * 1.6, W = Math.round(tb.x - ta.x + B.tw * 1.8), H = Math.round(Math.abs(tb.y - ta.y) + B.tw * 2.15);
+    const ta = P.at(0), tb = P.at(2); const mir = Math.sign((tb.x - ta.x) || 1);
+    const x0 = Math.min(ta.x, tb.x) - B.tw * 0.9, y0 = Math.min(ta.y, tb.y) - B.tw * 1.6, W = Math.round(Math.abs(tb.x - ta.x) + B.tw * 1.8), H = Math.round(Math.abs(tb.y - ta.y) + B.tw * 2.15);
     const hand = [[22, -118], [30, -150], [36, -118]];   /* the left hand over the anchor (sprite px × s), per rete frame, facing 1 */
     const F = [['rete0', 'idle0'], ['rete1', 'idle1'], ['rete2', 'hit0'], ['ridle0', 'cower0'], ['ridle0', 'cower1']];
     const out = [];
     F.forEach(([rr, mr], k) => {
       const c = cnv(W, H); const g = c.getContext('2d'); g.drawImage(shot, x0, y0, W, H, 0, 0, W, H);
       const ax = ta.x - x0, ay = ta.y - y0, bx = tb.x - x0, by = tb.y - y0;
-      shadow(g, ax + 3, ay + 2, B.tw * 0.36); cell(g, R, rowOf(R, rr), 1, ax, ay, s);
-      const hx = ax + (hand[Math.min(k, 2)][0]) * s, hy = ay + hand[Math.min(k, 2)][1] * s, top = by - 120 * s;
-      if (k >= 1 && k <= 3) { const u = [0, 0.25, 0.7, 1][k]; const nx = hx + (bx - hx) * u, ny = hy + (top - hy) * u - Math.sin(u * Math.PI) * 55 * s; const r = [0, 14, 36, 34][k] * s;
+      shadow(g, ax + 3, ay + 2, B.tw * 0.36); cell(g, R, rowOf(R, rr), P.fw, ax, ay, s);
+      const hx = ax + mir * (hand[Math.min(k, 2)][0]) * s, hy = ay + hand[Math.min(k, 2)][1] * s, top = by - 120 * s;
+      if (k >= 1 && k <= 3) { const u = [0, 0.25, 0.7, 1][k]; const nx = hx + (bx - hx) * u, ny = hy + (top - hy) * u - Math.sin(u * Math.PI) * 30 * s; const r = [0, 14, 36, 34][k] * s;
         g.save(); g.globalAlpha = 0.22; g.fillStyle = '#1a120a'; g.beginPath(); g.ellipse(ax + (bx - ax) * u, ay + (by - ay) * u, r * 1.1, r * 0.5, 0, 0, 7); g.fill(); g.restore(); }
-      shadow(g, bx + 3, by + 2, B.tw * 0.36); cell(g, A, rowOf(A, mr), 5, bx, by, s);
+      shadow(g, bx + 3, by + 2, B.tw * 0.36); cell(g, A, rowOf(A, mr), P.bk, bx, by, s);
       if (k === 0) { g.fillStyle = '#c9b48a'; g.strokeStyle = '#2a1a0c'; g.lineWidth = 1.5; g.beginPath(); g.ellipse(hx, hy, 9 * s, 6 * s, 0.4, 0, 7); g.fill(); g.stroke(); for (let i = 0; i < 5; i++) { g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx + Math.cos(i) * 12 * s, hy + Math.sin(i) * 9 * s + 6); g.stroke(); } }
-      if (k >= 1 && k <= 3) { const u = [0, 0.25, 0.7, 1][k]; const nx = hx + (bx - hx) * u, ny = hy + (top - hy) * u - Math.sin(u * Math.PI) * 55 * s;
+      if (k >= 1 && k <= 3) { const u = [0, 0.25, 0.7, 1][k]; const nx = hx + (bx - hx) * u, ny = hy + (top - hy) * u - Math.sin(u * Math.PI) * 30 * s;
         if (k === 3) netDisc(g, bx, top + 30 * s, 34 * s, 15 * s, { drop: 40 * s, sag: 0 });
         else netDisc(g, nx, ny, [0, 14, 36][k] * s, [0, 8, 14][k] * s, { sag: [0, 3, 6][k] * s }); }
-      if (k === 4) netWrap(g, A, rowOf(A, mr), 5, bx, by, s);
+      if (k === 4) netWrap(g, A, rowOf(A, mr), P.bk, bx, by, s);
       out.push(c);
     });
     return out;
@@ -149,7 +151,7 @@
   }
   function spiders(B, shot) {
     const free = freeSet(B); let tile = null, bd = 1e9; const cx = B.canvas.x + B.canvas.w * 0.45, cy = B.canvas.y + B.canvas.h * 0.55;
-    for (let r = 1; r < B.N - 1; r++) for (let c = 1; c < B.N - 1; c++) { let ok = true; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) if (!free(r + dr, c + dc)) ok = false; if (!clear(B, r, c)) ok = false; const p = T(B, r, c); if (!ok || !inView(B, p, 100)) continue; const d = Math.hypot(p.x - cx, p.y - cy); if (d < bd) { bd = d; tile = { r, c, p }; } }
+    for (let r = 1; r < B.N - 1; r++) for (let c = 1; c < B.N - 1; c++) { let ok = true; if (!clear(B, r, c) || !free(r, c + 1) || !free(r + 1, c) || !free(r, c - 1) || !free(r - 1, c)) ok = false; const p = T(B, r, c); if (!ok || !inView(B, p, 80)) continue; const d = Math.hypot(p.x - cx, p.y - cy); if (d < bd) { bd = d; tile = { r, c, p }; } }
     const A = SHEETS.main, SP = SHEETS.spider; const s = 0.8 * B.tw / (25.4 * PXMM), ss = s * 0.42;
     const m = tile.p; const x0 = m.x - B.tw * 1.25, y0 = m.y - B.tw * 1.55, W = Math.round(B.tw * 2.5), H = Math.round(B.tw * 2.15);
     /* six spiders: start on the neighbouring tiles, crawl to him; two climb him in the last frames */
@@ -178,10 +180,10 @@
     const seats = B.seats.filter(p => inView(B, p, 40)); let best = null;
     for (const st of seats) for (let r = 0; r < B.N; r++) for (let c = 0; c < B.N; c++) { if (!clear(B, r, c)) continue; const p = T(B, r, c); if (!inView(B, p, 70)) continue; const d = Math.hypot(p.x - st.x, p.y - st.y); if (d > B.tw * 1.6 && d < B.tw * 3.2 && (!best || Math.abs(d - B.tw * 2.4) < best.e)) best = { st, p, e: Math.abs(d - B.tw * 2.4) }; }
     const { st, p } = best; const hx = st.x, hy = st.y - B.crowdH * 0.85;
-    const x0 = Math.min(hx, p.x) - B.tw * 0.8, x1 = Math.max(hx, p.x) + B.tw * 0.8, y0 = Math.min(hy, p.y) - B.tw * 1.3, y1 = Math.max(hy, p.y) + B.tw * 0.45;
-    const W = Math.round(x1 - x0), H = Math.round(y1 - y0); const out = [];
+    let cxm = (hx + p.x) / 2, hwid = Math.max(B.tw * 1.4, Math.abs(hx - p.x) / 2 + B.tw * 0.8); let x0 = cxm - hwid, x1 = cxm + hwid, y0 = Math.min(hy, p.y) - B.tw * 1.6, y1 = Math.max(hy, p.y) + B.tw * 0.45;
+    const y0c = Math.max(y0, B.canvas.y); const W = Math.round(x1 - x0), H = Math.round(y1 - y0c); const out = []; y0 = y0c;
     const cellW = rtok.width / 8, cellH = rtok.height / 5, idx = 28; const tx = (idx % 8) * cellW, ty = Math.floor(idx / 8) * cellH;   /* elix2 */
-    const R = B.tw * 0.2; const at = (u) => ({ x: hx + (p.x - hx) * u, y: hy + (p.y - hy) * u - Math.sin(u * Math.PI) * B.tw * 1.1 });
+    const R = B.tw * 0.24; const at = (u) => ({ x: hx + (p.x - hx) * u, y: hy + (p.y - hy) * u - Math.sin(u * Math.PI) * B.tw * 1.9 });
     [0, 0.28, 0.55, 0.82, 1].forEach((u, k) => {
       const c = cnv(W, H); const g = c.getContext('2d'); g.drawImage(shot, x0, y0, W, H, 0, 0, W, H);
       const q = at(u); const gx = hx + (p.x - hx) * u, gy = (st.y + (p.y - st.y) * u);
