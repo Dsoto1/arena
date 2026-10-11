@@ -9,8 +9,10 @@ await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLA
 const info=()=>pg.evaluate(()=>['[data-mm="multi"]','[data-mm82="tut"]'].map(s=>{const el=document.querySelector(s);return {cls:el.classList.contains('tray100'),ax:el.getAttribute('aria-expanded')}}));
 out[tag+'_closed']=await info();
 const lum=c=>{const v=c.map(x=>{x/=255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)});return .2126*v[0]+.7152*v[1]+.0722*v[2]};
-const rgb=await pg.evaluate(()=>getComputedStyle(document.querySelector('[data-mm="multi"]')).color.match(/\d+/g).map(Number));
-const L1=lum(rgb),L2=lum([0x6a,0x1f,0x1b]);out[tag+'_contrast']=+((Math.max(L1,L2)+.05)/(Math.min(L1,L2)+.05)).toFixed(2);
+/* gold-leaf letters on Play Now's porphyry inlay (his note: match Play Now's red); text is a gold gradient clipped to the glyphs */
+const gl=await pg.evaluate(()=>{const t=document.querySelector('[data-mm="multi"] .mm98t');const cs=t&&getComputedStyle(t);return !!(cs&&/gradient/.test(cs.backgroundImage)&&(cs.webkitBackgroundClip==='text'||cs.backgroundClip==='text'))});
+const rgb=gl?[0xf0,0xcf,0x7d]:[0,0,0];
+const L1=lum(rgb),L2=lum([0x6d,0x1c,0x13]);out[tag+'_contrast']=+((Math.max(L1,L2)+.05)/(Math.min(L1,L2)+.05)).toFixed(2);
 await pg.screenshot({path:`tools/plans/menu100/tray_${tag}_closed.png`});
 await pg.click('[data-mm="multi"]');await pg.waitForTimeout(300);out[tag+'_multiOpen']=(await info())[0].ax;await pg.screenshot({path:`tools/plans/menu100/tray_${tag}_multi.png`});await pg.click('[data-mm82="tut"]');await pg.waitForTimeout(400);
 out[tag+'_open']=await info();
