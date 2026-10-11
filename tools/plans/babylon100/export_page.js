@@ -2,9 +2,10 @@
    GLADIATORS: the real rig92 token engine (assets/tok93.js + assets/three93.js + the pre-baked printed gear assets/gear100.js) builds a
    figure, wears a class kit and takes the armed stand; every visible mesh (skinned body, shells, baked gear, weapons) is then BAKED to
    world space on the CPU (SkinnedMesh.getVertexPosition), coloured per vertex (vertex colour × material colour, the skin's cavity ink),
-   masked-out shell triangles dropped, outlines/base skipped. Pose B = the same stand breathing (chest/head a few degrees, pelvis 8 mm
-   lower) with the SAME vertex order, so Babylon can blend A↔B as a morph target (the idle).
-   BEASTS: look100/beast3_rig.js (fetched, + one export line, imported as a blob module) sculpts idle0..idle3 frames (flipbook idle).
+   masked-out shell triangles dropped, outlines/base skipped. The SKIN comes along: rig92's bones (their matrices at this pose = the bind
+   pose) + every vertex's own bone indices/weights (rigid helmets/weapons = 100% on the bone they ride), so Babylon animates it on the GPU.
+   BEASTS: look100/beast3_rig.js (fetched, + one export line, imported as a blob module) sculpts idle0 + its joint list (JL); export.js
+   skins it to those joints (nearest bone segments) — one skeleton per species.
    Units out: TILES (1 tile = 31.75 mm of the mini: the 25.4 mm base is 0.8 tile), y up, figure facing +z. */
 (function () {
   const T = window.THREE93, LIB = window.TOK93LIB(T);
@@ -17,7 +18,10 @@
   /* one posed figure → {pos(Float32, tiles), col(Float32 linear), idx(Uint32), src:[mesh names]} */
   function bakeFigure(api) {
     const root = api.turn; root.updateMatrixWorld(true); const B = api.B;
-    const P = [], C = [], I = []; const names = [];
+    const P = [], C = [], I = [], SJ = [], SW = []; const names = [];
+    /* the skeleton: rig92's bones by key; every vertex keeps its own skin weights (rigid bits = 100% on the bone they ride) */
+    const keys = Object.keys(api.rig.bones), boneIx = new Map(keys.map((k, i) => [api.rig.bones[k], i]));
+    const rigidBone = (o) => { for (let p = o.parent; p; p = p.parent) if (boneIx.has(p)) return boneIx.get(p); return boneIx.get(api.rig.bones.pe); };
     const v = new T.Vector3();
     const k = MMPM / TILE_MM;
     root.traverse(o => {
@@ -30,12 +34,15 @@
       const ca = g.attributes.color, ma = g.attributes.mask, cav = g.attributes.cav;
       const mc = m.color ? m.color : new T.Color(1, 1, 1); const vc = !!(m.vertexColors && ca);
       const base = P.length / 3; names.push(o.name || o.type);
+      const si = o.isSkinnedMesh && g.attributes.skinIndex, sw = o.isSkinnedMesh && g.attributes.skinWeight, rb = si ? 0 : rigidBone(o);
+      const gmap = si ? o.skeleton.bones.map(b => boneIx.has(b) ? boneIx.get(b) : rigidBone(b)) : null;
       for (let i = 0; i < n; i++) {
         o.getVertexPosition(i, v); v.applyMatrix4(o.matrixWorld);
         P.push(v.x * k, v.y * k, v.z * k);
         let r = mc.r, gg = mc.g, b = mc.b; if (vc) { r *= ca.getX(i); gg *= ca.getY(i); b *= ca.getZ(i); }
         if (cav) { const c = cav.getX(i); const d = 1 - 0.26 * smooth(0.16, 0.28, c); r *= d; gg *= d; b *= d; const ink = smooth(0.5, 0.58, c) * 0.92; r += (0.011 - r) * ink; gg += (0.007 - gg) * ink; b += (0.006 - b) * ink; }
         C.push(r, gg, b);
+        if (si) for (let q = 0; q < 4; q++) { SJ.push(gmap[si.getComponent(i, q)] || 0); SW.push(sw.getComponent(i, q)); } else SJ.push(rb, 0, 0, 0), SW.push(1, 0, 0, 0);
       }
       const ix = g.index ? g.index.array : null; const nt = ix ? ix.length / 3 : n / 3;
       for (let t = 0; t < nt; t++) {
@@ -44,7 +51,10 @@
         I.push(base + a, base + bb, base + c);
       }
     });
-    return { pos: new Float32Array(P), col: new Float32Array(C), idx: new Uint32Array(I), names };
+    /* each bone's matrix in tile space at THIS pose (the posed mesh is the bind pose) + its parent */
+    const bones = keys.map(kk => { const bn = api.rig.bones[kk]; bn.updateWorldMatrix(true, false); const W = new T.Matrix4().makeScale(k, k, k).multiply(bn.matrixWorld);
+      let par = -1; for (let p = bn.parent; p; p = p.parent) if (boneIx.has(p)) { par = boneIx.get(p); break; } return { k: kk, par, m: W.elements.slice() }; });
+    return { pos: new Float32Array(P), col: new Float32Array(C), idx: new Uint32Array(I), sj: new Uint16Array(SJ), sw: new Float32Array(SW), bones, names };
   }
 
   window.EXP = {
@@ -54,12 +64,7 @@
       const api = API; const t0 = performance.now();
       api.apply({ look, gear, pose: api.standFor(gear) });
       const A = bakeFigure(api);
-      const sp = api.joint('sp'), ch = api.joint('ch'), he = api.joint('he'), off = api.offset();
-      api.setJoint('sp', [sp[0] + 3, sp[1], sp[2]]); api.setJoint('ch', [ch[0] - 4, ch[1] + 3, ch[2]]); api.setJoint('he', [he[0] + 4, he[1] + 9, he[2]]);
-      api.setOffset([off[0], off[1] - 8, off[2]]);
-      const Bf = bakeFigure(api);
-      if (Bf.pos.length !== A.pos.length) throw new Error('pose B changed the vertex count');
-      return { pos: b64(A.pos), posB: b64(Bf.pos), col: b64(A.col), idx: b64(A.idx), nv: A.pos.length / 3, nt: A.idx.length / 3, names: A.names, ms: Math.round(performance.now() - t0) };
+      return { pos: b64(A.pos), col: b64(A.col), idx: b64(A.idx), sj: b64(A.sj), sw: b64(A.sw), bones: A.bones, nv: A.pos.length / 3, nt: A.idx.length / 3, names: A.names, ms: Math.round(performance.now() - t0) };
     },
     async beast(key, frames) {
       if (!window.__B3) {
@@ -73,7 +78,8 @@
       /* scale to tiles: long bases are drawn 1.1 tile long, the figure ×sc on it (look100 round 2 board rule); round bases 0.8 tile */
       const k = (B.base[0] > 30 ? 1.1 / B.base[0] : 0.8 / 25.4) * (B.sc || 1);
       for (const n of frames) { const f = all.find(x => x.n === n); const r = M.meshOf(M.quad(S, f, COL), S.h); const p = r.geo.attributes.position.array; const pos = new Float32Array(p.length); for (let i = 0; i < p.length; i++) pos[i] = p[i] * k;
-        out.push({ n, pos: b64(pos), col: b64(new Float32Array(r.geo.attributes.color.array)), idx: b64(new Uint32Array(r.geo.index.array)), nv: r.verts, nt: r.tris }); }
+        const joints = M.JL.map(j => ({ n: j.n, par: j.par || null, p: j.p.map(v => v * k) }));
+        out.push({ n, joints, pos: b64(pos), col: b64(new Float32Array(r.geo.attributes.color.array)), idx: b64(new Uint32Array(r.geo.index.array)), nv: r.verts, nt: r.tris }); }
       return { key, base: [B.base[0] > 30 ? 1.1 : 0.8, B.base[0] > 30 ? 1.1 * B.base[1] / B.base[0] : 0.8], rim: B.rim, frames: out, ms: Math.round(performance.now() - t0) };
     },
   };
