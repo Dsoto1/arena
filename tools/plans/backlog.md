@@ -243,3 +243,6 @@ RANKED/ONLINE IMPROVEMENTS (his 2a: ALL 8, with the server batch): 1 hidden skil
 ONLINE SIDELINING (his 3a, all four): cosmetic pauses (clean-up show, chest/spawn/market reveals) short, same length on every screen, never counted against a timer ·
 turn clock independent of each viewer's Speed · Ranked rooms show "Digital rules ◆" · Fortuna's Bounty / stands actions only ticket holders in the timed group turn;
 Tactics online-rules page lists what is offline-only (missio, festivals, tournaments, hot seat, lessons).
+MANAGER WORLD TABS (his 1a 2a 3a 4a, 2026-10-11): mock first (tools/plans/mock100/world.html) — one shell; News = Forum Wall with the Acta pinned; League = Standings with all columns
++ house card; Imperium = clickable map + city cards; Trophies = Tituli hall; Season = Calendar of 12 week tablets + LOOK UP TO TWO SEASONS AHEAD (his add).
+FIX (his 2026-10-11): recruiting cards always say "his/him" — use the fighter's sex everywhere in Manager (whole strings per sex for i18n). Building (tv100g2).
