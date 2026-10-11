@@ -360,3 +360,59 @@ Their result still carries the FULL sheet (`png/meta/rows`), plus `parts`.
 3. **Commodus's lion face:** a) as is · b) the lion's jaw higher, so more of his face shows · c) bigger still, so it reads at zoom ×1
 4. **Zora's pillar chunk:** a) as is (grey drum, broken top) · b) a lower drum · c) marble-white like the arena's pillars in the lighter themes
 5. **Split every beast whose actions widen the cell** (the lions are done; bears, croc and wolves next)? a) yes · b) only if the menu/board needs the memory · c) no
+
+# Round 5: his round-4 answers (1b cape closer + darker linen · 2b bigger clasp discs, no chain · 3a Commodus's lion jaw lifted · 4a Zora as is · 5a no more splits)
+
+These are pictures only, not game code. Nothing in `src/`, `assets/`, `tools/art/` or the tests was touched. The `beast5_*` files are copies of round 4 with the changes.
+`tools/art/mm100/make.js` now picks `beast5_rig.js` + `beast5_hum.js` (the newest pair). Both still expose `BEAST300` / `LOOK100.humanoid3`.
+
+## What changed
+| beast | round 5 |
+|---|---|
+| **Tholo** (1b) | The cape hangs CLOSER: 4 cm off the body in idle and walk (round 4: 7 cm). Its top edge sits nearer the shoulder blades and a little higher, and it is narrower at the top (gathered at the clasps) and flares to the hem, so from behind it tapers instead of reading as a box. It is now a DARKER LINEN `#b9a582` (was ivory `#efe7d2`). In the swing and hit frames the cloth keeps 7 cm, with an extra collision capsule across the shoulder blades. **Every frame was checked, 23 frames × 8 facings: no red tunic shows through the cape.** |
+| **Tholo clasps** (2b) | Discs ~1.5× bigger (radius 0.10, was 0.066) in a brighter bronze `#e0aa48`, with a thick dark rim and a raised pale boss. **No chain.** At zoom ×1 they read as two gold rounds on his shoulders from the front and three-quarter views (see `beast5_board.png`, "Tholo (front)"). From straight behind only their edges show. |
+| **Commodus** (3a) | The lion head keeps its round-4 size but sits 4.5 cm higher and 3 cm further back on his crown. On top of that, the upper jaw is lifted another 3.5 cm (nose, whisker pads, lip line, fangs), and the nose bridge is flatter. From the board camera his own mouth, beard and chin now show under the jaw. Round 4 showed only a pale strip. |
+| **Zora** (4a + the cheap fix) | Unchanged look. In the fall frames, a wing whose tip would dip under the base is now raised about the shoulder until it clears the base top. Because no wing reaches below the base any more, the cell shrank from 110×141 to 110×130. |
+| others | Unchanged. The snakes keep their round-4 sheets, Leo round 3, and the rest round 2. |
+
+## Board composite (his note: round 4's board looked like round 3's)
+In round 4 the board did use the new sprites, but it turned Tholo to the front, which hides the cape, and drew Commodus too small to tell. `beast5_board.png` now:
+- turns the changed figures to a facing that SHOWS the change: Tholo from the back (cape), a SECOND Tholo from the front (clasps), Commodus at three-quarter front (his face under the lion) and Zora side-on;
+- prints which round each sprite comes from under its name.
+
+## Files
+| file | what |
+|---|---|
+| `beast5_r4_vs_r5.webp` | round 4 above round 5: Zora, Tholo and Commodus (idle, 8 facings; Tholo and Commodus ×1.4, plus walk) |
+| `beast5_board.png` | every beast + two ×1.15 gladiators on the real board, with round tags; Tholo back + front |
+| `beast5_close_tholo.png` | Tholo ×2.4: idle, walk2, attack1–3, hit0–1 × facings 0 1 3 4 5 7 (front, three-quarter, back, swing) |
+| `beast5_close_commodus.png` | Commodus face ×4: round 4 (top) vs round 5: idle, walk, attack, hit × 5 facings |
+| `beast5_close_zora.png` | Zora ×2.5, die0–4 × 6 facings (the wing fix) |
+| `beast5_cape_frames.png`, `beast5_clip_cape.webp` | Tholo walk0–5 at four facings; Tholo walking two tiles (48 × 40 ms, 195 KB) |
+| `beast5_strip_<zora|tholo|commodus>.png` | animation strips (facings 1 and 3) |
+| `beast5_<tholo|tholo_act|commodus|commodus_act|zora>_sheet.webp` | game-format sheets (the same split as round 4) |
+| `beast5_rig.js/.html`, `beast5_make.js`, `beast5_comp.js`, `beast5_hum.js/.html`, `beast5_humanoid.js`, `beast5_report.json` (incl. `memory`), `beast5_hum.json` | how it was made |
+
+**Re-run** with `LOOK_SCRATCH` set to any scratch folder:
+1. `node tools/plans/look100/beast5_make.js render zora` (~1 min)
+2. `node tools/plans/look100/beast5_humanoid.js` (~10–15 min under load)
+3. `node tools/plans/look100/beast5_make.js comp`
+
+The comparison side comes from the committed round-4 sheets. Tholo and Commodus are rebuilt there from their two `beast4_*` parts.
+
+## Memory (`beast5_report.json` → `memory`)
+| beast | round 4 | round 5 |
+|---|---|---|
+| tholo idle+walk / actions | 126×152, 246 KB, 5.84 MB / 212×228, 314 KB, 19.2 MB | same cells, 245 KB / 316 KB, same MB |
+| commodus idle+walk / actions | 112×147, 232 KB, 5.02 MB / 182×203, 312 KB, 14.7 MB | 112×150 (the raised lion head), 234 KB, 5.13 MB / same, 315 KB |
+| zora | 110×141, 311 KB, 10.9 MB (idle+walk 4.73) | 110×130, 312 KB, **10.0 MB** (idle+walk 4.36) |
+
+## What still falls short
+1. From straight behind, the clasps show only as small gold edges on the shoulder tops. They read from the front and three-quarter views.
+2. The cape is close in idle and walk but keeps 7 cm in the swing frames, so it stands off a little more as an attack starts. Within one animation you can't see it; between animations it is a small jump.
+3. Commodus's face shows, but at zoom ×1 it is mostly his beard and mouth under the lion; his eyes stay in the jaw's shadow.
+
+## Open questions (multiple choice)
+1. **Clasps from behind:** a) as is · b) tilt them back so they also read from behind
+2. **The cape in the swing frames:** a) as is (7 cm, never shows red) · b) 4 cm there too, accepting a possible fleck (none seen at 4 cm in idle/walk)
+3. **Commodus:** a) as is · b) lift the lion higher still, so his eyes show (it then sits more like a hat)

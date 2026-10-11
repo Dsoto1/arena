@@ -1,0 +1,381 @@
+{
+ "beasts": {
+  "zora": {
+   "key": "zora",
+   "meta": [
+    110,
+    130,
+    55,
+    98.5,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 82501,
+   "sculptMs": 22938,
+   "renderMs": 59347,
+   "tris": 36796,
+   "verts": 18313,
+   "h": 0.32,
+   "kb": 311.6,
+   "decodedMB": 10.04,
+   "idleWalkMB": 4.36,
+   "frames": 23,
+   "parts": [],
+   "pxmm": 3.143,
+   "sc": 0.828
+  },
+  "tholo": {
+   "key": "tholo",
+   "meta": [
+    212,
+    228,
+    106,
+    141.6,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 723945,
+   "clothMs": 69,
+   "kb": 529.6,
+   "parts": [
+    {
+     "name": "tholo",
+     "meta": [
+      126,
+      152,
+      63,
+      120.6,
+      10
+     ],
+     "rows": [
+      "idle0",
+      "idle1",
+      "idle2",
+      "idle3",
+      "walk0",
+      "walk1",
+      "walk2",
+      "walk3",
+      "walk4",
+      "walk5"
+     ],
+     "kb": 245.2,
+     "decodedMB": 5.84
+    },
+    {
+     "name": "tholo_act",
+     "meta": [
+      212,
+      228,
+      106,
+      141.6,
+      13
+     ],
+     "rows": [
+      "attack0",
+      "attack1",
+      "attack2",
+      "attack3",
+      "attack4",
+      "hit0",
+      "hit1",
+      "hit2",
+      "die0",
+      "die1",
+      "die2",
+      "die3",
+      "die4"
+     ],
+     "kb": 315.5,
+     "decodedMB": 19.18
+    }
+   ],
+   "decodedMB": 33.93,
+   "idleWalkMB": 14.75,
+   "frames": 23,
+   "pxmm": 3.143
+  },
+  "commodus": {
+   "key": "commodus",
+   "meta": [
+    182,
+    203,
+    91,
+    129.6,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 483196,
+   "clothMs": 32,
+   "kb": 562.9,
+   "parts": [
+    {
+     "name": "commodus",
+     "meta": [
+      112,
+      150,
+      56,
+      118.6,
+      10
+     ],
+     "rows": [
+      "idle0",
+      "idle1",
+      "idle2",
+      "idle3",
+      "walk0",
+      "walk1",
+      "walk2",
+      "walk3",
+      "walk4",
+      "walk5"
+     ],
+     "kb": 234.3,
+     "decodedMB": 5.13
+    },
+    {
+     "name": "commodus_act",
+     "meta": [
+      182,
+      203,
+      91,
+      129.6,
+      13
+     ],
+     "rows": [
+      "attack0",
+      "attack1",
+      "attack2",
+      "attack3",
+      "attack4",
+      "hit0",
+      "hit1",
+      "hit2",
+      "die0",
+      "die1",
+      "die2",
+      "die3",
+      "die4"
+     ],
+     "kb": 314.9,
+     "decodedMB": 14.66
+    }
+   ],
+   "decodedMB": 25.93,
+   "idleWalkMB": 11.28,
+   "frames": 23,
+   "pxmm": 3.143
+  }
+ },
+ "diag": {},
+ "cape": {
+  "n": 48,
+  "ms": 40,
+  "tiles": [
+   5,
+   4
+  ],
+  "w": 248,
+  "h": 274,
+  "scale": 1.417,
+  "kb": 194.8
+ },
+ "placed": [
+  "glad2",
+  "tholo",
+  "arenosus",
+  "zora",
+  "leaena",
+  "croc",
+  "spider",
+  "ursa",
+  "brutum",
+  "leo",
+  "commodus",
+  "boar",
+  "valencia",
+  "moechus",
+  "glykon",
+  "tholo2",
+  "glad"
+ ],
+ "memory": {
+  "tholo": {
+   "round4": [
+    {
+     "part": "tholo",
+     "cell": [
+      126,
+      152
+     ],
+     "kb": 246.3,
+     "decodedMB": 5.84
+    },
+    {
+     "part": "tholo_act",
+     "cell": [
+      212,
+      228
+     ],
+     "kb": 314.3,
+     "decodedMB": 19.18
+    }
+   ],
+   "round5": [
+    {
+     "part": "tholo",
+     "cell": [
+      126,
+      152
+     ],
+     "kb": 245.2,
+     "decodedMB": 5.84
+    },
+    {
+     "part": "tholo_act",
+     "cell": [
+      212,
+      228
+     ],
+     "kb": 315.5,
+     "decodedMB": 19.18
+    }
+   ]
+  },
+  "commodus": {
+   "round4": [
+    {
+     "part": "commodus",
+     "cell": [
+      112,
+      147
+     ],
+     "kb": 231.5,
+     "decodedMB": 5.02
+    },
+    {
+     "part": "commodus_act",
+     "cell": [
+      182,
+      203
+     ],
+     "kb": 311.5,
+     "decodedMB": 14.66
+    }
+   ],
+   "round5": [
+    {
+     "part": "commodus",
+     "cell": [
+      112,
+      150
+     ],
+     "kb": 234.3,
+     "decodedMB": 5.13
+    },
+    {
+     "part": "commodus_act",
+     "cell": [
+      182,
+      203
+     ],
+     "kb": 314.9,
+     "decodedMB": 14.66
+    }
+   ]
+  },
+  "zora": {
+   "round4": {
+    "cell": [
+     110,
+     141
+    ],
+    "kb": 311.1,
+    "decodedMB": 10.89,
+    "idleWalkMB": 4.73
+   },
+   "round5": {
+    "cell": [
+     110,
+     130
+    ],
+    "kb": 311.6,
+    "decodedMB": 10.04,
+    "idleWalkMB": 4.36
+   }
+  },
+  "note": "decoded = cells x w x h x 4 bytes; the unchanged beasts are as in beast4_report.json memory"
+ }
+}
