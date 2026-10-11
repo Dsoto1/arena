@@ -28,7 +28,7 @@
 
 ## Approved, not started
 - **Built from the approved mock-ups:**
-  - **Play Now:** sandstone, "your turn" ribbon, centred window / phone bottom sheet, carbon-black danger slab.
+  - **Play Now:** sandstone, "your turn" ribbon, centred window / phone bottom sheet, carbon-black danger slab, plus the event chooser as a card carousel.
   - **Bubbles:** in the page except when zoomed, italics for thoughts, name plate with 2+, none at Fast. Only if speed holds.
   - **Lobby:** 8 compact seats, short room code, Glory medals, user list to the bottom, goofy taunts (server phrases).
   - **My Ludus:**

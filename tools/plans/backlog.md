@@ -260,3 +260,4 @@ MAP INTEGRATION (his "all 7", 2026-10-11): small map insets inside existing flow
 4 the Annals Road (Play Now) box drawn on the real empire map: 12 arenas in Road order, won ones ticked, next lit, gladiator token on his city (his a) · 5 League house card · 6 programmata city picking · 7 Calendar hover. Imperium tab stays optional.
 SPECTATE → LOBBY BROWSER (his a): sub-tabs ⚔ Rooms · 👁 Live matches · 👥 Online now; the Spectate tab goes; Live = every match in progress with 👁 Watch / 🎟 Ticket.
 BABYLON: whatever the prototype shows, any Babylon work is a LATER release (his note 2026-10-11).
+QUEUE wave 5 (Play Now) explicitly includes: the sandstone mock A1–A5 AND the event card CAROUSEL for the event chooser (V99 2b) — confirmed in line (his note 2026-10-11).
