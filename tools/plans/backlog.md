@@ -169,3 +169,4 @@ MAIN MENU SHOW (his question 2026-10-11): today mmFig/mmShow2 (08-setup) slide/t
 BRIEFING (his 1c 2a 3a 4a 5a): portrait + token round, new Flavius opening lines, rule cards always shown BUT no digital-only rules there (they stay in Tactics), reopen = same window with NOW/done rounds, "Enter the arena".
 ARENA LOOK (his notes 2026-10-11): a railing along the near stands (the faint black line), new stone textures to fit the v1.0 looks → arena look test (tools/plans/look100/arena_*).
 3D round 7 answers (his 1a2b3a4b): tassets stay, merge meshes per figure, hide old harness belt under sculpted belts, next = in-game token modeller pipeline (round 8 = preview build, not merged). BUG his: scutum rotated again + elbow through → fix + automatic check in make.
+Tassets: his change — DO update (three plates on straps, gap at the bottom) in round 8.
