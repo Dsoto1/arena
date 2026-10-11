@@ -304,7 +304,7 @@ async function cpuUseItems(player) {
           use = enemiesOf(player).some(other => cheb(player, other) <= 2) && RD().pvp || S.npcs.some(n => n.alive && n.tamedBy == null && cheb(player, n) <= 2);
           break;
         case 'lure':
-          use = player.diff !== 'easy' && S.npcs.some(n => n.alive && n.aggro === player.id && n.t !== 'zora') && enemiesOf(player).some(other => cheb(player, other) <= 4);
+          use = player.diff !== 'easy' && S.npcs.some(n => lureOK100(n) && n.aggro === player.id) && enemiesOf(player).some(other => cheb(player, other) <= 4);
           break;
         case 'lyre':
         case 'tame':
@@ -318,12 +318,12 @@ async function cpuUseItems(player) {
         // reactions (Omnia, Fidelis, Minerva) and market cards are played elsewhere
       }
       if (k === 'lure' && use) {
-        const n = S.npcs.find(n => n.alive && n.aggro === player.id && n.t !== 'zora');
+        const n = S.npcs.find(n => lureOK100(n) && n.aggro === player.id);
         const q = enemiesOf(player).filter(other => cheb(player, other) <= 4).sort((a, b) => cheb(n, a) - cheb(n, b))[0];
         if (n && q) {
           player.items = player.items.filter(x => x !== it);
-          n.tamedBy = null;
           log(_T`${nm(player)} throws a Meat Lure at ${nm(q)}.`, 'big');
+          breakBond100(n);
           setAggro(n, q, 'lure');
           bumpRel(q, player, -25, _T('meat lure'));
           cardShow('c:lure', player);

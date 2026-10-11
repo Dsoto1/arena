@@ -2770,7 +2770,7 @@ const CARDS = {
   lure: {
     n: 'Meat Lure',
     type: 'declare',
-    d: _T('Throw a meat lure (range 4): aggro any 1 NPC in play onto another player. Works on Tholo; breaks a tame bond.'),
+    d: _T('Throw a meat lure (range 4): aggro any 1 NPC in play onto another player. Works on any beast but Commodus and humanoids; breaks a tame bond.'),
     q: _T('Accept without conceit, relinquish without reluctance'),
     img: 23
   },
@@ -2807,7 +2807,7 @@ const CARDS = {
   ursa: {
     n: 'Ursa Aggros You!',
     type: 'instant',
-    d: _T("Ursa's aggro token moves to you. If Ursa is already eliminated or tamed, gain 2 CF."),
+    d: _T("Ursa's aggro token moves to you and breaks any tame bond. If Ursa is already eliminated, gain 2 CF."),
     q: _T('Devote yourself to inevitable death'),
     img: 28,
     bear: _T('Ursa')
@@ -2815,7 +2815,7 @@ const CARDS = {
   brutum: {
     n: 'Brutum Aggros You!',
     type: 'instant',
-    d: _T("Brutum's aggro token moves to you. If Brutum is already eliminated or tamed, gain 2 CF."),
+    d: _T("Brutum's aggro token moves to you and breaks any tame bond. If Brutum is already eliminated, gain 2 CF."),
     q: _T('Devote yourself to inevitable death'),
     img: 29,
     bear: _T('Brutum')
@@ -6439,6 +6439,19 @@ async function lyreControl(player) {
     checkEnd();
   }
 }
+/* v1.0 tame bonds: lureOK100 — the Meat Lure works on any live beast but Zora, Commodus, custom humanoids and human NPCs (Tholo stays lurable: open question). breakBond100 — a bond ends: the beast turns wild, one log line. */
+function lureOK100(n) {
+  if (!n || !n.alive || n.t === 'zora' || n.t === 'commodus') return false;
+  if (n.t === 'tholo') return true;
+  return !(typeof hum95ally === 'function' && hum95ally(n.t));
+}
+function breakBond100(n) {
+  if (!n || n.tamedBy == null) return false;
+  const o = S.players[n.tamedBy];
+  n.tamedBy = null;
+  log(_T`🐾 ${n.name} breaks free of ${o ? nm(o) : '?'}!`, 'bad');
+  return true;
+}
 // Aggro: each NPC holds at most one aggro target, always the most recent player to attack, push or lure it.
 function setAggro(npc, player, why) {
   if (!npc || !npc.alive || npc.tamedBy != null || !player) return;
@@ -6726,10 +6739,11 @@ async function resolveDrawn(player, k) {
       {
         const n = S.npcs.find(n => (n.key || n.name) === C.bear);
         reveal();
-        if (!n || !n.alive || n.tamedBy != null) {
+        if (!n || !n.alive) {
           player.cf += 2;
-          log(_T`${beastName(C.bear)} is gone or tamed: ${nm(player)} gains ${cfAmt87(2)} instead.`);
+          log(_T`${beastName(C.bear)} is gone: ${nm(player)} gains ${cfAmt87(2)} instead.`);
         } else {
+          breakBond100(n);
           n.aggro = null;
           setAggro(n, player, 'card');
         }
@@ -6928,7 +6942,7 @@ async function useItem(player, it) {
       return false;
     case 'lure':
       {
-        const n = await pickNPC(player, _T('Meat Lure'), n => n.alive && n.t !== 'zora', _T('Choose the NPC to lure.'));
+        const n = await pickNPC(player, _T('Meat Lure'), lureOK100, _T('Choose the NPC to lure.'));
         if (!n) return false;
         const targets = activePlayers().filter(other => other !== player && !other.underground && cheb(player, other) <= 4);
         if (!targets.length) {
@@ -6948,9 +6962,8 @@ async function useItem(player, it) {
           q = S.players[id];
         }
         if (!q) return false;
-        if (n.tamedBy != null) log(_T`The tame bond between ${S.players[n.tamedBy].name} and ${n.name} is severed.`, 'bad');
-        n.tamedBy = null;
         log(_T`${nm(player)} throws a Meat Lure at ${nm(q)}.`, 'big');
+        breakBond100(n);
         setAggro(n, q, 'lure');
         bumpRel(q, player, -25, _T('meat lure'));
         break;
@@ -9600,7 +9613,7 @@ async function cpuUseItems(player) {
           use = enemiesOf(player).some(other => cheb(player, other) <= 2) && RD().pvp || S.npcs.some(n => n.alive && n.tamedBy == null && cheb(player, n) <= 2);
           break;
         case 'lure':
-          use = player.diff !== 'easy' && S.npcs.some(n => n.alive && n.aggro === player.id && n.t !== 'zora') && enemiesOf(player).some(other => cheb(player, other) <= 4);
+          use = player.diff !== 'easy' && S.npcs.some(n => lureOK100(n) && n.aggro === player.id) && enemiesOf(player).some(other => cheb(player, other) <= 4);
           break;
         case 'lyre':
         case 'tame':
@@ -9614,12 +9627,12 @@ async function cpuUseItems(player) {
         // reactions (Omnia, Fidelis, Minerva) and market cards are played elsewhere
       }
       if (k === 'lure' && use) {
-        const n = S.npcs.find(n => n.alive && n.aggro === player.id && n.t !== 'zora');
+        const n = S.npcs.find(n => lureOK100(n) && n.aggro === player.id);
         const q = enemiesOf(player).filter(other => cheb(player, other) <= 4).sort((a, b) => cheb(n, a) - cheb(n, b))[0];
         if (n && q) {
           player.items = player.items.filter(x => x !== it);
-          n.tamedBy = null;
           log(_T`${nm(player)} throws a Meat Lure at ${nm(q)}.`, 'big');
+          breakBond100(n);
           setAggro(n, q, 'lure');
           bumpRel(q, player, -25, _T('meat lure'));
           cardShow('c:lure', player);

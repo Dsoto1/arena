@@ -626,6 +626,19 @@ async function lyreControl(player) {
     checkEnd();
   }
 }
+/* v1.0 tame bonds: lureOK100 — the Meat Lure works on any live beast but Zora, Commodus, custom humanoids and human NPCs (Tholo stays lurable: open question). breakBond100 — a bond ends: the beast turns wild, one log line. */
+function lureOK100(n) {
+  if (!n || !n.alive || n.t === 'zora' || n.t === 'commodus') return false;
+  if (n.t === 'tholo') return true;
+  return !(typeof hum95ally === 'function' && hum95ally(n.t));
+}
+function breakBond100(n) {
+  if (!n || n.tamedBy == null) return false;
+  const o = S.players[n.tamedBy];
+  n.tamedBy = null;
+  log(_T`🐾 ${n.name} breaks free of ${o ? nm(o) : '?'}!`, 'bad');
+  return true;
+}
 // Aggro: each NPC holds at most one aggro target, always the most recent player to attack, push or lure it.
 function setAggro(npc, player, why) {
   if (!npc || !npc.alive || npc.tamedBy != null || !player) return;
@@ -913,10 +926,11 @@ async function resolveDrawn(player, k) {
       {
         const n = S.npcs.find(n => (n.key || n.name) === C.bear);
         reveal();
-        if (!n || !n.alive || n.tamedBy != null) {
+        if (!n || !n.alive) {
           player.cf += 2;
-          log(_T`${beastName(C.bear)} is gone or tamed: ${nm(player)} gains ${cfAmt87(2)} instead.`);
+          log(_T`${beastName(C.bear)} is gone: ${nm(player)} gains ${cfAmt87(2)} instead.`);
         } else {
+          breakBond100(n);
           n.aggro = null;
           setAggro(n, player, 'card');
         }
@@ -1115,7 +1129,7 @@ async function useItem(player, it) {
       return false;
     case 'lure':
       {
-        const n = await pickNPC(player, _T('Meat Lure'), n => n.alive && n.t !== 'zora', _T('Choose the NPC to lure.'));
+        const n = await pickNPC(player, _T('Meat Lure'), lureOK100, _T('Choose the NPC to lure.'));
         if (!n) return false;
         const targets = activePlayers().filter(other => other !== player && !other.underground && cheb(player, other) <= 4);
         if (!targets.length) {
@@ -1135,9 +1149,8 @@ async function useItem(player, it) {
           q = S.players[id];
         }
         if (!q) return false;
-        if (n.tamedBy != null) log(_T`The tame bond between ${S.players[n.tamedBy].name} and ${n.name} is severed.`, 'bad');
-        n.tamedBy = null;
         log(_T`${nm(player)} throws a Meat Lure at ${nm(q)}.`, 'big');
+        breakBond100(n);
         setAggro(n, q, 'lure');
         bumpRel(q, player, -25, _T('meat lure'));
         break;

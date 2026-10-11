@@ -1008,6 +1008,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   auto-placed (distributeHP 4th arg), eagle/CF offerings earn in no-CF rounds (04/133 edits), tamed beasts move AND attack either order (07-ui S.cmd.attacked),
   tame/lyre pickers show token rounds, tunnel exits with a bright edge, Studio 3D tokens ×0.88 (T99B.t93k), Zora figure image assets/zora99.webp (his TTS model,
   rendered with tools/plans/fix99b/zshot.js on the v0.72 render page). Test `tv99q`; shots tools/plans/fix99b/.
+- **v1.0 TAME BONDS (04-rules lureOK100/breakBond100, 02-data card texts; test tv100t):** a bond (n.tamedBy) breaks when the Meat Lure is played on the beast (any live beast except Zora, Commodus, custom humanoids via hum95ally; Tholo still lurable, open question) or an Ursa/Brutum card is drawn (only that bear; any owner's bond; the bear goes aggro on the drawer, CF fallback only when the bear is gone). One log line "🐾 <beast> breaks free of <owner>!"; the CPU lure (06-ai) uses the same helpers.
 - **v1.0 3D GEAR (276-v100gear + tools/art/rig92, his look100 rounds 2–8 + pick c):** rig92 = the promoted look-test body/gear/rig + sculpt.js
   (SDF sculpts, build time only) + gear8.js (decode/skin/mirror/merge the bake, one mesh + one outline, sculpted belts hide the harness belt) +
   hold.js (his card weapons in the fist, sword 15° straight wrist, armed stand `api.standFor`, scutum round 8 + `api.shieldCheck`). Printed pieces
