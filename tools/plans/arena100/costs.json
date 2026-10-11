@@ -1,0 +1,52 @@
+{
+ "desktop_4": {
+  "on": {
+   "cached": 8.3,
+   "rebuild": 93.6
+  },
+  "off": {
+   "cached": 8.9,
+   "rebuild": 60.2
+  }
+ },
+ "desktop_5": {
+  "on": {
+   "cached": 9.6,
+   "rebuild": 163.3
+  },
+  "off": {
+   "cached": 14.8,
+   "rebuild": 168.3
+  }
+ },
+ "desktop_6": {
+  "on": {
+   "cached": 5.6,
+   "rebuild": 87.7
+  },
+  "off": {
+   "cached": 16.8,
+   "rebuild": 110.1
+  }
+ },
+ "desktop_9": {
+  "on": {
+   "cached": 17.5,
+   "rebuild": 87.7
+  },
+  "off": {
+   "cached": 19.7,
+   "rebuild": 179.3
+  }
+ },
+ "phone6": {
+  "on": {
+   "cached": 9.7,
+   "rebuild": 191.8
+  },
+  "off": {
+   "cached": 15.9,
+   "rebuild": 276.4
+  }
+ }
+}
