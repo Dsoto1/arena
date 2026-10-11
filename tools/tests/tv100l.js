@@ -13,13 +13,13 @@ const open=async(W,H,off)=>{const pg=await b.newPage({viewport:{width:W,height:H
   await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:30000});
   await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
     const w=W_(),pm=me(),ros=rosterOf(pm);w.welc99=1;ros[0].inj={until:w.week+2,label:'a gashed thigh',pen:3};pm.perkPts=2;w.train='off';ros[1].fat=10;ros[2].fat=45;ros[3].fat=75;
-    w.night.bouts.forEach((b,i)=>{b.ents=b.ents.filter(id=>!ros.some(g=>g.id===id));b.ents.push(ros[i+1].id)});
+    w.night.bouts.filter(b=>b.tier!=='spc100'&&!b.any100).forEach((b,i)=>{b.ents=b.ents.filter(id=>!ros.some(g=>g.id===id));b.ents.push(ros[i+1].id)});
     sendLetter(w,{key:'t100clerk',kind:'letter',from:'your clerk',seal:'📜',title:'A note on the wages',body:'<p>Two contracts end soon.</p>',until:w.week});
     for(let k=0;k<5&&CUR_MODAL;k++){CUR_MODAL.done(null);await W8(200)}menuHide();openManager('ludus');await W8(1000);MGR.view=null;MGR.tab='ludus';MGR_REDRAW();await W8(500)});return pg};
 const ev=(pg,f,a)=>pg.evaluate(f,a);
 /* ---------- desktop ---------- */
 const pg=await open(1440,900);
-const A=await ev(pg,()=>{const q=s=>document.querySelector(s);const ban=q('.roomhd.b73-ludus.lu100ban');const card=ban&&ban.querySelector('.lu100mw[data-mg="tab"][data-id="night"]');const chips=card?[...card.querySelectorAll('.bc')]:[];
+const A=await ev(pg,()=>{const q=s=>document.querySelector(s);const ban=q('.roomhd.b73-ludus.lu100ban');const card=ban&&ban.querySelector('.lu100mw[data-mg="tab"][data-id="night"]');const chips=card?[...card.querySelectorAll('.bc')].filter(c=>c.querySelector('u')) /* v1.0: 296 special chips carry no fighter */:[];
   const ros=rosterOf(me());const desk=q('#desk99.lu100tasks');const rows=desk?desk.querySelectorAll('.dk99tw>.dk99row').length:0;const tiles=q('.lu100tiles');
   const dr=desk.getBoundingClientRect(),tr=tiles.getBoundingClientRect();
   return {ban:!!ban&&/Week 1 · Match Week/.test(ban.textContent)&&!!ban.querySelector('.lu100med')&&ban.textContent.includes(String(ludusTodo73())),card:!!card,
