@@ -1,0 +1,956 @@
+{
+ "day": {
+  "name": "day",
+  "viewport": "1440x900",
+  "load": {
+   "htmlMs": 23,
+   "babylonParsedMs": 1430,
+   "firstFrameMs": 4595,
+   "readyMs": 4798,
+   "err": null,
+   "totalKB": 13339,
+   "res": [
+    {
+     "f": "tools/plans/babylon100/arena.js",
+     "kb": 29,
+     "ms": 16
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs/babylon.js",
+     "kb": 8361,
+     "ms": 588
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js",
+     "kb": 389,
+     "ms": 125
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_murmillo.glb",
+     "kb": 964,
+     "ms": 64
+    },
+    {
+     "f": "tools/plans/look100/arena2_tex/6_roma.webp",
+     "kb": 24,
+     "ms": 30
+    },
+    {
+     "f": "assets/flavmood_calm.webp",
+     "kb": 8,
+     "ms": 45
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_thraex.glb",
+     "kb": 992,
+     "ms": 106
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_royalty.glb",
+     "kb": 949,
+     "ms": 14
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_venatore.glb",
+     "kb": 923,
+     "ms": 36
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_leo.glb",
+     "kb": 349,
+     "ms": 26
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_ursa.glb",
+     "kb": 351,
+     "ms": 50
+    }
+   ],
+   "wallMs": 4858
+  },
+  "frames": {
+   "n": 4,
+   "fps": 0.2,
+   "p50": 4748.5,
+   "p95": 4929.6,
+   "max": 4929.6
+  },
+  "babylon": {
+   "fps": 0.9,
+   "frameMs": 11.2,
+   "renderMs": 3.6,
+   "drawCalls": 85,
+   "activeMeshes": 96,
+   "meshes": 108,
+   "materials": 41,
+   "textures": 12,
+   "lights": 2,
+   "skeletons": 6,
+   "animGroups": 6,
+   "tris": 391643,
+   "crowd": 914,
+   "w": 1440,
+   "h": 900,
+   "texMB": 40.6,
+   "heapMB": 53.9,
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "jsHeapMB": 31.2,
+  "rssMB": 746,
+  "load1": [
+   23.49,
+   26.44
+  ],
+  "errs": []
+ },
+ "night": {
+  "name": "night",
+  "viewport": "1440x900",
+  "load": {
+   "htmlMs": 40,
+   "babylonParsedMs": 5440,
+   "firstFrameMs": 40582,
+   "readyMs": 120520,
+   "err": null,
+   "totalKB": 13339,
+   "res": [
+    {
+     "f": "tools/plans/babylon100/arena.js",
+     "kb": 29,
+     "ms": 89
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs/babylon.js",
+     "kb": 8361,
+     "ms": 2118
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js",
+     "kb": 389,
+     "ms": 142
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_murmillo.glb",
+     "kb": 964,
+     "ms": 57
+    },
+    {
+     "f": "tools/plans/look100/arena2_tex/6_roma.webp",
+     "kb": 24,
+     "ms": 150
+    },
+    {
+     "f": "assets/flavmood_calm.webp",
+     "kb": 8,
+     "ms": 150
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_thraex.glb",
+     "kb": 992,
+     "ms": 13
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_royalty.glb",
+     "kb": 949,
+     "ms": 173
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_venatore.glb",
+     "kb": 923,
+     "ms": 42
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_leo.glb",
+     "kb": 349,
+     "ms": 261
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_ursa.glb",
+     "kb": 351,
+     "ms": 45
+    }
+   ],
+   "wallMs": 120774
+  },
+  "frames": {
+   "n": 4,
+   "fps": 0.1,
+   "p50": 8702.1,
+   "p95": 9379.4,
+   "max": 9379.4
+  },
+  "babylon": {
+   "fps": 0.2,
+   "frameMs": 19.7,
+   "renderMs": 9.6,
+   "drawCalls": 85,
+   "activeMeshes": 96,
+   "meshes": 108,
+   "materials": 41,
+   "textures": 12,
+   "lights": 6,
+   "skeletons": 6,
+   "animGroups": 6,
+   "tris": 391643,
+   "crowd": 914,
+   "w": 1440,
+   "h": 900,
+   "texMB": 40.6,
+   "heapMB": 52,
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "jsHeapMB": 30.7,
+  "rssMB": 707,
+  "load1": [
+   42.77,
+   29.86
+  ],
+  "errs": []
+ },
+ "orbit": {
+  "name": "orbit",
+  "viewport": "1440x900",
+  "load": {
+   "htmlMs": 58,
+   "babylonParsedMs": 2372,
+   "firstFrameMs": 7579,
+   "readyMs": 43561,
+   "err": null,
+   "totalKB": 13339,
+   "res": [
+    {
+     "f": "tools/plans/babylon100/arena.js",
+     "kb": 29,
+     "ms": 24
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs/babylon.js",
+     "kb": 8361,
+     "ms": 822
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js",
+     "kb": 389,
+     "ms": 47
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_murmillo.glb",
+     "kb": 964,
+     "ms": 192
+    },
+    {
+     "f": "tools/plans/look100/arena2_tex/6_roma.webp",
+     "kb": 24,
+     "ms": 153
+    },
+    {
+     "f": "assets/flavmood_calm.webp",
+     "kb": 8,
+     "ms": 163
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_thraex.glb",
+     "kb": 992,
+     "ms": 158
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_royalty.glb",
+     "kb": 949,
+     "ms": 150
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_venatore.glb",
+     "kb": 923,
+     "ms": 64
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_leo.glb",
+     "kb": 349,
+     "ms": 128
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_ursa.glb",
+     "kb": 351,
+     "ms": 180
+    }
+   ],
+   "wallMs": 43589
+  },
+  "frames": {
+   "n": 4,
+   "fps": 0.2,
+   "p50": 5252.5,
+   "p95": 6709.7,
+   "max": 6709.7
+  },
+  "babylon": {
+   "fps": 0.4,
+   "frameMs": 30.5,
+   "renderMs": 26,
+   "drawCalls": 87,
+   "activeMeshes": 98,
+   "meshes": 108,
+   "materials": 41,
+   "textures": 12,
+   "lights": 2,
+   "skeletons": 6,
+   "animGroups": 6,
+   "tris": 343708,
+   "crowd": 914,
+   "w": 1440,
+   "h": 900,
+   "texMB": 40.6,
+   "heapMB": 51.7,
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "jsHeapMB": 30.4,
+  "rssMB": 710,
+  "load1": [
+   29.47,
+   39.04
+  ],
+  "errs": []
+ },
+ "persp_night": {
+  "name": "persp_night",
+  "viewport": "1440x900",
+  "load": {
+   "htmlMs": 37,
+   "babylonParsedMs": 4162,
+   "firstFrameMs": 23253,
+   "readyMs": 93931,
+   "err": null,
+   "totalKB": 13339,
+   "res": [
+    {
+     "f": "tools/plans/babylon100/arena.js",
+     "kb": 29,
+     "ms": 14
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs/babylon.js",
+     "kb": 8361,
+     "ms": 1540
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js",
+     "kb": 389,
+     "ms": 108
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_murmillo.glb",
+     "kb": 964,
+     "ms": 144
+    },
+    {
+     "f": "tools/plans/look100/arena2_tex/6_roma.webp",
+     "kb": 24,
+     "ms": 110
+    },
+    {
+     "f": "assets/flavmood_calm.webp",
+     "kb": 8,
+     "ms": 113
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_thraex.glb",
+     "kb": 992,
+     "ms": 150
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_royalty.glb",
+     "kb": 949,
+     "ms": 35
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_venatore.glb",
+     "kb": 923,
+     "ms": 34
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_leo.glb",
+     "kb": 349,
+     "ms": 230
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_ursa.glb",
+     "kb": 351,
+     "ms": 9
+    }
+   ],
+   "wallMs": 93994
+  },
+  "frames": {
+   "n": 4,
+   "fps": 0.1,
+   "p50": 10758.4,
+   "p95": 21884.3,
+   "max": 21884.3
+  },
+  "babylon": {
+   "fps": 0.2,
+   "frameMs": 8.1,
+   "renderMs": 3.6,
+   "drawCalls": 87,
+   "activeMeshes": 98,
+   "meshes": 108,
+   "materials": 41,
+   "textures": 12,
+   "lights": 6,
+   "skeletons": 6,
+   "animGroups": 6,
+   "tris": 343708,
+   "crowd": 914,
+   "w": 1440,
+   "h": 900,
+   "texMB": 40.6,
+   "heapMB": 52.3,
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "jsHeapMB": 31,
+  "rssMB": 718,
+  "load1": [
+   39.52,
+   35.08
+  ],
+  "errs": []
+ },
+ "close": {
+  "name": "close",
+  "viewport": "1440x900",
+  "load": {
+   "htmlMs": 87,
+   "babylonParsedMs": 3038,
+   "firstFrameMs": 17835,
+   "readyMs": 79716,
+   "err": null,
+   "totalKB": 13339,
+   "res": [
+    {
+     "f": "tools/plans/babylon100/arena.js",
+     "kb": 29,
+     "ms": 14
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs/babylon.js",
+     "kb": 8361,
+     "ms": 1372
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js",
+     "kb": 389,
+     "ms": 46
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_murmillo.glb",
+     "kb": 964,
+     "ms": 158
+    },
+    {
+     "f": "tools/plans/look100/arena2_tex/6_roma.webp",
+     "kb": 24,
+     "ms": 124
+    },
+    {
+     "f": "assets/flavmood_calm.webp",
+     "kb": 8,
+     "ms": 136
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_thraex.glb",
+     "kb": 992,
+     "ms": 515
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_royalty.glb",
+     "kb": 949,
+     "ms": 234
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_venatore.glb",
+     "kb": 923,
+     "ms": 21
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_leo.glb",
+     "kb": 349,
+     "ms": 224
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_ursa.glb",
+     "kb": 351,
+     "ms": 30
+    }
+   ],
+   "wallMs": 79747
+  },
+  "frames": {
+   "n": 4,
+   "fps": 0.1,
+   "p50": 10837.7,
+   "p95": 12386.2,
+   "max": 12386.2
+  },
+  "babylon": {
+   "fps": 0.2,
+   "frameMs": 30.8,
+   "renderMs": 16.4,
+   "drawCalls": 55,
+   "activeMeshes": 45,
+   "meshes": 108,
+   "materials": 41,
+   "textures": 12,
+   "lights": 2,
+   "skeletons": 6,
+   "animGroups": 6,
+   "tris": 303106,
+   "crowd": 914,
+   "w": 1440,
+   "h": 900,
+   "texMB": 40.6,
+   "heapMB": 51.7,
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "jsHeapMB": 30.4,
+  "rssMB": 702,
+  "load1": [
+   35.48,
+   39.97
+  ],
+  "errs": []
+ },
+ "close_night": {
+  "name": "close_night",
+  "viewport": "1440x900",
+  "load": {
+   "htmlMs": 54,
+   "babylonParsedMs": 5348,
+   "firstFrameMs": 12142,
+   "readyMs": 66423,
+   "err": null,
+   "totalKB": 13339,
+   "res": [
+    {
+     "f": "tools/plans/babylon100/arena.js",
+     "kb": 29,
+     "ms": 36
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs/babylon.js",
+     "kb": 8361,
+     "ms": 2021
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js",
+     "kb": 389,
+     "ms": 100
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_murmillo.glb",
+     "kb": 964,
+     "ms": 428
+    },
+    {
+     "f": "tools/plans/look100/arena2_tex/6_roma.webp",
+     "kb": 24,
+     "ms": 366
+    },
+    {
+     "f": "assets/flavmood_calm.webp",
+     "kb": 8,
+     "ms": 366
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_thraex.glb",
+     "kb": 992,
+     "ms": 230
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_royalty.glb",
+     "kb": 949,
+     "ms": 73
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_venatore.glb",
+     "kb": 923,
+     "ms": 176
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_leo.glb",
+     "kb": 349,
+     "ms": 110
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_ursa.glb",
+     "kb": 351,
+     "ms": 11
+    }
+   ],
+   "wallMs": 66526
+  },
+  "frames": {
+   "n": 4,
+   "fps": 0.1,
+   "p50": 16596.7,
+   "p95": 25213.6,
+   "max": 25213.6
+  },
+  "babylon": {
+   "fps": 0.2,
+   "frameMs": 5.6,
+   "renderMs": 2.2,
+   "drawCalls": 55,
+   "activeMeshes": 45,
+   "meshes": 108,
+   "materials": 41,
+   "textures": 12,
+   "lights": 6,
+   "skeletons": 6,
+   "animGroups": 6,
+   "tris": 303106,
+   "crowd": 914,
+   "w": 1440,
+   "h": 900,
+   "texMB": 40.6,
+   "heapMB": 51.7,
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "jsHeapMB": 30.3,
+  "rssMB": 707,
+  "load1": [
+   39.17,
+   46.72
+  ],
+  "errs": []
+ },
+ "lite": {
+  "name": "lite",
+  "viewport": "1440x900",
+  "load": {
+   "htmlMs": 404,
+   "babylonParsedMs": 5979,
+   "firstFrameMs": 28471,
+   "readyMs": 70490,
+   "err": null,
+   "totalKB": 13339,
+   "res": [
+    {
+     "f": "tools/plans/babylon100/arena.js",
+     "kb": 29,
+     "ms": 241
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs/babylon.js",
+     "kb": 8361,
+     "ms": 2624
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js",
+     "kb": 389,
+     "ms": 248
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_murmillo.glb",
+     "kb": 964,
+     "ms": 392
+    },
+    {
+     "f": "tools/plans/look100/arena2_tex/6_roma.webp",
+     "kb": 24,
+     "ms": 90
+    },
+    {
+     "f": "assets/flavmood_calm.webp",
+     "kb": 8,
+     "ms": 91
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_thraex.glb",
+     "kb": 992,
+     "ms": 776
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_royalty.glb",
+     "kb": 949,
+     "ms": 443
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_venatore.glb",
+     "kb": 923,
+     "ms": 139
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_leo.glb",
+     "kb": 349,
+     "ms": 173
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_ursa.glb",
+     "kb": 351,
+     "ms": 376
+    }
+   ],
+   "wallMs": 70528
+  },
+  "frames": {
+   "n": 4,
+   "fps": 0.2,
+   "p50": 4191.7,
+   "p95": 5847.2,
+   "max": 5847.2
+  },
+  "babylon": {
+   "fps": 0.4,
+   "frameMs": 9.7,
+   "renderMs": 4.4,
+   "drawCalls": 50,
+   "activeMeshes": 96,
+   "meshes": 108,
+   "materials": 41,
+   "textures": 11,
+   "lights": 2,
+   "skeletons": 6,
+   "animGroups": 6,
+   "tris": 216877,
+   "crowd": 914,
+   "w": 1440,
+   "h": 900,
+   "texMB": 24.6,
+   "heapMB": 50.4,
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "jsHeapMB": 29,
+  "rssMB": 644,
+  "load1": [
+   46.42,
+   37.41
+  ],
+  "errs": []
+ },
+ "noshadow": {
+  "name": "noshadow",
+  "viewport": "1440x900",
+  "load": {
+   "htmlMs": 135,
+   "babylonParsedMs": 3143,
+   "firstFrameMs": 14471,
+   "readyMs": 72302,
+   "err": null,
+   "totalKB": 13339,
+   "res": [
+    {
+     "f": "tools/plans/babylon100/arena.js",
+     "kb": 29,
+     "ms": 74
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs/babylon.js",
+     "kb": 8361,
+     "ms": 1003
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js",
+     "kb": 389,
+     "ms": 64
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_murmillo.glb",
+     "kb": 964,
+     "ms": 522
+    },
+    {
+     "f": "tools/plans/look100/arena2_tex/6_roma.webp",
+     "kb": 24,
+     "ms": 397
+    },
+    {
+     "f": "assets/flavmood_calm.webp",
+     "kb": 8,
+     "ms": 382
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_thraex.glb",
+     "kb": 992,
+     "ms": 175
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_royalty.glb",
+     "kb": 949,
+     "ms": 34
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_venatore.glb",
+     "kb": 923,
+     "ms": 377
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_leo.glb",
+     "kb": 349,
+     "ms": 42
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_ursa.glb",
+     "kb": 351,
+     "ms": 96
+    }
+   ],
+   "wallMs": 72340
+  },
+  "frames": {
+   "n": 4,
+   "fps": 0.1,
+   "p50": 5876.5,
+   "p95": 11939.8,
+   "max": 11939.8
+  },
+  "babylon": {
+   "fps": 0.3,
+   "frameMs": 5.6,
+   "renderMs": 3.1,
+   "drawCalls": 62,
+   "activeMeshes": 96,
+   "meshes": 108,
+   "materials": 41,
+   "textures": 11,
+   "lights": 2,
+   "skeletons": 6,
+   "animGroups": 6,
+   "tris": 366707,
+   "crowd": 914,
+   "w": 1440,
+   "h": 900,
+   "texMB": 24.6,
+   "heapMB": 50.6,
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "jsHeapMB": 29.2,
+  "rssMB": 655,
+  "load1": [
+   37.41,
+   39.82
+  ],
+  "errs": []
+ },
+ "phone": {
+  "name": "phone",
+  "viewport": "844x390@3",
+  "load": {
+   "htmlMs": 526,
+   "babylonParsedMs": 4903,
+   "firstFrameMs": 25549,
+   "readyMs": 57362,
+   "err": null,
+   "totalKB": 13339,
+   "res": [
+    {
+     "f": "tools/plans/babylon100/arena.js",
+     "kb": 29,
+     "ms": 244
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs/babylon.js",
+     "kb": 8361,
+     "ms": 1769
+    },
+    {
+     "f": "tools/plans/babylon100/node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js",
+     "kb": 389,
+     "ms": 260
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_murmillo.glb",
+     "kb": 964,
+     "ms": 20
+    },
+    {
+     "f": "tools/plans/look100/arena2_tex/6_roma.webp",
+     "kb": 24,
+     "ms": 16
+    },
+    {
+     "f": "assets/flavmood_calm.webp",
+     "kb": 8,
+     "ms": 11
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_thraex.glb",
+     "kb": 992,
+     "ms": 204
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_royalty.glb",
+     "kb": 949,
+     "ms": 57
+    },
+    {
+     "f": "tools/plans/babylon100/models/glad_venatore.glb",
+     "kb": 923,
+     "ms": 651
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_leo.glb",
+     "kb": 349,
+     "ms": 124
+    },
+    {
+     "f": "tools/plans/babylon100/models/beast_ursa.glb",
+     "kb": 351,
+     "ms": 250
+    }
+   ],
+   "wallMs": 57593
+  },
+  "frames": {
+   "n": 4,
+   "fps": 0.4,
+   "p50": 3015.9,
+   "p95": 3090.6,
+   "max": 3090.6
+  },
+  "babylon": {
+   "fps": 0.5,
+   "frameMs": 19.5,
+   "renderMs": 15.4,
+   "drawCalls": 85,
+   "activeMeshes": 96,
+   "meshes": 108,
+   "materials": 41,
+   "textures": 12,
+   "lights": 2,
+   "skeletons": 6,
+   "animGroups": 6,
+   "tris": 295697,
+   "crowd": 914,
+   "w": 1688,
+   "h": 780,
+   "texMB": 40.6,
+   "heapMB": 52.3,
+   "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "jsHeapMB": 31,
+  "rssMB": 706,
+  "load1": [
+   39.82,
+   28.09
+  ],
+  "errs": []
+ },
+ "game": {
+  "full": {
+   "p50": 4.1,
+   "p95": 6.3
+  },
+  "zoom2": {
+   "p50": 6.8,
+   "p95": 157.7
+  },
+  "heapMB": 27.7,
+  "cv": [
+   970,
+   611
+  ],
+  "bootMs": 160635,
+  "rssMB": 1028,
+  "load1": 18.37
+ }
+}

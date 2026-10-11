@@ -7,6 +7,6 @@ const ROOT = path.resolve(__dirname, '../../..'); const [out, W, H, q] = process
   try { const mobile = +W < 600; const pg = await b.newPage({ viewport: { width: +W, height: +H }, deviceScaleFactor: mobile ? 3 : 1, isMobile: mobile, hasTouch: mobile });
     const errs = []; pg.on('pageerror', e => errs.push(e.message)); pg.on('console', m => { if (m.type() === 'error' || m.type() === 'warning') errs.push(m.text().slice(0, 200)); });
     await pg.goto(`http://127.0.0.1:${PORT}/tools/plans/babylon100/arena.html${q ? '?' + q : ''}`); await pg.waitForFunction(() => window.MOCK_READY || window.MOCK_ERR, null, { timeout: 180000 });
-    await pg.waitForTimeout(2500); await pg.screenshot({ path: out }); console.log(JSON.stringify(await pg.evaluate(() => ({ err: window.MOCK_ERR, s: window.MOCK.stats() }))), errs.slice(0, 8));
+    await pg.waitForTimeout(2500); const st = await pg.evaluate(() => window.MOCK.stats()); await pg.evaluate(() => { window.MOCK.engine.stopRenderLoop(); window.MOCK.scene.render(); }); /* software GL: a running loop starves the screenshot */ await pg.screenshot({ path: out, timeout: 120000 }); console.log(JSON.stringify(await pg.evaluate(() => ({ err: window.MOCK_ERR, s: window.MOCK.stats(), st }))), errs.slice(0, 8));
   } finally { await b.close(); srv.kill(); }
 })();
