@@ -18,10 +18,10 @@ const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   arm94Settle(w,{ents:[A.id]},res);
   o.gearSame=JSON.stringify(A.eq94)===JSON.stringify(bs);o.shelfSame=JSON.stringify(arm94H(m).sh.map(P=>P.k).sort())===JSON.stringify([...sh0].length?arm94H(m).sh.map(P=>P.k).sort():[]);
   o.shelfN=arm94H(m).sh.length===shN0;
-  /* killed in the draft bout: his kit goes back to the shelf (v0.98 edit in 225) */
-  const nKit=[bs.R,bs.L,...bs.a,...(bs.o||[])].filter(Boolean).length;A.alive=false;arm94Settle(w,{ents:[A.id]},res);o.deadStrip=!A.eq94&&arm94H(m).sh.length===shN0+nKit;
+  /* killed in the draft bout: his own (non-issued) pieces go back to the shelf, the issued kit vanishes (v0.98 225 + v0.99 272) */
+  const nKit=[bs.R,bs.L,...bs.a,...(bs.o||[])].filter(P=>P&&P.iss!==A.id).length; /* v0.99 rule: his ISSUED starter kit vanishes with him, bought/won pieces return */A.alive=false;arm94Settle(w,{ents:[A.id]},res);o.deadStrip=!A.eq94&&arm94H(m).sh.length===shN0+nKit;
   return o});
 console.log(JSON.stringify(r));
 ok(r.ev==='ludus'&&r.seatHasKit,'a Manager fighter is seated in a Ludus (draft) bout with his kit '+JSON.stringify(r));ok(r.picks.length>=1,'he drafted pieces in the arena '+JSON.stringify(r.picks));
-ok(!r.entry,'a draft bout makes no settlement entry (his kit is not worn in a draft) '+JSON.stringify(r));ok(r.deadStrip,'killed in a draft bout: his kit returns to the shelf '+JSON.stringify(r));ok(r.gearSame&&r.shelfN,'his gear + the shelf are exactly as before: nothing drafted came home '+JSON.stringify(r));
+ok(!r.entry,'a draft bout makes no settlement entry (his kit is not worn in a draft) '+JSON.stringify(r));ok(r.deadStrip,'killed in a draft bout: his non-issued pieces return to the shelf, issued kit gone '+JSON.stringify(r));ok(r.gearSame&&r.shelfN,'his gear + the shelf are exactly as before: nothing drafted came home '+JSON.stringify(r));
 console.log(miss.length?'FAIL '+miss.join(' | '):'PASS tv98f');console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
