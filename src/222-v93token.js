@@ -27,7 +27,7 @@
      Pose JSON stays ≤ 600 B (eulers clamped ±180°, pelvis ±450 mm); t93Make / t94Sheet unchanged. T93.ui / T93.hist = test hooks.
    Globals: T93 (state), t93Load, t93Parts, t93Hash, t93Rec, t93ForCls, t93Img, t93URL, t93HTML, t93Make, t93Persist,
    t93Convert, t93Open (the modeller), t93CardHTML. Draw cost: one drawImage per piece (same as the minis). */
-const T93_VER=1;
+const T93_VER=2;   /* v1.0 (276-v100gear): the sculpted gear look — every stored token is remade once */
 const T93={api:null,loading:null,fail:'',busy:false,conv:false,skip:new Set(),url:new Map(),img:new Map(),made:0,ms:[]};
 /* the engine, loaded once on demand (plain scripts: they load from file://, the site and the standalone's data: URLs) */
 function t93Script(f){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=assetURL(f);s.async=true;s.onload=()=>ok();s.onerror=()=>no(new Error('load '+f));document.head.appendChild(s)})}

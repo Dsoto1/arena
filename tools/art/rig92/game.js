@@ -17,16 +17,40 @@
      api.pose() / api.setPose(json) / api.pins(L,R) / api.dispose() */
 import * as THREE from 'three';
 import { buildBodyAsync } from './body.js';
-import { JOINTS, JK, HANDLE_COL, applyPose, poseToJSON, poseFromJSON, readPose, emptyPose, jointPos, endPos, solveArm, rotateJointWorld, footNow, solveTwoBone, resolveSpec, BASE_R, BASE_H, MM_PER_M, ANKLE_H } from './rig.js';
+import { JOINTS, JK, HANDLE_COL, applyPose, poseToJSON, poseFromJSON, readPose, emptyPose, jointPos, jointQ, endPos, ENDS, solveArm, rotateJointWorld, footNow, solveTwoBone, resolveSpec, BASE_R, BASE_H, MM_PER_M, ANKLE_H } from './rig.js';
 import { PRESETS, PRESET_ORDER, PRESET_GROUPS } from './presets.js';
 import { makeGear } from './gear.js';
+import { loadBaked, wearBaked, merge8, beltShow8 } from './gear8.js';
+import { mountWeapons, killWeapons, armedSpec, armedFinish, shieldCheck, wristBend, holdsOf, STANCE } from './hold.js';
+import { MeshoptDecoder } from './vendor/meshopt_decoder.js';
+/* v1.0 (his picks, look100 rounds 2–8): printed pieces in a token's gear spec are worn as the PRE-BAKED SDF sculpts (assets/gear100.js,
+   made by mkgear.js), merged into one skinned mesh with one outline; the classic gear.js pieces stay for custom-coloured pieces and
+   pieces with extras (built on the device), and for everything when the bake is missing. */
+const HEAD8 = { horned: 'cassis' };
+function sculptSplit8(g, BK) { const out = JSON.parse(JSON.stringify(g || {})), list = []; if (!BK) return { spec: out, list };
+  const take = (o, sd) => { if (!o || o.c || (o.x && o.x.length)) return false; const k = HEAD8[o.t] || o.t; if (!BK.has(k)) return false; list.push({ k, sd }); return true; };
+  if (out.head && take(out.head)) delete out.head; if (out.chest && take(out.chest)) delete out.chest; if (out.belt && take(out.belt)) delete out.belt;
+  for (const s of ['L', 'R']) { const a = out.arm && out.arm[s]; if (a) { if (a.upper && take(a.upper, s)) delete a.upper; if (a.lower && take(a.lower, s)) delete a.lower; if (a.wraps && !a.lower && BK.has('wraps')) { list.push({ k: 'wraps', sd: s }); delete a.wraps; } }
+    const l = out.leg && out.leg[s]; if (l) { if (l.upper && take(l.upper, s)) delete l.upper; if (l.lower && take(l.lower, s)) delete l.lower; } }
+  return { spec: out, list }; }
+/* the body every token is built on (the bake is made on exactly this body; a different one skips the bake) */
+export const BODY8 = { res: 0.005, body: { face2: 1, headRes: 0.0022, grip: { L: 'hilt', R: 'hilt' } } };
 
 const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45];   /* src/102-minis73.js */
 const MINI_PXMM = 3.143;                                     /* src/94-v72.js */
 const D2R = Math.PI / 180;
 
+/* the key a bake must carry to be worn on a body built with these options */
+export const bodyKey8 = (o) => 'b8|' + JSON.stringify({ res: o.res, body: o.body });
+
 export async function createToken(opts = {}) {
-  const o = Object.assign({ res: 0.005, slice: 14 }, opts);
+  /* v1.0 defaults: the figure +15% on the 0.8-tile base, the painted pass, the painted face, fists that close round a hilt */
+  const o = Object.assign({ res: BODY8.res, slice: 14, scale: 1.15, paint: 1, body: BODY8.body }, opts);
+  /* the pre-baked printed pieces (window.GEAR100 from assets/gear100.js; opts.gear8 = null switches them off) */
+  let BK = null, bakeWhy = '';
+  { const GD = o.gear8 !== undefined ? o.gear8 : (typeof window !== 'undefined' ? window.GEAR100 : null);
+    const key = bodyKey8(o);
+    if (!GD) bakeWhy = 'none'; else if (GD.body !== key) bakeWhy = 'body'; else try { BK = await loadBaked(GD, MeshoptDecoder); } catch (e) { bakeWhy = String(e && e.message || e); BK = null; } }
   /* ---------- scene ---------- */
   const scene = new THREE.Scene();
   scene.add(new THREE.AmbientLight(0xffffff, 0.46 * Math.PI));
@@ -47,11 +71,17 @@ export async function createToken(opts = {}) {
     ink.position.y = -BASE_H / 2; baseG.add(ink);
   }
   /* ---------- the body (time-sliced build) ---------- */
-  const B = await buildBodyAsync({ res: o.res, hair: 'cap' }, o.slice, o.onStep);
+  const B = await buildBodyAsync(Object.assign({ res: o.res, hair: 'cap' }, o.body || {}), o.slice, o.onStep);
   turn.add(B.group);
+  /* look100 round 2: the figure +15% against its base (his minis' heroic scale; the base stays 25.4 mm = 0.8 tile) */
+  if (o.scale) B.group.scale.setScalar(o.scale);
+  /* look100 round 2: the painted pass — a 4-band ramp with deeper shade, less ambient, a stronger warm sun */
+  if (o.paint) { const d = new Uint8Array([40, 100, 176, 255]); B.mats.gm.image = { data: d, width: 4, height: 1 }; B.mats.gm.needsUpdate = true;
+    scene.children.forEach(l => { if (l.isAmbientLight) l.intensity = 0.27 * Math.PI; if (l.isDirectionalLight) { l.intensity = 0.86 * Math.PI; l.color.set(0xffe8cc); } }); }
   const rig = B.rig, gear = makeGear(B);
   const presets = PRESET_ORDER.map(k => [k, PRESETS[k].label, poseToJSON(resolveSpec(rig, PRESETS[k].spec))]);
   const groups = PRESET_GROUPS.map(([g, l, ks]) => [g, l, ks.slice()]);
+  const STAND0 = presets[0][2];   /* the plain stand (v1.0: the game turns it into the armed stand for what a gear spec holds) */
   let pose = poseFromJSON(presets[0][2]); applyPose(rig, pose);
 
   /* ---------- renderer: one WebGL context, never in the page (images are copied out) ---------- */
@@ -119,13 +149,29 @@ export async function createToken(opts = {}) {
 
   /* ---------- look + gear + pose ---------- */
   let lookKey = '', gearKey = '';
+  let sculpt8 = null, last8 = [], held = [], heldKey = '';
   function apply(a = {}) {
     if (a.look || a.gear) {
       const lk = Object.assign({}, a.look || {}, { noHarness: !!(a.gear && a.gear.chest) }); const k = JSON.stringify(lk);
       if (k !== lookKey) { B.setLook(lk); lookKey = k; }
-      const gk = JSON.stringify(a.gear || {}); if (gk !== gearKey) { gear.set(a.gear || {}); gearKey = gk; }
+      const gk = JSON.stringify(a.gear || {}); if (gk !== gearKey) { gearKey = gk; const sp = sculptSplit8(a.gear, BK);
+        const g2 = sp.spec; delete g2.wR; delete g2.wL; gear.set(g2);
+        if (sculpt8) { B.kit.kill(sculpt8); sculpt8 = null; }
+        const ms = []; for (const it of sp.list) { try { ms.push(...wearBaked(B, BK, it.k, it.sd)); } catch (e) { console.error(e); } }
+        if (ms.length) sculpt8 = ms.length > 1 ? merge8(B, ms) : ms[0];
+        beltShow8(B, !sp.list.some(it => BK && BK.kind(it.k) === 'b'));
+        last8 = sp.list.map(it => it.k + (BK && BK.kind(it.k) === 'l' ? it.sd || '' : ''));
+        const hk = JSON.stringify([a.gear && a.gear.wR, a.gear && a.gear.wL]); if (hk !== heldKey) { killWeapons(B, held); held = mountWeapons(B, a.gear || {}); heldKey = hk; } }
     }
     if (a.pose) setPose(a.pose);
+  }
+  /* THE ARMED STAND (his picks: sword 15° out of the fist, straight wrist, the elbow takes the angle; the scutum upright on the forearm):
+     the default 'stand' pose for what this gear holds — the plain stand when the hands are empty. The live pose is restored. */
+  function standFor(g) {
+    const ho = holdsOf(g || {}); if (!ho.R && !ho.L) return STAND0;
+    const keep = poseJSON();
+    try { setPose(poseToJSON(resolveSpec(rig, { p: STANCE.p, j: STANCE.j, f: STANCE.f }))); const A = armedSpec(rig, g); setPose(poseToJSON(resolveSpec(rig, A.spec))); armedFinish(rig, align, A.fr); return poseToJSON(readPose(rig, pinsNow())); }
+    finally { setPose(keep); }
   }
   function setPose(p) { pose = poseFromJSON(p); applyPose(rig, pose); }
   const pinsNow = () => { const f = {}; for (const s of ['L', 'R']) if (pose.f && pose.f[s]) f[s] = pose.f[s]; return f; };
@@ -300,9 +346,44 @@ export async function createToken(opts = {}) {
     for (const [s, on] of [['L', L], ['R', Rt]]) { if (on && !(pose.f && pose.f[s])) pose.f[s] = footNow(rig, s); if (!on && pose.f) delete pose.f[s]; }
     applyPose(rig, pose);
   }
+  /* look100: a big close render (any yaw / elevation / framing), transparent */
+  function hero(ho = {}) {
+    const h = Object.assign({ w: 512, h: 512, ss: 2, el: 22, yaw: 25, span: 2.25, cy: 0.9, cx: 0, outlinePx: 1.5 }, ho);
+    const W = h.w * h.ss, H = h.h * h.ss, ppm = H / h.span;
+    turn.rotation.y = h.yaw * D2R; turn.updateMatrixWorld(true);
+    const tgt = new THREE.Vector3(h.cx, h.cy, h.cz || 0);
+    if (h.focus) { rig.bones[h.focus].getWorldPosition(tgt); tgt.y += h.fdy == null ? -0.06 : h.fdy; }   /* frame a bone (the hand close-ups) */
+    const cam = orthoCam(W, H, ppm, h.el, tgt); lightFor(cam); B.setOutline(h.outlinePx * h.ss / ppm);
+    const r = renderer(W, H); turn.rotation.y = h.yaw * D2R; turn.updateMatrixWorld(true); baseG.visible = h.base !== false;
+    r.render(scene, cam); turn.rotation.y = 0; turn.updateMatrixWorld(true); baseG.visible = true;
+    let c = grab(r, W, H); for (let k = h.ss; k > 1; k /= 2) c = halve(c); return c;
+  }
+  const specPose = (spec) => poseToJSON(resolveSpec(rig, spec));
+  /* look100 round 2: a GRIP CONSTRAINT after the pose — turn the hand about its forearm so the back of the hand (shield face) looks
+     along `o`, or bend it so the blade (hand forward axis) points along `f` (figure space, y up, +z forward) */
+  function align(sd, want) {
+    const sx = sd === 'L' ? 1 : -1, W0 = new THREE.Vector3(...JK['w' + sd].pos), tip = new THREE.Vector3(...ENDS['w' + sd]);
+    const u = tip.clone().sub(W0).normalize(), z = new THREE.Vector3(0, 0, 1); const f = z.clone().sub(u.clone().multiplyScalar(z.dot(u))).normalize();
+    let ov = new THREE.Vector3().crossVectors(u, f); if (ov.x * sx < 0) ov.negate();
+    const qE = jointQ(rig, 'e' + sd); const u1 = u.clone().applyQuaternion(qE), o1 = ov.clone().applyQuaternion(qE), f1 = f.clone().applyQuaternion(qE);
+    let q = qE.clone();
+    if (want.o) {   /* round 3: twist about the FOREARM axis, so a strapped shield (whose board follows the forearm) turns in its own plane */
+      const fa = new THREE.Vector3(...JK['w' + sd].pos).sub(new THREE.Vector3(...JK['e' + sd].pos)).normalize().applyQuaternion(qE);
+      const od = new THREE.Vector3(...want.o); od.sub(fa.clone().multiplyScalar(od.dot(fa))).normalize(); const o2 = o1.clone().sub(fa.clone().multiplyScalar(o1.dot(fa))).normalize();
+      const ang = Math.atan2(new THREE.Vector3().crossVectors(o2, od).dot(fa), o2.dot(od)); q = new THREE.Quaternion().setFromAxisAngle(fa, ang).multiply(qE); }
+    if (want.tf) {   /* round 5: TWIST ONLY about the forearm so the thumb side (hand f) faces tf — the wrist itself stays straight */
+      const fa = new THREE.Vector3(...JK['w' + sd].pos).sub(new THREE.Vector3(...JK['e' + sd].pos)).normalize().applyQuaternion(qE);
+      const td = new THREE.Vector3(...want.tf); td.sub(fa.clone().multiplyScalar(td.dot(fa))).normalize(); const f2 = f1.clone().sub(fa.clone().multiplyScalar(f1.dot(fa))).normalize();
+      const ang = Math.atan2(new THREE.Vector3().crossVectors(f2, td).dot(fa), f2.dot(td)); q = new THREE.Quaternion().setFromAxisAngle(fa, ang).multiply(qE); }
+    if (want.f) { const fd = new THREE.Vector3(...want.f).normalize(); q = new THREE.Quaternion().setFromUnitVectors(f1, fd).multiply(qE); }
+    rig.bones['w' + sd].quaternion.copy(qE.clone().invert().multiply(q)); rig.bones['w' + sd].updateMatrixWorld(true);
+  }
   return {
+    hero, specPose, align, B, rig, turn, scene, baseG, sculpted: () => last8.slice(), standFor,
+    /* v1.0: the bake (null when missing: bakeWhy), the shield check on what is held now, the wrists' bend */
+    baked: BK ? { keys: BK.keys.length, bytes: BK.bytes, ms: BK.ms } : null, bakeWhy, bodyKey: bodyKey8(o), shieldCheck: () => shieldCheck(B, turn, held), wrists: () => ({ L: wristBend(rig, 'L'), R: wristBend(rig, 'R') }),
     apply, setPose, pose: poseJSON, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },
-    dispose() { gear.clear(); if (R) { R.dispose(); R.forceContextLoss(); R = null; } },
+    dispose() { gear.clear(); killWeapons(B, held); held = []; if (R) { R.dispose(); R.forceContextLoss(); R = null; } },
   };
 }
 export { poseToJSON, poseFromJSON, emptyPose };

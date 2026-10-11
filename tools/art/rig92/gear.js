@@ -11,7 +11,12 @@
    t = the printed key (galea, murmillo, lorica, manica, ocrea …) or a family word; c = '#rrggbb' (optional); x = the custom
    piece's cosmetic EXTRAS from 207-v92extras ({k,c} — studs, spikes, fur, galerus, trim, paint are shown in 3D).
    makeGear(B) → { set(spec), clear() } — parts are cached by their spec, so changing one piece rebuilds only that piece. */
+/* v1.0 (promoted from the look100 tests, rounds 2–8): gear.js + murmKit() at the end — the Murmillo-like Soldier's
+   printed pieces modelled after his art (Murmillo Helm cell 3, Manica, Greaves/ocrea cell 23, Balteus II cell 28, Gladius + Scutum cards)
+   with the weapons held in a gripping fist (body100.js opt.grip). */
 import * as THREE from 'three';
+import { gripBar } from './body.js';
+import { JK, ENDS } from './rig.js';
 
 const METAL = '#a7adb3', BRONZE = '#b0813a', GOLD = '#d6ab4c', LEATHER = '#7a4a2a', CLOTH = '#d9cfb6', WOOD = '#7a5a36', RED = '#a3281f';
 /* the colour a printed piece is made of */
@@ -244,3 +249,201 @@ export function makeGear(B) {
   };
 }
 export const GEAR_COLORS = ARM_COL;
+
+
+/* ===================== look100: the Murmillo-like Soldier ===================== */
+const STEEL = '#c3c8cc', STEEL_D = '#6d7377', BRASS = '#c99a3e', DARKBR = '#5b3d22', MAROON = '#5c171b', GOLD2 = '#e2b955';
+function canvasTex(w, h, paint) { const c = document.createElement('canvas'); c.width = w; c.height = h; paint(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; }
+/* a basis matrix: local X → ax, Y → ay, Z → X×Y */
+function basisQ(ax, ay) { const X = new THREE.Vector3(...ax).normalize(), Y = new THREE.Vector3(...ay).normalize(); const Z = new THREE.Vector3().crossVectors(X, Y).normalize(); X.crossVectors(Y, Z); return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(X, Y, Z)); }
+/* a closed, curved board (shield): rounded rect W×H, corner radius rc, bent round a vertical cylinder of radius Rc, thickness th.
+   groups: 0 = the painted face (uv), 1 = back + rim */
+function boardGeo(W, H, rc, Rc, th, nx = 22, ny = 32) {
+  const P = [], UV = [], I0 = [], I1 = [];
+  const clamp = (x, y) => { const ax = Math.abs(x), ay = Math.abs(y), cx = W / 2 - rc, cy = H / 2 - rc; if (ax > cx && ay > cy) { const dx = ax - cx, dy = ay - cy, d = Math.hypot(dx, dy); if (d > rc) { x = Math.sign(x) * (cx + dx * rc / d); y = Math.sign(y) * (cy + dy * rc / d); } } return [x, y]; };
+  const bend = (x, y, z) => { const a = x / Rc; return [(Rc + z) * Math.sin(a), y, (Rc + z) * Math.cos(a) - Rc]; };
+  const id = (side, i, j) => side * (nx + 1) * (ny + 1) + j * (nx + 1) + i;
+  for (const [side, z] of [[0, th / 2], [1, -th / 2]]) for (let j = 0; j <= ny; j++) for (let i = 0; i <= nx; i++) {
+    const [x, y] = clamp(-W / 2 + W * i / nx, -H / 2 + H * j / ny); P.push(...bend(x, y, z)); UV.push(x / W + 0.5, y / H + 0.5); }
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+    const a = id(0, i, j), b = id(0, i + 1, j), c = id(0, i + 1, j + 1), d = id(0, i, j + 1); I0.push(a, b, c, a, c, d);
+    const a1 = id(1, i, j), b1 = id(1, i + 1, j), c1 = id(1, i + 1, j + 1), d1 = id(1, i, j + 1); I1.push(a1, c1, b1, a1, d1, c1); }
+  const ring = []; for (let i = 0; i < nx; i++) ring.push([i, 0]); for (let j = 0; j < ny; j++) ring.push([nx, j]); for (let i = nx; i > 0; i--) ring.push([i, ny]); for (let j = ny; j > 0; j--) ring.push([0, j]);
+  for (let k = 0; k < ring.length; k++) { const [i, j] = ring[k], [i2, j2] = ring[(k + 1) % ring.length]; const a = id(0, i, j), b = id(0, i2, j2), a1 = id(1, i, j), b1 = id(1, i2, j2); I1.push(a, a1, b1, a, b1, b); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(UV, 2));
+  g.setIndex(I0.concat(I1)); g.addGroup(0, I0.length, 0); g.addGroup(I0.length, I1.length, 1); g.computeVertexNormals(); return g;
+}
+/* the scutum's face after his card: red field, gold rim, a gold spine, the square boss plate, gold wings and bolts */
+const scutumTex = () => canvasTex(256, 400, (g, w, h) => {
+  const gr = g.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, h * 0.62); gr.addColorStop(0, '#c53a2c'); gr.addColorStop(1, '#8e2219'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  g.strokeStyle = GOLD2; g.lineWidth = 14; g.strokeRect(9, 9, w - 18, h - 18); g.strokeStyle = '#3a120c'; g.lineWidth = 3; g.strokeRect(17, 17, w - 34, h - 34);
+  g.fillStyle = GOLD2; g.fillRect(w / 2 - 7, 18, 14, h - 36);
+  g.fillRect(w / 2 - 44, h / 2 - 44, 88, 88); g.fillStyle = '#8a6420'; g.fillRect(w / 2 - 34, h / 2 - 34, 68, 68); g.fillStyle = GOLD2; g.beginPath(); g.arc(w / 2, h / 2, 26, 0, 7); g.fill();
+  g.strokeStyle = GOLD2; g.lineCap = 'round';
+  for (const sy of [1, -1]) for (const sx of [1, -1]) {   /* wings + a zig-zag bolt in each quarter */
+    const cx = w / 2 + sx * 62, cy = h / 2 + sy * 105; g.lineWidth = 7; g.beginPath(); g.moveTo(w / 2 + sx * 20, h / 2 + sy * 52); g.lineTo(cx - sx * 10, cy - sy * 30); g.lineTo(cx + sx * 6, cy - sy * 10); g.lineTo(cx - sx * 4, cy + sy * 22); g.stroke();
+    g.lineWidth = 5; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(w / 2 + sx * 48, h / 2 + sy * (8 + k * 9)); g.quadraticCurveTo(w / 2 + sx * (80 + k * 8), h / 2 + sy * (2 + k * 14), w / 2 + sx * (100 + k * 4), h / 2 + sy * (20 + k * 18)); g.stroke(); }
+  }
+  for (const [x, y] of [[w / 2 - 38, h / 2 - 38], [w / 2 + 38, h / 2 - 38], [w / 2 - 38, h / 2 + 38], [w / 2 + 38, h / 2 + 38]]) { g.fillStyle = '#f2d98a'; g.beginPath(); g.arc(x, y, 4, 0, 7); g.fill(); }
+});
+/* the murmillo grille: bronze frame, rows of round holes, split down the middle */
+const grilleTex = () => canvasTex(256, 160, (g, w, h) => {
+  g.fillStyle = '#9a7a46'; g.fillRect(0, 0, w, h); g.fillStyle = '#17110c';
+  for (let r = 0; r < 6; r++) for (let c = 0; c < 14; c++) { const x = 14 + c * 17.5 + (r % 2) * 8, y = 18 + r * 22; if (Math.abs(x - w / 2) < 8 || x > w - 10) continue; g.beginPath(); g.arc(x, y, 7, 0, 7); g.fill(); }
+  g.fillStyle = '#b8935a'; g.fillRect(w / 2 - 4, 0, 8, h); g.fillRect(0, 0, w, 7); g.fillRect(0, h - 10, w, 10);
+});
+
+export function murmKit(B, o = {}) {
+  const K = B.kit, P = K.P, GI = K.GI, HO = K.HO, hs = K.hs, out = [];
+  const toon = (c, ex) => K.makeToon(c, ex);
+  const sub3 = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], dot3 = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const tAl = (p, a, b) => { const ab = sub3(b, a); return dot3(sub3(p, a), ab) / dot3(ab, ab); };
+  const lin3 = (hex) => { const c = new THREE.Color(hex).convertSRGBToLinear(); return [c.r, c.g, c.b]; };
+  const place = (m, bone, at, q) => { const bp = P(bone); m.position.set(at[0] - bp[0], at[1] - bp[1], at[2] - bp[2]); if (q) m.quaternion.copy(q); return m; };
+  const rig_ = (geo, mat, bone, at, q) => { const m = K.rigid(geo, mat, bone, at, null); place(m, bone, at, q); m.userData.ownMat = 1; const ink = m.userData.ink; if (ink) { ink.position.copy(m.position); ink.quaternion.copy(m.quaternion); } out.push(m); return m; };
+  const H = (x, y, z) => [HO[0] + x * hs, HO[1] + y * hs, HO[2] + z * hs];
+
+  /* ---- Murmillo Helm (cell 3): polished dome, the round-holed grille over the face, a flared brim at the bottom, a fish crest ---- */
+  if (o.helm !== false) {
+    const steel = toon(STEEL, { side: THREE.DoubleSide }), steelD = toon('#9aa0a5'), bronze = toon(BRASS), K2 = o.helmK || 1.08;
+    const Hk = (x, y, z) => H(x * K2, y * K2, z * K2);
+    const dome = new THREE.SphereGeometry(1, 30, 14, 0, Math.PI * 2, 0, Math.PI * 0.5); dome.scale(0.108 * hs * K2, 0.118 * hs * K2, 0.124 * hs * K2);
+    rig_(dome, steel, 'he', Hk(0, 0.112, -0.004));
+    const face = new THREE.CylinderGeometry(0.108 * hs * K2, 0.112 * hs * K2, 0.118 * hs * K2, 30, 3, true, -1.2, 2.4);
+    rig_(face, toon('#ffffff', { map: grilleTex(), side: THREE.DoubleSide }), 'he', Hk(0, 0.053, -0.004));
+    const back = new THREE.CylinderGeometry(0.108 * hs * K2, 0.116 * hs * K2, 0.118 * hs * K2, 30, 3, true, 1.2, Math.PI * 2 - 2.4); rig_(back, steel, 'he', Hk(0, 0.053, -0.004));
+    const band = new THREE.TorusGeometry(0.109 * hs * K2, 0.006 * hs * K2, 6, 40); band.rotateX(Math.PI / 2); rig_(band, bronze, 'he', Hk(0, 0.112, -0.004));
+    const brim = new THREE.CylinderGeometry(0.112 * hs * K2, 0.16 * hs * K2, 0.03 * hs * K2, 36, 1, true); rig_(brim, steel, 'he', Hk(0, -0.02, -0.006));
+    const rim = new THREE.TorusGeometry(0.16 * hs * K2, 0.0055 * hs * K2, 6, 40); rim.rotateX(Math.PI / 2); rig_(rim, bronze, 'he', Hk(0, -0.035, -0.006));
+    const crest = plate([[-0.13, 0], [-0.1, 0.035], [-0.02, 0.075], [0.06, 0.07], [0.12, 0.035], [0.135, 0.0]], 0.016); crest.scale(hs * K2, hs * K2, 1); crest.rotateY(Math.PI / 2);
+    rig_(crest, steelD, 'he', Hk(0, 0.21, -0.004));
+    const crestRim = plate([[-0.13, -0.004], [0.135, -0.004], [0.135, 0.01], [-0.13, 0.01]], 0.02); crestRim.scale(hs * K2, hs * K2, 1); crestRim.rotateY(Math.PI / 2); rig_(crestRim, bronze, 'he', Hk(0, 0.21, -0.004));
+  }
+  /* ---- Manica on the SWORD arm (right): steel lames from shoulder to wrist + a flared shoulder guard ---- */
+  if (o.manica !== false) {
+    const sd = o.swordSide || 'R', S0 = P('s' + sd), E0 = P('e' + sd), W0 = P('w' + sd), gi = GI['A' + sd], sx = sd === 'L' ? 1 : -1;
+    const tArm = (p) => { const tu = tAl(p, S0, E0); return tu < 1 ? tu * 0.5 : 0.5 + tAl(p, E0, W0) * 0.5; };
+    const mat = K.maskedMat(); mat.userData.hem = { w: 0.006, col: [201, 154, 62], bw: 0, bcol: [0, 0, 0] };
+    const lame = (p) => { const t = tArm(p) * 15.5, f = t - Math.floor(t); const v = f < 0.13 ? 0.42 : 0.78 + 0.22 * f; return lin3(STEEL).map(c => c * v / Math.max(0.0001, lin3(STEEL)[0]) * lin3(STEEL)[0]); };
+    const m = K.shellFrom('g_manica', (p, g) => g === gi ? Math.min(tArm(p) + 0.04, 0.95 - tArm(p)) * 0.25 : -1, lame, 0.0095, { mat }); m.userData.ownMat = 1; out.push(m);
+    const sh = new THREE.SphereGeometry(1, 20, 12, 0, Math.PI * 2, 0, Math.PI * 0.42); sh.scale(0.085, 0.07, 0.078);
+    const shm = rig_(sh, toon(STEEL, { side: THREE.DoubleSide }), 's' + sd, [S0[0] + sx * 0.03, S0[1] + 0.012, S0[2]]); shm.rotation.z = sx * 0.62;
+    const rimg = new THREE.TorusGeometry(1, 0.06, 6, 28); rimg.rotateX(Math.PI / 2); rimg.scale(0.085 * Math.sin(Math.PI * 0.42), 0.07, 0.078 * Math.sin(Math.PI * 0.42));
+    const rm = rig_(rimg, toon(BRASS), 's' + sd, [S0[0] + sx * 0.03, S0[1] + 0.012, S0[2]]); rm.rotation.z = sx * 0.62; rm.position.y += 0.07 * Math.cos(Math.PI * 0.42) * Math.cos(0.62); rm.position.x += -sx * 0.07 * Math.cos(Math.PI * 0.42) * Math.sin(0.62);
+  }
+  /* ---- the ocrea: one gold greave on the LEFT (front) leg, over the knee (cell 23) ---- */
+  if (o.greave !== false) {
+    const sd = o.shieldSide || 'L', K0 = P('k' + sd), A0 = P('a' + sd), gi = GI['L' + sd];
+    const mat = K.maskedMat(); mat.userData.hem = { w: 0.005, col: [120, 84, 30], bw: 0, bcol: [0, 0, 0] };
+    const gcol = (p, m2) => { const ax = Math.atan2(p[0] - (K0[0] + A0[0]) / 2, p[2] - (K0[2] + A0[2]) / 2 + 0.02); const v = 0.82 + 0.3 * Math.max(0, Math.cos(ax * 1.6)); return lin3(GOLD2).map(c => c * v); };
+    const m = K.shellFrom('g_ocrea', (p, g, n) => g === gi ? Math.min(Math.min(tAl(p, K0, A0) + 0.16, 0.86 - tAl(p, K0, A0)) * 0.25, n[2] + 0.35) : -1, gcol, 0.011, { mat }); m.userData.ownMat = 1; out.push(m);
+    const cap = new THREE.SphereGeometry(1, 16, 10, -1.2, 2.4, 0.3, 1.7); cap.scale(0.05, 0.06, 0.04);
+    rig_(cap, toon(GOLD2, { side: THREE.DoubleSide }), 'k' + sd, [K0[0], K0[1] + 0.02, K0[2] + 0.028]);
+  }
+  /* ---- Balteus II (cell 28): a wide dark-red belt with gold scrollwork + a gold rim ---- */
+  if (o.belt !== false) {
+    const by = (p) => 1.085 - 0.012 * Math.max(0, Math.min(1, p[2] / 0.09));
+    const mat = K.maskedMat(); mat.userData.hem = { w: 0.008, col: [215, 170, 69], bw: 0, bcol: [0, 0, 0] };
+    const col = (p) => { const a = Math.atan2(p[0], p[2]), y = p[1] - by(p); const wave = Math.abs(y - 0.011 * Math.sin(a * 7)) < 0.004; const palm = Math.abs(a) < 0.28 && Math.abs(y) < 0.03 && Math.abs(a) * 0.1 < 0.03 - Math.abs(y) * 0.6;
+      return wave || palm ? lin3(GOLD2) : lin3(MAROON); };
+    const m = K.shellFrom('g_balteus', (p, g) => g === GI.T ? 0.042 - Math.abs(p[1] - by(p)) : -1, col, 0.019, { mat }); m.userData.ownMat = 1; out.push(m);
+    /* the base belt's iron ring + studs would poke through: hide them */
+    for (const c of B.rig.bones.pe.children) { const pr = c.geometry && c.geometry.parameters; if (pr && (pr.radius === 0.031 || pr.radius === 0.0052)) { c.visible = false; if (c.userData.ink) c.userData.ink.visible = false; } }
+  }
+  /* ---- padded wraps on the shield forearm (the Soldier's printed kit) ---- */
+  if (o.wraps !== false && !o.severL) {
+    const sd = o.shieldSide || 'L', E0 = P('e' + sd), W0 = P('w' + sd), gi = GI['A' + sd];
+    const m = K.shellFrom('g_wraps', (p, g) => g === gi ? Math.min(tAl(p, E0, W0) - 0.25, 0.97 - tAl(p, E0, W0)) * 0.25 : -1, (p) => { const v = 0.8 + 0.2 * (Math.sin(tAl(p, E0, W0) * 46) > 0 ? 1 : 0); return lin3(CLOTH).map(c => c * v); }, 0.0045, {}); out.push(m);
+  }
+  /* ---- weapons + shield (round 2: one mount for every class) ---- */
+  if (o.sword !== false) out.push(...weaponKit(B, { R: 'gladius' }, out));
+  if (o.shield !== false && !o.severL) out.push(...weaponKit(B, { L: 'scutum', handle: o.handle }, out));
+  /* ---- a severed forearm: the cut + a stump cap (flesh, bone, a dark rim) ---- */
+  if (o.severL) {
+    const cut = K.sever('L', 0.32); const r = cut.r + 0.008;
+    const flesh = new THREE.CircleGeometry(r, 24), bone = new THREE.CircleGeometry(r * 0.32, 16), ring = new THREE.RingGeometry(r * 0.82, r * 1.02, 24);
+    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(...cut.n));
+    const at2 = (k) => [cut.at[0] + cut.n[0] * k, cut.at[1] + cut.n[1] * k, cut.at[2] + cut.n[2] * k];
+    rig_(flesh, toon('#9b1d18', { side: THREE.DoubleSide }), 'eL', at2(0.0), q);
+    rig_(ring, toon('#5a0d0b', { side: THREE.DoubleSide }), 'eL', at2(0.001), q);
+    rig_(bone, toon('#efe3c8', { side: THREE.DoubleSide }), 'eL', at2(0.0015), q);
+    for (const [k, rr, dx] of [[0.014, 0.012, 0.01], [0.034, 0.009, -0.008], [0.058, 0.007, 0.004], [0.08, 0.005, -0.002]]) rig_(new THREE.SphereGeometry(rr, 8, 6).scale(1, 1.6, 1), toon('#8a1612'), 'eL', [cut.at[0] + dx, cut.at[1] - k, cut.at[2] + 0.01], null);
+  }
+  return out;
+}
+
+/* ===================== look100 round 2: weapons + shields in the fist, for every class ===================== */
+const W_ALIAS = { gladius: 'gladius', pugio: 'dagger', sica: 'sica', trident: 'trident', rudis: 'rudis', axe: 'axe', hasta: 'spear', sling: 'sling', falcata: 'falcata', mace: 'mace' };
+const thracianTex = () => canvasTex(200, 260, (g, w, h) => { g.fillStyle = '#3f7a52'; g.fillRect(0, 0, w, h); g.strokeStyle = GOLD2; g.lineWidth = 12; g.strokeRect(8, 8, w - 16, h - 16);
+  g.lineWidth = 6; for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; g.beginPath(); g.moveTo(w / 2, h / 2); g.lineTo(w / 2 + Math.cos(a) * 70, h / 2 + Math.sin(a) * 95); g.stroke(); }
+  g.fillStyle = GOLD2; g.beginPath(); g.arc(w / 2, h / 2, 24, 0, 7); g.fill(); });
+export function weaponKit(B, spec, sink) {
+  const K = B.kit, P = K.P, out = [];
+  const toon = (c, ex) => K.makeToon(c, ex);
+  const rig_ = (geo, mat, bone, at, q) => { const m = K.rigid(geo, mat, bone, at, null); const bp = P(bone); m.position.set(at[0] - bp[0], at[1] - bp[1], at[2] - bp[2]); if (q) m.quaternion.copy(q);
+    m.userData.ownMat = 1; const ink = m.userData.ink; if (ink) { ink.position.copy(m.position); ink.quaternion.copy(m.quaternion); } out.push(m); return m; };
+  const held = (sd, kind) => { const W0 = P('w' + sd), tip = ENDS['w' + sd], sx = sd === 'L' ? 1 : -1; return gripBar(W0, tip, sx, kind); };
+  const vmat = () => toon('#ffffff', { vertexColors: true, side: THREE.DoubleSide });
+  const geoOf = (t) => {
+    if (t === 'gladius' || t === 'rudis' || t === 'falcata') {
+      const wood = t === 'rudis', curve = t === 'falcata';
+      const blade = curve ? plate([[-0.026, 0.06], [0.024, 0.06], [0.034, 0.25], [0.05, 0.42], [0.0, 0.58], [-0.02, 0.4], [-0.026, 0.2]], 0.008)
+        : plate([[-0.027, 0.06], [0.027, 0.06], [0.03, 0.2], [0.024, 0.46], [0, 0.56], [-0.024, 0.46], [-0.03, 0.2]], 0.008);
+      const fuller = plate([[-0.006, 0.08], [0.006, 0.08], [0.004, 0.44], [-0.004, 0.44]], 0.0095);
+      return merge([[cyl(0.0145, 0.0145, 0.1, 0, 10), wood ? '#8a6234' : '#2a1d16'], ...[-0.03, 0, 0.03].map(y => [at(new THREE.TorusGeometry(0.0155, 0.003, 4, 12).rotateX(Math.PI / 2), 0, y, 0), wood ? '#6d4a26' : '#4a3424']),
+        [at(new THREE.SphereGeometry(0.028, 14, 10).scale(1, 0.8, 1), 0, -0.066, 0), wood ? '#8a6234' : '#3a2a20'], [box(0.084, 0.024, 0.038, 0, 0.058), wood ? '#8a6234' : DARKBR], [box(0.09, 0.008, 0.042, 0, 0.069), BRASS],
+        [blade, wood ? '#c79a5a' : '#d3d8dc'], ...(wood ? [] : [[fuller, '#8e979e']])]);
+    }
+    /* round 3: the rest of W */
+    if (t === 'stones') return merge([[ball(0.026, 0.0, 0.0, 0.0), '#8a7a66'], [ball(0.022, 0.03, 0.02, 0.0), '#7a6a58'], [ball(0.02, -0.025, 0.03, 0.01), '#958570']]);
+    if (t === 'severedArm' || t === 'severedLeg') { const leg = t === 'severedLeg';
+      return merge([[cyl(leg ? 0.05 : 0.04, leg ? 0.038 : 0.03, leg ? 0.42 : 0.3, leg ? 0.22 : 0.16, 10), '#c08a68'], [at(new THREE.CylinderGeometry(leg ? 0.05 : 0.04, leg ? 0.05 : 0.04, 0.012, 12), 0, leg ? 0.43 : 0.31, 0), '#8e1612'],
+        [at(new THREE.SphereGeometry(leg ? 0.045 : 0.035, 10, 8).scale(leg ? 1 : 0.8, 1, leg ? 2.2 : 1.4), 0, -0.02, leg ? 0.06 : 0.02), leg ? '#6a4a30' : '#c08a68']]); }
+    if (t === 'scissor') return merge([[cyl(0.04, 0.035, 0.22, -0.06, 12), '#6d6a64'], [at(new THREE.TorusGeometry(0.09, 0.014, 6, 20, Math.PI).rotateY(Math.PI / 2), 0, 0.12, 0), '#cfd4d8']]);
+    if (t === 'pilum') return merge([[cyl(0.014, 0.014, 1.3, 0.1, 8), WOOD], [cyl(0.006, 0.006, 0.55, 1.02, 6), '#8f969b'], [at(new THREE.ConeGeometry(0.016, 0.06, 4), 0, 1.32, 0), '#cfd4d8'], [ball(0.022, 0, 0.75, 0), '#6d6a64']]);
+    if (t === 'psykhe') { const bl = plate([[-0.02, 0.06], [0.02, 0.06], [0.026, 0.25], [0.016, 0.45], [0.024, 0.58], [0, 0.7], [-0.024, 0.58], [-0.016, 0.45], [-0.026, 0.25]], 0.008);
+      return merge([[cyl(0.015, 0.015, 0.11, 0, 10), '#20202a'], [box(0.12, 0.022, 0.04, 0, 0.065), '#4a4f7a'], [ball(0.028, 0, -0.07), '#6a72b8'], [bl, '#5d6db8']]); }
+    if (t === 'pugio') return weaponGeo('dagger');
+    if (t === 'hasta') return weaponGeo('spear');
+    return weaponGeo(t);
+  };
+  for (const sd of ['R', 'L']) {
+    const t0 = spec[sd]; if (!t0) continue;
+    if (t0 === 'scutum' || t0 === 'thracian' || t0 === 'achilles') {
+      /* STRAPPED + HELD: the forearm runs along the back of the board (a strap round it), the fist holds the handle behind the boss;
+         board plane = forearm × hand-forward, face = the back of the hand (the pose's grip constraint turns that forward) */
+      const b = held(sd, 'bar'), big = t0 === 'scutum', W = big ? 0.66 : 0.46, Hh = big ? 1.02 : 0.62;
+      /* round 3 (his elbow bug): the board's long axis follows the FOREARM (elbow → wrist), not the hand, and stands 85 mm off the forearm's
+         axis (forearm r ≈ 40 mm + wraps + elbow bulge + strap) — so the elbow and forearm always stay behind it */
+      const E0 = P('e' + sd), W0 = P('w' + sd), fa = (() => { const v = [W0[0] - E0[0], W0[1] - E0[1], W0[2] - E0[2]], l = Math.hypot(...v); return v.map(x => x / l); })();
+      const sub3v = (a, c) => [a[0] - c[0], a[1] - c[1], a[2] - c[2]];
+      const dotv = (a, c) => a[0] * c[0] + a[1] * c[1] + a[2] * c[2], nrmv = (v) => { const l = Math.hypot(...v); return v.map(x => x / l); };
+      const on = nrmv(b.o3.map((v, i) => v - fa[i] * dotv(b.o3, fa))), hd2 = nrmv([on[1] * fa[2] - on[2] * fa[1], on[2] * fa[0] - on[0] * fa[2], on[0] * fa[1] - on[1] * fa[0]]);
+      const OFF = big ? 0.085 : 0.075, ctr = [0, 1, 2].map(i => b.c[i] + on[i] * (OFF - dotv(sub3v(b.c, W0), on)));   /* centred on the fist (boss over the hand) */
+      let q = basisQ(fa, hd2); { const zz = new THREE.Vector3(0, 0, 1).applyQuaternion(q); if (zz.dot(new THREE.Vector3(...on)) < 0) q = basisQ(fa.map(v => -v), hd2); }
+      /* look100 round 8 (spec.up8): the board's LONG edge (its y) along the forearm, upright when the forearm is; texture right way up */
+      if (spec.up8) { const yv = fa.map(v => -v); q = basisQ(hd2, yv); const zz = new THREE.Vector3(0, 0, 1).applyQuaternion(q); if (zz.dot(new THREE.Vector3(...on)) < 0) q = basisQ(hd2.map(v => -v), yv); }
+      const ach = t0 === 'achilles';
+      const geo = ach ? (() => { const g = new THREE.CylinderGeometry(0.34, 0.34, 0.03, 40, 1, false); g.rotateX(Math.PI / 2); g.clearGroups(); const n = g.index.count; g.addGroup(0, n, 0); return g; })() : boardGeo(W, Hh, big ? 0.07 : 0.05, big ? 0.6 : 0.5, 0.026);
+      const achTex = () => canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#b8862e'; g.fillRect(0, 0, w, h); for (let r = 120; r > 10; r -= 22) { g.strokeStyle = r % 44 ? '#f0cf6a' : '#7a4e18'; g.lineWidth = 7; g.beginPath(); g.arc(w / 2, h / 2, r, 0, 7); g.stroke(); } });
+      const m = rig_(geo, ach ? toon('#ffffff', { map: achTex() }) : [toon('#ffffff', { map: big ? scutumTex() : thracianTex() }), toon('#6e4a2c')], 'w' + sd, ctr, q);
+      const boss = new THREE.SphereGeometry(big ? 0.065 : 0.05, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2); boss.rotateX(Math.PI / 2);
+      const bp = [0, 1, 2].map(i => ctr[i] + on[i] * 0.012); const bm = rig_(boss, toon(GOLD2), 'w' + sd, bp, q);
+      /* the handle in the fist + two brackets back to the board, the forearm strap riveted to it */
+      rig_(colorize(cyl(0.011, 0.011, 0.16, 0, 10), '#6e4a2c'), vmat(), 'w' + sd, b.c, basisQ(b.u, b.f));
+      for (const k of [-0.07, 0.07]) rig_(colorize(box(0.016, 0.016, OFF + 0.03), '#5a3a22'), vmat(), 'w' + sd, [0, 1, 2].map(i => b.c[i] + b.f[i] * k + on[i] * (OFF / 2 + 0.01)), basisQ(fa, hd2));
+      const st = [E0[0] + fa[0] * 0.09, E0[1] + fa[1] * 0.09, E0[2] + fa[2] * 0.09];
+      const band = new THREE.TorusGeometry(0.046, 0.009, 6, 20); const bq = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(...fa));
+      rig_(band, toon('#5a3a22'), 'w' + sd, st, bq);
+      rig_(colorize(box(0.03, 0.028, OFF - 0.02), '#5a3a22'), vmat(), 'w' + sd, [0, 1, 2].map(i => st[i] + on[i] * (OFF / 2 + 0.015)), basisQ(fa, hd2));
+      if (spec.handle) for (const x of [m, bm]) { x.visible = false; if (x.userData.ink) x.userData.ink.visible = false; }
+    } else {
+      const t = W_ALIAS[t0] || t0, b = held(sd, 'hilt');
+      rig_(geoOf(t), vmat(), 'w' + sd, b.c, basisQ(b.u, b.f));
+    }
+  }
+  return out;
+}
+
+/* look100 round 3: the helpers outfit100.js builds with */
+export { merge, plate, box, cyl, ball, at, colorize, weaponGeo, helmetGeo, boardGeo, basisQ, canvasTex, scutumTex, thracianTex, grilleTex, arcPts, METAL, BRONZE, GOLD, LEATHER, CLOTH, WOOD, RED, STEEL, BRASS, DARKBR, MAROON, GOLD2 };
