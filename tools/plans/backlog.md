@@ -271,7 +271,7 @@ WAVE 3 STARTED (2026-10-11): Manager map insets (all 7) + ENTER ANY EVENT (1a 2b
 BABYLON (his 2026-10-11): pushed to the side — no Babylon work planned; prototype stays in tools/plans/babylon100/ for reference.
 3D GEAR Aim pose (his yes): the bow stands upright in the Aim pose like the armed stand (wrist turned) — building.
 BEASTS ROUND 3 ANSWERS (his 2026-10-11): 1a split Tholo + Commodus like Leo · 2c bronze shoulder clasp AND the cape IVORY WHITE (not red) · 3a bigger lion face on Commodus's hood ·
-4 Zora perches on a BROKEN CHUNK OF PILLAR ROCK · 5 snake: he had not seen it — shown (beast3_glykon_sheet + beast3_board), awaiting his word. → round 4 look test.
+4 Zora perches on a BROKEN CHUNK OF PILLAR ROCK · 5 snake THINNER (his word after seeing it). → round 4 look test.
 MY LUDUS ANSWERS: 1a advisor effects as built · FACILITIES (FAC 250/600/1200 builds under the advisors) go INTO the advisors — each building under the advisor who runs it, built from
 his popover · 2b Clerk's rebate shown in the header wages badge · 3a Roster + Armory banners swap to the new scenes now · 4b Consilium's counsel + Ledger links move where they belong
 thematically (counsel → Consilium's popover, Ledger → the Clerk's popover / money badge).
