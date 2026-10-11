@@ -31,6 +31,8 @@ ok(p1.noise===0&&p1.mean<0.15&&p1.big<p1.total*0.001,'1b cache == direct paint (
 /* ---- 2 + 3 the camera eases: no rebuilds, seams and rim stand still (frames aligned by the board shift) ---- */
 const walk=(on,keep,stands)=>pg.evaluate(async([on,keep,stands])=>{const st0=STANDS;STANDS=stands;const others=LAYERS93.defs.map(d=>d[0]).filter(n=>!keep.includes(n));others.forEach(n=>LAYERS93.dbg.add(n));
   Z99.on=on;const out={};const b0=Z99.stats.builds;
+  /* v1.0 294: a zoom that is still moving draws the last crisp layers scaled; this walk measures the settled frames */
+  if(typeof Z100!=='undefined')Z100.force=true;
   for(const z of [1.4,1.8,2.2]){CAM.z=z;S.zoomIn=true;draw();draw();const p=cur();const fr=[];const bz=Z99.stats.builds;
     for(let i=0;i<14;i++){CAM.fr=p.r-3+i*0.137;CAM.fc=p.c+2-i*0.091;draw();const dpr=devicePixelRatio;fr.push({ox:Math.round(OX*dpr),oy:Math.round(OY*dpr),d:ctx.getImageData(0,0,cv.width,cv.height).data,W:cv.width,H:cv.height})}
     let tot=0,diff=0,big=0;
@@ -39,6 +41,7 @@ const walk=(on,keep,stands)=>pg.evaluate(async([on,keep,stands])=>{const st0=STA
         if(B.d[ib+3]===0&&A.d[ia+3]===0)continue;tot++;const pa=A.d[ia+3]/255,pb=B.d[ib+3]/255;
         const dd=Math.abs(B.d[ib]*pb-A.d[ia]*pa)+Math.abs(B.d[ib+1]*pb-A.d[ia+1]*pa)+Math.abs(B.d[ib+2]*pb-A.d[ia+2]*pa)+Math.abs(B.d[ib+3]-A.d[ia+3]);if(dd>3)diff++;if(dd>30)big++}}
     out[z]={tot,diff,big,builds:Z99.stats.builds-bz}}
+  if(typeof Z100!=='undefined')Z100.force=false;
   Z99.on=true;STANDS=st0;others.forEach(n=>LAYERS93.dbg.delete(n));CAM.z=null;S.zoomIn=false;draw();return out},[on,keep,stands]);
 /* stands off: the rim lies bare beside the sand (with the stands on they cover its edges — 3c) */
 const ON=await walk(true,['rim','tiles','floor'],false),OFF=await walk(false,['rim','tiles','floor'],false),ONS=await walk(true,['rim','stands','tiles','floor'],true);

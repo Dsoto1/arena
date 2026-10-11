@@ -23,7 +23,7 @@ await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(
       for(let i=0;i<200;i++){await W8(120);if(CUR_MODAL){const lit=document.querySelector('#mBody [data-mi]:not(.dim):not([disabled])');const bs=[...document.querySelectorAll('#mBtns button:not([disabled])')];
           if(lit)lit.click();else if(bs.length)bs[0].click();else CUR_MODAL.done(null)}else if(S&&S.phase!=='setup'&&i>6)break}
       SPEED='pause';for(let i=0;i<50&&((typeof fxRAF!=='undefined'&&fxRAF)||S.busy||(S.anims&&S.anims.length));i++)await W8(100);try{menuHide()}catch(e){}
-      S.zoomIn=false;CAM.z=null;if(typeof DUEL!=='undefined'){DUEL.z=1;DUEL.on=false}for(const id of ['cardShow','bubbles'])(document.getElementById(id)||{}).innerHTML='';
+      if(typeof Z100!=='undefined')Z100.force=false;S.zoomIn=false;CAM.z=null;if(typeof DUEL!=='undefined'){DUEL.z=1;DUEL.on=false}for(const id of ['cardShow','bubbles'])(document.getElementById(id)||{}).innerHTML='';
       for(let i=0;i<30;i++){draw();await W8(100)} /* the stone texture, flags, art */},
     /* one draw with the clock frozen and Math.random seeded: the same frame every time */
     shot(prep){TL93.s=12345;if(prep)prep();draw();const c=cv.getContext('2d');return c.getImageData(0,0,cv.width,cv.height).data},
@@ -51,7 +51,7 @@ out.report=await pg.evaluate(()=>{LAYERS93.reset();for(let i=0;i<20;i++)draw();r
   ok(R.rows.filter(x=>x.cached&&/walls\/top|stands\/under/.test(x.name)).every(x=>x.hits>=15),'cached layers reused '+JSON.stringify(R.rows.filter(x=>x.cached)));
   ok(R.rows.find(x=>x.name==='pieces').n>=20,'pieces timed')}
 await scene('deco_off',null,null,'deco');
-await scene('zoom',null,`(()=>{const p=cur();CAM.z=2;CAM.fr=p.r-1.6;CAM.fc=p.c+1.2;CAM.raf=1})`);
+await scene('zoom',null,`(()=>{if(typeof Z100!=='undefined')Z100.force=true /* v1.0 294: a zoom that is still moving draws the last crisp layers scaled; force = the settled (crisp) frame this test compares */;const p=cur();CAM.z=2;CAM.fr=p.r-1.6;CAM.fc=p.c+1.2;CAM.raf=1})`);
 await pg.evaluate(()=>{CAM.z=null;CAM.raf=0;CAM.fr=null;draw()});
 await scene('wear',null,`(()=>{if(!S._t93){S._t93=1;S.rubble=(S.rubble||[]).concat([{r:5,c:4,dr:0,dc:1},{r:8,c:8,dr:1,dc:0}]);S.blood=(S.blood||[]).concat([{r:6,c:6,kind:'elim',seed:7},{r:3,c:9,kind:'limb',seed:9},{r:7,c:2,kind:'drop',seed:3}]);
   const p=S.players[3];S.piles.push({r:9,c:3,corpse:true,cls:p.cls,color:p.color,owner:p.id,items:[],weapons:[],armor:[]})}})`,'wear');

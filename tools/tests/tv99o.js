@@ -13,7 +13,7 @@ await p.goto(U);await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:6
 ok(await p.evaluate(()=>sessionStorage.getItem('flavius_onlopen99')!=null),'7b the open flag is set while Online is open');
 await p.reload();await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await p.waitForSelector('#onl',{timeout:20000}).catch(()=>{});
 ok(await p.evaluate(()=>!!document.getElementById('onl')),'7b a refresh did not return to Online');
-await p.evaluate(()=>{const x=document.getElementById('mClose');x&&x.click()});await p.waitForTimeout(600);
+await p.evaluate(()=>{const x=document.getElementById('mClose');x&&x.click()});await p.waitForFunction(()=>sessionStorage.getItem('flavius_onlopen99')==null,null,{timeout:8000}).catch(()=>{}) /* the flag goes when the window's promise settles: a slow runner needs more than 600 ms */;
 ok(await p.evaluate(()=>sessionStorage.getItem('flavius_onlopen99')==null),'7b closing Online clears the flag');
 /* 7a */const r7=await p.evaluate(()=>{const keep=window.l89ProfHTML;try{ONL.acct={id:'a1',name:'T'};ONL.tab='prof';l89ProfHTML=function(){throw new Error('boom')};const h=onlHTML();return {bad:/boom|ref E-|did not load|went wrong/i.test(h)||/↻/.test(h),tryAgain:/data-v="prof"[^>]*>[^<]*↻/.test(h)}}finally{l89ProfHTML=keep;ONL.tab='play'}});
 ok(r7.bad,'7a a failing Profile page shows no reason');
