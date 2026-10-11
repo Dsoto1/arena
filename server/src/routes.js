@@ -1461,6 +1461,69 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       const X=await editLobby(d.id,Y=>{err=C.roomSet(Y,ctx.acct,{turnT:d.turnT},now());if(err)return false});if(err)throw new Error(err);if(!X)throw new Error('That game is gone.');
       const rest={...d};delete rest.turnT;if(Object.keys(rest).some(k=>k!=='id'&&k!=='rid'))return base(rest,ctx);await toRoom(X,null,{except:ctx.acct});return room(X)}}}
   /* ══════════ end of v1.0 TURN TIMERS ══════════ */
+  /* v1.0 SERVER BATCH A (shared rules: the "v1.0 SERVER BATCH A" section of onlcore; docs/backend.md "v1.0 server batch A"; no protocol bump)
+     DOMUS   + slots100: gladiator slots opened (a house without it predates v1.0 and keeps all four); domusRow carries gmax, slots100, slotNext100
+     domus.slot {}            open the next slot: the house's Glory (best Domus-rank score) must reach the step, the treasury pays its coin (ledger 'upg')
+     market.kit {kit:'daily'} THE ISSUED KIT: once an online day a house; takes back every Issued piece the house holds elsewhere, refills what he lacks
+     bet.place                refused: code 'wager_off' (online wagers are closed; old bets still settle and refund as before)
+     SECURITY PASS (findings in docs/backend.md): request ids/chars must be short strings; domus.equip only for a living gladiator of your house;
+     match.odd counts FIGHTERS only (ticket holders never vote a strike); match.clock: a turn's own lanista cannot mark his turn ended while another
+     human fights (stalling), and a turn report far ahead of the last one (TURN_JUMP100) needs a second lanista's report. */
+  {const TURN_JUMP100=24;
+    NEED_DOMUS.add('domus.slot');
+    /* ── 3 · wagers closed ── */
+    R['bet.place']=async()=>{throw fail('wager_off',C.WAGER_OFF100)};
+    /* ── 5 · slots ── */
+    R['domus.slot']=async(d,ctx)=>{const {D}=await house92(ctx.acct);const D1=(await dr98Upd(D))||D;const g=C.slotGlory100(D1);const why=C.slotWhy100(D1,g);
+      if(why)throw (/treasury/.test(why)?fail('no_coin',why,{cost:(C.slotNext100(D1)||{}).coin|0}):fail('slot_locked',why));
+      let err='',s=null;const X=await editDomus(D.id,Y=>{err=C.slotWhy100(Y,g);if(err)return false;s=C.slotBuy100(Y,g,now())});if(!X||!s)throw new Error(err||'Try again.');
+      return {domus:C.domusRow(X),domus92:C.domusRow(X),slot:s.n,cost:s.coin}};
+    {const base=R['char.create'];R['char.create']=async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=A&&A.domus?await domusGet(A.domus):null;
+      if(D){const live=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>c.alive).length;const max=C.gladMax(D);const s=C.slotNext100(D);
+        if(live>=max&&s)throw fail('slot_full',`Every slot of your house is taken — open slot ${s.n} in the Domus (${s.glory} Glory + ${s.coin} coin).`)}
+      return base(d,ctx)}}
+    /* ── 2 · the Issued kit: one set a house, refilled once an online day ── */
+    {const base=R['market.kit'];R['market.kit']=async(d,ctx)=>{if(!d||d.kit!=='daily')return base(d,ctx);
+      const {D}=await house92(ctx.acct);const ch=await ownChar(ctx.acct,d.char);if(ch.domus!==D.id)throw new Error('Not of your house.');const list=await lobbies();
+      if(charBusy(ch.id,list))throw fail('in_match',`${ch.name} is in a match — the storeroom waits.`);
+      const day=C.dayKey(now());if(D.kitDay92===day)throw fail('kit_day','One free kit a day for each house — come back tomorrow.');
+      const others=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>c&&c.alive&&c.domus===D.id&&c.id!==ch.id);const away=C.issueElsewhere100(D,others,ch.id);
+      const busy=others.find(c=>charBusy(c.id,list)&&away.some(x=>x.holder===c.id));if(busy)throw fail('in_match',`The house’s Issued kit is with ${busy.name} in a match — claim it when he is back.`);
+      const plan=C.issuePlan100(ch,catalog);if(!plan.buy.length)throw fail('kit_none','He already has all of it.');
+      if(!(await editDomus(D.id,Y=>{if(Y.kitDay92===day)return false;Y.kitDay92=day})))throw fail('kit_day','One free kit a day for each house — come back tomorrow.');
+      /* one set a house: the pieces held elsewhere are taken back (worth nothing — they simply go) */
+      const back=[];for(const x of away){const ok=x.holder==='house'?await soft93(editDomus(D.id,Y=>{if(!C.takePiece(Y,x.item))return false})):await soft93(editChar(x.holder,c=>{if(!c.alive||!C.takePiece(c,x.item))return false}));if(ok)back.push(C.itemBase(x.item))}
+      let news=[],off=[];const c=await soft93(editChar(ch.id,x=>{if(!x.alive)return false;for(const it of plan.drop)C.takePiece(x,it);news=C.kitPieces92(x,plan.buy,true);
+        const eq=C.kitEquip92(x,{...plan,take:[]},news);off=C.dressApply(x,eq,news,catalog).off}));
+      if(!c){await editDomus(D.id,Y=>{if(Y.kitDay92===day)delete Y.kitDay92}).catch(()=>null);throw new Error('Your gladiator changed a moment ago — try again.')}
+      const D2=(off.length?await editDomus(D.id,Y=>{for(const P of off)C.putPiece(Y,P,false)}):null)||await domusGet(D.id);
+      return {char:strip(c),kit:'daily',bought:plan.buy,took:[],back,cost:0,disc:0,full:plan.full,issued:true,domus:C.domusRow(D2),domus92:C.domusRow(D2),gear:D2.gear||[],pcs:D2.pcs||{}}}}
+    /* ── 8 · security pass ── */
+    /* domus.equip: only a living gladiator of your own house */
+    {const base=R['domus.equip'];R['domus.equip']=async(d,ctx)=>{const ch=await charById(d&&d.char);if(!ch||ch.owner!==ctx.acct||!ch.alive)throw new Error('Not yours.');
+      const A=await acctOf(ctx.acct);if(ch.domus&&A&&A.domus&&ch.domus!==A.domus)throw new Error('Not of your house.');return base(d,ctx)}}
+    /* match.odd: a strike is the FIGHTERS' majority (ticket holders replay the match too, but never vote — two sock-puppet tickets could strike an honest fighter) */
+    R['match.odd']=async(d,ctx)=>{const M=await meta(d.id);const live=liveHumans(M);if(!live.includes(ctx.acct))throw new Error('Not your match.');
+      const fl=live.filter(a=>(M.players||[]).includes(a));if(!fl.includes(ctx.acct))return {votes:0,need:0,struck:false,spec:1};
+      const who=fl.find(a=>(M.seats||{})[a]===(d.seat|0));if(!who||who===ctx.acct)throw new Error('No one to name.');
+      await store.put('MATCH#'+d.id,'ODD#'+(d.seat|0)+'#'+ctx.acct,{by:ctx.acct,at:now(),ttl:ttl(2)});
+      const voters=(await store.query('MATCH#'+d.id,'ODD#'+(d.seat|0)+'#')).map(v=>v.by).filter(b=>fl.includes(b)&&b!==who);const votes=voters.length;let struck=false;
+      const need=Math.floor(fl.length/2)+1;if(fl.length>=3&&votes>=need&&(await store.putNew('MATCH#'+d.id,'ODDX#'+who,{at:now(),ttl:ttl(2)}))){await store.counter('ACCT#'+who,'PROFILE','strikes');struck=true}
+      if(fl.length>=3&&votes>=need)await toMatch({conns:{[who]:(M.conns||{})[who]||null}},'match.youodd',{id:d.id,seat:d.seat|0,voters});
+      return {votes,need,struck}};
+    /* match.clock: no stalling your own turn by marking it ended; a turn number far ahead needs a second lanista */
+    {const base=R['match.clock'];if(base)R['match.clock']=async(d,ctx)=>{d=d||{};if(d.kind!=='turn'&&d.kind!=='end')return base(d,ctx);
+      const M=await store.get('MATCH#'+d.id,'META');if(!M||M.status!=='live')return base(d,ctx);const fl=liveHumans(M).filter(a=>(M.players||[]).includes(a));
+      const owner=s=>Object.keys(M.seats||{}).find(a=>M.seats[a]===s)||null;const tc=M.tc100;
+      if(d.kind==='end'&&tc&&tc.t===(d.t|0)&&owner(tc.seat)===ctx.acct&&fl.some(a=>a!==ctx.acct))return base({...d,kind:'none'},ctx);
+      if(d.kind==='turn'){const tn=d.t|0,last=tc?tc.t|0:0;if(tn>last+TURN_JUMP100){await store.putNew('MATCH#'+d.id,'CLKV#'+tn+'#'+(d.seat|0)+'#'+ctx.acct,{at:now(),ttl:ttl(2)});
+        const n=new Set((await store.query('MATCH#'+d.id,'CLKV#'+tn+'#'+(d.seat|0)+'#')).map(x=>String(x.SK).split('#').pop()).filter(a=>fl.includes(a))).size;
+        if(n<Math.min(2,fl.length))return base({...d,kind:'none'},ctx)}}
+      return base(d,ctx)}}
+    /* every request: an id / gladiator reference is a short string (or a number) — never an object or a long blob */
+    const idOK100=v=>v==null||(typeof v==='string'&&v.length<=80)||(typeof v==='number'&&isFinite(v));
+    for(const t of Object.keys(R)){const base=R[t];R[t]=async(d,ctx)=>{if(d&&typeof d==='object'&&(!idOK100(d.id)||!idOK100(d.char)))throw fail('bad_req','That request was not understood.');return base(d,ctx)}}}
+  /* ══════════ end of v1.0 SERVER BATCH A ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);

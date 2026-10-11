@@ -21,7 +21,7 @@ const as=(acct,t,d)=>P.evaluate(async([acct,t,d])=>{const o=sessionStorage.getIt
   try{return {r:await NET.req(t,d)}}catch(e){return {err:e.message,code:e.code}}finally{sessionStorage.setItem('flavius_onlacct',o)}},[acct,t,d]);
 
 /* two houses: Vettii (Alpha, hero) and Bruttii (Brutus, slave) */
-const ids=await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
+const ids=await P.evaluate(async()=>{ONLC.SLOT100.start=4; /* v1.0: a house of four slots (the pre-v1.0 rule these checks need) */if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   const B=await NET.req('auth.signin',{name:'Bruttius'});const bd=(await NET.req('domus.create',{name:'Bruttii'})).domus;const bc=await NET.req('char.create',{name:'Brutus',cls:'slave'});
   ONL.acct=await NET.req('auth.signin',{name:'Vettius'});ONL.domus=(await NET.req('domus.create',{name:'Vettii'})).domus;const a=await NET.req('char.create',{name:'Alpha',cls:'hero'});
   return {a:a.id,dom:ONL.domus.id,acct:ONL.acct.id,b:bc.id,bdom:bd.id,bacct:B.id}});

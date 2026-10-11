@@ -51,7 +51,11 @@ async function routes(){
   const eve=await client('eve','venatore');const ec=await db.get('CHAR#'+eve.ch.id,'CHAR');ec.wallet=30;await db.put('CHAR#'+eve.ch.id,'CHAR',ec);
   const dc=await db.get('CHAR#'+dan.ch.id,'CHAR');dc.wallet=40;await db.put('CHAR#'+dan.ch.id,'CHAR',dc);
   const R2=await dan.req('lobby.create',{ev:'egidious',loc:3,cry:false,ticket:5});await dan.req('lobby.set',{id:R2.id,ticket:5});await eve.req('lobby.ticket',{id:R2.id});
-  assert.strictEqual(await trO(eve.acct),25,'Eve paid her ticket (v0.92: from the treasury)');await dan.req('bet.place',{id:R2.id,seat:0,amt:10});assert.strictEqual(await trO(dan.acct),30,'Dan backed himself');
+  assert.strictEqual(await trO(eve.acct),25,'Eve paid her ticket (v0.92: from the treasury)');{let e=null;try{await dan.req('bet.place',{id:R2.id,seat:0,amt:10})}catch(x){e=x}assert.ok(e&&e.code==='wager_off','v1.0: online wagers are closed')}
+  /* a bet placed before v1.0 (as bet.place wrote it: the treasury staked, the room holds it) still comes back */
+  {const P=await db.get('ACCT#'+dan.acct,'PROFILE');const D=await db.get('DOMUS#'+P.domus,'DOMUS');D.treasury=(D.treasury|0)+40-10;await db.put('DOMUS#'+P.domus,'DOMUS',D);await db.put('CHAR#'+dan.ch.id,'CHAR',{...(await db.get('CHAR#'+dan.ch.id,'CHAR')),wallet:0});
+    const X=await db.get('LOBBY#'+R2.id,'LOBBY');X.bets=[{by:dan.acct,char:dan.ch.id,seat:0,amt:10}];X.pool=10;await db.put('LOBBY#'+R2.id,'LOBBY',X)}
+  assert.strictEqual(await trO(dan.acct),30,'Dan backed himself (before v1.0)');
   await drop(dan);T+=C.ROOM_GRACE+1000;await eve.req('lobby.get',{id:R2.id});
   const L2=await db.get('LOBBY#'+R2.id,'LOBBY');assert.strictEqual(L2.status,'done','the empty room closed');
   assert.strictEqual(await trO(eve.acct),30,'the ticket came back');assert.strictEqual(await trO(dan.acct),40,'the wager came back');

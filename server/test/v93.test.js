@@ -88,7 +88,9 @@ async function routes(){
   let L2=await bob.req('lobby.create',{ev:'egidious',loc:3,cry:false});await bob.req('lobby.set',{id:L2.id,ticket:7});await setD(cat,{treasury:500});
   x=await once(cat,'lobby.ticket',{id:L2.id},'lobby.ticket',async()=>{const Z=await db.get('LOBBY#'+L2.id,'LOBBY');assert.strictEqual((Z.stands||[]).length,1,'one seat');assert.strictEqual(Z.pot|0,7,'one ticket in the pot')});
   await setD(cat,{treasury:500});
-  x=await once(cat,'bet.place',{id:L2.id,seat:0,amt:9},'bet.place',async()=>{const Z=await db.get('LOBBY#'+L2.id,'LOBBY');assert.strictEqual((Z.bets||[]).length,1,'one bet');assert.strictEqual(Z.pool|0,9)});assert.strictEqual(x.cost,9);
+  /* v1.0: online wagers are closed — a bet with a request id is refused, every time, and nothing is staked */
+  {const T0=(await getD(cat)).treasury|0;for(let i=0;i<2;i++){let e=null;try{await cat.req('bet.place',{id:L2.id,seat:0,amt:9,rid:'betrid93x'})}catch(x){e=x}assert.ok(e&&e.code==='wager_off','bet.place refused')}
+    assert.strictEqual((await getD(cat)).treasury|0,T0);assert.strictEqual(((await db.get('LOBBY#'+L2.id,'LOBBY')).bets||[]).length,0)}
   x=await once(bob,'lobby.send',{id:L2.id,coin:4},'lobby.send');
   /* the auction: the escrow is taken once */
   await setC(ann.ch.id,{glory:900,rankK:'veteranus',rank:'veteranus'});let al=await ann.req('auction.list',{});const lot=al.lots[0];

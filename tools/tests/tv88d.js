@@ -16,7 +16,7 @@ const world=(fn,arg)=>P.evaluate(([fn,arg])=>{const w=mockLoad();const r=(0,eval
 const open=async()=>{await P.evaluate(async()=>{if(!document.getElementById('onl')){onlineOpen('char');await new Promise(r=>setTimeout(r,900))}ONL.tab='char';ONL.newGlad=false;ONL82.dgAt=0;await onlRefresh();await NET.req('domus.get',{});onlRedraw()});await W(500)};
 
 /* a house, two gladiators: Alpha (hero, a helm + a bought gladius, ticked to bring), Beta */
-const ids=await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Vettius'});ONL.domus=(await NET.req('domus.create',{name:'Vettii'})).domus;
+const ids=await P.evaluate(async()=>{ONLC.SLOT100.start=4; /* v1.0: a house of four slots (the pre-v1.0 rule these checks need) */if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Vettius'});ONL.domus=(await NET.req('domus.create',{name:'Vettii'})).domus;
   const a=await NET.req('char.create',{name:'Alpha',cls:'hero'});const b2=await NET.req('char.create',{name:'Beta',cls:'soldier'});return {a:a.id,b:b2.id,dom:ONL.domus.id}});
 await world((w,[a,dom])=>{const ch=w.chars[a];ch.wallet=77;ch.gear=['galea','gladius'];delete ch.equip;w.domus82[dom].treasury=210;
   w.domus82[dom].trophies=[{k:'first:democritus',n:ONLC.trophyName('first:democritus'),at:Date.now(),glad:ch.name,x:1}]},[ids.a,ids.dom]);

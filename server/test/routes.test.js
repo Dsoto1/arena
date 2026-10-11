@@ -2,6 +2,7 @@
 'use strict';
 const assert=require('assert');const path=require('path');const crypto=require('crypto');
 const {makeRoutes}=require('../src/routes.js');const store=require('../src/store.js');const catalog=require('../src/catalog.json');const C=require('../src/onlcore.js');const {verify}=require('../src/jwt.js');
+C.SLOT100.start=4; /* v1.0: these checks predate the Domus slots — houses open with the four pre-v1.0 slots here */
 (async()=>{
   const db=store.memory();const pushed=[];let t=1700000000000;
   const route=makeRoutes({limits:false,store:db,push:async(a,ty,d)=>pushed.push([a,ty,d]),catalog,now:()=>(t+=1000),dev:true,countdown:0});
@@ -31,13 +32,13 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   await assert.rejects(route('char.buy',{char:ca.id,item:'gladius'},A),/treasury needs 60 coin/);
   const L=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:true},A);assert.strictEqual(L.rank,'tiro');
   await route('lobby.join',{id:L.id},B);
-  /* wagers: a fighter backs only themselves; the pool is escrowed */
+
   let ch=await db.get('CHAR#'+cb.id,'CHAR');ch.wallet=40;await db.put('CHAR#'+cb.id,'CHAR',ch);
-  await assert.rejects(route('bet.place',{id:L.id,seat:0,amt:10},B),/only back themselves/);
-  const bet=await route('bet.place',{id:L.id,seat:1,amt:10},B);assert.strictEqual(bet.char.wallet,0,'v0.92: the purse moved into the treasury');assert.strictEqual(await treOf('dev-b'),30,'the treasury stakes the bet');assert.strictEqual(bet.lobby.pool,10);
+  /* v1.0: online wagers are closed (code wager_off); the purse still moves into the treasury */
+  await assert.rejects(route('bet.place',{id:L.id,seat:1,amt:10},B),e=>e.code==='wager_off');
+  await route('domus.get',{},B);assert.strictEqual((await db.get('CHAR#'+cb.id,'CHAR')).wallet,0,'v0.92: the purse moved into the treasury');assert.strictEqual(await treOf('dev-b'),40);
   await assert.rejects(route('lobby.start',{id:L.id},B),/Only the host/);
   const L2=await route('lobby.start',{id:L.id},A);assert.strictEqual(L2.status,'live');assert.ok(Number.isInteger(L2.seed));
-  await assert.rejects(route('bet.place',{id:L.id,seat:1,amt:5},B),/Bets close/);
   await route('match.open',{id:L.id,snap:{S:'{}',rng:1}},A);
   /* inputs get one server order; a move may only speak for the sender's seat */
   const s0=await route('match.input',{id:L.id,in:{k:'act',a:'coin',seat:0}},A);const s1=await route('match.input',{id:L.id,in:{k:'act',a:'end',seat:0}},A);const s2=await route('match.input',{id:L.id,in:{k:'tile',r:3,c:4,seat:1}},B);
@@ -48,12 +49,12 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   assert.ok(!pushed.some(([a,ty,d])=>a==='dev-a'&&ty==='match.input'&&d.in.from==='dev-a'),'no echo of your own move');
   /* drop: refused while B is connected */
   await assert.rejects(route('match.drop',{id:L.id,seat:1},A),/Still here/);
-  /* results by agreement: both report the same table → B wins and survives, A dies at Tiro (forgotten); B's wager pays */
+  /* results by agreement: both report the same table → B wins and survives, A dies at Tiro (forgotten) */
   const table=[{seat:0,won:false,place:2,f:6,coin:4,survives:false},{seat:1,won:true,place:1,f:40,coin:12,survives:true},{seat:2,won:false,place:3,f:9},{seat:3,won:false,place:4,f:2}];
   const ra=await route('match.result',{id:L.id,table,hash:'h1'},A);assert.ok(ra.pending,'waits for the other report');
   const rb=await route('match.result',{id:L.id,table,hash:'h1'},B);
   assert.ok(!rb.void);assert.ok(!rb.out.died);assert.strictEqual(rb.char.survived,1);assert.strictEqual(rb.char.streak,1);assert.strictEqual(rb.char.stats.spd+rb.char.stats.str+rb.char.stats.int+rb.char.stats.lck+rb.char.stats.cha,275+2,'+1 survived, +1 won');
-  assert.strictEqual(rb.char.wallet,0);assert.strictEqual(await treOf('dev-b'),30+6+10,'v0.82: the Tiro award ×1.5 for the win, ×0.5 at two lanistas (no coin carried out) + the pool back; v0.92: all of it into the house treasury');
+  assert.strictEqual(rb.char.wallet,0);assert.strictEqual(await treOf('dev-b'),30+6+10,'v0.82: the Tiro award ×1.5 for the win, ×0.5 at two lanistas (no coin carried out); v0.92: all of it into the house treasury');
   assert.ok(pushed.some(([a,ty,d])=>a==='dev-a'&&ty==='match.settled'&&d.out&&d.out.died),'A hears the verdict');
   assert.ok(!(await db.get('CHAR#'+ca.id,'CHAR')).alive,'A is dead');assert.strictEqual((await route('hall.list',{},A)).length,0,'a fallen Tiro is forgotten');
   assert.strictEqual((await db.get('LOBBY#'+L.id,'LOBBY')).status,'done');

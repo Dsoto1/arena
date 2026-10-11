@@ -197,6 +197,56 @@ inputs that never come, so it must reload (426).
   too, so the gain is small; the victim's page shows the server's deadline. Logged as an open question.
 - **Rollback.** A protocol-7 server refuses protocol-8 pages (426) and the reverse, so roll back server and page together; the new items expire (ttl 2 days).
 
+## v1.0 server batch A
+
+Shared rules: the "v1.0 SERVER BATCH A" section at the end of `111-onlcore`; routes: the "v1.0 SERVER BATCH A" block at the end of `routes.js`
+(wrappers only); page + mock: `292-v100srvA`. Tests `server/test/v100a.test.js`, page `tonl100a`. **No protocol bump** (VER stays 8): every change is
+either server-side or decided by the host's opening snapshot.
+
+- **Ranked = equipped gear only.** `kitOf` always listed only what the gladiator wears/holds; the PAGE used to add the class weapons on top. Now a Ranked
+  seat carries `seat.onl.rk` and `giveLoadout` skips the class weapons for it (Custom keeps the class loadout). The opening snapshot is the host's, so
+  mixed page versions cannot disagree inside one match.
+- **The Issued kit** (`market.kit {char, kit:'daily'}`). The list is `issueList100(cls)` = the old padding (`DAILY92`) + the class's Level 1 weapons
+  (`ISSUE_W100`, a Level 1 stand-in where the printed weapon is Level 2: Royalty gladius, Amazonia mace, Damnatio stones). Once an online day a house
+  (`D.kitDay92`); refused (`kit_none`, the day not used) when he already has every piece he can take. ONE set a house: the claim takes back every Issued
+  piece the house holds on the shelf or on its other gladiators (they simply go — reply `back`); refused (`in_match`) while one of those is in a match.
+  Armor only on bare points; weapons only when he holds no weapon of his own. Issued = `pcs[uid].iss`: `pieceInfo` value 0, `usedPrice` 0, `repairCost` 0
+  and `gear.repair` refuses (`issued`), never in loot or the used market (`gearAfter` drops them from `carried`), and — new — the dead man's Issued
+  pieces left at home vanish instead of going to the shelf (`out.left`). There is no player-to-player transfer of gear or sell route online, so the kit
+  cannot become coin (audited: char.buy / market.buy / market.kit / auction / gift.open / lobby.send / loot / deadGear / domusAfter / offers / acct.delete).
+- **Online wagers closed.** `betOK` always refuses; `bet.place` answers `{code:'wager_off'}` + the text code. Old bets (placed before v1.0) still settle and
+  refund through the unchanged settlement; `wager.list` still reads the history.
+- **Domus slots** (`domus.slot {}` — in `IDEM93`, so a replayed request pays once). `D.slots100` = slots opened; a house WITHOUT the field predates v1.0
+  and keeps all four. A new house (`C.newDomus`) opens with `SLOT100.start` = 1. Steps (`SLOT100.steps`, his numbers): slot 2 = 150 Glory + 200 coin,
+  slot 3 = 600 + 500, slot 4 = 1500 + 1000. Glory = the house's best Domus-rank score (`D.dr98`, recomputed by `dr98Upd` before the check; it never
+  drops). The coin leaves the treasury (ledger `upg`). `gladMax(D)` = slots + the coin-only 5th slot (`UPG89.slot5`, now only after the four).
+  `char.create` beyond the slots → `slot_full` naming the next step. `domusRow` carries `gmax`, `slots100`, `slotNext100` (not on the public row).
+- **Watchers are not players.** `hereSummary`: a ticket holder in a live match is counted in `watch`, not `fight`. Who's online: a ticket holder is
+  `watch` (live) / `room` (waiting). The table factor and `canStart` already counted only seated humans.
+- **Taunts.** `QC_TEXT` lions / senate / garum (room), tickle / granny / yawn / sandal (match), bigger (after) — codes only, translated by the page.
+
+### Security pass (v1.0, findings and what changed)
+
+Read: `routes.js` (every route since v0.93), `store.js`, `jwt.js`, `index.js`, `harden93.js`.
+
+| # | Finding | Status |
+|---|---|---|
+| 1 | `match.odd` counted ticket holders: two sock-puppet tickets + one fighter could strike an honest fighter. | **Fixed**: strikes count live FIGHTERS only (a ticket holder's vote returns `{spec:1}`). |
+| 2 | `match.clock {kind:'end'}`: the lanista whose turn it is could mark his own turn ended and never time out (stalling). | **Fixed**: his own end report is ignored while another human fights. |
+| 3 | `match.clock {kind:'turn'}` with a huge turn number made every real turn "older" — timers off for the match. | **Fixed**: a report more than `TURN_JUMP100` (24) turns ahead needs a second lanista's identical report. |
+| 4 | Request ids (`d.id`, `d.char`) were used in keys without a type check (an object became "[object Object]"). | **Fixed**: any request with a non-string / over-80-character `id` or `char` → `bad_req`. |
+| 5 | `domus.equip` accepted a dead gladiator or one of another house of the same account. | **Fixed**: living + own house. |
+| 6 | New paying route needs idempotency. | `domus.slot` is in `IDEM93`. Every paying route since v0.94 checked: `char.tok` (no coin, daily quota; a replayed part is harmless), `lobby.set` pw / turnT (no coin). |
+| 7 | Clock reports are trusted from any fighter (first report wins); a lying page can still name the wrong seat or invent decision windows to pause a turn. | **Open** — it can only stall timers, never move coin, gear or deaths. Real fix = server replay of Ranked matches (backlog "REAL RANKED VERIFICATION"). |
+| 8 | Results are by agreement of the humans; a lone human vs CPUs is unverified. | **Open** (same backlog item). |
+| 9 | Token pictures: any WebP of the right size is accepted (content not checked). Hidden info (Mandata) reaches every client. `match.get` is readable by anyone (free watching). | **Known, by decision** (v0.94 / v0.80). |
+| 10 | Raw errors | None found: every refusal goes through `fail()` / `errReply` (internal errors → `server_error` + ref). |
+| 11 | Rate limits | Every route goes through the general bucket (`RATE93`; `match.*` its own); the new route needs nothing more. |
+| 12 | JWT | RS256 only, issuer, audience, `token_use=id`, expiry, key id checked; JWKS cached 1 h. Dev sign-in only with `DEV_NAMES=true`. OK. |
+
+- **Rollback.** Older servers: `domus.slot` → `unknown_req` (the page shows the refusal), `slots100` is ignored (every house back to four), bets open
+  again. No data shape needs undoing.
+
 ## Versions, deploy, rollout, rollback
 
 - **Protocol** `ONLC.VER` (111-onlcore): `$connect` refuses another version with 426 ("reload"). Bump it only when old clients

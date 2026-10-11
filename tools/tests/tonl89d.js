@@ -23,7 +23,7 @@ const drag=async(from,to)=>{const a=await center(from);const z=await center(to);
   const c=await center(to);await P.mouse.move(c.x,c.y,{steps:8});await P.mouse.up();return true};
 
 /* a house: Alpha (hero, Leather Greaves + a helm) and Beta (an unworn axe); the shelf: Ocrea, Lorica, a Falcata, a broken Cassis; offerings */
-const ids=await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Vettius'});ONL.domus=(await NET.req('domus.create',{name:'Vettii'})).domus;
+const ids=await P.evaluate(async()=>{ONLC.SLOT100.start=4; /* v1.0: a house of four slots (the pre-v1.0 rule these checks need) */if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Vettius'});ONL.domus=(await NET.req('domus.create',{name:'Vettii'})).domus;
   const a=await NET.req('char.create',{name:'Alpha',cls:'hero'});const b2=await NET.req('char.create',{name:'Beta',cls:'soldier'});return {a:a.id,b:b2.id,dom:ONL.domus.id,acct:ONL.acct.id}});
 await world((w,[a,b,dom])=>{const ch=w.chars[a];ch.wallet=377;ch.gear=['galea','lgreaves'];ch.equip=['galea','lgreaves'];ch.offers=['elix2'];w.chars[b].gear=['axe'];w.chars[b].equip=[];
   const D=w.domus82[dom];D.treasury=2210;D.gear=['ocrea','lorica','falcata','cassis'];D.offers=['merc1','cf1'];ONLC.breakItem(D,'cassis');

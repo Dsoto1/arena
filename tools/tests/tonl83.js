@@ -65,8 +65,9 @@ await C.evaluate(async id=>{await NET.req('char.buy',{char:id,item:'mace'});awai
 const L2=await B.evaluate(async()=>await NET.req('lobby.create',{ev:'cassian',loc:3,seats:4,ranked:true,cry:false}));await C.evaluate(async id=>await NET.req('lobby.join',{id}),L2.id);
 const held=await B.evaluate(async id=>{const p=NET.req('lobby.start',{id});await new Promise(r=>setTimeout(r,500));await ONL83.hold(id);try{await p;return 'started'}catch(e){return e.code||e.message}},L2.id);
 ok(held==='count_stopped','✕ Hold stops the countdown ('+held+')');
-await A.evaluate(async id=>{await NET.req('bet.place',{id,seat:0,amt:20})},L2.id);
-const wl0=await A.evaluate(async()=>await NET.req('wager.list',{}));const op=wl0.open.find(x=>x.id===L2.id);ok(op&&op.pool===20&&op.seats[0].stake===20&&wl0.mine[0].res==='open','the wagers tab: open pot, odds, my open bet');
+/* v1.0: online wagers are closed — the mock refuses bet.place like the server */
+const bet100=await A.evaluate(async id=>{try{await NET.req('bet.place',{id,seat:0,amt:20});return 'ok'}catch(e){return e.code||e.message}},L2.id);ok(bet100==='wager_off','bet.place refused ('+bet100+')');
+const wl0=await A.evaluate(async()=>await NET.req('wager.list',{}));ok(!wl0.open.some(x=>x.id===L2.id)&&!(wl0.mine||[]).length,'no pot, no bet of mine');
 const L2s=await B.evaluate(async id=>await NET.req('lobby.start',{id}),L2.id);const sb=L2s.players.findIndex(p=>p.char===cb),sc=L2s.players.findIndex(p=>p.char===cc);
 const t2=[0,1,2,3].map(i=>i===sb?{seat:i,won:true,place:1,f:30,survives:true,brk:['cassis']}:i===sc?{seat:i,won:false,place:4,f:2,survives:false,ks:sb,kb:'g'}:{seat:i,won:false,place:2,f:6,survives:true});
 await B.evaluate(async([id,t])=>{await NET.req('match.result',{id,table:t,hash:'r2'})},[L2.id,t2]);await C.evaluate(async([id,t])=>{await NET.req('match.result',{id,table:t,hash:'r2'})},[L2.id,t2]);await B.waitForTimeout(600);
@@ -86,7 +87,7 @@ ok(rp.cost===rp.want&&rp.cost===55&&!rp.broken&&rp.t===200-rp.cost,'repaired for
 const mk=await C.evaluate(async()=>(await NET.req('market.list',{})).used);ok(mk.length===1&&/^mace#/.test(mk[0].item)&&mk[0].hist[0].how==='fell','the rest goes to the market with its history');
 await world(A,(w,id)=>{w.chars[id].wallet+=100},ca);const buy=await A.evaluate(async([id,mid])=>(await NET.req('market.buy',{char:id,id:mid})).char.gear.some(x=>/^mace#/.test(x)),[ca,mk[0]&&mk[0].id]);ok(buy,'a third lanista buys it');
 /* the wagers tab after the match */
-const wl1=await A.evaluate(async()=>await NET.req('wager.list',{}));ok(wl1.mine[0].res==='won'&&wl1.top.length>=1,'my bet settled; the week’s best bettors');
+const wl1=await A.evaluate(async()=>await NET.req('wager.list',{}));ok(!(wl1.mine||[]).length,'no bets to settle');
 /* ── 5. follow + profile ── */
 const dB=await B.evaluate(()=>ONL.domus.id);const fw=await A.evaluate(async id=>(await NET.req('domus.follow',{id})).follows,dB);ok(fw.length===1&&fw[0].st!=='off','★ follow');
 const hf=await A.evaluate(async()=>(await NET.req('hello',{all:1})).follows);ok(hf&&hf[0].id===dB,'hello lists the followed houses');
