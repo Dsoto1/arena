@@ -10,7 +10,8 @@ const save = (f, url) => fs.writeFileSync(f, Buffer.from(url.split(',')[1], 'bas
     await pg.goto(`http://127.0.0.1:${PORT}/tools/plans/look100/beast3_hum.html`); await pg.waitForFunction(() => window.LOOK300_READY || window.__err, null, { timeout: 120000 });
     const e0 = await pg.evaluate(() => window.__err); if (e0) throw new Error(e0);
     await pg.evaluate(() => LOOK300.init(0.005));
-    for (const k of (process.argv[2] ? process.argv.slice(2) : ['glad', 'tholo', 'commodus'])) { const r = await pg.evaluate((k) => LOOK300.humanoid3(k), k); save(path.join(SCR, `beast3_${k}.png`), r.png);
-      delete r.png; out[k] = r; fs.writeFileSync(RP, JSON.stringify(out, null, 1)); console.log(k, JSON.stringify(r).slice(0, 400)); }
+    const oi = process.argv.indexOf('--only'), only = oi > 0 ? process.argv[oi + 1].split(',') : null; const ks = process.argv.slice(2).filter((a, i, A) => a !== '--only' && A[i - 1] !== '--only');
+    for (const k of (ks.length ? ks : ['glad', 'tholo', 'commodus'])) { const r = await pg.evaluate(([k, o]) => LOOK300.humanoid3(k, o), [k, only]); save(path.join(SCR, `beast3_${k}${only ? '_test' : ''}.png`), r.png);
+      delete r.png; if (!only) out[k] = r; fs.writeFileSync(RP, JSON.stringify(out, null, 1)); console.log(k, JSON.stringify(r).slice(0, 400)); }
     if (errs.length) console.log('errs', errs.slice(0, 5));
   } catch (e) { console.error(String(e).slice(0, 600)); fail = 1; } finally { await b.close(); srv.kill(); } process.exit(fail); })();

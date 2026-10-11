@@ -1,0 +1,81 @@
+{
+ "glad": {
+  "murmillo": {
+   "trisFull": 383411,
+   "vertsFull": 325099,
+   "tris": 23989,
+   "verts": 14675,
+   "err": 0.00067,
+   "kb": 944.7,
+   "bakeMs": 5005,
+   "parts": 21
+  },
+  "thraex": {
+   "trisFull": 400458,
+   "vertsFull": 335590,
+   "tris": 23985,
+   "verts": 15102,
+   "err": 0.00067,
+   "kb": 968.1,
+   "bakeMs": 3415,
+   "parts": 40
+  },
+  "royalty": {
+   "trisFull": 374758,
+   "vertsFull": 319829,
+   "tris": 23997,
+   "verts": 14520,
+   "err": 0.00056,
+   "kb": 936.3,
+   "bakeMs": 2527,
+   "parts": 27
+  },
+  "venatore": {
+   "trisFull": 395188,
+   "vertsFull": 331509,
+   "tris": 23998,
+   "verts": 14320,
+   "err": 0.00049,
+   "kb": 925.4,
+   "bakeMs": 3757,
+   "parts": 15
+  }
+ },
+ "beast": {
+  "leo": {
+   "frames": 4,
+   "trisFullPerFrame": 34230,
+   "trisPerFrame": 8965,
+   "kb": 769,
+   "sculptMs": 8188,
+   "base": [
+    1.1,
+    0.6416666666666667
+   ],
+   "rim": "#3a1a18"
+  },
+  "ursa": {
+   "frames": 4,
+   "trisFullPerFrame": 27648,
+   "trisPerFrame": 8999,
+   "kb": 774.2,
+   "sculptMs": 7539,
+   "base": [
+    1.1,
+    0.6893333333333334
+   ],
+   "rim": "#7b2c17"
+  }
+ },
+ "init": {
+  "ms": 57370,
+  "baked": {
+   "keys": 31,
+   "bytes": 246038,
+   "ms": 18
+  },
+  "why": "",
+  "mmpm": 17.56756756756757
+ },
+ "errs": []
+}

@@ -297,7 +297,7 @@ function commodusDress(extra) {
 
 window.LOOK300 = {
   async init(res = 0.005) { TOK = await createToken({ res }); B = TOK._dbg.B; GM = B.mats.gm; const { turn } = TOK._dbg; BASE = turn.children[0]; PROPS = new THREE.Group(); turn.add(PROPS); return B.stats; },
-  async humanoid3(key) {
+  async humanoid3(key, only) {
     const H = {
       glad: { look: { skin: '#c08a64', hair: '#2a1c12', hs: 'crop', bs: 'stubble', cloth: '#b8933c' }, gear: { head: { t: 'murmillo' }, belt: { t: 'balteus' }, arm: { R: { lower: { t: 'manica' } } }, leg: { L: { lower: { t: 'ocrea' } } }, wR: { t: 'sword' }, wL: { t: 'scutum', c: '#9c2f25' } }, sc: [1.15, 1.15, 1.15] },
       tholo: { look: { skin: '#b07a52', hair: '#8a847c', hs: 'crop', bs: 'full', cloth: '#7a3a22' }, gear: { helm: 'laurel', arm: { L: { wraps: 1 }, R: { wraps: 1 } }, wR: { t: 'club' } }, sc: [1.15 * 1.24, 1.15 * 1.13, 1.15 * 1.2], tunic: '#7a3a22', cape: 1 },
@@ -310,7 +310,7 @@ window.LOOK300 = {
     if (H.pelt) info = commodusDress(extra);
     B.group.scale.set(...H.sc);
     const rows = [GLAD_ROWS[0], GLAD_ROWS[1], GLAD_ROWS[2], GLAD_ROWS[4], FALL_ROWS[0]];
-    const fr = rows.flatMap(([k, fs]) => fs.map((s, i) => ({ k: k === 'fall' ? 'die' : k, i, s })));
+    let fr = rows.flatMap(([k, fs]) => fs.map((s, i) => ({ k: k === 'fall' ? 'die' : k, i, s }))); if (only) fr = fr.filter(x => only.includes(x.k + x.i));
     const cape = H.cape ? { clear: {}, inside: {}, ms: 0 } : null;
     const S = await renderFrames(fr, { box: 6.2, ty: 0.85, set: (x) => { setFrame(x.s);
       if (cape) { const t0 = performance.now(); const c = capeBuild(x); capeMesh(c); const nm = x.k + x.i; if (x.k !== 'die') { const r = capeCheck(c, nm); cape.clear[nm] = r.minMM; cape.inside[nm] = r.inside; } cape.ms += performance.now() - t0; } } });
