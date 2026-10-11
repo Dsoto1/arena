@@ -17,13 +17,15 @@
   const T = (B, r, c) => B.tiles[r + ',' + c];
   const inView = (B, p, m) => p.x > B.canvas.x + m && p.x < B.canvas.x + B.canvas.w - m && p.y > B.canvas.y + m * 1.3 && p.y < B.canvas.y + B.canvas.h - m * 0.6;
   function clear(B, r, c) { if (r < 1 || c < 1 || r > B.N - 2 || c > B.N - 2) return false;   /* never the edge row: the base must not reach the railing */
-    for (const [or, oc] of B.occ) { const dx = (oc - or) - (c - r), dy = (oc + or) - (c + r); if (dx === 0 && dy === 0) return false; if (Math.abs(dx) <= 2 && dy >= 1 && dy <= 5) return false; } return true; }
+    for (const [or, oc] of B.occ) { const dx = (oc - or) - (c - r), dy = (oc + or) - (c + r); if (dx === 0 && dy === 0) return false; if (Math.abs(dx) <= CL.dx && dy >= 1 && dy <= CL.dy) return false; } return true; }
+  const CL = { dx: 2, dy: 5 };
   const DIRS = [[0, 1, 1, 5, 0], [1, 0, 7, 3, 40], [-1, 0, 3, 7, 60], [0, -1, 5, 1, 80]];
   function pickPath(B, len) { let best = null;
     for (const [dr, dc, fw, bk, pen] of DIRS) for (let r = 0; r < B.N; r++) for (let c = 0; c < B.N; c++) {
       let ok = true; for (let k = 0; k < len; k++) if (!clear(B, r + dr * k, c + dc * k)) ok = false; if (!ok) continue;
       const a = T(B, r, c), b = T(B, r + dr * (len - 1), c + dc * (len - 1)); if (!inView(B, a, 70) || !inView(B, b, 70)) continue;
       const d = Math.hypot((a.x + b.x) / 2 - (B.canvas.x + B.canvas.w / 2), (a.y + b.y) / 2 - (B.canvas.y + B.canvas.h / 2)) + pen; if (!best || d < best.d) best = { r, c, dr, dc, fw, bk, d, at: (k) => T(B, r + dr * k, c + dc * k) }; }
+    if (!best && CL.dx > 0) { CL.dx--; CL.dy = Math.max(2, CL.dy - 2); const b = pickPath(B, len); CL.dx = 2; CL.dy = 5; return b; }
     return best; }
   /* the tile's outline (to show the base inside it) */
   function tileLine(g, x, y, tw, a = 0.55) { g.save(); g.strokeStyle = `rgba(255,236,170,${a})`; g.lineWidth = 1.2; g.setLineDash([4, 3]); g.beginPath(); g.moveTo(x, y - tw / 4); g.lineTo(x + tw / 2, y); g.lineTo(x, y + tw / 4); g.lineTo(x - tw / 2, y); g.closePath(); g.stroke(); g.restore(); }

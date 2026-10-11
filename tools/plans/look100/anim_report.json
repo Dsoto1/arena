@@ -382,6 +382,44 @@
     "walk2",
     "walk3"
    ]
+  },
+  "clip": {
+   "tiles": [
+    1,
+    11,
+    1,
+    0
+   ],
+   "facing": 7,
+   "scale": 0.917,
+   "baseOfTile": 0.704,
+   "w": 354,
+   "h": 281,
+   "n": 57,
+   "ms": 40,
+   "kb": 226.7
+  },
+  "crowd": {
+   "z1": {
+    "scale": 0.425,
+    "variants": 24
+   },
+   "z2": {
+    "scale": 0.85,
+    "variants": 24
+   },
+   "recoloured": 39
+  },
+  "forum": {
+   "scale": 0.618,
+   "walking": 11,
+   "n": 20
+  },
+  "timing2": {
+   "px": 488,
+   "raster": 522.8,
+   "readback": 1.6,
+   "post2d": 4.5
   }
  }
 }

@@ -326,8 +326,10 @@ export async function createToken(opts = {}) {
     let ov = new THREE.Vector3().crossVectors(u, f); if (ov.x * sx < 0) ov.negate();
     const qE = jointQ(rig, 'e' + sd); const u1 = u.clone().applyQuaternion(qE), o1 = ov.clone().applyQuaternion(qE), f1 = f.clone().applyQuaternion(qE);
     let q = qE.clone();
-    if (want.o) { const od = new THREE.Vector3(...want.o); od.sub(u1.clone().multiplyScalar(od.dot(u1))).normalize();
-      const ang = Math.atan2(new THREE.Vector3().crossVectors(o1, od).dot(u1), o1.dot(od)); q = new THREE.Quaternion().setFromAxisAngle(u1, ang).multiply(qE); }
+    if (want.o) {   /* round 3: twist about the FOREARM axis, so a strapped shield (whose board follows the forearm) turns in its own plane */
+      const fa = new THREE.Vector3(...JK['w' + sd].pos).sub(new THREE.Vector3(...JK['e' + sd].pos)).normalize().applyQuaternion(qE);
+      const od = new THREE.Vector3(...want.o); od.sub(fa.clone().multiplyScalar(od.dot(fa))).normalize(); const o2 = o1.clone().sub(fa.clone().multiplyScalar(o1.dot(fa))).normalize();
+      const ang = Math.atan2(new THREE.Vector3().crossVectors(o2, od).dot(fa), o2.dot(od)); q = new THREE.Quaternion().setFromAxisAngle(fa, ang).multiply(qE); }
     if (want.f) { const fd = new THREE.Vector3(...want.f).normalize(); q = new THREE.Quaternion().setFromUnitVectors(f1, fd).multiply(qE); }
     rig.bones['w' + sd].quaternion.copy(qE.clone().invert().multiply(q)); rig.bones['w' + sd].updateMatrixWorld(true);
   }

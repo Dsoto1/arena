@@ -402,18 +402,24 @@ export function weaponKit(B, spec, sink) {
       /* STRAPPED + HELD: the forearm runs along the back of the board (a strap round it), the fist holds the handle behind the boss;
          board plane = forearm × hand-forward, face = the back of the hand (the pose's grip constraint turns that forward) */
       const b = held(sd, 'bar'), big = t0 === 'scutum', W = big ? 0.66 : 0.46, Hh = big ? 1.02 : 0.62;
-      const ctr = [0, 1, 2].map(i => b.c[i] - b.u[i] * (big ? 0.07 : 0.03) + b.o3[i] * 0.058);
-      let q = basisQ(b.u, b.f); { const zz = new THREE.Vector3(0, 0, 1).applyQuaternion(q); if (zz.dot(new THREE.Vector3(...b.o3)) < 0) q = basisQ(b.u.map(v => -v), b.f); }
+      /* round 3 (his elbow bug): the board's long axis follows the FOREARM (elbow → wrist), not the hand, and stands 85 mm off the forearm's
+         axis (forearm r ≈ 40 mm + wraps + elbow bulge + strap) — so the elbow and forearm always stay behind it */
+      const E0 = P('e' + sd), W0 = P('w' + sd), fa = (() => { const v = [W0[0] - E0[0], W0[1] - E0[1], W0[2] - E0[2]], l = Math.hypot(...v); return v.map(x => x / l); })();
+      const dotv = (a, c) => a[0] * c[0] + a[1] * c[1] + a[2] * c[2], nrmv = (v) => { const l = Math.hypot(...v); return v.map(x => x / l); };
+      const on = nrmv(b.o3.map((v, i) => v - fa[i] * dotv(b.o3, fa))), hd2 = nrmv([on[1] * fa[2] - on[2] * fa[1], on[2] * fa[0] - on[0] * fa[2], on[0] * fa[1] - on[1] * fa[0]]);
+      const OFF = big ? 0.085 : 0.075, ctr = [0, 1, 2].map(i => W0[i] - fa[i] * (big ? 0.06 : 0.03) + on[i] * OFF);
+      let q = basisQ(fa, hd2); { const zz = new THREE.Vector3(0, 0, 1).applyQuaternion(q); if (zz.dot(new THREE.Vector3(...on)) < 0) q = basisQ(fa.map(v => -v), hd2); }
       const geo = boardGeo(W, Hh, big ? 0.07 : 0.05, big ? 0.6 : 0.5, 0.026);
       const m = rig_(geo, [toon('#ffffff', { map: big ? scutumTex() : thracianTex() }), toon('#6e4a2c')], 'w' + sd, ctr, q);
-      const boss = new THREE.SphereGeometry(big ? 0.06 : 0.045, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2); boss.rotateX(Math.PI / 2);
-      const bm = rig_(boss, toon(GOLD2), 'w' + sd, [0, 1, 2].map(i => b.c[i] + b.o3[i] * 0.07), q);
-      /* the handle in the fist + the forearm strap (leather band round the forearm, riveted to the board) */
+      const boss = new THREE.SphereGeometry(big ? 0.065 : 0.05, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2); boss.rotateX(Math.PI / 2);
+      const bp = [0, 1, 2].map(i => b.c[i] + on[i] * (OFF + 0.012)); const bm = rig_(boss, toon(GOLD2), 'w' + sd, bp, q);
+      /* the handle in the fist + two brackets back to the board, the forearm strap riveted to it */
       rig_(colorize(cyl(0.011, 0.011, 0.16, 0, 10), '#6e4a2c'), vmat(), 'w' + sd, b.c, basisQ(b.u, b.f));
-      const E0 = P('e' + sd), W0 = P('w' + sd), ax = [W0[0] - E0[0], W0[1] - E0[1], W0[2] - E0[2]], st = [E0[0] + ax[0] * 0.42, E0[1] + ax[1] * 0.42, E0[2] + ax[2] * 0.42];
-      const band = new THREE.TorusGeometry(0.044, 0.009, 6, 20); const bq = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(...ax).normalize());
-      rig_(band, toon('#5a3a22'), 'e' + sd, st, bq);
-      const tab = box(0.03, 0.028, 0.05); rig_(colorize(tab, '#5a3a22'), vmat(), 'e' + sd, [0, 1, 2].map(i => st[i] + b.o3[i] * 0.05), basisQ(b.u, b.f));
+      for (const k of [-0.07, 0.07]) rig_(colorize(box(0.016, 0.016, OFF + 0.03), '#5a3a22'), vmat(), 'w' + sd, [0, 1, 2].map(i => b.c[i] + b.f[i] * k + on[i] * (OFF / 2 + 0.01)), basisQ(fa, hd2));
+      const st = [E0[0] + fa[0] * 0.09, E0[1] + fa[1] * 0.09, E0[2] + fa[2] * 0.09];
+      const band = new THREE.TorusGeometry(0.046, 0.009, 6, 20); const bq = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(...fa));
+      rig_(band, toon('#5a3a22'), 'w' + sd, st, bq);
+      rig_(colorize(box(0.03, 0.028, OFF - 0.02), '#5a3a22'), vmat(), 'w' + sd, [0, 1, 2].map(i => st[i] + on[i] * (OFF / 2 + 0.015)), basisQ(fa, hd2));
       if (spec.handle) for (const x of [m, bm]) { x.visible = false; if (x.userData.ink) x.userData.ink.visible = false; }
     } else {
       const t = W_ALIAS[t0] || t0, b = held(sd, 'hilt');
@@ -422,3 +428,6 @@ export function weaponKit(B, spec, sink) {
   }
   return out;
 }
+
+/* look100 round 3: the helpers outfit100.js builds with */
+export { merge, plate, box, cyl, ball, at, colorize, weaponGeo, helmetGeo, boardGeo, basisQ, canvasTex, scutumTex, thracianTex, grilleTex, arcPts, METAL, BRONZE, GOLD, LEATHER, CLOTH, WOOD, RED, STEEL, BRASS, DARKBR, MAROON, GOLD2 };

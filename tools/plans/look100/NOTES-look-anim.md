@@ -87,3 +87,49 @@ Render = headless Chromium, SwiftShader CPU WebGL (the rig92 setup), 2× supersa
    on the board, token in panels.
 5. Rete: a) 2D net painted over the sprites (this test) · b) a modelled net rendered per facing.
 6. Frame rate: a) ~9 fps stepped (this clip) · b) 12–15 fps (more frames, bigger sheets) · c) stepped poses + smooth glide in between.
+
+---
+
+# Round 2 (his answers: full frame set, 3D class stand-ins, 3D crowd everywhere, modelled spider, 2D rete, stepped poses + glide, forum walkers)
+
+## New files
+| file | what |
+|---|---|
+| `anim_clip2_walk_attack.webp` | clip v2: 57 frames × 40 ms (2.3 s loop, 232 KB). Pose steps every 120 ms, position glides every frame (ease in/out over the two tiles, small lunge on the thrust). Token drawn at the game's 3D-token size (T99B.t93k 0.88 × 0.8 tile → base = **0.70 tile**), path kept off the edge row (no base on the railing) |
+| `anim_clip2_still.png` | one clip frame with both tiles dashed: the bases sit inside their tiles |
+| `anim_classes_lineup.png` | the 8 printed classes as rig92 stand-ins (approximate loadouts from CLASSES + the 103/106/123 edits), 8 frames × facings 1 and 3, dashed tile under each base |
+| `spec2_compare_z1.webp`, `spec2_compare_z2.webp`, `spec2_detail_z1.png`, `spec2_detail_z2.png` | crowd v2: a red-wood bench under every sitter, the darker painted tone (brightness .8, contrast 1.14, saturation .88), +20% size, **6 rendered looks × 12 tunic colours** recoloured at draw time (grey-keyed cloth) |
+| `spec_forum_compare.webp`, `spec_forum_detail.png` | the Roma forum (172-v89city): today's figures vs the same rig92 people (townsfolk = crowd looks walking/standing, guards + gladiators = class stand-ins) |
+| `spec_forum_shot.js`, `anim_make2.js`, `anim_comp2.js`, `anim_time2.js` | how (render ≈ 10 min, comp ≈ 1 min) |
+
+## Size: who wins
+The other agent's round 2 landed while this ran (look100_r2_board.png): figure ×1.15 on the same 25.4 mm base, drawn with the minis'
+rule (base 0.8 tile), pillars/pots/chest ×1.15. This round was rendered before that: figure ×1.0, base 0.70 tile (the game's 0.88 rule). To match:
+re-render the sheets with createToken({scale:1.15}) and draw at 0.8 tile (clip scale ÷0.88) — one comp + render pass (~10 min here).
+This round uses the game's current 3D-token size (0.88 × 0.8 tile base = 0.70 tile, which just fits the tile's inscribed circle 0.707).
+A +15% figure on the same 0.70 base still fits the tile; a +15% base (0.81 tile) would overhang the tile diamond slightly.
+
+## Memory per look (decoded RGBA = cells × w × h × 4)
+| | 8 facings | 5 facings + mirror (×5/8) |
+|---|---|---|
+| gladiator, full 47 frames (main 312 cells 124×143 + fall 64 cells 146×144) | **26.2 MiB** | **16.4 MiB** |
+| same, sheets rendered at the drawn size (×0.92 at zoom 2) | ≈ 22 MiB | ≈ 14 MiB |
+| spectator look, 9 poses (66×133) | 2.4 MiB | 1.5 MiB |
+- 4 gladiators on the table = ≈ 105 MiB (8 facings) / 66 MiB (5+mirror) — too much for phones; tolerable on desktop. Levers: decode
+  per action on demand (idle+walk ≈ 5.4 MiB always, the rest when used), render at the drawn size, trim cells per row.
+- Mirroring swaps the weapon hand (the shield/sword side flips) — visible on every class with a shield.
+- WebP on disk: full gladiator 659 + 128 KB (431 + 80 KB at half resolution); class stand-in 8 frames × 2 facings 36 KB; spectator look 101 KB (74 KB half).
+
+## Render time per look (full 47 frames × 8 = 376 cells)
+- Measured here (headless Chromium, SwiftShader CPU WebGL, 614k triangles a cell incl. outlines, 488² px at 2× supersample):
+  raster **523 ms a cell** (gl.finish-forced), full readback 1.6 ms, 2D downscale + crop scan 4.5 ms → ≈ 200 s + body build 3.4 s
+  (first run measured 245 s for the full set). The page's own JS is ~6 ms a cell; everything else is the software rasteriser.
+- Estimate on real GPUs (basis: the per-cell JS measured here + raster throughput assumptions, NOT measured): laptop iGPU at a few
+  hundred M triangles/s → raster ≈ 2–5 ms a cell → **≈ 3–4 s of rendering + ≈ 3 s body build ≈ 6–8 s a look**; mid phone GPU
+  ≈ 10–20 ms a cell + ≈ 8–10 s body build (JS ~3× slower) → **≈ 15–20 s a look**. 5 facings + mirror cuts the render part by 3/8.
+- Class stand-ins (8 frames × 2 facings): 87 s for all 8 here. Spectators: 56–91 s a look here (6 looks 462 s), most of it rebuilding the cloth shells.
+
+## Known limits of round 2
+- Crowd benches are small blocks turned with the sitter; in the game the tier itself should be the bench (sit the pelvis on the tier edge).
+- Forum figures are drawn over the stalls (no occlusion in this paste-up) and stand ~20% taller than today's townsfolk.
+- Class stand-ins in the forum use facings 1/3 only, mirrored for the others (weapon hand flips).
