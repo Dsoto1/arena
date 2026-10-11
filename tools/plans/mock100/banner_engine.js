@@ -1,92 +1,131 @@
-/* banner_engine.js — mock100 "One Banner Press": ONE heraldry engine, five KINDS (shape + frame only).
-   Mock-up code (static page helper), NOT game code. Devices = the game's FLAG_SHAPES (flagURI's paths) + the Domus-rank symbols
-   (DR_SYM98), both read from the built game by banner_today.js into window.BT. Everything lives in flagURI's 600×340 "charge space",
-   so the sculpt layers (scbLayersSVG ×6) and every device line up exactly as they do today.
-   A design: {c1,c2,div,dev,fg,motto,sculpt,trim:{gold,tassels,fringe,bar},wear,tail}. kind: flag|banner|pennant|tapestry|crest. */
+/* banner_engine.js — mock100 "Heraldry" round 2 (ANCIENT ROMAN): ONE design engine, six Roman KINDS (shape + frame only).
+   Mock-up code, NOT game code. Emblems = the game's FLAG_SHAPES (flagURI paths) + the Domus-rank symbols (DR_SYM98), read from the built
+   game by banner_today.js into window.BT, plus the Roman emblems drawn here (R_EMB). Everything lives in flagURI's 600×340 space
+   (centre 300,180) so the sculpt layers (scbLayersSVG ×6) and every emblem line up as today.
+   A design: {c1,c2,fg,pat,emb,top,ins,sculpt,trim:{gilt,tassels,fringe,bar,topbar,fc},wear}.
+   kinds: vexillum | signum | flammula | velarium | scutum | parma  (+ tabula(): the dovetailed inscription plaque, any kind may carry it). */
 (function(){
 let UID=0;
-const DIVS=['plain','pale','fess','quarterly','chevron','bordure','saltire'];
-/* the kinds: viewBox, the cloth outline, the field box, where the device sits (cx,cy,scale), the motto line */
+const PATS=[['plain','Plain','pannus purus'],['clavi','Clavi','two stripes'],['meander','Meander','Greek-key border'],['wave','Waves','running-wave border'],['clipeus','Clipeus','central roundel'],['laurel','Laurel','wreath round the emblem'],['halved','Halved','two colour fields']];
+const PAL=[['#5b1a45','Purpura','Tyrian purple'],['#9b2a1c','Rubia','madder red'],['#b5832e','Ochra','ochre'],['#e2a72e','Crocus','saffron'],['#3f8f7e','Aerugo','verdigris'],['#2c5a8c','Caeruleum','Egyptian blue'],['#e8dcc0','Creta','chalk white'],['#1f1712','Atramentum','lamp black']];
 const KINDS={
-  flag:{vb:[340,232],n:'Flag',sub:'rectangle on a pole'},
-  banner:{vb:[200,300],n:'Banner',sub:'vertical · swallow-tail or straight'},
-  pennant:{vb:[156,262],n:'Pennant',sub:'rank-style (the dr98 cut)'},
-  tapestry:{vb:[420,236],n:'Tapestry',sub:'wide · hung in the stands'},
-  crest:{vb:[200,250],n:'Crest',sub:'shield shape'}};
+  vexillum:{vb:[220,300],n:'Vexillum',sub:'cloth from a crossbar'},
+  signum:{vb:[120,320],n:'Signum',sub:'pole standard, phalerae'},
+  flammula:{vb:[110,300],n:'Flammula',sub:'rank streamer'},
+  velarium:{vb:[460,236],n:'Velarium',sub:'awning for the stands'},
+  scutum:{vb:[180,270],n:'Scutum',sub:'curved shield'},
+  parma:{vb:[160,160],n:'Parma',sub:'round shield · chips'}};
 function shade(hex,k){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=v=>Math.max(0,Math.min(255,Math.round(k<0?v*(1+k):v+(255-v)*k)));return '#'+[f(r),f(g),f(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-function geom(kind,d){
+/* ---- the Roman emblems not in the game (600×340 space, centre 300,180) ---- */
+const sword=(a)=>`<g transform="translate(300 186) rotate(${a})"><path d="M0 -128 L13 -104 L13 34 L-13 34 L-13 -104Z"/><path d="M0 -118 V30" stroke="BG" stroke-width="3" opacity=".5"/><rect x="-34" y="34" width="68" height="13" rx="6"/><rect x="-8" y="47" width="16" height="44" rx="4"/><circle cx="0" cy="98" r="13"/></g>`;
+const R_EMB={
+  bull:`<g fill="FG"><path d="M170 210 C170 170 200 150 250 150 L360 148 C380 140 400 136 420 140 L428 118 C432 108 446 104 452 110 C444 114 440 122 442 132 L456 140 C470 146 476 160 470 172 L452 176 C444 190 430 196 414 196 L404 200 C400 214 392 224 380 228 L382 280 L364 280 L360 236 L268 236 L264 280 L246 280 L244 232 C226 228 214 220 208 212 L190 252 L186 214 C178 214 172 214 170 210Z"/><path d="M430 128 C422 110 430 96 448 94 C438 104 436 116 440 126Z"/></g><circle cx="446" cy="152" r="4" fill="BG"/>`,
+  capricorn:`<g fill="FG"><path d="M372 128 L380 84 L390 120 L404 92 L404 134 C424 142 430 164 420 180 L392 184 C386 202 372 214 352 218 L346 270 L332 270 L334 222 L314 222 L308 268 L294 268 L296 220 C256 218 228 232 206 256 C184 282 146 284 138 262 C130 240 150 224 168 232 C154 236 152 248 160 254 C176 264 196 244 210 226 C240 190 290 178 340 180 C346 154 356 134 372 128Z"/></g><circle cx="404" cy="152" r="4" fill="BG"/>`,
+  scorpion:`<g fill="FG"><ellipse cx="300" cy="196" rx="34" ry="46"/><ellipse cx="300" cy="138" rx="26" ry="22"/><path d="M284 126 L244 96 L214 100 L234 110 L214 120 L248 120 L278 142Z"/><path d="M316 126 L356 96 L386 100 L366 110 L386 120 L352 120 L322 142Z"/><circle cx="300" cy="258" r="14"/><circle cx="304" cy="282" r="13"/><circle cx="318" cy="302" r="12"/><circle cx="340" cy="308" r="11"/><circle cx="358" cy="298" r="10"/><path d="M362 286 L386 270 L378 296Z"/></g><g stroke="FG" stroke-width="8" stroke-linecap="round"><path d="M270 176 L222 160 M268 198 L214 204 M272 220 L224 246 M330 176 L378 160 M332 198 L386 204 M328 220 L376 246"/></g>`,
+  medusa:`<g stroke="FG" stroke-width="11" fill="none" stroke-linecap="round">${Array.from({length:12},(_,i)=>{const a=(-170+i*(340/11))*Math.PI/180;const c=Math.cos(a),s=Math.sin(a);const x1=300+c*58,y1=184+s*62,x2=300+c*104,y2=184+s*100;return `<path d="M${x1.toFixed(0)} ${y1.toFixed(0)} Q${(x1+x2)/2+s*18} ${(y1+y2)/2-c*18} ${x2.toFixed(0)} ${y2.toFixed(0)}"/>`}).join('')}</g><g fill="FG"><ellipse cx="300" cy="184" rx="60" ry="66"/><path d="M236 120 L210 92 L250 106Z M364 120 L390 92 L350 106Z"/></g><g fill="BG"><ellipse cx="278" cy="170" rx="10" ry="6"/><ellipse cx="322" cy="170" rx="10" ry="6"/><path d="M296 182 L300 204 L304 182Z"/><path d="M280 220 Q300 234 320 220 Q300 226 280 220Z"/></g>`,
+  gladii:`<g fill="FG">${sword(-34)}${sword(34)}</g>`,
+  rete:`<g stroke="FG" stroke-width="5" fill="none" opacity=".95">${[0,1,2,3,4,5].map(i=>`<path d="M${170+i*24} 100 Q${150+i*24} 200 ${178+i*26} 296"/>`).join('')}${[0,1,2,3,4,5,6].map(i=>`<path d="M160 ${110+i*28} Q230 ${126+i*28} 310 ${110+i*28}"/>`).join('')}</g><g fill="FG" transform="translate(380 186) rotate(14)"><rect x="-7" y="-60" width="14" height="190"/><path d="M-46 -130 L-38 -66 Q0 -42 38 -66 L46 -130 L32 -130 L26 -84 Q14 -78 7 -78 L7 -150 L-7 -150 L-7 -78 Q-14 -78 -26 -84 L-32 -130Z"/><path d="M-52 -138 L-46 -152 L-40 -138Z M52 -138 L46 -152 L40 -138Z M0 -164 L-9 -148 L9 -148Z"/></g>`,
+  palma:`<path d="M300 300 Q284 200 318 76" stroke="FG" stroke-width="9" fill="none"/><g fill="FG">${Array.from({length:11},(_,i)=>{const t=i/10,x=300-12*t+20*t*t,y=290-210*t;const L=70-40*t;return `<ellipse cx="${(x-L*.5).toFixed(0)}" cy="${(y-8).toFixed(0)}" rx="${(L*.55).toFixed(0)}" ry="7" transform="rotate(-28 ${(x-L*.5).toFixed(0)} ${(y-8).toFixed(0)})"/><ellipse cx="${(x+L*.5).toFixed(0)}" cy="${(y-8).toFixed(0)}" rx="${(L*.55).toFixed(0)}" ry="7" transform="rotate(28 ${(x+L*.5).toFixed(0)} ${(y-8).toFixed(0)})"/>`}).join('')}</g>`,
+  murmillo:`<g fill="FG"><path d="M196 252 L226 240 C216 176 248 126 300 120 C352 116 392 146 402 196 L414 240 L446 250 L430 266 L210 266Z"/><path d="M262 126 C280 70 344 58 392 92 C362 92 330 100 304 122Z"/></g><g fill="BG" opacity=".75">${[0,1,2,3].map(r=>[0,1,2,3,4].map(c=>`<circle cx="${330+c*14}" cy="${170+r*14}" r="4"/>`).join('')).join('')}</g>`,
+  thraex:`<g fill="FG"><path d="M196 252 L226 240 C216 176 248 126 300 120 C352 116 392 146 402 196 L414 240 L446 250 L430 266 L210 266Z"/><path d="M296 122 C292 64 352 34 404 62 L414 92 L388 80 C362 70 334 82 318 120Z"/><path d="M404 62 L430 70 L414 92Z"/></g><g fill="BG" opacity=".75">${[0,1,2].map(r=>[0,1,2,3].map(c=>`<circle cx="${336+c*14}" cy="${176+r*14}" r="4"/>`).join('')).join('')}</g>`,
+  manus:`<g fill="FG"><path d="M246 300 L246 196 C246 184 262 182 264 196 L266 230 L268 110 C268 96 288 96 288 110 L290 200 L292 92 C292 78 312 78 312 92 L314 200 L318 104 C318 90 338 90 338 104 L338 210 L346 134 C348 120 366 122 364 136 L360 240 C358 274 340 300 310 300Z"/></g><rect x="236" y="300" width="128" height="16" rx="5" fill="FG"/>`,
+  spqr:`<text x="300" y="214" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="104" letter-spacing="8" fill="FG">SPQR</text><path d="M180 236 H420" stroke="FG" stroke-width="6"/>`,
+  num:`<text x="300" y="232" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="150" letter-spacing="6" fill="FG">XII</text>`};
+const EMB_GROUPS=[['Beasts',['wolf','boar','sym:eagle','eagle','bull','lion','capricorn','scorpion','croc','horse','goat','owl']],['Arena',['gladii','rete','murmillo','thraex','sym:helm','sym:rudis','trident','sym:shield']],['Gods & victory',['thunder','medusa','sym:laurel','palma','sun','moon','manus','olive']],['Letters & city',['spqr','num','column','tower','ship','wave','mount','sym:amphora']]];
+const EMB_N={wolf:'Lupa',boar:'Aper','sym:eagle':'Aquila',eagle:'Aquila (wide)',bull:'Taurus',lion:'Leo',capricorn:'Capricornus',scorpion:'Scorpio',croc:'Crocodilus',horse:'Equus',goat:'Caper',owl:'Noctua',gladii:'Gladii',rete:'Rete & tridens',murmillo:'Galea murmillonis',thraex:'Galea thraecis','sym:helm':'Galea',trident:'Tridens','sym:rudis':'Rudis','sym:shield':'Scutum',thunder:'Fulmen',medusa:'Gorgo','sym:laurel':'Laurea',palma:'Palma',sun:'Sol',moon:'Luna',manus:'Manus',olive:'Oliva',spqr:'S·P·Q·R',num:'Numerus',column:'Columna',tower:'Turris',ship:'Navis',wave:'Unda',mount:'Mons','sym:amphora':'Amphora',none:'—'};
+function emblem(key,fg,bg){const BT=window.BT||{};if(!key||key==='none')return null;let s='',k=1;
+  if(key.startsWith('sym:')){s=(BT.sym||{})[key.slice(4)]||'';k=1.75}
+  else if(R_EMB[key]){s=R_EMB[key]}
+  else{s=((BT.dev||{})[key]||'').replace(/opacity="\.4?5?"/g,'')}
+  return {s:s.replace(/FG/g,fg).replace(/BG/g,bg),k}}
+/* the emblem group at (cx,cy) scale sc, solid + ink outline + soft shadow (his 2a) */
+function embG(d,id,cx,cy,sc,lod,fill){const e=emblem(d.emb,fill||d.fg,d.c1);if(!e||!e.s)return '';
+  const blk=e.s.replace(/fill="(?!none)[^"]*"/g,'fill="#000"').replace(/stroke="(?!none)[^"]*"/g,'stroke="#000"');
+  return `<g transform="translate(${cx} ${cy}) scale(${sc*e.k}) translate(-300 -180)"><g transform="translate(5 7)" opacity=".4" filter="url(#${id}sh)">${blk}</g><g stroke="#2a1a0c" stroke-width="${lod?6:3.2}" stroke-linejoin="round" stroke-opacity=".7">${e.s}</g></g>`}
+/* the cloth pattern inside a box */
+function pattern(d,b,id,cx,cy,r){const [x,y,w,h]=b;const c1=d.c1,c2=d.c2;let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c1}"/>`;const t=Math.min(w,h)*.1;
+  switch(d.pat){
+  case 'clavi':s+=`<rect x="${x+w*.22}" y="${y}" width="${w*.09}" height="${h}" fill="${c2}"/><rect x="${x+w*.69}" y="${y}" width="${w*.09}" height="${h}" fill="${c2}"/>`;break;
+  case 'halved':s+=`<rect x="${x+w/2}" y="${y}" width="${w/2}" height="${h}" fill="${c2}"/>`;break;
+  case 'meander':case 'wave':{if(r<0){const R=-r,tt=R*.16,dk=shade(c1,-.25);s+=`<circle cx="${cx}" cy="${cy}" r="${R-tt/2}" fill="none" stroke="${c2}" stroke-width="${tt}"/><circle cx="${cx}" cy="${cy}" r="${R-tt/2}" fill="none" stroke="${dk}" stroke-width="${tt*.55}" stroke-dasharray="${d.pat==='meander'?`${tt*.7} ${tt*.35}`:`.1 ${tt*.9}`}" stroke-linecap="${d.pat==='meander'?'butt':'round'}"/>`;break}const p=d.pat==='meander'?`${id}mk`:`${id}wv`;const i=t*.9;
+    s+=`<g fill="url(#${p})"><rect x="${x+i}" y="${y+i}" width="${w-2*i}" height="${t}"/><rect x="${x+i}" y="${y+h-i-t}" width="${w-2*i}" height="${t}"/></g><g fill="url(#${p}v)"><rect x="${x+i}" y="${y+i+t}" width="${t}" height="${h-2*i-2*t}"/><rect x="${x+w-i-t}" y="${y+i+t}" width="${t}" height="${h-2*i-2*t}"/></g>`;break}
+  case 'clipeus':s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${c2}"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#${id}g)" stroke-width="${Math.max(2,r*.09)}"/><circle cx="${cx}" cy="${cy}" r="${r*.86}" fill="none" stroke="url(#${id}g)" stroke-width="${Math.max(.8,r*.025)}"/>`;break}
+  return s}
+function laurel(cx,cy,r,id){let s='';for(let i=0;i<9;i++){for(const sd of [-1,1]){const a=(90+sd*(28+i*15))*Math.PI/180;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;const rot=a*180/Math.PI+(sd>0?-60:60)+90;s+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${(r*.16).toFixed(1)}" ry="${(r*.065).toFixed(1)}" transform="rotate(${rot.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="url(#${id}lf)"/>`}}
+  return s+`<path d="M${cx-r*.25} ${cy+r*.98} Q${cx} ${cy+r*1.08} ${cx+r*.25} ${cy+r*.98}" stroke="#9b2a1c" stroke-width="${r*.05}" fill="none"/>`}
+/* the dovetailed plaque (tabula ansata) — bronze, letters cut dark; or on cloth: gold leaf */
+function tabula(x,y,w,h,txt,id,fs){const a=h*.62;return `<path d="M${x} ${y} H${x+w} L${x+w+a} ${y+h/2} L${x+w} ${y+h} H${x} L${x-a} ${y+h/2}Z" fill="url(#${id}br)" stroke="#5a3c10" stroke-width="1"/><path d="M${x+2} ${y+2.5} H${x+w-2} V${y+h-2.5} H${x+2}Z" fill="none" stroke="#5a3c10" stroke-opacity=".5" stroke-width=".7"/><circle cx="${x-a*.55}" cy="${y+h/2}" r="${h*.08}" fill="#5a3c10"/><circle cx="${x+w+a*.55}" cy="${y+h/2}" r="${h*.08}" fill="#5a3c10"/><text x="${x+w/2}" y="${y+h*.7}" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="${fs||h*.56}" letter-spacing="${(fs||h*.56)*.18}" fill="#3a2208">${txt}</text>`}
+const goldText=(x,y,fs,txt,id,ls)=>`<text x="${x}" y="${y}" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="${fs}" letter-spacing="${ls==null?fs*.22:ls}" fill="url(#${id}g)" stroke="#3a2208" stroke-width="${fs*.045}" paint-order="stroke">${txt}</text>`;
+function defs(id,d,kind,wear){const shieldK=kind==='scutum'||kind==='parma';const c=d.c1;
+  return `<defs>
+  <filter id="${id}n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="${shieldK?'.035':'1.1 .85'}" numOctaves="${shieldK?3:2}" seed="${4+UID%7}"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 ${shieldK?.55:.5} ${shieldK?-.12:-.05}"/></filter>
+  <filter id="${id}n2" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="1" seed="9"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .22 -.04"/></filter>
+  <pattern id="${id}w" width="3" height="3" patternUnits="userSpaceOnUse"><path d="M0 1.5H3M1.5 0V3" stroke="#000" stroke-opacity=".1" stroke-width=".6"/></pattern>
+  <pattern id="${id}mk" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="scale(${kind==='velarium'?1:.75})"><rect width="16" height="16" fill="${d.c2}"/><path d="M0 14 H14 V2 H3 V11 H11 V5 H6 V8" fill="none" stroke="${shade(c,-.25)}" stroke-width="1.8"/></pattern>
+  <pattern id="${id}mkv" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="scale(${kind==='velarium'?1:.75}) rotate(90)"><rect width="16" height="16" fill="${d.c2}"/><path d="M0 14 H14 V2 H3 V11 H11 V5 H6 V8" fill="none" stroke="${shade(c,-.25)}" stroke-width="1.8"/></pattern>
+  <pattern id="${id}wv" width="18" height="16" patternUnits="userSpaceOnUse" patternTransform="scale(${kind==='velarium'?1:.75})"><rect width="18" height="16" fill="${d.c2}"/><path d="M0 12 C4 12 5 4 10 4 C15 4 15 10 12 10 C10 10 10 7 11.5 7 M12 10 C14 13 16 12 18 12" fill="none" stroke="${shade(c,-.25)}" stroke-width="1.8"/></pattern>
+  <pattern id="${id}wvv" width="18" height="16" patternUnits="userSpaceOnUse" patternTransform="scale(${kind==='velarium'?1:.75}) rotate(90)"><rect width="18" height="16" fill="${d.c2}"/><path d="M0 12 C4 12 5 4 10 4 C15 4 15 10 12 10 C10 10 10 7 11.5 7 M12 10 C14 13 16 12 18 12" fill="none" stroke="${shade(c,-.25)}" stroke-width="1.8"/></pattern>
+  <filter id="${id}sh" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
+  <filter id="${id}wr" x="-6%" y="-6%" width="112%" height="112%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="3" seed="3"/><feDisplacementMap in="SourceGraphic" scale="${(wear*7).toFixed(1)}"/></filter>
+  <radialGradient id="${id}vg" cx=".5" cy=".45" r=".7"><stop offset=".5" stop-color="#3a2810" stop-opacity="0"/><stop offset="1" stop-color="#2a1a08" stop-opacity="${(.12+wear*.55).toFixed(2)}"/></radialGradient>
+  <linearGradient id="${id}g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f6dc8a"/><stop offset=".45" stop-color="#d8b25a"/><stop offset=".55" stop-color="#b48a34"/><stop offset="1" stop-color="#e9c66a"/></linearGradient>
+  <linearGradient id="${id}br" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#e2bd6e"/><stop offset=".5" stop-color="#b5873a"/><stop offset="1" stop-color="#8a6024"/></linearGradient>
+  <radialGradient id="${id}bs" cx=".36" cy=".32" r=".75"><stop offset="0" stop-color="#fff2c0"/><stop offset=".35" stop-color="#d8b25a"/><stop offset=".8" stop-color="#7a5418"/><stop offset="1" stop-color="#4a3008"/></radialGradient>
+  <linearGradient id="${id}lf" x1="0" x2="1"><stop offset="0" stop-color="#e9c66a"/><stop offset="1" stop-color="#9a7a2a"/></linearGradient>
+  <linearGradient id="${id}p" x1="0" x2="1"><stop offset="0" stop-color="#3a2614"/><stop offset=".45" stop-color="#9a7040"/><stop offset="1" stop-color="#2a1a0c"/></linearGradient>
+  <linearGradient id="${id}f" x1="0" x2="1">${shieldK?`<stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset=".18" stop-color="#000" stop-opacity=".12"/><stop offset=".38" stop-color="#fff" stop-opacity=".16"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset=".86" stop-color="#000" stop-opacity=".25"/><stop offset="1" stop-color="#000" stop-opacity=".6"/>`:`<stop offset="0" stop-color="#000" stop-opacity=".34"/><stop offset=".13" stop-color="#fff" stop-opacity=".1"/><stop offset=".3" stop-color="#000" stop-opacity=".2"/><stop offset=".47" stop-color="#fff" stop-opacity=".09"/><stop offset=".64" stop-color="#000" stop-opacity=".17"/><stop offset=".82" stop-color="#fff" stop-opacity=".07"/><stop offset="1" stop-color="#000" stop-opacity=".36"/>`}</linearGradient>
+  <radialGradient id="${id}pf" cx=".38" cy=".34" r=".72"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></radialGradient>
+  <linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".25"/><stop offset=".12" stop-color="#000" stop-opacity="0"/><stop offset=".85" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+  </defs>`}
+const FC={gold:['#f3d27a','#b48a34'],c2:null,creta:['#efe3c8','#a8987a'],rubia:['#c0473f','#7a1f1a'],purpura:['#8a3a72','#4a1238']};
+function fcol(d){const k=(d.trim||{}).fc||'gold';if(k==='c2')return [shade(d.c2,.2),shade(d.c2,-.35)];return FC[k]||FC.gold}
+function fringe(x0,x1,y,len,d){const [a,b]=fcol(d);let s='';for(let x=x0;x<=x1;x+=2.8)s+=`<path d="M${x.toFixed(1)} ${y} l${(((x*7)%5)/5-.5).toFixed(2)} ${len}" stroke="${((x*10|0)%3)?a:b}" stroke-width="1.3"/>`;return s}
+function tassel(x,y,d,sz){sz=sz||1;const [a,b]=fcol(d);return `<g transform="translate(${x} ${y}) scale(${sz})"><path d="M0 0 V6" stroke="${b}" stroke-width="1.2"/><circle cx="0" cy="7" r="3" fill="${a}" stroke="${b}" stroke-width=".6"/><path d="M-3.4 9 L3.4 9 L4.6 22 L-4.6 22Z" fill="${a}"/>${[-3,-1,1,3].map(o=>`<path d="M${o} 11 L${o*1.3} 22" stroke="${b}" stroke-width=".5"/>`).join('')}</g>`}
+function clothFx(id,VW,VH,lod,wear,shieldK){return `${lod?'':`<rect width="${VW}" height="${VH}" fill="url(#${id}w)" opacity="${shieldK?0:1}"/><rect width="${VW}" height="${VH}" filter="url(#${id}n)" style="mix-blend-mode:multiply"/>${shieldK?`<rect width="${VW}" height="${VH}" filter="url(#${id}n2)" style="mix-blend-mode:screen" opacity=".6"/>`:''}`}
+  <rect width="${VW}" height="${VH}" fill="url(#${id}f)"/>${shieldK?'':`<rect width="${VW}" height="${VH}" fill="url(#${id}v)"/>`}
+  ${wear>0?`<rect width="${VW}" height="${VH}" fill="url(#${id}vg)"/><rect width="${VW}" height="${VH}" fill="#7a5a2a" opacity="${(wear*.22).toFixed(2)}" style="mix-blend-mode:multiply"/>`:''}`}
+function svg(kind,d,opt={}){const id='r'+(++UID);const [VW,VH]=KINDS[kind].vb;const lod=!!(opt.px&&opt.px<44);const T=d.trim||{};const wear=+d.wear||0;
+  const gilt=T.gilt!==false;const shieldK=kind==='scutum'||kind==='parma';let back='',body='',front='',cut='';const ins=(d.ins||'').trim();
+  const pole=(x,y0,y1,w)=>`<rect x="${x-w/2}" y="${y0}" width="${w}" height="${y1-y0}" rx="${w/2}" fill="url(#${id}p)"/>`;
+  const spear=(x,y)=>`<path d="M${x} ${y-22} L${x+5.5} ${y-4} L${x+2.6} ${y} L${x-2.6} ${y} L${x-5.5} ${y-4}Z" fill="url(#${id}g)" stroke="#5a3c10" stroke-width=".7"/><rect x="${x-3.6}" y="${y}" width="7.2" height="5" fill="url(#${id}br)"/>`;
+  const bar=(x0,x1,y)=>`<rect x="${x0}" y="${y-3}" width="${x1-x0}" height="6.5" rx="3" fill="url(#${id}${gilt?'g':'p'})"/><circle cx="${x0}" cy="${y+.2}" r="5" fill="url(#${id}bs)"/><circle cx="${x1}" cy="${y+.2}" r="5" fill="url(#${id}bs)"/>`;
+  const ribbons=(x,y,len)=>`<path d="M${x} ${y} q-3 ${len*.5} 2 ${len}" stroke="${d.c2}" stroke-width="4" fill="none"/><path d="M${x+3} ${y} q4 ${len*.45} -1 ${len*.9}" stroke="${shade(d.c1,.1)}" stroke-width="3.4" fill="none"/>`;
   switch(kind){
-  case 'flag':{/* a waving cloth: wavy top/bottom edges, the fly edge curls */
-    const cut='M22 18 C88 6 150 30 214 16 S300 6 322 14 L326 186 C300 178 262 196 214 190 S100 176 22 196 Z';
-    return {cut,box:[18,4,312,196],dev:[172,98,.4],motto:[172,178,22],rib:null}}
-  case 'banner':{const straight=d.tail==='straight';
-    const cut=straight?'M32 22 H168 V262 H32 Z':'M32 22 H168 V272 L100 236 L32 272 Z';
-    return {cut,box:[32,22,136,252],dev:[100,112,.34],motto:[100,straight?236:212,17],band:straight?[32,218,136,28]:[32,194,136,28]}}
-  case 'pennant':{const cut='M15.6 18.2 H140.4 V223.6 L78 197.6 L15.6 223.6 Z';return {cut,box:[15.6,18.2,124.8,205.4],dev:[78,104,.3],motto:null,inner:'M26 28.6 H130 V208 L78 185 L26 208 Z'}}
-  case 'tapestry':{const cut='M18 20 H402 V200 H18 Z';return {cut,box:[18,20,384,180],dev:[210,98,.36],motto:[210,184,19],border:true}}
-  case 'crest':{const cut='M24 22 H176 V108 C176 166 140 200 100 222 C60 200 24 166 24 108 Z';return {cut,box:[24,22,152,200],dev:[100,104,.32],motto:[100,236,14],rib:true,inner:'M33 31 H167 V108 C167 160 134 191 100 211 C66 191 33 160 33 108 Z'}}}}
-function division(d,b,id){const [x,y,w,h]=b;const c1=d.c1,c2=d.c2;
-  switch(d.div){
-  case 'pale':return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c1}"/><rect x="${x+w/2}" y="${y}" width="${w/2}" height="${h}" fill="${c2}"/>`;
-  case 'fess':return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c1}"/><rect x="${x}" y="${y+h/2}" width="${w}" height="${h/2}" fill="${c2}"/>`;
-  case 'quarterly':return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c1}"/><rect x="${x+w/2}" y="${y}" width="${w/2}" height="${h/2}" fill="${c2}"/><rect x="${x}" y="${y+h/2}" width="${w/2}" height="${h/2}" fill="${c2}"/>`;
-  case 'chevron':return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c1}"/><path d="M${x} ${y+h*.78} L${x+w/2} ${y+h*.42} L${x+w} ${y+h*.78} V${y+h*.98} L${x+w/2} ${y+h*.62} L${x} ${y+h*.98}Z" fill="${c2}"/>`;
-  case 'saltire':{const t=Math.min(w,h)*.12;return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c1}"/><path d="M${x} ${y} L${x+w} ${y+h}" stroke="${c2}" stroke-width="${t}"/><path d="M${x+w} ${y} L${x} ${y+h}" stroke="${c2}" stroke-width="${t}"/>`}
-  case 'bordure':{const t=Math.min(w,h)*.085;return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c2}"/><g data-bordure="1"></g>`}
-  default:return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c1}"/>`}}
-/* the device in charge space (600×340, centre 300,180): printed devices made solid (the game draws them as .45 watermarks) */
-function device(d,lod){const BT=window.BT||{};let s='',k=1;
-  if(!d.dev||d.dev==='none')return '';
-  if(d.dev.startsWith('sym:')){s=(BT.sym||{})[d.dev.slice(4)]||'';k=1.75;s=s.replace(/FG/g,d.fg)}
-  else{s=((BT.dev||{})[d.dev]||'').replace(/FG/g,d.fg).replace(/BG/g,d.c1).replace(/opacity="\.4?5?"/g,'').replace(/opacity="\.5"/g,'')}
-  return {s,k}}
-function svg(kind,d,opt={}){const id='b'+(++UID);const G=geom(kind,d);const [VW,VH]=KINDS[kind].vb;const lod=opt.px&&opt.px<44; /* small chips: no texture, no motto, no sculpt detail */
-  const T=d.trim||{};const wear=+d.wear||0;const gold=T.gold!==false;const GOLD='#d8b25a',GOLD2='#f3d27a',GOLDD='#8a6420';
-  const [cx,cy,sc]=G.dev;const dv=device(d,lod);
-  const devG=dv&&dv.s?`<g transform="translate(${cx} ${cy}) scale(${sc*dv.k}) translate(-300 -180)"><g transform="translate(5 7)" opacity=".38" filter="url(#${id}sh)">${dv.s.replace(/fill="(?!none)[^"]*"/g,'fill="#000"').replace(/stroke="(?!none)[^"]*"/g,'stroke="#000"')}</g><g stroke="${shade(d.fg,-.55)}" stroke-width="${lod?6:3.5}" stroke-linejoin="round" stroke-opacity=".8">${dv.s}</g></g>`:'';
-  const scul=d.sculpt&&!lod?`<g transform="translate(${cx} ${cy}) scale(${sc}) translate(-300 -180) scale(6)">${d.sculpt}</g>`:'';
-  const [bx,by,bw,bh]=G.box;let field=division(d,G.box,id);
-  if(d.div==='bordure'){const t=Math.min(bw,bh)*.085;const inner=G.inner||G.cut;field+=`<g transform="translate(${bx+bw/2} ${by+bh/2}) scale(${1-2*t/bw} ${1-2*t/bh}) translate(${-(bx+bw/2)} ${-(by+bh/2)})"><path d="${G.cut}" fill="${d.c1}"/></g>`}
-  /* folds: hanging cloth = vertical folds; the flag = folds following the wave; the crest = a painted board (light from upper left) */
-  const folds=kind==='crest'?`<radialGradient id="${id}f" cx=".3" cy=".22" r=".95"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".42"/></radialGradient>`
-   :`<linearGradient id="${id}f" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".34"/><stop offset=".13" stop-color="#fff" stop-opacity=".1"/><stop offset=".3" stop-color="#000" stop-opacity=".2"/><stop offset=".47" stop-color="#fff" stop-opacity=".09"/><stop offset=".64" stop-color="#000" stop-opacity=".17"/><stop offset=".82" stop-color="#fff" stop-opacity=".07"/><stop offset="1" stop-color="#000" stop-opacity=".36"/></linearGradient>`;
-  const vfold=kind==='crest'?'':`<linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".25"/><stop offset=".12" stop-color="#000" stop-opacity="0"/><stop offset=".85" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>`;
-  const defs=`<defs><clipPath id="${id}c"><path d="${G.cut}"/></clipPath>${folds}${vfold}
-    <filter id="${id}n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="${kind==='crest'?'.55':'1.15 .9'}" numOctaves="2" seed="${7+UID%5}"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 ${kind==='crest'?.32:.5} -.05"/></filter>
-    <pattern id="${id}w" width="3" height="3" patternUnits="userSpaceOnUse"><path d="M0 1.5H3M1.5 0V3" stroke="#000" stroke-opacity=".09" stroke-width=".6"/></pattern>
-    <filter id="${id}sh" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
-    <filter id="${id}wr" x="-6%" y="-6%" width="112%" height="112%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="3" seed="3"/><feDisplacementMap in="SourceGraphic" scale="${(wear*7).toFixed(1)}"/></filter>
-    <radialGradient id="${id}vg" cx=".5" cy=".45" r=".7"><stop offset=".55" stop-color="#3a2810" stop-opacity="0"/><stop offset="1" stop-color="#2a1a08" stop-opacity="${(.15+wear*.55).toFixed(2)}"/></radialGradient>
-    <linearGradient id="${id}g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${GOLD2}"/><stop offset=".5" stop-color="${GOLD}"/><stop offset="1" stop-color="${GOLDD}"/></linearGradient>
-    <linearGradient id="${id}p" x1="0" x2="1"><stop offset="0" stop-color="#3a2614"/><stop offset=".4" stop-color="#8a6236"/><stop offset="1" stop-color="#2a1a0c"/></linearGradient>
-    <linearGradient id="${id}ph" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#9a7040"/><stop offset=".5" stop-color="#5a3c1e"/><stop offset="1" stop-color="#2a1a0c"/></linearGradient></defs>`;
-  /* the motto */
-  let motto='';if(G.motto&&d.motto&&!lod){const [mx,my,fs]=G.motto;
-    if(kind==='crest')motto=`<path d="M22 228 C40 222 56 240 100 240 C144 240 160 222 178 228 L184 244 C162 238 146 252 100 252 C54 252 38 238 16 244Z" fill="#efe1bf" stroke="#6a4a1c" stroke-width="1.2"/><path d="M22 228 L10 236 L16 244Z M178 228 L190 236 L184 244Z" fill="#c9b48a" stroke="#6a4a1c" stroke-width="1"/><text x="${mx}" y="${my+8}" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="${fs}" letter-spacing="3" fill="#4a2a10">${d.motto}</text>`;
-    else{const band=G.band?`<rect x="${G.band[0]}" y="${G.band[1]}" width="${G.band[2]}" height="${G.band[3]}" fill="${shade(d.c1,-.35)}" opacity=".85"/><rect x="${G.band[0]}" y="${G.band[1]}" width="${G.band[2]}" height="1.6" fill="${GOLD}"/><rect x="${G.band[0]}" y="${G.band[1]+G.band[3]-1.6}" width="${G.band[2]}" height="1.6" fill="${GOLD}"/>`:'';
-      motto=`${band}<text x="${mx}" y="${my}" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="${fs}" letter-spacing="${kind==='tapestry'?8:4}" fill="${d.fg}" stroke="#000" stroke-opacity=".35" stroke-width=".6" paint-order="stroke">${d.motto}</text>`}}
-  /* the tapestry's woven border (a meander band) */
-  const border=G.border?`<g><rect x="${bx+6}" y="${by+6}" width="${bw-12}" height="${bh-12}" fill="none" stroke="${shade(d.c2,-.1)}" stroke-width="10"/><rect x="${bx+6}" y="${by+6}" width="${bw-12}" height="${bh-12}" fill="none" stroke="${GOLD}" stroke-width="10" stroke-dasharray="5 3 2 3" opacity=".75"/><rect x="${bx+12}" y="${by+12}" width="${bw-24}" height="${bh-24}" fill="none" stroke="${GOLD}" stroke-width="1"/></g>`:'';
-  const cloth=`<g clip-path="url(#${id}c)">${field}${border}${devG}${scul}${motto&&kind!=='crest'?motto:''}
-    ${lod?'':`<rect width="${VW}" height="${VH}" fill="url(#${id}w)"/><rect width="${VW}" height="${VH}" filter="url(#${id}n)" style="mix-blend-mode:multiply"/>`}
-    <rect width="${VW}" height="${VH}" fill="url(#${id}f)"/>${vfold?`<rect width="${VW}" height="${VH}" fill="url(#${id}v)"/>`:''}
-    ${wear>0?`<rect width="${VW}" height="${VH}" fill="url(#${id}vg)"/><rect width="${VW}" height="${VH}" fill="#7a5a2a" opacity="${(wear*.22).toFixed(2)}" style="mix-blend-mode:multiply"/>`:''}</g>`;
-  const edge=gold?`<path d="${G.cut}" fill="none" stroke="url(#${id}g)" stroke-width="${lod?3.2:kind==='crest'?4:2.6}" stroke-linejoin="round"/>${G.inner&&!lod?`<path d="${G.inner}" fill="none" stroke="${d.fg}" stroke-opacity=".38" stroke-width="1"/>`:''}`
-    :`<path d="${G.cut}" fill="none" stroke="${shade(d.c1,-.45)}" stroke-width="1.6"/>`;
-  /* trim */
-  let back='',front='';
-  if(kind==='flag'){back=`<rect x="11" y="6" width="8" height="226" rx="3" fill="url(#${id}ph)" transform="rotate(0)"/><rect x="11" y="6" width="8" height="226" rx="3" fill="url(#${id}p)" opacity=".7"/><circle cx="15" cy="7" r="6.5" fill="url(#${id}g)" stroke="${GOLDD}" stroke-width=".8"/>`;
-    if(T.tassels)front+=`<path d="M19 22 C14 40 12 52 13 62" stroke="url(#${id}g)" stroke-width="1.6" fill="none"/>${tassel(13,62,id)}`;
-    if(T.fringe&&!lod)front+=fringe(326,14,186,'v',id)}
-  if(kind==='banner'||kind==='pennant'||kind==='tapestry'){const x0=kind==='tapestry'?8:kind==='banner'?16:5,x1=VW-x0,y=kind==='pennant'?10:12;
-    if(T.bar!==false)back=`<rect x="${x0}" y="${y-3}" width="${x1-x0}" height="${kind==='pennant'?9:7}" rx="3.5" fill="url(#${id}${gold?'g':'ph'})"/><circle cx="${x0}" cy="${y+.5}" r="${kind==='pennant'?7:6}" fill="url(#${id}g)" stroke="${GOLDD}" stroke-width=".8"/><circle cx="${x1}" cy="${y+.5}" r="${kind==='pennant'?7:6}" fill="url(#${id}g)" stroke="${GOLDD}" stroke-width=".8"/>`;
-    if(kind==='pennant'&&T.topbar)front+=`<rect x="15.6" y="18.2" width="124.8" height="18" fill="#9b2a1c" clip-path="url(#${id}c)"/><rect x="15.6" y="36" width="124.8" height="2" fill="url(#${id}g)"/>`;
-    if(T.tassels){const pts=kind==='banner'?(d.tail==='straight'?[[32,262],[168,262]]:[[32,272],[168,272]]):kind==='pennant'?[[15.6,223.6],[140.4,223.6]]:[[18,200],[402,200]];
-      front+=pts.map(([x,y2])=>`<path d="M${x} ${y2} l${x<VW/2?-5:5} 12" stroke="url(#${id}g)" stroke-width="1.6"/>`+tassel(x+(x<VW/2?-5:5),y2+12,id)).join('')}
-    if(T.fringe&&!lod){if(kind==='tapestry')front+=fringe(200,22,400,'h',id);else if(kind==='banner'&&d.tail==='straight')front+=fringe(262,34,166,'h',id)}}
-  if(kind==='crest'&&!lod){front+=motto}
-  return `<svg class="b100 k-${kind}" viewBox="0 0 ${VW} ${VH}" xmlns="http://www.w3.org/2000/svg"${opt.px?` width="${Math.round(opt.px*VW/VH)}" height="${opt.px}"`:''} role="img" aria-label="${KINDS[kind].n}">${defs}${back}<g filter="${wear>0.05?`url(#${id}wr)`:''}"><g transform="translate(2.5 3.5)" opacity=".35"><path d="${G.cut}" fill="#000"/></g>${cloth}${edge}</g>${front}</svg>`}
-function tassel(x,y,id){return `<path d="M${x-3.4} ${y+2} L${x+3.4} ${y+2} L${x+4.5} ${y+15} L${x-4.5} ${y+15}Z" fill="url(#${id}g)"/>${[-3,-1,1,3].map(o=>`<path d="M${x+o} ${y+4} L${x+o*1.3} ${y+15}" stroke="#7a5418" stroke-width=".5"/>`).join('')}<circle cx="${x}" cy="${y+1.5}" r="3" fill="url(#${id}g)" stroke="#7a5418" stroke-width=".6"/>`}
-function fringe(a,b,c,dir,id){let s='';if(dir==='h'){for(let x=b;x<=c;x+=3.2)s+=`<path d="M${x} ${a} l${(x%7)/7-.5} 9" stroke="url(#${id}g)" stroke-width="1.3"/>`}else{for(let y=b;y<=c;y+=3.4)s+=`<path d="M${a} ${y} l8 ${(y%5)/5-.4}" stroke="url(#${id}g)" stroke-width="1.2"/>`}return s}
-window.B100={KINDS,DIVS,svg,shade};
+  case 'vexillum':{cut='M40 36 H180 V182 H40Z';const box=[40,36,140,146];const cx=110,cy=ins?96:108;const ifs=Math.min(15,118/Math.max(1,ins.length)*1.05);
+    back=pole(110,8,300,7)+spear(110,16)+(T.bar!==false?bar(28,192,32):'')+ribbons(28,34,58)+ribbons(189,34,58);
+    body=pattern(d,box,id,cx,cy,44)+(d.pat==='laurel'?laurel(cx,cy,44,id):'')+embG(d,id,cx,cy,d.pat==='clipeus'||d.pat==='laurel'?.2:.27,lod)+(d.sculpt&&!lod?`<g transform="translate(${cx} ${cy}) scale(.27) translate(-300 -180) scale(6)">${d.sculpt}</g>`:'')+(ins&&!lod?goldText(110,d.pat==='meander'||d.pat==='wave'?158:166,ifs,ins,id):'');
+    if(T.fringe!==false&&!lod)front+=fringe(41,179,182,13,d);if(T.tassels)front+=tassel(40,182,d)+tassel(180,182,d);break}
+  case 'flammula':{cut='M18 34 H92 V244 L55 218 L18 244Z';const cx=55,cy=118;
+    back=pole(55,6,300,6)+spear(55,14)+(T.bar!==false?bar(12,98,30):'');
+    body=pattern(d,[18,34,74,210],id,cx,cy,26)+(d.pat==='laurel'?laurel(cx,cy,27,id):'')+embG(d,id,cx,cy,d.pat==='clipeus'||d.pat==='laurel'?.15:.21,lod)+(T.topbar?`<rect x="18" y="34" width="74" height="16" fill="#9b2a1c"/><rect x="18" y="50" width="74" height="2" fill="url(#${id}g)"/>`:'');
+    if(T.tassels)front+=tassel(18,244,d)+tassel(92,244,d);break}
+  case 'velarium':{cut='M20 22 Q125 46 230 22 Q335 46 440 22 V198 H20Z';const cx=230,cy=108;
+    back=`<path d="M20 22 L8 6 M230 22 L230 4 M440 22 L452 6" stroke="#6a5030" stroke-width="2"/>`;
+    body=pattern(d,[20,14,420,190],id,cx,cy,52)+Array.from({length:10},(_,i)=>`<rect x="${20+i*42}" y="0" width="21" height="236" fill="#000" opacity=".1"/>`).join('')+(d.pat==='laurel'?laurel(cx,cy,52,id):'')+embG(d,id,cx,cy,d.pat==='clipeus'||d.pat==='laurel'?.24:.3,lod)+(d.sculpt&&!lod?`<g transform="translate(${cx} ${cy}) scale(.3) translate(-300 -180) scale(6)">${d.sculpt}</g>`:'');
+    if(ins&&!lod)front+=tabula(170,166,120,24,ins,id,14);if(T.fringe!==false&&!lod)front+=fringe(21,439,198,11,d);if(T.tassels)front+=tassel(20,22,d)+tassel(230,22,d)+tassel(440,22,d);break}
+  case 'scutum':{cut='M28 16 Q90 4 152 16 Q160 135 152 254 Q90 266 28 254 Q20 135 28 16Z';const cx=90,cy=84;
+    body=pattern(d,[18,4,144,262],id,cx,cy,46)+(d.pat==='laurel'?laurel(cx,cy,50,id):'')+embG(d,id,cx,cy,d.pat==='clipeus'||d.pat==='laurel'?.22:.34,lod)+(d.sculpt&&!lod?`<g transform="translate(${cx} ${cy}) scale(.34) translate(-300 -180) scale(6)">${d.sculpt}</g>`:'')
+      +(lod?'':`<path d="M90 140 V258" stroke="#000" stroke-opacity=".22" stroke-width="5"/><path d="M89 140 V258" stroke="#fff" stroke-opacity=".12" stroke-width="1.5"/>`);
+    front=`<circle cx="90" cy="168" r="${lod?20:17}" fill="url(#${id}bs)" stroke="#4a3008" stroke-width="1.2"/><circle cx="86" cy="163" r="4" fill="#fff6d0" opacity=".55"/>`;break}
+  case 'parma':{cut='M80 10 A70 70 0 1 1 79.9 10Z';const cx=80,cy=80;
+    body=pattern(d,[10,10,140,140],id,cx,cy,(d.pat==='meander'||d.pat==='wave')?-70:36)+(d.pat==='laurel'?laurel(cx,cy,40,id):'')+embG(d,id,cx,cy,d.pat==='clipeus'||d.pat==='laurel'?.17:.24,lod)+(d.sculpt&&!lod?`<g transform="translate(${cx} ${cy}) scale(.24) translate(-300 -180) scale(6)">${d.sculpt}</g>`:'');
+    if(!lod)front=Array.from({length:10},(_,i)=>{const a=i*Math.PI/5;return `<circle cx="${(80+Math.cos(a)*64).toFixed(1)}" cy="${(80+Math.sin(a)*64).toFixed(1)}" r="2.2" fill="url(#${id}bs)"/>`}).join('');break}
+  case 'signum':{/* a pole standard: emblem on top, crossbar + ribbons, wreath, phalerae, clipeus with the emblem, lunula, tabula */
+    back=pole(60,30,320,7)+`<path d="M56 314 L60 320 L64 314Z" fill="#5a3c10"/>`;
+    const gF=`url(#${id}g)`;let s='';
+    const top=d.top||'emb';const tk=top==='emb'?d.emb:top;
+    const te=emblem(tk,gF,'#3a2208');if(te&&te.s)s+=`<g transform="translate(60 22) scale(${.12*te.k}) translate(-300 -180)"><g transform="translate(5 7)" opacity=".4" filter="url(#${id}sh)">${te.s.replace(/fill="(?!none)[^"]*"/g,'fill="#000"').replace(/stroke="(?!none)[^"]*"/g,'stroke="#000"')}</g><g stroke="#5a3c10" stroke-width="5" stroke-linejoin="round">${te.s}</g></g>`;
+    s+=`<rect x="44" y="42" width="32" height="6" rx="2" fill="url(#${id}br)"/>`+bar(20,100,58)+ribbons(20,60,54)+ribbons(97,60,54)+(T.tassels?tassel(22,112,d,.8)+tassel(99,112,d,.8):'');
+    s+=`<circle cx="60" cy="82" r="13" fill="none" stroke="url(#${id}lf)" stroke-width="5"/>${lod?'':laurel(60,82,13,id)}`;
+    for(const y of [108,212,236])s+=`<circle cx="60" cy="${y}" r="10.5" fill="url(#${id}bs)" stroke="#4a3008" stroke-width=".8"/><circle cx="60" cy="${y}" r="4" fill="${d.c1}" stroke="#4a3008" stroke-width=".6"/>`;
+    s+=`<circle cx="60" cy="158" r="31" fill="url(#${id}bs)" stroke="#4a3008" stroke-width="1"/><circle cx="60" cy="158" r="25" fill="${d.c1}"/>`+(d.pat==='clipeus'?`<circle cx="60" cy="158" r="19" fill="${d.c2}"/>`:'')+embG(d,id,60,158,.075,lod)+(lod?'':`<circle cx="60" cy="158" r="25" fill="url(#${id}pf)"/>`);
+    s+=`<path d="M44 252 Q60 274 76 252 Q60 264 44 252Z" fill="url(#${id}g)" stroke="#5a3c10" stroke-width=".6"/>`;
+    if(ins&&!lod)s+=tabula(36,276,48,16,ins.slice(0,8),id,9.5);
+    return `<svg class="b100 k-signum" viewBox="0 0 ${VW} ${VH}" xmlns="http://www.w3.org/2000/svg"${opt.px?` width="${Math.round(opt.px*VW/VH)}" height="${opt.px}"`:''} role="img" aria-label="Signum">${defs(id,d,kind,wear)}${back}${s}</svg>`}}
+  const edge=gilt?`<path d="${cut}" fill="none" stroke="url(#${id}${shieldK?'br':'g'})" stroke-width="${shieldK?(lod?5:4.5):(lod?3:2.2)}" stroke-linejoin="round"/>`:`<path d="${cut}" fill="none" stroke="${shade(d.c1,-.45)}" stroke-width="1.6"/>`;
+  const shadow=`<g transform="translate(2.5 3.5)" opacity=".35"><path d="${cut}" fill="#000"/></g>`;
+  const cloth=`<g clip-path="url(#${id}c)">${body}${clothFx(id,VW,VH,lod,wear,shieldK)}${kind==='parma'?`<rect width="160" height="160" fill="url(#${id}pf)"/>`:''}</g>`;
+  return `<svg class="b100 k-${kind}" viewBox="0 0 ${VW} ${VH}" xmlns="http://www.w3.org/2000/svg"${opt.px?` width="${Math.round(opt.px*VW/VH)}" height="${opt.px}"`:''} role="img" aria-label="${KINDS[kind].n}">${defs(id,d,kind,wear).replace('</defs>',`<clipPath id="${id}c"><path d="${cut}"/></clipPath></defs>`)}${back}<g filter="${wear>0.05?`url(#${id}wr)`:''}">${shadow}${cloth}${edge}</g>${front}</svg>`}
+function tabulaSVG(txt,w){const id='r'+(++UID);w=w||220;return `<svg viewBox="0 0 ${w+40} 44" xmlns="http://www.w3.org/2000/svg">${defs(id,{c1:'#000',c2:'#000'},'vexillum',0)}${tabula(20,6,w,32,txt,id,18)}</svg>`}
+window.B100={KINDS,PATS,PAL,EMB_GROUPS,EMB_N,svg,shade,tabulaSVG};
 })();

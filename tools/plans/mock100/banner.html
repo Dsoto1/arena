@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>One Banner Press</title>
-<!-- v1.0 mock-up: ONE banner / flag / pennant / tapestry / crest designer. Static page, NOT game code.
+<title>Heraldry</title>
+<!-- v1.0 mock-up round 2 (Roman): ONE heraldry designer, six Roman kinds. Static page, NOT game code.
      "Today" samples are rendered from the built game by banner_today.js (→ banner_today_data.js + banner_today/arena.png).
      The new kinds are drawn by banner_engine.js (inline SVG). Shots: node tools/plans/mock100/banner_shot.js -->
 <link rel="stylesheet" href="../mock98/mock98.css">
@@ -178,95 +178,124 @@ table.map code{font:12px var(--mono);color:var(--muted)}
   .kb{min-width:0;flex:1 1 30%}
 }
 </style></head><body>
+<style>
+/* round 2 (Roman) additions */
+.pal{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.pal button{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:7px;border:1px solid var(--line2);background:#140e09;cursor:pointer;font:12px var(--body);color:var(--bone);min-width:0}
+.pal button i{width:16px;height:16px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px #0008,0 0 0 1px #ffffff22}
+.pal button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pal button.on{border-color:var(--gold);box-shadow:0 0 0 1px #d6ab4c66}
+.slot{display:flex;gap:6px;flex-wrap:wrap}
+.slot a{padding:4px 10px;border-radius:999px;border:1px solid var(--line2);font:500 12px var(--mono);color:var(--muted);cursor:pointer}
+.slot a.on{border-color:var(--gold);color:var(--gold2);background:#2a1e12}
+.five{grid-template-columns:1fr .6fr .55fr 1.9fr .85fr .8fr}
+.kinds .kb svg{height:46px}
+.lat{font:italic 400 12px var(--body);color:var(--dim);margin-left:4px}
+.devs{grid-template-columns:repeat(4,minmax(0,1fr))}
+.devs button{min-width:0;overflow:hidden}
+.devs .lbl{font:9.5px var(--mono);color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.decided{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.decided span{padding:3px 10px;border-radius:999px;border:1px solid #4a6a3a;background:#18220f;color:#cfe6b8;font:12.5px var(--body)}
+.ab{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ab svg{height:44px;width:auto}
+@media (max-width:760px){.five{grid-template-columns:repeat(3,minmax(0,1fr))}.five svg{height:74px}.pal{grid-template-columns:repeat(2,1fr)}.kinds{flex-wrap:wrap}.kb{flex:1 1 30%}}
+</style>
 <div class="pg">
-<h1>🚩 One Banner Press</h1>
-<p class="lead">Nine-odd banner systems today, drawn nine ways. In v1.0 they all come off <b>one press</b>: one heraldry (cloth, device, motto, sculpt, trim, wear) and five <b>kinds</b> — <b>Flag · Banner · Pennant · Tapestry · Crest</b>. The kind is only the shape and the frame; the house picks its heraldry once and every place in the game derives its own kind. The bar is the online Domus-rank pennant: woven cloth, folds, gold edge, tassels.</p>
+<h1>🦅 Heraldry — one press for every signum</h1>
+<p class="lead">Round 2, made <b>Roman</b>. One house design — cloth, pattern, emblem, inscription, sculpt, trim, wear — and six <b>Roman objects</b> that carry it: the <b>Vexillum</b> (cloth from a crossbar), the <b>Signum</b> (pole standard with phalerae), the <b>Flammula</b> (the rank streamer), the <b>Velarium</b> (awning cloth over the stands), the <b>Scutum</b> and the gladiator's <b>Parma</b>. Mottos go on a <b>tabula ansata</b>. No heater shields, no heraldic divisions: dyed wool, painted fresco, gold leaf, square capitals.</p>
+<div class="decided"><span>✓ 1a house parma on the rank streamer's bar from Ludus Magnus up</span><span>✓ 2a solid emblem + shadow</span><span>✓ 3a weathering = the slider only</span><span>✓ 4a full design online, sculpt offline only</span><span>✓ 5 name: Heraldry (Roman options in §6)</span></div>
 
 <!-- ======================= 1 · TODAY ======================= -->
-<div class="cap"><span class="n">§1</span><h2>Today — every banner in the game</h2><span>rendered from the built game (v0.99)</span></div>
+<div class="cap"><span class="n">§1</span><h2>Today — every banner in the game</h2><span>rendered from the built game (v0.99) · → the Roman kind it becomes</span></div>
 <div class="today" id="today"></div>
-<p class="note">Same engine underneath most of them (<b>flagURI</b>: a 600×340 rectangle, a watermark device at 45% opacity, letters at the bottom) — but each caller adds its own frame, or none. The tapestries and wall banners are canvas code with their own colours; the room banner is a hand-drawn SVG; the rank pennants are the only ones with a real frame.</p>
+<p class="note">Same engine under most of them (<b>flagURI</b>: a 600×340 rectangle, an emblem at 45% opacity, letters at the bottom) — each caller adds its own frame, or none. Tapestries and wall banners are canvas code; the room banners are a hand-drawn SVG; the rank pennants are the only ones with a real frame.</p>
 
 <!-- ======================= 2 · THE DESIGNER ======================= -->
-<div class="cap"><span class="n">§2</span><h2>The designer — Creator Studio → Banners &amp; heraldry</h2><span>same rail, tabs and button rows as the other designers</span></div>
+<div class="cap"><span class="n">§2</span><h2>The designer — Creator Studio → Heraldry</h2><span>same rail, tabs and button rows as the other designers</span></div>
 <div class="studio">
   <nav class="srail">
     <div class="h">Creator Studio</div>
     <div class="g">Overview</div><a>All creations <i>48</i></a><a>Roster sets <i>3</i></a>
     <div class="g">Fighters</div><a>Characters <i>12</i></a><a>Classes <i>4</i></a><a>Lanistas <i>2</i></a>
     <div class="g">Arena</div><a>Beasts <i>3</i></a><a>Events <i>5</i></a><a>Weapons <i>6</i></a><a>Armor <i>4</i></a>
-    <div class="g">Look</div><a class="on">Banners &amp; heraldry <i>7</i></a><a>Tokens <i>9</i></a><a>Trophies <i>2</i></a><a>Spectators <i>5</i></a>
+    <div class="g">Look</div><a class="on">Heraldry <i>7</i></a><a>Tokens <i>9</i></a><a>Trophies <i>2</i></a><a>Spectators <i>5</i></a>
   </nav>
   <section class="stage">
-    <div class="st-hd"><h2 id="dName">Domus Valeria</h2><span class="pill go">house heraldry</span><span class="sp"></span><button class="btn sm">↶</button><button class="btn sm">↷</button></div>
+    <div class="st-hd"><h2 id="dName">Domus Valeria</h2><span class="pill go">house design</span><span class="sp"></span><button class="btn sm">↶</button><button class="btn sm">↷</button></div>
     <div class="kinds" id="kinds"></div>
-    <div class="big" id="big"><div class="tag">Preview · <b id="bigK">Flag</b></div></div>
+    <div class="big" id="big"></div>
     <div class="five" id="five"></div>
     <div class="ctx" id="ctx"></div>
   </section>
   <aside class="side">
-    <div class="tabs" id="tabs"><a data-t="cloth" class="on">Cloth</a><a data-t="device">Device</a><a data-t="motto">Motto</a><a data-t="sculpt">Sculpt</a><a data-t="trim">Trim &amp; wear</a></div>
+    <div class="tabs" id="tabs"><a data-t="cloth" class="on">Cloth</a><a data-t="pat">Pattern</a><a data-t="emb">Emblem</a><a data-t="ins">Inscription</a><a data-t="sculpt">Sculpt</a><a data-t="trim">Trim &amp; wear</a></div>
     <div class="pane on" data-p="cloth">
-      <h4>Field colours <small>tinctures</small></h4>
-      <div class="cols"><label>Field<input type="color" id="c1" value="#7a2230"></label><label>Second<input type="color" id="c2" value="#d6ab4c"></label><label>Device<input type="color" id="fg" value="#d6ab4c"></label><button class="btn sm" id="rnd">🎲 Roll</button></div>
-      <h4>Division <small>how the field is split</small></h4>
-      <div class="grid6" id="divs"></div>
-      <p class="note" style="margin:0;font-size:12.5px">Each kind clips the same field to its own outline — a quarterly flag is a quarterly crest is a quarterly tapestry.</p>
+      <h4>Dye <small>first colour · the cloth</small></h4><div class="pal" id="pal1"></div>
+      <h4>Second dye <small>stripes, borders, roundel, halves</small></h4><div class="pal" id="pal2"></div>
+      <h4>Emblem paint</h4><div class="slot" id="fgs"></div>
+      <div class="cols"><label>Any colour<input type="color" id="c1" value="#5b1a45"></label><label>Second<input type="color" id="c2" value="#b5832e"></label><label>Emblem<input type="color" id="fg" value="#e2b64a"></label><button class="btn sm" id="rnd">🎲 Roll</button></div>
     </div>
-    <div class="pane" data-p="device">
-      <h4>Device <small>the emblem on the cloth</small></h4>
+    <div class="pane" data-p="pat">
+      <h4>Pattern <small>woven or painted on the cloth</small></h4>
+      <div class="grid6" id="pats"></div>
+      <p class="note" style="margin:0;font-size:12.5px">Every kind lays the same pattern on its own cloth: clavi run down a vexillum, round a parma's face, across a velarium.</p>
+    </div>
+    <div class="pane" data-p="emb">
+      <h4>Emblem <small>the house's sign</small></h4>
       <div class="devs" id="devs"></div>
+      <h4>Signum topper <small>what crowns the pole</small></h4>
+      <div class="slot" id="tops"></div>
     </div>
-    <div class="pane" data-p="motto">
-      <h4>Motto <small>Latin capitals, ≤ 12</small></h4>
-      <input class="tin" id="motto" maxlength="12" value="VALERIA">
-      <div class="note" style="margin:0;font-size:12.5px">Where it shows: <b>Flag</b> under the device · <b>Banner</b> on a band · <b>Tapestry</b> along the border · <b>Crest</b> on a scroll · <b>Pennant</b> never (too narrow). Chips under 44 px drop it.</div>
-      <label class="tg"><input type="checkbox" checked> Initials when empty (today's <code class="k">ludusInitials</code>)</label>
+    <div class="pane" data-p="ins">
+      <h4>Inscription <small>square capitals, ≤ 12</small></h4>
+      <input class="tin" id="ins" maxlength="12" value="DOMVS·VALERIA">
+      <div class="ab" id="tab"></div>
+      <div class="note" style="margin:0;font-size:12.5px">Where it shows: <b>Vexillum</b> in gold leaf on the cloth · <b>Velarium</b> and <b>Signum</b> on a bronze <i>tabula ansata</i> · <b>Scutum, Parma, Flammula</b> never. Chips under 44 px drop it. U → V and J → I as the Romans cut them.</div>
+      <label class="tg"><input type="checkbox" checked> House initials when empty</label>
     </div>
     <div class="pane" data-p="sculpt">
       <h4>Sculpt layers <small>the shared bench (scbLayers)</small></h4>
       <div class="acts" style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn sm">● Circle</button><button class="btn sm">⬭ Oval</button><button class="btn sm">■ Box</button><button class="btn sm">▲ Triangle</button><button class="btn sm">◆ Diamond</button><button class="btn sm">★ Star</button><button class="btn sm">☾ Crescent</button><button class="btn sm">╱ Bar</button><button class="btn sm">➤ Spike</button><button class="btn sm">◯ Ring</button></div>
-      <div class="lay"><div class="sel">● Circle <i>gold · 18</i></div><div>★ Star <i>crimson · 10</i></div><div>╱ Bar <i>gold · 60×3</i></div></div>
+      <div class="lay"><div class="sel">● Circle <i>gold · 18</i></div><div>★ Star <i>madder · 10</i></div><div>╱ Bar <i>gold · 60×3</i></div></div>
       <label class="tg"><input type="checkbox" id="scOn"> Show the sculpted layers on this design</label>
-      <p class="note" style="margin:0;font-size:12.5px">Drag on the big preview, 🔨 commit to bake — exactly today's bench; the layers live in the same 600×340 space as the device, so every kind places them alike.</p>
+      <p class="note" style="margin:0;font-size:12.5px">Exactly today's bench. Sculpt stays offline (his 4a): online houses wear the rest of the design.</p>
     </div>
     <div class="pane" data-p="trim">
       <h4>Trim</h4>
-      <label class="tg"><input type="checkbox" id="tGold" checked> Gold edge</label>
+      <label class="tg"><input type="checkbox" id="tGold" checked> Gilded edge / bronze rim</label>
       <label class="tg"><input type="checkbox" id="tTas" checked> Tassels</label>
-      <label class="tg"><input type="checkbox" id="tFr" checked> Fringe <span class="k">tapestry · straight banner · flag fly</span></label>
-      <label class="tg"><input type="checkbox" id="tBar" checked> Top bar / pole</label>
-      <label class="tg"><input type="checkbox" id="tTop"> Red top band <span class="k">pennant (Domus Aurea style)</span></label>
-      <h4>Banner tail</h4>
-      <div class="cols"><label class="tg"><input type="radio" name="tail" value="swallow" checked> Swallow-tail</label><label class="tg"><input type="radio" name="tail" value="straight"> Straight + fringe</label></div>
+      <label class="tg"><input type="checkbox" id="tFr" checked> Fringe <span class="k">vexillum · velarium</span></label>
+      <label class="tg"><input type="checkbox" id="tBar" checked> Crossbar</label>
+      <label class="tg"><input type="checkbox" id="tTop"> Madder band <span class="k">flammula (Domus Aurea)</span></label>
+      <h4>Fringe &amp; tassel colour</h4><div class="slot" id="fcs"></div>
       <h4>Weathering <small id="wv">0</small></h4>
       <input type="range" class="rng" id="wear" min="0" max="100" value="0">
-      <p class="note" style="margin:0;font-size:12.5px">Frayed edge, sun-faded cloth, darker hems. A house can age its banner; the arena can age it by season.</p>
+      <p class="note" style="margin:0;font-size:12.5px">Frayed wool, sun-faded dye, chipped paint on the shields. The house chooses (his 3a).</p>
     </div>
-    <div class="foot"><button class="btn pri">💾 Save heraldry</button><button class="btn">↺ Fresh cloth</button><button class="btn">⬇ Use as my house</button></div>
+    <div class="foot"><button class="btn pri">💾 Save design</button><button class="btn">↺ Fresh cloth</button><button class="btn">⬇ Use for my house</button></div>
   </aside>
   <div class="rack" style="grid-column:1/-1">
-    <h4>Your heraldry · 3 <small>— 📜 rolls · 🔒 lock · Edit · Copy · Delete (deleting asks first)</small></h4>
+    <h4>Your designs · 3 <small>— 📜 rolls · 🔒 lock · Edit · Copy · Delete (deleting asks first)</small></h4>
     <div class="rk" id="rackU"></div>
-    <h4>🔒 System heraldry · 31 <small>— the empire, 14 cities, 8 Domus ranks, 7 regions · Copy &amp; edit</small></h4>
+    <h4>🔒 System designs · 32 <small>— the empire, 14 cities, 8 Domus ranks, 7 regions, the arena's wall cloths, Flavius's box · Copy &amp; edit</small></h4>
     <div class="rk" id="rackS"></div>
   </div>
 </div>
 
 <!-- ======================= 3 · ONE DESIGN, MANY USES ======================= -->
-<div class="cap"><span class="n">§3</span><h2>One design, many uses</h2><span>a house picks ONE heraldry; each place derives its kind</span></div>
+<div class="cap"><span class="n">§3</span><h2>One design, many uses</h2><span>a house picks ONE design; each place carries its own Roman object</span></div>
 <div class="sets" id="sets"></div>
-<p class="note">Who owns which heraldry: <b>Manager house</b> = <code class="k">m.flag</code> (rivals derive theirs as today, from id + city) · <b>online Domus</b> = <code class="k">D.look89</code> grown to a full heraldry (server keeps the small JSON; the rank pennant stays the system design, the house crest rides on its top bar from Ludus Magnus up) · <b>Studio</b> = <code class="k">customFlags</code>, chosen by a character (<code class="k">banner91</code>), a lanista or a career. Families keep their derived heraldry (kin share it).</p>
+<p class="note">Who owns which design: <b>Manager house</b> = <code class="k">m.flag</code> (rivals derive theirs as today, from id + city) · <b>online Domus</b> = <code class="k">D.look89</code> grown to the full design minus sculpt (his 4a); its rank streamer stays the system design, and from <b>Ludus Magnus</b> up the house <b>parma</b> rides on its crossbar (his 1a) · <b>Studio</b> = <code class="k">customFlags</code>, chosen by a character (<code class="k">banner91</code>), a lanista or a career. Families keep their derived design (kin share it).</p>
 
 <!-- ======================= 4 · QUALITY BAR ======================= -->
 <div class="cap"><span class="n">§4</span><h2>The quality bar</h2><span>dr98 today → the engine every kind is drawn with</span></div>
 <div class="qa">
-  <div class="qbox"><h3>What makes dr98 look good</h3>
-    <div class="anat"><b>cloth</b><span>flagURI field + device under a clip</span><b>folds</b><span>dark · light · dark gradient across</span><b>edge</b><span>gold stroke + a faint inner line in the device colour</span><b>top</b><span>gold bar with two finials</span><b>tiers</b><span>tassels at Illustris, red band at Aurea</span></div>
-    <p class="note" style="margin:0;font-size:12.5px">Added for v1.0: a woven <b>texture</b> (noise + weave), vertical <b>hem shading</b>, the device made <b>solid</b> with a soft drop shadow (today: 45% watermark), and the frame per kind.</p></div>
-  <div class="qbox"><h3>The 8 Domus ranks — today (left of each pair) vs the same system designs off the new press</h3><div class="drrow" id="drrow"></div>
+  <div class="qbox"><h3>What makes dr98 look good — kept</h3>
+    <div class="anat"><b>cloth</b><span>field + emblem under a clip</span><b>folds</b><span>dark · light · dark across</span><b>edge</b><span>gilded stroke</span><b>bar</b><span>gold crossbar, two finials</span><b>tiers</b><span>tassels at Illustris, madder band at Aurea</span></div>
+    <p class="note" style="margin:0;font-size:12.5px">Added: <b>dyed-wool</b> texture (weave + noise) on cloth, <b>painted-fresco</b> mottling on shields, <b>gold-leaf</b> square capitals, bronze <b>umbo</b> and rivets, the emblem <b>solid</b> with an ink line and a soft shadow (today: 45% watermark).</p></div>
+  <div class="qbox"><h3>The 8 Domus ranks — today (left of each pair) vs the same system designs as flammulae</h3><div class="drrow" id="drrow"></div>
     <h3 style="margin-top:6px">Small sizes — one rule for every kind</h3><div class="lod" id="lod"></div>
-    <p class="note" style="margin:0;font-size:12.5px">Under 44 px: no texture, no motto, no sculpt detail, a thicker edge — chips stay legible in the league table and room lists. Images are cached per design + kind + size, so a table of 12 houses is 12 draws once.</p></div>
+    <p class="note" style="margin:0;font-size:12.5px">Under 44 px: no texture, inscription or sculpt; a thicker rim and ink line. The <b>parma</b> is the chip everywhere a name sits in a row. Cached per design + kind + size.</p></div>
 </div>
 
 <!-- ======================= 5 · WHAT BECOMES WHAT ======================= -->
@@ -281,21 +310,21 @@ table.map code{font:12px var(--mono);color:var(--muted)}
 <script>
 const BT=window.BT,E=window.B100;
 const L=t=>document.getElementById(t);
-const bars={none:'none'};
 /* ---------------- §1 today ---------------- */
 {const img=(u,c)=>`<img src="${u}" class="${c||''}" alt="">`;const cards=[
- ['1','Empire &amp; city banners',BT.empire.slice(0,4).map(e=>img(e.u)).join('')+img(BT.spqr),'<b>flagURI</b> · flagSVG · flagURIk · FLAGS · CITY_FLAG · EMPIRE_FLAG','→ <b>Flag</b> (system designs, locked)'],
- ['2','Manager house flags',BT.house.map(h=>img(h.u)).join(''),'<b>mgrFlagOf</b> · houseFlagURI · flagChip · flagImg · flagSpread · flagPickerHTML','→ the house <b>heraldry</b>; chips = <b>Crest</b>'],
- ['3','Family banners',BT.fam.map(h=>img(h.u)).join(''),'<b>famFlagOf</b> · famFlagChip','→ derived heraldry, <b>Crest</b> chip'],
- ['4','Studio Banner press',img(BT.sculpt)+img(BT.house[2].u),'<b>flagStudioHTML</b> · blankFlag · flagStudioClick/Input · flagSculpt + scbLayersSVG → customFlags','→ <b>the one designer</b>'],
- ['5','Crowd fan flags',img(BT.fan,'tall'),'<b>drawFanFlags</b> (canvas, the house flag on a stick)','→ <b>Flag</b> small (LOD)'],
- ['6','Arena tapestries',`<img src="banner_today/arena.png" style="height:72px;object-fit:cover;object-position:10% 60%;width:230px">`,'<b>ar91FlagSrc</b> · ar91DecoPaint (canvas: frame, studs, fringe around flagURI)','→ <b>Tapestry</b> of the section\'s house'],
- ['7','Wall banners &amp; drape',img(BT.wall,'tall'),'<b>ar91Banner</b> (XII / S / IV on red) · <b>ar91Drape</b> (FR icon)','→ <b>Banner</b> (arena system designs)'],
- ['8','Domus rank pennants',BT.dr.slice(0,8).map(r=>img(r.u,'tall')).join(''),'<b>dr98URI</b> · dr98Chip · DR_SYM98 · DRANKS98','→ <b>Pennant</b> = THE quality bar; 8 locked system designs'],
- ['9','Region flags',BT.rg.slice(0,5).map(r=>r.h).join(''),'<b>rg98Flag</b> · REGIONS98 (flagURI)','→ <b>Flag</b> (7 locked system designs)'],
- ['10','Online Domus crest',BT.crest.map(u=>img(u)).join(''),'<b>d89Crest</b> · d89Banner · d89Look · CREST89 (c1/c2/crest)','→ the Domus <b>heraldry</b> (Crest + Pennant top)'],
- ['11','Ludus room pennants',BT.room.replace('<svg','<svg style="height:72px;width:auto"'),'<b>roomScene73</b> wrapper (145-v85fix:121): two hand-drawn pennants + the house flag','→ <b>Banner</b> pair + <b>Flag</b> from the house'],
- ['12','Portrait backdrops',BT.portrait.replace(/width:110px;height:154px/,'width:52px;height:73px'),'<b>gLook</b> bg:"flag:&lt;city&gt;" (17-manager:163) · charEditor banner91','→ <b>Flag</b> cloth behind the bust (unchanged look)'],
+ ['1','Empire &amp; city banners',BT.empire.slice(0,4).map(e=>img(e.u)).join('')+img(BT.spqr),'<b>flagURI</b> · flagSVG · flagURIk · FLAGS · CITY_FLAG · EMPIRE_FLAG','→ <b>Vexillum</b> (system designs, locked)'],
+ ['2','Manager house flags',BT.house.map(h=>img(h.u)).join(''),'<b>mgrFlagOf</b> · houseFlagURI · flagChip · flagImg · flagSpread · flagPickerHTML','→ the house <b>design</b>; chips = <b>Parma</b>'],
+ ['3','Family banners',BT.fam.map(h=>img(h.u)).join(''),'<b>famFlagOf</b> · famFlagChip','→ derived design, <b>Parma</b> chip'],
+ ['4','Studio Banner press',img(BT.sculpt)+img(BT.house[2].u),'<b>flagStudioHTML</b> · blankFlag · flagStudioClick/Input · flagSculpt + scbLayersSVG → customFlags','→ <b>the one designer</b> (Heraldry)'],
+ ['5','Crowd fan flags',img(BT.fan,'tall'),'<b>drawFanFlags</b> (canvas, the house flag on a stick)','→ a small <b>Vexillum</b> held up'],
+ ['6','Arena tapestries',`<img src="banner_today/arena.png" style="height:72px;object-fit:cover;object-position:10% 60%;width:230px">`,'<b>ar91FlagSrc</b> · ar91DecoPaint (canvas frame, studs, fringe around flagURI)','→ <b>Velarium</b> of the section\'s house'],
+ ['7','Wall banners &amp; drape',img(BT.wall,'tall'),'<b>ar91Banner</b> (XII / S / IV on red) · <b>ar91Drape</b> (FR icon)','→ <b>Vexillum</b> (arena system designs)'],
+ ['8','Domus rank pennants',BT.dr.map(r=>img(r.u,'tall')).join(''),'<b>dr98URI</b> · dr98Chip · DR_SYM98 · DRANKS98','→ <b>Flammula</b> = THE quality bar; 8 locked system designs'],
+ ['9','Region flags',BT.rg.slice(0,5).map(r=>r.h).join(''),'<b>rg98Flag</b> · REGIONS98 (flagURI)','→ <b>Vexillum</b> (7 locked system designs)'],
+ ['10','Online Domus crest',BT.crest.map(u=>img(u)).join(''),'<b>d89Crest</b> · d89Banner · d89Look · CREST89 (c1/c2/crest)','→ the Domus <b>design</b> (Parma + Scutum on the banner card)'],
+ ['11','Ludus room pennants',BT.room.replace('<svg','<svg style="height:72px;width:auto"'),'<b>roomScene73</b> wrapper (145-v85fix:121): two hand-drawn pennants + the house flag','→ <b>Signum</b> pair + <b>Vexillum</b> from the house'],
+ ['12','Portrait backdrops',BT.portrait.replace(/width:110px;height:154px/,'width:52px;height:73px'),'<b>gLook</b> bg:"flag:&lt;city&gt;" (17-manager:163) · charEditor banner91','→ <b>Vexillum</b> cloth behind the bust (unchanged look)'],
+ ['13','Flavius\'s box pennant',`<img src="banner_today/flavbox.png" style="height:72px;border-radius:3px">`,'<b>drawFlavius</b> (16-crowd:930) — the purple pennant under Flavius\'s portrait over the arena, his name in gold','→ a <b>Flammula</b> system design (Q3)'],
 ];
  L('today').innerHTML=cards.map(([n,t,row,fn,to])=>`<div class="tc"><h3><span class="num">${n}</span>${t}</h3><div class="row">${row}</div><div class="fn">${fn}</div><div class="to">${to}</div></div>`).join('')+
  `<div class="tc keep"><h3><span class="num">✕</span>Language flags</h3><div class="row">${BT.lang.join('')}</div><div class="fn"><b>flag91</b> · FLAG91 (190-v91flags)</div><div class="to"><span class="pill keep">stays separate</span> real country flags, never heraldry</div></div>`;}
@@ -303,91 +332,106 @@ const bars={none:'none'};
 /* ---------------- the designs ---------------- */
 const SC=BT.sculptSVG;
 const HOUSES=[
- {id:'val',name:'Domus Valeria',who:'Online Domus',src:'D.look89 → heraldry',c1:'#7a2230',c2:'#d6ab4c',fg:'#d6ab4c',div:'bordure',dev:'boar',motto:'VALERIA',trim:{gold:true,tassels:true,fringe:true,bar:true},wear:0,tail:'swallow',rank:'ludusmagnus'},
- {id:'bat',name:'Ludus Batiatus',who:'Manager house',src:'m.flag (Capua)',c1:'#1c3566',c2:'#d9d0bb',fg:'#e2b64a',div:'pale',dev:'horse',motto:'BATIATVS',trim:{gold:true,tassels:false,fringe:true,bar:true},wear:.25,tail:'straight'},
- {id:'pol',name:'Wolves of Pola',who:'Studio custom',src:'customFlags · c:f3k',c1:'#24324a',c2:'#d7c29a',fg:'#e9c547',div:'quarterly',dev:'wolf',motto:'LVPI',sculpt:SC,trim:{gold:true,tassels:true,fringe:true,bar:true},wear:.55,tail:'swallow'}];
-let D={...HOUSES[0],trim:{...HOUSES[0].trim}},K='flag';
-const KS=['flag','banner','pennant','tapestry','crest'];
+ {id:'val',name:'Domus Valeria',who:'Online Domus',src:'D.look89 → full design',c1:'#5b1a45',c2:'#b5832e',fg:'#e2b64a',pat:'meander',emb:'boar',top:'emb',ins:'DOMVS·VALERIA',trim:{gilt:true,tassels:true,fringe:true,bar:true,fc:'gold'},wear:0,rank:'ludusmagnus'},
+ {id:'bat',name:'Ludus Batiatus',who:'Manager house',src:'m.flag (Capua)',c1:'#9b2a1c',c2:'#e8dcc0',fg:'#e8dcc0',pat:'clavi',emb:'gladii',top:'manus',ins:'BATIATVS',trim:{gilt:true,tassels:false,fringe:true,bar:true,fc:'creta'},wear:.25},
+ {id:'pol',name:'Lupi Polae',who:'Studio custom',src:'customFlags · c:f3k',c1:'#3f8f7e',c2:'#1f1712',fg:'#e8dcc0',pat:'clipeus',emb:'wolf',top:'sym:eagle',ins:'LVPI',sculpt:'',trim:{gilt:true,tassels:true,fringe:true,bar:true,fc:'c2'},wear:.5}];
+let D=JSON.parse(JSON.stringify(HOUSES[0])),K='vexillum';
+const KS=['vexillum','signum','flammula','velarium','scutum','parma'];
 const sv=(k,d,o)=>E.svg(k,d,o);
+function rankD(k){const R=(BT.dr||[]).find(r=>r.k===k)||BT.dr[0];const i=BT.dr.indexOf(R);const P={tugurium:['#5d5246','#eadfc4','hut'],taberna:['#6e6236','#f2e4b2','amphora'],ludusminor:['#874626','#f6dcbc','rudis'],ludus:['#2b5a78','#eaf1f4','blades'],ludusmagnus:['#6e1d22','#f0cf7d','helm'],familianota:['#4a2a6a','#f2da92','shield'],illustris:['#9a7524','#fff3c8','laurel'],aurea:['#c08a22','#fff8de','eagle']}[R.k];
+ return {c1:P[0],c2:P[0],fg:P[1],pat:'plain',emb:'sym:'+P[2],trim:{gilt:true,tassels:i>=6,bar:true,topbar:i>=7,fc:'gold'},wear:0,_i:i}}
+/* the rank streamer with the house parma on its crossbar (his 1a: Ludus Magnus and up) */
+function rankWithParma(rk,h,px){const r=rankD(rk);const s=sv('flammula',r,px?{px}:{});if(r._i<4||!h)return s;
+ return `<span style="position:relative;display:inline-block;line-height:0">${s}<span style="position:absolute;left:50%;top:${px?1:2}%;transform:translateX(-50%);line-height:0;filter:drop-shadow(0 2px 3px #000a)">${sv('parma',h,{px:Math.round((px||110)*.2)})}</span></span>`}
 
 /* scenes in context */
-function sceneWall(d){/* the stands, iso: two tapestries hung on poles over the benches (skewed like 192's), and a pair of banners at a tower */
- const t=E.svg('tapestry',d).replace('<svg','<svg x="0" y="0" width="150" height="84"');const b=E.svg('banner',d).replace('<svg','<svg x="0" y="0" width="38" height="58"');
- const blocks=Array.from({length:7},(_,r)=>Array.from({length:12},(_,c)=>`<rect x="${c*30+(r%2?15:0)-15}" y="${r*16}" width="29" height="15" fill="#7c6650" opacity="${.55+((r*7+c*3)%5)/14}"/>`).join('')).join('');
- return `<svg class="scene" viewBox="0 0 330 150"><defs><linearGradient id="skyw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9c4d8"/><stop offset="1" stop-color="#dfe6e2"/></linearGradient></defs><rect width="330" height="150" fill="url(#skyw)"/>
+function sceneStands(d){const t=E.svg('velarium',d).replace('<svg','<svg x="0" y="0" width="150" height="77"');const v=E.svg('vexillum',d).replace('<svg','<svg x="0" y="0" width="34" height="46"');
+ const blocks=Array.from({length:7},(_,r)=>Array.from({length:12},(_,c)=>`<rect x="${c*30+(r%2?15:0)-15}" y="${r*16}" width="29" height="15" fill="#8a7256" opacity="${.55+((r*7+c*3)%5)/14}"/>`).join('')).join('');
+ return `<svg class="scene" viewBox="0 0 330 150"><defs><linearGradient id="skyw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9c4d8"/><stop offset="1" stop-color="#e6e2d4"/></linearGradient></defs><rect width="330" height="150" fill="url(#skyw)"/>
   <g transform="translate(0 40) skewY(-14)">${blocks}<rect y="104" width="330" height="10" fill="#9b2a1c"/>${Array.from({length:12},(_,i)=>`<rect x="${i*28}" y="114" width="26" height="60" fill="#5a4a3a" opacity=".8"/>`).join('')}</g>
-  <g transform="translate(22 52) skewY(-14)"><rect x="-2" y="-8" width="3" height="96" fill="#4a321c"/><rect x="150" y="-8" width="3" height="96" fill="#4a321c"/>${t}</g>
-  <g transform="translate(232 18) skewY(-14)">${b}<g transform="translate(46 0)">${b}</g></g></svg>`}
-function sceneFan(d){const f=E.svg('flag',d,{}).replace('<svg','<svg x="34" y="6" width="58" height="40"');
- return `<svg class="scene" viewBox="0 0 120 110"><rect width="120" height="110" fill="#3a2c20"/>${[[14,92],[46,96],[78,92],[106,96]].map(([x,y],i)=>`<circle cx="${x}" cy="${y-24}" r="8" fill="${['#c48a5a','#a86a42','#d9a070','#8a5a36'][i]}"/><path d="M${x-12} ${y+16} Q${x-12} ${y-14} ${x} ${y-14} Q${x+12} ${y-14} ${x+12} ${y+16}Z" fill="${['#6a3a2a','#2a4a6a','#5a5a2a','#4a2a4a'][i]}"/>`).join('')}<path d="M40 60 L40 8" stroke="#5a4a34" stroke-width="2.4"/><path d="M34 74 L40 60" stroke="#c48a5a" stroke-width="5" stroke-linecap="round"/>${f}</svg>`}
-function rowsTable(d){const other=[HOUSES[1],HOUSES[2],{c1:'#3d4a1e',c2:'#e8d9a0',fg:'#e8d9a0',div:'fess',dev:'olive',trim:{gold:true}},{c1:'#101010',c2:'#c9ccd3',fg:'#c9ccd3',div:'chevron',dev:'owl',trim:{gold:true}}];
- const r=(i,dd,n,rec,me)=>`<div class="mrow${me?' me':''}"><span class="pl">${i}</span>${E.svg('crest',dd,{px:22})}${E.svg('flag',dd,{px:16})}<span>${n}</span><span class="r">${rec}</span></div>`;
- return r(1,other[0],'Ludus Batiatus','9–2')+r(2,d,D.name,'8–3',1)+r(3,other[1],'Wolves of Pola','7–4')+r(4,other[2],'Schola Thysdri','5–6')}
+  <g transform="translate(22 56) skewY(-14)"><rect x="-2" y="-6" width="3" height="96" fill="#4a321c"/><rect x="150" y="-6" width="3" height="96" fill="#4a321c"/>${t}</g>
+  <g transform="translate(236 6) skewY(-14)">${v}<g transform="translate(42 0)">${v}</g></g></svg>`}
+function sceneFan(d){const f=E.svg('vexillum',d).replace('<svg','<svg x="22" y="0" width="44" height="60"');
+ return `<svg class="scene" viewBox="0 0 120 110"><rect width="120" height="110" fill="#3a2c20"/>${[[14,92],[46,96],[78,92],[106,96]].map(([x,y],i)=>`<circle cx="${x}" cy="${y-24}" r="8" fill="${['#c48a5a','#a86a42','#d9a070','#8a5a36'][i]}"/><path d="M${x-12} ${y+16} Q${x-12} ${y-14} ${x} ${y-14} Q${x+12} ${y-14} ${x+12} ${y+16}Z" fill="${['#6a3a2a','#e8dcc0','#5a5a2a','#5b1a45'][i]}"/>`).join('')}${f}<path d="M38 78 L44 62" stroke="#c48a5a" stroke-width="5" stroke-linecap="round"/></svg>`}
+const OTHER=[HOUSES[1],HOUSES[2],{c1:'#b5832e',c2:'#1f1712',fg:'#1f1712',pat:'wave',emb:'bull',trim:{gilt:true}},{c1:'#2c5a8c',c2:'#e8dcc0',fg:'#e8dcc0',pat:'laurel',emb:'scorpion',trim:{gilt:true}}];
+function rowsTable(d){const r=(i,dd,n,rec,me)=>`<div class="mrow${me?' me':''}"><span class="pl">${i}</span>${E.svg('parma',dd,{px:22})}<span>${n}</span><span class="r">${rec}</span></div>`;
+ return r(1,OTHER[0],'Ludus Batiatus','9–2')+r(2,d,D.name,'8–3',1)+r(3,OTHER[1],'Lupi Polae','7–4')+r(4,OTHER[2],'Schola Thysdri','5–6')}
 function rowsRoom(d){const dd=[d,HOUSES[1],HOUSES[2]];const ranks=['ludusmagnus','ludus','taberna'];
- return ['Valerius','Batiatus','Lupa'].map((n,i)=>`<div class="mrow${i?'':' me'}">${E.svg('pennant',rankD(ranks[i]),{px:24})}${E.svg('crest',dd[i],{px:20})}<span>${n}</span><span class="r">${['👑 host','✓ ready','—'][i]}</span></div>`).join('')}
-function rankD(k){const R=(BT.dr||[]).find(r=>r.k===k)||BT.dr[0];const i=BT.dr.indexOf(R);const PAL={tugurium:['#5d5246','#eadfc4','hut'],taberna:['#6e6236','#f2e4b2','amphora'],ludusminor:['#874626','#f6dcbc','rudis'],ludus:['#2b5a78','#eaf1f4','blades'],ludusmagnus:['#6e1d22','#f0cf7d','helm'],familianota:['#4a2a6a','#f2da92','shield'],illustris:['#9a7524','#fff3c8','laurel'],aurea:['#c08a22','#fff8de','eagle']}[R.k];
- return {c1:PAL[0],c2:PAL[0],fg:PAL[1],div:'plain',dev:'sym:'+PAL[2],trim:{gold:true,tassels:i>=6,bar:true,topbar:i>=7},wear:0}}
+ return ['Valerius','Batiatus','Lupa'].map((n,i)=>`<div class="mrow${i?'':' me'}">${rankWithParma(ranks[i],dd[i],30)}${E.svg('parma',dd[i],{px:20})}<span>${n}</span><span class="r">${['👑 host','✓ ready','—'][i]}</span></div>`).join('')}
 
-/* ---------------- §2 designer render ---------------- */
+/* ---------------- §2 designer ---------------- */
+const FGS=[['#e2b64a','gold leaf'],['#e8dcc0','chalk'],['#1f1712','black'],['#9b2a1c','madder'],['c2','second dye']];
+const FCS=[['gold','gold'],['creta','chalk'],['rubia','madder'],['purpura','purple'],['c2','second dye']];
 function render(){
- L('kinds').innerHTML=KS.map(k=>`<button class="kb${k===K?' on':''}" data-k="${k}">${sv(k,D,{px:44})}<b>${E.KINDS[k].n}</b><small>${E.KINDS[k].sub.split(' · ')[0]}</small></button>`).join('');
+ L('kinds').innerHTML=KS.map(k=>`<button class="kb${k===K?' on':''}" data-k="${k}">${sv(k,D,{px:46})}<b>${E.KINDS[k].n}</b><small>${E.KINDS[k].sub}</small></button>`).join('');
  L('big').innerHTML=`<div class="tag">Preview · <b>${E.KINDS[K].n}</b> · ${E.KINDS[K].sub}</div>`+sv(K,D);
  L('five').innerHTML=KS.map(k=>`<div class="${k===K?'on':''}" data-k="${k}">${sv(k,D)}<span>${E.KINDS[k].n.toUpperCase()}</span></div>`).join('');
- L('ctx').innerHTML=`<div class="cx"><div class="t">Arena · the stands</div>${sceneWall(D)}</div><div class="cx"><div class="t">Crowd · fan flag</div>${sceneFan(D)}</div><div class="cx"><div class="t">Manager · league table</div>${rowsTable(D)}</div><div class="cx"><div class="t">Online · room list</div>${rowsRoom(D)}</div>`;
- L('divs').innerHTML=E.DIVS.map(v=>`<button class="${D.div===v?'on':''}" data-div="${v}">${sv('crest',{...D,div:v,dev:'none',motto:''},{px:42})}<span>${v}</span></button>`).join('');
- const devs=['none',...Object.keys(BT.dev)],syms=Object.keys(BT.sym).map(s=>'sym:'+s);
- L('devs').innerHTML=`<div class="sep">Printed devices · FLAG_SHAPES</div>`+devs.map(v=>`<button class="${D.dev===v?'on':''}" data-dev="${v}" title="${v}">${sv('crest',{...D,dev:v,motto:'',sculpt:''},{px:40})}</button>`).join('')+`<div class="sep">Rank symbols · DR_SYM98</div>`+syms.map(v=>`<button class="${D.dev===v?'on':''}" data-dev="${v}" title="${v}">${sv('crest',{...D,dev:v,motto:'',sculpt:''},{px:40})}</button>`).join('');
+ L('ctx').innerHTML=`<div class="cx"><div class="t">Arena · the stands</div>${sceneStands(D)}</div><div class="cx"><div class="t">Crowd · fan vexillum</div>${sceneFan(D)}</div><div class="cx"><div class="t">Manager · league table</div>${rowsTable(D)}</div><div class="cx"><div class="t">Online · room list</div>${rowsRoom(D)}</div>`;
+ const pal=(which)=>E.PAL.map(([c,n,en])=>`<button class="${D[which]===c?'on':''}" data-pc="${which}" data-c="${c}" title="${en}"><i style="background:${c}"></i><span>${n}</span></button>`).join('');
+ L('pal1').innerHTML=pal('c1');L('pal2').innerHTML=pal('c2');
+ L('fgs').innerHTML=FGS.map(([c,n])=>`<a class="${(c==='c2'?D.c2:c)===D.fg?'on':''}" data-fg="${c}">${n}</a>`).join('');
+ L('fcs').innerHTML=FCS.map(([c,n])=>`<a class="${(D.trim.fc||'gold')===c?'on':''}" data-fc="${c}">${n}</a>`).join('');
+ L('pats').innerHTML=E.PATS.map(([v,n,en])=>`<button class="${D.pat===v?'on':''}" data-pat="${v}" title="${en}">${sv('vexillum',{...D,pat:v,ins:'',emb:v==='clipeus'||v==='laurel'?D.emb:'none',sculpt:''},{px:62})}<span>${n}</span></button>`).join('');
+ L('devs').innerHTML=E.EMB_GROUPS.map(([g,list])=>`<div class="sep">${g}</div>`+list.map(v=>`<button class="${D.emb===v?'on':''}" data-emb="${v}" title="${E.EMB_N[v]||v}">${sv('parma',{...D,emb:v,pat:'plain',sculpt:''},{px:46})}<span class="lbl">${E.EMB_N[v]||v}</span></button>`).join('')).join('');
+ L('tops').innerHTML=[['emb','the house emblem'],['manus','manus (open hand)'],['sym:eagle','aquila'],['sym:laurel','laurel'],['palma','palm']].map(([v,n])=>`<a class="${(D.top||'emb')===v?'on':''}" data-top="${v}">${n}</a>`).join('');
+ L('tab').innerHTML=E.tabulaSVG(D.ins||'DOMVS',200)+`<span class="k">the tabula ansata</span>`;
  L('dName').textContent=D.name;L('wv').textContent=Math.round(D.wear*100);
 }
-function rack(){L('rackU').innerHTML=HOUSES.map(h=>`<div class="rc">${sv('crest',h)}<b>${h.name}</b><div class="acts"><span>📜</span><span>🔒</span><span>Edit</span><span>Copy</span><span>Delete</span></div></div>`).join('');
- const sys=[{name:'S·P·Q·R',c1:'#6e1414',c2:'#6e1414',fg:'#e2b64a',div:'plain',dev:'eagle',motto:'S·P·Q·R',k:'flag'},{name:'Capua',c1:'#1c3566',c2:'#d9d0bb',fg:'#e8e0cc',div:'fess',dev:'horse',motto:'CAPVA',k:'flag'},{name:'Nemausus',c1:'#1d4a2a',c2:'#8c1f1a',fg:'#e0433a',div:'pale',dev:'croc',motto:'NEMAVSVS',k:'flag'},{name:'Ludus Magnus',...rankD('ludusmagnus'),k:'pennant'},{name:'Domus Aurea',...rankD('aurea'),k:'pennant'},{name:'Europa',c1:'#6e1414',c2:'#6e1414',fg:'#e2b64a',div:'plain',dev:'column',motto:'EVROPA',k:'flag'},{name:'Arena · XII',c1:'#a8322c',c2:'#a8322c',fg:'#2a0d0a',div:'plain',dev:'none',motto:'XII',k:'banner',tail:'straight'}];
- L('rackS').innerHTML=sys.map(s=>`<div class="rc sys">${sv(s.k,{trim:{gold:true,bar:true,tassels:s.k==='pennant'&&s.name==='Domus Aurea',topbar:s.name==='Domus Aurea'},wear:0,...s})}<b>🔒 ${s.name}</b><div class="acts"><span>Copy &amp; edit</span></div></div>`).join('')}
-document.addEventListener('click',e=>{const k=e.target.closest('[data-k]');if(k){K=k.dataset.k;render();return}
- const dv=e.target.closest('[data-div]');if(dv){D.div=dv.dataset.div;render();return}
- const de=e.target.closest('[data-dev]');if(de){D.dev=de.dataset.dev;render();return}
- const t=e.target.closest('[data-t]');if(t){document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a===t));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.p===t.dataset.t));return}
- if(e.target.id==='rnd'){const P=[['#6e1414','#e2b64a'],['#1c3566','#e8e0cc'],['#1d4a2a','#e0433a'],['#3d1c4a','#e6c46a'],['#11474a','#e9efe6'],['#8a5a0e','#fff0b8']];const p=P[Math.floor(Math.random()*P.length)];D.c1=p[0];D.c2=p[1];D.fg=p[1];syncIn();render()}});
-function syncIn(){L('c1').value=D.c1;L('c2').value=D.c2;L('fg').value=D.fg;L('motto').value=D.motto||'';L('wear').value=Math.round(D.wear*100);L('tGold').checked=D.trim.gold!==false;L('tTas').checked=!!D.trim.tassels;L('tFr').checked=!!D.trim.fringe;L('tBar').checked=D.trim.bar!==false;L('tTop').checked=!!D.trim.topbar;L('scOn').checked=!!D.sculpt}
-document.addEventListener('input',e=>{const i=e.target;if(i.id==='c1'||i.id==='c2'||i.id==='fg')D[i.id]=i.value;else if(i.id==='motto')D.motto=i.value.toUpperCase();else if(i.id==='wear')D.wear=i.value/100;
- else if(i.id==='tGold')D.trim.gold=i.checked;else if(i.id==='tTas')D.trim.tassels=i.checked;else if(i.id==='tFr')D.trim.fringe=i.checked;else if(i.id==='tBar')D.trim.bar=i.checked;else if(i.id==='tTop')D.trim.topbar=i.checked;
- else if(i.id==='scOn')D.sculpt=i.checked?SC:'';else if(i.name==='tail')D.tail=i.value;else return;render()});
+function rack(){L('rackU').innerHTML=HOUSES.map(h=>`<div class="rc">${sv('scutum',h)}<b>${h.name}</b><div class="acts"><span>📜</span><span>🔒</span><span>Edit</span><span>Copy</span><span>Delete</span></div></div>`).join('');
+ const sys=[{name:'S·P·Q·R',c1:'#9b2a1c',c2:'#e2b64a',fg:'#e2b64a',pat:'laurel',emb:'sym:eagle',ins:'S·P·Q·R',k:'vexillum'},{name:'Capua',c1:'#2c5a8c',c2:'#e8dcc0',fg:'#e8dcc0',pat:'wave',emb:'horse',ins:'CAPVA',k:'vexillum'},{name:'Nemausus',c1:'#3f8f7e',c2:'#9b2a1c',fg:'#e8dcc0',pat:'halved',emb:'croc',ins:'NEMAVSVS',k:'vexillum'},{name:'Ludus Magnus',...rankD('ludusmagnus'),k:'flammula'},{name:'Domus Aurea',...rankD('aurea'),k:'flammula'},{name:'Europa',c1:'#9b2a1c',c2:'#e2b64a',fg:'#e2b64a',pat:'clavi',emb:'column',ins:'EVROPA',k:'vexillum'},{name:'Arena · XII',c1:'#9b2a1c',c2:'#e2b64a',fg:'#e2b64a',pat:'meander',emb:'num',ins:'',k:'vexillum'},{name:'Flavius',c1:'#4a1a4a',c2:'#e2b64a',fg:'#e2b64a',pat:'clipeus',emb:'sym:laurel',trim:{gilt:true,tassels:true,bar:true},k:'flammula'}];
+ L('rackS').innerHTML=sys.map(s=>`<div class="rc sys">${sv(s.k,{trim:{gilt:true,bar:true,fringe:true},wear:0,...s})}<b>🔒 ${s.name}</b><div class="acts"><span>Copy &amp; edit</span></div></div>`).join('')}
+document.addEventListener('click',e=>{const q=(s)=>e.target.closest(s);let x;
+ if(x=q('[data-k]')){K=x.dataset.k;render();return}
+ if(x=q('[data-pat]')){D.pat=x.dataset.pat;render();return}
+ if(x=q('[data-emb]')){D.emb=x.dataset.emb;render();return}
+ if(x=q('[data-top]')){D.top=x.dataset.top;render();return}
+ if(x=q('[data-pc]')){D[x.dataset.pc]=x.dataset.c;syncIn();render();return}
+ if(x=q('[data-fg]')){D.fg=x.dataset.fg==='c2'?D.c2:x.dataset.fg;syncIn();render();return}
+ if(x=q('[data-fc]')){D.trim.fc=x.dataset.fc;render();return}
+ if(x=q('[data-t]')){document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a===x));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.p===x.dataset.t));return}
+ if(e.target.id==='rnd'){const P=E.PAL;const a=P[Math.floor(Math.random()*6)][0];let b=P[Math.floor(Math.random()*8)][0];if(b===a)b='#e8dcc0';D.c1=a;D.c2=b;syncIn();render()}});
+function syncIn(){L('c1').value=D.c1;L('c2').value=D.c2;L('fg').value=D.fg;L('ins').value=D.ins||'';L('wear').value=Math.round(D.wear*100);L('tGold').checked=D.trim.gilt!==false;L('tTas').checked=!!D.trim.tassels;L('tFr').checked=D.trim.fringe!==false;L('tBar').checked=D.trim.bar!==false;L('tTop').checked=!!D.trim.topbar;L('scOn').checked=!!D.sculpt}
+document.addEventListener('input',e=>{const i=e.target;if(i.id==='c1'||i.id==='c2'||i.id==='fg')D[i.id]=i.value;else if(i.id==='ins')D.ins=i.value.toUpperCase().replace(/U/g,'V').replace(/J/g,'I');else if(i.id==='wear')D.wear=i.value/100;
+ else if(i.id==='tGold')D.trim.gilt=i.checked;else if(i.id==='tTas')D.trim.tassels=i.checked;else if(i.id==='tFr')D.trim.fringe=i.checked;else if(i.id==='tBar')D.trim.bar=i.checked;else if(i.id==='tTop')D.trim.topbar=i.checked;
+ else if(i.id==='scOn')D.sculpt=i.checked?SC:'';else return;render()});
 
 /* ---------------- §3 house sets ---------------- */
 function sets(){L('sets').innerHTML=HOUSES.map(h=>{const uses=[
-  ['flag',h,'Masthead · square','Flag'],['tapestry',h,'Stands tapestry','Tapestry'],['banner',h,'Ludus room · gate poles','Banner'],
-  ['crest',h,'League row · records','Crest'],h.rank?['pennant',rankD(h.rank),'Rank pennant (system)','Pennant','crest']:['pennant',h,'Studio · Play Now seat','Pennant'],['flagS',h,'Fan flag · chips','Flag ≤ 44px']];
- return `<div class="hs"><div class="who"><span class="pill ${h.id==='val'?'go':''}">${h.who}</span><h3>${h.name}</h3><span class="k">${h.src}</span><span class="k">${h.div} · ${h.dev} · “${h.motto}”${h.wear?` · wear ${Math.round(h.wear*100)}`:''}</span></div>
-  <div class="uses">${uses.map(([k,d,lab,kn,extra])=>`<div class="use"><div class="pic">${k==='flagS'?`<div style="display:flex;gap:6px;align-items:flex-end">${sv('flag',d,{px:40})}${sv('crest',d,{px:28})}${sv('crest',d,{px:18})}</div>`:extra?`<div style="position:relative;height:100%">${sv(k,d)}<div class="ov">${sv('crest',h,{px:30})}</div></div>`:sv(k,d)}</div><span><b>${kn}</b>${lab}</span></div>`).join('')}</div></div>`}).join('')}
+  ['vexillum','Masthead · the square','Vexillum'],['velarium','Stands awning','Velarium'],['signum','Ludus room · procession','Signum'],
+  ['scutum','Record · fighter card','Scutum'],['rank',h.rank?'Rank streamer (system) + house parma':'Studio · Play Now seat','Flammula'],['chips','Fan flag · chips','Parma ≤ 44px']];
+ return `<div class="hs"><div class="who"><span class="pill ${h.id==='val'?'go':''}">${h.who}</span><h3>${h.name}</h3><span class="k">${h.src}</span><span class="k">${h.pat} · ${E.EMB_N[h.emb]} · “${h.ins}”${h.wear?` · wear ${Math.round(h.wear*100)}`:''}</span></div>
+  <div class="uses">${uses.map(([k,lab,kn])=>`<div class="use"><div class="pic">${k==='chips'?`<div style="display:flex;gap:6px;align-items:flex-end">${sv('vexillum',h,{px:52})}${sv('parma',h,{px:30})}${sv('parma',h,{px:18})}</div>`:k==='rank'?(h.rank?rankWithParma(h.rank,h,104):sv('flammula',h)):sv(k,h)}</div><span><b>${kn}</b>${lab}</span></div>`).join('')}</div></div>`}).join('')}
 
 /* ---------------- §4 quality ---------------- */
-function quality(){L('drrow').innerHTML=BT.dr.map(r=>`<img src="${r.u}" alt="">${sv('pennant',rankD(r.k))}`).join('<span style="width:8px"></span>');
- L('lod').innerHTML=[96,64,44,32,22,16].map(px=>`<div>${sv('crest',HOUSES[0],{px})}<span>${px}px</span></div>`).join('')+[64,32,18].map(px=>`<div>${sv('flag',HOUSES[1],{px})}<span>flag ${px}</span></div>`).join('')+[64,24].map(px=>`<div>${sv('pennant',rankD('aurea'),{px})}<span>pennant ${px}</span></div>`).join('')}
+function quality(){L('drrow').innerHTML=BT.dr.map(r=>`<img src="${r.u}" alt="">${sv('flammula',rankD(r.k),{px:76})}`).join('<span style="width:8px"></span>');
+ L('lod').innerHTML=[96,64,44,32,22,16].map(px=>`<div>${sv('parma',HOUSES[0],{px})}<span>parma ${px}</span></div>`).join('')+[64,32].map(px=>`<div>${sv('vexillum',HOUSES[1],{px})}<span>vexillum ${px}</span></div>`).join('')+[72,30].map(px=>`<div>${sv('flammula',rankD('aurea'),{px})}<span>flammula ${px}</span></div>`).join('')+`<div>${sv('scutum',HOUSES[2],{px:40})}<span>scutum 40</span></div>`}
 
 /* ---------------- §5 map ---------------- */
 L('map').querySelector('tbody').innerHTML=[
- ['Empire + city banners (FLAGS, EMPIRE_FLAG)','Flag · 15 system designs 🔒','flagURI body, flagSVG, flagURIk, CITY_FLAG lookups','flagBG page backdrop keeps working via the new URI'],
- ['Manager house flag (mgrFlagOf, picker)','the house heraldry','houseFlagURI, flagChip, flagImg, flagSpread, flagPickerHTML','rivals still derived from id + city; same 12 devices'],
- ['Family banners (famFlagOf)','derived heraldry → Crest chip','famFlagChip','kin share it, as today'],
- ['Studio Banner press','THE designer','flagStudioHTML, blankFlag, flagStudioClick/Input, flagSculpt','customFlags rows open as-is (div plain, kind flag)'],
- ['Crowd fan flags (drawFanFlags)','Flag at LOD size','the inline rect fallback','canvas draws the cached image'],
- ['Arena tapestries (ar91FlagSrc / ar91DecoPaint)','Tapestry of that section\'s house','the studs/fringe frame code','192 layer cache key = design hash'],
- ['Wall banners + drape (ar91Banner / ar91Drape)','Banner · arena system designs 🔒','both canvas painters','XII / S / IV and the FR drape as locked designs'],
- ['Domus rank pennants (dr98URI)','Pennant · 8 system designs 🔒','dr98URI body (dr98Chip keeps its name)','server untouched (DRANKS98 data)'],
- ['Region flags (rg98Flag)','Flag · 7 system designs 🔒','RG98_CACHE + flagURI call','REGIONS98 data untouched'],
- ['Domus crest (d89Crest, look89)','the Domus heraldry: Crest + on the rank pennant','d89Crest','server: look89 grows optional fields (div, motto, trim, wear)'],
- ['Ludus room pennants (145 roomScene73)','Banner pair from the house','the hand-drawn <path> pennants','banner73 scene keeps its layout'],
- ['Portrait backdrops (bg:"flag:…")','Flag cloth (no frame) behind the bust','—','face99 R99 cache unchanged'],
+ ['Empire + city banners (FLAGS, EMPIRE_FLAG)','Vexillum · 15 system designs 🔒','flagURI body, flagSVG, flagURIk, CITY_FLAG lookups','flagBG page backdrop keeps working via the new URI'],
+ ['Manager house flag (mgrFlagOf, picker)','the house design','houseFlagURI, flagChip, flagImg, flagSpread, flagPickerHTML','rivals still derived from id + city; same emblems'],
+ ['Family banners (famFlagOf)','derived design → Parma chip','famFlagChip','kin share it, as today'],
+ ['Studio Banner press','THE designer (Heraldry)','flagStudioHTML, blankFlag, flagStudioClick/Input, flagSculpt','customFlags rows open as-is (pattern plain, kind vexillum)'],
+ ['Crowd fan flags (drawFanFlags)','a small Vexillum held up','the inline rect fallback','canvas draws the cached image'],
+ ['Arena tapestries (ar91FlagSrc / ar91DecoPaint)','Velarium of that section\'s house','the studs/fringe frame code','192 layer cache key = design hash'],
+ ['Wall banners + drape (ar91Banner / ar91Drape)','Vexillum · arena system designs 🔒','both canvas painters','XII / S / IV and the FR drape as locked designs'],
+ ['Domus rank pennants (dr98URI)','Flammula · 8 system designs 🔒 (+ house parma from Ludus Magnus)','dr98URI body (dr98Chip keeps its name)','server untouched (DRANKS98 data)'],
+ ['Region flags (rg98Flag)','Vexillum · 7 system designs 🔒','RG98_CACHE + flagURI call','REGIONS98 data untouched'],
+ ['Domus crest (d89Crest, look89)','the Domus design: Parma + Scutum','d89Crest','server: look89 grows optional fields (pattern, inscription, trim, wear) — deploy'],
+ ['Ludus room pennants (145 roomScene73)','Signum pair from the house','the hand-drawn <path> pennants','banner73 scene keeps its layout'],
+ ['Portrait backdrops (bg:"flag:…")','Vexillum cloth (no frame) behind the bust','—','face99 R99 cache unchanged'],
+ ['Flavius\'s box pennant (drawFlavius)','Flammula · system design 🔒 (Q3)','the box\'s pennant paint','portrait + moods unchanged'],
  ['Language flags (flag91)','stays separate','—','real country flags, not heraldry'],
 ].map(r=>`<tr>${r.map((c,i)=>`<td>${i===2?`<code>${c}</code>`:c}</td>`).join('')}</tr>`).join('');
 
 /* ---------------- §6 questions ---------------- */
 L('qs').innerHTML=[
- ['Q1 · Rank pennants online','How does a house show itself on its rank pennant?',['The pennant stays the pure system design; the house crest sits beside it in lists','From Ludus Magnus up the house crest rides on the pennant\'s top bar (as drawn in §3)','The house\'s own colours become the pennant field; only the symbol shows the rank'],1],
- ['Q2 · Devices','Today the device is a 45% watermark. In v1.0:',['Solid device + soft shadow everywhere (as drawn)','Solid for houses, watermark kept for city / empire banners','A per-design “Device strength” slider'],0],
- ['Q3 · Weathering','Who ages a banner?',['Only the designer slider (the house chooses)','The slider + the arena: tapestries fray a little over a Manager season, mended by a cheap “new cloth”','Off — no weathering in v1.0'],0],
- ['Q4 · Online heraldry','The online Domus today has c1, c2 and a crest only. In v1.0:',['Full heraldry online (division, motto, trim, wear; sculpt layers stay offline-only)','Full heraldry incl. sculpt layers (≤ 3 KB, server-checked)','Keep online as today; the engine just draws it better'],0],
- ['Q5 · Language flags','',['Stay out of the designer (real country flags)','Draw them with the same cloth/edge for one look, but not editable'],0],
- ['Q6 · Studio name','The rail entry:',['Banners & heraldry','Banner press (today\'s name)','Heraldry'],0],
+ ['Q1 · The Studio name','He picked “Heraldry”; now that it is Roman:',['Heraldry','Signa (“standards”)','Insignia (“badges, marks of rank”)'],2],
+ ['Q2 · The chip','The small mark beside a house name in tables and lists:',['Parma (round gladiator shield, as drawn)','Scutum (taller, curved)','A tiny Vexillum'],0],
+ ['Q3 · Flavius\'s box pennant','The purple cloth under Flavius\'s portrait over the arena (§1 card 13):',['Becomes a locked Flammula system design (same look, new press)','Becomes a Velarium hung over the box rail','Leave it as it is'],0],
+ ['Q4 · Signum topper','What crowns a house\'s signum by default:',['The house emblem in gold (as drawn)','Always the open hand (manus)','The house picks; Domus ranks set it (eagle only at Domus Aurea)'],2],
+ ['Q5 · The tabula ansata','The inscription plaque:',['Bronze with cut letters (as drawn)','White marble with madder-red painted letters','The house picks either'],0],
+ ['Q6 · Velarium stripes','The awning\'s sewn panels:',['Always faint panel seams, the house pattern on top (as drawn)','Bold alternating stripes of the two dyes (red/purple like the Colosseum)','A Pattern option “Awning stripes” for every kind'],1],
 ].map(([h,t,o,rec])=>`<div class="q"><b>${h}</b> <span class="muted">${t}</span><ol type="a">${o.map((x,i)=>`<li class="${i===rec?'rec':''}">${x}</li>`).join('')}</ol></div>`).join('');
 
 syncIn();render();rack();sets();quality();

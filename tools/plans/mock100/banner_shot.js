@@ -8,6 +8,6 @@ for(const [W,H,tag] of [[1440,900,'1440'],[390,844,'390']]){const pg=await b.new
   await pg.screenshot({path:path.resolve(__dirname,`banner_${tag}_full.png`),fullPage:true});
   const sec=async(sel,name)=>{const el=await pg.$(sel);if(el)await el.screenshot({path:path.resolve(__dirname,`banner_${tag}_${name}.png`)})};
   await sec('#today','today');await sec('.studio','designer');await sec('#sets','sets');await sec('.qa','quality');
-  if(W>600){for(const t of ['device','trim']){await pg.click(`[data-t="${t}"]`);if(t==='trim'){await pg.fill('#wear','60');await pg.dispatchEvent('#wear','input');await pg.click('[data-k="tapestry"]')}await pg.waitForTimeout(200);await sec('.studio','designer_'+t)}}
+  if(W>600){for(const t of ['pat','emb','trim']){await pg.click(`[data-t="${t}"]`);if(t==='trim'){await pg.fill('#wear','60');await pg.dispatchEvent('#wear','input');await pg.click('[data-k="velarium"]')}await pg.waitForTimeout(200);await sec('.studio','designer_'+t)}}
   console.log(tag,'errors',JSON.stringify(errs));await pg.close()}
 await b.close()})();
