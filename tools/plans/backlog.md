@@ -231,3 +231,7 @@ TURN TIMERS: GO (2026-10-11) — with his change: the last-seconds countdown nev
 WHO'S ONLINE (his 1c 2b 3a): a panel beside the Orbis on the Online landing AND a Lobby Browser tab; rows = house banner, lanista, active gladiator + rank,
 status (idle / in a room / fighting), time-zone region; actions Invite · Watch · House card · ★ Follow; hidden lanistas never listed. Building.
 QUEUE (2026-10-11): v0.99 fixes started now (tv100x). SERVER BATCH starts after the turn-timers + who's-online branches merge (same routes.js / onlcore, one deploy). Then waves: My Ludus+advisors → Recruiting+rooms → Play Now+briefing → lobby+bubbles → Insignia → Tituli/first hour/replays/daily → 3D animation (after beasts final) → sound/balance/translations/release.
+ENTER ANY EVENT (mock tools/plans/mock100/anyevent.html; his picks 2026-10-11): 1a specials ADDED on top of Bouts I–III · 2b specials cost an ENTRY FEE you pay, bigger purse ·
+3a one event per fighter a week (entering moves him off his bout) · 4a team partner = your fighter / hired free agent / editor's pick · 5a one event about every 3 weeks
+rank-restricted at random · 6b restrictions "X and above" AND "X and below" (rookie bouts) · 7 cards mostly FILLED early (you see who is entered); when you TRAVEL,
+every remaining empty seat on every bout is filled so the full card shows before final decisions · 8 (banner ★ chips) not answered yet. Build in the Manager wave.
