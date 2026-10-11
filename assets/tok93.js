@@ -2165,6 +2165,9 @@ const REST = {}; for (const sd of ['L', 'R']) { const W0 = V(JK['w' + sd].pos), 
 
 /* ---------- THE HOLDS (figure metres, facing +z, the right hand at −x). θ° = blade angle off the forearm line toward the thumb ---------- */
 const STANCE = { p: [0, -140, 10], j: { pe: [4, -20, 0], sp: [12, 10, 0], ch: [8, 10, 0], he: [-16, 8, 0] }, f: { L: [150, 230, 10], R: [-160, -230, -40] } };
+/* the stance for what a gear spec holds (H5[hold].j replaces joints of STANCE: the archer turns his chest so the draw shoulder goes back) */
+function stanceFor(gear) { const ho = holdsOf(gear || {}), R = ho.R, H = R && !isShield(R) ? H5[WHOLD[R]] : null;
+  return { p: STANCE.p, j: Object.assign({}, STANCE.j, (H && H.j) || {}), f: STANCE.f }; }
 const H5 = {
   /* round 8: the sword hold the max-load search settled on (gladius clear of the scutum and the body) */
   sword: { R: { th: 15, b: [-0.1, 0.2, 1], hint: [-0.14, -0.06, 1], at: [-0.33, 1.2, 0.44] } },
@@ -2175,7 +2178,12 @@ const H5 = {
   trident: { R: { th: 90, b: [0.04, 1, 0.06], hint: [0, 0, 1], at: [-0.34, 0.95, 0.2] } },
   hafted: { R: { th: 80, b: [-0.12, 1, -0.15], hint: [0, 0.05, 1], at: [-0.28, 1.36, 0.24] } },
   throw: { R: { th: 0, b: [0, 1, -0.2], hint: [0, 0, 1], at: [-0.24, 1.66, -0.05] } },
-  bow: { L: { th: 90, b: [0, 1, 0.05], hint: [0.25, 0, 1], at: [0.2, 1.42, 0.52] }, hand: 'L', drawR: { h: [-60, 1500, 160], hp: [1, -0.3, -1] } },
+  /* v1.0 (his BUG note: the archer's elbows bent the wrong way — the targets sat above the lowered stance's shoulders, so both elbows flew
+     up over the head): the targets are now RELATIVE TO THE POSED SHOULDER (rel, x = out), with fixed elbow poles (pole, x = out): the bow arm
+     reaches forward at shoulder height nearly straight, its elbow turned slightly out and down; the draw hand sits at the cheek, its elbow
+     out and back at shoulder height, behind the head. elbowCheck() + tv100g hold them to it. */
+  bow: { j: { sp: [12, -16, 0], ch: [8, -22, 0], he: [-16, 50, 0] }, L: { th: 90, b: [0, 1, 0.05], hint: [0.25, 0, 1], rel: [-0.03, 0.03, 0.5], pole: [1, -0.45, -0.25] }, hand: 'L',
+    drawR: { rel: [0.12, 0.03, 0.12], elb: [0.14, -0.02, -0.22] } },
   crossbow: { R: { th: 90, b: [0.05, 0.02, 1], hint: [0, -0.7, -0.6], at: [-0.15, 1.42, 0.28] }, two: { d: 0.32, th: 90, hint: [0, -1, 0.3] } },
   labrys: { R: { th: 75, b: [0.35, 1, 0.35], hint: [0.1, -0.2, 1], at: [-0.17, 1.02, 0.3] }, two: { d: 0.32, th: 75, hint: [-0.1, -0.2, 1] } },
   sling: { R: { th: 0, b: [0, -1, 0.1], hint: [0, 0, 1], at: [-0.36, 0.98, 0.12] } },
@@ -2188,17 +2196,18 @@ const mirH = (h) => ({ th: h.th, b: mir(h.b), hint: mir(h.hint), at: mir(h.at) }
 
 /* hand frame + arm targets for one hand (S = the posed shoulder) */
 function frame5(rig, sd, h) {
-  const r = REST[sd], b = V(h.b).normalize(), th = h.th / D; let p = V(h.hint).sub(b.clone().multiplyScalar(V(h.hint).dot(b)));
+  const r = REST[sd], b = V(h.b).normalize(), th = h.th / D, sx0 = sd === 'L' ? 1 : -1, S0 = jointPos(rig, 's' + sd).clone();
+  const AT = h.rel ? S0.clone().add(V([h.rel[0] * sx0, h.rel[1], h.rel[2]])) : V(h.at); let p = V(h.hint).sub(b.clone().multiplyScalar(V(h.hint).dot(b)));
   if (p.lengthSq() < 1e-6) p = V([0, -1, 0]).sub(b.clone().multiplyScalar(-b.y)); p.normalize();
   const u = b.clone().multiplyScalar(Math.cos(th)).add(p.clone().multiplyScalar(Math.sin(th))).normalize();
   const f = b.clone().multiplyScalar(Math.sin(th)).sub(p.clone().multiplyScalar(Math.cos(th))).normalize();
   const o = new THREE.Vector3().crossVectors(u, f).multiplyScalar(r.sg);
   const S = jointPos(rig, 's' + sd).clone();
-  const Wd = V(h.at).sub(u.clone().multiplyScalar(r.gl)).add(o.clone().multiplyScalar(0.03)), Ed = Wd.clone().sub(u.clone().multiplyScalar(r.Lf));
+  const Wd = AT.clone().sub(u.clone().multiplyScalar(r.gl)).add(o.clone().multiplyScalar(0.03)), Ed = Wd.clone().sub(u.clone().multiplyScalar(r.Lf));
   const E = S.clone().add(Ed.clone().sub(S).normalize().multiplyScalar(r.Lu)), W = E.clone().add(u.clone().multiplyScalar(r.Lf));
   const grip = W.clone().add(u.clone().multiplyScalar(r.gl)).sub(o.clone().multiplyScalar(0.03));
   const pole = E.clone().sub(S.clone().add(W).multiplyScalar(0.5)); const sx = sd === 'L' ? 1 : -1;
-  return { u, f, o, b, th, E, W, grip, S, h: [W.x * 1000, W.y * 1000, W.z * 1000], hp: pole.lengthSq() > 1e-8 ? [pole.x * sx, pole.y, pole.z] : null };
+  return { u, f, o, b, th, E, W, grip, S, h: [W.x * 1000, W.y * 1000, W.z * 1000], hp: h.pole ? h.pole.slice() : pole.lengthSq() > 1e-8 ? [pole.x * sx, pole.y, pole.z] : null };
 }
 /* the wrist's bend in the hand's own frame against its rest relation: flex (palm/back) and deviation (thumb/little finger) */
 function wristBend(rig, sd) {
@@ -2206,6 +2215,36 @@ function wristBend(rig, sd) {
   const hd = tip.clone().sub(W).normalize(); const n0 = r.u.clone().applyQuaternion(qE), f0 = r.f.clone().applyQuaternion(qE), o0 = r.o.clone().applyQuaternion(qE);
   const a = (v) => Math.atan2(v.dot(o0), v.dot(n0)) * D, c = (v) => Math.atan2(v.dot(f0), v.dot(n0)) * D;
   return { flex: Math.round(a(hd) * 10) / 10, dev: Math.round(c(hd) * 10) / 10, total: Math.round(Math.acos(Math.min(1, hd.dot(n0))) * D * 10) / 10 };
+}
+/* v1.0 (his BUG note: the archer's elbows bent the wrong way): THE ELBOWS' BEND, measured on the SCREEN-FACING figure in each of the 8
+   facings (turn = the facing pivot; world positions, the body's own axes turned with it). Per arm: n = the elbow's offset from the
+   shoulder→wrist line (unit; out = toward the arm's side, back = behind, up), bend = its length (m), dy / dz / dx = the elbow against the
+   shoulder (m; dz < 0 behind, dx > 0 out), hz = the elbow against the head (dz < 0 = behind the head line), anat = the bend in the upper
+   arm's own frame against its rest bend (1 = the natural hinge, < 0 = bent the wrong way). bowOk(): the bow arm reaches nearly straight
+   with a slight outward, never upward, bend; the draw elbow sits behind the shoulder and the head, at shoulder height (±0.12 m), not across. */
+const SEG_U = V(JK.sL.pos).distanceTo(V(JK.eL.pos));
+function elbowCheck(rig, turn, yaws) {
+  const res = [], y0 = turn ? turn.rotation.y : 0, P = (k) => { const b = rig.bones[k]; b.updateWorldMatrix(true, false); return new THREE.Vector3().setFromMatrixPosition(b.matrixWorld); };
+  const r2 = (v) => Math.round(v * 100) / 100, r3 = (v) => Math.round(v * 1000) / 1000;
+  for (const yaw of (turn ? yaws || [0, 45, 90, 135, 180, 225, 270, 315] : [0])) {
+    if (turn) { turn.rotation.y = yaw / D; turn.updateMatrixWorld(true); }
+    const q = new THREE.Quaternion(); if (turn) turn.getWorldQuaternion(q);
+    const row = { yaw }; const He = P('he');
+    for (const sd of ['L', 'R']) { const sx = sd === 'L' ? 1 : -1, S = P('s' + sd), E = P('e' + sd), W = P('w' + sd);
+      const OUT = V([sx, 0, 0]).applyQuaternion(q), FWD = V([0, 0, 1]).applyQuaternion(q), UP = V([0, 1, 0]);
+      const ax = W.clone().sub(S).normalize(), n = E.clone().sub(S); n.sub(ax.clone().multiplyScalar(n.dot(ax))); const bend = n.length(); n.normalize();
+      const sb = rig.bones['s' + sd]; const sq = new THREE.Quaternion(); sb.getWorldQuaternion(sq); const nl = n.clone().applyQuaternion(sq.invert());
+      const rel = E.clone().sub(S), kU = SEG_U / (S.distanceTo(E) || 1);   /* lengths in rest metres whatever the figure's scale */
+      row[sd] = { out: r2(n.dot(OUT)), back: r2(-n.dot(FWD)), up: r2(n.dot(UP)), bend: r3(bend * kU), dx: r3(rel.dot(OUT) * kU), dy: r3(rel.dot(UP) * kU), dz: r3(rel.dot(FWD) * kU), hz: r3(E.clone().sub(He).dot(FWD) * kU), anat: r2(-nl.z) }; }
+    res.push(row); }
+  if (turn) { turn.rotation.y = y0; turn.updateMatrixWorld(true); }
+  return res;
+}
+function bowOk(rows) {
+  return rows.every(r => { const L = r.L, R = r.R;
+    const bowArm = L.bend <= 0.13 && (L.bend < 0.03 || (L.out >= 0.3 && L.up <= 0.1));
+    const draw = R.dz <= -0.03 && R.hz <= -0.03 && Math.abs(R.dy) <= 0.12 && R.dx >= -0.03 && R.back >= 0.3;
+    return bowArm && draw && L.anat > 0 && R.anat > 0; });
 }
 /* clamp: past 15° flex / 10° deviation the wrist keeps only its twist */
 function clampWrist(rig, sd) {
@@ -2233,10 +2272,12 @@ function armedSpec(rig, gear) {
   if (ho.shield && ho.shield[0] === 'L') { fr.L = frame5(rig, 'L', { th: 0, b: [0, -1, 0.03], hint: [0, 0, 1], at: SHIELD8.at }); fr.L.shield = 1; }
   if (ho.shield && ho.shield[0] === 'R') { fr.R = frame5(rig, 'R', { th: 0, b: [0, -1, 0.03], hint: [0, 0, 1], at: mir(SHIELD8.at) }); fr.R.shield = 1; }
   for (const sd of ['L', 'R']) if (fr[sd]) { h[sd] = fr[sd].h; hp[sd] = fr[sd].hp; }
-  if (H && H.drawR) { h.R = H.drawR.h; hp.R = H.drawR.hp; }
+  if (H && H.drawR) { const d = H.drawR; if (d.rel) { const S = jointPos(rig, 'sR'); h.R = [(S.x - d.rel[0]) * 1000, (S.y + d.rel[1]) * 1000, (S.z + d.rel[2]) * 1000];
+      /* elb: where the elbow should be (shoulder + [out, up, z]) → the pole from the arm's middle toward it */
+      if (d.elb) { const W = V(h.R.map(v => v / 1000)), Et = S.clone().add(V([-d.elb[0], d.elb[1], d.elb[2]])), pl = Et.sub(S.clone().add(W).multiplyScalar(0.5)); hp.R = [-pl.x, pl.y, pl.z]; } else hp.R = d.hp; } else { h.R = d.h; hp.R = d.hp; } }
   if (!h.L) { h.L = [210, 1230, 330]; hp.L = [1, -0.6, -0.2]; }
   if (!h.R) { h.R = [-300, 1150, 280]; hp.R = [1, -1, -0.3]; }
-  return { spec: { p: STANCE.p, j: STANCE.j, f: STANCE.f, h, hp }, fr };
+  const st = stanceFor(gear); return { spec: { p: st.p, j: st.j, f: st.f, h, hp }, fr };
 }
 function armedFinish(rig, align, fr) {
   for (const sd of ['L', 'R']) if (fr[sd] && !fr[sd].shield) align(sd, { tf: fr[sd].f.toArray() });
@@ -2257,7 +2298,7 @@ function mount5(B, k, sd, th) {
 }
 /* the retiarius' net (round 4): a loose mesh hanging from the left hand */
 function net(B) { const g = new THREE.PlaneGeometry(0.42, 0.62, 9, 12); const P = g.attributes.position; for (let i = 0; i < P.count; i++) { const x = P.getX(i), y = P.getY(i); P.setZ(i, 0.05 * Math.sin(x * 9) * Math.cos(y * 7) - Math.abs(x) * 0.12); P.setX(i, x * (0.6 + (0.31 - y) * 0.9)); }
-  g.translate(0, -0.33, 0); const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0xd8c9a0, wireframe: true })); m.userData.raw = 1;
+  g.translate(0, -0.33, 0); const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0xd8c9a0, wireframe: true })); m.userData.raw = 1; m.name = 'net';
   const b = B.rig.bones.wL, W0 = JK.wL.pos, tip = ENDS.wL; m.position.set((tip[0] - W0[0]) * 0.6, (tip[1] - W0[1]) * 0.6, (tip[2] - W0[2]) * 0.6); m.rotation.y = Math.PI / 2; b.add(m); return [m]; }
 
 /* every held thing for a gear spec (built once per spec; they ride the bones, so any pose carries them) */
@@ -2321,7 +2362,7 @@ function shieldCheck(B, turn, list) {
   return res;
 }
 
-return {wristBend,holdsOf,armedSpec,armedFinish,mountWeapons,killWeapons,shieldCheck,WGEO4,WHOLD,weaponKey,STANCE,H5,SHIELD8};})();
+return {stanceFor,wristBend,elbowCheck,bowOk,holdsOf,armedSpec,armedFinish,mountWeapons,killWeapons,shieldCheck,WGEO4,WHOLD,weaponKey,STANCE,H5,SHIELD8};})();
 __M.game=(function(){
 /* =====================================================================
    rig92/game.js — the token modeller's engine as the game uses it (v0.93)
@@ -2346,7 +2387,7 @@ const {JOINTS,JK,HANDLE_COL,applyPose,poseToJSON,poseFromJSON,readPose,emptyPose
 const {PRESETS,PRESET_ORDER,PRESET_GROUPS}=__M.presets;
 const {makeGear}=__M.gear;
 const {loadBaked,loadBody8,wearBaked,merge8,beltShow8}=__M.gear8;
-const {mountWeapons,killWeapons,armedSpec,armedFinish,shieldCheck,wristBend,holdsOf,STANCE}=__M.hold;
+const {mountWeapons,killWeapons,armedSpec,armedFinish,shieldCheck,wristBend,elbowCheck,bowOk,holdsOf,stanceFor}=__M.hold;
 const {MeshoptDecoder}=__M.meshopt_decoder;
 /* v1.0 (his picks, look100 rounds 2–8): printed pieces in a token's gear spec are worn as the PRE-BAKED SDF sculpts (assets/gear100.js,
    made by mkgear.js), merged into one skinned mesh with one outline; the classic gear.js pieces stay for custom-coloured pieces and
@@ -2443,27 +2484,61 @@ async function createToken(opts = {}) {
      figure as the sheet sees it (CPU skinning, every 2nd body vertex, the sheet's own yaw + 30° projection); fitTile() scales a figure that
      spills INSIDE the render (the base never changes) and returns what it did. */
   const TILE_HALF = BASE_R * 1.25;
-  function reach(el = 30) {
+  function reach(el = 30, skip) {
     turn.rotation.y = 0; turn.updateMatrixWorld(true);
     const v = new THREE.Vector3(), ce = Math.cos(el * D2R), se = Math.sin(el * D2R), ys = MINI_YAW.map(y => [Math.cos(y * D2R), Math.sin(y * D2R)]);
     let hw = 0, dn = -1e9, n = 0; const sk = new Set();
     B.group.traverseVisible(o => { if (o.isSkinnedMesh && o.skeleton && !sk.has(o.skeleton)) { sk.add(o.skeleton); o.skeleton.update(); } });
     B.group.traverseVisible(o => {
-      if (!o.isMesh || o.name === 'bowstring' || /_ink$/.test(o.name)) return;   /* raw meshes count too (the retiarius' net); the string lies between the bow's tips */ const P = o.geometry && o.geometry.attributes.position; if (!P) return;
+      if (!o.isMesh || o.name === 'bowstring' || /_ink$/.test(o.name) || (skip && skip.has(o))) return;   /* raw meshes count too (the retiarius' net); the string lies between the bow's tips */ const P = o.geometry && o.geometry.attributes.position; if (!P) return;
       const st = o.isSkinnedMesh && P.count > 30000 ? 2 : 1;
       for (let i = 0; i < P.count; i += st) { if (o.isSkinnedMesh) o.getVertexPosition(i, v); else v.fromBufferAttribute(P, i); v.applyMatrix4(o.matrixWorld);
         for (const [c, s2] of ys) { const xs = v.x * c + v.z * s2, zs = -v.x * s2 + v.z * c; if (Math.abs(xs) > hw) hw = Math.abs(xs); const d = zs * se - (v.y + BASE_H) * ce; if (d > dn) dn = d; } n++; }
     });
     return { hw, dn, n, tileHalf: TILE_HALF };
   }
+  /* v1.0 (his 2b): A LONG SHAFT NEVER SHRINKS THE FIGURE BELOW ~70%. When the fit would fall under SHAFT.min, the held weapons (not the bow,
+     lyre or shields) are first RAISED toward the diagonal about the grip (15° steps, ≤ 60°), then their visible length is SHORTENED about
+     the grip (≥ 0.6) — the first try that keeps SHAFT.min wins, else the best one. Display only: the pose and the hand stay as they are, the
+     weapons are put back after the render (restore()). The body's own reach is measured once; each try re-measures only the weapons. */
+  const SHAFT = { min: 0.72, tries: [[15, 1], [30, 1], [45, 1], [45, 0.85], [45, 0.72], [45, 0.6], [60, 0.72], [60, 0.6]] };
+  const fOf = (s, hw, dn) => { const pad = ((s.outlinePx || 0.85) + 1.0) / (s.pxmm * MM_PER_M), BH = BASE_H * Math.cos(s.el * D2R); let f = 1;
+    if (hw > TILE_HALF - pad) f = Math.min(f, (TILE_HALF - pad) / hw);
+    if (dn > TILE_HALF / 2 - pad && dn + BH > 1e-6) f = Math.min(f, (TILE_HALF / 2 - pad + BH) / (dn + BH));
+    return f; };
+  const shaftList = () => held.filter(m => m.parent && ((m.userData && m.userData.w4 && !/^(bow|lyre)$/.test(m.userData.w4.k)) || m.name === 'net'));
+  function meshReach(m, el, out) {
+    const P = m.geometry.attributes.position, v = new THREE.Vector3(), ce = Math.cos(el * D2R), se = Math.sin(el * D2R); m.updateMatrixWorld(true);
+    for (let i = 0; i < P.count; i++) { v.fromBufferAttribute(P, i).applyMatrix4(m.matrixWorld);
+      for (const y of MINI_YAW) { const c = Math.cos(y * D2R), s2 = Math.sin(y * D2R), xs = v.x * c + v.z * s2, zs = -v.x * s2 + v.z * c; if (Math.abs(xs) > out.hw) out.hw = Math.abs(xs); const d = zs * se - (v.y + BASE_H) * ce; if (d > out.dn) out.dn = d; } }
+    return out;
+  }
+  function shaftFit(s, r0) {
+    const ws = shaftList(); if (!ws.length) return null;
+    const keep = ws.map(m => [m, m.quaternion.clone(), m.scale.clone()]);
+    const put = (a, k) => { for (const [m, q0, s0] of keep) { m.quaternion.copy(q0); m.scale.copy(s0); m.updateMatrixWorld(true);
+      if (m.name === 'net') { m.scale.copy(s0).multiplyScalar((1 - a / 150) * k); m.updateMatrixWorld(true); continue; }   /* the net gathers in: smaller, never turned */
+      if (a) { const pq = new THREE.Quaternion(); m.parent.getWorldQuaternion(pq); const gq = new THREE.Quaternion(); B.group.getWorldQuaternion(gq);
+        const toG = gq.clone().invert().multiply(pq);   /* bone → figure space */
+        const d = new THREE.Vector3(0, 1, 0).applyQuaternion(toG.clone().multiply(q0)).normalize(), up = new THREE.Vector3(0, d.y < -0.3 ? -1 : 1, 0);
+        const ang = Math.min(a * D2R, Math.acos(Math.max(-1, Math.min(1, d.dot(up))))); const ax = new THREE.Vector3().crossVectors(d, up);
+        if (ax.lengthSq() > 1e-8 && ang > 1e-3) { const rq = new THREE.Quaternion().setFromAxisAngle(ax.normalize(), ang); m.quaternion.copy(toG.clone().invert().multiply(rq).multiply(toG).multiply(q0)); } }
+      m.scale.set(s0.x, s0.y * k, s0.z);
+      const ink = m.userData.ink; if (ink) { ink.quaternion.copy(m.quaternion); ink.scale.copy(m.scale); ink.updateMatrixWorld(true); } m.updateMatrixWorld(true); } };
+    const skip = new Set(ws); const body = reach(s.el, skip); const fBody = fOf(s, body.hw, body.dn);
+    let best = null;
+    for (const [a, k] of SHAFT.tries) { put(a, k); const r = ws.reduce((o2, m) => meshReach(m, s.el, o2), { hw: body.hw, dn: body.dn }); const f = fOf(s, r.hw, r.dn);
+      if (!best || f > best.f + 1e-4) best = { a, k, f, hw: r.hw, dn: r.dn }; if (f >= SHAFT.min) break; }
+    put(best.a, best.k);
+    return { a: best.a, k: best.k, f: best.f, hw: best.hw, dn: best.dn, fBody, restore: () => { for (const [m, q0, s0] of keep) { m.quaternion.copy(q0); m.scale.copy(s0); const ink = m.userData.ink; if (ink) { ink.quaternion.copy(q0); ink.scale.copy(s0); } } } };
+  }
   function fitTile(s) {
     const s0 = o.scale || 1; B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true);
-    const pad = ((s.outlinePx || 0.85) + 1.0) / (s.pxmm * MM_PER_M), ce = Math.cos(s.el * D2R), BH = BASE_H * ce;
-    const r = reach(s.el); let f = 1;
-    if (r.hw > TILE_HALF - pad) f = Math.min(f, (TILE_HALF - pad) / r.hw);
-    if (r.dn > TILE_HALF / 2 - pad && r.dn + BH > 1e-6) f = Math.min(f, (TILE_HALF / 2 - pad + BH) / (r.dn + BH));
+    let r = reach(s.el); let f = fOf(s, r.hw, r.dn), sh = null;
+    if (f < SHAFT.min && s.shaft !== false) { sh = shaftFit(s, r); if (sh && sh.a + (1 - sh.k) > 0 && sh.f > f) { f = sh.f; r = { hw: sh.hw, dn: sh.dn }; } else if (sh) { sh.restore(); sh = null; } }
     if (f < 0.999) { B.group.scale.setScalar(s0 * f); B.group.updateMatrixWorld(true); }
-    return { f: +f.toFixed(4), hw: +r.hw.toFixed(4), dn: +r.dn.toFixed(4), restore: () => { B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true); } };
+    return { f: +f.toFixed(4), hw: +r.hw.toFixed(4), dn: +r.dn.toFixed(4), shaft: sh ? { a: sh.a, k: sh.k, fBody: +sh.fBody.toFixed(4) } : null,
+      restore: () => { if (sh) sh.restore(); B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true); } };
   }
   /* the minis' sheet: 8 yaw cells in one row, transparent, cropped round the anchor; meta like MINI8 */
   function sheet(so = {}) { const g = sheetSteps(so); for (;;) { const r = g.next(); if (r.done) return r.value; } }
@@ -2528,7 +2603,7 @@ async function createToken(opts = {}) {
   function standFor(g) {
     const ho = holdsOf(g || {}); if (!ho.R && !ho.L) return STAND0;
     const keep = poseJSON();
-    try { setPose(poseToJSON(resolveSpec(rig, { p: STANCE.p, j: STANCE.j, f: STANCE.f }))); const A = armedSpec(rig, g); setPose(poseToJSON(resolveSpec(rig, A.spec))); armedFinish(rig, align, A.fr); return poseToJSON(readPose(rig, pinsNow())); }
+    try { setPose(poseToJSON(resolveSpec(rig, stanceFor(g)))); const A = armedSpec(rig, g); setPose(poseToJSON(resolveSpec(rig, A.spec))); armedFinish(rig, align, A.fr); return poseToJSON(readPose(rig, pinsNow())); }
     finally { setPose(keep); }
   }
   function setPose(p) { pose = poseFromJSON(p); applyPose(rig, pose); }
@@ -2739,8 +2814,9 @@ async function createToken(opts = {}) {
   return {
     hero, specPose, align, B, rig, turn, scene, baseG, sculpted: () => last8.slice(), standFor,
     /* v1.0: the bake (null when missing: bakeWhy), the shield check on what is held now, the wrists' bend */
-    baked: BK ? { keys: BK.keys.length, bytes: BK.bytes, ms: BK.ms } : null, bakeWhy, bodyBaked: core ? { verts: core.nv, bytes: core.bytes, ms: core.ms.load } : null, bodyWhy, bodyKey: bodyKey8(o), shieldCheck: () => shieldCheck(B, turn, held), wrists: () => ({ L: wristBend(rig, 'L'), R: wristBend(rig, 'R') }),
-    reach, fitTile: (so) => { const f = fitTile(Object.assign({ el: 30, pxmm: MINI_PXMM, outlinePx: 0.85 }, so || {})); f.restore(); return { f: f.f, hw: f.hw, dn: f.dn, tileHalf: TILE_HALF }; },
+    baked: BK ? { keys: BK.keys.length, bytes: BK.bytes, ms: BK.ms } : null, bakeWhy, bodyBaked: core ? { verts: core.nv, bytes: core.bytes, ms: core.ms.load } : null, bodyWhy, bodyKey: bodyKey8(o), shieldCheck: () => shieldCheck(B, turn, held), wrists: () => ({ L: wristBend(rig, 'L'), R: wristBend(rig, 'R') }), elbows: () => { const rows = elbowCheck(rig, turn, MINI_YAW); return { rows, bowOk: bowOk(rows), anatOk: rows.every(r => (r.L.bend < 0.03 || r.L.anat > 0) && (r.R.bend < 0.03 || r.R.anat > 0)) }; },
+    reach, fitTile: (so) => { const f = fitTile(Object.assign({ el: 30, pxmm: MINI_PXMM, outlinePx: 0.85 }, so || {})); const out = { f: f.f, hw: f.hw, dn: f.dn, shaft: f.shaft, tileHalf: TILE_HALF };
+      if (so && so.keep) out.restore = f.restore; else f.restore(); return out; },
     apply, setPose, pose: poseJSON, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },
     dispose() { gear.clear(); killWeapons(B, held); held = []; if (R) { R.dispose(); R.forceContextLoss(); R = null; } },
   };

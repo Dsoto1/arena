@@ -82,6 +82,9 @@ const REST = {}; for (const sd of ['L', 'R']) { const W0 = V(JK['w' + sd].pos), 
 
 /* ---------- THE HOLDS (figure metres, facing +z, the right hand at −x). θ° = blade angle off the forearm line toward the thumb ---------- */
 export const STANCE = { p: [0, -140, 10], j: { pe: [4, -20, 0], sp: [12, 10, 0], ch: [8, 10, 0], he: [-16, 8, 0] }, f: { L: [150, 230, 10], R: [-160, -230, -40] } };
+/* the stance for what a gear spec holds (H5[hold].j replaces joints of STANCE: the archer turns his chest so the draw shoulder goes back) */
+export function stanceFor(gear) { const ho = holdsOf(gear || {}), R = ho.R, H = R && !isShield(R) ? H5[WHOLD[R]] : null;
+  return { p: STANCE.p, j: Object.assign({}, STANCE.j, (H && H.j) || {}), f: STANCE.f }; }
 export const H5 = {
   /* round 8: the sword hold the max-load search settled on (gladius clear of the scutum and the body) */
   sword: { R: { th: 15, b: [-0.1, 0.2, 1], hint: [-0.14, -0.06, 1], at: [-0.33, 1.2, 0.44] } },
@@ -92,7 +95,12 @@ export const H5 = {
   trident: { R: { th: 90, b: [0.04, 1, 0.06], hint: [0, 0, 1], at: [-0.34, 0.95, 0.2] } },
   hafted: { R: { th: 80, b: [-0.12, 1, -0.15], hint: [0, 0.05, 1], at: [-0.28, 1.36, 0.24] } },
   throw: { R: { th: 0, b: [0, 1, -0.2], hint: [0, 0, 1], at: [-0.24, 1.66, -0.05] } },
-  bow: { L: { th: 90, b: [0, 1, 0.05], hint: [0.25, 0, 1], at: [0.2, 1.42, 0.52] }, hand: 'L', drawR: { h: [-60, 1500, 160], hp: [1, -0.3, -1] } },
+  /* v1.0 (his BUG note: the archer's elbows bent the wrong way — the targets sat above the lowered stance's shoulders, so both elbows flew
+     up over the head): the targets are now RELATIVE TO THE POSED SHOULDER (rel, x = out), with fixed elbow poles (pole, x = out): the bow arm
+     reaches forward at shoulder height nearly straight, its elbow turned slightly out and down; the draw hand sits at the cheek, its elbow
+     out and back at shoulder height, behind the head. elbowCheck() + tv100g hold them to it. */
+  bow: { j: { sp: [12, -16, 0], ch: [8, -22, 0], he: [-16, 50, 0] }, L: { th: 90, b: [0, 1, 0.05], hint: [0.25, 0, 1], rel: [-0.03, 0.03, 0.5], pole: [1, -0.45, -0.25] }, hand: 'L',
+    drawR: { rel: [0.12, 0.03, 0.12], elb: [0.14, -0.02, -0.22] } },
   crossbow: { R: { th: 90, b: [0.05, 0.02, 1], hint: [0, -0.7, -0.6], at: [-0.15, 1.42, 0.28] }, two: { d: 0.32, th: 90, hint: [0, -1, 0.3] } },
   labrys: { R: { th: 75, b: [0.35, 1, 0.35], hint: [0.1, -0.2, 1], at: [-0.17, 1.02, 0.3] }, two: { d: 0.32, th: 75, hint: [-0.1, -0.2, 1] } },
   sling: { R: { th: 0, b: [0, -1, 0.1], hint: [0, 0, 1], at: [-0.36, 0.98, 0.12] } },
@@ -105,17 +113,18 @@ const mirH = (h) => ({ th: h.th, b: mir(h.b), hint: mir(h.hint), at: mir(h.at) }
 
 /* hand frame + arm targets for one hand (S = the posed shoulder) */
 function frame5(rig, sd, h) {
-  const r = REST[sd], b = V(h.b).normalize(), th = h.th / D; let p = V(h.hint).sub(b.clone().multiplyScalar(V(h.hint).dot(b)));
+  const r = REST[sd], b = V(h.b).normalize(), th = h.th / D, sx0 = sd === 'L' ? 1 : -1, S0 = jointPos(rig, 's' + sd).clone();
+  const AT = h.rel ? S0.clone().add(V([h.rel[0] * sx0, h.rel[1], h.rel[2]])) : V(h.at); let p = V(h.hint).sub(b.clone().multiplyScalar(V(h.hint).dot(b)));
   if (p.lengthSq() < 1e-6) p = V([0, -1, 0]).sub(b.clone().multiplyScalar(-b.y)); p.normalize();
   const u = b.clone().multiplyScalar(Math.cos(th)).add(p.clone().multiplyScalar(Math.sin(th))).normalize();
   const f = b.clone().multiplyScalar(Math.sin(th)).sub(p.clone().multiplyScalar(Math.cos(th))).normalize();
   const o = new THREE.Vector3().crossVectors(u, f).multiplyScalar(r.sg);
   const S = jointPos(rig, 's' + sd).clone();
-  const Wd = V(h.at).sub(u.clone().multiplyScalar(r.gl)).add(o.clone().multiplyScalar(0.03)), Ed = Wd.clone().sub(u.clone().multiplyScalar(r.Lf));
+  const Wd = AT.clone().sub(u.clone().multiplyScalar(r.gl)).add(o.clone().multiplyScalar(0.03)), Ed = Wd.clone().sub(u.clone().multiplyScalar(r.Lf));
   const E = S.clone().add(Ed.clone().sub(S).normalize().multiplyScalar(r.Lu)), W = E.clone().add(u.clone().multiplyScalar(r.Lf));
   const grip = W.clone().add(u.clone().multiplyScalar(r.gl)).sub(o.clone().multiplyScalar(0.03));
   const pole = E.clone().sub(S.clone().add(W).multiplyScalar(0.5)); const sx = sd === 'L' ? 1 : -1;
-  return { u, f, o, b, th, E, W, grip, S, h: [W.x * 1000, W.y * 1000, W.z * 1000], hp: pole.lengthSq() > 1e-8 ? [pole.x * sx, pole.y, pole.z] : null };
+  return { u, f, o, b, th, E, W, grip, S, h: [W.x * 1000, W.y * 1000, W.z * 1000], hp: h.pole ? h.pole.slice() : pole.lengthSq() > 1e-8 ? [pole.x * sx, pole.y, pole.z] : null };
 }
 /* the wrist's bend in the hand's own frame against its rest relation: flex (palm/back) and deviation (thumb/little finger) */
 export function wristBend(rig, sd) {
@@ -123,6 +132,36 @@ export function wristBend(rig, sd) {
   const hd = tip.clone().sub(W).normalize(); const n0 = r.u.clone().applyQuaternion(qE), f0 = r.f.clone().applyQuaternion(qE), o0 = r.o.clone().applyQuaternion(qE);
   const a = (v) => Math.atan2(v.dot(o0), v.dot(n0)) * D, c = (v) => Math.atan2(v.dot(f0), v.dot(n0)) * D;
   return { flex: Math.round(a(hd) * 10) / 10, dev: Math.round(c(hd) * 10) / 10, total: Math.round(Math.acos(Math.min(1, hd.dot(n0))) * D * 10) / 10 };
+}
+/* v1.0 (his BUG note: the archer's elbows bent the wrong way): THE ELBOWS' BEND, measured on the SCREEN-FACING figure in each of the 8
+   facings (turn = the facing pivot; world positions, the body's own axes turned with it). Per arm: n = the elbow's offset from the
+   shoulder→wrist line (unit; out = toward the arm's side, back = behind, up), bend = its length (m), dy / dz / dx = the elbow against the
+   shoulder (m; dz < 0 behind, dx > 0 out), hz = the elbow against the head (dz < 0 = behind the head line), anat = the bend in the upper
+   arm's own frame against its rest bend (1 = the natural hinge, < 0 = bent the wrong way). bowOk(): the bow arm reaches nearly straight
+   with a slight outward, never upward, bend; the draw elbow sits behind the shoulder and the head, at shoulder height (±0.12 m), not across. */
+const SEG_U = V(JK.sL.pos).distanceTo(V(JK.eL.pos));
+export function elbowCheck(rig, turn, yaws) {
+  const res = [], y0 = turn ? turn.rotation.y : 0, P = (k) => { const b = rig.bones[k]; b.updateWorldMatrix(true, false); return new THREE.Vector3().setFromMatrixPosition(b.matrixWorld); };
+  const r2 = (v) => Math.round(v * 100) / 100, r3 = (v) => Math.round(v * 1000) / 1000;
+  for (const yaw of (turn ? yaws || [0, 45, 90, 135, 180, 225, 270, 315] : [0])) {
+    if (turn) { turn.rotation.y = yaw / D; turn.updateMatrixWorld(true); }
+    const q = new THREE.Quaternion(); if (turn) turn.getWorldQuaternion(q);
+    const row = { yaw }; const He = P('he');
+    for (const sd of ['L', 'R']) { const sx = sd === 'L' ? 1 : -1, S = P('s' + sd), E = P('e' + sd), W = P('w' + sd);
+      const OUT = V([sx, 0, 0]).applyQuaternion(q), FWD = V([0, 0, 1]).applyQuaternion(q), UP = V([0, 1, 0]);
+      const ax = W.clone().sub(S).normalize(), n = E.clone().sub(S); n.sub(ax.clone().multiplyScalar(n.dot(ax))); const bend = n.length(); n.normalize();
+      const sb = rig.bones['s' + sd]; const sq = new THREE.Quaternion(); sb.getWorldQuaternion(sq); const nl = n.clone().applyQuaternion(sq.invert());
+      const rel = E.clone().sub(S), kU = SEG_U / (S.distanceTo(E) || 1);   /* lengths in rest metres whatever the figure's scale */
+      row[sd] = { out: r2(n.dot(OUT)), back: r2(-n.dot(FWD)), up: r2(n.dot(UP)), bend: r3(bend * kU), dx: r3(rel.dot(OUT) * kU), dy: r3(rel.dot(UP) * kU), dz: r3(rel.dot(FWD) * kU), hz: r3(E.clone().sub(He).dot(FWD) * kU), anat: r2(-nl.z) }; }
+    res.push(row); }
+  if (turn) { turn.rotation.y = y0; turn.updateMatrixWorld(true); }
+  return res;
+}
+export function bowOk(rows) {
+  return rows.every(r => { const L = r.L, R = r.R;
+    const bowArm = L.bend <= 0.13 && (L.bend < 0.03 || (L.out >= 0.3 && L.up <= 0.1));
+    const draw = R.dz <= -0.03 && R.hz <= -0.03 && Math.abs(R.dy) <= 0.12 && R.dx >= -0.03 && R.back >= 0.3;
+    return bowArm && draw && L.anat > 0 && R.anat > 0; });
 }
 /* clamp: past 15° flex / 10° deviation the wrist keeps only its twist */
 function clampWrist(rig, sd) {
@@ -150,10 +189,12 @@ export function armedSpec(rig, gear) {
   if (ho.shield && ho.shield[0] === 'L') { fr.L = frame5(rig, 'L', { th: 0, b: [0, -1, 0.03], hint: [0, 0, 1], at: SHIELD8.at }); fr.L.shield = 1; }
   if (ho.shield && ho.shield[0] === 'R') { fr.R = frame5(rig, 'R', { th: 0, b: [0, -1, 0.03], hint: [0, 0, 1], at: mir(SHIELD8.at) }); fr.R.shield = 1; }
   for (const sd of ['L', 'R']) if (fr[sd]) { h[sd] = fr[sd].h; hp[sd] = fr[sd].hp; }
-  if (H && H.drawR) { h.R = H.drawR.h; hp.R = H.drawR.hp; }
+  if (H && H.drawR) { const d = H.drawR; if (d.rel) { const S = jointPos(rig, 'sR'); h.R = [(S.x - d.rel[0]) * 1000, (S.y + d.rel[1]) * 1000, (S.z + d.rel[2]) * 1000];
+      /* elb: where the elbow should be (shoulder + [out, up, z]) → the pole from the arm's middle toward it */
+      if (d.elb) { const W = V(h.R.map(v => v / 1000)), Et = S.clone().add(V([-d.elb[0], d.elb[1], d.elb[2]])), pl = Et.sub(S.clone().add(W).multiplyScalar(0.5)); hp.R = [-pl.x, pl.y, pl.z]; } else hp.R = d.hp; } else { h.R = d.h; hp.R = d.hp; } }
   if (!h.L) { h.L = [210, 1230, 330]; hp.L = [1, -0.6, -0.2]; }
   if (!h.R) { h.R = [-300, 1150, 280]; hp.R = [1, -1, -0.3]; }
-  return { spec: { p: STANCE.p, j: STANCE.j, f: STANCE.f, h, hp }, fr };
+  const st = stanceFor(gear); return { spec: { p: st.p, j: st.j, f: st.f, h, hp }, fr };
 }
 export function armedFinish(rig, align, fr) {
   for (const sd of ['L', 'R']) if (fr[sd] && !fr[sd].shield) align(sd, { tf: fr[sd].f.toArray() });
@@ -174,7 +215,7 @@ function mount5(B, k, sd, th) {
 }
 /* the retiarius' net (round 4): a loose mesh hanging from the left hand */
 function net(B) { const g = new THREE.PlaneGeometry(0.42, 0.62, 9, 12); const P = g.attributes.position; for (let i = 0; i < P.count; i++) { const x = P.getX(i), y = P.getY(i); P.setZ(i, 0.05 * Math.sin(x * 9) * Math.cos(y * 7) - Math.abs(x) * 0.12); P.setX(i, x * (0.6 + (0.31 - y) * 0.9)); }
-  g.translate(0, -0.33, 0); const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0xd8c9a0, wireframe: true })); m.userData.raw = 1;
+  g.translate(0, -0.33, 0); const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0xd8c9a0, wireframe: true })); m.userData.raw = 1; m.name = 'net';
   const b = B.rig.bones.wL, W0 = JK.wL.pos, tip = ENDS.wL; m.position.set((tip[0] - W0[0]) * 0.6, (tip[1] - W0[1]) * 0.6, (tip[2] - W0[2]) * 0.6); m.rotation.y = Math.PI / 2; b.add(m); return [m]; }
 
 /* every held thing for a gear spec (built once per spec; they ride the bones, so any pose carries them) */
