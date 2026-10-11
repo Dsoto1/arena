@@ -55,3 +55,60 @@ Re-render: `node tools/plans/look100/make2.js` (~2.5 min) then `node tools/plans
   sheet 7–10.4 s, 512 hero ~1.4 s (SwiftShader).
 - Class pieces come from gear.js's generic shells/helmets (centurion, cassis, thracian, galea, Flavius, steel; ornate/musculata/amazon chests,
   manicas, greaves, cestus, wraps): they read, but weaker than his minis — the next pass models each printed piece like the Murmillo kit.
+
+
+## Round 3 — shield/elbow fix, FULL OUTFITTING, faces
+Re-render: `node tools/plans/look100/make3.js` (~2.3 min). New code: `outfit100.js` (layer stack + PIECES table + `outfitCheck` rules),
+weapon additions in `gear100.js` `weaponKit`, face sculpt + 2.2 mm head grid in `body100.js` (`face2`, `headRes`). Inventory: `r3_inventory.json`
+(32 ARM + 29 W from the built game, after every module patch); layer table: `r3_layers.json` (and below).
+
+| file | what |
+|---|---|
+| r3_shield.png | 3 poses × front / shield-arm side / behind the shield + 8 facings |
+| r3_maxload.png + r3_maxload_sheet.png | max load in 8 facings, 512 hero, side/back, unarmed stack, worn + REFUSED list |
+| r3_contact.png | all 32 printed armor pieces + 28 weapons on the mannequin, labelled (chariotCard skipped) |
+| r3_faces.png | male/female before vs after at 512 px, profile, board size (1×) and head ×3 |
+
+- Elbow fix: the scutum's long axis follows the FOREARM (elbow → wrist) and stands 85 mm off its axis (75 mm for the Thracian / Achilles);
+  the grip constraint twists about the forearm; the board is centred on the fist (boss over the hand); two brackets join the handle to the board.
+- Layer stack (shell offset off the skin): sandals 4.8 · padding 6.2 · mail 9.2 · plates 12.5 · belts 19 mm · then rigid shoulder flares stacked
+  outward (+12 % each: thorax pauldron → manica → segmentata) · helmets. The rules (outfitCheck = armorConflict + armPad): one hard piece per equip
+  point, lower padding under a hard lower piece, the belt on the chest plate, the Leather Tasset alone on the upper leg.
+- Faces: 2.2 mm head grid merged into the 5 mm body (overlap band at y 1.585, no seam), small blend radii, no eyeballs (flush eye + painted
+  almond, iris, dark upper lid), wedge nose, brow ledge, mouth line painted, jaw angle + chin, flat ears with a hollow. Build 3.5 → 9–11 s
+  (~270k verts) on SwiftShader; sheet size unchanged (27–28 KB) — the gain is at 512 px; at board size the heads read about the same.
+
+| piece | name | slot/pt | AP | segment | layer | offset mm | recipe |
+|---|---|---|---|---|---|---|---|
+| galea | Iron Helm | head/helm | 2 | head | helm | rigid | rigid helmet galea |
+| cassis | Horned Helm | head/helm | 3 | head | helm | rigid | rigid helmet horned |
+| crista | Hoplomachus Helm | head/helm | 3 | head | helm | rigid | rigid helmet crested |
+| murmillo | Steel Gated Helm | head/helm | 4 | head | helm | rigid | rigid helmet murm |
+| helm5 | Steel Dome Helm | head/helm | 5 | head | helm | rigid | rigid helmet secutor |
+| flavhelm | Helm of Flavius | head/helm | 5 | head | helm | rigid | rigid helmet crested |
+| centurion | Centurian Helm | head/helm | 3 | head | helm | rigid | rigid helmet centurion |
+| steelhelm | Steel Helm | head/helm | 2 | head | helm | rigid | rigid helmet galea |
+| thrachelm | Thracian Helm | head/helm | 4 | head | helm | rigid | rigid helmet thraex |
+| pectorale | Bronze Chest Armor | chest/chest | 3 | torso | plate | 12.5 | shell pect |
+| lorica | Scaled Chest Armor | chest/chest | 4 | torso | mail | 9.2 | shell cuirass scale |
+| musculata | Forged Chest Armor | chest/chest | 5 | torso | plate | 12.5 | shell cuirass muscle |
+| amazon | Plated Chest Armor | chest/chest | 5 | torso | plate | 12.5 | shell cuirass straps |
+| flavchest | Flavius' Chest Armor | chest/chest | 5 | torso | plate | 12.5 | shell cuirass muscle |
+| thorax | Reinforced Chest Armor | chest/chest | 7 | torso | plate | 12.5 | shell high plates + pauldrons |
+| ornate | Ornate Chest Armor | chest/chest | 4 | torso | plate | 12.5 | shell high medal |
+| balteus | Leather Gladiator Belt II | chest/chest | 2 | belt | belt | 19 | shell ornate |
+| balteus1 | Leather Gladiator Belt I | chest/chest | 2 | belt | belt | 19 | shell ring |
+| wraps | Padded Arm Armor | arm/lower | 2 | armL | pad | 6.2 | shell  pad |
+| bracers | Flavius' Bracers | arm/lower | 3 | armL | plate | 12.5 | shell  plate |
+| manica | Galerus | arm/upper | 3 | armU | plate | 12.5 | shell  lames + 1 shoulder flare(s) |
+| provmanica | Manica | arm/upper | 3 | armU | plate | 12.5 | shell  lames + 1 shoulder flare(s) |
+| galerus | Lorica Segmentata | arm/upper | 4 | armU | plate | 12.5 | shell  lames + 2 shoulder flare(s) |
+| cestus | Cestus | arm/hand | 2 | hand | pad | 6.2 | shell |
+| legwrapsU | Leather Tasset Armor | leg/upper | 2 | legU | plate | 12.5 | shell  strips |
+| femoralia | Iron Tasset Armor | leg/upper | 3 | legU | plate | 12.5 | shell  lames |
+| thighplate | Tasset Armor | leg/upper | 4 | legU | plate | 12.5 | shell  lames |
+| legwraps | Padded Leg Armor | leg/lower | 2 | legL | pad | 6.2 | shell  pad |
+| ocrea | Greaves | leg/lower | 4 | legL | plate | 12.5 | shell + knee cap (front) |
+| greaves | Flavius' Greaves | leg/lower | 3 | legL | plate | 12.5 | shell  engr + knee cap (front) |
+| cnemis | Steel Greaves | leg/lower | 5 | legL | plate | 12.5 | shell + knee cap (front) |
+| lgreaves | Leather Greaves | leg/lower | 3 | legL | plate | 12.5 | shell (front) |
