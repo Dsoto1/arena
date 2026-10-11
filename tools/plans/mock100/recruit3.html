@@ -191,9 +191,36 @@ body.ph .hrs .sub{display:none}
 body.ph .step small{display:none}body.ph .step{font-size:15px;gap:5px}
 body.ph .pips{display:none}
 .pmeta span{overflow:hidden;text-overflow:ellipsis;min-width:0}body.ph .pmeta span:last-child{display:none}
-body.ph .offr .oform{flex-wrap:wrap;height:auto;row-gap:6px}body.ph .wage .big{font-size:18px}
+body.ph .off .oform{flex-wrap:wrap;height:auto;row-gap:6px}body.ph .wage .big{font-size:18px}
 body.ph .ban .hrb{display:none}
 body.ph .sign{min-height:170px}
+
+/* offer · contract tablet (round 3b) */
+.offr3{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:7px;min-height:532px}
+.ocol{display:flex;flex-direction:column;gap:7px;min-width:0}
+.tab3{display:flex;flex-direction:column;border-radius:8px;padding:7px;background:linear-gradient(135deg,#7a4e26,#5a3618 40%,#6e4420 70%,#4a2c12);box-shadow:inset 0 0 0 1px #a2703a,inset 0 0 12px #2a1606,0 4px 12px #0008;min-width:0}
+.tstrip{height:40px;flex:none;border-radius:4px 4px 0 0}
+.tstrip .pic{background:url(img3/m_temple.jpg) center 45%/cover}
+.tt3{position:absolute;z-index:5;left:10px;top:10px;font:400 15px var(--display);letter-spacing:.06em;color:#fff3d6;text-shadow:0 1px 3px #000,0 0 8px #000}
+.wax{flex:1;margin-top:5px;border-radius:3px;padding:8px 12px 10px;background:radial-gradient(ellipse at 30% 20%,#4a3a24,#2e2414 70%);box-shadow:inset 0 2px 8px #000c,inset 0 0 0 1px #1a1008;color:#e8d6ae;display:flex;flex-direction:column}
+.clerk{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px;align-items:center;height:34px;font-size:12.5px;color:#d8c49a;border-bottom:1px dashed #8a6a3a66;margin-bottom:4px}
+.clerk .rd{width:28px;height:28px}
+.clerk b{color:#f0cf7d;font-weight:600}
+.tparty{font:400 14px var(--display);color:#f3e3bd;height:22px;line-height:22px;letter-spacing:.02em}
+.tparty b{color:#f0cf7d;font-weight:400}
+.tsub{font:500 9.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#b39d80;height:20px;line-height:22px;border-top:1px solid #8a6a3a44;margin-top:3px}
+.trow{display:grid;grid-template-columns:84px minmax(0,1fr) 62px;gap:8px;align-items:center;height:27px;font-size:13px;font-family:Georgia,serif}
+.trow span:first-child{color:#c9b083;font-style:italic}
+.trow span:last-child{text-align:right;font:12px var(--mono);color:#f0cf7d;white-space:nowrap}
+.trow.ok span:last-child{color:#9be86c}.trow.no span:last-child{color:#ff9a8a}
+.seals{margin-top:auto;padding-top:8px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.seal{display:flex;align-items:center;gap:8px;height:52px;border-top:1px dashed #8a6a3a77;padding-top:6px;min-width:0}
+.seal span{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:400 15px var(--display)}
+.seal.mine span{background:radial-gradient(circle at 38% 32%,#d84a3a,#8a1a12 70%);color:#ffd8c8;box-shadow:0 2px 4px #000a,inset 0 0 0 3px #a3281f,inset 0 0 0 5px #6a120c;opacity:.55}
+.seal.his span{border:2px dashed #8a6a3a;color:#8a6a3a}
+.seal>*{min-width:0}.seal small{font-size:11.5px;color:#b39d80;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.ph .offr3{grid-template-columns:minmax(0,1fr);min-height:0}
+body.ph .trow{grid-template-columns:74px minmax(0,1fr) 56px}
 </style></head>
 <body class="s-scout">
 <div class="app">
@@ -270,23 +297,39 @@ body.ph .sign{min-height:170px}
 
    <!-- ③ OFFER -->
    <div class="pane offer">
-    <div class="offr">
+    <div class="offr3">
+     <div class="ocol">
      <section class="panel off"><div class="phd">The contract</div>
       <div class="wage"><span class="big">Wage 24/wk</span><div class="slider"><i></i><b></b><u style="left:0">15</u><u style="left:48%">ask 23</u><u style="left:100%">40</u></div></div>
       <div class="oform"><label>Weeks <select class="tin" style="width:auto"><option>4</option><option selected>8</option><option>12</option></select></label><label>Bonus <input class="tin" value="0"></label><label title="Pledge him the main event within 2 weeks: +12 interest now"><span class="ck"></span> Pledge the main event (+12)</label></div>
       <div class="verdict"><div class="vbar"><i></i><u></u></div><div>✗ <b>Not yet</b> · pull 45 (money +3) · needs 52 · Severianus 48</div><p>Raise the wage, or pitch, feast and gift next week · dealbreaker safe</p></div>
       <button class="obtn">✍ Offer the contract</button>
      </section>
-     <div class="fr sign"><div class="pic"></div><span class="rd big"></span><span class="rd cl" title="Fabia Dura, your Clerk"></span><span class="coins"><i></i><i></i><i></i><i></i></span><span class="cap">Fabia Dura draws up the tablets</span></div>
-    </div>
-    <div class="offr">
-     <section class="panel" style="padding:6px 8px"><div class="phd">Where he stands</div><div id="suit2"></div></section>
-     <section class="panel lg"><div class="phd">On your ledger · if he signs</div>
-      <div class="row"><span>Wage</span><span class="one">24 a week × 8 weeks</span><span><span class="coin"></span> 192</span></div>
-      <div class="row"><span>Bonus</span><span class="one">none · counts toward the weekly wage</span><span>0</span></div>
-      <div class="row"><span>Net / wk</span><span class="one">+26 → +2 a week before fees</span><span>+2</span></div>
-      <div class="row"><span>Pledge</span><span class="one">main event within 2 weeks · break it and Honor pays</span><span>off</span></div>
-      <div class="row"><span>Rival</span><span class="one">Severianus may outbid by ×1.2 in 2 weeks</span><span>~28</span></div></section>
+     <section class="panel" style="padding:6px 8px;flex:1"><div class="phd">Where he stands</div><div id="suit2"></div></section>
+     </div>
+     <!-- the CONTRACT TABLET: exactly what he signs -->
+     <section class="tab3">
+      <div class="fr tstrip"><div class="pic"></div><span class="tt3">Tabula · contract of service</span></div>
+      <div class="wax">
+       <div class="clerk"><span class="rd" style="background-image:url(img3/r3_c_clerk.png)"></span><span class="one"><b>Fabia Dura</b>, Clerk: “He reads every line. Mind the rudis.”</span></div>
+       <div class="tparty one"><b>Ludus Virgilanti</b> engages <b>The Wolf of Dacia</b></div>
+       <div class="trow"><span>Wage</span><span class="one">24 coin a week × 8 weeks</span><span>192</span></div>
+       <div class="trow"><span>Bonus</span><span class="one">none · spread over the weeks</span><span>0</span></div>
+       <div class="trow"><span>Pledge</span><span class="one">main event within 2 weeks · not pledged</span><span>—</span></div>
+       <div class="trow"><span>Ends</span><span class="one">season 1 · week 12 · renew or release</span><span>W12</span></div>
+       <div class="tsub">His wants</div>
+       <div class="trow ok"><span>📣 Fame</span><span class="one">your fame 58 · he wants a known house</span><span>✓ met</span></div>
+       <div class="trow no"><span>🗡 Rudis</span><span class="one">no rudis clause · Severianus may offer one</span><span>✗ unmet</span></div>
+       <div class="trow ok"><span>Dealbreaker</span><span class="one">Honor below C · your Honor is A</span><span>✓ safe</span></div>
+       <div class="tsub">On your ledger</div>
+       <div class="trow"><span>Net / wk</span><span class="one">+26 → +2 a week before fees</span><span>+2</span></div>
+       <div class="trow"><span>Rival bid</span><span class="one">Severianus may bid ×1.2 in 2 weeks</span><span>~28</span></div>
+       <div class="seals">
+        <div class="seal mine"><span>LV</span><small>your seal · on Offer</small></div>
+        <div class="seal his"><span>?</span><small>his seal · when he accepts</small></div>
+       </div>
+      </div>
+     </section>
     </div>
    </div>
   </div></main>

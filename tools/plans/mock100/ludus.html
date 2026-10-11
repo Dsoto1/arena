@@ -5,6 +5,7 @@
 <!-- MOCK-UP ONLY (v1.0 plan, his PDF "mockludusmanager" 2026-10-09 = ludus_img/his_mock.png).
      Content = a real week-3 career (Ludus Crispinus, Capua; this week's games in Pompeii) captured by ludus_before.js.
      Tile art = the game's own room banner scenes (roomScene73 / roomScene / armoryScene96 / cityScene75) exported as SVG, cropped per tile.
+     Round 3: #week-b (no Fight Night card, parchment fills the column) · #advisors (the council room) · #mail-open (one letter read in full).
      States: #week (default, 4 tasks) · #bye (week 4, 6 tasks) · #mail (letters drawer) · #team-a (Your Team → today's Roster tab) ·
      #team-b (Your Team → one team hub with tabs; the rail loses Roster/Armory/Infirmary/Training Yard) · #rooms (the new scenes as room banners) · #phone.
      Round 2 (his answers D1–D7): tiles = one weekly job each, RICHER painted scenes (ludus_scenes.js) used as tile AND room banner.
@@ -138,7 +139,7 @@ body.s-phone #phoneFrame{display:flex;justify-content:center;padding:20px}
 .mailbtn b{font:700 10px var(--mono);background:#7a2219;color:#ffd9cf;border-radius:8px;padding:0 6px}
 .drawer{display:none;position:fixed;top:0;right:0;bottom:0;width:520px;z-index:30;background:#1d150f;border-left:1px solid #7a5d2a;box-shadow:-12px 0 30px rgba(0,0,0,.6);padding:14px 16px;overflow:auto}
 .scrim{display:none;position:fixed;inset:0;z-index:29;background:rgba(0,0,0,.45)}
-body.s-mail .drawer,body.s-mail .scrim{display:block}
+body.s-mail .drawer.d1,body.s-mail .scrim,body.s-mail-open .drawer.d2,body.s-mail-open .scrim{display:block}
 .drawer h3{display:flex;align-items:center;gap:8px;margin:0 0 10px;font:400 21px var(--display);color:var(--gold2)}
 .drawer h3 .x{margin-left:auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-size:16px;color:var(--bone)}
 .lrow{display:grid;grid-template-columns:26px minmax(0,1fr) auto;align-items:center;gap:8px;background:var(--parch);color:var(--pink);border-radius:6px;border-left:4px solid #8c7a64;padding:6px 10px 6px 8px;margin-bottom:4px}
@@ -251,8 +252,56 @@ body:not(.s-team-a) .a-only{display:none!important}
 .optnote b{color:var(--gold2)}.optnote .pc{color:#9fd77e}.optnote .cn{color:#ff9a86}
 /* #rooms */
 .roomsv{display:none}
-body.s-rooms .app>.grid .main>*{display:none}
+body.s-rooms .app>.grid .main>*,body.s-advisors .app>.grid .main>*{display:none}
 body.s-rooms .roomsv{display:grid!important;gap:8px}
+body.s-advisors .advv{display:block!important}
+/* #week-b: no Fight Night card, the parchment fills the column */
+body.s-week-b .fncard{display:none}
+body.s-week-b .body{align-items:stretch}body.s-week-b .lcol{grid-template-rows:1fr}
+body.s-week-b .trow{padding:11px 4px}body.s-week-b .trow .ti{width:46px;height:46px;font-size:22px}body.s-week-b .trow .tx b{font-size:16.5px}
+body.s-week-b .trow .tx>span{font-size:13.5px}
+.nextwk{display:none;margin-top:10px;padding:8px 6px 0;border-top:1px dashed rgba(122,93,42,.45);font-size:13px;color:#5c4326}
+.nextwk b{color:#2a1708}
+body.s-week-b .nextwk{display:block}
+/* #advisors: the council room */
+.advv{display:none}
+.cgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.adc{background:var(--panel2);border:1px solid var(--line3);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:62px minmax(0,1fr);gap:4px 12px}
+.adc>img{width:62px;height:62px;border-radius:50%;border:2px solid #b08a3c;grid-row:1/3}
+.adc .nm b{display:block;font:400 17px var(--display);color:var(--gold2)}
+.adc .nm small{font:700 10.5px var(--mono);letter-spacing:1.2px;text-transform:uppercase;color:var(--dim)}
+.adc .lv{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.adc .lv .l{font:700 11px var(--mono);background:#3a2a18;border:1px solid #7a5d2a;color:var(--gold2);border-radius:9px;padding:0 7px}
+.adc .lv .pb{flex:1;min-width:60px;height:6px;border-radius:3px;background:#140f0b;overflow:hidden}.adc .lv .pb i{display:block;height:100%;background:var(--gold)}
+.adc .lv .tr{font:12px var(--body);color:var(--gold2);background:linear-gradient(#3a2a17,#2a1f17);border:1px solid #8a6a2c;border-radius:5px;padding:2px 8px;cursor:pointer}
+.adc .does{grid-column:1/-1;font-size:13px;color:var(--bone)}
+.adc .say{grid-column:1/-1;background:var(--parch);color:var(--pink);border-radius:6px;border-left:3px solid var(--gold);padding:6px 9px;font-size:13px;font-style:italic}
+.adc .say small{display:block;font-style:normal;font-size:11.5px;color:var(--pdim);margin-top:2px}
+.adc .say.new{box-shadow:0 0 0 1px rgba(160,120,40,.7) inset}.adc .say .nw{font:700 9.5px var(--mono);font-style:normal;background:#dcae42;color:#1a120c;border-radius:8px;padding:0 5px;margin-left:4px}
+.advnote{margin-top:8px;font-size:12.5px;color:var(--dim)}
+/* #mail-open: one letter read in full */
+.lfull{background:var(--parch);color:var(--pink);border-radius:8px;box-shadow:0 0 0 1px #9c8058 inset,0 4px 14px rgba(0,0,0,.4);padding:12px 14px;margin-bottom:10px;position:relative}
+.lfull .hd{display:flex;gap:10px;align-items:center}
+.lfull .seal{flex:none;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#b57ae0,#5a2a8a 70%);box-shadow:0 2px 3px rgba(0,0,0,.45),inset 0 0 0 4px rgba(0,0,0,.12);display:grid;place-items:center;font:400 18px var(--display);color:#efe0ff}
+.lfull .hd b{display:block;font:400 19px/1.15 var(--display);color:#2a1708}
+.lfull .hd small{font-size:12.5px;color:var(--pdim)}
+.lfull .due{margin-left:auto;align-self:flex-start;font:700 10px var(--mono);letter-spacing:.6px;text-transform:uppercase;background:#5c4316;color:#f6dd95;border-radius:9px;padding:2px 8px;white-space:nowrap}
+.lfull p{margin:9px 0;font-size:14.5px;line-height:1.45}
+.lfull .sig{font-style:italic;text-align:right;color:#5c4326;font-size:13.5px}
+.lfull .tr{display:grid;grid-template-columns:1fr 24px 1fr;gap:8px;align-items:center;margin:8px 0}
+.lfull .gc{background:rgba(255,255,255,.4);border:1px solid #c9b58c;border-radius:6px;padding:6px 9px;font-size:13.5px}
+.lfull .gc small{display:block;font:700 10px var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--pdim)}
+.lfull .gc b{color:#2a1708}
+.lfull .adv2{display:flex;gap:9px;align-items:center;background:rgba(255,255,255,.3);border-left:3px solid #b08a3c;border-radius:5px;padding:6px 9px;font-size:13px;font-style:italic;margin:8px 0}
+.lfull .adv2 img{width:38px;height:38px;border-radius:50%;border:2px solid #b08a3c;flex:none}
+.lfull .adv2 small{display:block;font-style:normal;font-size:11.5px;color:var(--pdim)}
+.lfull .acts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px}
+.lfull .acts .btn{background:#3a2a1a;color:#f6e7c6;border-color:#5a4026}
+.lfull .acts .btn.yes{background:linear-gradient(#2f5a1e,#1e3a12);border-color:#6fae4c}
+.lfull .acts .btn.no{background:linear-gradient(#7a2219,#4a140d);border-color:#c0433a}
+.lfull .acts .btn.file{background:transparent;color:#5c4326;border-color:#9c8058}
+.back{font-size:13px;color:var(--muted);margin-bottom:8px;cursor:pointer}
+@media (max-width:600px){.cgrid{grid-template-columns:1fr}.lfull .tr{grid-template-columns:1fr}.lfull .tr>span{display:none}.lfull .acts .btn{flex:1}}
 @media (max-width:600px){.tm{grid-template-columns:1fr}.slots{grid-template-columns:1fr}.lst .h{display:none}.fr{grid-template-columns:36px minmax(0,1fr) auto}.fr>:nth-child(n+4){display:none}.htabs{overflow-x:auto}.htabs span{padding:6px 10px;font-size:13px;white-space:nowrap}.htabs .keep{display:none}.rban{height:92px}.rban .tt b{font-size:20px}}
 </style></head>
 <body>
@@ -325,6 +374,7 @@ body.s-rooms .roomsv{display:grid!important;gap:8px}
       <div class="trow done"><span class="ck">✓</span><span class="ti">⚔</span><span class="tx"><b>Fill the Fight Night card</b><span>Undercard, Feature and Main in Pompeii carry your fighters</span></span><span class="cnt">3/3</span><span class="go">›</span></div>
       <div class="trow"><span class="ck"></span><span class="ti">🏋</span><span class="tx"><b>Set the week's training</b><span>Drills for 5 fighters, 10 hours in the Training Yard</span></span><span class="cnt">0/10 h</span><span class="go">›</span></div>
       <div class="ok">Already in order: <b>✓</b> no untreated wounds · <b>✓</b> no contract runs out · <b>✓</b> 5 on the roster · <b>✓</b> no perk points</div>
+      <div class="nextwk">📅 <b>Coming up:</b> week 4 is a bye (no games) · week 5 Fight Night at home in Capua · contracts: Aper the Gilded ends in 3 weeks</div>
      </div>
      <!-- week 4, bye: 6 tasks -->
      <div class="bye-only">
@@ -391,6 +441,38 @@ body.s-rooms .roomsv{display:grid!important;gap:8px}
      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><button class="btn">Bench</button><button class="btn">Lend</button><button class="btn">⚒ Dress</button><button class="btn">🏋 Drills</button></div></div>
    </div>
 
+
+   <!-- ===== #advisors: the council room ===== -->
+   <div class="advv">
+    <div class="rban"><div class="bg" data-sc="council" data-mode="banner"></div><div class="tt"><b>🏛 The Council</b><span>six voices, one seal — your advisors for life</span><div class="chips"><i>2 new counsels</i><i>Recruiter Lv 3</i></div></div></div>
+    <div class="cgrid">
+     <div class="adc"><img src="ludus_img/face_0.png" alt=""><div class="nm"><b>Kaeso Ahenobarbus</b><small>Consilium</small></div>
+      <div class="lv"><span class="l">Lv 3</span><span class="pb"><i style="width:0%"></i></span>seasons in the top four 0/1</div>
+      <div class="does">Strategy: when to fight, when to hold back.</div>
+      <div class="say new">"Pompeii is stacked with veterans. Send the ones who need the coin, keep the Fox fresh for Capua."<small>Counsel for Pompeii · week 3<span class="nw">NEW</span></small></div></div>
+     <div class="adc"><img src="ludus_img/face_1.png" alt=""><div class="nm"><b>Gnaeus Cicatrix</b><small>Recruiter</small></div>
+      <div class="lv"><span class="l">Lv 3</span><span class="pb"><i style="width:0%"></i></span>signings 0/5 <span class="tr">⬆ Train · <img class="coin" src="../../../assets/coin.webp" alt="">120</span></div>
+      <div class="does">Scouts free agents: 20 hours a week, grades sharper with each level.</div>
+      <div class="say new">"Galba Bone-Breaker. Soldier, ~B+, asks 38 a week. I'd stake my eye on him."<small>Pick of the week · week 3<span class="nw">NEW</span></small></div></div>
+     <div class="adc"><img src="ludus_img/face_2.png" alt=""><div class="nm"><b>Quintus Celer</b><small>Doctore</small></div>
+      <div class="lv"><span class="l">Lv 3</span><span class="pb"><i style="width:0%"></i></span>rating band-ups 0/10</div>
+      <div class="does">Drills, growth and the Training Yard.</div>
+      <div class="say">"Hostus is one push from Strength 80. Give him Iron this week."<small>Week II in review · week 3</small></div></div>
+     <div class="adc"><img src="ludus_img/face_3.png" alt=""><div class="nm"><b>Septimus Dentatus</b><small>Medicus</small></div>
+      <div class="lv"><span class="l">Lv 3</span><span class="pb"><i style="width:0%"></i></span>wounds healed 0/8</div>
+      <div class="does">Wounds, rest and the ward.</div>
+      <div class="say">"Aper is worn. One more hard week and I'll be stitching him."<small>A risk letter · week 2</small></div></div>
+     <div class="adc"><img src="ludus_img/face_4.png" alt=""><div class="nm"><b>Marcia Sabina</b><small>Clerk</small></div>
+      <div class="lv"><span class="l">Lv 3</span><span class="pb"><i style="width:19%"></i></span>treasury 288/1500</div>
+      <div class="does">Purse, wages and contracts.</div>
+      <div class="say">"We lose 56 a week. Two weeks of runway, dominus. Win something."<small>The Quaestor's ledger · week 3</small></div></div>
+     <div class="adc"><img src="ludus_img/face_5.png" alt=""><div class="nm"><b>Nonus Flamma</b><small>Barracks master</small></div>
+      <div class="lv"><span class="l">Lv 4</span><span class="pb"><i style="width:17%"></i></span>weeks without an unhappy exit 2/12</div>
+      <div class="does">The fighters' moods and requests.</div>
+      <div class="say">"Three of them are begging for the sand. Let them, or hear about it."<small>The eager · week 3</small></div></div>
+    </div>
+    <div class="advnote">Levels rise by what each advisor achieves; only the Recruiter can also be trained with coin (his level sharpens the grades).</div>
+   </div>
    <!-- ===== #rooms: the same scenes atop each room ===== -->
    <div class="roomsv">
     <div class="rban"><div class="bg" data-sc="team" data-mode="banner"></div><div class="tt"><b>🛡 Your Team</b><span>the men and women who carry your name onto the sand</span></div></div>
@@ -406,7 +488,7 @@ body.s-rooms .roomsv{display:grid!important;gap:8px}
 
 <!-- letters drawer (#mail) -->
 <div class="scrim"></div>
-<div class="drawer">
+<div class="drawer d1">
  <h3>📬 Letters <span style="font:13px var(--body);color:var(--muted)">5 unread · answers live in Weekly tasks</span><span class="x">✕</span></h3>
  <div class="lopen"><div class="adv"><img src="ludus_img/face_0.png" alt=""><div><b class="t">Counsel for Pompeii: hold our fighters back</b><div style="font-size:12.5px;color:var(--pdim)">Kaeso Ahenobarbus, the Consilium · week 3</div></div></div>
   <p>The Pompeii card is stacked with veterans this week. Send the ones who need the coin, keep the Fox fresh for Capua.</p></div>
@@ -419,8 +501,30 @@ body.s-rooms .roomsv{display:grid!important;gap:8px}
  <div class="past">▸ Acta Diurna · week II · three bouts in Capua, no deaths</div>
 </div>
 
+<div class="drawer d2">
+ <h3>📬 Letters <span style="font:13px var(--body);color:var(--muted)">4 unread</span><span class="x">✕</span></h3>
+ <div class="back">‹ All letters</div>
+ <div class="lfull">
+  <div class="hd"><span class="seal">S</span><div><b>A trade offer from Ludus Severianus</b><small>Domitia Severa, lanista · Capua · week 3</small></div><span class="due">answer by week 4</span></div>
+  <p>Crispus — your Lupercus has luck but no future in your colours. I'll give you Pompeia Ferreus for him, and twenty-five coin to soften the parting. She fights hard and eats little.</p>
+  <div class="tr"><div class="gc"><small>They want</small><b>Lupercus the Lucky</b> · Veteranus · grade B · 24/wk</div><span>⇄</span><div class="gc"><small>You get</small><b>Pompeia Ferreus</b> · Hoplomachus · grade B · 21/wk + <img class="coin" src="../../../assets/coin.webp" alt="">25</div></div>
+  <div class="sig">— D. Severa, by her own hand</div>
+  <div class="adv2"><img src="ludus_img/face_4.png" alt=""><span>"A fair swap and three coin a week cheaper. Lupercus is on no card this week."<small>Marcia Sabina, your Clerk</small></span></div>
+  <div class="acts"><button class="btn file">🗄 File it away</button><button class="btn no">✖ Decline</button><button class="btn yes">✔ Accept</button></div>
+ </div>
+ <div class="sec">Unread · 4</div>
+ <div class="lrow unread"><span>📅</span><span class="tx"><b>Week II in review</b> <span class="f">· from your clerk</span></span><span class="new">NEW</span></div>
+ <div class="lrow unread"><span>🏛</span><span class="tx"><b>Counsel for Pompeii: hold our fighters back</b> <span class="f">· the Consilium</span></span><span class="new">NEW</span></div>
+ <div class="lrow unread"><span>📊</span><span class="tx"><b>Top of the table</b> <span class="f">· finish 1st for 120 and the Superbus</span></span><span class="new">NEW</span></div>
+ <div class="lrow unread"><span>🏛</span><span class="tx"><b>Nonus Flamma has earned the fourth laurel</b> <span class="f">· Barracks master</span></span><span class="new">NEW</span></div>
+ <div class="sec">Read this week</div>
+ <div class="lrow"><span>🏛</span><span class="tx"><b>The Quaestor's ledger</b> <span class="f">· founding treasury +320 · sealed</span></span><span class="f" style="font:11px var(--mono);color:var(--pdim)">wk 3</span></div>
+ <div class="lrow"><span>✝</span><span class="tx"><b>The Christians keep together</b> <span class="f">· your barracks</span></span><span class="f" style="font:11px var(--mono);color:var(--pdim)">wk 3</span></div>
+ <div class="sec">Past letters · 12 kept</div>
+ <div class="past">▸ Acta Diurna · week II · three bouts in Capua, no deaths<br>▸ The Quaestor's ledger · week 2 · sealed<br>▸ Welcome to Ludus Crispinus · week 1</div>
+</div>
 <div id="phoneFrame"><iframe title="phone" src="ludus.html#week"></iframe></div>
-<div class="statebar"><a href="#week">#week</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#team-a">#team-a</a><a href="#team-b">#team-b</a><a href="#rooms">#rooms</a><a href="#phone">#phone</a></div>
+<div class="statebar"><a href="#week">#week</a><a href="#week-b">#week-b</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#mail-open">#mail-open</a><a href="#advisors">#advisors</a><a href="#team-a">#team-a</a><a href="#team-b">#team-b</a><a href="#rooms">#rooms</a><a href="#phone">#phone</a></div>
 <script src="ludus_scenes.js"></script>
 <script>
 document.querySelectorAll('[data-sc]').forEach(e=>e.innerHTML=SCENE99(e.dataset.sc,e.dataset.mode||'tile'));
@@ -428,7 +532,7 @@ function st(){const h=(location.hash||'#week').slice(1);document.body.className=
  document.querySelectorAll('.rail .t.a-on').forEach(t=>t.classList.toggle('on',h==='team-a'))}
 addEventListener('hashchange',st);st();
 document.querySelector('.mailbtn').onclick=()=>location.hash='#mail';
-document.querySelector('.scrim').onclick=document.querySelector('.drawer .x').onclick=()=>location.hash='#week';
+document.querySelector('.scrim').onclick=()=>location.hash='#week';document.querySelectorAll('.drawer .x').forEach(x=>x.onclick=()=>location.hash='#week');document.querySelector('.d2 .back').onclick=()=>location.hash='#mail';document.querySelectorAll('.tile')[4].onclick=()=>location.hash='#advisors';
 document.querySelectorAll('.tile')[0].onclick=()=>location.hash='#team-b';
 </script>
 </body></html>

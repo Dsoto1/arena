@@ -93,3 +93,9 @@ Layout: a compact top bar, rail and list (34 px rows), and a 62 px fresco banner
 - Offer: the contract + a signing fresco, then Where he stands + On your ledger.
 - Every label is one line; ellipsis + hover where needed.
 - Some text in the new panels is made up for the mock (e.g. "On your ledger"); the numbers there are not computed.
+- **Round 3b (Offer):** the decorative signing fresco is replaced by the CONTRACT TABLET (`.tab3`): a wooden-framed wax tabula with a slim temple-fresco header strip.
+  - Clerk Fabia Dura's face and one line, then the parties.
+  - Wage × weeks, bonus, pledge clause and end week.
+  - His wants met or unmet (Fame ✓, Rudis ✗) and the dealbreaker.
+  - The ledger lines (net a week, rival bid), and two seal spots: yours (LV, pressed on Offer) and his (empty until he accepts).
+  - The separate "On your ledger" panel is folded into it. "Where he stands" moved under the contract, so the page has no dead area at 1440.

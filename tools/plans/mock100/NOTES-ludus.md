@@ -75,3 +75,9 @@ Shots: `ludus_week_1440/390`, `ludus_bye_1440/390`, `ludus_mail_1440`, `ludus_te
 - **D3: as many tasks as needed**, progress N/M. `#week` has 4 tasks (1/4; drills and hours merged into "Set the week's training"). When the
   list is short, the left column shows a "This Fight Night" card (day, bout, event, your fighter, fatigue) under it. `#bye` has 6 (0/6).
 - **D4a**: letters drawer, as before. **D6a**: GEM/DUD = 2+ grades off on Overall. **D7a**: the reveal plays by itself (signing.html unchanged).
+
+## ROUND 3 (2026-10-11)
+- `#week-b`: like `#week` but without the "This Fight Night" card. The parchment stretches to the tiles' height, the rows get roomier, and a dashed "Coming up" line fills the gap (next week's bye, next Fight Night, a contract ending). Compare with `#week`.
+- `#advisors`: the council room that opens from the Advisors tile. The painted council-hall banner sits on top, then a 3×2 grid of cards with the real council83 faces. Each card has the name, role, a level badge with a progress bar toward the next level, ⬆ Train on the Recruiter only (coin), what the advisor does in one line, and their latest advice as a parchment quote (NEW when unread).
+- `#mail-open`: the 📬 drawer with one letter read in full: the sender's wax seal, title, an "answer by" deadline, the body, the trade boxes and a signature. Underneath, the Clerk's face gives her advice, then File it away / Decline / Accept. Below that come Unread, Read this week and Past letters. "‹ All letters" goes back to `#mail`.
+Shots: `ludus_week-b_1440/390`, `ludus_advisors_1440/390`, `ludus_mail-open_1440/390`.
