@@ -179,6 +179,18 @@ body.ex.ph .exw{padding:12px}
 body.ex.ph .twocol{grid-template-columns:1fr}
 body.ex.ph .sheet{grid-template-columns:repeat(4,1fr)}
 body.ex.ph .jbox{flex-wrap:wrap;width:100%}body.ex.ph .jbox .in{flex:1;width:auto}
+/* round 3: right column reaches the bottom of the settings pane; rows share the height, quick chat at the foot */
+.grid{align-items:stretch}
+.grid>div:first-child{display:flex;flex-direction:column}.grid>div:first-child>.pane{flex:1}
+.rcol{display:flex;flex-direction:column}
+.rcol>.pane{flex:1;display:flex;flex-direction:column}
+.rcol .list{flex:1}
+.rcol .row{flex:1 1 52px;height:auto;min-height:52px;max-height:66px}
+.rcol .qc{margin-top:auto;padding-top:12px}
+.qcg{font:500 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:8px 0 5px}
+.qc .chips.tn span{border-color:#7a3a6a;background:#2a1626;color:#f2cfe6;font-weight:500}
+.qc .chips.tn span:hover{border-color:#e7a0d0;color:#ffe2f4}
+body.ph .rcol .row{flex:none;height:46px;min-height:0}
 /* ---------- phone ---------- */
 body.ph .orail{display:none}
 body.ph .main{padding:10px 12px 90px}
@@ -321,9 +333,10 @@ let rows='';for(let i=0;i<8;i++){const m=members[i];
   ${isHost&&!me?`<span class="acts"><button class="btn sm">👑 Give host</button><button class="btn sm exit">✕ Kick</button></span>`:''}</div>`}
 const list=`<div class="pane"><div class="ph"><h3>In the room</h3><span class="n">${room}/8</span><span class="sp"></span><span class="n">✓ ready · ○ not yet</span></div><div class="list">${rows}</div>
  ${isHost?'<div class="legend">Hover a lanista: 👑 Give host · ✕ Kick (5 min). Click a name: house card.</div>':'<div class="legend">Click a name: house card (record, gladiators, ★ Follow).</div>'}
- <div class="qc"><div class="ph"><h3>Quick chat</h3><span class="n">pops under your token · 6 s</span></div><div class="chips">${['Ave!','2 min','Sound the horns?','Swap teams?','One more seat?','Good luck','Vale'].map(x=>`<span>${x}</span>`).join('')}</div></div></div>`;
+ <div class="qc"><div class="ph"><h3>Quick chat</h3><span class="n">pops under your token · 6 s</span></div><div class="qcg">Room</div><div class="chips">${['Ave!','2 min','Sound the horns?','Swap teams?','One more seat?','Good luck','Vale'].map(x=>`<span>${x}</span>`).join('')}</div>
+ <div class="qcg">Taunts</div><div class="chips tn">${['Mind the lions','Flavius is watching','Is that a Damnatio?','Nice helmet. Yours?',"I've seen stronger slaves",'Bring a bucket','To the Gate of Life!','My lanista bet on me… sorry, lanista'].map(x=>`<span>${x}</span>`).join('')}</div></div></div>`;
 
-document.getElementById('main').innerHTML=banner+`<div class="grid"><div><div class="pane">${s.horns?foot+watch:''}<div class="seats ${s.compact?'cmp':''}" style="${s.horns?'margin-top:12px':''}">${seatsH}</div>${s.horns?'':watch}${set}${s.horns?'':foot}</div></div><div>${list}</div></div>`;
+document.getElementById('main').innerHTML=banner+`<div class="grid"><div><div class="pane">${s.horns?foot+watch:''}<div class="seats ${s.compact?'cmp':''}" style="${s.horns?'margin-top:12px':''}">${seatsH}</div>${s.horns?'':watch}${set}${s.horns?'':foot}</div></div><div class="rcol">${list}</div></div>`;
 
 /* ---- #extras: C1a Lobby Browser join box + house card Join, C4a medal sheet ---- */
 document.getElementById('ex').innerHTML=`<h2>Lobby Browser · Join by code</h2><div class="lead">C1a — replaces the room's Invite buttons. A friend pastes the room code (or a lanista's FID) and lands in that room — no searching, no region or filter in the way.</div>

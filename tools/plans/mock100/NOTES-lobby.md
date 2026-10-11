@@ -40,3 +40,11 @@ Where the invite-by-FID goes now (Lobby Browser? house card?), whether the room 
   Veteranus iron/crossed swords · Primus Palus silver/column · Summa Rudis gold/crown · Rudiarius gold + red enamel/gladius ·
   Invictus gold + purple enamel + laurel/eagle. Used on seat chips (18 px), list rows (14 px), the banner rank gate and house cards;
   medal sheet in `#extras`. Drawn as inline SVG (`medal(k,size)` in lobby.html) — can ship as code, no image files.
+
+## Revision 3
+- The player list column stretches to the bottom of the settings pane: the 8 rows share the height (52–66 px each), quick chat sits at its foot.
+- Quick chat grouped **Room** (Ave!, 2 min, Sound the horns?, Swap teams?, One more seat?, Good luck, Vale) / **Taunts** (Mind the lions,
+  Flavius is watching, Is that a Damnatio?, Nice helmet. Yours?, I've seen stronger slaves, Bring a bucket, To the Gate of Life!,
+  My lanista bet on me… sorry, lanista).
+- NOTE: quick-chat phrases are **server phrase codes** (`ONLC.QC` / `QC_TEXT` in src/111-onlcore.js; the server refuses unknown codes),
+  so new phrases need a server deploy (`node tools/mkserver.js` + flavius.sh release) and translations in every language (srvkeys → part-25).
