@@ -59410,8 +59410,8 @@ body.calm .wd100wk.now,body.idle92 .wd100wk.now{transform:none}
    • TWICE: after a seat's second applied timeout the other live humans get "Hand to CPU / Wait"; a majority (ONLC.dropNeed100) → the server
      orders {k:'drop', tt:1, until} — here a MARK (ONLM.left 'tt100'): at that seat's next decision a CPU takes it and plays that turn; the
      lanista may reclaim within the 139 window (p._cpu84 / ONL84.rcl).
-   8c THE TURN PANEL #tt100 (top of the right column; phones: one strip above the action bar): the active face in a ring that empties, a thin bar,
-      next up, the seats with their rings, the BIG number in the ring in the last 10 s, a thin red glow at the screen EDGES on my own turn
+   8c THE TURN PANEL #tt100 (now the right column's ⏳ Turn tab #turnPane; the SLIM BAR #ttb100 above the avatar / above #actions on phones carries the clock): the active face in a ring that empties, a thin bar,
+      next up, the seats with their rings, the bold number in the slim bar in the last 10 s, a thin red glow at the screen EDGES on my own turn
       (four 6 px strips — never over the board), a soft "marble" tick each second of my last 5 s (tt100Tick, SFX volume / mute respected).
    Test hook (mock only): localStorage flavius_onltest100='{"t":6,"d":4}' shortens a room's clocks (a room with the timer Off stays Off).
    Test tonl100tt; server/test/v100tt.test.js; docs/backend.md "v1.0 turn timers". */
@@ -59562,21 +59562,19 @@ function tt100FaceEl(p){const k=p.id+'|'+p.cls;let el=TT100C.face.get(k);if(el)r
 const TT_R=21,TT_C=2*Math.PI*TT_R;
 const tt100Ring=()=>`<svg class="rg100" viewBox="0 0 48 48" aria-hidden="true"><circle class="bg" cx="24" cy="24" r="${TT_R}"/><circle class="fg" cx="24" cy="24" r="${TT_R}" stroke-dasharray="${TT_C.toFixed(1)}" stroke-dashoffset="0"/></svg>`;
 const tt100Fmt=ms=>{const s=Math.ceil(ms/1000);return s>=60?`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:_T`${s} s`};
-function tt100Panel(on){let el=document.getElementById('tt100');document.body.classList.toggle('tt100on',!!on);if(!on){if(el)el.hidden=true;tt100Edge(false);return}
+function tt100Panel(on){let el=document.getElementById('tt100');document.body.classList.toggle('tt100on',!!on);if(!on){if(el)el.hidden=true;tt100Edge(false);tt100Bar(null);if(SIDE.tab==='turn'){SIDE.tab='fighter';try{sideApply()}catch(e){}}return}
   if(!el){el=document.createElement('section');el.id='tt100';el.className='tt100';el.setAttribute('aria-label',_T('Whose turn'));el.addEventListener('click',tt100Click)}
-  const phone=tt100Phone();const side=document.querySelector('.side');const acts=document.getElementById('actions');
-  if(phone||!side||!side.offsetParent){if(acts&&acts.parentElement&&acts.previousElementSibling!==el)acts.parentElement.insertBefore(el,acts)}
-  else if(side.firstElementChild!==el)side.insertBefore(el,side.firstElementChild);
+  const phone=tt100Phone();const pane=tt100PaneEnsure();if(pane&&el.parentElement!==pane)pane.appendChild(el);
   el.hidden=false;el.classList.toggle('ph100',phone);
   const c=tt100Cfg();const p=cur();if(!p)return;const seat=onlmSeatOf(p);const T=tt100TurnLeft();const P=ONLM.pend;const D=tt100DecLeft();
   const mine=seat===ONLM.me&&!p.cpu;const nx=typeof bar96Next==='function'?bar96Next():null;
   const who=p.cpu&&!(S.tt100x&&S.tt100x.seat===seat)?_T('CPU'):mine?_T('Your turn'):_T('their turn');const ph={resolve:_T('Resolve'),choice:_T('Choice'),action:_T('Action'),end:_T('End'),command:_T('Command')}[S.phase]||'';
   const ch=P&&P.seat!==ONLM.me&&onlmHuman(P.seat)?`<div class="ch100"><span class="dots100"><i></i><i></i><i></i></span>${_T`<b>${esc(onlmName(P.seat))}</b> is choosing…`} <span class="what">${esc(tt100Strip(P.t).slice(0,40))}</span><span class="dt100"></span></div>`:'';
   const V=TT100C.vote;const vote=V?`<div class="vt100"><b>${_T`⌛ ${esc(V.name)} timed out twice`}</b><p>${_T`Hand the seat to a CPU for the rest of the bout? He still faces the Fate.`}</p>${V.res?`<p class="rc-sub">${esc(V.res)}</p>`:`<div class="vb100"><button type="button" class="btn primary tksm" data-tt100v="yes">${_T`🤖 Hand to CPU`}</button><button type="button" class="btn tksm" data-tt100v="no">${_T`Wait`}</button></div>`}</div>`:'';
-  const seats=phone?'':`<div class="st100">${S.players.map((q,i)=>`<div class="s100 ${q===p?'on':''} ${q.alive&&!q.exited?'':'out'}" data-s100="${i}"><span class="fc100 sm">${tt100Ring()}</span><span class="n">${esc(q.name)}</span><span class="v"></span></div>`).join('')}</div>`;
+  const seats=`<div class="st100">${S.players.map((q,i)=>`<div class="s100 ${q===p?'on':''} ${q.alive&&!q.exited?'':'out'}" data-s100="${i}"><span class="fc100 sm">${tt100Ring()}</span><span class="n">${esc(q.name)}</span><span class="v"></span></div>`).join('')}</div>`;
   const sig=[seat,S.turnNo,S.phase,c.t,phone,mine,p.cpu?1:0,ch&&P.d+'|'+P.seat,V?V.seat+'|'+(V.res||''):'',S.players.map(q=>(q.alive&&!q.exited?1:0)+(q.cpu?'c':'h')).join('')].join('#');
   if(el.dataset.sig!==sig){el.dataset.sig=sig;
-    el.innerHTML=`<div class="tp100 ${mine?'mine':''}"><span class="fc100 big">${tt100Ring()}<span class="fslot"></span><b class="num"></b></span><div class="nm100"><b>${esc(p.name)}</b><small>${who}${ph?' · '+ph:''}</small>${nx&&nx!==p&&!phone?`<small class="nx100">${_T`next: ${esc(nx.name)}`}</small>`:''}</div><span class="t100"></span></div>
+    el.innerHTML=`<div class="tp100 ${mine?'mine':''}"><span class="fc100 big">${tt100Ring()}<span class="fslot"></span></span><div class="nm100"><b>${esc(p.name)}</b><small>${who}${ph?' · '+ph:''}</small>${nx&&nx!==p?`<small class="nx100">${_T`next: ${esc(nx.name)}`}</small>`:''}</div><span class="t100"></span></div>
       <div class="bar100"><i></i></div>${ch}${vote}${seats}`;
     el.querySelector('.fslot').appendChild(tt100FaceEl(p));
     el.querySelectorAll('[data-s100]').forEach(r=>{const q=S.players[+r.dataset.s100];if(q)r.querySelector('.fc100').appendChild(tt100FaceEl(q))})}
@@ -59585,17 +59583,38 @@ function tt100Panel(on){let el=document.getElementById('tt100');document.body.cl
   el.classList.toggle('late',late&&!T.out);el.classList.toggle('pz',!!(T&&T.pz));el.classList.toggle('noclk',!T);
   const ring=el.querySelector('.tp100 .rg100 .fg');if(ring)ring.setAttribute('stroke-dashoffset',(TT_C*(1-fr)).toFixed(1));
   const tt=el.querySelector('.t100');if(tt)tt.textContent=!T?'':T.out?'⌛':T.pz?'⏸':tt100Fmt(T.left);
-  const num=el.querySelector('.tp100 .num');if(num)num.textContent=late&&!T.out?String(Math.ceil(T.left/1000)):'';
   const bar=el.querySelector('.bar100 i');if(bar)bar.style.width=(T?fr*100:0).toFixed(1)+'%';
   const dt=el.querySelector('.dt100');if(dt)dt.textContent=D&&D.seat!==ONLM.me?tt100Fmt(D.left):'';
   el.querySelectorAll('[data-s100]').forEach(r=>{const i=+r.dataset.s100,q=S.players[i];const v=r.querySelector('.v');const act=q===p;const g=r.querySelector('.rg100 .fg');
     if(g)g.setAttribute('stroke-dashoffset',(TT_C*(act?1-(T?fr:1):1)).toFixed(1));r.classList.toggle('late',act&&late);
     if(v)v.textContent=i===ONLM.me?_T('you'):q.cpu&&!(S.tt100x&&S.tt100x.seat===i)?_T('CPU'):act&&T?(T.out?'⌛':tt100Fmt(T.left)):c.t?_T`${c.t} s`:''});
-  tt100Edge(mine&&late&&!T.out);
+  tt100Edge(mine&&late&&!T.out);tt100Bar(T||D?{p,seat,T,D}:{p,seat,T:null,D:null},c);
+  if(V&&!V.seen100){V.seen100=1;if(SIDE.tab!=='turn'){try{sideTab('turn')}catch(e){}}}
   /* my last 5 s: one soft tick a second (my turn, or my own window's clock) */
   const D2=D&&D.seat===ONLM.me?D:null;const myLeft=D2?D2.left:mine&&T&&!T.pz&&!T.out?T.left:null;
   if(myLeft!=null&&myLeft>0&&myLeft<=5000){const s=Math.ceil(myLeft/1000);if(s!==TT100C.tickSec){TT100C.tickSec=s;tt100Tick()}}else TT100C.tickSec=-1;
   tt100DockTick(D)}
+/* ---- v1.0 slim bar (#ttb100, above the avatar) + the ⏳ Turn tab (#turnPane holds the full #tt100) ---- */
+const tt100TabOn=()=>{try{return !!(S&&S.onl&&S.phase!=='setup'&&onlmOn())}catch(e){return false}};
+function tt100PaneEnsure(){const side=document.querySelector('aside.side');if(!side)return null;let pane=document.getElementById('turnPane');
+  if(!pane){pane=document.createElement('div');pane.id='turnPane';pane.className='panel turnpane';pane.hidden=true;side.appendChild(pane)}return pane}
+function tt100Pane(){const pane=tt100PaneEnsure();if(!pane)return;pane.hidden=!(SIDE.tab==='turn'&&tt100TabOn())}
+{const base=sideTabsHTML;sideTabsHTML=function(){let h=base.apply(this,arguments);try{if(tt100TabOn())h+=`<button type="button" role="tab" data-sidetab="turn" aria-selected="${SIDE.tab==='turn'}" class="${SIDE.tab==='turn'?'on':''}">${_T`⏳ Turn`}${TT100C.vote&&!TT100C.vote.res?' ●':''}</button>`}catch(e){}return h}}
+{const base=sideApply;sideApply=function(){try{if(SIDE.tab==='turn'&&!tt100TabOn())SIDE.tab='fighter'}catch(e){}const r=base.apply(this,arguments);try{tt100Pane()}catch(e){console.error(e)}return r}}
+function tt100BarEl(){let el=document.getElementById('ttb100');if(!el){el=document.createElement('button');el.type='button';el.id='ttb100';el.className='idle';el.setAttribute('aria-label',_T('Whose turn'));
+  el.innerHTML='<span class="nm"></span><span class="trk"><i></i></span><b class="n"></b>';el.addEventListener('click',e=>{e.preventDefault();sideTab('turn');if(document.body.classList.contains('phoneP2')){const b=document.querySelector('#ppTabs [data-pp="side"]');if(b)b.click()}})}return el}
+/* shown only while an online TIMED match is live (the slot is reserved the whole time, so nothing moves when a clock starts or stops) */
+function tt100Bar(X,c){let el=document.getElementById('ttb100');if(!X||!c||!c.t||!tt100On()){if(el)el.hidden=true;return}
+  el=tt100BarEl();const side=document.querySelector('aside.side');const phone=tt100Phone();const acts=document.getElementById('actions');
+  if(phone||!side||!side.offsetParent){if(acts&&acts.parentElement&&acts.previousElementSibling!==el)acts.parentElement.insertBefore(el,acts)}
+  else{const tabs=document.getElementById('sideTabs');const want=tabs&&tabs.parentElement===side?tabs.nextSibling:side.firstChild;if(el.parentElement!==side||el.previousSibling!==tabs)side.insertBefore(el,want)}
+  el.hidden=false;const {T,D,p,seat}=X;const src=D?{left:D.left,total:D.total,seat:D.seat}:T?{left:T.left,total:T.total,seat:T.seat,pz:T.pz,out:T.out}:null;
+  el.classList.toggle('idle',!src);el.classList.toggle('nomo',typeof reduceMotion==='function'&&reduceMotion());
+  const nm=src&&src.seat!=null?(src.seat===seat?p.name:onlmName(src.seat)):(p&&p.name)||'';const nmEl=el.querySelector('.nm');if(nmEl.textContent!==nm)nmEl.textContent=nm;
+  const live=!!(src&&!src.pz&&!src.out);const fr=src?Math.max(0,Math.min(1,src.left/src.total)):0;const s=src?src.left/1000:99;
+  el.classList.toggle('late',live&&s<=10);el.classList.toggle('warn',live&&s>10&&s<=20);el.classList.toggle('pz',!!(src&&src.pz));
+  const w=(fr*100).toFixed(1)+'%';const i=el.querySelector('.trk i');if(i.style.width!==w)i.style.width=w;
+  const n=el.querySelector('.n');const tx=!src?'':src.out?'⌛':src.pz?'⏸':tt100Fmt(src.left);if(n.textContent!==tx)n.textContent=tx}
 function tt100Edge(on){let w=document.getElementById('tt100edge');if(!on){if(w)w.hidden=true;return}
   if(!w){w=document.createElement('div');w.id='tt100edge';w.setAttribute('aria-hidden','true');w.innerHTML='<i class="e1"></i><i class="e2"></i><i class="e3"></i><i class="e4"></i>';document.body.appendChild(w)}w.hidden=false}
 /* the tick: "marble coasters lightly clapping" — two short bright knocks, quiet, through the SFX bus (volume + mute) */
@@ -59607,13 +59626,13 @@ function tt100Click(e){const b=e.target.closest&&e.target.closest('[data-tt100v]
 /* ---------------- 2b: my window docked beside the board ---------------- */
 function tt100Dock(O,opt){const m=document.getElementById('modal'),box=document.getElementById('mboxEl');if(!m||!box)return;const o=opt||{};
   const dock=!(o.full||o.wide||o.xwide);m.classList.remove('dock100','sheet100');if(dock)tt100DockPlace();
-  let h=document.getElementById('dk100');if(h)h.remove();h=document.createElement('div');h.id='dk100';h.dataset.d=O.d;
+  let h=document.getElementById('dk100');if(h)h.remove();if(!(tt100Cfg().t>0))return;h=document.createElement('div');h.id='dk100';h.dataset.d=O.d;
   const n=O.step;const dots=Array.from({length:n},(_,i)=>`<i class="${i<n-1?'ok':'cur'}"></i>`).join('');
   const bs=O.buttons||[];const di=bs.findIndex(b=>b&&b.value===O.def);const defL=di>=0?tt100Strip(bs[di].label):_T('close');
   h.innerHTML=`<div class="dk100h"><b>${_T`Step ${n}`}</b><span class="dots">${dots}</span>${O.clock?`<span class="clk100"><span class="fc100 sm">${tt100Ring()}</span><b class="s"></b></span>`:''}</div>${O.clock?`<div class="dk100f"><div class="bar100"><i></i></div><small>${_T`No answer in <b class="s2"></b> → ${esc(defL)}`}</small></div>`:''}`;
   box.insertBefore(h,box.firstChild);if(di>=0){const btn=box.querySelector(`#mBtns [data-mi="${di}"],#pickgrid [data-mi="${di}"]`);if(btn){btn.classList.add('def100');btn.setAttribute('data-def100',_T('default'))}}}
 function tt100DockPlace(){const m=document.getElementById('modal');const side=document.querySelector('.side');if(!m)return;
-  if(tt100Phone()||!side||!side.offsetParent){m.classList.remove('dock100');m.classList.add('sheet100');return}m.classList.remove('sheet100');m.classList.add('dock100');const r=side.getBoundingClientRect();const tp=document.getElementById('tt100');const tb=tp&&!tp.hidden&&tp.parentElement===side?tp.getBoundingClientRect().bottom+6:r.top;
+  if(tt100Phone()||!side||!side.offsetParent){m.classList.remove('dock100');m.classList.add('sheet100');return}m.classList.remove('sheet100');m.classList.add('dock100');const r=side.getBoundingClientRect();const tp=document.getElementById('ttb100');const tb=tp&&!tp.hidden&&tp.parentElement===side?tp.getBoundingClientRect().bottom+6:r.top;
   m.style.setProperty('--dkx',Math.round(r.left)+'px');m.style.setProperty('--dkw',Math.round(r.width)+'px');m.style.setProperty('--dky',Math.max(8,Math.round(Math.min(tb,window.innerHeight*0.5)))+'px')}
 function tt100DockTick(D){const h=document.getElementById('dk100');if(!h)return;const O=TT100C.open;if(!O||String(O.d)!==h.dataset.d||!D||D.d!==O.d)return;const fr=Math.max(0,Math.min(1,D.left/D.total));
   const g=h.querySelector('.rg100 .fg');if(g)g.setAttribute('stroke-dashoffset',(TT_C*(1-fr)).toFixed(1));const s=h.querySelector('.s');if(s)s.textContent=tt100Fmt(D.left);
@@ -59707,6 +59726,19 @@ if(typeof MOCK_ROUTES!=='undefined'){
 #tt100.ph100{margin:0 0 6px;padding:5px 8px}#tt100.ph100 .tp100{gap:7px}#tt100.ph100 .fc100.big{width:40px;height:40px}#tt100.ph100 .f100{width:30px;height:30px}
 #tt100.ph100 .bar100{margin:4px 0 0}
 body.tt100on #onlWait{display:none!important}
+#turnPane[hidden]{display:none}#turnPane{padding:6px}#turnPane #tt100{margin:0}
+#ttb100{display:flex;align-items:center;gap:8px;box-sizing:border-box;width:100%;height:20px;margin:0 0 6px;padding:0 7px;border:1px solid var(--line2,#4a3826);border-radius:5px;background:var(--panel2,#211810);color:var(--bone,#f3e6c4);font:12px/1 var(--ui,inherit);cursor:pointer;flex:none}
+#ttb100[hidden]{display:none}#ttb100.idle{visibility:hidden}
+#ttb100 .nm{flex:0 1 38%;min-width:0;max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--muted,#bfae8f);text-align:left}
+#ttb100 .trk{flex:1;min-width:20px;height:6px;border-radius:3px;background:#0d0906;display:flex;justify-content:flex-end;overflow:hidden}
+#ttb100 .trk i{display:block;height:100%;width:100%;border-radius:3px;background:#4fae6a;transition:width 1s linear}
+#ttb100.nomo .trk i,body.calm #ttb100 .trk i,body.idle92 #ttb100 .trk i{transition:none}
+#ttb100 .n{flex:none;min-width:3.2em;text-align:right;font:600 12px var(--mono,monospace)}
+#ttb100.warn .trk i{background:#e0a93e}#ttb100.late .trk i{background:#e0503e}
+#ttb100.late{border-color:#e0503e}#ttb100.late .n{font-weight:900;font-size:15px;color:#f07a5c}#ttb100.warn .n{color:#e8c96a}#ttb100.pz .trk i{background:#6c7f8a}
+body.phoneL #ttb100,body.phoneP2 #ttb100{margin:0;position:fixed;z-index:58;height:20px;width:auto}
+body.phoneP2 #ttb100{left:56px;right:8px;top:calc(var(--ppTop,55dvh) - 26px)}
+body.phoneL #ttb100{left:8px;bottom:8px;width:min(300px,42vw)}
 #tt100edge[hidden]{display:none}#tt100edge i{position:fixed;pointer-events:none;z-index:55;background:#e0503e;opacity:.5;box-shadow:0 0 14px 4px #e0503e88}
 #tt100edge .e1{left:0;right:0;top:0;height:5px}#tt100edge .e2{left:0;right:0;bottom:0;height:5px}#tt100edge .e3{top:0;bottom:0;left:0;width:5px}#tt100edge .e4{top:0;bottom:0;right:0;width:5px}
 body:not(.calm) #tt100edge i{animation:edge100 1s ease-in-out infinite}@keyframes edge100{0%,100%{opacity:.25}50%{opacity:.6}}body.idle92 #tt100edge i{animation:none}
