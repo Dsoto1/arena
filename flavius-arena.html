@@ -60640,8 +60640,8 @@ async function push100Play(player,target){const piece=target.pl||target.u;if(!pi
      steel = armor only) next to ONE total; drawn on 227's #fx95 overlay over the board, placed with center() so it follows the
      ROT89 turn and the zoom; beasts have no zones (no pip).
    3 ONE ACTION = ONE READOUT: every text float an attack makes (−AP, −HP, blocked, ELIMINATED, the elixir save…) is gathered while
-     hurt()/hurtNPC() runs and drawn as ONE line led by the cause icon (his weapon icons WICO75 dmg/abs; ✊ fist, 🐾 beast, 🪨 stone,
-     ⚠ the arena): "⚔ 4 → Chest: 2 armor, 2 health". Readouts QUEUE per piece (the next starts as the last fades), never stack.
+     hurt()/hurtNPC() runs and drawn as ONE line led by the cause icon (his weapon icons WICO75 dmg/abs; ✊ fist; a stone = his Spectator medallion and a beast = its own
+     round token, both cells of rtok.webp drawn small; ⚠ the arena): "⚔ 4 → Chest: 2 armor, 2 health". Readouts QUEUE per piece (the next starts as the last fades), never stack.
    4 SAVES / BLOCKS AS WORDS: Missed · Blocked (a fist on armor) · Absorbed N (a shield) · Dodged · Saved (Health Elixir, Fidelis).
    5 OTHERS (Q2b): full readouts for the viewer's gladiator and the target it just attacked; other exchanges = small faded marks.
      SETTINGS.hit100 = 'full' (default) | 'mine' (others: nothing) | 'quiet' (no board readouts; avatar numbers for your own fighter
@@ -60676,8 +60676,16 @@ function h100Dur(){let d=H100_DUR*(H100.k||1);if(typeof SPEED!=='undefined'&&SPE
 function h100Shown(){try{const c=typeof cur==='function'?cur():null;return typeof boardShown==='function'?boardShown(c):c}catch(e){return null}}
 /* cause icon: an image of his weapon icons, else a glyph */
 function h100Img(k){if(H100.img[k])return H100.img[k];if(typeof WICO75==='undefined'||!WICO75[k])return null;const im=new Image();im.src=WICO75[k];H100.img[k]=im;return im}
-function h100Cause(src){if(!src)return {g:'⚠'};if(src.spect)return {g:'🪨'};if(src.punch)return {g:'✊'};
-  if(src.type==='npc'||src.n)return {g:'🐾'};if(src.type==='player'||src.p)return {k:'dmg',g:'⚔'};return {g:'⚠'}}
+/* h100Sheet — his rtok.webp sheet as an image; h100Tok draws one medallion cell (crisp: straight from the sheet's own pixels) */
+function h100Sheet(){if(H100.sheet)return H100.sheet;try{const im=new Image();im.src=assetURL('rtok.webp');H100.sheet=im;return im}catch(e){return null}}
+function h100Tok(cx,name,x,y,sz){const im=h100Sheet(),i=RTOK_NAMES.indexOf(name);if(!im||!im.complete||!im.naturalWidth||i<0)return false;
+  const cw=im.naturalWidth/RTOK_COLS,ch=im.naturalHeight/RTOK_ROWS;cx.imageSmoothingQuality='high';cx.drawImage(im,(i%RTOK_COLS)*cw,Math.floor(i/RTOK_COLS)*ch,cw,ch,x,y,sz,sz);return true}
+/* a paw for a beast with no round token (custom beasts), drawn with paths */
+function h100Paw(cx,x,y,sz){cx.save();cx.fillStyle='#e8d8b8';cx.strokeStyle='rgba(10,6,4,.9)';cx.lineWidth=Math.max(1,sz/14);const u=sz/10;
+  const dot=(a,b,r)=>{cx.beginPath();cx.ellipse(x+a*u,y+b*u,r*u,r*u*1.15,0,0,Math.PI*2);cx.fill();cx.stroke()};
+  dot(5,6.7,2.8);dot(2,4.3,1.1);dot(4,2.6,1.2);dot(6,2.6,1.2);dot(8,4.3,1.1);cx.restore()}
+function h100Cause(src){if(!src)return {g:'⚠'};if(src.spect)return {tok:'spectator'};if(src.punch)return {g:'✊'};
+  if(src.type==='npc'||src.n){let t=null;try{t=npcTokName(src.n)}catch(e){}return t?{tok:t}:{paw:1}}if(src.type==='player'||src.p)return {k:'dmg',g:'⚔'};return {g:'⚠'}}
 function h100By(src){try{if(!src)return _T('The arena');if(src.spect)return src.spect.name||_T('The stands');if(src.p)return src.p.name;if(src.n)return src.n.name}catch(e){}return _T('The arena')}
 
 /* ---------- the readout queue ---------- */
@@ -60706,20 +60714,20 @@ function h100Paint(clear){if(typeof fx95Cv!=='function')return;const c=fx95Cv();
   cx.setTransform(dpr,0,0,dpr,0,0);if(clear)cx.clearRect(0,0,B95.fxW,B95.fxH);
   const now=performance.now(),move=h100Anim();let any=false;
   for(const R of H100.list){const k=(now-R.t0)/R.dur;if(k<0||k>=1)continue;any=true;
-    const m=h100Pos(R);const lift=move?TW*0.18*k:0;let a=R.faded?0.55:1;if(move){if(k<0.08)a*=k/0.08;if(k>0.75)a*=(1-k)/0.25}else if(k>0.92)a=0;
+    const m=h100Pos(R);const lift=move?TW*0.18*k:0;let a=R.faded?0.75:1;if(move){if(k<0.08)a*=k/0.08;if(k>0.75)a*=(1-k)/0.25}else if(k>0.92)a=0;
     cx.save();cx.globalAlpha=a;
     /* the pip beside the token */
     let top=m.y-TW*0.35-lift;
-    if(R.pip){const ph=Math.max(R.faded?18:26,Math.min(R.faded?32:46,TW*(R.faded?0.4:0.55)));const px=m.x+TW*0.3,py=m.y-TW*0.35-ph-lift;top=py;
+    if(R.pip){const ph=Math.max(R.faded?22:26,Math.min(R.faded?38:46,TW*(R.faded?0.47:0.55)));const px=m.x+TW*0.3,py=m.y-TW*0.35-ph-lift;top=py;
       h100PipDraw(cx,px,py,ph,R.pip.loc,R.pip.col);
       if(R.pip.total){const fs=Math.round(ph*0.42);cx.font=`700 ${fs}px Marcellus SC, serif`;cx.textAlign='left';cx.textBaseline='middle';cx.lineJoin='round';
         cx.lineWidth=Math.max(3,fs/4);cx.strokeStyle='rgba(10,6,4,.92)';cx.strokeText(R.pip.total,px+ph*0.62,py+ph*0.45);cx.fillStyle=R.pip.col;cx.fillText(R.pip.total,px+ph*0.62,py+ph*0.45)}}
     /* the line above the token */
-    if(R.text&&!R.faded||R.word&&!R.pip){const fs=Math.round(Math.max(13,Math.min(R.big?24:19,TW*(R.big?0.3:0.24))));cx.font=`700 ${fs}px Marcellus SC, serif`;cx.textBaseline='middle';
+    if(R.text&&!R.faded||R.word&&!R.pip){const fs=Math.round(Math.max(R.faded?14:13,Math.min(R.big?24:R.faded?21:19,TW*(R.big?0.3:R.faded?0.27:0.24))));cx.font=`700 ${fs}px Marcellus SC, serif`;cx.textBaseline='middle';
       const txt=R.text||R.word;const tw=cx.measureText(txt).width;const isz=R.cause&&!R.faded?fs*1.15:0;const pad=fs*0.45,gap=isz?fs*0.3:0;
       const W2=tw+isz+gap+pad*2,H2=fs*1.55;let x=m.x-W2/2;const y=Math.max(2,Math.min(m.y-TW*1.15-H2/2-lift,top-H2-3));x=Math.max(4,Math.min((B95.fxW||x+W2)-W2-4,x));
       if(!R.faded){cx.fillStyle='rgba(12,8,6,.8)';h100Pill(cx,x,y,W2,H2);cx.fill();cx.strokeStyle=R.edge||'rgba(240,207,125,.55)';cx.lineWidth=1;cx.stroke()}
-      if(isz){const im=R.cause.k?h100Img(R.cause.k):null;if(im&&im.complete&&im.naturalWidth)cx.drawImage(im,x+pad,y+(H2-isz)/2,isz,isz);
+      if(isz){const im=R.cause.k?h100Img(R.cause.k):null;if(R.cause.tok)h100Tok(cx,R.cause.tok,x+pad,y+(H2-isz)/2,isz);else if(R.cause.paw)h100Paw(cx,x+pad,y+(H2-isz)/2,isz);else if(im&&im.complete&&im.naturalWidth)cx.drawImage(im,x+pad,y+(H2-isz)/2,isz,isz);
         else{cx.font=`${Math.round(isz*0.85)}px serif`;cx.textAlign='left';cx.fillStyle='#fff';cx.fillText(R.cause.g||'',x+pad,y+H2/2);cx.font=`700 ${fs}px Marcellus SC, serif`}}
       cx.textAlign='left';cx.lineJoin='round';if(R.faded){cx.lineWidth=Math.max(3,fs/5);cx.strokeStyle='rgba(10,6,4,.85)';cx.strokeText(txt,x+pad+isz+gap,y+H2/2)}
       cx.fillStyle=R.color||'#f3e6cf';cx.fillText(txt,x+pad+isz+gap,y+H2/2)}

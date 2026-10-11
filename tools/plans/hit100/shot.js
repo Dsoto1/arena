@@ -13,7 +13,7 @@ for(const [nm,vp,mob] of [['desktop',{width:1440,height:900},false],['phone',{wi
     S.cur=1;me.ap.larm=0;await hurt(me,'larm',2,{type:'npc',n:{name:'Leo'}},'');me.ap.rleg=0;await hurt(me,'rleg',1,{type:'player',p:P[3],w:P[3].wR},'');S.cur=0;H100.list.length=0;draw()});
   await pg.waitForTimeout(300);
   await pg.evaluate(async()=>{const P=S.players;const me=P[0],q=P[1];q.ap.chest=2;q.hp.chest=7;hurt(q,'chest',4,{type:'player',p:me,w:me.wR},'');
-    const x=P[2],y=P[3];x.ap.head=0;hurt(x,'head',2,{type:'player',p:y,w:y.wR},'');fx(me.r,me.c,'+2 CF','#f0cf7d')});
+    const x=P[2],y=P[3];x.ap.head=0;hurt(x,'head',2,{type:'player',p:y,w:y.wR},'');hurt(P[3],'chest',1,{type:'env',spect:{name:'Cato'}},'');H100.tgt=q;hurt(q,'lleg',1,{type:'npc',n:{t:'lion',name:'Leo',id:1}},'');fx(me.r,me.c,'+2 CF','#f0cf7d')});
   await pg.evaluate(()=>{SPEED='pause'});await pg.waitForTimeout(2500);await pg.screenshot({path:path.join(out,nm+'_hit.png')});
   await pg.evaluate(()=>{H100.k=1;H100.peek=null;H100.list.length=0;document.querySelectorAll('.h100n').forEach(e=>e.remove());render();draw()});await pg.waitForTimeout(2000);await pg.screenshot({path:path.join(out,nm+'_ticks.png')});
   await cx.close()}

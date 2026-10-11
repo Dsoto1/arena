@@ -40,6 +40,12 @@ const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   SETTINGS.hit100='full';
   /* 4 a miss = one word readout */
   H100.list.length=0;fx(q.r,q.c,'miss','#b8b0a4');await hurt(q,'chest',0,{type:'player',p:me,w:me.wR},'t5');const M=H100.list.filter(z=>z.key===q);o.miss=M.length===1&&/Missed/.test(M[0].text);
+  /* 2a cause icons: a stone and a beast are medallion images, never emoji */
+  H100.list.length=0;q.hp.chest=7;await hurt(q,'chest',1,{type:'env',spect:{name:'Cato'}},'ts');const SR=H100.list.filter(z=>z.key===q).pop();o.stoneCause=SR&&SR.cause;
+  H100.list.length=0;q.hp.chest=7;await hurt(q,'chest',1,{type:'npc',n:{t:'lion',name:'Leo',id:1}},'tb');const BR=H100.list.filter(z=>z.key===q).pop();o.beastCause=BR&&BR.cause;
+  await until(()=>{const im=h100Sheet();return im&&im.complete&&im.naturalWidth},5000);const cv0=document.createElement('canvas');cv0.width=cv0.height=40;
+  const px=n=>h100Tok(cv0.getContext('2d'),n,0,0,32)?999:-1; /* file:// taints the canvas: drawn = true */
+  o.stonePx=px('spectator');o.beastPx=px('leo');
   /* 6 ticks: the CPU hits you outside your turn */
   S.cur=1;me.hp.rleg=7;me.ap.rleg=0;await hurt(me,'rleg',3,{type:'player',p:q,w:q.wR},'t6');o.ticks=(H100.ticks[me.id]||[]).length;
   S.boardPid=null;H100.peek=null;render();await W8(400);const tk=document.querySelector('#board svg[data-h100="'+me.id+'"] .h100tk');o.tkEl=!!tk;o.tkTip=tk?tk.getAttribute('data-avtip'):'';
@@ -62,6 +68,8 @@ ok(r.num&&r.onChest&&r.grey&&r.red,'1a avatar number over the chest: grey armor,
 ok(r.peek,'1b the panel peeks at your target');ok(r.back,'1c the panel snaps back to yours');
 ok(r.othersFull,'5a others: a faded mark in Full');ok(r.othersMine===0,'5b others: nothing in Mine');ok(r.quietMine===0,'5c Quiet: nothing on the board');
 ok(r.miss,'4 a miss is one word');
+ok(r.stoneCause&&r.stoneCause.tok==='spectator'&&!r.stoneCause.g&&r.stonePx>200,'2a stone hit wears his medallion image, no emoji '+JSON.stringify([r.stoneCause,r.stonePx]));
+ok(r.beastCause&&r.beastCause.tok==='leo'&&!r.beastCause.g&&r.beastPx>200,'2b beast hit wears its own token round, no emoji '+JSON.stringify([r.beastCause,r.beastPx]));
 ok(r.ticks===1&&r.tkEl&&/−3/.test(r.tkTip),'6a tick on your avatar with its tip ('+r.tkTip+')');ok(r.tkKept,'6b tick survives redraws');ok(r.tkCleared,'6c tick cleared at your turn');
 ok(r.fly&&r.moneyBoard===0,'7 CF flies to the panel, not on the board '+JSON.stringify([r.fly,r.moneyBoard]));
 ok(r.fast===0,'8 Fast: no pop-ups ('+r.fast+')');ok(r.setRow,'9 Settings row');
