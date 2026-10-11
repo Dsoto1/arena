@@ -15,6 +15,22 @@ const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   o.nat={n:sp().length,mainSp:n.bouts[2].special,mainEv:n.bouts[2].ev,fx:n.fx.ev,after:n.bouts.findIndex(b=>b.tier==='spc100')===3,
     fees:sp().every(([b])=>b.any100.fee>0&&b.fee===0),purse:sp().every(([b])=>b.purse>n.bouts[2].purse||(b.any100.rx&&b.any100.rx.k==='lo')),
     open:sp().some(([b])=>b.ents.length<boutSize(b)),riv:sp().some(([b])=>b.ents.length>0),hasFx:sp().some(([b])=>b.ev===n.fx.ev)};
+  /* own days (2a): specials on different days, play order follows days; no gauntlet/commodus over many weeks */
+  o.days={set:sp().every(([b])=>[0,1,2].includes(b.any100.day)),spread:sp().length<2||new Set(sp().map(([b])=>b.any100.day)).size===sp().length,
+    seq:(()=>{const q=any100Seq(n);const ok=q.every((i,k)=>!k||any100Key(n.bouts[q[k-1]])<=any100Key(n.bouts[i]));return ok&&q.length===n.bouts.length})(),
+    guard:sp().every(([b,i])=>{const bf=any100Before(n,i);const day=b.any100.day;return bf.every(x=>any100Key(x)<any100Key(b))&&n.bouts.filter(c=>!any100Sp(c)&&(ANY100_RANK[c.tier]<=day)).every(c=>bf.includes(c))}),
+    label:sp().every(([b])=>any100DayShort(b)===[_T('Fri'),_T('Sat'),_T('Sun')][b.any100.day]+' ★'),
+    tracker:(()=>{const els=[...document.querySelectorAll('.roomstat.bt85w [data-bt85]')].map(e=>+e.dataset.bt85);return JSON.stringify(els)===JSON.stringify(any100Seq(n))})(),
+    card:(()=>{const q=any100Seq(n);const dom=[...document.querySelectorAll('#mgrBody .card2.bout')];return dom.length===q.length&&dom.every((c,k)=>c.classList.contains('spc100')===any100Sp(n.bouts[q[k]]))})()};
+  {const w1=W_(),w0=w1.week,seen={};let sd=new Set(),multi=0;
+    const keep={bouts:n.bouts,any:n.any100,fx:n.fx};
+    for(let x=1;x<=60;x++){w1.week=x;n.bouts=[{tier:'under',ev:'democritus',ents:[],purse:40,done:false,bets:[]},{tier:'feature',ev:'egidious',ents:[],purse:80,done:false,bets:[]},
+        {tier:'main',ev:['gauntlet','commodus','juggernaut','familia','cassian'][x%5],ents:[],purse:160,done:false,bets:[],special:x%5<4}];n.fx={ev:n.bouts[2].ev,purse:1.5};
+      const was=n.bouts[2].ev;any100Make(w1);for(const b of n.bouts.filter(any100Sp)){seen[b.ev]=1;sd.add(b.any100.day)}
+      if(['gauntlet','commodus'].includes(was)&&(n.bouts[2].ev!==was||n.bouts.some(b=>any100Sp(b)&&b.ev===was)))seen.__moved=1;
+      const sp2=n.bouts.filter(any100Sp);if(sp2.length>1&&new Set(sp2.map(b=>b.any100.day)).size<sp2.length)seen.__clash=1}
+    w1.week=w0;n.bouts=keep.bouts;n.any100=keep.any;n.fx=keep.fx;
+    o.pool={gauntlet:!!seen.gauntlet,commodus:!!seen.commodus,moved:!!seen.__moved,clash:!!seen.__clash,days:sd.size,evs:Object.keys(seen).length}}
   o.panel=!!document.querySelector('#any100wk');o.rows=document.querySelectorAll('#any100wk .a1ev').length;o.nb=n.bouts.length;
   o.star=document.querySelectorAll('.roomstat.bt85w .bt85.bt100s').length;
   /* restriction frequency: about every third week */
@@ -70,6 +86,8 @@ const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
 console.log(JSON.stringify(R));
 ok(R.nat.n>=1&&!R.nat.mainSp&&R.nat.mainEv==='cassian'&&R.nat.after&&R.nat.fees&&R.nat.purse,'specials on top of Bouts I-III '+JSON.stringify(R.nat));
 ok(R.nat.hasFx,'the special fixture is a headline special');ok(R.nat.riv&&R.nat.open,'rivals entered early, seats left open');
+ok(R.days.set&&R.days.spread&&R.days.seq&&R.days.guard&&R.days.label&&R.days.tracker&&R.days.card,'specials on their own days, play order follows '+JSON.stringify(R.days));
+ok(!R.pool.gauntlet&&!R.pool.commodus&&!R.pool.moved&&!R.pool.clash&&R.pool.days===3&&R.pool.evs>=5,'no gauntlet/commodus as specials over 60 weeks, fixture stays '+JSON.stringify(R.pool));
 ok(R.panel&&R.rows===R.nb,'week card lists every event');ok(R.star===R.nat.n,'★ chip per special in the tracker '+R.star);
 ok(R.rxN>=12&&R.rxN<=30,'restricted about every 3rd week '+R.rxN);
 ok(R.pk,'picker opens');ok(R.enter.in&&R.enter.fee===24&&R.enter.left&&R.enter.open&&R.enter.once===1&&R.enter.gone&&R.enter.shown,'enter: fee, moved off his bout '+JSON.stringify(R.enter));

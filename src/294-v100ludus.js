@@ -80,12 +80,12 @@ const LU100_FAC=()=>({yard:_T('Yard'),barracks:_T('Barracks'),valet:_T('Beds'),k
 const LU100_DAY=()=>({under:_T('Fri'),feature:_T('Sat'),main:_T('Sun'),spc100:_T('Sun ★')}); /* spc100 = 296-v100any headline specials */
 const LU100_TIER=()=>({under:_T('Undercard'),feature:_T('Feature'),main:_T('Main'),spc100:_T('Special')});
 function lu100Bouts(w,pm){const n=w.night;if(!n||n.bye||!n.bouts||!n.bouts.length)return [];const mine=lu100Mine(pm);
-  return n.bouts.map(b=>{const id=(b.ents||[]).find(x=>mine.has(x));return {b,g:id?gById(id):null}})}
+  return (typeof any100Seq==='function'?any100Seq(n):n.bouts.map((b,i)=>i)).map(i=>{const b=n.bouts[i];const id=(b.ents||[]).find(x=>mine.has(x));return {b,g:id?gById(id):null}})}
 function lu100MatchCard(w,pm){const n=w.night;const L=n&&LOCATIONS[n.loc];
   if(!n||n.bye||!n.bouts||!n.bouts.length){let nx='';try{for(let d=1;d<=3;d++){const wk=w.week+d;if(isByeWk(wk))continue;const f=fixtureFor(w.season,wk);if(f){nx=_T`Next: week ${wkOf(wk)} · ${esc((EVENTS[f.ev]||{}).n||'')} in ${esc((LOCATIONS[f.loc]||{}).n||'')}`;break}}}catch(e){}
     return `<div class="lu100mw stone" role="note"><span class="sw">🌿</span><span class="tx"><b>${_T`No games this week`}</b><small>${nx}</small></span></div>`}
   const B=lu100Bouts(w,pm);const on=B.filter(x=>x.g).length;const D=LU100_DAY(),T=LU100_TIER();
-  const chip=({b,g})=>{const band=g?fatBand90(gFat(g)):'';return `<i class="bc${b.done?' done':''}${g?'':' none'}" title="${esc((TIERS[b.tier]||{}).n||'')}${g?' · '+esc(g.name):''}"><em>${D[b.tier]||''}<span class="tn"> · ${T[b.tier]||''}</span></em><span>${g?`<u>${lu100Face(g)}</u><span class="gn">${esc(g.name)}</span><s class="fd ${band}" title="${esc(FB90_TXT()[band][1])}"></s>`:`<span class="gn">${_T`— no fighter`}</span>`}${b.done?' <span class="ok">✓</span>':''}</span></i>`};
+  const chip=({b,g})=>{const band=g?fatBand90(gFat(g)):'';return `<i class="bc${b.done?' done':''}${g?'':' none'}" title="${esc((TIERS[b.tier]||{}).n||'')}${g?' · '+esc(g.name):''}"><em>${b.tier==='spc100'&&typeof any100DayShort==='function'?any100DayShort(b):D[b.tier]||''}<span class="tn"> · ${T[b.tier]||''}</span></em><span>${g?`<u>${lu100Face(g)}</u><span class="gn">${esc(g.name)}</span><s class="fd ${band}" title="${esc(FB90_TXT()[band][1])}"></s>`:`<span class="gn">${_T`— no fighter`}</span>`}${b.done?' <span class="ok">✓</span>':''}</span></i>`};
   return `<button type="button" class="lu100mw" data-mg="tab" data-id="night" title="${esc(_T('Open Match Week'))}"><span class="sw">⚔</span><span class="tx"><b>${_T`Match Week`}</b>
     <small>${esc(L?L.n:'')} · ${_T`${n.bouts.length} bouts`} · ${on===n.bouts.length?_T`your fighters on all ${on}`:_T`your fighters on ${on}`}<span class="lg"> · <s class="fd fresh"></s>${_T`fresh`} <s class="fd tired"></s>${_T`tired`} <s class="fd worn"></s>${_T`worn`}</span></small>
     <span class="days">${B.map(chip).join('')}</span></span></button>`}
