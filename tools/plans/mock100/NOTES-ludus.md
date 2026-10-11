@@ -81,3 +81,20 @@ Shots: `ludus_week_1440/390`, `ludus_bye_1440/390`, `ludus_mail_1440`, `ludus_te
 - `#advisors`: the council room that opens from the Advisors tile. The painted council-hall banner sits on top, then a 3×2 grid of cards with the real council83 faces. Each card has the name, role, a level badge with a progress bar toward the next level, ⬆ Train on the Recruiter only (coin), what the advisor does in one line, and their latest advice as a parchment quote (NEW when unread).
 - `#mail-open`: the 📬 drawer with one letter read in full: the sender's wax seal, title, an "answer by" deadline, the body, the trade boxes and a signature. Underneath, the Clerk's face gives her advice, then File it away / Decline / Accept. Below that come Unread, Read this week and Past letters. "‹ All letters" goes back to `#mail`.
 Shots: `ludus_week-b_1440/390`, `ludus_advisors_1440/390`, `ludus_mail-open_1440/390`.
+
+## ROUND 4 (2026-10-11): advisors stay on the My Ludus screen
+- **The `#advisors` room is SUPERSEDED and removed** (its shots are deleted).
+- **Advisors tile = a MARBLE RELIEF frieze.** Six clipeus heads (an imago clipeata roundel each). Each head is made from that advisor's real council face, which was captured from the game as `ludus_img/face_N.png`; the stone version is `ludus_img/marble_N.png` (greyscale, emboss from the upper left, warm marble tint, soft chisel edge).
+  - The panel itself is CSS: a cream marble ground with veining from SVG noise, plus a dentil moulding on top and a fillet at the bottom.
+  - Names are carved in square capitals with V for U (KAESO, GNAEVS, QVINTVS…), and each role is carved smaller below the name.
+  - A red wax seal sits on a head when that advisor has new advice (here the Consilium and the Recruiter). The caption line quotes the newest advice.
+- **Tapping a head opens a popover anchored above it** (`#advisor-pop`; on a phone it becomes a bottom sheet with a scrim). It shows:
+  - the face in colour, name, role, the level badge, and a progress bar toward the next level;
+  - what he does in one line, and his latest advice with a link;
+  - the upgrade line.
+- **The upgrade line follows the game's rules** (256-v98adv + 249 REC98):
+  - Coin trains any advisor only up to level 2 (`REC98.up[1]` = 60 coin). Levels 3–5 are EARNED by deeds (`adv98Req`, for example "5 graded signings + fame 50" for Recruiter level 4).
+  - `#advisor-pop` shows this career's Recruiter at Lv 3: "⬆ Level 4 is earned · sign 5 recruits graded on all five ratings · fame 50 ✓ — Level 4 gives +4 recruiter's hours (32 h) · grades ~27% sharper" (lvK .62 → .45).
+  - `#advisor-train` shows a new house's Recruiter at Lv 1: "⬆ Train to level 2 · 60 coin — +4 recruiter's hours (24 h) · grades 20% sharper. Levels 3–5 are earned by deeds."
+  - **Other advisors:** in the game today only the Recruiter's level changes play. Their popovers would show the same earn-line (for example Doctore "rating band-ups 0/10 · fame 50") with "the level shows on the card; no game effect yet". Virgilante should say whether those levels should start doing something in v1.0.
+Shots: `ludus_advisor-pop_1440.png`, `ludus_advisor-pop_390.png`, `ludus_advisor-train_1440.png`, plus a re-take of `ludus_week_*`, `ludus_week-b_*` and `ludus_bye_*`.

@@ -5,7 +5,9 @@
 <!-- MOCK-UP ONLY (v1.0 plan, his PDF "mockludusmanager" 2026-10-09 = ludus_img/his_mock.png).
      Content = a real week-3 career (Ludus Crispinus, Capua; this week's games in Pompeii) captured by ludus_before.js.
      Tile art = the game's own room banner scenes (roomScene73 / roomScene / armoryScene96 / cityScene75) exported as SVG, cropped per tile.
-     Round 3: #week-b (no Fight Night card, parchment fills the column) · #advisors (the council room) · #mail-open (one letter read in full).
+     Round 3: #week-b (no Fight Night card, parchment fills the column) · #mail-open (one letter read in full). [#advisors room: SUPERSEDED in round 4]
+     Round 4: the Advisors tile = a MARBLE RELIEF frieze (clipeus heads made from the council faces, names carved); a head opens a popover on the
+     frieze — #advisor-pop (the Recruiter, Lv 3: his next level is earned) · #advisor-train (a new house's Recruiter, Lv 1: ⬆ Train for coin). Phone: bottom sheet.
      States: #week (default, 4 tasks) · #bye (week 4, 6 tasks) · #mail (letters drawer) · #team-a (Your Team → today's Roster tab) ·
      #team-b (Your Team → one team hub with tabs; the rail loses Roster/Armory/Infirmary/Training Yard) · #rooms (the new scenes as room banners) · #phone.
      Round 2 (his answers D1–D7): tiles = one weekly job each, RICHER painted scenes (ludus_scenes.js) used as tile AND room banner.
@@ -303,6 +305,62 @@ body.s-week-b .nextwk{display:block}
 .back{font-size:13px;color:var(--muted);margin-bottom:8px;cursor:pointer}
 @media (max-width:600px){.cgrid{grid-template-columns:1fr}.lfull .tr{grid-template-columns:1fr}.lfull .tr>span{display:none}.lfull .acts .btn{flex:1}}
 @media (max-width:600px){.tm{grid-template-columns:1fr}.slots{grid-template-columns:1fr}.lst .h{display:none}.fr{grid-template-columns:36px minmax(0,1fr) auto}.fr>:nth-child(n+4){display:none}.htabs{overflow-x:auto}.htabs span{padding:6px 10px;font-size:13px;white-space:nowrap}.htabs .keep{display:none}.rban{height:92px}.rban .tt b{font-size:20px}}
+
+/* ---------- round 4: the marble frieze + advisor popover ---------- */
+.tile.adv{cursor:default}
+.frieze{background:#e6dcc6;border-bottom:1px solid #6a5130!important}
+.frieze:after{display:none}
+.frieze:before{content:"";position:absolute;inset:0;background:
+ repeating-linear-gradient(90deg,transparent 0 18px,rgba(120,100,70,.18) 18px 19px) top/100% 9px no-repeat,
+ linear-gradient(#cbbd9f,#f3ecdc 3px,#d8ccb2 9px,transparent 10px),
+ linear-gradient(0deg,#b8a886,#efe7d6 3px,#cdbf9f 7px,transparent 8px),
+ radial-gradient(ellipse at 15% 0%,rgba(255,250,235,.7),transparent 60%),
+ url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .05' numOctaves='4' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .55 -.18'/%3E%3C/filter%3E%3Crect width='300' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+ box-shadow:inset 0 0 30px rgba(90,70,40,.35)}
+.fz{position:absolute;inset:12px 10px 8px;display:flex;justify-content:space-around;align-items:center;z-index:1}
+.clip{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;padding:2px 4px;border-radius:8px}
+.clip .ring{position:relative;width:74px;height:74px;border-radius:50%;padding:4px;
+ background:radial-gradient(circle at 32% 28%,#fffaf0,#d9ccb0 55%,#a8977a);box-shadow:2px 3px 4px rgba(70,50,25,.45),inset -2px -2px 3px rgba(80,60,30,.35),inset 2px 2px 3px rgba(255,255,255,.8)}
+.clip .ring img{width:100%;height:100%;border-radius:50%;display:block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);filter:drop-shadow(1px 1px 1px rgba(60,40,20,.35))}
+.clip .ring:after{content:"";position:absolute;inset:4px;border-radius:50%;box-shadow:inset 3px 3px 6px rgba(70,50,25,.55),inset -2px -2px 3px rgba(255,255,255,.55)}
+.clip b{font:400 13px/1 "Marcellus SC",Georgia,serif;letter-spacing:2px;color:#6b5a40;text-shadow:1px 1px 0 rgba(255,255,255,.75),-1px -1px 0 rgba(80,60,30,.35);margin-top:4px}
+.clip small{font:400 9px/1 "Marcellus SC",Georgia,serif;letter-spacing:1.6px;color:#8a7858;text-shadow:1px 1px 0 rgba(255,255,255,.7)}
+.clip .wax{position:absolute;right:-3px;top:-2px;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#e2584a,#8a1a10 72%);box-shadow:0 1px 2px rgba(0,0,0,.5),inset 0 0 0 3px rgba(0,0,0,.12);z-index:2}
+.clip .wax:after{content:"";position:absolute;inset:6px;border-radius:50%;border:1px solid rgba(255,200,190,.45)}
+.clip:hover .ring,body.s-advisor-pop .clip[data-adv="1"] .ring,body.s-advisor-train .clip[data-adv="1"] .ring{box-shadow:0 0 0 2px #d6ab4c,2px 3px 6px rgba(70,50,25,.5)}
+.clip:focus-visible{outline:2px solid #d6ab4c}
+/* popover */
+.apop{display:none;position:fixed;z-index:40;width:400px;background:linear-gradient(#2a1f17,#1c140e);border:1px solid var(--gold);border-radius:10px;box-shadow:0 14px 40px rgba(0,0,0,.7);padding:12px 14px}
+.apop:after{content:"";position:absolute;left:var(--ax,50%);bottom:-8px;width:14px;height:14px;margin-left:-7px;background:#1c140e;border-right:1px solid var(--gold);border-bottom:1px solid var(--gold);transform:rotate(45deg)}
+body.s-advisor-pop .apop,body.s-advisor-train .apop{display:block}
+.apop .hd{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:4px 12px;align-items:center}
+.apop .hd img{width:64px;height:64px;border-radius:50%;border:2px solid #b08a3c;grid-row:1/3}
+.apop .hd b{font:400 19px var(--display);color:var(--gold2)}
+.apop .hd small{font:700 10.5px var(--mono);letter-spacing:1.2px;color:var(--dim)}
+.apop .x{width:26px;height:26px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;color:var(--bone);cursor:pointer;align-self:start}
+.apop .lv{grid-column:2/-1;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.apop .lv .l{font:700 11px var(--mono);background:#3a2a18;border:1px solid #7a5d2a;color:var(--gold2);border-radius:9px;padding:0 7px}
+.apop .lv .pb{flex:1;height:6px;border-radius:3px;background:#140f0b;overflow:hidden}.apop .lv .pb i{display:block;height:100%;background:var(--gold)}
+.apop .does{margin:8px 0 6px;font-size:13.5px}
+.apop .say{background:var(--parch);color:var(--pink);border-radius:6px;border-left:3px solid var(--gold);padding:6px 9px;font-size:13.5px;font-style:italic}
+.apop .say small{display:block;font-style:normal;font-size:11.5px;color:var(--pdim);margin-top:2px}
+.apop .up{margin-top:9px;border-top:1px solid var(--line2);padding-top:8px;font-size:13px;color:var(--bone)}
+.apop .up .tbtn{display:inline-flex;align-items:center;gap:5px;font:14px var(--body);color:#fff1cf;background:linear-gradient(#3a6a2a,#22401a);border:1px solid #8ac46a;border-radius:6px;padding:4px 11px;margin-right:6px}
+.apop .up .earn{display:inline-block;font:700 10.5px var(--mono);letter-spacing:.6px;text-transform:uppercase;background:#3a2a18;border:1px solid #7a5d2a;color:var(--gold2);border-radius:9px;padding:1px 8px;margin-right:6px}
+.apop .up .req{display:block;color:var(--muted);font-size:12.5px;margin-top:4px}
+.apop .up .req i{font-style:normal;color:#9fd77e}
+.apop .up .gain{color:#9fd77e}
+.apop .t-only{display:none}body.s-advisor-train .apop .t-only{display:inline}body.s-advisor-train .apop .e-only{display:none}
+.apop .t-blk{display:none}body.s-advisor-train .apop .t-blk{display:block}body.s-advisor-train .apop .e-blk{display:none}
+@media (max-width:600px){
+ .clip .ring{width:44px;height:44px;padding:3px}.clip b{font-size:9.5px;letter-spacing:1px}.clip small{display:none}.clip .wax{width:13px;height:13px}
+ .fz{inset:8px 4px 6px}
+ .pips{grid-template-columns:repeat(2,1fr);gap:1px 6px;padding:2px 5px}.pips span{font-size:9.5px}.pips span i{width:6px;height:6px}
+ .apop{left:0!important;right:0;bottom:0;top:auto!important;width:auto;border-radius:14px 14px 0 0;padding:14px 14px 22px}
+ .apop:after{display:none}
+ .apop:before{content:"";display:block;width:40px;height:4px;border-radius:2px;background:var(--line3);margin:-4px auto 10px}
+ body.s-advisor-pop .scrim,body.s-advisor-train .scrim{display:block}
+}
 </style></head>
 <body>
 <div class="app">
@@ -403,10 +461,8 @@ body.s-week-b .nextwk{display:block}
       <div class="cap"><i class="em">🏛</i><span><b>Upgrade School</b><span>The buildings · next: Barracks I · <img class="coin" src="../../../assets/coin.webp" alt="">250</span></span><i class="chev">›</i></div></div>
      <div class="tile"><div class="art"><div class="bg" data-sc="armory"></div><div class="st"><span>12 on the shelf</span><span class="w">2 to repair</span></div></div>
       <div class="cap"><i class="em">⚒</i><span><b>Armory</b><span>Better gear. Shelf, repairs, the stalls</span></span><i class="chev">›</i></div></div>
-     <div class="tile wide"><div class="art"><div class="bg" data-sc="council"></div>
-       <div class="counsel week-only">Consilium: "Hold our fighters back in Pompeii."</div><div class="counsel bye-only">Doctore: "A bye is a gift. Use the extra hours."</div>
-       <div class="faces"><img src="ludus_img/face_0.png" alt=""><img src="ludus_img/face_1.png" alt=""><img src="ludus_img/face_2.png" alt=""><img src="ludus_img/face_3.png" alt=""><img src="ludus_img/face_4.png" alt=""><img src="ludus_img/face_5.png" alt=""></div></div>
-      <div class="cap"><i class="em">🏛</i><span><b>Advisors <i class="cnt">2 new</i></b><span>Six advisors for life: Consilium, Recruiter, Doctore, Medicus, Clerk, Barracks master</span></span><i class="chev">›</i></div></div>
+     <div class="tile wide adv"><div class="art frieze"><div class="fz"><button class="clip" data-adv="0" type="button"><span class="ring"><img src="ludus_img/marble_0.png" alt=""><i class=wax></i></span><b>KAESO</b><small>CONSILIVM</small></button><button class="clip" data-adv="1" type="button"><span class="ring"><img src="ludus_img/marble_1.png" alt=""><i class=wax></i></span><b>GNAEVS</b><small>RECRVITER</small></button><button class="clip" data-adv="2" type="button"><span class="ring"><img src="ludus_img/marble_2.png" alt=""></span><b>QVINTVS</b><small>DOCTORE</small></button><button class="clip" data-adv="3" type="button"><span class="ring"><img src="ludus_img/marble_3.png" alt=""></span><b>SEPTIMVS</b><small>MEDICVS</small></button><button class="clip" data-adv="4" type="button"><span class="ring"><img src="ludus_img/marble_4.png" alt=""></span><b>MARCIA</b><small>CLERK</small></button><button class="clip" data-adv="5" type="button"><span class="ring"><img src="ludus_img/marble_5.png" alt=""></span><b>NONVS</b><small>BARRACKS MASTER</small></button></div></div>
+      <div class="cap"><i class="em">🏛</i><span><b>Advisors <i class="cnt">2 new</i></b><span class="week-only">Tap a face to hear him · Consilium: "Hold our fighters back in Pompeii."</span><span class="bye-only">Tap a face to hear him · Doctore: "A bye is a gift. Use the extra hours."</span></span></div></div>
     </div>
    </div>
 
@@ -442,37 +498,6 @@ body.s-week-b .nextwk{display:block}
    </div>
 
 
-   <!-- ===== #advisors: the council room ===== -->
-   <div class="advv">
-    <div class="rban"><div class="bg" data-sc="council" data-mode="banner"></div><div class="tt"><b>🏛 The Council</b><span>six voices, one seal — your advisors for life</span><div class="chips"><i>2 new counsels</i><i>Recruiter Lv 3</i></div></div></div>
-    <div class="cgrid">
-     <div class="adc"><img src="ludus_img/face_0.png" alt=""><div class="nm"><b>Kaeso Ahenobarbus</b><small>Consilium</small></div>
-      <div class="lv"><span class="l">Lv 3</span><span class="pb"><i style="width:0%"></i></span>seasons in the top four 0/1</div>
-      <div class="does">Strategy: when to fight, when to hold back.</div>
-      <div class="say new">"Pompeii is stacked with veterans. Send the ones who need the coin, keep the Fox fresh for Capua."<small>Counsel for Pompeii · week 3<span class="nw">NEW</span></small></div></div>
-     <div class="adc"><img src="ludus_img/face_1.png" alt=""><div class="nm"><b>Gnaeus Cicatrix</b><small>Recruiter</small></div>
-      <div class="lv"><span class="l">Lv 3</span><span class="pb"><i style="width:0%"></i></span>signings 0/5 <span class="tr">⬆ Train · <img class="coin" src="../../../assets/coin.webp" alt="">120</span></div>
-      <div class="does">Scouts free agents: 20 hours a week, grades sharper with each level.</div>
-      <div class="say new">"Galba Bone-Breaker. Soldier, ~B+, asks 38 a week. I'd stake my eye on him."<small>Pick of the week · week 3<span class="nw">NEW</span></small></div></div>
-     <div class="adc"><img src="ludus_img/face_2.png" alt=""><div class="nm"><b>Quintus Celer</b><small>Doctore</small></div>
-      <div class="lv"><span class="l">Lv 3</span><span class="pb"><i style="width:0%"></i></span>rating band-ups 0/10</div>
-      <div class="does">Drills, growth and the Training Yard.</div>
-      <div class="say">"Hostus is one push from Strength 80. Give him Iron this week."<small>Week II in review · week 3</small></div></div>
-     <div class="adc"><img src="ludus_img/face_3.png" alt=""><div class="nm"><b>Septimus Dentatus</b><small>Medicus</small></div>
-      <div class="lv"><span class="l">Lv 3</span><span class="pb"><i style="width:0%"></i></span>wounds healed 0/8</div>
-      <div class="does">Wounds, rest and the ward.</div>
-      <div class="say">"Aper is worn. One more hard week and I'll be stitching him."<small>A risk letter · week 2</small></div></div>
-     <div class="adc"><img src="ludus_img/face_4.png" alt=""><div class="nm"><b>Marcia Sabina</b><small>Clerk</small></div>
-      <div class="lv"><span class="l">Lv 3</span><span class="pb"><i style="width:19%"></i></span>treasury 288/1500</div>
-      <div class="does">Purse, wages and contracts.</div>
-      <div class="say">"We lose 56 a week. Two weeks of runway, dominus. Win something."<small>The Quaestor's ledger · week 3</small></div></div>
-     <div class="adc"><img src="ludus_img/face_5.png" alt=""><div class="nm"><b>Nonus Flamma</b><small>Barracks master</small></div>
-      <div class="lv"><span class="l">Lv 4</span><span class="pb"><i style="width:17%"></i></span>weeks without an unhappy exit 2/12</div>
-      <div class="does">The fighters' moods and requests.</div>
-      <div class="say">"Three of them are begging for the sand. Let them, or hear about it."<small>The eager · week 3</small></div></div>
-    </div>
-    <div class="advnote">Levels rise by what each advisor achieves; only the Recruiter can also be trained with coin (his level sharpens the grades).</div>
-   </div>
    <!-- ===== #rooms: the same scenes atop each room ===== -->
    <div class="roomsv">
     <div class="rban"><div class="bg" data-sc="team" data-mode="banner"></div><div class="tt"><b>🛡 Your Team</b><span>the men and women who carry your name onto the sand</span></div></div>
@@ -523,8 +548,18 @@ body.s-week-b .nextwk{display:block}
  <div class="sec">Past letters · 12 kept</div>
  <div class="past">▸ Acta Diurna · week II · three bouts in Capua, no deaths<br>▸ The Quaestor's ledger · week 2 · sealed<br>▸ Welcome to Ludus Crispinus · week 1</div>
 </div>
+<div class="apop" id="apop">
+ <div class="hd"><img src="ludus_img/face_1.png" alt=""><span><b>Gnaeus Cicatrix</b><br><small>RECRUITER</small></span><span class="x" title="Close">✕</span>
+  <div class="lv"><span class="l"><span class="e-only">Lv 3</span><span class="t-only">Lv 1</span></span><span class="pb"><i style="width:50%" class="e-only"></i></span><span class="e-only">to Lv 4: 0/5 graded signings · fame 62/50 ✓</span><span class="t-only">a new house's recruiter</span></div></div>
+ <div class="does">Scouts free agents: <b class="e-only">28</b><b class="t-only">20</b> hours a week. His level sets how sharp the grades are.</div>
+ <div class="say">"Galba Bone-Breaker. Soldier, ~B+, asks 38 a week. I'd stake my eye on him."<small>Pick of the week · week 3 · <u>See him in Recruiting</u></small></div>
+ <div class="up e-blk"><span class="earn"><span style="font-family:var(--body)">⬆</span> Level 4 is earned</span>sign 5 recruits graded on all five ratings · fame 50 <i>✓</i>
+  <span class="req">Level 4 gives <span class="gain">+4 recruiter's hours (32 h) · grades ~27% sharper</span>. Coin only trains to level 2.</span></div>
+ <div class="up t-blk"><span class="tbtn">⬆ Train to level 2 · <img class="coin" src="../../../assets/coin.webp" alt="">60</span>
+  <span class="req">Level 2 gives <span class="gain">+4 recruiter's hours (24 h) · grades 20% sharper</span>. Levels 3–5 are earned by deeds.</span></div>
+</div>
 <div id="phoneFrame"><iframe title="phone" src="ludus.html#week"></iframe></div>
-<div class="statebar"><a href="#week">#week</a><a href="#week-b">#week-b</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#mail-open">#mail-open</a><a href="#advisors">#advisors</a><a href="#team-a">#team-a</a><a href="#team-b">#team-b</a><a href="#rooms">#rooms</a><a href="#phone">#phone</a></div>
+<div class="statebar"><a href="#week">#week</a><a href="#week-b">#week-b</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#mail-open">#mail-open</a><a href="#advisor-pop">#advisor-pop</a><a href="#advisor-train">#advisor-train</a><a href="#team-a">#team-a</a><a href="#team-b">#team-b</a><a href="#rooms">#rooms</a><a href="#phone">#phone</a></div>
 <script src="ludus_scenes.js"></script>
 <script>
 document.querySelectorAll('[data-sc]').forEach(e=>e.innerHTML=SCENE99(e.dataset.sc,e.dataset.mode||'tile'));
@@ -532,7 +567,13 @@ function st(){const h=(location.hash||'#week').slice(1);document.body.className=
  document.querySelectorAll('.rail .t.a-on').forEach(t=>t.classList.toggle('on',h==='team-a'))}
 addEventListener('hashchange',st);st();
 document.querySelector('.mailbtn').onclick=()=>location.hash='#mail';
-document.querySelector('.scrim').onclick=()=>location.hash='#week';document.querySelectorAll('.drawer .x').forEach(x=>x.onclick=()=>location.hash='#week');document.querySelector('.d2 .back').onclick=()=>location.hash='#mail';document.querySelectorAll('.tile')[4].onclick=()=>location.hash='#advisors';
+document.querySelector('.scrim').onclick=()=>location.hash='#week';document.querySelectorAll('.drawer .x').forEach(x=>x.onclick=()=>location.hash='#week');document.querySelector('.d2 .back').onclick=()=>location.hash='#mail';
 document.querySelectorAll('.tile')[0].onclick=()=>location.hash='#team-b';
+
+function placePop(){const h=location.hash;if(h!=='#advisor-pop'&&h!=='#advisor-train')return;const c=document.querySelector('.clip[data-adv="1"] .ring');const p=document.getElementById('apop');if(!c||innerWidth<=600)return;
+ const r=c.getBoundingClientRect();const L=Math.max(10,Math.min(innerWidth-p.offsetWidth-10,r.left+r.width/2-p.offsetWidth/2));p.style.left=L+'px';p.style.top=(r.top-p.offsetHeight-12)+'px';p.style.setProperty('--ax',(r.left+r.width/2-L)+'px')}
+addEventListener('hashchange',()=>setTimeout(placePop,0));addEventListener('resize',placePop);setTimeout(placePop,50);
+document.querySelectorAll('.clip').forEach(b=>b.onclick=()=>{location.hash='#advisor-pop'});
+document.querySelector('#apop .x').onclick=()=>location.hash='#week';
 </script>
 </body></html>
