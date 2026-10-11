@@ -176,7 +176,7 @@ ARENA THEMES (his ok): update THEMES99 palettes where needed to match the new ar
 RULE (his, 2026-10-11): NO achievement/trophy may use a basic emoji icon as its art. Found: online trophies TROPHY_IC83 (137-v83onlui) = 🏆 🦁(reads as a teddy bear) 👑 💀 🛡 👍 ☀ 🏅. Fix in v1.0 with the unified Tituli plaques: each title gets real in-house art (Tholo / Commodus = their token rounds or card art, first win = the event's Summa Rudis medallion, rank = the rank medal, Thumb = the Fate card art, Victor of the Day = laurel crown, bouts survived = scutum). Audit the Manager trophy case, Annals feats, Immortalis too.
 Round 8 answers (his): 1b tassets ~30k · 3a real integration for v1.0 (file list in NOTES-look-gear.md Round 8) · Q2 conversion cost: (c) — his pick 2026-10-11 ("C works"): printed pieces + class kits are sculpted ONCE at build time and shipped as one pre-baked file (~150–300 KB, loaded on demand); only custom extras build on the device · online trophy art fix ships with 1.0.
 
-## v1.0 HIT FEEDBACK (his picks 2026-10-11; nothing built until go)
+## v1.0 HIT FEEDBACK (his picks 2026-10-11) — BUILT: 277-v100hit, test tv100h, shots tools/plans/hit100/
 Problem: every point change pops its own floating number (#fx95) — noise without cause or place.
 - Q1b: numbers land ON THE FIGHTER-PANEL AVATAR over the piece/location hit (grey −N armor AP, red −N health), settle into the existing
   cracks/dims; severed = a word. On the board: a small 6-zone body pip (head/chest/arms/legs) beside the token lights the struck zone + one total.
