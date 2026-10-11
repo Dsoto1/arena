@@ -1,0 +1,166 @@
+{
+ "pxmm": 4.267,
+ "g_soldier": {
+  "kb": 43.1,
+  "decodedKB": 929,
+  "cells": 9,
+  "w": 1062,
+  "h": 224
+ },
+ "d_soldier": {
+  "kb": 19.8,
+  "decodedKB": 346,
+  "cells": 4,
+  "w": 479,
+  "h": 185
+ },
+ "g_hero": {
+  "kb": 42.7,
+  "decodedKB": 897,
+  "cells": 9,
+  "w": 1048,
+  "h": 219
+ },
+ "d_hero": {
+  "kb": 20.3,
+  "decodedKB": 359,
+  "cells": 4,
+  "w": 491,
+  "h": 187
+ },
+ "g_slave": {
+  "kb": 46.4,
+  "decodedKB": 1183,
+  "cells": 9,
+  "w": 1346,
+  "h": 225
+ },
+ "d_slave": {
+  "kb": 21.2,
+  "decodedKB": 478,
+  "cells": 4,
+  "w": 544,
+  "h": 225
+ },
+ "g_royalty": {
+  "kb": 41.9,
+  "decodedKB": 821,
+  "cells": 9,
+  "w": 1035,
+  "h": 203
+ },
+ "d_royalty": {
+  "kb": 18.4,
+  "decodedKB": 331,
+  "cells": 4,
+  "w": 460,
+  "h": 184
+ },
+ "g_amazonia": {
+  "kb": 40.8,
+  "decodedKB": 809,
+  "cells": 9,
+  "w": 1035,
+  "h": 200
+ },
+ "d_amazonia": {
+  "kb": 18.7,
+  "decodedKB": 358,
+  "cells": 4,
+  "w": 506,
+  "h": 181
+ },
+ "g_veteranus": {
+  "kb": 42.3,
+  "decodedKB": 929,
+  "cells": 9,
+  "w": 1062,
+  "h": 224
+ },
+ "d_veteranus": {
+  "kb": 19.4,
+  "decodedKB": 346,
+  "cells": 4,
+  "w": 479,
+  "h": 185
+ },
+ "g_venatore": {
+  "kb": 43.1,
+  "decodedKB": 1052,
+  "cells": 9,
+  "w": 1202,
+  "h": 224
+ },
+ "d_venatore": {
+  "kb": 18.5,
+  "decodedKB": 461,
+  "cells": 4,
+  "w": 663,
+  "h": 178
+ },
+ "g_damnatio": {
+  "kb": 36.3,
+  "decodedKB": 801,
+  "cells": 9,
+  "w": 1035,
+  "h": 198
+ },
+ "d_damnatio": {
+  "kb": 16.1,
+  "decodedKB": 313,
+  "cells": 4,
+  "w": 460,
+  "h": 174
+ },
+ "gladMs": 116197,
+ "beastRig": "/tools/plans/look100/beast3_rig.js",
+ "totalKB": 631,
+ "commodus": {
+  "kb": 53.1,
+  "decodedKB": 1150,
+  "cells": 11,
+  "w": 1389,
+  "h": 212,
+  "ms": 215371
+ },
+ "tholo": {
+  "kb": 21.6,
+  "decodedKB": 420,
+  "cells": 4,
+  "w": 493,
+  "h": 218,
+  "ms": 124247
+ },
+ "lion": {
+  "kb": 27.9,
+  "decodedKB": 735,
+  "cells": 6,
+  "w": 1120,
+  "h": 168,
+  "ms": 12614
+ },
+ "wolf": {
+  "kb": 18,
+  "decodedKB": 489,
+  "cells": 6,
+  "w": 985,
+  "h": 127,
+  "ms": 11529
+ },
+ "snake": {
+  "kb": 13.4,
+  "decodedKB": 272,
+  "cells": 6,
+  "w": 704,
+  "h": 99,
+  "ms": 8355
+ },
+ "bear": {
+  "kb": 8.5,
+  "decodedKB": 181,
+  "cells": 3,
+  "w": 309,
+  "h": 150,
+  "ms": 8092
+ }
+}
