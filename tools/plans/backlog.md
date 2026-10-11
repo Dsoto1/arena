@@ -220,3 +220,9 @@ let the others drop the seat to a CPU (like the 3-min away rule) · 6a decision 
 answer · 7a Custom: host setting Off/30/60/90/120 s (default Off) · 8c ring around the active face + bar in the turn panel + big countdown in
 the last 10 s + a SOFT tick in the last 5 s ("marble coasters lightly clapping").
 Timeouts must be SERVER-ordered inputs (lockstep: the server, not a client clock, says time ran out; same moment on every screen).
+
+## His answers 2026-10-11 (v1.0 summary + tame)
+1 Turn timers: the last-seconds countdown must NEVER block the arena view (no big number over the board; keep it off the sand) — build on his go.
+2a EVERYTHING in one v1.0 · 3 Fight Night rename: asked for my recommendation · 4a "enter any event": mock-up first · 5 who's-online list in v1.0 ·
+6 sharper Mandata/round token PNGs coming from him · 7 Tholo CAN be Meat-lured ("a strange beast") · 8 I draft the website What's New.
+Tame: 1a Tholo lurable · 2a Ursa/Brutum break the bond whoever owns the bear · 3a card text names Tholo again.
