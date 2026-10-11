@@ -1,5 +1,5 @@
 {
- "run": 306,
+ "run": 307,
  "lastFull": 1791382783754,
  "tests": {
   "tseed4": {
@@ -1868,21 +1868,21 @@
    "sh": "32ee2cd6c9"
   },
   "tmgr54": {
-   "streak": 59,
-   "runs": 59,
+   "streak": 60,
+   "runs": 60,
    "fails": 0,
    "flaky": [],
-   "lastRun": 296,
-   "time": 11,
-   "lastPass": 296,
+   "lastRun": 307,
+   "time": 28,
+   "lastPass": 307,
    "deps": {
-    "build.sh": "64278cdfc1f7",
-    "src/01-head.html": "10f03bacf0a0",
+    "build.sh": "fa9743bd904e",
+    "src/01-head.html": "92e329f3da80",
     "tools/smartreg.js": "f324391b30d6",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tmgr54.js": "46975530f1e3"
    },
-   "sh": "5b9057c8cd"
+   "sh": "8391c01722"
   },
   "tv55": {
    "streak": 57,
@@ -2141,21 +2141,21 @@
    "pinUntil": 90
   },
   "tv65": {
-   "streak": 2,
-   "runs": 61,
+   "streak": 3,
+   "runs": 62,
    "fails": 5,
    "flaky": [
     8,
     23,
     60
    ],
-   "lastRun": 288,
-   "time": 36,
-   "sh": "34113f5886",
-   "lastPass": 288,
+   "lastRun": 307,
+   "time": 28,
+   "sh": "8391c01722",
+   "lastPass": 307,
    "deps": {
-    "build.sh": "c90f949a67e7",
-    "src/01-head.html": "10f03bacf0a0",
+    "build.sh": "fa9743bd904e",
+    "src/01-head.html": "92e329f3da80",
     "tools/smartreg.js": "f324391b30d6",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tv65.js": "4db538123763"

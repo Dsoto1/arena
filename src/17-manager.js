@@ -592,6 +592,7 @@ async function endWeek(){
           mnews(_T`🦅 <b>${esc(g.name)}</b> returns from the war a HERO: +${up} rating, +15 fame, and half the empire chanting the name.`,'big');
           if(m2&&m2.isPlayer)tnews(_T`${esc(g.name)} came home a war hero: +${up} rating, +15 fame.`)}
         continue}
+      if(injReq(g.inj)==='surgeon'&&!g.contract){ghist(g,_T`the city physician closed the ${g.inj.label}`);delete g.inj;continue} /* v1.0 (his pick a): free agents are treated free by the city physician — their wounds never fester */
       if(injReq(g.inj)==='surgeon'){ // a surgeon's wound does not simply pass: it festers
         g.inj.until=w.week+1;g.inj.neglect=(g.inj.neglect||0)+1;const m2=g.contract?mgrById(g.contract.mgr):null;
         if(g.inj.neglect>=3){const roll=Math.random();
