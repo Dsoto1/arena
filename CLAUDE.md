@@ -1097,7 +1097,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   WAGERS CLOSED (`betOK` → `WAGER_OFF100`, bet.place code `wager_off`; no Wagers tab/buttons/bubbles online; old bets still settle). RESULTS FOR EVERY PLAYER: the
   online results window opens with `#onr100` "Your match" (outcome, coin to the treasury / "Custom bout — no coin is paid", lifetime CF, Glory, every seat + Fate;
   waits for the settlement, the settlement toasts land in it). DOMUS SLOTS (`SLOT100`: start 1; slot 2 = 150 Glory + 200 coin, 3 = 600 + 500, 4 = 1500 + 1000; Glory =
-  the house's best Domus-rank score dr98; `D.slots100`, a house without it keeps four; route domus.slot in IDEM93; the coin 5th slot only after the four; locked
+  the house's best Domus-rank score dr98; `D.slots100`, a house without it gets one slot per LIVING gladiator on first touch (min 1, stored once); route domus.slot in IDEM93; the coin 5th slot only after the four; locked
   `.gc89.sl100` cards). WATCHERS (hereSummary `watch`; Who's online ticket holders = watch/room). TAUNTS (QC lions/senate/garum, tickle/granny/yawn/sandal, bigger).
   SECURITY: fighters-only strikes (match.odd), no self-ending your turn clock, far-ahead turn reports need 2 lanistas (`TURN_JUMP100`), ids/chars short strings
   (`bad_req`), domus.equip living + own house. Older test suites that need four gladiators set `C.SLOT100.start=4` / `ONLC.SLOT100.start=4`. Tests tonl100a, server v100a.

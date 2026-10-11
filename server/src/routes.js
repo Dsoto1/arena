@@ -100,8 +100,12 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   async function guestsHere(){const t=now();if(hereMs&&gC&&t-gAt<hereMs)return gC;gC=(await store.byIndex('GON')).filter(G=>G.conn&&t-(G.GSI1SK||0)<HERE_MS&&t-(G.first||0)<C.GUEST_MS);gAt=t;return gC}
   const summary=async list=>{const H=await here();return C.hereSummary(H.map(x=>({id:x.id,match:x.match,tz:x.here&&x.here.tz})),list,(await guestsHere()).map(G=>({tz:G.tz})))};
   /* ── v0.82 DOMUS: DOMUS#<id> DOMUS = the house; DNAME#<lower name> DNAME = its name, claimed once (putNew); ACCT PROFILE {domus, dname} ── */
-  const domusGet=async id=>id?await store.get('DOMUS#'+id,'DOMUS'):null;
   const domusItem=D=>({...D,GSI1PK:'DOMUS_OF#'+D.owner,GSI1SK:D.founded});
+  /* v1.0: a house from before the slots (no slots100) keeps one slot per LIVING gladiator, once, on first touch (ONLC.slotsMigrate100) */
+  const domusGet=async id=>{const D=id?await store.get('DOMUS#'+id,'DOMUS'):null;
+    if(D&&D.slots100==null&&C.slotsMigrate100){const n=(await store.byIndex('OWNER#'+D.owner)).filter(c=>c.domus===D.id&&c.alive).length;C.slotsMigrate100(D,n);
+      const rev=await store.putRev('DOMUS#'+id,'DOMUS',domusItem(D));if(rev===false){const X=await store.get('DOMUS#'+id,'DOMUS');if(X&&X.slots100!=null)return X}else D.rev=rev}
+    return D};
   async function editDomus(id,fn){if(!id)return null;for(let i=0;i<6;i++){const D=await domusGet(id);if(!D)return null;if((await fn(D))===false)return null;
       const rev=await store.putRev('DOMUS#'+id,'DOMUS',domusItem(D));if(rev!==false){D.rev=rev;return D}}return null}
   /* gladiators a house has ever had (living or dead): its counter, or its gladiators found by owner */
@@ -1462,7 +1466,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       const rest={...d};delete rest.turnT;if(Object.keys(rest).some(k=>k!=='id'&&k!=='rid'))return base(rest,ctx);await toRoom(X,null,{except:ctx.acct});return room(X)}}}
   /* ══════════ end of v1.0 TURN TIMERS ══════════ */
   /* v1.0 SERVER BATCH A (shared rules: the "v1.0 SERVER BATCH A" section of onlcore; docs/backend.md "v1.0 server batch A"; no protocol bump)
-     DOMUS   + slots100: gladiator slots opened (a house without it predates v1.0 and keeps all four); domusRow carries gmax, slots100, slotNext100
+     DOMUS   + slots100: gladiator slots opened (a house without it predates v1.0: first touch sets it to its living gladiators, min 1); domusRow carries gmax, slots100, slotNext100
      domus.slot {}            open the next slot: the house's Glory (best Domus-rank score) must reach the step, the treasury pays its coin (ledger 'upg')
      market.kit {kit:'daily'} THE ISSUED KIT: once an online day a house; takes back every Issued piece the house holds elsewhere, refills what he lacks
      bet.place                refused: code 'wager_off' (online wagers are closed; old bets still settle and refund as before)

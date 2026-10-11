@@ -1383,7 +1383,7 @@ const ONLC=(function(){
        (armor only on bare points; weapons only when he holds no weapon of his own). Once an online day a house (D.kitDay92, as v0.92).
    3 · ONLINE WAGERS CLOSED: betOK always refuses (WAGER_OFF100); the server's bet.place answers code 'wager_off'. Settlement code stays for old data.
    5 · DOMUS SLOTS: a new house opens with SLOT100.start (1) gladiator slot; slots 2–4 open for the house's Glory (its best Domus-rank score, dr98)
-       AND coin from the treasury (SLOT100.steps). Houses founded before v1.0 (no slots100 on the house) keep all four. The coin-only 5th slot
+       AND coin from the treasury (SLOT100.steps). A house founded before v1.0 (no slots100 yet) keeps as many slots as it has LIVING gladiators when first touched (at least 1; slotsMigrate100, once, stored on the house); the rest are locked like a new house's. The coin-only 5th slot
        (UPG89.slot5) needs the four first.
    6 · WATCHERS ARE NOT PLAYERS: the landing's counts (hereSummary) count a ticket holder in a live match as watching, not fighting; Who's online
        shows a ticket holder as watching (live) / in a room (waiting).
@@ -1400,6 +1400,8 @@ const ONLC=(function(){
   function slotWhy100(D,g){if(!D)return 'Name your house first.';const s=slotNext100(D);if(!s)return 'Every slot of the house is open.';const have=slotGlory100(D,g);
     if(have<s.glory)return `Slot ${s.n} opens at ${s.glory} Glory — your house has ${have}.`;if((D.treasury|0)<s.coin)return `The treasury needs ${s.coin} coin.`;return ''}
   function slotBuy100(D,g,t){const why=slotWhy100(D,g);if(why)throw new Error(why);const s=slotNext100(D);D.treasury=(D.treasury|0)-s.coin;D.slots100=s.n;C.ledAdd(D,'upg',s.coin,null,t);return s}
+  /* once per house: a pre-v1.0 house (no slots100) keeps one slot per living gladiator (min 1); returns true when it changed */
+  const slotsMigrate100=(D,living)=>{if(!D||D.slots100!=null)return false;D.slots100=Math.max(1,Math.min(C.GLAD_MAX,living|0));return true};
   C.gladMax=D=>slotsOf100(D)+(((D&&D.upg89)||{}).slot5?1:0);
   {const base=C.upgWhy;C.upgWhy=function(D,k){if(k==='slot5'&&slotsOf100(D)<C.GLAD_MAX)return 'Open the four slots first.';return base.apply(this,arguments)}}
   {const base=C.newDomus;C.newDomus=function(){const D=base.apply(this,arguments);if(D)D.slots100=SLOT100.start;return D}}
@@ -1442,7 +1444,7 @@ const ONLC=(function(){
   for(const [sc,ks] of [['room',['lions','senate','garum']],['match',['tickle','granny','yawn','sandal']],['after',['bigger']]])for(const k of ks)if(!C.QC[sc].includes(k))C.QC[sc].push(k);
   /* the new paying request runs once per request id */
   if(Array.isArray(C.IDEM93)&&!C.IDEM93.includes('domus.slot'))C.IDEM93.push('domus.slot');
-  Object.assign(C,{SLOT100,ISSUE_W100,WAGER_OFF100,slotsOf100,slotNext100,slotGlory100,slotWhy100,slotBuy100,issueList100,isIss100,issOf100,issuePlan100,issueElsewhere100})})(ONLC);
+  Object.assign(C,{SLOT100,ISSUE_W100,WAGER_OFF100,slotsOf100,slotsMigrate100,slotNext100,slotGlory100,slotWhy100,slotBuy100,issueList100,isIss100,issOf100,issuePlan100,issueElsewhere100})})(ONLC);
 /* ===== v1.0 SERVER BATCH B ===== */
 /* Ranked improvements 1–7 + the online sidelining (his picks 2026-10-11). Shared by the server (routes.js "v1.0 SERVER BATCH B") and the page
    (293-v100srvB: the client + its mock routes). No protocol bump: every new request is optional for an older page; the server only adds fields.
