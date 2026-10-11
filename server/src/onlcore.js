@@ -1303,4 +1303,44 @@ const ONLC=(function(){
   if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('house.card'))C.GUEST_OK.push('house.card');
   Object.assign(C,{PW98,pwClean98,pwWhy98,sha256hex98,pwHash98,REGIONS98,regionOf98,regionByKey98,DRANKS98,DR_TOP98,DR_FALLEN98,drankScore98,drankOf98,drankIdx98,drankKeep98,
     EVENTS_CUSTOM98,EV_SEATS98,customOnly98,rename98,renameDeep98})})(ONLC);
+/* ══════════ v1.0 WHO'S ONLINE (his picks 1c 2b 3a; the page: 287-v100who, the server: the "v1.0 WHO'S ONLINE" block of routes.js) ══════════
+   here.list {status?, region?, sort?, cursor?} → {rows, n, next, at}: the lanistas online now (presence: ACCT GSI1PK 'ON'), one row each —
+     {id, ln lanista name, g active gladiator, rk its rank, dn house name, dom house id, dr Domus-rank tier, rg region (REGIONS98 from the
+      time zone), st idle|room|fight|watch, rm the waiting room, m the live match (fighting or watched), ni 1 = takes no invitation from you,
+      fo 1 = you follow the house, me 1 = your own row (always first; hid 1 when you hide yourself)}.
+   Never listed: hidden lanistas (acct.priv {hide}), guests, CPU bots. Guests may read the list (no ni / fo). ≤ WHO100.MAX rows a page and
+   ≤ WHO100.BYTES of JSON (the rest → `next`, a numeric cursor). Status: seated in a live match → fight; in a waiting room (sitting or
+   standing) → room; watching a live match (ACCT w100 {id, at}, set by match.watch, cleared by match.unwatch, ≤ WATCH_MS old) → watch; else idle. */
+(function(C){
+  const WHO100={MAX:200,BYTES:60000,POLL_MS:30000,WATCH_MS:3*3600e3,ST:['idle','room','fight','watch'],SORTS:['st','name','rank','region']}; /* TWEAK: page size, reply size, the page's refresh */
+  const ST_ORD100={fight:0,room:1,watch:2,idle:3};
+  /* the rooms list → who sits/stands where: {room: Map acct→room id, fight: Map acct→match id, live: Set of live match ids} */
+  function whoMaps100(rooms,now){const room=new Map(),fight=new Map(),live=new Set();
+    for(const L of rooms||[]){if(!L||!L.id)continue;if(L.status==='live'){live.add(L.id);for(const p of L.players||[])if(p&&p.id&&!/^bot/.test(p.id)&&!p.cpu&&!p.left)fight.set(p.id,L.id)}
+      else if(L.status==='waiting')for(const m of [...(L.members||[]),...(L.players||[])])if(m&&m.id&&!room.has(m.id))room.set(m.id,L.id)}
+    return {room,fight,live,now:+now||0}}
+  function whoStatus100(A,maps){if(!A)return {st:'idle'};if(maps.fight.has(A.id))return {st:'fight',m:maps.fight.get(A.id)};if(maps.room.has(A.id))return {st:'room',rm:maps.room.get(A.id)};
+    const w=A.w100;if(w&&w.id&&maps.live.has(w.id)&&(maps.now-(+w.at||0))<WHO100.WATCH_MS)return {st:'watch',m:w.id};return {st:'idle'}}
+  /* one row from an ACCT profile (here = {glad, rank, tz}); o = {dr, viewer: the asking ACCT or null} */
+  function whoRow100(A,maps,o){o=o||{};const h=A.here||{};const s=whoStatus100(A,maps);const rk=C.RANKS.some(r=>r.k===h.rank)?h.rank:'tiro';
+    const r={id:String(A.id),ln:String(A.lname||'').slice(0,40),g:String(h.glad||'').slice(0,40),rk,dn:String(A.dname||'').slice(0,40),dom:A.domus?String(A.domus):'',
+      dr:/^[a-z]{3,16}$/.test(String(o.dr||''))?o.dr:'',rg:C.regionOf98?C.regionOf98(h.tz||''):'',st:s.st};
+    if(s.rm)r.rm=s.rm;if(s.m)r.m=s.m;const V=o.viewer;
+    if(V&&V.id===A.id){r.me=1;if(C.privOf89(A).hide)r.hid=1}
+    else if(V){if(C.invWhy89(A,{domus:V.domus}))r.ni=1;if(A.domus&&(V.follows||[]).some(f=>f&&f.id===A.domus))r.fo=1}
+    return r}
+  /* who may be listed: hidden lanistas, bots and accounts without a name or gladiator never (your own row always) */
+  const whoListed100=(A,viewerId)=>!!A&&!/^bot/.test(String(A.id))&&(A.id===viewerId||!C.privOf89(A).hide);
+  function whoKeep100(rows,q){q=q||{};const st=WHO100.ST.includes(q.status)?q.status:'';const rg=C.regionByKey98&&C.regionByKey98(q.region)?q.region:(q.region==='none'?'none':'');
+    return (rows||[]).filter(r=>r.me||((!st||r.st===st)&&(!rg||(rg==='none'?!r.rg:r.rg===rg))))}
+  const whoName100=r=>String(r.ln||r.g||'').toLowerCase();
+  function whoSort100(rows,by){by=WHO100.SORTS.includes(by)?by:'st';const ri=k=>C.rankIdx(k);
+    const cmp={st:(a,b)=>ST_ORD100[a.st]-ST_ORD100[b.st],rank:(a,b)=>ri(b.rk)-ri(a.rk),region:(a,b)=>String(a.rg||'zz').localeCompare(String(b.rg||'zz')),name:()=>0}[by];
+    return (rows||[]).slice().sort((a,b)=>(b.me|0)-(a.me|0)||cmp(a,b)||whoName100(a).localeCompare(whoName100(b))||String(a.id).localeCompare(String(b.id)))}
+  /* one page from a cursor: ≤ MAX rows and ≤ BYTES of JSON */
+  function whoPage100(rows,cursor){const from=Math.max(0,Math.min(rows.length,parseInt(cursor,10)||0));const out=[];let bytes=2;
+    for(let i=from;i<rows.length&&out.length<WHO100.MAX;i++){const n=JSON.stringify(rows[i]).length+1;if(bytes+n>WHO100.BYTES&&out.length)break;out.push(rows[i]);bytes+=n}
+    const end=from+out.length;return {rows:out,n:rows.length,next:end<rows.length?String(end):null}}
+  if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('here.list'))C.GUEST_OK.push('here.list');
+  Object.assign(C,{WHO100,ST_ORD100,whoMaps100,whoStatus100,whoRow100,whoListed100,whoKeep100,whoSort100,whoPage100})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

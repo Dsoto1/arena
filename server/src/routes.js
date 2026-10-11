@@ -1373,6 +1373,26 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   {const base=R['domus.get'];R['domus.get']=async(d,ctx)=>{await dr98Acct(ctx.acct);return base(d,ctx)}}
   {const base=R['match.abandon'];R['match.abandon']=async(d,ctx)=>{const r=await base(d,ctx);await dr98Acct(ctx.acct);return r}}
   /* ══════════ end of v0.98 PART E ══════════ */
+  /* ══════════ v1.0 WHO'S ONLINE (shared rules: the v1.0 WHO'S ONLINE section of onlcore; no protocol bump, no new table permission) ══════════
+     ACCT PROFILE   + w100 {id, at}: the live match this lanista watches (match.watch sets it, match.unwatch clears it)
+                    + dr100: the house's Domus-rank tier key, refreshed on hello / domus.get (so the list needs no house reads)
+     here.list {status?, region?, sort?, cursor?}  the online lanistas (guests may read it): ONE presence query (GSI1 'ON', cached like here())
+                    + the rooms list (GSI1 'LOBBIES'); a house read only for an account that has no dr100 yet (≤ DR_GETS a request, cached).
+                    Hidden lanistas, guests and bots are never listed; the caller's own row comes first (me:1). The general rate limit applies. */
+  const drC100=new Map();const DR_GETS100=25;
+  async function drOf100(A){if(!A||!A.domus)return '';const c=drC100.get(A.domus);if(c&&now()-c.at<300e3)return c.k;
+    const D=await domusGet(A.domus).catch(()=>null);const k=D?C.drankOf98(+D.dr98||0).k:'';drC100.set(A.domus,{k,at:now()});if(drC100.size>2000)drC100.clear();return k}
+  async function drMark100(acct){try{const A=await acctOf(acct);if(!A||!A.domus)return;drC100.delete(A.domus);const k=await drOf100(A);if(k&&A.dr100!==k){await store.set('ACCT#'+acct,'PROFILE',{dr100:k});const c=(hereC||[]).find(x=>x.id===acct);if(c)c.dr100=k}}catch(e){}}
+  for(const t of ['hello','domus.get']){const base=R[t];if(!base)continue;R[t]=async(d,ctx)=>{const r=await base(d,ctx);if(ctx&&ctx.acct)await drMark100(ctx.acct);return r}}
+  {const base=R['match.watch'];R['match.watch']=async(d,ctx)=>{const r=await base(d,ctx);if(ctx&&ctx.acct&&d&&d.id){const w={id:String(d.id),at:now()};try{await store.set('ACCT#'+ctx.acct,'PROFILE',{w100:w});const c=(hereC||[]).find(x=>x.id===ctx.acct);if(c)c.w100=w}catch(e){}}return r}}
+  {const base=R['match.unwatch'];R['match.unwatch']=async(d,ctx)=>{const r=await base(d,ctx);if(ctx&&ctx.acct){try{await store.set('ACCT#'+ctx.acct,'PROFILE',{w100:null});const c=(hereC||[]).find(x=>x.id===ctx.acct);if(c)c.w100=null}catch(e){}}return r}}
+  Object.assign(R,{
+    'here.list':async(d,ctx)=>{d=d||{};const t=now();const V=ctx.acct?await acctOf(ctx.acct):null;const [H,list]=await Promise.all([here(),lobbies()]);
+      const maps=C.whoMaps100(list,t);const vid=V?V.id:null;let gets=0;const rows=[];
+      for(const A of H){if(!C.whoListed100(A,vid))continue;let dr=A.dr100||'';if(!dr&&A.domus&&(drC100.has(A.domus)||gets++<DR_GETS100))dr=await drOf100(A);
+        rows.push(C.whoRow100(A,maps,{dr,viewer:V}))}
+      return {...C.whoPage100(C.whoSort100(C.whoKeep100(rows,d),d.sort),d.cursor),at:t}}});
+  /* ══════════ end of v1.0 WHO'S ONLINE ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);
