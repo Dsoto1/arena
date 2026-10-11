@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Any Event Mock</title>
+<link rel="stylesheet" href="../mock98/mock98.css">
+<style>
+/* v1.0 mock — backlog 22: enter any event of the week (classic bouts + headline specials), grade-restricted events. Static. */
+body{background:#1a120d;overflow:auto}
+.wrap{display:flex;gap:18px;padding:16px 22px 40px;max-width:1440px;margin:0 auto}
+.mrail{width:220px;flex:none;border:1px solid var(--line2);border-radius:6px;background:var(--panel);align-self:flex-start;font-size:15px}
+.mrail .g{padding:6px 12px;font:500 10.5px var(--mono);letter-spacing:.16em;color:var(--muted);background:#160f0b;border-top:1px solid var(--line2)}
+.mrail .g:first-child{border-top:0}
+.mrail a{display:flex;gap:8px;padding:8px 13px;color:var(--bone);text-decoration:none;border-top:1px solid #ffffff08}
+.mrail a.on{background:linear-gradient(90deg,#3a2a18,#2a1f17);box-shadow:inset 3px 0 0 var(--gold);color:var(--gold2)}
+.mrail a .n{margin-left:auto;font:11px var(--mono);background:#5b3fa0;color:#fff;border-radius:8px;padding:1px 7px}
+.col{flex:1;min-width:0}
+.hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.hdr h1{font:400 26px var(--display);color:var(--gold2)}
+.hdr .chip{font:13px var(--mono);border:1px solid var(--line2);border-radius:4px;padding:4px 9px;color:var(--bone);background:#21180f}
+.bnr{width:100%;border-radius:6px;display:block;border:1px solid #6b5236}
+.lbl{display:flex;align-items:center;gap:10px;margin:26px 0 10px;font:400 19px var(--display);color:var(--gold2);letter-spacing:.04em}
+.lbl i{font:600 12px var(--mono);font-style:normal;background:var(--gold);color:#1a1008;border-radius:3px;padding:2px 7px;letter-spacing:.05em}
+.lbl small{font:13px var(--body);color:var(--muted);letter-spacing:0}
+.lbl:first-of-type{margin-top:14px}
+
+/* ---------- the week's card ---------- */
+.wk{border:1px solid #6b5236;border-radius:8px;background:linear-gradient(#241a12,#1d150f);overflow:hidden}
+.wkhd{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line2);background:#160f0b}
+.wkhd h2{font:400 19px var(--display);color:var(--gold2)}
+.wkhd .sp{flex:1}
+.wkhd .k{font-size:13.5px;color:var(--muted)}
+.wkhd .k b{color:var(--bone)}
+.grp{padding:6px 14px;font:500 10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:#1a120d;border-top:1px solid var(--line2);display:flex;gap:10px}
+.grp.sp1{color:#e4b9f5;background:linear-gradient(90deg,#2b1830,#1a120d 60%)}
+.ev{display:grid;grid-template-columns:62px 58px minmax(210px,1fr) 214px 128px 228px;gap:14px;align-items:center;padding:10px 14px;border-top:1px solid #ffffff0c}
+.ev.mine{background:linear-gradient(90deg,#3a2a1640,transparent 70%)}
+.ev.spc{background:linear-gradient(90deg,#3a1f3c40,transparent 70%)}
+.ev.lock{background:repeating-linear-gradient(135deg,#00000000 0 14px,#ffffff05 14px 28px)}
+.day{text-align:center;font:600 12px var(--mono);color:var(--gold2);border:1px solid #6b5236;border-radius:5px;padding:5px 0;background:#21180f;line-height:1.25}
+.day small{display:block;font:400 10.5px var(--mono);color:var(--muted)}
+.art{width:58px;height:54px;border-radius:4px;object-fit:cover;object-position:50% 0;border:1px solid #5a4430;box-shadow:0 2px 5px #0008}
+.tt{min-width:0}
+.tt .tier{font:500 10.5px var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.tt h3{font:400 18.5px/1.15 var(--display);color:var(--bone);margin:1px 0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.rc{font:12px var(--body);padding:1px 7px;border-radius:9px;border:1px solid #5a4430;color:#d8c4a2;background:#2a1f17;white-space:nowrap}
+.rc.no{border-color:#8a5a3a;color:#f0b48a}
+.rc.team{border-color:#4f7aa8;color:#a9cdf2;background:#17222f}
+.rc.dig{border-color:var(--dig);color:var(--dig2);background:#251a33}
+.rx{display:inline-flex;align-items:center;gap:5px;font:600 12px var(--body);padding:2px 9px 2px 6px;border-radius:4px;color:#2a1405;background:linear-gradient(#f3d58b,#c79a3c);border:1px solid #f6e2a8;box-shadow:0 0 0 1px #6b4a17,0 2px 6px #0007;white-space:nowrap}
+.rx .gr{background:#2a1405;color:#f3d58b;border-radius:3px;padding:0 4px;font:700 11.5px var(--mono)}
+/* seats */
+.seats{display:flex;gap:6px;align-items:center}
+.seat{width:44px;height:52px;border-radius:5px;border:1px solid #4a3826;background:#160f0b;position:relative;overflow:hidden;flex:none}
+.seat img{width:100%;height:100%;object-fit:cover;object-position:50% 8%}
+.seat .hs{position:absolute;left:0;right:0;bottom:0;height:4px}
+.seat.open{border:1.5px dashed #8a7050;display:grid;place-items:center;color:#a3907a;font:11px var(--mono);background:#1a120d}
+.seat.you{border:2px solid var(--gold);box-shadow:0 0 8px #d6ab4c66}
+.seat.you::after{content:"YOURS";position:absolute;left:0;right:0;top:0;font:700 8.5px var(--mono);text-align:center;background:#d6ab4ccc;color:#1a1008;letter-spacing:.06em}
+.seat.lockd{border:1.5px dashed #5a4430;color:#6b5a48}
+.vs{font:11px var(--mono);color:var(--muted);margin:0 1px}
+.seatnote{font:12px var(--mono);color:var(--muted);margin-top:4px}
+.seatnote b{color:#9fd47a;font-weight:500}
+/* money */
+.mon{font-size:13.5px;line-height:1.5}
+.mon div{display:flex;justify-content:space-between;gap:6px}
+.mon span{color:var(--muted)}
+.mon b{font:600 14px var(--mono);color:var(--gold2)}
+.mon b.plus{color:#bfe39e}
+.coin{display:inline-block;width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffe7a6,#c99a3a 70%);box-shadow:0 0 0 1px #6b4a17;vertical-align:-2px;margin-right:3px}
+/* action */
+.act{display:flex;flex-direction:column;gap:5px;align-items:stretch}
+.act .btn{text-align:center}
+.ent{display:flex;align-items:center;gap:8px;border:1px solid #6f8f45;background:#1f2a14;border-radius:5px;padding:5px 8px;font-size:14px}
+.ent img{width:28px;height:28px;border-radius:50%;object-fit:cover;object-position:50% 10%;border:1px solid #9fd47a}
+.ent b{color:#cfeab0;font-weight:600}
+.ent small{display:block;color:#9cb889;font-size:12px}
+.ent .x{width:24px;height:24px;font-size:13px;margin-left:auto}
+.sug{font-size:12.5px;color:var(--muted);text-align:center}
+.sug b{color:var(--bone)}
+.btn.dim{opacity:.55}
+.btn.enter{border-color:var(--gold);color:var(--gold2);background:linear-gradient(#3a2a16,#2a1d10)}
+.lockline{font-size:12.5px;color:#e9c98c;text-align:center}
+.wkft{display:flex;flex-wrap:wrap;gap:6px 18px;padding:9px 14px;border-top:1px solid var(--line2);background:#160f0b;font-size:13px;color:var(--muted)}
+.wkft b{color:var(--bone);font-weight:500}
+
+/* ---------- the picker ---------- */
+.stage{position:relative;border-radius:8px;border:1px solid var(--line2);background:#0e0906;padding:22px;overflow:hidden}
+.stage::before{content:"";position:absolute;inset:0;background:url(anyevent_before_1440.png) center 40%/cover;opacity:.16;filter:blur(1.5px)}
+.pk{position:relative;max-width:820px;margin:0 auto;background:linear-gradient(#251b13,#1c140e);border:1px solid #8a6a3a;border-radius:9px;box-shadow:0 16px 50px #000c}
+.pkhd{display:flex;gap:14px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line2)}
+.pkhd img{width:66px;height:60px;object-fit:cover;object-position:50% 0;border-radius:4px;border:1px solid #5a4430}
+.pkhd h3{font:400 21px var(--display);color:var(--gold2)}
+.pkhd .s{font-size:13.5px;color:var(--muted)}
+.pkhd .x{margin-left:auto;align-self:flex-start}
+.what{margin:12px 16px 4px;border:1px solid #4f7aa8;background:#141d28;border-radius:6px;padding:9px 12px;font-size:14px;color:#cfe0f2}
+.what b{color:#fff}
+.what.rxw{border-color:#c79a3c;background:#2a1f10;color:#f0dfb5}
+.pkg{padding:10px 16px 2px;font:500 10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.fr{display:grid;grid-template-columns:44px minmax(150px,1fr) 66px 80px 104px 120px;gap:12px;align-items:center;margin:0 16px;padding:7px 8px;border-top:1px solid #ffffff0c}
+.fr img{width:44px;height:44px;border-radius:5px;object-fit:cover;object-position:50% 10%;border:1px solid #5a4430}
+.fr .nm b{font-size:15.5px;color:var(--bone);font-weight:600}
+.fr .nm span{display:block;font-size:12.5px;color:var(--muted)}
+.fr .nm em{font-style:normal;font:11px var(--mono);color:#1a1008;background:var(--gold);border-radius:3px;padding:0 5px;margin-left:5px}
+.fr .nm em.bn{background:#4a3826;color:#d8c4a2}
+.gd{display:inline-flex;align-items:baseline;gap:5px;font:700 15px var(--mono)}
+.gd i{font-style:normal;display:inline-block;min-width:30px;text-align:center;padding:2px 4px;border-radius:4px;font-size:14px}
+.gd small{font:400 12px var(--mono);color:var(--muted)}
+.gA i{background:#e8c55e;color:#2a1a04}.gB i{background:#b9c9d6;color:#14202a}.gC i{background:#c08a5a;color:#24140a}
+.ft{font:12.5px var(--mono);padding:2px 7px;border-radius:9px;text-align:center;white-space:nowrap}
+.ft.fresh{background:#1f3318;color:#a9de86;border:1px solid #4f7a3a}.ft.tired{background:#33291a;color:#e6c27a;border:1px solid #7a6030}.ft.worn{background:#3a1a16;color:#f09a88;border:1px solid #8a3a30}
+.fit{font-size:13px;color:var(--muted)}
+.fit b{font-family:var(--mono);margin-right:4px}
+.fit b.y{color:#9fd47a}.fit b.m{color:#e6c27a}.fit b.n{color:#f09a88}
+.fr.sel{background:#2e3b1e;outline:1px solid #6f8f45;border-radius:5px}
+.fr.off{opacity:.42}
+.fr.off img{filter:grayscale(1)}
+.fr.ref{opacity:1;background:#3a1a16;outline:1px solid #b24a3a;border-radius:5px}
+.fr.ref img{filter:grayscale(.7)}
+.why{grid-column:2/-1;font-size:13px;color:#f3b4a6;margin-top:-2px}
+.why b{color:#fff}
+.part{margin:6px 16px 0;border:1px solid var(--line2);border-radius:6px;background:#1a120d;padding:8px 12px}
+.part h4{font:400 15px var(--display);color:var(--gold2);margin-bottom:6px}
+.opt{display:flex;align-items:center;gap:10px;padding:5px 2px;font-size:14px}
+.opt .rd{width:16px;height:16px;border-radius:50%;border:1.5px solid #8a7050;flex:none}
+.opt .rd.on{border-color:var(--gold);background:radial-gradient(circle,#f0cf7d 40%,transparent 45%)}
+.opt img{width:28px;height:28px;border-radius:50%;object-fit:cover;object-position:50% 10%}
+.opt span{color:var(--muted);font-size:13px}
+.opt .sp{flex:1}
+.pkft{display:flex;align-items:center;gap:10px;padding:12px 16px;margin-top:10px;border-top:1px solid var(--line2);background:#160f0b;border-radius:0 0 9px 9px;font-size:13.5px;color:var(--muted)}
+.pkft .sp{flex:1}
+.pkft b{color:var(--bone)}
+.toast{position:absolute;right:28px;top:14px;background:#3a1a16;border:1px solid #b24a3a;border-radius:6px;padding:8px 12px;font-size:14px;color:#ffd9cf;box-shadow:0 8px 24px #000a}
+
+/* ---------- phone ---------- */
+.mob{display:none}
+@media (max-width:700px){
+ .wrap{padding:10px 12px 90px;display:block}
+ .mrail{display:none}
+ .hdr h1{font-size:22px}.hdr .chip:nth-of-type(n+2){display:none}
+ .lbl{font-size:17px;margin:20px 0 8px}
+ .lbl small{display:none}
+ .wkhd{flex-wrap:wrap;gap:4px 10px}.wkhd .k{font-size:12.5px}
+ .ev{grid-template-columns:50px 1fr;grid-template-areas:"art tt" "seats seats" "mon act";gap:8px 10px;padding:10px 12px}
+ .ev .day{display:none}
+ .ev .art{grid-area:art;width:50px;height:48px}
+ .ev .tt{grid-area:tt}.ev .tt h3{font-size:17px}
+ .ev .sx{grid-area:seats}
+ .ev .mon{grid-area:mon;align-self:start}
+ .ev .act{grid-area:act}
+ .tier .dd{display:inline}
+ .seat{width:40px;height:46px}
+ .wkft{font-size:12px}
+ .stage{padding:0;border:0;background:none;overflow:visible}
+ .stage::before{display:none}
+ .pk{border-radius:12px 12px 0 0;max-width:none}
+ .pkhd img{width:48px;height:44px}.pkhd h3{font-size:18px}
+ .fr{grid-template-columns:40px 1fr auto;grid-template-areas:"img nm gd" "img ft fit" "why why why";gap:3px 10px;margin:0 10px}
+ .fr img{grid-area:img;width:40px;height:40px}
+ .fr .nm{grid-area:nm}.fr .gd{grid-area:gd;justify-self:end}
+ .fr .ft{grid-area:ft;justify-self:start}.fr .fit{grid-area:fit;justify-self:end;font-size:12px}
+ .fr .act2{display:none}
+ .fr .why{grid-area:why;grid-column:auto}
+ .what,.part{margin-left:10px;margin-right:10px}
+ .pkft{flex-wrap:wrap}
+ .toast{position:static;margin:10px}
+ .mob{display:flex;position:fixed;left:0;right:0;bottom:0;gap:6px;padding:8px 10px;background:#160f0bf2;border-top:1px solid var(--line2);overflow:hidden}
+ .mob a{flex:none;border:1px solid var(--line2);border-radius:18px;padding:6px 12px;font-size:14px;color:var(--bone);text-decoration:none;background:#21180f}
+ .mob a.on{border-color:var(--gold);color:var(--gold2)}
+}
+@media (min-width:701px){.tier .dd{display:none}}
+</style></head><body>
+<div class="wrap">
+ <nav class="mrail">
+  <div class="g">LUDUS</div><a>🏛 Your ludus</a><a>🛡 Roster · 5</a><a>⚒ Armory</a><a>🤝 Recruiting</a><a>⚕ Infirmary</a><a>🏋 Training Yard</a>
+  <div class="g">ARENA</div><a class="on">⚔ Match Week <span class="n">5</span></a><a>💰 Wagers</a>
+  <div class="g">WORLD</div><a>📰 News</a><a>📊 League</a><a>🌍 Imperium</a><a>🏆 Trophies</a><a>📅 Season</a>
+ </nav>
+ <div class="col">
+  <div class="hdr"><h1>Ludus Crispinus</h1><span class="chip">Treasury <span class="coin"></span>411</span><span class="chip">Fame 62</span><span class="chip">5 fighters</span></div>
+  <img class="bnr" src="ludus_img/banner_night.png" alt="">
+
+  <!-- ===================== A ===================== -->
+  <div class="lbl"><i>A</i> The week's card <small>every event of the week, classic bouts and the headline specials</small></div>
+  <div class="wk">
+   <div class="wkhd"><h2>This week at Pompeii</h2><span class="sp"></span>
+    <span class="k">Entered <b>2</b> of 5 events · one event per fighter</span></div>
+
+   <div class="grp">Classic bouts</div>
+   <!-- Bout I -->
+   <div class="ev mine">
+    <div class="day">FRI<small>Bout I</small></div>
+    <img class="art" src="anyevent_img/ev_egidious.png" alt="">
+    <div class="tt"><div class="tier">Undercard<span class="dd"> · Fri</span></div><h3>Classic · Egidious</h3>
+     <div class="chips"><span class="rc">Elimination</span></div></div>
+    <div class="sx"><div class="seats"><div class="seat"><img src="anyevent_img/rv_0.png"><i class="hs" style="background:#7a3fa0"></i></div><div class="seat"><img src="anyevent_img/rv_2.png"><i class="hs" style="background:#3f7aa0"></i></div><div class="seat"><img src="anyevent_img/rv_6.png"><i class="hs" style="background:#a0603f"></i></div><div class="seat you"><img src="anyevent_img/me_0.png"></div></div>
+     <div class="seatnote">full · 4 of 4</div></div>
+    <div class="mon"><div><span>Purse</span><b><i class="coin"></i>30</b></div><div><span>Fee</span><b class="plus">+12</b></div></div>
+    <div class="act"><div class="ent"><img src="anyevent_img/me_0.png"><div><b>Septimus Malleus</b><small>✓ Entered · starter</small></div><button class="x">✕</button></div></div>
+   </div>
+   <!-- Bout II -->
+   <div class="ev">
+    <div class="day">SAT<small>Bout II</small></div>
+    <img class="art" src="anyevent_img/ev_democritus.png" alt="">
+    <div class="tt"><div class="tier">Feature bout<span class="dd"> · Sat</span></div><h3>Classic · Democritus</h3>
+     <div class="chips"><span class="rc">Elimination</span></div></div>
+    <div class="sx"><div class="seats"><div class="seat"><img src="anyevent_img/rv_5.png"><i class="hs" style="background:#3f8a5a"></i></div><div class="seat"><img src="anyevent_img/rv_8.png"><i class="hs" style="background:#a08a3f"></i></div><div class="seat open">open</div><div class="seat open">open</div></div>
+     <div class="seatnote"><b>2 open</b> · 2 rivals</div></div>
+    <div class="mon"><div><span>Purse</span><b><i class="coin"></i>70</b></div><div><span>Fee</span><b class="plus">+24</b></div></div>
+    <div class="act"><button class="btn enter">⚔ Enter a fighter ▾</button><div class="sug">Starter: <b>Marcia Galba</b> (B)</div></div>
+   </div>
+   <!-- Bout III -->
+   <div class="ev mine">
+    <div class="day">SUN<small>Bout III</small></div>
+    <img class="art" src="anyevent_img/ev_cassian.png" alt="">
+    <div class="tt"><div class="tier">Main event<span class="dd"> · Sun</span></div><h3>Classic · Cassian</h3>
+     <div class="chips"><span class="rc">Elimination</span><span class="rc">🦅 Golden Eagle in play</span></div></div>
+    <div class="sx"><div class="seats"><div class="seat"><img src="anyevent_img/rv_4.png"><i class="hs" style="background:#a03f3f"></i></div><div class="seat you"><img src="anyevent_img/me_2.png"></div><div class="seat open">open</div><div class="seat open">open</div></div>
+     <div class="seatnote"><b>2 open</b></div></div>
+    <div class="mon"><div><span>Purse</span><b><i class="coin"></i>160</b></div><div><span>Fee</span><b class="plus">+40</b></div></div>
+    <div class="act"><div class="ent"><img src="anyevent_img/me_2.png"><div><b>Marcus Murena</b><small>✓ Entered · starter</small></div><button class="x">✕</button></div></div>
+   </div>
+
+   <div class="grp sp1">★ Headline specials</div>
+   <!-- Juggernaut (restricted) -->
+   <div class="ev spc lock">
+    <div class="day">SUN<small>Headline</small></div>
+    <img class="art" src="anyevent_img/ev_juggernaut.png" alt="">
+    <div class="tt"><div class="tier">Special event<span class="dd"> · Sun</span></div><h3>Juggernaut</h3>
+     <div class="chips"><span class="rx">🛡 Grade <span class="gr">B+</span> and above only</span><span class="rc no">🌾 No CF</span></div></div>
+    <div class="sx"><div class="seats"><div class="seat"><img src="anyevent_img/rv_7.png"><i class="hs" style="background:#3f8a5a"></i></div><div class="seat open">open</div><div class="seat open">open</div><div class="seat open">open</div></div>
+     <div class="seatnote"><b>3 open</b> · 1 of yours qualifies</div></div>
+    <div class="mon"><div><span>Purse</span><b><i class="coin"></i>272</b></div><div><span>Fee</span><b class="plus">+40</b></div></div>
+    <div class="act"><button class="btn enter">⚔ Enter a fighter ▾</button><div class="lockline">Only Marcus Murena (B+) qualifies — he is on Bout III</div></div>
+   </div>
+   <!-- Familia (team) -->
+   <div class="ev spc">
+    <div class="day">SAT<small>Headline</small></div>
+    <img class="art" src="anyevent_img/ev_familia.png" alt="">
+    <div class="tt"><div class="tier">Special event<span class="dd"> · Sat</span></div><h3>Familia · 2 v 2</h3>
+     <div class="chips"><span class="rc team">👥 Team event</span><span class="rc no">🌾 No CF</span><span class="rc no">No Crowd Actions</span></div></div>
+    <div class="sx"><div class="seats"><div class="seat"><img src="anyevent_img/rv_1.png"><i class="hs" style="background:#3f6fd0"></i></div><div class="seat"><img src="anyevent_img/rv_3.png"><i class="hs" style="background:#3f6fd0"></i></div><span class="vs">vs</span><div class="seat open">open</div><div class="seat open">open</div></div>
+     <div class="seatnote">Team A full · <b>Team B open</b></div></div>
+    <div class="mon"><div><span>Purse</span><b><i class="coin"></i>180</b></div><div><span>Fee</span><b class="plus">+20</b></div><div><span>per seat</span><b style="color:var(--muted)">½</b></div></div>
+    <div class="act"><button class="btn enter">⚔ Enter a fighter ▾</button><div class="sug">You fill one seat, then pick a partner</div></div>
+   </div>
+   <div class="wkft"><span>⚔ <b>One event per fighter</b> a week</span><span>★ Specials take <b>any grade</b> unless badged</span><span>Triumviratus is <b>only ever an undercard</b></span><span>Unentered seats go to rivals and free agents at the week's end</span></div>
+  </div>
+
+  <!-- ===================== B ===================== -->
+  <div class="lbl"><i>B</i> Picker open on a special event <small>team event: you fill one seat of Team B</small></div>
+  <div class="stage">
+   <div class="pk">
+    <div class="pkhd"><img src="anyevent_img/ev_familia.png" alt=""><div><h3>Enter Familia · 2 v 2</h3><div class="s">Saturday · Pompeii · purse <i class="coin"></i>180 shared by the winning team · fee +20 a seat</div></div><button class="x">✕</button></div>
+    <div class="what">👥 <b>Team event.</b> Your fighter takes one seat of <b>Team B</b>. Pick his partner below — another of yours, or a free agent hired for the bout. No CF, no Crowd Actions.</div>
+    <div class="pkg">Starters</div>
+    <div class="fr"><img src="anyevent_img/me_0.png"><div class="nm"><b>Septimus Malleus</b><em>Bout I</em><span>Veteranus · entered Fri</span></div><div class="gd gB"><i>B</i><small>70</small></div><span class="ft tired">Tired 42</span><div class="fit"><b class="m">~</b>even field</div><button class="btn act2">Move here</button></div>
+    <div class="fr sel"><img src="anyevent_img/me_3.png"><div class="nm"><b>Marcia Galba</b><em>Bout II</em><span>Amazonia · not entered yet</span></div><div class="gd gB"><i>B</i><small>71</small></div><span class="ft fresh">Fresh 12</span><div class="fit"><b class="y">✓</b>best of yours</div><button class="btn gold act2">✓ Picked</button></div>
+    <div class="fr"><img src="anyevent_img/me_2.png"><div class="nm"><b>Marcus Murena</b><em>Bout III</em><span>Royalty · entered Sun</span></div><div class="gd gB"><i>B+</i><small>81</small></div><span class="ft fresh">Fresh 20</span><div class="fit"><b class="y">✓</b>top of field</div><button class="btn act2">Move here</button></div>
+    <div class="pkg">Bench</div>
+    <div class="fr"><img src="anyevent_img/me_4.png"><div class="nm"><b>Hostilia Invictus</b><em class="bn">Bench</em><span>Royalty</span></div><div class="gd gB"><i>B</i><small>70</small></div><span class="ft fresh">Fresh 5</span><div class="fit"><b class="m">~</b>even field</div><button class="btn act2">Pick</button></div>
+    <div class="fr"><img src="anyevent_img/me_1.png"><div class="nm"><b>Galerius Vitalis</b><em class="bn">Bench</em><span>Hero · back from the Infirmary</span></div><div class="gd gC"><i>C+</i><small>68</small></div><span class="ft worn">Worn 64</span><div class="fit"><b class="n">✗</b>worn: −1 move</div><button class="btn act2">Pick</button></div>
+    <div class="part"><h4>Partner for Marcia Galba</h4>
+     <div class="opt"><span class="rd on"></span><img src="anyevent_img/me_4.png"><b>Hostilia Invictus</b><span>yours · bench · B 70</span><span class="sp"></span><span>both seats pay you</span></div>
+     <div class="opt"><span class="rd"></span><img src="anyevent_img/rv_9.png"><b>Ahenobarbus the Lucky</b><span>free agent · C 57</span><span class="sp"></span><span>hire <i class="coin"></i>14 for the bout</span></div>
+     <div class="opt"><span class="rd"></span><span style="width:28px;text-align:center">🎲</span><b>The editor pairs her</b><span>a free agent, free</span><span class="sp"></span><span>partner's share leaves the house</span></div>
+    </div>
+    <div class="pkft"><span>Galba leaves <b>Bout II</b> open · Hostilia's first bout this week</span><span class="sp"></span><button class="btn">Cancel</button><button class="btn gold">⚔ Enter Galba + Hostilia</button></div>
+   </div>
+  </div>
+
+  <!-- ===================== C ===================== -->
+  <div class="lbl"><i>C</i> Restricted event <small>below the grade: greyed, a click says why</small></div>
+  <div class="stage">
+   <div class="pk">
+    <div class="pkhd"><img src="anyevent_img/ev_juggernaut.png" alt=""><div><h3>Enter Juggernaut</h3><div class="s">Sunday · Pompeii · purse <i class="coin"></i>272 · fee +40</div></div><button class="x">✕</button></div>
+    <div class="what rxw">🛡 <b>Grade B+ and above only</b> (rating 78+). The editor wants a show of champions this week. No CF.</div>
+    <div class="pkg">Starters</div>
+    <div class="fr"><img src="anyevent_img/me_2.png"><div class="nm"><b>Marcus Murena</b><em>Bout III</em><span>Royalty · entered Sun</span></div><div class="gd gB"><i>B+</i><small>81</small></div><span class="ft fresh">Fresh 20</span><div class="fit"><b class="y">✓</b>qualifies</div><button class="btn gold act2">Move here</button></div>
+    <div class="fr ref"><img src="anyevent_img/me_3.png"><div class="nm"><b>Marcia Galba</b><em>Bout II</em><span>Amazonia</span></div><div class="gd gB"><i>B</i><small>71</small></div><span class="ft fresh">Fresh 12</span><div class="fit"><b class="n">✗</b>below B+</div><button class="btn dim act2">Pick</button>
+     <div class="why">⛔ <b>Marcia Galba is grade B (71).</b> This event takes B+ (78) and above.</div></div>
+    <div class="fr off"><img src="anyevent_img/me_0.png"><div class="nm"><b>Septimus Malleus</b><em>Bout I</em><span>Veteranus</span></div><div class="gd gB"><i>B</i><small>70</small></div><span class="ft tired">Tired 42</span><div class="fit"><b class="n">✗</b>below B+</div><button class="btn dim act2">Pick</button></div>
+    <div class="pkg">Bench</div>
+    <div class="fr off"><img src="anyevent_img/me_4.png"><div class="nm"><b>Hostilia Invictus</b><em class="bn">Bench</em><span>Royalty</span></div><div class="gd gB"><i>B</i><small>70</small></div><span class="ft fresh">Fresh 5</span><div class="fit"><b class="n">✗</b>below B+</div><button class="btn dim act2">Pick</button></div>
+    <div class="fr off"><img src="anyevent_img/me_1.png"><div class="nm"><b>Galerius Vitalis</b><em class="bn">Bench</em><span>Hero</span></div><div class="gd gC"><i>C+</i><small>68</small></div><span class="ft worn">Worn 64</span><div class="fit"><b class="n">✗</b>below B+</div><button class="btn dim act2">Pick</button></div>
+    <div class="pkft"><span>Moving <b>Murena</b> here opens his seat in Bout III</span><span class="sp"></span><button class="btn">Cancel</button><button class="btn gold">⚔ Move Murena to Juggernaut</button></div>
+   </div>
+   <div class="toast">⛔ Galba is grade B — Juggernaut takes B+ and above.</div>
+  </div>
+ </div>
+</div>
+<div class="mob"><a>🏛 Your ludus</a><a class="on">⚔ Match Week · 5</a><a>🛡 Roster</a><a>⏭ End the week</a></div>
+</body></html>

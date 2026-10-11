@@ -230,3 +230,4 @@ FIGHT NIGHT: 3a keep "Match Week" (no rename).
 TURN TIMERS: GO (2026-10-11) — with his change: the last-seconds countdown never sits over the board (turn panel + face ring + thin red screen-edge glow).
 WHO'S ONLINE (his 1c 2b 3a): a panel beside the Orbis on the Online landing AND a Lobby Browser tab; rows = house banner, lanista, active gladiator + rank,
 status (idle / in a room / fighting), time-zone region; actions Invite · Watch · House card · ★ Follow; hidden lanistas never listed. Building.
+QUEUE (2026-10-11): v0.99 fixes started now (tv100x). SERVER BATCH starts after the turn-timers + who's-online branches merge (same routes.js / onlcore, one deploy). Then waves: My Ludus+advisors → Recruiting+rooms → Play Now+briefing → lobby+bubbles → Insignia → Tituli/first hour/replays/daily → 3D animation (after beasts final) → sound/balance/translations/release.
