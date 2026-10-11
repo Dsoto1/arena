@@ -21,7 +21,7 @@ import { JOINTS, JK, HANDLE_COL, applyPose, poseToJSON, poseFromJSON, readPose, 
 import { PRESETS, PRESET_ORDER, PRESET_GROUPS } from './presets.js';
 import { makeGear } from './gear.js';
 import { loadBaked, loadBody8, wearBaked, merge8, beltShow8 } from './gear8.js';
-import { mountWeapons, killWeapons, armedSpec, armedFinish, shieldCheck, wristBend, elbowCheck, bowOk, holdsOf, stanceFor } from './hold.js';
+import { mountWeapons, killWeapons, armedSpec, armedFinish, shieldCheck, wristBend, elbowCheck, bowOk, holdsOf, stanceFor, armClash } from './hold.js';
 import { MeshoptDecoder } from './vendor/meshopt_decoder.js';
 /* v1.0 (his picks, look100 rounds 2–8): printed pieces in a token's gear spec are worn as the PRE-BAKED SDF sculpts (assets/gear100.js,
    made by mkgear.js), merged into one skinned mesh with one outline; the classic gear.js pieces stay for custom-coloured pieces and
@@ -448,7 +448,7 @@ export async function createToken(opts = {}) {
   return {
     hero, specPose, align, B, rig, turn, scene, baseG, sculpted: () => last8.slice(), standFor,
     /* v1.0: the bake (null when missing: bakeWhy), the shield check on what is held now, the wrists' bend */
-    baked: BK ? { keys: BK.keys.length, bytes: BK.bytes, ms: BK.ms } : null, bakeWhy, bodyBaked: core ? { verts: core.nv, bytes: core.bytes, ms: core.ms.load } : null, bodyWhy, bodyKey: bodyKey8(o), shieldCheck: () => shieldCheck(B, turn, held), wrists: () => ({ L: wristBend(rig, 'L'), R: wristBend(rig, 'R') }), elbows: () => { const rows = elbowCheck(rig, turn, MINI_YAW); return { rows, bowOk: bowOk(rows), anatOk: rows.every(r => (r.L.bend < 0.03 || r.L.anat > 0) && (r.R.bend < 0.03 || r.R.anat > 0)) }; },
+    baked: BK ? { keys: BK.keys.length, bytes: BK.bytes, ms: BK.ms } : null, bakeWhy, bodyBaked: core ? { verts: core.nv, bytes: core.bytes, ms: core.ms.load } : null, bodyWhy, bodyKey: bodyKey8(o), shieldCheck: () => shieldCheck(B, turn, held), wrists: () => ({ L: wristBend(rig, 'L'), R: wristBend(rig, 'R') }), elbows: () => { const rows = elbowCheck(rig, turn, MINI_YAW); return { rows, bowOk: bowOk(rows), anatOk: rows.every(r => (r.L.bend < 0.03 || r.L.anat > 0) && (r.R.bend < 0.03 || r.R.anat > 0)) }; }, clash: () => armClash(rig, turn, MINI_YAW),
     reach, fitTile: (so) => { const f = fitTile(Object.assign({ el: 30, pxmm: MINI_PXMM, outlinePx: 0.85 }, so || {})); const out = { f: f.f, hw: f.hw, dn: f.dn, shaft: f.shaft, tileHalf: TILE_HALF };
       if (so && so.keep) out.restore = f.restore; else f.restore(); return out; },
     apply, setPose, pose: poseJSON, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },

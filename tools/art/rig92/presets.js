@@ -112,9 +112,11 @@ export const PRESETS = {
   },
   aim: {
     label: 'Aim',
-    spec: { p: [0, -60, 0], j: { pe: [0, 40, 0], sp: [0, 10, 0], ch: [-2, 10, 0], he: [-2, -48, 0], wL: [-20, -115, 0], wR: [0, 0, 0] },
-      f: { L: [140, 200, 30], R: [-150, -150, 30] },
-      h: { L: [430, 1450, 380], R: [-60, 1520, -60] }, hp: { L: [1, -0.4, -0.4], R: [1, 0, -1] } },
+    /* v1.0 (his note: the draw arm went through his body): side-on — chest turned 100° to his right, head back to the target (the facing),
+       bow arm straight ahead, draw hand at the right cheek, elbow back and out at shoulder height; centred on the base (−100 mm) */
+    spec: { p: [0, -60, -100], j: { pe: [0, -40, 0], sp: [0, -30, 0], ch: [4, -30, 0], ne: [5, 40, 0], he: [10, 40, 0], wL: [-20, 75, 20], wR: [0, 0, 0] },
+      f: { L: [60, 90, -20], R: [-110, -270, -40] },
+      h: { L: [-23, 1419, 585], R: [-129, 1519, -88] }, hp: { L: [1, -0.4, -0.3], R: [0.4, -0.2, -1] } },
   },
   parry: {
     label: 'Parry',
