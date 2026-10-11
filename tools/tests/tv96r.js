@@ -8,7 +8,7 @@ const mark=await pg.evaluate(()=>ERR92.n);
 await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;me().coin=3000;MGR.tab='armory';MGR_REDRAW();await W8(500)});
 const shot=async n=>{if(SHOT)await pg.screenshot({path:SHOT+'/'+n+'.png',clip:{x:0,y:0,width:pg.viewportSize().width,height:330}})};
 const r=await pg.evaluate(()=>{const o={};const h=document.querySelector('.b73-armory');o.has=!!h;o.title=h&&h.querySelector('.roomttl b').textContent;o.sub=h&&h.querySelector('.roomttl span').textContent;
-  o.own=!!(h&&h.querySelector('.ab96glow'));o.same=roomScene73('armory')!==roomScene73('roster');o.svg=!!(h&&h.querySelector('svg')&&h.querySelector('svg').getBoundingClientRect().height>40);
+  o.own=!!(h&&h.querySelector('.ab96glow, img.sc100')) /* v1.0: 297 paints 294a's scene */;o.same=roomScene73('armory')!==roomScene73('roster');o.svg=!!(h&&h.querySelector('svg, img.sc100')&&h.querySelector('svg, img.sc100').getBoundingClientRect().height>40);
   const m=me();const H=arm94H(m);H.sh.push({id:'zz1',t:'w',k:'gladius'});o.stat1=tabStat73('armory');MGR_REDRAW();o.chip=!!document.querySelector('.b73-armory .roomstat');H.sh.pop();return o});
 ok(r.has&&/Armory/.test(r.title),'armory banner titled '+r.title);ok(r.sub&&r.sub.length<60,'short subtitle');ok(r.own&&r.same&&r.svg,'own scene '+JSON.stringify(r));ok(r.chip&&r.stat1&&/shelf|repair/.test(r.stat1[1]),'count chip '+JSON.stringify(r.stat1));
 await shot('armory_1440');

@@ -17,7 +17,7 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
    const h=rosterOf(riv)[0];h.fat=80;h.inj=null;rivalTrain(w);r.riv.rest=h.restWk===w.week}
   document.querySelector('#desk99 .dk99row [data-mg="tab"][data-id="infirm"]').click();await W8(400);r.tab=MGR.tab;
   MGR.tab='ludus';delete ros[0].inj;MGR_REDRAW();await W8(300);r.hurtGone=![...document.querySelectorAll('#desk99 .dk99tw>.dk99row .tx')].some(x=>/is hurt/.test(x.textContent));r.after=[...document.querySelectorAll('#desk99 .dk99tw>.dk99row')].filter(x=>!x.querySelector('[data-re95]')).length /* v0.95: healed fighter gets an extra 'equip him again' nudge (229) */;r.done=!!document.querySelector('#desk99 .dk99done');return r});
-ok(o.a.items>=4,'checklist items');ok(o.a.hurt&&o.a.renewBtn,'hurt + renew items');ok(/\/wk/.test(o.a.ledger)&&o.a.money.net===o.a.money.gate+o.a.money.fees-o.a.money.wages,'ledger');
+ok(o.a.items>=4,'checklist items');ok(o.a.hurt&&o.a.renewBtn,'hurt + renew items');ok(/\/wk/.test(o.a.ledger)&&o.a.money.net===o.a.money.gate+o.a.money.fees-o.a.money.wages+(o.a.money.clerk||0) /* v1.0: 297 counts the Clerk rebate */,'ledger');
 ok(o.a.econ&&o.a.bonus,'economy levers');ok(o.a.riv.reg==='hard'&&o.a.riv.paid&&o.a.riv.grew&&o.a.riv.fat&&o.a.riv.rest,'rivals train');ok(o.a.skip,'skip list');ok(o.a.tab==='infirm','button opens the tab');ok(o.a.hurtGone&&o.a.done,'done items fold') /* v0.95: healing also adds gear nudges (bare hands / equip him again), so count is not fixed */;
 /* the stands: right-column tabs, the top-bar Stands button, the ticker, the Bestiary */
 o.s=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);
