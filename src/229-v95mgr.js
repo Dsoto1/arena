@@ -93,14 +93,14 @@ BANNERS73.armory=[_T('🛡 The Armory'),_T('every blade, plate and token your ho
 function armoryTab95(){const pm=me();if(!pm)return '';const hurt=rosterOf(pm).filter(g=>g.inj);
   return `<h4 class="secth" style="margin-top:0">${_T`🛡 Your Armory`} <span class="rc-sub">${_T`only fit fighters can be equipped — a hurt fighter's gear waits on the shelf`}</span></h4>${hurt.length?`<p class="rc-sub ar95hurt">${_T`⚕ Hurt:`} ${hurt.map(g=>esc(g.name)).join(', ')}</p>`:''}${arm94HTML()}`}
 {const base=ludusTabHTML;ludusTabHTML=function(){if(MGR.tab==='armory')return armoryTab95();return base.apply(this,arguments)}}
-{const base=arm94Fit;arm94Fit=function(g,P,want){try{const pm=me();if(g&&g.inj&&pm&&g.contract&&g.contract.mgr===pm.id){return {no:_T`${esc(g.name)} is hurt — equip him after he has healed.`}}}catch(e){}return base.apply(this,arguments)}}
-{const base=arm94HTML;arm94HTML=function(){let h=base.apply(this,arguments);try{const pm=me();const g=arm94Sel(pm);if(g&&g.inj)h=h.replace('<div class="ar94worn">',`<p class="ar94warn">${_T`⚕ Hurt — he cannot be equipped until he has healed; his gear is on the shelf.`}</p><div class="ar94worn">`);
+{const base=arm94Fit;arm94Fit=function(g,P,want){try{const pm=me();if(g&&g.inj&&pm&&g.contract&&g.contract.mgr===pm.id){return {no:sx(g,_T`${esc(g.name)} is hurt — equip him after he has healed.`,_T`${esc(g.name)} is hurt — equip her after she has healed.`)}}}catch(e){}return base.apply(this,arguments)}}
+{const base=arm94HTML;arm94HTML=function(){let h=base.apply(this,arguments);try{const pm=me();const g=arm94Sel(pm);if(g&&g.inj)h=h.replace('<div class="ar94worn">',`<p class="ar94warn">${sx(g,_T`⚕ Hurt — he cannot be equipped until he has healed; his gear is on the shelf.`,_T`⚕ Hurt — she cannot be equipped until she has healed; her gear is on the shelf.`)}</p><div class="ar94worn">`);
   h=h.replace(/(<button type="button" class="ar94g[^"]*" data-ar94g="([^"]+)"[^>]*>[\s\S]*?<small>)/g,(m0,a,id)=>{const x=gById(id);return x&&x.inj?a+'⚕ ':a});return h}catch(e){console.error(e)}return h}}
 /* hurt → the gear goes to the shelf at once */
 function inj95Sweep(){try{const w=W_(),pm=me();if(!w||!pm||w.dead)return 0;let n=0;const H=arm94H(pm);
   for(const g of rosterOf(pm)){if(!g.inj||!g.eq94||g.eq94.h!==pm.id)continue;const E=g.eq94;const L=[E.R,E.L,...(E.a||[]),...(E.o||[])].filter(Boolean);if(!L.length)continue;
     for(const P of L)H.sh.push(P);g.re95=L.map(P=>P.id);E.R=null;E.L=null;E.a=[];E.o=[];n++;
-    if(typeof tnews==='function')tnews(_T`⚕ <b>${esc(g.name)}</b> is hurt — his gear went to the Armory shelf. Equip him again after he has healed.`)}
+    if(typeof tnews==='function')tnews(sx(g,_T`⚕ <b>${esc(g.name)}</b> is hurt — his gear went to the Armory shelf. Equip him again after he has healed.`,_T`⚕ <b>${esc(g.name)}</b> is hurt — her gear went to the Armory shelf. Equip her again after she has healed.`))}
   return n}catch(e){console.error(e);return 0}}
 {const base=applyBout;applyBout=function(){const r=base.apply(this,arguments);inj95Sweep();return r}}
 function re95Ids(g){const pm=me();const H=arm94H(pm);return (g.re95||[]).filter(id=>H.sh.some(P=>P.id===id))}
@@ -108,12 +108,12 @@ function re95Do(g){const pm=me();let n=0;for(const id of re95Ids(g)){const at=ar
     if(P&&P.dmg&&P.t==='a'&&g.eq94){/* a damaged piece he wore goes back on as it was (arm94Fit refuses damaged pieces from the shelf; bouts skip it until repaired) */arm94Detach(pm,at);if(P.loc==null)delete P.loc;g.eq94.a.push(P);r={ok:1}}
     else r=arm94Put(pm,id,{g:g.id,z:'auto'});if(r&&r.ok)n++}delete g.re95;return n}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-re95]');if(!b)return;e.stopPropagation();e.preventDefault();const g=gById(b.dataset.re95);if(!g)return;const n=re95Do(g);
-  if(typeof mToast==='function')mToast(n?_T`🛡 ${esc(g.name)} is equipped again.`:_T`Nothing of his is left on the shelf.`);saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+  if(typeof mToast==='function')mToast(n?_T`🛡 ${esc(g.name)} is equipped again.`:sx(g,_T`Nothing of his is left on the shelf.`,_T`Nothing of hers is left on the shelf.`));saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
 {const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const pm=me(),w=W_();if(!pm||!w)return I;
     for(const it of I)if(it.btn&&typeof it.btn==='string'&&it.btn.includes('data-id="roster"')&&/Armory/.test(it.btn))it.btn=it.btn.replace('data-id="roster"','data-id="armory"');
     for(const g of rosterOf(pm)){if(!g.re95||g.inj)continue;const E=g.eq94;const bare=!E||!(E.R||E.L||(E.a||[]).length);const left=re95Ids(g);
       if(!bare||!left.length){if(bare&&!left.length)delete g.re95;else if(!bare)delete g.re95;continue}
-      I.push({done:false,ic:'🛡',txt:_T`<b>${esc(g.name)}</b> has healed — equip him again`,btn:`<button class="btn tksm" type="button" data-re95="${g.id}">${_T`Re-equip`}</button> <button class="btn tksm" type="button" data-mg="tab" data-id="armory">${_T`🛡 Armory`}</button>`})}
+      I.push({done:false,ic:'🛡',txt:sx(g,_T`<b>${esc(g.name)}</b> has healed — equip him again`,_T`<b>${esc(g.name)}</b> has healed — equip her again`),btn:`<button class="btn tksm" type="button" data-re95="${g.id}">${_T`Re-equip`}</button> <button class="btn tksm" type="button" data-mg="tab" data-id="armory">${_T`🛡 Armory`}</button>`})}
     const st=st95Pool(w,pm);const fit=st.filter(g=>!g.inj).length;const have=st.filter(g=>g.slot95).length;
     if(!w.tutorial&&fit>have&&have<3)I.push({done:false,ic:'⭐',txt:_T`<b>${have} of 3</b> starter slots filled`,btn:`<button class="btn tksm" type="button" data-mg="tab" data-id="roster">${_T`Roster`}</button>`})}catch(e){console.error(e)}return I}}
 
@@ -178,7 +178,7 @@ function st95DepthHTML(pm,w){const out=w.glads.filter(g=>g.alive&&g.loanFrom&&g.
     tab.querySelectorAll('tr[data-mg="lsel"]').forEach(r=>{const g=gById(r.dataset.id);if(!g)return;let c='';
       if(g.slot95)c=`<span class="st95tag">${ST95_BOUT[g.slot95-1][1]}</span><button type="button" class="btn tksm" data-st95="bench" data-id="${g.id}" title="${_T`Send to the bench`}">${_T`🪑 Bench`}</button>`;
       else if(g.inj)c=`<span class="rc-sub">${_T`⚕ hurt`}</span>`;
-      else{const full=st95Pool(w,pm).filter(x=>x.slot95).length>=3;c=`<button type="button" class="btn tksm" data-st95="promo" data-id="${g.id}" ${full?`aria-disabled="true" title="${esc(_T('Three starters already — bench one or pick a slot above.'))}"`:`title="${esc(_T('Make him a starter'))}"`}>${_T`⭐ Promote`}</button>`;
+      else{const full=st95Pool(w,pm).filter(x=>x.slot95).length>=3;c=`<button type="button" class="btn tksm" data-st95="promo" data-id="${g.id}" ${full?`aria-disabled="true" title="${esc(_T('Three starters already — bench one or pick a slot above.'))}"`:`title="${esc(sx(g,_T('Make him a starter'),_T('Make her a starter')))}"`}>${_T`⭐ Promote`}</button>`;
         if(!g.loanFrom&&lenders.length)c+=`<select class="tin dclend" data-m47lend="${g.id}" title="${_T`Lend out for 3 weeks`}"><option value="">${_T`Lend…`}</option>${lenders.map(m=>`<option value="${m.id}">${esc(m.ludus)} · ${loanFee(g)}/wk · 3 wk</option>`).join('')}</select>`}
       r.insertAdjacentHTML('beforeend',`<td class="st95act">${c}</td>`)})}
   return `<div class="st95wrap"><div class="st95left">${st95DepthHTML(pm,w)}<div class="card2 st95list">${left.outerHTML}</div></div><div class="st95right">${right.innerHTML}</div></div>`}catch(e){console.error(e)}return h}}

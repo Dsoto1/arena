@@ -1,0 +1,238 @@
+[
+ {
+  "k": "Throw a meat lure (range 4): aggro any 1 NPC in play onto another player. Works on Tholo and every beast but Commodus and humanoids; breaks a tame bond.",
+  "w": "02-data.js:1392"
+ },
+ {
+  "k": "Ursa's aggro token moves to you and breaks any tame bond. If Ursa is already eliminated, gain 2 CF.",
+  "w": "02-data.js:1429"
+ },
+ {
+  "k": "Brutum's aggro token moves to you and breaks any tame bond. If Brutum is already eliminated, gain 2 CF.",
+  "w": "02-data.js:1437"
+ },
+ {
+  "k": "🐾 {0} breaks free of {1}!",
+  "w": "04-rules.js:639"
+ },
+ {
+  "k": "{0} is gone: {1} gains {2} instead.",
+  "w": "04-rules.js:931"
+ },
+ {
+  "k": "the city physician closed the {0}",
+  "w": "17-manager.js:597"
+ },
+ {
+  "k": "{0} fights for his father's house — no purse on earth will move him.",
+  "w": "17-manager.js:1014"
+ },
+ {
+  "k": "{0} fights for her father's house — no purse on earth will move her.",
+  "w": "17-manager.js:1014"
+ },
+ {
+  "k": "Courting starts with knowing them. Their ratings are letter grades — \"?\" until your <b>Recruiter</b> looks. Spend some of the recruiter's hours: press the first scouting action, <b>👁 Watch</b> (or any other). Grade all five and their personality shows.",
+  "w": "36-mtutor.js:47"
+ },
+ {
+  "k": "Now <b>pitch</b> them. Each pitch leans on one of your <b>house grades</b> (your lanista traits — every recruit sees them); one that answers their wish counts double. One pitch per recruit a week.",
+  "w": "36-mtutor.js:48"
+ },
+ {
+  "k": "🌙 Hide him",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "🌙 Hide her",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "🔥 He will not fight",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "🔥 She will not fight",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "Ad Flamma — he dies",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "Ad Flamma — she dies",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "🔥 He will not fight?",
+  "w": "141-v85faith.js:205"
+ },
+ {
+  "k": "🔥 She will not fight?",
+  "w": "141-v85faith.js:205"
+ },
+ {
+  "k": "<b>{0}</b> will not raise a hand in the arena. The sentence is the fire: he dies.",
+  "w": "141-v85faith.js:205"
+ },
+ {
+  "k": "<b>{0}</b> will not raise a hand in the arena. The sentence is the fire: she dies.",
+  "w": "141-v85faith.js:205"
+ },
+ {
+  "k": "Remember him",
+  "w": "141-v85faith.js:206"
+ },
+ {
+  "k": "Remember her",
+  "w": "141-v85faith.js:206"
+ },
+ {
+  "k": "🛏 {0} is resting this week — undo the rest in the Infirmary to enter her.",
+  "w": "183-v90ward.js:67"
+ },
+ {
+  "k": "⚔ {0} is on this week's card — withdraw her on Match Week first.",
+  "w": "183-v90ward.js:72"
+ },
+ {
+  "k": "disabled title=\"On this week's card — withdraw her on Match Week first\"",
+  "w": "183-v90ward.js:144"
+ },
+ {
+  "k": "👈 Pick a fighter in the squad to open the card here.",
+  "w": "184-v90yard.js:124"
+ },
+ {
+  "k": "Put it on her",
+  "w": "225-v94armory.js:308"
+ },
+ {
+  "k": "On loan — her gear belongs to her own house",
+  "w": "225-v94armory.js:314"
+ },
+ {
+  "k": "🤝 On loan — she fights in her own house's gear.",
+  "w": "225-v94armory.js:323"
+ },
+ {
+  "k": "She fights with what she wears. Ability, weakness, coin and keys stay with her class.",
+  "w": "225-v94armory.js:327"
+ },
+ {
+  "k": "pick a fighter · drag a piece onto the figure, or tap it and tap where it goes",
+  "w": "225-v94armory.js:332"
+ },
+ {
+  "k": "{0} is hurt — equip her after she has healed.",
+  "w": "229-v95mgr.js:96"
+ },
+ {
+  "k": "⚕ Hurt — she cannot be equipped until she has healed; her gear is on the shelf.",
+  "w": "229-v95mgr.js:97"
+ },
+ {
+  "k": "⚕ <b>{0}</b> is hurt — her gear went to the Armory shelf. Equip her again after she has healed.",
+  "w": "229-v95mgr.js:103"
+ },
+ {
+  "k": "Nothing of hers is left on the shelf.",
+  "w": "229-v95mgr.js:111"
+ },
+ {
+  "k": "<b>{0}</b> has healed — equip her again",
+  "w": "229-v95mgr.js:116"
+ },
+ {
+  "k": "Make her a starter",
+  "w": "229-v95mgr.js:181"
+ },
+ {
+  "k": "Watch her train",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "Study her bouts",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "· she took a bruise",
+  "w": "249-v98rec.js:128"
+ },
+ {
+  "k": "· all five graded: her personality is on the card.",
+  "w": "249-v98rec.js:128"
+ },
+ {
+  "k": "{0} balks: {1}. Only about {2} coin a week would make her overlook it.",
+  "w": "249-v98rec.js:144"
+ },
+ {
+  "k": "Something about your house bothers {0}. About {1} coin a week would settle it — or grade her to learn what.",
+  "w": "249-v98rec.js:144"
+ },
+ {
+  "k": "Grade all five ratings to read her — wants, temper, dealbreakers.",
+  "w": "249-v98rec.js:146"
+ },
+ {
+  "k": "{0}: {1} — ask around, watch her train, share a cup or study her bouts.",
+  "w": "249-v98rec.js:158"
+ },
+ {
+  "k": "Show her the Training Yard",
+  "w": "249-v98rec.js:168"
+ },
+ {
+  "k": "Promise her the sand",
+  "w": "249-v98rec.js:168"
+ },
+ {
+  "k": "Grade her Speed or Strength to see how far our Doctore could take her.",
+  "w": "249-v98rec.js:175"
+ },
+ {
+  "k": "With our Doctore her {0} {1} could reach {2} within a season.",
+  "w": "249-v98rec.js:176"
+ },
+ {
+  "k": "With our Doctore her {0} {1} would hold firm.",
+  "w": "249-v98rec.js:176"
+ },
+ {
+  "k": "She would train beside {0} ({1}).",
+  "w": "249-v98rec.js:177"
+ },
+ {
+  "k": "{0}, your Medicus, shows her the cots and the baths.",
+  "w": "249-v98rec.js:178"
+ },
+ {
+  "k": "Bold entries: she would see the sand often.",
+  "w": "249-v98rec.js:179"
+ },
+ {
+  "k": "she cares about this",
+  "w": "249-v98rec.js:185"
+ },
+ {
+  "k": "{0} of {1} left this week · one per recruit · a pitch on her wish counts double",
+  "w": "249-v98rec.js:192"
+ },
+ {
+  "k": "(it answered her wish)",
+  "w": "249-v98rec.js:198"
+ },
+ {
+  "k": "The next thing your recruiter can learn about her.",
+  "w": "249-v98rec.js:203"
+ },
+ {
+  "k": "It answers her wish, and your {0} grade backs it.",
+  "w": "249-v98rec.js:223"
+ },
+ {
+  "k": "Issued kit: the house lent it to her — it cannot be sold.",
+  "w": "272-v99fix4.js:90"
+ }
+]

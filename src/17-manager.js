@@ -162,6 +162,8 @@ function gLook(glad){if(!glad.look){glad.look=gladPortrait(glad.id||glad.name,gl
   const fk=typeof CITY_FLAG!=='undefined'&&glad.city?CITY_FLAG[glad.city]:null; // v0.22: league portraits fly their home city's banner
   if(fk&&(typeof SETTINGS==='undefined'||SETTINGS.banners!==false))return {...glad.look,bg:'flag:'+fk};return glad.look}
 /* gSex — ♀ / ♂ marker. */
+/* sx — whole-string alternatives by sex (g.fem): sx(g,maleText,femaleText). */
+function sx(g,m,f){return g&&g.fem?f:m}
 const gSex=glad=>glad.fem?'<span title="Female — a gladiatrix" style="color:#e07b9a">♀</span>':'<span title="Male" style="color:#7fa6c9">♂</span>';
 /* gAge — a fighter's age (24 when unknown). */
 const gAge=glad=>glad.age||24;
@@ -1010,7 +1012,7 @@ function signGlad(glad,wage,weeks,bonus,pledge=false){const m=me();m.coin-=bonus
 /* poachVerdict — whether a signed fighter would leave their house for you, and the buyout. */
 function poachVerdict(glad,wage){
   const m=me();const pull=coinPull(glad,wage);const iv=interestOf(glad,m)+pull;const loy=loyaltyOf(glad);const fee=buyout(glad);
-  if(glad.noPoach)return {ok:false,why:_T`${glad.name} fights for ${glad.fem?_T('her'):_T('his')} father's house — no purse on earth will move ${glad.fem?_T('her'):_T('him')}.`};
+  if(glad.noPoach)return {ok:false,why:sx(glad,_T`${glad.name} fights for his father's house — no purse on earth will move him.`,_T`${glad.name} fights for her father's house — no purse on earth will move her.`)};
   {const fr=mgrById(glad.contract.mgr);if(fr&&fr.pact&&fr.pact>=W_().week)return {ok:false,why:_T`You have a non-poaching pact with ${fr.ludus} until week ${wkOf(fr.pact)}.`}}
   if(m.fame<reqFame(glad)&&wage<askWage(glad)*fameBypassX(glad,m))return {ok:false,why:_T`${glad.name} won't consider an ${mgrTier(m.fame)} ludus — unless you pay about ${Math.ceil(askWage(glad)*fameBypassX(glad,m))} a week.`};
   if(iv<=loy)return {ok:false,why:_T`${glad.name}'s loyalty to ${mgrById(glad.contract.mgr).ludus} (${loy}) is higher than their interest in you (${iv}, ${pull} of it your money). Pay more, or pitch and visit first; unhappy fighters are easier.`};

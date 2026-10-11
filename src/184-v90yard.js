@@ -121,7 +121,7 @@ function yd90StudyHTML(w,m){const X=x74(w);const left=thLeft(w);const mine=new S
   let card='',all='';if(h.startsWith('<div class="yd76grid',i)){const c2=cutDiv(h,i);if(c2){if(MGR.yd87==='all')all=c2[0];else card=c2[0];h=c2[1]}}
   card=card.replace(/<button type="button" class="btn tksm yo87back" data-ycard87="">[^<]*<\/button>/,`<button type="button" class="btn tksm yo87back" data-ycard87="" title="${_T`Close the card`}">${_T`✕ Close`}</button>`);
   const tools=`<div class="yd90tools">${yd90DocHTML(w)}${yd90StudyHTML(w,m)}</div>`;
-  const side=`<div class="yd90side">${card?card+tools:tools+(!all?`<div class="card2 yd90hint rc-sub">${_T`👈 Pick a fighter in the squad to open his card here.`}</div>`:'')}</div>`;
+  const side=`<div class="yd90side">${card?card+tools:tools+(!all?`<div class="card2 yd90hint rc-sub">${_T`👈 Pick a fighter in the squad to open the card here.`}</div>`:'')}</div>`;
   return h.slice(0,i)+`<div class="yd90"><div class="yd90main">${squad}</div>${side}</div>`+all+h.slice(i)}catch(e){console.error(e);return h}}}
 
 /* ---------- 5 · the rail stays put ---------- */

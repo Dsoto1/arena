@@ -87,7 +87,7 @@ function iss99Purge(w,gid){let n=0;try{for(const m of w.mgrs||[]){const H=arm94H
 {const base=arm94Ensure;arm94Ensure=function(w){const r=base.apply(this,arguments);try{if(w&&!w.iss99){w.iss99=1;for(const g of w.glads||[]){const E=g.eq94;if(!E||!g.k94||!g.alive)continue;const K=arm94Kit(g.cls);
       if(E.R&&K.R===E.R.k&&!E.R.iss)E.R.iss=g.id;if(E.L&&K.L===E.L.k&&!E.L.iss)E.L.iss=g.id;const want=(K.a||[]).map(x=>x.k);for(const P of E.a||[]){const i=want.indexOf(P.k);if(i>=0&&!P.iss){P.iss=g.id;want.splice(i,1)}}}
       return (typeof r==='number'?r:0)+1}}catch(e){console.error(e)}return r}}
-{const base=arm94Sell;arm94Sell=function(pid){try{const pm=me();const P=pm&&arm94H(pm).sh.find(x=>x.id===pid);if(P&&P.iss)return {no:_T('Issued kit: the house lent it to him — it cannot be sold.')}}catch(e){}return base.apply(this,arguments)}}
+{const base=arm94Sell;arm94Sell=function(pid){try{const pm=me();const P=pm&&arm94H(pm).sh.find(x=>x.id===pid);if(P&&P.iss)return {no:sx(gById(P.iss),_T('Issued kit: the house lent it to him — it cannot be sold.'),_T('Issued kit: the house lent it to her — it cannot be sold.'))}}catch(e){}return base.apply(this,arguments)}}
 {const base=arm94Meta;arm94Meta=function(P){const s=base.apply(this,arguments);return P&&P.iss?s+' · '+_T('issued'):s}}
 
 /* ---------- 3b · damaged armor comes off the body after a bout ---------- */
@@ -106,7 +106,7 @@ function fall99Count(s){try{if(!s)return;const n=s.list.filter(g=>g.alive===fals
 /* ---------- 3c · selling from the Armory ---------- */
 function sell99Price(P){return Math.max(1,Math.floor(arm94Price(P.t,P.k)*(P.dmg?ARM94.sellK/2:ARM94.sellK)))}
 function sell99(pid){const pm=me(),w=W_();if(!pm||!w)return {no:'?'};const H=arm94H(pm);const P=H.sh.find(x=>x.id===pid);if(!P)return {no:_T('Only pieces on the shelf can be sold.')};
-  if(P.iss)return {no:_T('Issued kit: the house lent it to him — it cannot be sold.')};
+  if(P.iss)return {no:sx(gById(P.iss),_T('Issued kit: the house lent it to him — it cannot be sold.'),_T('Issued kit: the house lent it to her — it cannot be sold.'))};
   if(!P.dmg&&arm94SellLeft(pm,w)<=0)return {no:_T`The stalls buy ${ARM94.sellMax} pieces a week from one house — come back next week.`};
   const pr=sell99Price(P);H.sh.splice(H.sh.indexOf(P),1);pm.coin+=pr;if(!P.dmg){const sk=(w.season||0)+':'+(w.week||0);pm.sell94=pm.sell94&&pm.sell94.k===sk?pm.sell94:{k:sk,n:0};pm.sell94.n++}
   try{arm94Fl(w,pm,'sell',pr)}catch(e){}return {ok:1,pr}}
