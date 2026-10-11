@@ -5,8 +5,8 @@
    1   THE BUILDINGS BELONG TO THE ADVISORS: each facility (23-ludus FAC) is run by one advisor and is built from HIS popover
        (#lu100pop) — the same rows and the SAME button (data-mg="build" data-id=<facility> → 23's ludusClick: FAC_COST, levels I–III,
        one project a week, the say/tnews lines). Mapping LU2_FAC (TWEAK): Doctore → Training yard, Practice stands · Medicus →
-       Valetudinarium, Kitchen · Barracks master → Barracks, Shrine · Clerk → Stables, Armory (the fitted armor = the house's
-       stores) · Recruiter → the Ludus grade recruits read · Consilium → the OVERVIEW: grade badge, every building by advisor (click
+       Valetudinarium, Kitchen · Barracks master → Barracks, Shrine, Armory (the fitted armor = the house's
+       stores) · Clerk → Stables (+ the Ledger) · Recruiter → the Ludus grade recruits read · Consilium → the OVERVIEW: grade badge, every building by advisor (click
        = that advisor's popover), the next build you can pay for and who holds it. A facility no advisor holds lands with the Consilium.
        A head wears a small 🏗 marker when one of his buildings is affordable this week (builders free, coin enough).
        The Upgrade School tile stays (art + pips) but opens the Consilium's overview (data-lu100adv="consilium"); the 'fac' lesson step
@@ -15,15 +15,15 @@
        contract wages): net/wk includes it and the badge says "wages N (−R Clerk)".
    3a  The Roster and Armory banners (95 banner73 → roomScene73) show 294a's painted scenes (scene100 'team' / 'armory', banner
        crop) instead of 95's roster scene and 243's armoryScene96; titles, subtitles and chips unchanged.
-   4b  "🏛 The Consilium's counsel" lives in the Consilium's popover (his head lights each week until the counsel is read this week,
-       w.lu2c = the absolute week it was read; a money warning names itself) and "📜 Ledger" in the Clerk's popover AND on the header
+   4b  "🏛 The Consilium's counsel" lives in the Consilium's popover (his head lights ONLY for a warning or decision this week: debt / under 3 weeks of wages, a loan
+       payment due, a rival's challenge waiting; w.lu2c = the absolute week it was read; the counsel stays readable from his popover any time) and "📜 Ledger" in the Clerk's popover AND on the header
        ledger badge (click / Enter → Your ludus, the Ledger panel under the tiles). The links row keeps only 🎓 Schooling (lesson).
    Kill switch localStorage flavius_ludus2100off=1 → 294's page as it was. Test tv100l2 (tv100l runs with the switch on).
    ===================================================================== */
 const LU2={};
 function lu2On(){try{return localStorage.getItem('flavius_ludus2100off')!=='1'&&typeof lu100On==='function'&&lu100On()}catch(e){return true}}
 /* TWEAK: who runs which building */
-const LU2_FAC={doctore:['yard','stands'],medicus:['valet','kitchen'],barracks:['barracks','shrine'],clerk:['stables','armory']};
+const LU2_FAC={doctore:['yard','stands'],medicus:['valet','kitchen'],barracks:['barracks','shrine','armory'],clerk:['stables']};
 function lu2Owner(fk){for(const [k,L] of Object.entries(LU2_FAC))if(L.includes(fk))return k;return 'consilium'}
 function lu2Keys(k){return Object.keys(FAC).filter(fk=>lu2Owner(fk)===k)}
 function lu2Busy(w,pm){return pm.facWk===w.week}
@@ -33,10 +33,16 @@ function lu2Next(w,pm){const ks=Object.keys(FAC).filter(fk=>facLvl(pm,fk)<3).sor
 const LU2_RN=['I','II','III'];
 /* the Clerk's rebate this week (same sum as 294's endWeek) */
 function lu2Rebate(w,pm){try{if(!w||!pm||w.tutorial||w.dead)return 0;const wages=rosterOf(pm).reduce((a,g)=>a+((g.contract&&g.contract.wage)||0),0);return Math.round(wages*ADV100.clerkPct*(adv98Lv(w,'clerk')-1)/100)}catch(e){return 0}}
-/* the counsel: a weekly report until read; a money warning names itself */
+/* the counsel: his head lights ONLY for a warning or a decision this week (debt / short of wages, a loan payment due, a challenge
+   waiting); the counsel itself is always readable from his popover. Reading a warning (w.lu2c = week) darkens the head. */
 function lu2Counsel(w){try{const pm=me();if(!w||!pm||w.tutorial)return null;if(w.lu2c===w.week)return null;
   const wages=rosterOf(pm).reduce((a,g)=>a+((g.contract&&g.contract.wage)||0),0);const run=wages>0?Math.floor(Math.max(0,pm.coin)/wages):99;
-  return pm.coin<0?_T('Counsel: the treasury is in debt'):run<3?_T('Counsel: coin for less than 3 weeks of wages'):_T("This week's counsel")}catch(e){return null}}
+  if(pm.coin<0)return _T('Counsel: the treasury is in debt');
+  if(run<3)return _T('Counsel: coin for less than 3 weeks of wages');
+  const L=w.loan;if(L&&L.amt>0&&(L.due||0)>(L.paid||0))return _T('Counsel: a loan payment is due');
+  const ch=(w.letters||[]).find(x=>x&&x.rl76&&x.rl76.kind==='chal'&&x.until>=w.week&&!x.read);
+  if(ch&&!(w.chal76&&w.chal76.s===w.season&&w.chal76.wk===w.week))return _T('Counsel: a rival challenge is waiting');
+  return null}catch(e){return null}}
 
 /* ---------- the buildings in a popover ---------- */
 function lu2Row(w,pm,fk){const F=FAC[fk];const l=facLvl(pm,fk);const cost=FAC_COST[l];

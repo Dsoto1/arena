@@ -10,7 +10,8 @@ const open=async(W,H)=>{const pg=await b.newPage({viewport:{width:W,height:H}});
 const shot=async(pg,name)=>{await pg.waitForTimeout(600);await pg.screenshot({path:path.join(out,'r2_'+name+'.png')})};
 for(const [W,H,s] of [[1440,900,'1440'],[390,844,'390']]){const pg=await open(W,H);
   await shot(pg,'week_'+s);
-  for(const k of ['consilium','doctore','clerk']){await pg.evaluate(async k=>{LU100.pop=k;MGR_REDRAW();await new Promise(r=>setTimeout(r,500));const p=document.getElementById('lu100pop');if(p&&innerWidth>600)p.scrollIntoView({block:'center'})},k);await shot(pg,k+'_'+s)}
+  await pg.evaluate(async()=>{me().coin=-5;MGR_REDRAW();await new Promise(r=>setTimeout(r,600))});await shot(pg,'warn_'+s);await pg.evaluate(()=>{me().coin=900;MGR_REDRAW()});
+  for(const k of ['consilium','doctore','clerk','barracks']){await pg.evaluate(async k=>{LU100.pop=k;MGR_REDRAW();await new Promise(r=>setTimeout(r,500));const p=document.getElementById('lu100pop');if(p&&innerWidth>600)p.scrollIntoView({block:'center'})},k);await shot(pg,k+'_'+s)}
   await pg.evaluate(async()=>{LU100.pop=null;MGR.tab='roster';MGR_REDRAW();await new Promise(r=>setTimeout(r,800));const m=document.querySelector('#mBody');if(m)m.scrollTop=0});await shot(pg,'roster_'+s);
   await pg.evaluate(async()=>{MGR.tab='armory';MGR_REDRAW();await new Promise(r=>setTimeout(r,800))});await shot(pg,'armory_'+s);
   await pg.close()}
