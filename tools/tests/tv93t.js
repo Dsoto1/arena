@@ -38,7 +38,7 @@ for(let iter=0;iter<200;iter++){
    case 'infirm':await clk('[data-mg="tab"][data-id="infirm"]');break;
    case 'medic':await pg.evaluate(()=>{const b=document.querySelector(`[data-mg="medic"][data-id="${MTUT.A}"]`);b&&b.click()});break;
    case 'ludus':await clk('[data-mg="tab"][data-id="ludus"]');break;
-   case 'fac':await clk('[data-mg="run"][data-id="fac"]');break;
+   case 'fac':await pg.evaluate(()=>{const e=mtEl(MTUT_STEPS[MTUT.step].spot);e&&e.click()});break; /* v1.0 (297): the head that holds the Stables, or the old Facilities tile */
    case 'stables':await clk('[data-mg="build"][data-id="stables"]');break;
    case 'school':await clk('[data-mg="run"][data-id="school"]');break;
    case 'perk':await clk('#mgrPane [data-mg="perk"]:not([disabled])');break;

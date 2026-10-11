@@ -1176,6 +1176,16 @@ One global script; files are concatenated in order. Later "version modules" patc
   Doctore +1/+2 yard Doctore level (y92DocLv wrapper), Medicus new wounds 1/2 weeks sooner (`med100Apply`, inj.md100), Clerk 3%/level of wages back,
   Barracks +1 morale/level for fighters under 70; player's house, Lv ≥2, week end (`adv100Fx` = the text). No save change. Kill switch
   localStorage flavius_ludus100off=1. Test `tv100l`.
+- **v1.0 MY LUDUS ROUND 2 (297-v100ludus2, last before 08-setup; his answers 2026-10-11, shots tools/plans/ludus100/r2_* via shot2.js):** BUILDINGS
+  BELONG TO THE ADVISORS (`LU2_FAC`, TWEAK): Doctore → Training yard + Practice stands · Medicus → Valetudinarium + Kitchen · Barracks master → Barracks +
+  Shrine · Clerk → Stables + Armory · Recruiter → the Ludus grade note · Consilium → overview (grade, buildings by advisor `.lu2o[data-lu100adv]`, the next
+  build you can pay for and who holds it, unmapped FAC keys). Rows live in his popover (a `lu100PopHTML` wrapper) and use 23's own `[data-mg="build"]`
+  (FAC_COST, levels, one project a week). `.lu2bm` 🏗 on a head with an affordable building (inside .c83f via a `lu100Frieze` wrapper). Upgrade School tile
+  = `data-lu100adv="consilium"` (no data-mg). Lesson step 'fac' lights the Stables holder's head (spot/say/until rewritten; tv93t clicks the spot).
+  CLERK REBATE: `weekMoney` wrapper adds `r.clerk` (= 294's endWeek sum, `lu2Rebate`) to net; the header badge (`[data-lu2led]`, click/Enter → Your ludus
+  + Ledger panel) prints "wages N (−R Clerk)". Roster + Armory banners = `scene100('team'|'armory','banner')` (`roomScene73` wrapper, img.lu2ban).
+  COUNSEL: Consilium lit each week until read (`w.lu2c` = week read; key 'lu2:consil' → counsel panel); "The Consilium's counsel" button in his popover,
+  "📜 Ledger" in the Clerk's; the links row keeps only 🎓 Schooling. Kill switch localStorage flavius_ludus2100off=1 (tv100l runs with it). Test `tv100l2`.
 - **v1.0 MAP INSETS (295-v100maps, last before 08-setup; his "all 7", backlog "MAP INTEGRATION"; display only):** ONE helper `mapInset100(o)` → cached
   HTML (`MI100.html` ≤240): an svg whose viewBox crops assets/map.jpg around the places it marks (city x,y = LOCATIONS 0..1, same frame as MAP_PX/290's pins;
   birthplaces beyond the 12 arenas = `MI100_XTRA`, off-map → an edge arrow); pins by kind (host/next lit gold + opacity glow, home blue, sel red, won green,
