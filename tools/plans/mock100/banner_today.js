@@ -26,6 +26,8 @@ const J=await pg.evaluate(async()=>{const o={};
   /* fan flag replica (27 drawFanFlags: the house flag image on a stick, 0.4×0.24 TW) */
   const f=mgrFlagOf(mg[0]);const im=new Image();im.src=houseFlagURI(f);await new Promise(r=>im.onload=r);
   const c2=document.createElement('canvas');c2.width=120;c2.height=120;const h=c2.getContext('2d');const T=110;h.fillStyle='#2a2018';h.fillRect(0,0,120,120);h.translate(30,60);h.strokeStyle='#5a4a34';h.lineWidth=3.3;h.beginPath();h.moveTo(0,T*.34);h.lineTo(0,-T*.26);h.stroke();h.drawImage(im,0,-T*.26,T*.4,T*.24);o.fan=c2.toDataURL();
+  o.dev={};for(const sh of FLAG_SHAPES){const d=decodeURIComponent(flagURI('#000000','#FFFFFF','',sh).split(',')[1]);const a=d.indexOf("fill='#000000'/>")+16,z=d.lastIndexOf('<text');o.dev[sh]=d.slice(a,z).split('#FFFFFF').join('FG').split('#000000').join('BG')}
+  o.sym=DR_SYM98;o.sculptSVG=scbLayersSVG({layers:[{t:'circle',x:50,y:28,w:18,h:18,r:0,c:'#e2b64a',o:1},{t:'star',x:50,y:28,w:10,h:10,r:0,c:'#6e1414',o:1},{t:'line',x:50,y:44,w:60,h:3,r:0,c:'#e2b64a',o:1}],baked:[]});
   return o});
 fs.writeFileSync(path.resolve(__dirname,'banner_today_data.js'),'window.BT='+JSON.stringify(J)+';');
 /* the tapestries in a live arena (192 ar91DecoPaint) */

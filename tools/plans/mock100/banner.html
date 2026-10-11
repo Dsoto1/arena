@@ -1,0 +1,392 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One Banner Press</title>
+<!-- v1.0 mock-up: ONE banner / flag / pennant / tapestry / crest designer. Static page, NOT game code.
+     "Today" samples are rendered from the built game by banner_today.js (→ banner_today_data.js + banner_today/arena.png).
+     The new kinds are drawn by banner_engine.js (inline SVG). Shots: node tools/plans/mock100/banner_shot.js -->
+<link rel="stylesheet" href="../mock98/mock98.css">
+<script src="banner_today_data.js"></script>
+<script src="banner_engine.js"></script>
+<style>
+body{padding:22px 0 60px;overflow:auto}
+.pg{width:min(1240px,calc(100% - 32px));margin:0 auto}
+.pg>h1{font:400 30px/1.1 var(--display);color:var(--gold2);letter-spacing:.05em;margin:0 0 6px}
+.lead{max-width:900px;font-size:15px;color:var(--bone)}
+.cap{display:flex;align-items:baseline;gap:12px;margin:34px 0 10px;flex-wrap:wrap;border-top:1px solid var(--line2);padding-top:18px}
+.cap h2{font:400 22px var(--display);color:var(--gold2);letter-spacing:.05em}
+.cap .n{font:500 12px var(--mono);color:var(--dim);letter-spacing:.1em}
+.cap span{color:var(--muted);font-size:14px}
+.note{color:var(--muted);font-size:14px;line-height:1.5;margin:8px 0 0;max-width:1000px}
+.note b{color:var(--bone)}
+.k{font:11px var(--mono);color:var(--dim);letter-spacing:.04em}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;border:1px solid var(--line2);font:500 11px var(--mono);color:var(--muted);background:#160f0b}
+.pill.keep{border-color:#5a88b0;color:#bcd6ec}.pill.go{border-color:#c79a48;color:var(--gold2)}
+
+/* ---------- TODAY sheet ---------- */
+.today{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.tc{border:1px solid var(--line2);border-radius:10px;background:var(--panel);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.tc h3{font:400 15px var(--display);color:var(--gold2);letter-spacing:.04em;display:flex;gap:8px;align-items:baseline}
+.tc h3 .num{font:500 11px var(--mono);color:var(--dim)}
+.tc .row{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;min-height:64px}
+.tc .row img{height:46px;border-radius:2px;box-shadow:0 2px 6px #0008}
+.tc .row img.tall{height:72px;box-shadow:none}
+.tc .row svg{height:46px;width:auto}
+.tc .fn{font:11px/1.45 var(--mono);color:var(--dim)}
+.tc .fn b{color:var(--muted);font-weight:500}
+.tc .to{font-size:13px;color:var(--bone)}.tc .to b{color:var(--gold2);font-weight:500}
+.tc.keep{border-style:dashed}
+.tc .rg98,.tc .flagchip{height:30px!important}
+
+/* ---------- the Studio frame (designer) ---------- */
+.studio{display:grid;grid-template-columns:200px minmax(0,1fr) 360px;border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:linear-gradient(#1d150f,#160f0b);box-shadow:0 10px 40px #000a}
+.srail{background:linear-gradient(#21180f,#1a120d);border-right:1px solid var(--line2);padding:14px 10px;display:flex;flex-direction:column;gap:3px}
+.srail .h{font:400 18px var(--display);color:var(--gold2);padding:0 8px 8px}
+.srail .g{font:500 10.5px var(--mono);letter-spacing:.14em;color:var(--dim);text-transform:uppercase;padding:10px 8px 3px}
+.srail a{display:flex;justify-content:space-between;padding:6px 9px;border-radius:7px;color:var(--bone);font-size:14px;text-decoration:none}
+.srail a i{font:normal 11px var(--mono);color:var(--dim)}
+.srail a.on{background:linear-gradient(90deg,#3a2a18,#2a1f17);border:1px solid var(--gold);color:var(--gold2)}
+.stage{padding:14px 18px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.st-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.st-hd h2{font:400 22px var(--display);color:var(--gold2)}
+.st-hd .sp{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;border:1px solid var(--line2);background:linear-gradient(#2e2219,#221811);color:var(--bone);font:500 14px var(--body);cursor:pointer}
+.btn.pri{background:linear-gradient(#c79a3c,#8e6a22);border-color:#f0cf7d;color:#1d1206}
+.btn.sm{padding:3px 8px;font-size:12.5px}
+.kinds{display:flex;gap:6px}
+.kb{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 6px 6px;border-radius:9px;border:1px solid var(--line2);background:#1a130d;cursor:pointer;flex:1 1 0;min-width:0}
+.kb small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.kb svg{height:44px;width:auto}
+.kb b{font:400 13px var(--display);color:var(--bone);letter-spacing:.04em}
+.kb small{font:10.5px var(--mono);color:var(--dim)}
+.kb.on{border-color:var(--gold);background:linear-gradient(#3a2a18,#22180f);box-shadow:0 0 0 1px #d6ab4c55}
+.kb.on b{color:var(--gold2)}
+.big{display:flex;gap:18px;align-items:center;justify-content:center;min-height:330px;border-radius:10px;background:radial-gradient(ellipse 60% 55% at 50% 45%,#3a2a1a,#140e09 80%);border:1px solid #2e2218;position:relative}
+.big svg{height:300px;width:auto;max-width:92%;filter:drop-shadow(0 10px 18px #000a)}
+.big .tag{position:absolute;left:12px;top:10px;font:500 11px var(--mono);letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.big .tag b{color:var(--gold2);font-weight:500}
+.five{display:grid;grid-template-columns:1.3fr 1fr .8fr 1.6fr 1fr;gap:8px;align-items:end}
+.five div{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:8px;background:#17100b;border:1px solid #2e2218;cursor:pointer}
+.five div.on{border-color:#8a6a3a}
+.five svg{height:96px;width:auto;max-width:100%}
+.five span{font:500 11px var(--mono);color:var(--muted);letter-spacing:.06em}
+.ctx{display:grid;grid-template-columns:1.6fr .8fr 1.2fr 1.2fr;gap:8px}
+.cx{border:1px solid #2e2218;border-radius:8px;background:#17100b;padding:8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.cx .t{font:500 10.5px var(--mono);letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.cx svg.scene{width:100%;height:auto;display:block;border-radius:5px}
+.mrow{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:5px;font-size:13px;white-space:nowrap;overflow:hidden}
+.mrow:nth-child(odd){background:#1f1711}
+.mrow .pl{font:500 11px var(--mono);color:var(--dim);width:14px}
+.mrow .r{margin-left:auto;font:12px var(--mono);color:var(--muted)}
+.mrow.me{outline:1px solid #8a6a3a}
+.mrow svg{flex:none}
+/* right panel */
+.side{border-left:1px solid var(--line2);background:#1a130d;display:flex;flex-direction:column;min-width:0}
+.tabs{display:flex;gap:2px;padding:10px 10px 0;border-bottom:1px solid var(--line2);flex-wrap:wrap}
+.tabs a{padding:7px 10px;border-radius:7px 7px 0 0;font-size:13.5px;color:var(--muted);cursor:pointer;border:1px solid transparent;border-bottom:none}
+.tabs a.on{color:var(--gold2);background:#221810;border-color:var(--line2);margin-bottom:-1px}
+.pane{padding:12px 14px;display:none;flex-direction:column;gap:12px}
+.pane.on{display:flex}
+.pane h4{font:400 14px var(--display);color:var(--gold2);letter-spacing:.05em;display:flex;align-items:baseline;gap:8px}
+.pane h4 small{font:400 12px var(--body);color:var(--dim)}
+.cols{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cols label{display:flex;flex-direction:column;gap:3px;font:500 11px var(--mono);color:var(--dim)}
+.cols label.tg{flex-direction:row;font:14px var(--body);color:var(--bone)}
+.cols input[type=color]{width:54px;height:30px;border:1px solid var(--line2);border-radius:6px;background:none;padding:1px}
+.grid6{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.grid6 button,.devs button{border:1px solid var(--line2);border-radius:7px;background:#140e09;padding:4px 2px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+.grid6 button svg{height:42px;width:auto}
+.grid6 button span{font:10.5px var(--mono);color:var(--muted)}
+.grid6 button.on,.devs button.on{border-color:var(--gold);box-shadow:0 0 0 1px #d6ab4c66}
+.devs{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.devs button svg{height:40px;width:auto}
+.devs .sep{grid-column:1/-1;font:500 10.5px var(--mono);letter-spacing:.12em;color:var(--dim);text-transform:uppercase;margin-top:4px}
+.tin{width:100%;padding:7px 9px;border-radius:7px;border:1px solid var(--line2);background:#120c08;color:var(--bone);font:16px var(--display);letter-spacing:.12em}
+.tg{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.tg input{accent-color:#d6ab4c;width:16px;height:16px}
+.lay{display:flex;flex-direction:column;gap:3px}
+.lay div{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;background:#140e09;border:1px solid #2e2218;font-size:13.5px}
+.lay div.sel{border-color:#8a6a3a}
+.lay div i{margin-left:auto;font:normal 11px var(--mono);color:var(--dim)}
+.rng{width:100%;accent-color:#d6ab4c}
+.foot{margin-top:auto;padding:10px 14px;border-top:1px solid var(--line2);display:flex;gap:6px;flex-wrap:wrap}
+.rack{grid-column:1/-1;border-top:1px solid var(--line2);padding:12px 18px 16px;display:flex;flex-direction:column;gap:8px}
+.rack h4{font:400 15px var(--display);color:var(--gold2)}
+.rack h4 small{font:12px var(--body);color:var(--dim)}
+.rk{display:flex;gap:10px;flex-wrap:wrap}
+.rc{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px;border:1px solid #2e2218;border-radius:9px;background:#17100b;width:132px}
+.rc svg{height:62px;width:auto}
+.rc b{font:400 13px var(--display);color:var(--bone);text-align:center}
+.rc .acts{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
+.rc .acts span{font:11px var(--mono);padding:1px 5px;border:1px solid var(--line2);border-radius:4px;color:var(--muted)}
+.rc.sys{border-style:dashed}
+
+/* ---------- house sets ---------- */
+.sets{display:flex;flex-direction:column;gap:12px}
+.hs{display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);padding:12px 14px;align-items:center}
+.hs .who{display:flex;flex-direction:column;gap:4px}
+.hs .who h3{font:400 18px var(--display);color:var(--gold2)}
+.hs .who .k{font-size:11px}
+.uses{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;align-items:end}
+.use{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.use .pic{height:110px;display:flex;align-items:flex-end;justify-content:center}
+.use .pic svg{height:100%;width:auto;max-width:100%}
+.use span{font:500 10.5px var(--mono);color:var(--muted);text-align:center;letter-spacing:.04em}
+.use span b{display:block;color:var(--bone);font:400 12.5px var(--display);letter-spacing:.03em}
+
+/* ---------- quality bar ---------- */
+.qa{display:grid;grid-template-columns:260px minmax(0,1fr);gap:14px;align-items:stretch}
+.qbox{border:1px solid var(--line2);border-radius:10px;background:var(--panel);padding:12px;display:flex;flex-direction:column;gap:8px}
+.qbox h3{font:400 15px var(--display);color:var(--gold2)}
+.drrow{display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap}
+.drrow img{height:64px}
+.drrow svg{height:72px;width:auto}
+.lod{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap}
+.lod div{display:flex;flex-direction:column;align-items:center;gap:3px}
+.lod span{font:10.5px var(--mono);color:var(--dim)}
+.anat{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:13px;color:var(--muted)}
+.anat b{color:var(--gold2);font:500 12px var(--mono)}
+
+/* ---------- table ---------- */
+table.map{width:100%;border-collapse:collapse;font-size:13.5px}
+table.map th{font:500 11px var(--mono);letter-spacing:.1em;color:var(--dim);text-transform:uppercase;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line2)}
+table.map td{padding:7px 8px;border-bottom:1px solid #2a1f17;vertical-align:top}
+table.map td:first-child{color:var(--bone)}
+table.map code{font:12px var(--mono);color:var(--muted)}
+.q{border:1px solid var(--line2);border-radius:10px;background:var(--panel);padding:10px 14px;margin-bottom:8px}
+.q b{color:var(--gold2);font-weight:500}
+.q ol{margin:6px 0 0;padding-left:22px;color:var(--muted)}
+.q li.rec{color:var(--bone)}.q li.rec:after{content:"  ← my pick";font:11px var(--mono);color:var(--gold2)}
+
+/* ---------- phones ---------- */
+@media (max-width:760px){
+  .studio{grid-template-columns:1fr}
+  .srail{flex-direction:row;overflow-x:auto;padding:8px;border-right:none;border-bottom:1px solid var(--line2)}
+  .srail .h,.srail .g{display:none}
+  .srail a{white-space:nowrap;flex:none}
+  .side{border-left:none;border-top:1px solid var(--line2)}
+  .big{min-height:230px}.big svg{height:210px}
+  .five{grid-template-columns:repeat(5,minmax(0,1fr))}.five svg{height:56px}.five span{font-size:9.5px}
+  .ctx{grid-template-columns:1fr 1fr}
+  .hs{grid-template-columns:1fr}
+  .uses{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .use .pic{height:84px}
+  .qa{grid-template-columns:1fr}
+  .grid6{grid-template-columns:repeat(4,1fr)}
+  .devs{grid-template-columns:repeat(5,1fr)}
+  table.map{font-size:12.5px}table.map td:nth-child(4),table.map th:nth-child(4){display:none}
+  .kb{min-width:0;flex:1 1 30%}
+}
+</style></head><body>
+<div class="pg">
+<h1>🚩 One Banner Press</h1>
+<p class="lead">Nine-odd banner systems today, drawn nine ways. In v1.0 they all come off <b>one press</b>: one heraldry (cloth, device, motto, sculpt, trim, wear) and five <b>kinds</b> — <b>Flag · Banner · Pennant · Tapestry · Crest</b>. The kind is only the shape and the frame; the house picks its heraldry once and every place in the game derives its own kind. The bar is the online Domus-rank pennant: woven cloth, folds, gold edge, tassels.</p>
+
+<!-- ======================= 1 · TODAY ======================= -->
+<div class="cap"><span class="n">§1</span><h2>Today — every banner in the game</h2><span>rendered from the built game (v0.99)</span></div>
+<div class="today" id="today"></div>
+<p class="note">Same engine underneath most of them (<b>flagURI</b>: a 600×340 rectangle, a watermark device at 45% opacity, letters at the bottom) — but each caller adds its own frame, or none. The tapestries and wall banners are canvas code with their own colours; the room banner is a hand-drawn SVG; the rank pennants are the only ones with a real frame.</p>
+
+<!-- ======================= 2 · THE DESIGNER ======================= -->
+<div class="cap"><span class="n">§2</span><h2>The designer — Creator Studio → Banners &amp; heraldry</h2><span>same rail, tabs and button rows as the other designers</span></div>
+<div class="studio">
+  <nav class="srail">
+    <div class="h">Creator Studio</div>
+    <div class="g">Overview</div><a>All creations <i>48</i></a><a>Roster sets <i>3</i></a>
+    <div class="g">Fighters</div><a>Characters <i>12</i></a><a>Classes <i>4</i></a><a>Lanistas <i>2</i></a>
+    <div class="g">Arena</div><a>Beasts <i>3</i></a><a>Events <i>5</i></a><a>Weapons <i>6</i></a><a>Armor <i>4</i></a>
+    <div class="g">Look</div><a class="on">Banners &amp; heraldry <i>7</i></a><a>Tokens <i>9</i></a><a>Trophies <i>2</i></a><a>Spectators <i>5</i></a>
+  </nav>
+  <section class="stage">
+    <div class="st-hd"><h2 id="dName">Domus Valeria</h2><span class="pill go">house heraldry</span><span class="sp"></span><button class="btn sm">↶</button><button class="btn sm">↷</button></div>
+    <div class="kinds" id="kinds"></div>
+    <div class="big" id="big"><div class="tag">Preview · <b id="bigK">Flag</b></div></div>
+    <div class="five" id="five"></div>
+    <div class="ctx" id="ctx"></div>
+  </section>
+  <aside class="side">
+    <div class="tabs" id="tabs"><a data-t="cloth" class="on">Cloth</a><a data-t="device">Device</a><a data-t="motto">Motto</a><a data-t="sculpt">Sculpt</a><a data-t="trim">Trim &amp; wear</a></div>
+    <div class="pane on" data-p="cloth">
+      <h4>Field colours <small>tinctures</small></h4>
+      <div class="cols"><label>Field<input type="color" id="c1" value="#7a2230"></label><label>Second<input type="color" id="c2" value="#d6ab4c"></label><label>Device<input type="color" id="fg" value="#d6ab4c"></label><button class="btn sm" id="rnd">🎲 Roll</button></div>
+      <h4>Division <small>how the field is split</small></h4>
+      <div class="grid6" id="divs"></div>
+      <p class="note" style="margin:0;font-size:12.5px">Each kind clips the same field to its own outline — a quarterly flag is a quarterly crest is a quarterly tapestry.</p>
+    </div>
+    <div class="pane" data-p="device">
+      <h4>Device <small>the emblem on the cloth</small></h4>
+      <div class="devs" id="devs"></div>
+    </div>
+    <div class="pane" data-p="motto">
+      <h4>Motto <small>Latin capitals, ≤ 12</small></h4>
+      <input class="tin" id="motto" maxlength="12" value="VALERIA">
+      <div class="note" style="margin:0;font-size:12.5px">Where it shows: <b>Flag</b> under the device · <b>Banner</b> on a band · <b>Tapestry</b> along the border · <b>Crest</b> on a scroll · <b>Pennant</b> never (too narrow). Chips under 44 px drop it.</div>
+      <label class="tg"><input type="checkbox" checked> Initials when empty (today's <code class="k">ludusInitials</code>)</label>
+    </div>
+    <div class="pane" data-p="sculpt">
+      <h4>Sculpt layers <small>the shared bench (scbLayers)</small></h4>
+      <div class="acts" style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn sm">● Circle</button><button class="btn sm">⬭ Oval</button><button class="btn sm">■ Box</button><button class="btn sm">▲ Triangle</button><button class="btn sm">◆ Diamond</button><button class="btn sm">★ Star</button><button class="btn sm">☾ Crescent</button><button class="btn sm">╱ Bar</button><button class="btn sm">➤ Spike</button><button class="btn sm">◯ Ring</button></div>
+      <div class="lay"><div class="sel">● Circle <i>gold · 18</i></div><div>★ Star <i>crimson · 10</i></div><div>╱ Bar <i>gold · 60×3</i></div></div>
+      <label class="tg"><input type="checkbox" id="scOn"> Show the sculpted layers on this design</label>
+      <p class="note" style="margin:0;font-size:12.5px">Drag on the big preview, 🔨 commit to bake — exactly today's bench; the layers live in the same 600×340 space as the device, so every kind places them alike.</p>
+    </div>
+    <div class="pane" data-p="trim">
+      <h4>Trim</h4>
+      <label class="tg"><input type="checkbox" id="tGold" checked> Gold edge</label>
+      <label class="tg"><input type="checkbox" id="tTas" checked> Tassels</label>
+      <label class="tg"><input type="checkbox" id="tFr" checked> Fringe <span class="k">tapestry · straight banner · flag fly</span></label>
+      <label class="tg"><input type="checkbox" id="tBar" checked> Top bar / pole</label>
+      <label class="tg"><input type="checkbox" id="tTop"> Red top band <span class="k">pennant (Domus Aurea style)</span></label>
+      <h4>Banner tail</h4>
+      <div class="cols"><label class="tg"><input type="radio" name="tail" value="swallow" checked> Swallow-tail</label><label class="tg"><input type="radio" name="tail" value="straight"> Straight + fringe</label></div>
+      <h4>Weathering <small id="wv">0</small></h4>
+      <input type="range" class="rng" id="wear" min="0" max="100" value="0">
+      <p class="note" style="margin:0;font-size:12.5px">Frayed edge, sun-faded cloth, darker hems. A house can age its banner; the arena can age it by season.</p>
+    </div>
+    <div class="foot"><button class="btn pri">💾 Save heraldry</button><button class="btn">↺ Fresh cloth</button><button class="btn">⬇ Use as my house</button></div>
+  </aside>
+  <div class="rack" style="grid-column:1/-1">
+    <h4>Your heraldry · 3 <small>— 📜 rolls · 🔒 lock · Edit · Copy · Delete (deleting asks first)</small></h4>
+    <div class="rk" id="rackU"></div>
+    <h4>🔒 System heraldry · 31 <small>— the empire, 14 cities, 8 Domus ranks, 7 regions · Copy &amp; edit</small></h4>
+    <div class="rk" id="rackS"></div>
+  </div>
+</div>
+
+<!-- ======================= 3 · ONE DESIGN, MANY USES ======================= -->
+<div class="cap"><span class="n">§3</span><h2>One design, many uses</h2><span>a house picks ONE heraldry; each place derives its kind</span></div>
+<div class="sets" id="sets"></div>
+<p class="note">Who owns which heraldry: <b>Manager house</b> = <code class="k">m.flag</code> (rivals derive theirs as today, from id + city) · <b>online Domus</b> = <code class="k">D.look89</code> grown to a full heraldry (server keeps the small JSON; the rank pennant stays the system design, the house crest rides on its top bar from Ludus Magnus up) · <b>Studio</b> = <code class="k">customFlags</code>, chosen by a character (<code class="k">banner91</code>), a lanista or a career. Families keep their derived heraldry (kin share it).</p>
+
+<!-- ======================= 4 · QUALITY BAR ======================= -->
+<div class="cap"><span class="n">§4</span><h2>The quality bar</h2><span>dr98 today → the engine every kind is drawn with</span></div>
+<div class="qa">
+  <div class="qbox"><h3>What makes dr98 look good</h3>
+    <div class="anat"><b>cloth</b><span>flagURI field + device under a clip</span><b>folds</b><span>dark · light · dark gradient across</span><b>edge</b><span>gold stroke + a faint inner line in the device colour</span><b>top</b><span>gold bar with two finials</span><b>tiers</b><span>tassels at Illustris, red band at Aurea</span></div>
+    <p class="note" style="margin:0;font-size:12.5px">Added for v1.0: a woven <b>texture</b> (noise + weave), vertical <b>hem shading</b>, the device made <b>solid</b> with a soft drop shadow (today: 45% watermark), and the frame per kind.</p></div>
+  <div class="qbox"><h3>The 8 Domus ranks — today (left of each pair) vs the same system designs off the new press</h3><div class="drrow" id="drrow"></div>
+    <h3 style="margin-top:6px">Small sizes — one rule for every kind</h3><div class="lod" id="lod"></div>
+    <p class="note" style="margin:0;font-size:12.5px">Under 44 px: no texture, no motto, no sculpt detail, a thicker edge — chips stay legible in the league table and room lists. Images are cached per design + kind + size, so a table of 12 houses is 12 draws once.</p></div>
+</div>
+
+<!-- ======================= 5 · WHAT BECOMES WHAT ======================= -->
+<div class="cap"><span class="n">§5</span><h2>What becomes what</h2><span>full table + save notes in NOTES-banner.md</span></div>
+<table class="map" id="map"><thead><tr><th>Today</th><th>Becomes</th><th>Replaces</th><th>Note</th></tr></thead><tbody></tbody></table>
+
+<!-- ======================= 6 · QUESTIONS ======================= -->
+<div class="cap"><span class="n">§6</span><h2>Open questions</h2></div>
+<div id="qs"></div>
+</div>
+
+<script>
+const BT=window.BT,E=window.B100;
+const L=t=>document.getElementById(t);
+const bars={none:'none'};
+/* ---------------- §1 today ---------------- */
+{const img=(u,c)=>`<img src="${u}" class="${c||''}" alt="">`;const cards=[
+ ['1','Empire &amp; city banners',BT.empire.slice(0,4).map(e=>img(e.u)).join('')+img(BT.spqr),'<b>flagURI</b> · flagSVG · flagURIk · FLAGS · CITY_FLAG · EMPIRE_FLAG','→ <b>Flag</b> (system designs, locked)'],
+ ['2','Manager house flags',BT.house.map(h=>img(h.u)).join(''),'<b>mgrFlagOf</b> · houseFlagURI · flagChip · flagImg · flagSpread · flagPickerHTML','→ the house <b>heraldry</b>; chips = <b>Crest</b>'],
+ ['3','Family banners',BT.fam.map(h=>img(h.u)).join(''),'<b>famFlagOf</b> · famFlagChip','→ derived heraldry, <b>Crest</b> chip'],
+ ['4','Studio Banner press',img(BT.sculpt)+img(BT.house[2].u),'<b>flagStudioHTML</b> · blankFlag · flagStudioClick/Input · flagSculpt + scbLayersSVG → customFlags','→ <b>the one designer</b>'],
+ ['5','Crowd fan flags',img(BT.fan,'tall'),'<b>drawFanFlags</b> (canvas, the house flag on a stick)','→ <b>Flag</b> small (LOD)'],
+ ['6','Arena tapestries',`<img src="banner_today/arena.png" style="height:72px;object-fit:cover;object-position:10% 60%;width:230px">`,'<b>ar91FlagSrc</b> · ar91DecoPaint (canvas: frame, studs, fringe around flagURI)','→ <b>Tapestry</b> of the section\'s house'],
+ ['7','Wall banners &amp; drape',img(BT.wall,'tall'),'<b>ar91Banner</b> (XII / S / IV on red) · <b>ar91Drape</b> (FR icon)','→ <b>Banner</b> (arena system designs)'],
+ ['8','Domus rank pennants',BT.dr.slice(0,8).map(r=>img(r.u,'tall')).join(''),'<b>dr98URI</b> · dr98Chip · DR_SYM98 · DRANKS98','→ <b>Pennant</b> = THE quality bar; 8 locked system designs'],
+ ['9','Region flags',BT.rg.slice(0,5).map(r=>r.h).join(''),'<b>rg98Flag</b> · REGIONS98 (flagURI)','→ <b>Flag</b> (7 locked system designs)'],
+ ['10','Online Domus crest',BT.crest.map(u=>img(u)).join(''),'<b>d89Crest</b> · d89Banner · d89Look · CREST89 (c1/c2/crest)','→ the Domus <b>heraldry</b> (Crest + Pennant top)'],
+ ['11','Ludus room pennants',BT.room.replace('<svg','<svg style="height:72px;width:auto"'),'<b>roomScene73</b> wrapper (145-v85fix:121): two hand-drawn pennants + the house flag','→ <b>Banner</b> pair + <b>Flag</b> from the house'],
+ ['12','Portrait backdrops',BT.portrait.replace(/width:110px;height:154px/,'width:52px;height:73px'),'<b>gLook</b> bg:"flag:&lt;city&gt;" (17-manager:163) · charEditor banner91','→ <b>Flag</b> cloth behind the bust (unchanged look)'],
+];
+ L('today').innerHTML=cards.map(([n,t,row,fn,to])=>`<div class="tc"><h3><span class="num">${n}</span>${t}</h3><div class="row">${row}</div><div class="fn">${fn}</div><div class="to">${to}</div></div>`).join('')+
+ `<div class="tc keep"><h3><span class="num">✕</span>Language flags</h3><div class="row">${BT.lang.join('')}</div><div class="fn"><b>flag91</b> · FLAG91 (190-v91flags)</div><div class="to"><span class="pill keep">stays separate</span> real country flags, never heraldry</div></div>`;}
+
+/* ---------------- the designs ---------------- */
+const SC=BT.sculptSVG;
+const HOUSES=[
+ {id:'val',name:'Domus Valeria',who:'Online Domus',src:'D.look89 → heraldry',c1:'#7a2230',c2:'#d6ab4c',fg:'#d6ab4c',div:'bordure',dev:'boar',motto:'VALERIA',trim:{gold:true,tassels:true,fringe:true,bar:true},wear:0,tail:'swallow',rank:'ludusmagnus'},
+ {id:'bat',name:'Ludus Batiatus',who:'Manager house',src:'m.flag (Capua)',c1:'#1c3566',c2:'#d9d0bb',fg:'#e2b64a',div:'pale',dev:'horse',motto:'BATIATVS',trim:{gold:true,tassels:false,fringe:true,bar:true},wear:.25,tail:'straight'},
+ {id:'pol',name:'Wolves of Pola',who:'Studio custom',src:'customFlags · c:f3k',c1:'#24324a',c2:'#d7c29a',fg:'#e9c547',div:'quarterly',dev:'wolf',motto:'LVPI',sculpt:SC,trim:{gold:true,tassels:true,fringe:true,bar:true},wear:.55,tail:'swallow'}];
+let D={...HOUSES[0],trim:{...HOUSES[0].trim}},K='flag';
+const KS=['flag','banner','pennant','tapestry','crest'];
+const sv=(k,d,o)=>E.svg(k,d,o);
+
+/* scenes in context */
+function sceneWall(d){/* the stands, iso: two tapestries hung on poles over the benches (skewed like 192's), and a pair of banners at a tower */
+ const t=E.svg('tapestry',d).replace('<svg','<svg x="0" y="0" width="150" height="84"');const b=E.svg('banner',d).replace('<svg','<svg x="0" y="0" width="38" height="58"');
+ const blocks=Array.from({length:7},(_,r)=>Array.from({length:12},(_,c)=>`<rect x="${c*30+(r%2?15:0)-15}" y="${r*16}" width="29" height="15" fill="#7c6650" opacity="${.55+((r*7+c*3)%5)/14}"/>`).join('')).join('');
+ return `<svg class="scene" viewBox="0 0 330 150"><defs><linearGradient id="skyw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9c4d8"/><stop offset="1" stop-color="#dfe6e2"/></linearGradient></defs><rect width="330" height="150" fill="url(#skyw)"/>
+  <g transform="translate(0 40) skewY(-14)">${blocks}<rect y="104" width="330" height="10" fill="#9b2a1c"/>${Array.from({length:12},(_,i)=>`<rect x="${i*28}" y="114" width="26" height="60" fill="#5a4a3a" opacity=".8"/>`).join('')}</g>
+  <g transform="translate(22 52) skewY(-14)"><rect x="-2" y="-8" width="3" height="96" fill="#4a321c"/><rect x="150" y="-8" width="3" height="96" fill="#4a321c"/>${t}</g>
+  <g transform="translate(232 18) skewY(-14)">${b}<g transform="translate(46 0)">${b}</g></g></svg>`}
+function sceneFan(d){const f=E.svg('flag',d,{}).replace('<svg','<svg x="34" y="6" width="58" height="40"');
+ return `<svg class="scene" viewBox="0 0 120 110"><rect width="120" height="110" fill="#3a2c20"/>${[[14,92],[46,96],[78,92],[106,96]].map(([x,y],i)=>`<circle cx="${x}" cy="${y-24}" r="8" fill="${['#c48a5a','#a86a42','#d9a070','#8a5a36'][i]}"/><path d="M${x-12} ${y+16} Q${x-12} ${y-14} ${x} ${y-14} Q${x+12} ${y-14} ${x+12} ${y+16}Z" fill="${['#6a3a2a','#2a4a6a','#5a5a2a','#4a2a4a'][i]}"/>`).join('')}<path d="M40 60 L40 8" stroke="#5a4a34" stroke-width="2.4"/><path d="M34 74 L40 60" stroke="#c48a5a" stroke-width="5" stroke-linecap="round"/>${f}</svg>`}
+function rowsTable(d){const other=[HOUSES[1],HOUSES[2],{c1:'#3d4a1e',c2:'#e8d9a0',fg:'#e8d9a0',div:'fess',dev:'olive',trim:{gold:true}},{c1:'#101010',c2:'#c9ccd3',fg:'#c9ccd3',div:'chevron',dev:'owl',trim:{gold:true}}];
+ const r=(i,dd,n,rec,me)=>`<div class="mrow${me?' me':''}"><span class="pl">${i}</span>${E.svg('crest',dd,{px:22})}${E.svg('flag',dd,{px:16})}<span>${n}</span><span class="r">${rec}</span></div>`;
+ return r(1,other[0],'Ludus Batiatus','9–2')+r(2,d,D.name,'8–3',1)+r(3,other[1],'Wolves of Pola','7–4')+r(4,other[2],'Schola Thysdri','5–6')}
+function rowsRoom(d){const dd=[d,HOUSES[1],HOUSES[2]];const ranks=['ludusmagnus','ludus','taberna'];
+ return ['Valerius','Batiatus','Lupa'].map((n,i)=>`<div class="mrow${i?'':' me'}">${E.svg('pennant',rankD(ranks[i]),{px:24})}${E.svg('crest',dd[i],{px:20})}<span>${n}</span><span class="r">${['👑 host','✓ ready','—'][i]}</span></div>`).join('')}
+function rankD(k){const R=(BT.dr||[]).find(r=>r.k===k)||BT.dr[0];const i=BT.dr.indexOf(R);const PAL={tugurium:['#5d5246','#eadfc4','hut'],taberna:['#6e6236','#f2e4b2','amphora'],ludusminor:['#874626','#f6dcbc','rudis'],ludus:['#2b5a78','#eaf1f4','blades'],ludusmagnus:['#6e1d22','#f0cf7d','helm'],familianota:['#4a2a6a','#f2da92','shield'],illustris:['#9a7524','#fff3c8','laurel'],aurea:['#c08a22','#fff8de','eagle']}[R.k];
+ return {c1:PAL[0],c2:PAL[0],fg:PAL[1],div:'plain',dev:'sym:'+PAL[2],trim:{gold:true,tassels:i>=6,bar:true,topbar:i>=7},wear:0}}
+
+/* ---------------- §2 designer render ---------------- */
+function render(){
+ L('kinds').innerHTML=KS.map(k=>`<button class="kb${k===K?' on':''}" data-k="${k}">${sv(k,D,{px:44})}<b>${E.KINDS[k].n}</b><small>${E.KINDS[k].sub.split(' · ')[0]}</small></button>`).join('');
+ L('big').innerHTML=`<div class="tag">Preview · <b>${E.KINDS[K].n}</b> · ${E.KINDS[K].sub}</div>`+sv(K,D);
+ L('five').innerHTML=KS.map(k=>`<div class="${k===K?'on':''}" data-k="${k}">${sv(k,D)}<span>${E.KINDS[k].n.toUpperCase()}</span></div>`).join('');
+ L('ctx').innerHTML=`<div class="cx"><div class="t">Arena · the stands</div>${sceneWall(D)}</div><div class="cx"><div class="t">Crowd · fan flag</div>${sceneFan(D)}</div><div class="cx"><div class="t">Manager · league table</div>${rowsTable(D)}</div><div class="cx"><div class="t">Online · room list</div>${rowsRoom(D)}</div>`;
+ L('divs').innerHTML=E.DIVS.map(v=>`<button class="${D.div===v?'on':''}" data-div="${v}">${sv('crest',{...D,div:v,dev:'none',motto:''},{px:42})}<span>${v}</span></button>`).join('');
+ const devs=['none',...Object.keys(BT.dev)],syms=Object.keys(BT.sym).map(s=>'sym:'+s);
+ L('devs').innerHTML=`<div class="sep">Printed devices · FLAG_SHAPES</div>`+devs.map(v=>`<button class="${D.dev===v?'on':''}" data-dev="${v}" title="${v}">${sv('crest',{...D,dev:v,motto:'',sculpt:''},{px:40})}</button>`).join('')+`<div class="sep">Rank symbols · DR_SYM98</div>`+syms.map(v=>`<button class="${D.dev===v?'on':''}" data-dev="${v}" title="${v}">${sv('crest',{...D,dev:v,motto:'',sculpt:''},{px:40})}</button>`).join('');
+ L('dName').textContent=D.name;L('wv').textContent=Math.round(D.wear*100);
+}
+function rack(){L('rackU').innerHTML=HOUSES.map(h=>`<div class="rc">${sv('crest',h)}<b>${h.name}</b><div class="acts"><span>📜</span><span>🔒</span><span>Edit</span><span>Copy</span><span>Delete</span></div></div>`).join('');
+ const sys=[{name:'S·P·Q·R',c1:'#6e1414',c2:'#6e1414',fg:'#e2b64a',div:'plain',dev:'eagle',motto:'S·P·Q·R',k:'flag'},{name:'Capua',c1:'#1c3566',c2:'#d9d0bb',fg:'#e8e0cc',div:'fess',dev:'horse',motto:'CAPVA',k:'flag'},{name:'Nemausus',c1:'#1d4a2a',c2:'#8c1f1a',fg:'#e0433a',div:'pale',dev:'croc',motto:'NEMAVSVS',k:'flag'},{name:'Ludus Magnus',...rankD('ludusmagnus'),k:'pennant'},{name:'Domus Aurea',...rankD('aurea'),k:'pennant'},{name:'Europa',c1:'#6e1414',c2:'#6e1414',fg:'#e2b64a',div:'plain',dev:'column',motto:'EVROPA',k:'flag'},{name:'Arena · XII',c1:'#a8322c',c2:'#a8322c',fg:'#2a0d0a',div:'plain',dev:'none',motto:'XII',k:'banner',tail:'straight'}];
+ L('rackS').innerHTML=sys.map(s=>`<div class="rc sys">${sv(s.k,{trim:{gold:true,bar:true,tassels:s.k==='pennant'&&s.name==='Domus Aurea',topbar:s.name==='Domus Aurea'},wear:0,...s})}<b>🔒 ${s.name}</b><div class="acts"><span>Copy &amp; edit</span></div></div>`).join('')}
+document.addEventListener('click',e=>{const k=e.target.closest('[data-k]');if(k){K=k.dataset.k;render();return}
+ const dv=e.target.closest('[data-div]');if(dv){D.div=dv.dataset.div;render();return}
+ const de=e.target.closest('[data-dev]');if(de){D.dev=de.dataset.dev;render();return}
+ const t=e.target.closest('[data-t]');if(t){document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a===t));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.p===t.dataset.t));return}
+ if(e.target.id==='rnd'){const P=[['#6e1414','#e2b64a'],['#1c3566','#e8e0cc'],['#1d4a2a','#e0433a'],['#3d1c4a','#e6c46a'],['#11474a','#e9efe6'],['#8a5a0e','#fff0b8']];const p=P[Math.floor(Math.random()*P.length)];D.c1=p[0];D.c2=p[1];D.fg=p[1];syncIn();render()}});
+function syncIn(){L('c1').value=D.c1;L('c2').value=D.c2;L('fg').value=D.fg;L('motto').value=D.motto||'';L('wear').value=Math.round(D.wear*100);L('tGold').checked=D.trim.gold!==false;L('tTas').checked=!!D.trim.tassels;L('tFr').checked=!!D.trim.fringe;L('tBar').checked=D.trim.bar!==false;L('tTop').checked=!!D.trim.topbar;L('scOn').checked=!!D.sculpt}
+document.addEventListener('input',e=>{const i=e.target;if(i.id==='c1'||i.id==='c2'||i.id==='fg')D[i.id]=i.value;else if(i.id==='motto')D.motto=i.value.toUpperCase();else if(i.id==='wear')D.wear=i.value/100;
+ else if(i.id==='tGold')D.trim.gold=i.checked;else if(i.id==='tTas')D.trim.tassels=i.checked;else if(i.id==='tFr')D.trim.fringe=i.checked;else if(i.id==='tBar')D.trim.bar=i.checked;else if(i.id==='tTop')D.trim.topbar=i.checked;
+ else if(i.id==='scOn')D.sculpt=i.checked?SC:'';else if(i.name==='tail')D.tail=i.value;else return;render()});
+
+/* ---------------- §3 house sets ---------------- */
+function sets(){L('sets').innerHTML=HOUSES.map(h=>{const uses=[
+  ['flag',h,'Masthead · square','Flag'],['tapestry',h,'Stands tapestry','Tapestry'],['banner',h,'Ludus room · gate poles','Banner'],
+  ['crest',h,'League row · records','Crest'],h.rank?['pennant',rankD(h.rank),'Rank pennant (system)','Pennant','crest']:['pennant',h,'Studio · Play Now seat','Pennant'],['flagS',h,'Fan flag · chips','Flag ≤ 44px']];
+ return `<div class="hs"><div class="who"><span class="pill ${h.id==='val'?'go':''}">${h.who}</span><h3>${h.name}</h3><span class="k">${h.src}</span><span class="k">${h.div} · ${h.dev} · “${h.motto}”${h.wear?` · wear ${Math.round(h.wear*100)}`:''}</span></div>
+  <div class="uses">${uses.map(([k,d,lab,kn,extra])=>`<div class="use"><div class="pic">${k==='flagS'?`<div style="display:flex;gap:6px;align-items:flex-end">${sv('flag',d,{px:40})}${sv('crest',d,{px:28})}${sv('crest',d,{px:18})}</div>`:extra?`<div style="position:relative;height:100%">${sv(k,d)}<div style="position:absolute;left:50%;top:6%;transform:translateX(-50%)">${sv('crest',h,{px:30})}</div></div>`:sv(k,d)}</div><span><b>${kn}</b>${lab}</span></div>`).join('')}</div></div>`}).join('')}
+
+/* ---------------- §4 quality ---------------- */
+function quality(){L('drrow').innerHTML=BT.dr.map(r=>`<img src="${r.u}" alt="">${sv('pennant',rankD(r.k))}`).join('<span style="width:8px"></span>');
+ L('lod').innerHTML=[96,64,44,32,22,16].map(px=>`<div>${sv('crest',HOUSES[0],{px})}<span>${px}px</span></div>`).join('')+[64,32,18].map(px=>`<div>${sv('flag',HOUSES[1],{px})}<span>flag ${px}</span></div>`).join('')+[64,24].map(px=>`<div>${sv('pennant',rankD('aurea'),{px})}<span>pennant ${px}</span></div>`).join('')}
+
+/* ---------------- §5 map ---------------- */
+L('map').querySelector('tbody').innerHTML=[
+ ['Empire + city banners (FLAGS, EMPIRE_FLAG)','Flag · 15 system designs 🔒','flagURI body, flagSVG, flagURIk, CITY_FLAG lookups','flagBG page backdrop keeps working via the new URI'],
+ ['Manager house flag (mgrFlagOf, picker)','the house heraldry','houseFlagURI, flagChip, flagImg, flagSpread, flagPickerHTML','rivals still derived from id + city; same 12 devices'],
+ ['Family banners (famFlagOf)','derived heraldry → Crest chip','famFlagChip','kin share it, as today'],
+ ['Studio Banner press','THE designer','flagStudioHTML, blankFlag, flagStudioClick/Input, flagSculpt','customFlags rows open as-is (div plain, kind flag)'],
+ ['Crowd fan flags (drawFanFlags)','Flag at LOD size','the inline rect fallback','canvas draws the cached image'],
+ ['Arena tapestries (ar91FlagSrc / ar91DecoPaint)','Tapestry of that section\'s house','the studs/fringe frame code','192 layer cache key = design hash'],
+ ['Wall banners + drape (ar91Banner / ar91Drape)','Banner · arena system designs 🔒','both canvas painters','XII / S / IV and the FR drape as locked designs'],
+ ['Domus rank pennants (dr98URI)','Pennant · 8 system designs 🔒','dr98URI body (dr98Chip keeps its name)','server untouched (DRANKS98 data)'],
+ ['Region flags (rg98Flag)','Flag · 7 system designs 🔒','RG98_CACHE + flagURI call','REGIONS98 data untouched'],
+ ['Domus crest (d89Crest, look89)','the Domus heraldry: Crest + on the rank pennant','d89Crest','server: look89 grows optional fields (div, motto, trim, wear)'],
+ ['Ludus room pennants (145 roomScene73)','Banner pair from the house','the hand-drawn <path> pennants','banner73 scene keeps its layout'],
+ ['Portrait backdrops (bg:"flag:…")','Flag cloth (no frame) behind the bust','—','face99 R99 cache unchanged'],
+ ['Language flags (flag91)','stays separate','—','real country flags, not heraldry'],
+].map(r=>`<tr>${r.map((c,i)=>`<td>${i===2?`<code>${c}</code>`:c}</td>`).join('')}</tr>`).join('');
+
+/* ---------------- §6 questions ---------------- */
+L('qs').innerHTML=[
+ ['Q1 · Rank pennants online','How does a house show itself on its rank pennant?',['The pennant stays the pure system design; the house crest sits beside it in lists','From Ludus Magnus up the house crest rides on the pennant\'s top bar (as drawn in §3)','The house\'s own colours become the pennant field; only the symbol shows the rank'],1],
+ ['Q2 · Devices','Today the device is a 45% watermark. In v1.0:',['Solid device + soft shadow everywhere (as drawn)','Solid for houses, watermark kept for city / empire banners','A per-design “Device strength” slider'],0],
+ ['Q3 · Weathering','Who ages a banner?',['Only the designer slider (the house chooses)','The slider + the arena: tapestries fray a little over a Manager season, mended by a cheap “new cloth”','Off — no weathering in v1.0'],0],
+ ['Q4 · Online heraldry','The online Domus today has c1, c2 and a crest only. In v1.0:',['Full heraldry online (division, motto, trim, wear; sculpt layers stay offline-only)','Full heraldry incl. sculpt layers (≤ 3 KB, server-checked)','Keep online as today; the engine just draws it better'],0],
+ ['Q5 · Language flags','',['Stay out of the designer (real country flags)','Draw them with the same cloth/edge for one look, but not editable'],0],
+ ['Q6 · Studio name','The rail entry:',['Banners & heraldry','Banner press (today\'s name)','Heraldry'],0],
+].map(([h,t,o,rec])=>`<div class="q"><b>${h}</b> <span class="muted">${t}</span><ol type="a">${o.map((x,i)=>`<li class="${i===rec?'rec':''}">${x}</li>`).join('')}</ol></div>`).join('');
+
+syncIn();render();rack();sets();quality();
+</script></body></html>
