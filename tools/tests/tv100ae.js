@@ -75,7 +75,7 @@ const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   o.star2=document.querySelectorAll('.roomstat.bt85w .bt85.bt100s').length;
   /* 6 · play the card in order; the solo special is won by our fighter (a fixed bout nobody catches) */
   w.rigCount=-20;n.bouts[si].rig=g1.id;let cBefore=null;
-  for(let i=0;i<n.bouts.length;i++){if(i===si)cBefore=m.coin;await runBoutSim(i);if(i===si)o.play={done:n.bouts[si].done,won:(n.bouts[si].res.winners||[]).includes(g1.id),gain:m.coin-cBefore,min:Math.round(240*0.25)}}
+  for(let i=0;i<n.bouts.length;i++){if(i===si)cBefore=m.coin;await runBoutSim(i);if(i===si)o.play={done:n.bouts[si].done,won:(n.bouts[si].res.winners||[]).includes(g1.id),gain:m.coin-cBefore,min:(()=>{const nw=Math.max(1,(n.bouts[si].res.winners||[]).length),P=Math.max(1,Math.round(240/nw));return Math.round(P*0.5)-Math.max(1,Math.round(P*0.1))})()}}
   o.team={done:n.bouts[ti].done,rows:(n.bouts[ti].res&&n.bouts[ti].res.rows||[]).length};
   o.news=(w.news||[]).some(x=>/Headline special/.test(x.text));
   /* 7 · kill switch: no specials, no week's card */
@@ -97,7 +97,7 @@ ok(R.hire.both&&R.hire.same&&R.hire.cost===R.hire.exp&&R.hire.rec&&R.hire.refund
 ok(R.ed.ok&&R.ed.ed&&R.ed.same&&R.ed.cost===19,"editor's pick "+JSON.stringify(R.ed));
 ok(R.rx.grey&&R.rx.why&&!R.rx.book&&R.rx.chip,'restricted greys ineligible '+JSON.stringify(R.rx));
 ok(R.full.flag&&R.full.all&&R.full.teams&&R.full.note,'travel fills every seat '+JSON.stringify(R.full));ok(R.star2===2,'★ chips for the two specials');
-ok(R.play&&R.play.done&&R.play.won&&R.play.gain>=R.play.min,'special played to the end pays the purse '+JSON.stringify(R.play));
+ok(R.play&&R.play.done&&R.play.won&&R.play.gain>=R.play.min,'special played to the end pays the cut of the purse (shared by the winners) '+JSON.stringify(R.play));
 ok(R.team.done&&R.team.rows===4,'team special played '+JSON.stringify(R.team));
 ok(R.off.none&&R.off.panel,'kill switch '+JSON.stringify(R.off));ok(!R.errs.length,'no new errors '+JSON.stringify(R.errs));
 /* phones: 390 px, no horizontal overflow on Match Week or in the picker */
