@@ -65,7 +65,7 @@ ok(r5.tc&&r5.note&&!r5.loose,'5 the advisor\'s note is inside the road box '+JSO
 ok(r5.letter,'5 the next-prize line is a letter '+r5.lk);ok(r5.once,'5 and not sent twice in one week');
 const r5b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));MGR.tab='night';MGR_REDRAW();await W8(500);const tc=document.querySelector('.travelcard');const r=tc.getBoundingClientRect();/* v0.97 (244-v96walk): the road box is one slim strip, the walk button lives in the banner */
   return {h:Math.round(r.height),sideH:Math.round(r.height),w:Math.round(r.width),strip:tc.classList.contains('strip96'),side:!!tc.querySelector('.road85side')}});
-ok(r5b.strip&&!r5b.side&&r5b.h<=135 /* v1.0: 295 insets, CI fonts +3px */,'5 the road box is as tall as its content '+JSON.stringify(r5b));
+ok(r5b.strip&&!r5b.side&&r5b.h<=120,'5 the road box is as tall as its content '+JSON.stringify(r5b));
 if(SHOT){await W(300);await pg.screenshot({path:SHOT+'/tv96m_night.png'})}
 /* ---- 6 · warnings only for this week's city ---- */
 const r6=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_();const o={};const loc=w.night.loc;
