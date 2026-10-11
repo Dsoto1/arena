@@ -108,9 +108,9 @@ function ar91Tex(){const M=ar91Mat();const lite=typeof lite84On==='function'&&li
 
 /* ---------- drawing helpers (g = the layer's context) ---------- */
 let AR91PAT=null; /* the pattern of the layer being painted */
-function ar91Fill(g,scale){if(AR91PAT){try{const o=center((N-1)/2,(N-1)/2) /* v0.92 (his note): pinned to the board's middle, not the canvas corner — zooming no longer slides the stone */;AR91PAT.setTransform(new DOMMatrix().translate(o.x,o.y).scale((scale||1)*TW*0.9/170))}catch(e){}g.fillStyle=AR91PAT}else g.fillStyle=ar91Mat().cap}
+function ar91Fill(g,scale,kind /* v1.0: 'floor' on the flat fills (100-arena lays the slabs on the floor); ignored here */){if(AR91PAT){try{const o=center((N-1)/2,(N-1)/2) /* v0.92 (his note): pinned to the board's middle, not the canvas corner — zooming no longer slides the stone */;AR91PAT.setTransform(new DOMMatrix().translate(o.x,o.y).scale((scale||1)*TW*0.9/170))}catch(e){}g.fillStyle=AR91PAT}else g.fillStyle=ar91Mat().cap}
 function ar91Path(g,Q){g.beginPath();Q.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.closePath()}
-function ar91Stone(g,Q,shadeA,scale){ar91Path(g,Q);ar91Fill(g,scale);g.fill();if(shadeA){g.fillStyle=shadeA;g.fill()}}
+function ar91Stone(g,Q,shadeA,scale,kind){ar91Path(g,Q);ar91Fill(g,scale,kind);g.fill();if(shadeA){g.fillStyle=shadeA;g.fill()}}
 function ar91Ring(k){const P=center;const n=N-1,e0=-0.5,e1=n+0.5;return [P(e0-k,e0-k),P(e0-k,e1+k),P(e1+k,e1+k),P(e1+k,e0-k)]}
 function ar91Mid(){const n=N-1,a=center(0,0),b=center(n,n);return {x:(a.x+b.x)/2,y:(a.y+b.y)/2}}
 /* ar91Edges — the four sides at ring k, with which are far (upper on screen) */
@@ -118,6 +118,22 @@ function ar91Edges(k){const C=ar91Ring(k),mid=ar91Mid();return [[0,1],[1,2],[2,3
 /* ar91Soot — a soft dark smudge on the stone above and behind a fire (baked) */
 function ar91Soot(g,x,y,r){const gr=g.createRadialGradient(x,y-r*0.55,0,x,y-r*0.55,r);gr.addColorStop(0,'rgba(18,12,8,.26)');gr.addColorStop(.55,'rgba(18,12,8,.1)');gr.addColorStop(1,'rgba(18,12,8,0)');
   g.save();g.translate(x,y-r*0.55);g.scale(0.7,1);g.translate(-x,-(y-r*0.55));g.fillStyle=gr;g.fillRect(x-r,y-r*1.6,r*2,r*2.1);g.restore()}
+
+/* ar91NearGeom — v1.0: ONE place for the corner towers and the near walls, so the tower, the wall, 277's plinth and its rail
+   never drift apart. towers[0] = left, [1] = right: {x, y (ar91Tower's base centre), yf (its front foot), k (half width)};
+   near[] = the near sides at ring 0.19, a.x < b.x: {E, a, b (run on to the tower — v0.92, his arrows: the tower stands 0.92 k
+   out from the sand corner), a0, b0 (the side itself), left, dy (the dark gap between sand and wall, carried along)}. */
+function ar91NearGeom(){const lud=ar91Lud();const k=TW*(lud?0.4:0.27),mid=ar91Mid();const R2=ar91Ring(0.19);
+  const Lt=R2.reduce((b,p)=>p.x<b.x?p:b),Rt=R2.reduce((b,p)=>p.x>b.x?p:b);
+  const towers=[{x:Lt.x-k*0.92,y:Lt.y-k/2+TW*0.01,side:-1},{x:Rt.x+k*0.92,y:Rt.y-k/2+TW*0.01,side:1}];for(const T of towers){T.yf=T.y+k/2;T.k=k}
+  const near=[];for(const E of ar91Edges(0.19).filter(E=>!E.far)){let a=E.a,b=E.b;if(a.x>b.x){const t=a;a=b;b=t}const left=E.mx<mid.x;const a0=a,b0=b;let dy=0;
+    {const kx=TW*(lud?0.4:0.27)*0.92,v={x:b.x-a.x,y:b.y-a.y};if(v.x>0){const t=kx/v.x;if(left)a={x:a.x-v.x*t,y:a.y-v.y*t};else b={x:b.x+v.x*t,y:b.y+v.y*t};
+      const C0=ar91Ring(0),p=C0[E.ia],q=C0[E.ib];if(q.x!==p.x){const P0=left?a0:b0,y0=p.y+(q.y-p.y)*(P0.x-p.x)/(q.x-p.x);dy=P0.y-y0}}}
+    near.push({E,a,b,a0,b0,left,dy})}
+  return {k,lud,lip:TW*0.04,Hc:TW*0.16,mid,towers,near}}
+/* ar91Face — v1.0 hook after a vertical stone face is painted ('side' = the foundation's side faces, 'tower' = a corner tower's
+   front); 277-v100arena paints its dado band here. Nothing in 192. */
+function ar91Face(g,Q,kind,shadeA){}
 
 /* ---------- layer 'under': the foundation + the near sides (under the benches) ---------- */
 function ar91Under(g){if(!night91On())ar91Floor(g);const Pq=pt;const n=N-1;const EX=ar91Ex();const lud=ar91Lud();const lo=-2.95-EX,hi=n+2.95+EX,inn=-0.62,inn2=n+0.62;
@@ -128,7 +144,7 @@ function ar91Under(g){if(!night91On())ar91Floor(g);const Pq=pt;const n=N-1;const
   /* the side faces under the front edges */
   const h=TW*0.3;for(let i=0;i<OO.length;i++){const p=OO[i],q=OO[(i+1)%OO.length];if(Math.max(p.y,q.y)<cMid.y-TW*2&&!(Math.abs(p.y-q.y)<1))continue;
     const F=[p,q,{x:q.x,y:q.y+h},{x:p.x,y:p.y+h}];if(lud){g.fillStyle='#1c1a18';ar91Path(g,F);g.fill();continue}
-    ar91Stone(g,F,Math.abs(p.y-q.y)<1?'rgba(30,20,10,.35)':(p.x<q.x)===(p.y<q.y)?'rgba(30,20,10,.42)':'rgba(30,20,10,.22)',0.8)}
+    const sh=Math.abs(p.y-q.y)<1?'rgba(30,20,10,.35)':(p.x<q.x)===(p.y<q.y)?'rgba(30,20,10,.42)':'rgba(30,20,10,.22)';ar91Stone(g,F,sh,0.8);ar91Face(g,F,'side',sh)}
   /* stairs at the left and right corners: treads, risers, closed stepped ends */
   {const cx0=(O[0].x+O[2].x)/2;const nst=5,dh=h/nst,run=TW*0.12;
     const li=OO.reduce((b,p,i)=>p.x<OO[b].x?i:b,0),ri=OO.reduce((b,p,i)=>p.x>OO[b].x?i:b,0);
@@ -151,7 +167,7 @@ function ar91Under(g){if(!night91On())ar91Floor(g);const Pq=pt;const n=N-1;const
         ar91Stone(g,[{x:x0,y:p.y-TW*0.1},{x:x0+sg*TW*0.12,y:p.y-TW*0.04},{x:x0+sg*TW*0.12,y:p.y+TW*0.02},{x:x0,y:p.y-TW*0.04}],'rgba(255,250,236,.2)',0.6)}}}
   /* the top: the ring between the outline and the sand's surround */
   g.save();g.beginPath();OO.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.closePath();I.slice().reverse().forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.closePath();
-  ar91Fill(g,1);g.fill('evenodd');g.fillStyle='rgba(60,45,30,.10)';g.fill('evenodd');g.restore();
+  ar91Fill(g,1,'floor');g.fill('evenodd');g.fillStyle='rgba(60,45,30,.10)';g.fill('evenodd');g.restore();
   /* stairways in the middle gap of each side */
   const A0=6.28,A1=6.72,D0=-0.62,D1=-2.95-EX;
   for(const q of [(d,a)=>[d,a],(d,a)=>[n-d,a],(d,a)=>[a,d],(d,a)=>[a,n-d]])for(let k=0;k<=10;k++){const d=D0+(D1-D0)*k/10;const p0=Pq(...q(d,A0-0.15)),p1=Pq(...q(d,A1+0.15));
@@ -159,13 +175,10 @@ function ar91Under(g){if(!night91On())ar91Floor(g);const Pq=pt;const n=N-1;const
     g.strokeStyle='rgba(255,250,236,.3)';g.lineWidth=1;g.beginPath();g.moveTo(p0.x,p0.y-1.5);g.lineTo(p1.x,p1.y-1.5);g.stroke()}
   /* the near sides: the stone floor flush with the sand out to the stands, then the cut-down near walls */
   const mid=ar91Mid();const Ci=ar91Ring(0.2),Co=ar91Ring(0.95);
-  for(const [i,j] of [[0,1],[1,2],[2,3],[3,0]]){if((Ci[i].y+Ci[j].y)/2<mid.y)continue;ar91Stone(g,[Ci[i],Ci[j],Co[j],Co[i]],'rgba(60,45,30,.12)')}
-  const Hc=TW*0.16;for(const E of ar91Edges(0.19).filter(E=>!E.far)){let a=E.a,b=E.b;if(a.x>b.x){const t=a;a=b;b=t}const left=E.mx<mid.x;
-    /* v0.92 (his arrows): the wall runs on to its corner tower (the tower stands 0.92 k out from the sand corner) */
-    {const kx=TW*(lud?0.4:0.27)*0.92,v={x:b.x-a.x,y:b.y-a.y};if(v.x>0){const t=kx/v.x;const a0=a,b0=b;if(left)a={x:a.x-v.x*t,y:a.y-v.y*t};else b={x:b.x+v.x*t,y:b.y+v.y*t};
-      /* …and the dark gap between the sand and the wall runs on with it (his arrows, v0.92) */
-      const C0=ar91Ring(0),p=C0[E.ia],q=C0[E.ib];if(q.x!==p.x){const P0=left?a0:b0,y0=p.y+(q.y-p.y)*(P0.x-p.x)/(q.x-p.x),dy=P0.y-y0;
-        if(dy>0){g.fillStyle='#24180f';ar91Path(g,[a,b,{x:b.x,y:b.y-dy},{x:a.x,y:a.y-dy}]);g.fill()}}}}
+  for(const [i,j] of [[0,1],[1,2],[2,3],[3,0]]){if((Ci[i].y+Ci[j].y)/2<mid.y)continue;ar91Stone(g,[Ci[i],Ci[j],Co[j],Co[i]],'rgba(60,45,30,.12)',undefined,'floor')}
+  const NG=ar91NearGeom();const Hc=NG.Hc;for(const W of NG.near){const a=W.a,b=W.b,left=W.left;
+    /* …and the dark gap between the sand and the wall runs on with it (his arrows, v0.92) */
+    if(W.dy>0){g.fillStyle='#24180f';ar91Path(g,[a,b,{x:b.x,y:b.y-W.dy},{x:a.x,y:a.y-W.dy}]);g.fill()}
     ar91Stone(g,[{x:a.x,y:a.y},{x:b.x,y:b.y},{x:b.x,y:b.y+Hc},{x:a.x,y:a.y+Hc}],left?'rgba(255,248,230,.04)':'rgba(40,28,16,.28)');
     if(lud){g.fillStyle=AR91RED;ar91Path(g,[{x:a.x,y:a.y+Hc*0.45},{x:b.x,y:b.y+Hc*0.45},{x:b.x,y:b.y+Hc},{x:a.x,y:a.y+Hc}]);g.fill()}
     const ia={x:a.x+(mid.x-a.x)*0.012,y:a.y+(mid.y-a.y)*0.012},ib={x:b.x+(mid.x-b.x)*0.012,y:b.y+(mid.y-b.y)*0.012};
@@ -227,7 +240,7 @@ function ar91Tower(g,x,y,fires){const lud=ar91Lud();const k=TW*(lud?0.4:0.27),hh
     g.lineWidth=Math.max(1,TW*0.028);g.beginPath();for(const t of [1/3,2/3]){g.moveTo(x-k+2*k*t,yf);g.lineTo(x-k+2*k*t,yt)}g.moveTo(x-k,yf-hh/2);g.lineTo(x+k,yf-hh/2);g.stroke();
     g.fillStyle='#d9cfb8';ar91Path(g,T);g.fill();g.strokeStyle='#7a5532';g.lineWidth=Math.max(1,TW*0.03);g.stroke();return}
   g.fillStyle='rgba(20,12,4,.28)';g.save();g.translate(x+TW*0.18,yf);g.scale(1,0.36);g.beginPath();g.arc(0,0,k*1.3,0,Math.PI*2);g.fill();g.restore();
-  ar91Stone(g,F,'rgba(40,28,16,.12)',0.7);
+  ar91Stone(g,F,'rgba(40,28,16,.12)',0.7);ar91Face(g,F,'tower','rgba(40,28,16,.12)');
   const sh=g.createLinearGradient(x-k,0,x+k,0);sh.addColorStop(0,'rgba(255,248,230,.10)');sh.addColorStop(.6,'rgba(0,0,0,0)');sh.addColorStop(1,'rgba(30,20,10,.28)');g.fillStyle=sh;ar91Path(g,F);g.fill();
   g.strokeStyle='rgba(40,30,20,.45)';g.lineWidth=1;ar91Path(g,F);g.stroke();
   const ct=yt-k/2;ar91Soot(g,x,yt+TW*0.02,TW*0.32);
@@ -270,7 +283,7 @@ function ar91TopPaint(g,out){const lud=ar91Lud();const ring=ar91Ring;const mid=a
   /* the gully */
   /* v0.91 (his call): the gully only along the two FAR edges — from the bottom-corner view the near sand meets its low wall directly */
   const farE=ar91Edges(0.17).filter(E=>E.far);const Rg0=ring(0),Rg1=ring(0.1),Rg2=ring(0.17),Rg3=ring(0.01);
-  g.save();for(const E of farE){ar91Path(g,[Rg0[E.ia],Rg0[E.ib],Rg2[E.ib],Rg2[E.ia]]);ar91Fill(g,1);g.fill();g.fillStyle='rgba(22,15,8,.58)';g.fill()}g.restore();
+  g.save();for(const E of farE){ar91Path(g,[Rg0[E.ia],Rg0[E.ib],Rg2[E.ib],Rg2[E.ia]]);ar91Fill(g,1,'floor');g.fill();g.fillStyle='rgba(22,15,8,.58)';g.fill()}g.restore();
   g.save();for(const E of farE){ar91Path(g,[Rg1[E.ia],Rg1[E.ib],Rg2[E.ib],Rg2[E.ia]]);g.fillStyle='rgba(10,6,2,.35)';g.fill()}
   g.strokeStyle='rgba(255,244,220,.28)';g.lineWidth=1;g.beginPath();for(const E of farE){g.moveTo(Rg3[E.ia].x,Rg3[E.ia].y);g.lineTo(Rg3[E.ib].x,Rg3[E.ib].y)}g.stroke();
   for(const [r,c,hz] of ar91DrainsAt()){const Lp=hz?[[r,c-0.32],[r,c+0.32]]:[[r-0.32,c],[r+0.32,c]];const a=center(...Lp[0]),b=center(...Lp[1]);const ux=b.x-a.x,uy=b.y-a.y;
@@ -298,8 +311,7 @@ function ar91TopPaint(g,out){const lud=ar91Lud();const ring=ar91Ring;const mid=a
     g.fillStyle='#b53a33';ar91Path(g,[{x:a.x,y:a.y-H-cY},{x:b.x,y:b.y-H-cY},{x:B2.x,y:B2.y-H-cY},{x:A2.x,y:A2.y-H-cY}]);g.fill()}
   /* the towers at the far walls' ends (left and right corners) */
   /* v0.91 (his sketch): each tower stands AT the sand's corner — the far wall ends into its side, the near wall's red starts at its foot */
-  {const R2=ring(0.19);const Lt=R2.reduce((b,p)=>p.x<b.x?p:b),Rt=R2.reduce((b,p)=>p.x>b.x?p:b);const k=TW*(lud?0.4:0.27);
-    ar91Tower(g,Lt.x-k*0.92,Lt.y-k/2+TW*0.01,out.fires);ar91Tower(g,Rt.x+k*0.92,Rt.y-k/2+TW*0.01,out.fires)}
+  {const T=ar91NearGeom().towers;ar91Tower(g,T[0].x,T[0].y,out.fires);ar91Tower(g,T[1].x,T[1].y,out.fires)}
   /* the emperor's podium (attached box) or the ludus temple */
   if(lud)ar91Temple(g);else if(!AR91.det&&!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))ar91Podium(g,out.fires)}
 

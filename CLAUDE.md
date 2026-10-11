@@ -1025,6 +1025,15 @@ One global script; files are concatenated in order. Later "version modules" patc
   late strips take over only during the walk-in); else the flat show (230's MM95/mm95Raster) for that visit. Reduce motion / Animations Off = one still
   group photo, no loop. The canvas is tainted on file:// (screenshots, not toDataURL). Kill switch localStorage flavius_mm100off=1. Test `tv100mm`.
 - **v1.0 FRAME METER (288-v100fps, last before 08-setup; display only):** Settings → General → Performance "Show frame meter" (`SETTINGS.fps100`, default off; row added by a `set98General` wrapper, `applySettings` wrapper runs `fps100Sync`). On = corner overlay `#fps100` (bl/br/tl/tr, ⇱ in the expanded view, localStorage flavius_fps100pos): fps over 1 s, slowest frame of 5 s, share of frames >16.7 / >33 ms, 60-frame sparkline, green >=55 · amber 30-54 · red <30; click expands to the measured screen (`fps100Screen`) + top 3 `LAYERS93.report()` layers. rAF timestamps only (`F100`), loop stops when hidden or off (no loop, no element when off); it keeps the page awake while shown (tooltip says so; idle92 still pauses CSS animations). Test `tv100fps`, shots tools/plans/fps100/.
+- **v1.0 THE ARENA LOOK (277-v100arena + small 192 edits; his picks 1a 2b 3b 4a 5a; prototype tools/plans/look100/NOTES-arena.md, shots tools/plans/arena100/
+  via shots.js):** a stone family per arena `A100[k]` (k = THEME.arena99 → S.locIdx → Roma) with its own tileable texture assets/stone100_<k>_<key>.webp
+  (one loaded on demand via ar91Img), cap, rail + colours, band. 192 now has `ar91NearGeom()` (towers + near walls in ONE helper), `ar91Face(g,Q,kind)`
+  hook (foundation sides + tower fronts) and passes 'floor' to `ar91Fill` on flat fills (277 lays an iso matrix there). RAIL on the old faint near-stand
+  line, painted at the end of 'under' (before the tiles → never over sand/pieces): bronze / stone balustrade / marble parapet by stone family, metal per
+  arena (`A100BRZ` gilt Roma, bronze Arles, dark Nemausus, verdigris Pola), Capua the gilt parapet; corner towers get a PLINTH down to the walkway,
+  piers ONLY at run ends (tower faces, both sides of each stair opening, the near corner). Dado BAND with a motif on all 12 (ar91Face + far-wall foot via
+  an ar91TopPaint wrapper). THEMES99 palettes `A100PAL` (Capua/Thysdrus/Pompeii benches, Leptis green), AA checked; Ludus keeps plaster; Light board
+  skips rail shadows/gradients. `A100X.last` = rail geometry of the last bake. Kill switch flavius_arena100off=1 (bare 192, pixel-identical). Test tv100r.
 - **v1.0 3D GEAR (276-v100gear + tools/art/rig92, his look100 rounds 2–8 + pick c):** rig92 = the promoted look-test body/gear/rig + sculpt.js
   (SDF sculpts, build time only) + gear8.js (decode/skin/mirror/merge the bake, one mesh + one outline, sculpted belts hide the harness belt) +
   hold.js (his card weapons in the fist, sword 15° straight wrist, armed stand `api.standFor`, scutum round 8 + `api.shieldCheck`). Printed pieces
