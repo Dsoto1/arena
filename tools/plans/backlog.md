@@ -268,3 +268,5 @@ TURN PANEL (his note 2026-10-11): the full #tt100 panel pushed the avatar down �
 ONLINE BATCH A/B ANSWERS (his 2026-10-11): B1a only ticket holders act online, Fortuna's Bounty card unchanged · B2a leavers Ranked only · B3a random seats every non-team Ranked room · B4a no clean-up show online · B5a reveal credit 900 ms ≤5 s, owner clock ≤10 s late = fine · A1 NO to keeping all four: pre-v1.0 houses keep slots = living gladiators (≥1), the rest unlock like new (my reading of "no", building) · A2 coin-only 5th slot: he asked for thoughts (proposal: also needs Domus rank Ludus Magnus 3000) · A3 yes, L1 stand-ins (Royalty gladius, Amazonia mace, Damnatio stones).
 MENU SHOW (his a, 2026-10-11): after the 3D show ends the main menu keeps idling (no freeze) — today's behaviour, no change.
 WAVE 3 STARTED (2026-10-11): Manager map insets (all 7) + ENTER ANY EVENT (1a 2b 3a 4a 5a 6b 7 8a).
+BABYLON (his 2026-10-11): pushed to the side — no Babylon work planned; prototype stays in tools/plans/babylon100/ for reference.
+3D GEAR Aim pose (his yes): the bow stands upright in the Aim pose like the armed stand (wrist turned) — building.
