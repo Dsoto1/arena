@@ -305,7 +305,7 @@ export function quadFrames(sp) {
 }
 
 /* ======================= SNAKE (spline chain) ======================= */
-export const SNAKES = { glykon: { c: '#b9a23a', b: '#3a2a10', u: '#e8d8a0', p: 'band', nb: 18 }, arenosus: { c: '#c8a46a', b: '#6a4a26', u: '#efe0bc', p: 'diam' } };
+export const SNAKES = { glykon: { c: '#a08c5c', b: '#3e3020', u: '#d8c89a', p: 'band', nb: 18 }, arenosus: { c: '#a8906a', b: '#5e4630', u: '#ddd0b0', p: 'diam' } };
 function snakeFrame(f, col) {
   const P = []; const N = 40, Ltot = 62, r = 2.1; const pts = [];
   /* a coil on the base: tail tip at the outside of a spiral, the body winding in, the last part rising as the neck */
@@ -340,7 +340,7 @@ export function snakeFrames() { return [
 
 /* ======================= ZORA, the golden eagle ======================= */
 function eagleFrame(f) {
-  JL = []; const P = []; const BR = { c: '#8e6038', p: 'feath', u: '#6a4426', dry: 0.75 }, GOLD = { c: '#d8aa58', p: 'feath', dry: 0.7 }, BEAK = { c: '#e0b040', dry: 0.5 }, TAL = { c: '#e6c040', dry: 0.4 }, DK = { c: '#141008', dry: 0.9 }, TIP = { c: '#5a3a1e', p: 'feath', dry: 0.7 };
+  JL = []; const P = []; const BR = { c: '#7e5e44', p: 'feath', u: '#5e4430', dry: 0.75 }, GOLD = { c: '#d8aa58', p: 'feath', dry: 0.7 }, BEAK = { c: '#e0b040', dry: 0.5 }, TAL = { c: '#e6c040', dry: 0.4 }, DK = { c: '#141008', dry: 0.9 }, TIP = { c: '#5a3a1e', p: 'feath', dry: 0.7 };
   const lift = f.lift || 0, pitch = (f.pitch || 0) * D2R, roll = (f.roll || 0) * D2R; const R = mm(Rz(roll), Rx(-pitch)); const root = [0, 8.2 + lift, f.z || 0]; const T = (p) => add(mv(R, p), root);
   P.push(ell(T([0, 0, 0]), [3.4, 3.7, 5.4], mm(R, Rx(-0.25)), 1.4, BR));
   P.push(ell(T([0, 1.9, 2.6]), [2.6, 2.6, 2.6], R, 1.2, BR));
@@ -418,9 +418,9 @@ function setup() {
 /* his base: an oval/round disc, sand top with grain, a coloured rim */
 function makeBase(dims, rim) {
   if (BASE) { TURN.remove(BASE); BASE.traverse(o => { if (o.geometry) o.geometry.dispose(); }); BASE = null; } if (!dims) return;
-  const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d'); g.fillStyle = '#b9ab90'; g.fillRect(0, 0, 256, 256);
-  let s = 11; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647; for (let i = 0; i < 900; i++) { g.fillStyle = rnd() < .5 ? 'rgba(90,76,58,.2)' : 'rgba(250,240,220,.24)'; g.beginPath(); g.arc(rnd() * 256, rnd() * 256, rnd() * 1.6 + .4, 0, 7); g.fill(); }
-  for (let i = 0; i < 12; i++) { g.strokeStyle = 'rgba(120,100,76,.22)'; g.lineWidth = 3; g.beginPath(); const y = rnd() * 256; g.moveTo(0, y); g.bezierCurveTo(80, y + 16, 170, y - 16, 256, y + 4); g.stroke(); }
+  const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d'); g.fillStyle = '#8c7c66'; g.fillRect(0, 0, 256, 256);
+  let s = 11; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647; for (let i = 0; i < 900; i++) { g.fillStyle = rnd() < .5 ? 'rgba(60,48,36,.28)' : 'rgba(200,186,160,.24)'; g.beginPath(); g.arc(rnd() * 256, rnd() * 256, rnd() * 1.6 + .4, 0, 7); g.fill(); }
+  for (let i = 0; i < 12; i++) { g.strokeStyle = 'rgba(70,56,40,.3)'; g.lineWidth = 4; g.beginPath(); const y = rnd() * 256; g.moveTo(0, y); g.bezierCurveTo(80, y + 16, 170, y - 16, 256, y + 4); g.stroke(); }
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
   const H = 3.4, rx = dims[0] / 2, rz = dims[1] / 2; const G = new THREE.Group();
   const geo = new THREE.CylinderGeometry(1 * 0.955, 1, H, 72); geo.scale(rz, 1, rx);
@@ -452,16 +452,19 @@ async function sheet(build, frames, o) {
 }
 const enc = (c, q = 0.8) => { const u = c.toDataURL('image/webp', q); return { url: u, bytes: Math.round((u.length - u.indexOf(',') - 1) * 0.75) }; };
 /* the beasts to render: key → [builder, frames, options] */
+/* round 2 board rule (his 2c + 3a): long bases capped at 1.1 tile but the FIGURE drawn +30% (round bases: +15% like the gladiators);
+   each sheet is rendered at the size it is drawn at zoom ×2 (tile 104 px): long base → 1.1·104/long mm, round → 0.8·104/25.4 ≈ the minis' 3.143 */
+const DRAWN = (b) => b[0] > 30 ? 1.1 * 104 / b[0] : PXMM;
 export const BEASTS = {
-  leo: { sp: 'lion', base: [72, 42], rim: '#5a2a18', box: 120, ty: 13, sc: 1.15 }, leaena: { sp: 'lioness', base: [72, 42], rim: '#5a2a18', box: 116, ty: 13, sc: 1.15 },
-  ursa: { sp: 'bear', base: [75, 47], rim: '#8a3a22', box: 120, ty: 15 }, brutum: { sp: 'bear', base: [75, 47], rim: '#8a3a22', box: 120, ty: 15 },
-  valencia: { sp: 'wolf', base: [25.4, 25.4], rim: '#6a2a1a', box: 62, ty: 8 }, moechus: { sp: 'wolf', base: [25.4, 25.4], rim: '#6a2a1a', box: 62, ty: 8 },
-  glykon: { snake: 'glykon', base: [25.4, 25.4], rim: '#b08a2a', box: 50, ty: 6 }, arenosus: { snake: 'arenosus', base: [25.4, 25.4], rim: '#b08a2a', box: 50, ty: 6 },
-  zora: { eagle: 1, base: [25.4, 25.4], rim: '#5a2a18', box: 70, ty: 12 }, boar: { sp: 'boar', base: [25.4, 25.4], rim: '#4a3a2a', box: 56, ty: 7 },
-  croc: { sp: 'croc', base: [75, 34], rim: '#3a4a3a', box: 130, ty: 5 }, spider: { spider: 1, base: null, box: 34, ty: 3 },
+  leo: { sp: 'lion', base: [72, 42], rim: '#3a1a18', box: 150, ty: 16, sc: 1.15 * 1.3 }, leaena: { sp: 'lioness', base: [72, 42], rim: '#3a1a18', box: 146, ty: 16, sc: 1.15 * 1.3 },
+  ursa: { sp: 'bear', base: [75, 47], rim: '#7b2c17', box: 150, ty: 19, sc: 1.3 }, brutum: { sp: 'bear', base: [75, 47], rim: '#7b2c17', box: 150, ty: 19, sc: 1.3 },
+  valencia: { sp: 'wolf', base: [25.4, 25.4], rim: '#3a2214', box: 70, ty: 9, sc: 1.15 }, moechus: { sp: 'wolf', base: [25.4, 25.4], rim: '#3a2214', box: 70, ty: 9, sc: 1.15 },
+  glykon: { snake: 'glykon', base: [25.4, 25.4], rim: '#c4a35a', box: 56, ty: 7, sc: 1.15 }, arenosus: { snake: 'arenosus', base: [25.4, 25.4], rim: '#c4a35a', box: 56, ty: 7, sc: 1.15 },
+  zora: { eagle: 1, base: [25.4, 25.4], rim: '#4a2016', box: 80, ty: 14, sc: 1.15 }, boar: { sp: 'boar', base: [25.4, 25.4], rim: '#3a2a1e', box: 64, ty: 8, sc: 1.15 },
+  croc: { sp: 'croc', base: [75, 34], rim: '#2e3a2a', box: 160, ty: 6, sc: 1.3 }, spider: { spider: 1, base: null, box: 34, ty: 3, sc: 1 },
 };
 window.BEASTS_KEYS = () => BEASTS;
-window.BEAST100 = {
+window.BEAST200 = {
   async render(key, opt = {}) {
     const B = BEASTS[key]; let build, frames, h;
     if (B.sp) { const v = VARIANTS[key] || [B.sp]; const S = SPECIES[B.sp]; const COL = Object.assign({}, S.col, v[1] || {}); build = (f) => quad(S, f, COL); frames = quadFrames(B.sp); h = S.h; }
@@ -470,11 +473,12 @@ window.BEAST100 = {
     else { build = spiderFrame; frames = spiderFrames(); h = 0.22; }
     if (opt.only) frames = frames.filter(f => opt.only.includes(f.n));
     if (opt.h) h = opt.h;
-    const r = await sheet(build, frames, { base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: B.sc });
+    if (opt.diag) frames = frames.filter(f => f.n === 'idle0');
+    const r = await sheet(build, frames, { base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: B.sc, pxmm: opt.diag ? 6 / (B.sc || 1) * 1.2 : (B.base ? DRAWN(B.base) : PXMM) });
     window.BSHEET = window.BSHEET || {}; BSHEET[key] = r;
     const w8 = enc(r.canvas); const idleWalk = frames.filter(f => /^(idle|walk)/.test(f.n)).length;
     return { key, meta: r.meta, rows: r.rows, ms: r.ms, sculptMs: r.sculptMs, renderMs: r.renderMs, tris: r.tris, verts: r.verts, h, kb: +(w8.bytes / 1024).toFixed(1), png: r.canvas.toDataURL('image/png'),
-      decodedMB: +(r.meta[0] * r.meta[1] * 4 * 8 * r.rows.length / 1048576).toFixed(2), idleWalkMB: +(r.meta[0] * r.meta[1] * 4 * 8 * idleWalk / 1048576).toFixed(2), frames: r.rows.length };
+      decodedMB: +(r.meta[0] * r.meta[1] * 4 * 8 * r.rows.length / 1048576).toFixed(2), idleWalkMB: +(r.meta[0] * r.meta[1] * 4 * 8 * idleWalk / 1048576).toFixed(2), frames: r.rows.length, joints: opt.diag ? r.joints[0] : null, pxmm: opt.diag ? 0 : (B.base ? DRAWN(B.base) : PXMM), sc: B.sc };
   },
 };
-window.BEAST100_READY = true;
+window.BEAST200_READY = true;
