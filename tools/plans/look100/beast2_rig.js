@@ -130,28 +130,28 @@ export const SPECIES = {
   /* digitigrade cats: wrist + hock high, toes on the ground */
   lion: { base: [72, 42], h: 0.5, L: 10.5, y: 15.2, chest: [5.6, 7.0, 7.6], belly: [4.6, 5.0, 7.4], hips: [5.0, 5.8, 6.0], fx: 3.5, hx: 3.3, legF: [8.4, 8.0, 2.8], legH: [9.2, 8.4, 5.2], rF: [2.6, 1.7, 1.4], rH: [2.9, 1.6, 1.3], paw: [2.0, 1.2, 2.4],
     neck: [6.2, 2.7], head: [3.8, 3.9, 4.2], muz: [3.9, 2.1], ears: 'round', mane: 1, tail: [21, 0.9, 0.5], tuft: 1.8, cat: 1,
-    col: { fur: '#a87c44', u: '#c9a670', mane: '#7a4c22', muz: '#c8a46c', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
+    col: { fur: '#c8a46c', u: '#e0c898', mane: '#9a6c38', muz: '#dcc090', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
   lioness: { base: [72, 42], h: 0.5, L: 10.0, y: 14.2, chest: [5.4, 6.6, 7.6], belly: [4.6, 5.0, 7.2], hips: [4.8, 5.8, 6.0], fx: 3.1, hx: 3.0, legF: [8.0, 7.6, 2.6], legH: [8.8, 8.0, 5.0], rF: [2.2, 1.5, 1.25], rH: [2.5, 1.45, 1.2], paw: [1.8, 1.1, 2.2],
     neck: [6.2, 2.5], head: [3.0, 3.1, 3.7], muz: [3.7, 1.8], ears: 'round', tail: [20, 0.8, 0.45], tuft: 1.3, cat: 1,
-    col: { fur: '#a47c46', u: '#c6a676', muz: '#c8a87a', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
+    col: { fur: '#ccac78', u: '#e2cca0', muz: '#e0c89c', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
   /* plantigrade bear: heel + palm flat, long paws, a shoulder hump, shaggy */
   bear: { base: [75, 47], h: 0.55, L: 10.5, y: 16.0, chest: [8.0, 9.0, 8.6], belly: [7.6, 8.2, 8.6], hips: [7.6, 8.6, 7.6], fx: 4.4, hx: 4.2, legF: [8.2, 7.6, 1.6], legH: [8.4, 7.8, 1.8], rF: [3.5, 2.8, 2.4], rH: [3.7, 2.6, 2.3], paw: [2.8, 1.4, 4.0], plant: 1,
     neck: [5.0, 4.2], head: [4.4, 4.4, 4.6], muz: [4.2, 2.4], ears: 'bear', tail: [3.5, 1.5, 1.0], hump: 1, shag: 1,
-    col: { fur: '#9a7048', u: '#7a583a', muz: '#c09a66', nose: '#141010', dark: '#120c08', claw: '#e8dcc0' } },
+    col: { fur: '#a88a66', u: '#8c7052', muz: '#c8b088', nose: '#141010', dark: '#120c08', claw: '#e8dcc0' } },
   wolf: { base: [25.4, 25.4], h: 0.36, L: 6.0, y: 9.6, chest: [3.2, 4.3, 4.6], belly: [2.6, 3.0, 4.4], hips: [2.9, 3.5, 3.6], fx: 1.9, hx: 1.85, legF: [5.2, 5.0, 2.0], legH: [5.8, 5.4, 3.4], rF: [1.35, 0.9, 0.75], rH: [1.65, 0.85, 0.72], paw: [1.05, 0.7, 1.45],
     neck: [4.0, 1.9], head: [2.3, 2.3, 2.5], muz: [3.3, 1.15], ears: 'pointy', tail: [11, 1.2, 0.6], brush: 1, ruff: 1,
-    col: { fur: '#8a6e50', u: '#c8b494', muz: '#c0aa88', nose: '#141210', dark: '#141210', claw: '#d8d0c0' } },
+    col: { fur: '#ae9070', u: '#dccaa8', muz: '#d4c0a0', nose: '#141210', dark: '#141210', claw: '#d8d0c0' } },
   boar: { base: [25.4, 25.4], h: 0.36, L: 5.6, y: 8.2, chest: [4.4, 5.2, 5.2], belly: [4.2, 4.6, 5], hips: [4.0, 4.6, 4.2], fx: 2.3, hx: 2.2, legF: [4.0, 3.6, 1.4], legH: [4.4, 3.6, 2.2], rF: [1.6, 1.0, 0.8], rH: [1.9, 1.0, 0.8], paw: [0.9, 0.9, 1.1],
     neck: [2.6, 3.4], head: [3.0, 3.2, 3.6], muz: [3.6, 2.0], ears: 'pointy', tail: [4, 0.5, 0.35], tusks: 1, ridge: 1, shag: 0.5,
-    col: { fur: '#5e4434', u: '#4a3628', muz: '#8a6a5a', nose: '#5a3a30', dark: '#120c08', claw: '#2a2018', tusk: '#efe6cc' } },
+    col: { fur: '#7e6452', u: '#665040', muz: '#a8907e', nose: '#5a3a30', dark: '#120c08', claw: '#2a2018', tusk: '#efe6cc' } },
   croc: { base: [75, 34], h: 0.45, L: 9.5, y: 3.4, chest: [5.0, 2.6, 6.0], belly: [5.2, 2.6, 6.5], hips: [4.6, 2.5, 5.0], fx: 5.0, hx: 4.6, legF: [3.6, 3.2, 1.0], legH: [4.2, 3.6, 1.2], rF: [1.3, 1.0, 0.8], rH: [1.6, 1.1, 0.9], paw: [1.4, 0.5, 1.8], sprawl: 1, plant: 1,
     neck: [2.4, 2.8], head: [2.8, 1.8, 3.4], muz: [10, 1.6], ears: null, tail: [26, 2.6, 0.3], scutes: 1, croc: 1,
-    col: { fur: '#5e6a3e', u: '#c2b882', muz: '#5e6a3e', nose: '#2a3018', dark: '#141a0c', claw: '#d8d0b0', tooth: '#efe8d0' } },
+    col: { fur: '#7a8456', u: '#d2c896', muz: '#7a8456', nose: '#2a3018', dark: '#141a0c', claw: '#d8d0b0', tooth: '#efe8d0' } },
 };
 /* variants = a recolour (sampled from his minis8: the lit 85th-percentile colour of the figure) */
 export const VARIANTS = {
-  leo: ['lion'], leaena: ['lioness'], ursa: ['bear'], brutum: ['bear', { fur: '#74543a', u: '#5c422c', muz: '#a08460' }],
-  valencia: ['wolf'], moechus: ['wolf', { fur: '#6e625a', u: '#a49a8c', muz: '#9a9084' }],
+  leo: ['lion'], leaena: ['lioness'], ursa: ['bear'], brutum: ['bear', { fur: '#96785a', u: '#7c6248', muz: '#bca27c' }],
+  valencia: ['wolf'], moechus: ['wolf', { fur: '#5c5856', u: '#8e8a86', muz: '#86827e' }],
   boar: ['boar'], croc: ['croc'],
 };
 function quad(S, f, COL) {
@@ -305,7 +305,7 @@ export function quadFrames(sp) {
 }
 
 /* ======================= SNAKE (spline chain) ======================= */
-export const SNAKES = { glykon: { c: '#a08c5c', b: '#3e3020', u: '#d8c89a', p: 'band', nb: 18 }, arenosus: { c: '#a8906a', b: '#5e4630', u: '#ddd0b0', p: 'diam' } };
+export const SNAKES = { glykon: { c: '#b4a27a', b: '#5a4a34', u: '#e2d6b4', p: 'band', nb: 18 }, arenosus: { c: '#b8a486', b: '#7a644a', u: '#e6dcc4', p: 'diam' } };
 function snakeFrame(f, col) {
   const P = []; const N = 40, Ltot = 62, r = 2.1; const pts = [];
   /* a coil on the base: tail tip at the outside of a spiral, the body winding in, the last part rising as the neck */
@@ -340,7 +340,7 @@ export function snakeFrames() { return [
 
 /* ======================= ZORA, the golden eagle ======================= */
 function eagleFrame(f) {
-  JL = []; const P = []; const BR = { c: '#7e5e44', p: 'feath', u: '#5e4430', dry: 0.75 }, GOLD = { c: '#d8aa58', p: 'feath', dry: 0.7 }, BEAK = { c: '#e0b040', dry: 0.5 }, TAL = { c: '#e6c040', dry: 0.4 }, DK = { c: '#141008', dry: 0.9 }, TIP = { c: '#5a3a1e', p: 'feath', dry: 0.7 };
+  JL = []; const P = []; const BR = { c: '#947658', p: 'feath', u: '#76583e', dry: 0.75 }, GOLD = { c: '#d8aa58', p: 'feath', dry: 0.7 }, BEAK = { c: '#e0b040', dry: 0.5 }, TAL = { c: '#e6c040', dry: 0.4 }, DK = { c: '#141008', dry: 0.9 }, TIP = { c: '#6a4e34', p: 'feath', dry: 0.7 };
   const lift = f.lift || 0, pitch = (f.pitch || 0) * D2R, roll = (f.roll || 0) * D2R; const R = mm(Rz(roll), Rx(-pitch)); const root = [0, 8.2 + lift, f.z || 0]; const T = (p) => add(mv(R, p), root);
   P.push(ell(T([0, 0, 0]), [3.4, 3.7, 5.4], mm(R, Rx(-0.25)), 1.4, BR));
   P.push(ell(T([0, 1.9, 2.6]), [2.6, 2.6, 2.6], R, 1.2, BR));
@@ -409,7 +409,7 @@ function setup() {
   if (REND) return; REND = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); REND.outputColorSpace = THREE.SRGBColorSpace; REND.setClearColor(0, 0); REND.setPixelRatio(1);
   SCENE = new THREE.Scene(); SCENE.add(new THREE.AmbientLight(0xffffff, 0.5 * Math.PI)); SUN = new THREE.DirectionalLight(0xfff4e6, 0.62 * Math.PI); SCENE.add(SUN); SCENE.add(SUN.target);
   TURN = new THREE.Group(); SCENE.add(TURN);
-  GM = new THREE.DataTexture(new Uint8Array([135, 135, 185, 185, 225, 225, 255, 255]), 8, 1, THREE.RedFormat); GM.needsUpdate = true; GM.minFilter = GM.magFilter = THREE.NearestFilter;
+  GM = new THREE.DataTexture(new Uint8Array([150, 150, 198, 198, 235, 235, 255, 255]), 8, 1, THREE.RedFormat); GM.needsUpdate = true; GM.minFilter = GM.magFilter = THREE.NearestFilter;
   MATS.body = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap: GM });
   const ink = new THREE.MeshBasicMaterial({ color: 0x120c0a, side: THREE.BackSide }); const u = { value: 0.3 }; ink.userData.u = u;
   ink.onBeforeCompile = (sh) => { sh.uniforms.uOut = u; sh.vertexShader = 'uniform float uOut;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed += normalize(normal) * uOut;'); }; ink.customProgramCacheKey = () => 'beastInk'; MATS.ink = ink;

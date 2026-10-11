@@ -31,7 +31,7 @@
     const colW = (b) => Math.max(b.S.meta[0], b.his ? b.his.width / 8 : 0);
     const W = 150 + Math.max(...blocks.map(b => (colW(b) + 6) * 8)) + 20; let H = 50; for (const b of blocks) H += 26 + (b.his ? b.his.height + 8 : 0) + b.S.meta[1] + 16;
     const c = cnv(W, H, '#e4d6b4'); const g = c.getContext('2d');
-    label(g, 'Beasts as rig92-style sculpted tokens — his mini (minis8, 8 facings) above ours (idle frame, 8 facings), both at the minis’ 3.143 px/mm', 12, 12, { px: 16, b: 1 });
+    label(g, 'Round 2 \u2014 his mini (minis8) above ours (idle, 8 facings), both as DRAWN on the board at zoom \u00d72 (tile 104 px): his long bases fit 1.1 tile; ours 1.1 tile + figure +30% (round bases +15%)', 12, 12, { px: 15, b: 1 });
     let y = 50;
     for (const b of blocks) { const cw = colW(b) + 6; label(g, NAMES[b.k], 12, y + 4, { px: 14, b: 1 }); y += 26;
       if (b.his) { const hw = b.his.width / 8; label(g, 'his mini', 12, y + b.his.height / 2 - 8, { px: 12, c: '#6a5236' }); for (let i = 0; i < 8; i++) g.drawImage(b.his, i * hw, 0, hw, b.his.height, 150 + i * cw + (cw - hw) / 2, y, hw, b.his.height); y += b.his.height + 8; }

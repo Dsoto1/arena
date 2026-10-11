@@ -1,0 +1,155 @@
+{
+ "note": "ms, headless Chromium (software canvas). off = today (v0.99), on = round-2 look. cached = one draw() with the layers baked; rebuild = one draw() after AR91.ver++ (re-bakes under/deco/top/light).",
+ "desktop1440": {
+  "5": {
+   "off": {
+    "cachedMs": 4.1,
+    "rebuildMs": 61.8,
+    "underBakeMs": 17.1,
+    "topBakeMs": 24.9
+   },
+   "on": {
+    "cachedMs": 3.6,
+    "rebuildMs": 67.7,
+    "underBakeMs": 18,
+    "topBakeMs": 24.2
+   }
+  },
+  "6": {
+   "off": {
+    "cachedMs": 5.2,
+    "rebuildMs": 66.7,
+    "underBakeMs": 21,
+    "topBakeMs": 29.1
+   },
+   "on": {
+    "cachedMs": 5.6,
+    "rebuildMs": 70.8,
+    "underBakeMs": 23.1,
+    "topBakeMs": 31.7
+   }
+  },
+  "9": {
+   "off": {
+    "cachedMs": 3.3,
+    "rebuildMs": 49.4,
+    "underBakeMs": 18,
+    "topBakeMs": 24.9
+   },
+   "on": {
+    "cachedMs": 3.8,
+    "rebuildMs": 62.3,
+    "underBakeMs": 19,
+    "topBakeMs": 34.7
+   }
+  }
+ },
+ "phone844x390dpr2": {
+  "5": {
+   "off": {
+    "cachedMs": 40.7,
+    "rebuildMs": 344.5,
+    "underBakeMs": 108.6,
+    "topBakeMs": 397.8
+   },
+   "on": {
+    "cachedMs": 51.2,
+    "rebuildMs": 334.6,
+    "underBakeMs": 106.9,
+    "topBakeMs": 247.9
+   }
+  },
+  "6": {
+   "off": {
+    "cachedMs": 39.2,
+    "rebuildMs": 304.9,
+    "underBakeMs": 58.2,
+    "topBakeMs": 177
+   },
+   "on": {
+    "cachedMs": 42.4,
+    "rebuildMs": 277.2,
+    "underBakeMs": 93.1,
+    "topBakeMs": 328.6
+   }
+  },
+  "9": {
+   "off": {
+    "cachedMs": 31.4,
+    "rebuildMs": 308.9,
+    "underBakeMs": 56.2,
+    "topBakeMs": 170.6
+   },
+   "on": {
+    "cachedMs": 35,
+    "rebuildMs": 284.5,
+    "underBakeMs": 83.4,
+    "topBakeMs": 176.7
+   }
+  }
+ },
+ "webpDecodeMs": {
+  "syracusae": 42.5,
+  "verona": 57.4,
+  "arles": 18.5,
+  "capua": 17.6,
+  "thysdrus": 17.1,
+  "roma": 17.4,
+  "nemausus": 33.4,
+  "pompeii": 26.5,
+  "leptis": 19.9,
+  "uthina": 19.2,
+  "pola": 18.1,
+  "puteoli": 16.8
+ },
+ "webpKB": {
+  "1_syracusae.webp": {
+   "kb": 12.9,
+   "q": 0.94
+  },
+  "2_verona.webp": {
+   "kb": 45.8,
+   "q": 0.94
+  },
+  "3_arles.webp": {
+   "kb": 38.1,
+   "q": 0.94
+  },
+  "4_capua.webp": {
+   "kb": 39,
+   "q": 0.94
+  },
+  "5_thysdrus.webp": {
+   "kb": 28,
+   "q": 0.94
+  },
+  "6_roma.webp": {
+   "kb": 24.1,
+   "q": 0.94
+  },
+  "7_nemausus.webp": {
+   "kb": 36.5,
+   "q": 0.94
+  },
+  "8_pompeii.webp": {
+   "kb": 60.8,
+   "q": 0.94
+  },
+  "9_leptis.webp": {
+   "kb": 12.8,
+   "q": 0.94
+  },
+  "10_uthina.webp": {
+   "kb": 42.8,
+   "q": 0.94
+  },
+  "11_pola.webp": {
+   "kb": 12.8,
+   "q": 0.94
+  },
+  "12_puteoli.webp": {
+   "kb": 47.5,
+   "q": 0.94
+  }
+ }
+}
