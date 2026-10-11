@@ -9308,19 +9308,30 @@ async function simToEnd(skipAsk) {
   await endTurn();
 }
 
-/* trainAP100 (v1.00) — the Manager start bonus (+AP from training, temple, walk the sand, gear, armory...) only goes onto locations that already have armor; bare locations never get it. Lowest AP first, HEAL_ORDER breaks ties; no armor at all = nothing is placed. */
+/* trainAP100 (v1.00) — the Manager start bonus (+AP from training, temple, walk the sand, gear, armory...) only goes onto locations that already have armor; bare locations never get it. A human places it in the distribute dialog with the bare locations disabled (DIST100.only, 199); CPUs, sims and hidden-controlled fighters auto-place (lowest AP first, HEAL_ORDER breaks ties); no armor at all = nothing is placed. */
 async function trainAP100(p, n, why) {
   const locs = LOCS.filter(l => p.hp[l] > 0 && p.ap[l] > 0 && p.ap[l] < 7);
   if (!locs.length) return;
-  const plan = {};
-  LOCS.forEach(l => plan[l] = 0);
-  for (let i = 0; i < n; i++) {
-    const c = locs.filter(l => p.ap[l] + plan[l] < 7).sort((a, b) => p.ap[a] + plan[a] - (p.ap[b] + plan[b]) || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b));
-    if (!c.length) break;
-    plan[c[0]]++;
+  let plan;
+  if (!p.cpu && !HEADLESS && !(S && S.sim)) {
+    DIST100.only = locs;
+    try {
+      plan = await distModal(p, n, why, 'ap');
+    } finally {
+      DIST100.only = null;
+    }
+  } else {
+    plan = {};
+    LOCS.forEach(l => plan[l] = 0);
+    for (let i = 0; i < n; i++) {
+      const c = locs.filter(l => p.ap[l] + plan[l] < 7).sort((a, b) => p.ap[a] + plan[a] - (p.ap[b] + plan[b]) || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b));
+      if (!c.length) break;
+      plan[c[0]]++;
+    }
   }
   const parts = [];
   for (const l of LOCS) if (plan[l]) {
+    if (!locs.includes(l)) continue;
     p.ap[l] = Math.min(7, p.ap[l] + plan[l]);
     parts.push(_T`${LOCN[l]} +${plan[l]} AP`);
   }
@@ -33799,22 +33810,30 @@ const ONLC=(function(){
       fo 1 = you follow the house, me 1 = your own row (always first; hid 1 when you hide yourself)}.
    Never listed: hidden lanistas (acct.priv {hide}), guests, CPU bots. Guests may read the list (no ni / fo). ≤ WHO100.MAX rows a page and
    ≤ WHO100.BYTES of JSON (the rest → `next`, a numeric cursor). Status: seated in a live match → fight; in a waiting room (sitting or
-   standing) → room; watching a live match (ACCT w100 {id, at}, set by match.watch, cleared by match.unwatch, ≤ WATCH_MS old) → watch; else idle. */
+   standing) → room; watching a live match (ACCT w100 {id, at}, set by match.watch, cleared by match.unwatch, ≤ WATCH_MS old) → watch; else idle.
+   PER-GLADIATOR (his pick 3): st is the lanista's CURRENT activity. A gladiator stays fighting until his match ends or his Fate is recorded, even when
+   his lanista abandoned (Custom 'cpu' rule) and sits in another room with ANOTHER gladiator: such a row carries ab {m, g} = that match + gladiator
+   (the server reads the match record only for accounts with a live-match flag, ≤ AB_READS reads a request, cached; the row's own st ignores it). */
 (function(C){
-  const WHO100={MAX:200,BYTES:60000,POLL_MS:30000,WATCH_MS:3*3600e3,ST:['idle','room','fight','watch'],SORTS:['st','name','rank','region']}; /* TWEAK: page size, reply size, the page's refresh */
+  const WHO100={MAX:200,BYTES:60000,POLL_MS:30000,WATCH_MS:3*3600e3,AB_READS:20,AB_TTL:10000,ST:['idle','room','fight','watch'],SORTS:['st','name','rank','region']}; /* TWEAK: page size, reply size, the page's refresh */
   const ST_ORD100={fight:0,room:1,watch:2,idle:3};
   /* the rooms list → who sits/stands where: {room: Map acct→room id, fight: Map acct→match id, live: Set of live match ids} */
-  function whoMaps100(rooms,now){const room=new Map(),fight=new Map(),live=new Set();
-    for(const L of rooms||[]){if(!L||!L.id)continue;if(L.status==='live'){live.add(L.id);for(const p of L.players||[])if(p&&p.id&&!/^bot/.test(p.id)&&!p.cpu&&!p.left)fight.set(p.id,L.id)}
+  function whoMaps100(rooms,now){const room=new Map(),fight=new Map(),live=new Set(),fightAll=new Map(),gname=new Map();
+    for(const L of rooms||[]){if(!L||!L.id)continue;if(L.status==='live'){live.add(L.id);for(const p of L.players||[])if(p&&p.id&&!/^bot/.test(p.id)&&!p.cpu&&!p.left){fight.set(p.id,L.id);(fightAll.get(p.id)||fightAll.set(p.id,[]).get(p.id)).push(L.id);gname.set(p.id+'|'+L.id,String(p.name||''))}}
       else if(L.status==='waiting')for(const m of [...(L.members||[]),...(L.players||[])])if(m&&m.id&&!room.has(m.id))room.set(m.id,L.id)}
-    return {room,fight,live,now:+now||0}}
-  function whoStatus100(A,maps){if(!A)return {st:'idle'};if(maps.fight.has(A.id))return {st:'fight',m:maps.fight.get(A.id)};if(maps.room.has(A.id))return {st:'room',rm:maps.room.get(A.id)};
+    return {room,fight,live,fightAll,gname,now:+now||0}}
+  /* ab = {m, g}: a gladiator of this lanista still fighting in match m after he abandoned it (the server/mock reads the match record) — that match no longer
+     counts as his CURRENT activity; a second live match (another gladiator) still does */
+  function whoStatus100(A,maps,ab){if(!A)return {st:'idle'};const fm=ab&&maps.fightAll?(maps.fightAll.get(A.id)||[]).find(m=>m!==ab.m):maps.fight.get(A.id);if(fm)return {st:'fight',m:fm};if(maps.room.has(A.id))return {st:'room',rm:maps.room.get(A.id)};
     const w=A.w100;if(w&&w.id&&maps.live.has(w.id)&&(maps.now-(+w.at||0))<WHO100.WATCH_MS)return {st:'watch',m:w.id};return {st:'idle'}}
+  /* the abandoned-but-still-fighting mark from a match record (Ranked abandons are a recorded Fate: nothing still fights) */
+  function whoAb100(A,M,maps,ranked){if(!A||!M||M.status!=='live'||ranked||M.ranked||!(M.abandoned||{})[A.id]||(M.reports||{})[A.id]||!maps.live.has(M.id))return null;
+    return {m:String(M.id),g:(maps.gname.get(A.id+'|'+M.id)||'').slice(0,40)}}
   /* one row from an ACCT profile (here = {glad, rank, tz}); o = {dr, viewer: the asking ACCT or null} */
-  function whoRow100(A,maps,o){o=o||{};const h=A.here||{};const s=whoStatus100(A,maps);const rk=C.RANKS.some(r=>r.k===h.rank)?h.rank:'tiro';
+  function whoRow100(A,maps,o){o=o||{};const h=A.here||{};const ab=o.ab&&o.ab.m&&maps.live.has(o.ab.m)?o.ab:null;const s=whoStatus100(A,maps,ab);const rk=C.RANKS.some(r=>r.k===h.rank)?h.rank:'tiro';
     const r={id:String(A.id),ln:String(A.lname||'').slice(0,40),g:String(h.glad||'').slice(0,40),rk,dn:String(A.dname||'').slice(0,40),dom:A.domus?String(A.domus):'',
       dr:/^[a-z]{3,16}$/.test(String(o.dr||''))?o.dr:'',rg:C.regionOf98?C.regionOf98(h.tz||''):'',st:s.st};
-    if(s.rm)r.rm=s.rm;if(s.m)r.m=s.m;const V=o.viewer;
+    if(s.rm)r.rm=s.rm;if(s.m)r.m=s.m;if(ab)r.ab={m:String(ab.m),g:String(ab.g||'').slice(0,40)};const V=o.viewer;
     if(V&&V.id===A.id){r.me=1;if(C.privOf89(A).hide)r.hid=1}
     else if(V){if(C.invWhy89(A,{domus:V.domus}))r.ni=1;if(A.domus&&(V.follows||[]).some(f=>f&&f.id===A.domus))r.fo=1}
     return r}
@@ -33831,7 +33850,7 @@ const ONLC=(function(){
     for(let i=from;i<rows.length&&out.length<WHO100.MAX;i++){const n=JSON.stringify(rows[i]).length+1;if(bytes+n>WHO100.BYTES&&out.length)break;out.push(rows[i]);bytes+=n}
     const end=from+out.length;return {rows:out,n:rows.length,next:end<rows.length?String(end):null}}
   if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('here.list'))C.GUEST_OK.push('here.list');
-  Object.assign(C,{WHO100,ST_ORD100,whoMaps100,whoStatus100,whoRow100,whoListed100,whoKeep100,whoSort100,whoPage100})})(ONLC);
+  Object.assign(C,{WHO100,ST_ORD100,whoAb100,whoMaps100,whoStatus100,whoRow100,whoListed100,whoKeep100,whoSort100,whoPage100})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
 /* =====================================================================
    112-ONLINE · MULTIPLAYER → ONLINE (phase 1: the landing space, against a mock server)
@@ -40479,16 +40498,16 @@ document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target||e.target.
 #onl .v85sc-empty{flex:1;display:flex;align-items:center;justify-content:center;font:italic 15px Georgia,serif;color:var(--muted,#a8987a);padding:10px 6px;min-height:50px}
 /* big screens: two TALL showcases side by side (the face on top) */
 @media(min-width:1600px) and (min-height:1000px){
- #onl .v85show{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-auto-rows:auto}
- #onl .v85sc{flex-direction:column;align-items:center;text-align:center;gap:8px;padding:12px 14px 46px;
+ #onl .onl-play81:not(.l100) .v85show{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-auto-rows:auto}
+ #onl .onl-play81:not(.l100) .v85sc{flex-direction:column;align-items:center;text-align:center;gap:8px;padding:12px 14px 46px;
    background:radial-gradient(ellipse 70% 40% at 50% 26%,rgba(240,207,125,.2),transparent 70%),linear-gradient(180deg,rgba(201,162,79,.14),rgba(24,17,11,.92) 65%)}
- #onl .v85sc.fall{background:radial-gradient(ellipse 70% 40% at 50% 26%,rgba(160,70,50,.22),transparent 70%),linear-gradient(180deg,rgba(122,58,42,.18),rgba(20,14,12,.94) 65%)}
- #onl .v85sc-fig{order:-1;width:78px;margin:0}#onl .v85sc-fig .portrait{width:78px!important;height:104px!important}#onl .v85sc-tok{right:-34px}#onl .v85sc-tok img,#onl .v85sc-tok svg{max-height:60px;max-width:60px}
- #onl .v85sc-i{align-items:center;width:100%;gap:5px}#onl .v85sc-h{justify-content:center}#onl .v85sc-h>span{flex-direction:column;align-items:center;gap:0}#onl .v85sc-h b{font-size:16px}
- #onl .v85sc .v85list{position:absolute;left:50%;bottom:12px;transform:translateX(-50%)}
- #onl .v85sc-n{flex-direction:column;gap:3px}#onl .v85sc-n>b{font-size:21px;max-width:100%}#onl .v85sc-r,#onl .v85sc-num,#onl .v85sc-lost{justify-content:center}
- #onl .v85sc-ev{white-space:normal}#onl .v85sc-lost small{flex-basis:100%}
- #onl .v85sc-empty{min-height:150px;font-size:16px}#onl .v85sc.none .v85sc-i{flex:1}
+ #onl .onl-play81:not(.l100) .v85sc.fall{background:radial-gradient(ellipse 70% 40% at 50% 26%,rgba(160,70,50,.22),transparent 70%),linear-gradient(180deg,rgba(122,58,42,.18),rgba(20,14,12,.94) 65%)}
+ #onl .onl-play81:not(.l100) .v85sc-fig{order:-1;width:78px;margin:0}#onl .onl-play81:not(.l100) .v85sc-fig .portrait{width:78px!important;height:104px!important}#onl .onl-play81:not(.l100) .v85sc-tok{right:-34px}#onl .onl-play81:not(.l100) .v85sc-tok img,#onl .onl-play81:not(.l100) .v85sc-tok svg{max-height:60px;max-width:60px}
+ #onl .onl-play81:not(.l100) .v85sc-i{align-items:center;width:100%;gap:5px}#onl .onl-play81:not(.l100) .v85sc-h{justify-content:center}#onl .onl-play81:not(.l100) .v85sc-h>span{flex-direction:column;align-items:center;gap:0}#onl .onl-play81:not(.l100) .v85sc-h b{font-size:16px}
+ #onl .onl-play81:not(.l100) .v85sc .v85list{position:absolute;left:50%;bottom:12px;transform:translateX(-50%)}
+ #onl .onl-play81:not(.l100) .v85sc-n{flex-direction:column;gap:3px}#onl .onl-play81:not(.l100) .v85sc-n>b{font-size:21px;max-width:100%}#onl .onl-play81:not(.l100) .v85sc-r,#onl .onl-play81:not(.l100) .v85sc-num,#onl .onl-play81:not(.l100) .v85sc-lost{justify-content:center}
+ #onl .onl-play81:not(.l100) .v85sc-ev{white-space:normal}#onl .onl-play81:not(.l100) .v85sc-lost small{flex-basis:100%}
+ #onl .onl-play81:not(.l100) .v85sc-empty{min-height:150px;font-size:16px}#onl .onl-play81:not(.l100) .v85sc.none .v85sc-i{flex:1}
 }
 @media(max-width:1399px){#onl .v85sc-h small{display:none}}
 /* the Party button + panel */
@@ -45228,7 +45247,7 @@ function l89VisitHTML(){const r=V89L.visit;if(!r)return '';const D=r.domus||{};c
   const wall=memo.length?`<div class="mw89"><div class="mw89-h">${_T`🕯 Memorial wall <small class="rc-sub">${memo.length}</small>`}</div><div class="mw89-r">${memo.map(m=>`<div class="pq89"><span class="pq89-m">${m.fa==='c'?'✝':'D·M'}</span><b>${esc2(m.name)}</b><small>${esc2((CLASSES[m.cls]||{}).name||'')} · ${onlRankChip(m.rank||'tiro')}</small>${m.at?`<small>${esc2(l89Date(m.at))}</small>`:''}</div>`).join('')}</div></div>`:'';
   return `<div class="dom82-wrap d89w vs89w"><div class="dom82-main dom89" style="--hc1:${esc2(L.c1)};--hc2:${esc2(L.c2)}">${strip}${banner}${show}${cards}${wall}</div></div>`}
 async function onl89Visit(x){if(!x)return;V89L.findErr='';const d=typeof x==='object'?x:ONLC.fidClean(x)?{fid:x}:/^D/.test(String(x))?{id:x}:{name:String(x).replace(/^House /i,'')};let r;
-  try{r=await NET.req('domus.visit',d)}catch(e){const msg=e&&(e.code==='no_fid'||e.code==='no_domus')?_T('No house with that FID.'):errText92(e,_T('No such house.'));if(d.fid!=null){V89L.findErr=msg;if(document.getElementById('onl'))onlRedraw()}onlToast80('🏛 '+esc2(msg));return null}
+  try{r=await NET.req('domus.visit',d)}catch(e){const msg=e&&(e.code==='no_fid'||e.code==='no_domus')?(d.name!=null?_T('No house with that name.'):_T('No house with that FID.')):errText92(e,_T('No such house.'));if(d.fid!=null){V89L.findErr=msg;if(document.getElementById('onl'))onlRedraw()}onlToast80('🏛 '+esc2(msg));return null}
   V89L.visit=r;V89L.vSel=r.active;if(ONL.tab!=='visit')V89L.back=ONL.tab==='prof'?'prof':'char';ONL.tab='visit';for(const p of document.querySelectorAll('.pf83pop,.pop89l'))p.remove();
   if(document.getElementById('onl'))onlRedraw();else if(typeof onlineOpen==='function')onlineOpen('visit');return r}
 
@@ -48299,11 +48318,11 @@ function morph91Node(o,n){if(o.nodeType===3||o.nodeType===8){if(o.nodeValue!==n.
    • AP Upgrade window: each location button shows the armor piece being upgraded (its card art) and its AP before → after; ✖ Cancel kept. */
 const DIST91={cancel:false};
 distModal=function(player,n,why,kind){const plan={};LOCS.forEach(l=>plan[l]=0);
-  const cap=l=>kind==='hp'?7-player.hp[l]:7-player.ap[l];const okLoc=l=>player.hp[l]>0&&cap(l)>0;
+  const cap=l=>kind==='hp'?7-player.hp[l]:7-player.ap[l];const bare=l=>!!(typeof DIST100!=='undefined'&&DIST100.only&&!DIST100.only.includes(l));const okLoc=l=>player.hp[l]>0&&cap(l)>0&&!bare(l);
   const left=()=>n-LOCS.reduce((s,l)=>s+plan[l],0);const room=()=>LOCS.some(l=>okLoc(l)&&plan[l]<cap(l));
   const canCancel=DIST91.cancel;
-  const body=()=>`<p>${_T`Distribute <b>${n} ${kind==='hp'?'HP':'AP'}</b> from ${why}. Put it all in one location or spread it. Nothing can exceed 7.`}</p>
-   <div class="dist">${LOCS.map(l=>`<span>${sideBadge(l)} ${LOCN[l]} <span style="color:var(--dim);font:12px var(--mono)">${kind==='hp'?player.hp[l]:player.ap[l]} → ${(kind==='hp'?player.hp[l]:player.ap[l])+plan[l]}</span></span><button class="btn" type="button" data-d="-" data-l="${l}" ${plan[l]?'':'disabled'} aria-label="${_T`Remove from ${LOCN[l]}`}">−</button><span class="v">${plan[l]}</span><button class="btn" type="button" data-d="+" data-l="${l}" ${okLoc(l)&&plan[l]<cap(l)&&left()>0?'':'disabled'} aria-label="${_T`Add to ${LOCN[l]}`}">+</button>`).join('')}</div>
+  const body=()=>`<p>${_T`Distribute <b>${n} ${kind==='hp'?'HP':'AP'}</b> from ${why}. Put it all in one location or spread it. Nothing can exceed 7.`}</p>${typeof DIST100!=='undefined'&&DIST100.only?`<p class="rc-sub">${_T`Only a location that wears armor can take it.`}</p>`:''}
+   <div class="dist">${LOCS.map(l=>`<span>${sideBadge(l)} ${LOCN[l]} <span style="color:var(--dim);font:12px var(--mono)">${kind==='hp'?player.hp[l]:player.ap[l]} → ${(kind==='hp'?player.hp[l]:player.ap[l])+plan[l]}</span></span><button class="btn" type="button" data-d="-" data-l="${l}" ${plan[l]?'':'disabled'} aria-label="${_T`Remove from ${LOCN[l]}`}">−</button><span class="v">${plan[l]}</span><button class="btn" type="button" data-d="+" data-l="${l}" ${okLoc(l)&&plan[l]<cap(l)&&left()>0?'':'disabled'} ${bare(l)?`title="${_T`No armor here`}"`:''} aria-label="${_T`Add to ${LOCN[l]}`}">+</button>`).join('')}</div>
    <p style="margin-top:10px">${_T`Left to assign: <b id="distLeft">${left()}</b>`}</p>`;
   const sync=()=>{const ok=document.querySelector('#mBtns [data-mi="1"]');if(ok)ok.disabled=left()>0&&room()};
   const btns=[{label:_T('Auto: head, chest, arms, legs'),value:'auto'},{label:_T('Confirm'),value:'ok',primary:1}];if(canCancel)btns.push({label:_T('Cancel'),value:'cancel'});
@@ -54142,7 +54161,7 @@ function tac98Tut(){const img=f=>typeof assetURL==='function'?assetURL(f):'asset
   const done=k=>typeof lessonDone==='function'&&lessonDone(k);
   const card=(k,art,title,desc,n,chips)=>{const d=done(k);return `<div class="ls98"><div class="art" style="background-image:url('${art}')"></div><div class="tx">
     <span class="badge${d?' ok98':''}">${d?_T('✓ Done'):_T('Not taken yet')}</span><h3>${title}</h3><p>${desc}</p>
-    <div class="pr98"><i style="width:${d?100:0}%"></i></div><small class="sm98">${d?_T`${n} / ${n} steps`:_T`${n} steps`}</small>
+    <div class="prog98"><i style="width:${d?100:0}%"></i></div><small class="sm98">${d?_T`${n} / ${n} steps`:_T`${n} steps`}</small>
     <div class="st98">${chips.map(c=>`<span class="${d?'ok':''}">${c}</span>`).join('')}</div>
     <button type="button" class="btn${d?'':' primary'}" data-lesson="${k}">${d?_T('↻ Play it again'):_T('▶ Start the lesson')}</button></div></div>`};
   const nC=typeof TUT_STEPS!=='undefined'?TUT_STEPS.length:0,nM=typeof MTUT_STEPS!=='undefined'?MTUT_STEPS.length:0;
@@ -54405,7 +54424,7 @@ label.s98-row{cursor:pointer}
 .ls98 .art{flex:none;width:150px;height:200px;border-radius:8px;background-size:cover;background-position:center;box-shadow:0 6px 18px #000a,0 0 0 1px #6b5236}
 .ls98 .tx{flex:1;min-width:0}.ls98 h3{font:400 26px var(--display);color:var(--gold2);letter-spacing:.04em;margin:6px 0 4px}.ls98 p{margin:0 0 10px;color:var(--muted);font-size:15px}
 .ls98 .badge.ok98{border-color:#4d7a43;color:#bfe3b0}
-.pr98{height:8px;border-radius:4px;background:#160f0b;border:1px solid #3a2c1e;overflow:hidden;margin:6px 0 4px}.pr98 i{display:block;height:100%;background:linear-gradient(90deg,#9c7a33,var(--gold2))}
+.prog98{height:8px;border-radius:4px;background:#160f0b;border:1px solid #3a2c1e;overflow:hidden;margin:6px 0 4px}.prog98 i{display:block;height:100%;background:linear-gradient(90deg,#9c7a33,var(--gold2))}
 .st98{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 12px}.st98 span{font-size:12.5px;padding:2px 8px;border-radius:999px;border:1px solid #4a3826;color:var(--muted)}.st98 span.ok{border-color:#4d7a43;color:#bfe3b0}
 h2.h98{font:400 20px var(--display);color:var(--gold2);letter-spacing:.04em;margin:20px 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}h2.h98 small{font:14px var(--body);color:var(--muted);letter-spacing:0}
 .pops98{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -58403,6 +58422,8 @@ setInterval(()=>{if(!STAND100.on||!cheer92OK())return;const now=performance.now(
        the menu not on top of it).
    F2  Manager start bonus +AP (training/boost, Temple Mars, gear care +1, sparring, scouting the arena, Armory level, Vulcanalia...) lands
        only on locations that already HAVE armor: 05-flow trainAP100 replaces distributeAP for s.boost.ap (lowest AP first, none = nothing).
+       Follow-up: a HUMAN places it again — trainAP100 opens the distribute dialog (199 distModal; 212's body-pick works too) with `DIST100.only` = the armored
+       locations, the others disabled with "No armor here"; CPUs / sims / headless auto-place as before; no armor = no dialog.
    F3  A fighter in an Infirmary BED never trains: yard92Lock returns "🛏 In bed" (every y92 session / drill / lock-in / care / trial refuses
        him through y92Lock), thResolve drops his hour plan + sparring pairs before resolving, ord87Apply skips him, the old yard buttons
        (data-yb76 / data-yp76 / ptrain / yj / tp) refuse him with a toast, and the weekly regime (17-manager) lists him as sat out.
@@ -58415,6 +58436,9 @@ setInterval(()=>{if(!STAND100.on||!cheer92OK())return;const now=performance.now(
        a watched bout (mgrAfterWatch wrapper); unwatched weeks are filled from the regulars (CROWD_CACHE) or generated people by a HASH of
        world + week (never the dice RNG). composeWeekPaper wrapper adds P.rabble; paperHTML wrapper prints it.
    ===================================================================== */
+
+/* ---------- F2b · humans place the start bonus again: the distribute dialog with the bare locations disabled (v1.0 follow-up) ---------- */
+const DIST100={only:null};
 
 /* ---------- F3 · bed patients do not train ---------- */
 const bed100=g=>{try{return !!(g&&typeof inBed76==='function'&&inBed76(g))}catch(e){return false}};
@@ -58494,7 +58518,7 @@ SAVE_MIGRATIONS.push(['1.00',w=>{w.rab100=w.rab100||{}}]);
    287-v100who · v1.0 WHO'S ONLINE (his picks 1c 2b 3a; shared rules = the v1.0 WHO'S ONLINE section of 111-onlcore; the server = its
    "v1.0 WHO'S ONLINE" block in server/src/routes.js; no protocol bump)
    =====================================================================
-   1 · WHERE (1c): a compact panel beside the Orbis Terrarum on the Online landing (#who100p: its own grid column between the stage and the
+   1 · WHERE (1c) [the landing panel was removed again, see FOLLOW-UP]: a compact panel beside the Orbis Terrarum on the Online landing (#who100p: its own grid column between the stage and the
        This week / Acta column on desktop, as tall as the stage and scrolling inside itself — it adds no height, so the landing still fits
        without page scroll at ≥1300×900, 142's rule; tablets a row under This week, phones right under the stage) AND a "👥 Online now" tab in the Lobby
        Browser (#who100t: Rooms | Online now strip over the list; the full list with status / region filters and a sort, "Show more" pages
@@ -58510,6 +58534,13 @@ SAVE_MIGRATIONS.push(['1.00',w=>{w.rab100=w.rab100||{}}]);
        Lists are patched in place (#who100pL / #who100tL) — the rest of the screen never redraws for it.
    MOCK: MOCK_ROUTES['here.list'] mirrors the server (presence = mockHere80; watching = a live match's M.watch; hidden via mockHidden89).
    Kill switch localStorage flavius_who100off=1. Never in S / onlHash. Test tonl100w.
+   FOLLOW-UP (his answers 2026-10-11): the landing panel is GONE (the list lives only in the Lobby Browser's "👥 Online now" tab; a lanista with no house or
+   gladiator yet shows only there — the server lists every present non-hidden account). PER-GLADIATOR status: a row's st = the lanista's CURRENT activity;
+   a gladiator of his still fighting in a match he abandoned (Custom, CPU holds the seat) rides as `ab {m,g}` → a second chip "⚔ <gladiator> still fighting"
+   + 👁 Watch on that match. THE LANDING (a100): ★ Followed houses (+ its Find box) left the landing — the Find section of 👤 Profile & Settings already
+   holds them, and now finds a house by NAME or FID; the 📜 Acta of the day box is merged INTO the 🏆 Biggest winner / 🪦 Biggest loser boxes (each lists its
+   top line + the day's acta lines that fit it, "See today's list ›"). The grid is the stage + playlists on the left and ONE right column (This week + the
+   two boxes) — fits without scrolling at ≥1300×900; tablets stack it; phones one column.
    ===================================================================== */
 const WHO100=(()=>{const o={rows:[],n:0,next:null,at:0,busy:false,err:'',lb:'rooms',f:{st:'',reg:'',sort:'st'}};
   try{const x=JSON.parse(localStorage.getItem('flavius_onlwho100')||'null');if(x&&typeof x==='object'){if(x.lb==='who')o.lb='who';if(x.f&&typeof x.f==='object')o.f={...o.f,...x.f}}}catch(e){}return o})();
@@ -58529,13 +58560,15 @@ function who100Row(r,full){const nm=r.ln||r.g||_T('A lanista');const drn=r.dr&&t
   const lbl=t=>`<span class="w100bl">${t}</span>`;
   const inv=r.me||who100Guest()?'':(()=>{const why=who100InvWhy(r);return `<button type="button" class="btn tksm" data-w100="inv" data-v="${esc2(r.id)}" ${why?'disabled':''} title="${esc2(why||_T('Invite to your room'))}" aria-label="${esc2(_T('Invite'))}">✉${lbl(_T('Invite'))}</button>`})();
   const watch=(r.st==='fight'||r.st==='watch')&&r.m&&!r.me?`<button type="button" class="btn tksm" data-w100="watch" data-v="${esc2(r.m)}" title="${esc2(_T('Watch their match'))}" aria-label="${esc2(_T('Watch'))}">👁${lbl(_T('Watch'))}</button>`:'';
+  const abG=r.ab?esc2(r.ab.g||_T('A gladiator')):'';
+  const abw=r.ab&&!r.me?`<button type="button" class="btn tksm" data-w100="watch" data-v="${esc2(r.ab.m)}" title="${esc2(_T`Watch ${r.ab.g||_T('A gladiator')} fight on`)}" aria-label="${esc2(_T`Watch ${r.ab.g||_T('A gladiator')} fight on`)}">👁${lbl(_T('Watch'))}</button>`:'';
   const card=r.dom?`<button type="button" class="btn tksm" data-hc98="${esc2(r.id)}" title="${esc2(_T('House card'))}" aria-label="${esc2(_T('House card'))}">🏛${lbl(_T('House'))}</button>`:'';
   const fol=r.me||who100Guest()||!r.dom?'':`<button type="button" class="btn tksm ${r.fo?'on':''}" data-w100="fol" data-v="${esc2(r.dom)}" data-on="${r.fo?0:1}" title="${esc2(r.fo?_T('Following — click to stop'):_T('Follow this house'))}" aria-label="${esc2(r.fo?_T('Unfollow'):_T('Follow'))}">${r.fo?'★':'☆'}${lbl(r.fo?_T('Following'):_T('Follow'))}</button>`;
   return `<div class="w100r w100-${esc2(r.st)} ${r.me?'w100me':''}" data-w100r="${esc2(r.id)}">${ban}
-    <span class="w100who"><span class="w100l1"><i class="w100dot" title="${esc2(stx)}" aria-hidden="true"></i><b class="w100n" ${r.dom?`data-hc98="${esc2(r.id)}" role="button" tabindex="0" title="${esc2(r.dn?onlHouse82(r.dn):'')}"`:''}>${esc2(nm)}</b>${you}<span class="w100rg">${flag}</span></span>
-      <small>${r.g?esc2(r.g):'—'} ${onlRankChip(r.rk||'tiro')}${full&&r.dn?` · <span class="w100dn">${esc2(onlHouse82(r.dn))}</span>`:''}</small></span>
+    <span class="w100who"><span class="w100l1"><i class="w100dot" title="${esc2(stx+(r.g&&(r.st==='room'||r.st==='fight')?' · '+r.g:''))}" aria-hidden="true"></i><b class="w100n" ${r.dom?`data-hc98="${esc2(r.id)}" role="button" tabindex="0" title="${esc2(r.dn?onlHouse82(r.dn):'')}"`:''}>${esc2(nm)}</b>${you}<span class="w100rg">${flag}</span></span>
+      <small>${r.g?esc2(r.g):'—'} ${onlRankChip(r.rk||'tiro')}${full&&r.dn?` · <span class="w100dn">${esc2(onlHouse82(r.dn))}</span>`:''}</small>${r.ab?`<small class="w100ab" data-w100ab="${esc2(r.ab.m)}">${_T`⚔ ${abG} still fighting`}</small>`:''}</span>
     <span class="w100st"><span class="sr93">${_T`Status:`} </span>${esc2(stx)}</span>
-    <span class="w100acts">${watch}${inv}${card}${fol}</span></div>`}
+    <span class="w100acts">${watch}${abw}${inv}${card}${fol}</span></div>`}
 function who100Shown(full){let rows=WHO100.rows||[];if(full){rows=ONLC.whoKeep100(rows,{status:WHO100.f.st,region:WHO100.f.reg});rows=ONLC.whoSort100(rows,WHO100.f.sort)}return rows}
 function who100ListHTML(full){if(!WHO100.at&&!WHO100.err)return `<p class="rc-sub w100empty">${_T`Looking around the forum…`}</p>`;
   if(WHO100.err&&!WHO100.rows.length)return `<p class="onl-err w100empty">${esc2(WHO100.err)}</p>`;
@@ -58543,9 +58576,6 @@ function who100ListHTML(full){if(!WHO100.at&&!WHO100.err)return `<p class="rc-su
   return rows.map(r=>who100Row(r,full)).join('')+(others?'':`<p class="rc-sub w100empty">${full&&(WHO100.f.st||WHO100.f.reg)?_T('Nobody matches these filters.'):_T('Nobody else is online right now.')}</p>`)
     +(full&&WHO100.next?`<div class="w100more"><button type="button" class="btn tksm" data-w100="more">${_T`Show more`} · ${Math.max(0,(WHO100.n|0)-WHO100.rows.length)}</button></div>`:'')}
 const who100Count=()=>(WHO100.n||WHO100.rows.length)-((WHO100.rows||[]).some(r=>r.me)?1:0);
-/* the landing panel (beside the Orbis) */
-function who100PanelHTML(){return `<div class="a100-who card2" id="who100p"><div class="w100h"><b>${_T`👥 Online now`}</b><span class="rc-sub" id="who100pN">${WHO100.at?Math.max(0,who100Count()):''}</span>
-    <button type="button" class="btn tksm" data-w100="all" title="${esc2(_T('Everyone online, with filters'))}">${_T`All ›`}</button></div><div class="w100list" id="who100pL">${who100ListHTML(false)}</div></div>`}
 /* the Lobby Browser tab */
 function who100TabsHTML(){const t=(k,l)=>`<button type="button" class="w100tab ${WHO100.lb===k?'on':''}" data-w100tab="${k}" aria-pressed="${WHO100.lb===k}">${l}</button>`;
   return `<div class="w100tabs" role="tablist">${t('rooms',_T('⚔ Rooms'))}${t('who',_T('👥 Online now')+(WHO100.at?` · ${Math.max(0,who100Count())}`:''))}</div>`}
@@ -58558,11 +58588,10 @@ function who100TabHTML(){const f=WHO100.f;const opt=(v,l,cur)=>`<option value="$
      <button type="button" class="btn tksm" data-w100="refresh" title="${esc2(_T('Refresh'))}">↻</button><span class="rc-sub" id="who100tN">${WHO100.at?_T`${Math.max(0,who100Count())} online`:''}</span></div>
     <div class="w100list w100full" id="who100tL">${who100ListHTML(true)}</div></div>`}
 /* patch the lists in place (the rest of the screen stays) */
-function who100Patch(){const a=document.getElementById('who100pL');if(a){const h=who100ListHTML(false);if(a.innerHTML!==h)a.innerHTML=h}
-  const b=document.getElementById('who100tL');if(b){const h=who100ListHTML(true);if(b.innerHTML!==h)b.innerHTML=h}
-  const n=Math.max(0,who100Count());const pn=document.getElementById('who100pN');if(pn)pn.textContent=WHO100.at?String(n):'';const tn=document.getElementById('who100tN');if(tn)tn.textContent=WHO100.at?_T`${n} online`:'';
+function who100Patch(){const b=document.getElementById('who100tL');if(b){const h=who100ListHTML(true);if(b.innerHTML!==h)b.innerHTML=h}
+  const n=Math.max(0,who100Count());const tn=document.getElementById('who100tN');if(tn)tn.textContent=WHO100.at?_T`${n} online`:'';
   const tb=document.querySelector('#onl .w100tab[data-w100tab="who"]');if(tb)tb.textContent=_T('👥 Online now')+(WHO100.at?` · ${n}`:'')}
-const who100Showing=()=>!!(document.getElementById('who100p')||document.getElementById('who100t'));
+const who100Showing=()=>!!document.getElementById('who100t');
 async function who100Fetch(more){if(WHO100.busy)return;WHO100.busy=true;
   try{const r=await NET.req('here.list',more&&WHO100.next?{cursor:WHO100.next}:{});const rows=Array.isArray(r&&r.rows)?r.rows:[];
     if(more){const seen=new Set(WHO100.rows.map(x=>x.id));WHO100.rows=WHO100.rows.concat(rows.filter(x=>!seen.has(x.id)))}else WHO100.rows=rows;
@@ -58573,11 +58602,29 @@ function who100Due(){return who100Showing()&&!document.hidden&&!document.body.cl
 setInterval(()=>{try{if(who100Due())who100Fetch()}catch(e){}},5000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&who100Due())who100Fetch()});
 
-/* the landing: the panel beside the stage's Orbis (its own column on desktop) */
-{const base=onlPlayHTML;onlPlayHTML=function(){const h=base.apply(this,arguments);try{if(WHO100_OFF||typeof h!=='string'||h.indexOf('a81-week')<0||h.indexOf('who100p')>=0)return h;
-  const T=document.createElement('template');T.innerHTML=h;const wk=T.content.querySelector('.onl-play81>.a81-week');if(!wk)return h;
-  const box=document.createElement('div');box.className='a100-whow';box.innerHTML=who100PanelHTML();wk.after(box);T.content.querySelector('.onl-play81').classList.add('w100on');
-  if(!WHO100.busy&&Date.now()-WHO100.at>=ONLC.WHO100.POLL_MS-400)setTimeout(()=>who100Fetch(),0);return T.innerHTML}catch(e){console.error(e);return h}}}
+/* ---------- THE LANDING (a100): stage + playlists | one right column (This week, 🏆 Biggest winner, 🪦 Biggest loser) ---------- */
+/* the day's acta lines that belong in each box (acta87Line = 149's one line; a line opens the day's list) */
+function a100Acta(kind){const T=typeof ONL80F!=='undefined'?ONL80F.today:null;const L=((T&&T.acta)||[]).filter(e=>e&&!e.pre);
+  const rows=kind==='fall'?L.filter(e=>(e.fell|0)>0):L.filter(e=>!!e.w);return rows.slice(0,3)}
+function a100ActaHTML(kind){const rows=a100Acta(kind);if(!rows.length)return '';
+  return `<div class="a100-acta" data-a100="${kind}"><div class="a100-ah">${kind==='fall'?_T`✝ Fell today`:_T`📜 Acta of the day`}</div>${rows.map(acta87Line).join('')}</div>`}
+{const base=v85ShowHTML;v85ShowHTML=function(){const h=base.apply(this,arguments);try{if(WHO100_OFF||typeof acta87Line!=='function')return h;
+  const T=document.createElement('template');T.innerHTML=h;
+  for(const k of ['win','fall']){const box=T.content.querySelector(`.v85sc.${k}`);if(!box)continue;const a=a100ActaHTML(k);if(!a)continue;
+    let i=box.querySelector(':scope>.v85sc-i');if(!i)continue;i.insertAdjacentHTML('beforeend',a)}
+  return T.innerHTML}catch(e){console.error(e);return h}}}
+{const base=onlPlayHTML;onlPlayHTML=function(){const h=base.apply(this,arguments);try{if(WHO100_OFF||typeof h!=='string'||h.indexOf('a85-show')<0||h.indexOf('a100-right')>=0)return h;
+  const T=document.createElement('template');T.innerHTML=h;const g=T.content.querySelector('.onl-play81.v85');if(!g)return h;
+  const wk=g.querySelector(':scope>.a81-week'),fo=g.querySelector(':scope>.a81-forum'),show=g.querySelector('.a85-show');if(!wk||!show)return h;
+  for(const x of g.querySelectorAll('.fl83'))x.remove();if(fo)fo.remove();
+  const right=document.createElement('div');right.className='a100-right';const inner=document.createElement('div');inner.className='a100-ri';inner.append(wk,show);right.appendChild(inner);g.appendChild(right);g.classList.add('l100');
+  return T.innerHTML}catch(e){console.error(e);return h}}}
+/* the Profile's Find: a name or a FID (the server's domus.visit takes both) */
+{const base=l89FindHTML;l89FindHTML=function(follow){let h=base.apply(this,arguments);try{if(WHO100_OFF)return h;
+  h=h.split(_T('🔍 Find a house by FID')).join(_T('🔍 Find a house by name or FID')).replace(/placeholder="[^"]*"/,`placeholder="${esc2(_T('House name or FID-XXXXXX'))}"`).replace('maxlength="14"','maxlength="40"')}catch(e){console.error(e)}return h}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-l89="find"]');if(!b||WHO100_OFF)return;const i=b.parentElement&&b.parentElement.querySelector('input');const s=String((i&&i.value)||'').trim();
+  if(!s||ONLC.fidClean(s))return;e.preventDefault();e.stopPropagation();V89L.find=s;if(s.length<2){V89L.findErr=_T('Type a house name or its FID.');onlRedraw();return}
+  onl89Visit({name:s.replace(/^House /i,'')}).then(r=>{if(!r&&document.getElementById('onl')){V89L.findErr=_T('No house with that name.');onlRedraw()}})},true);
 /* the Lobby Browser: Rooms | 👥 Online now */
 {const base=onlLobbyHTML;onlLobbyHTML=function(){if(WHO100_OFF)return base.apply(this,arguments);if(WHO100.lb==='who'){if(!WHO100.busy&&Date.now()-WHO100.at>=ONLC.WHO100.POLL_MS-400)setTimeout(()=>who100Fetch(),0);return who100TabsHTML()+who100TabHTML()}
   const h=base.apply(this,arguments);return who100TabsHTML()+h}}
@@ -58585,7 +58632,6 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&who100Due
 /* the controls */
 document.addEventListener('click',async e=>{const t=e.target.closest&&e.target.closest('#onl [data-w100tab]');if(t){e.preventDefault();WHO100.lb=t.dataset.w100tab==='who'?'who':'rooms';who100Save();onlRedraw();return}
   const b=e.target.closest&&e.target.closest('#onl [data-w100]');if(!b||b.disabled)return;e.preventDefault();e.stopPropagation();const a=b.dataset.w100,v=b.dataset.v;
-  if(a==='all'){WHO100.lb='who';who100Save();ONL.tab='lobby';onlRedraw();return}
   if(a==='refresh'){WHO100.at=0;who100Fetch();return}
   if(a==='more'){who100Fetch(true);return}
   if(a==='inv'){const L=who100MyRoom();if(!L)return;b.disabled=true;try{await NET.req('lobby.invite',{id:L.id,to:v});onlToast80(_T('✉ Invitation sent.'))}catch(err){b.disabled=false;onlToast80('⚠ '+esc2(errText92(err)))}return}
@@ -58600,25 +58646,18 @@ MOCK_ROUTES['here.list']=(w,d,me)=>{d=d||{};const now=Date.now();const V=me&&w.a
   const maps=ONLC.whoMaps100(Object.values(w.lobbies||{}).filter(L=>!L.mock),now);const rows=[];
   for(const h of mockHere80(w)){if(h.bot)continue;const A0=w.accounts[h.id];if(!A0||A0.guest||/^guest/.test(h.id))continue;
     if(typeof mockHidden89==='function'&&mockHidden89(w,h.id)&&h.id!==me)continue;
-    if(maps.fight.has(h.id)&&!h.match)maps.fight.delete(h.id);
+    if(!h.match){maps.fight.delete(h.id);maps.fightAll.delete(h.id)}
+    let ab=null;for(const L of Object.values(w.lobbies||{})){if(L.mock||L.status!=='live'||!L.players.some(p=>p.id===h.id))continue;const M=w.matches&&w.matches[L.id];
+      if(M&&(M.abandoned||{})[h.id]&&M.status!=='done'){ab=ONLC.whoAb100({id:h.id},{id:L.id,status:'live',abandoned:M.abandoned,reports:M.reports},maps,!!L.ranked);if(ab)break}}
     const ch=onlMockChar(w,h.id);const D=A0.domus&&typeof mockDomus82==='function'?mockDomus82(w,A0.domus):null;
     let w100=null;for(const [id,M] of Object.entries(w.matches||{})){const L=w.lobbies[id];if(M&&M.watch&&M.watch[h.id]&&L&&L.status==='live'){w100={id,at:now};break}}
     const hide=typeof mockHidden89==='function'&&mockHidden89(w,h.id);
     const A={...A0,id:h.id,dname:(D&&D.name)||A0.dname||'',w100,priv89:A0.priv89||(hide?{hide:true}:undefined),here:{glad:ch?ch.name:'',rank:ch?ONLC.rankFor(ch).k:'tiro',tz:hide?'':(h.tz||A0.tz||'')}};
-    rows.push(ONLC.whoRow100(A,maps,{dr:D?ONLC.drankOf98(+D.dr98||0).k:'',viewer:V}))}
+    rows.push(ONLC.whoRow100(A,maps,{dr:D?ONLC.drankOf98(+D.dr98||0).k:'',viewer:V,ab}))}
   return {...ONLC.whoPage100(ONLC.whoSort100(ONLC.whoKeep100(rows,d),d.sort),d.cursor),at:now}};
 if(!ONLC.GUEST_OK.includes('here.list'))ONLC.GUEST_OK.push('here.list');
 
 {const st=document.createElement('style');st.textContent=`
-@media(min-width:1100px){#onl .onl-play81.v85.w100on{grid-template-columns:minmax(0,1fr) 235px 285px;grid-template-areas:"stage who week" "stage who forum" "pls pls pls";grid-template-rows:auto 1fr auto}
- #onl .w100on .a100-whow{position:relative;min-height:150px;align-self:stretch}#onl .w100on .a100-who{position:absolute;inset:0}#onl .w100on .a100-who .w100list{flex:1;max-height:none}}
-@media(min-width:1400px){#onl .onl-play81.v85.w100on{grid-template-columns:minmax(0,1fr) 260px 320px}}
-@media(min-width:1100px) and (max-width:1399px){#onl .w100on .onl-party{gap:5px}#onl .w100on .onl-party .onl-slot{width:62px;height:78px}}
-@media(min-width:761px) and (max-width:1099px){#onl .onl-play81.v85.w100on{grid-template-areas:"stage stage" "week forum" "who who" "pls pls";grid-template-rows:none}}
-.a100-whow{grid-area:who;min-width:0}
-.a100-who{padding:8px 10px;display:flex;flex-direction:column;gap:6px;min-height:0}
-.w100h{display:flex;align-items:center;gap:8px}.w100h b{flex:1;white-space:nowrap}.w100h .btn{white-space:nowrap;padding:1px 7px}
-.a100-who .w100list{max-height:136px;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:3px;padding-right:2px}
 .w100r{display:grid;grid-template-columns:16px minmax(0,1fr) auto;align-items:center;gap:6px;padding:3px 6px;border-radius:6px;background:rgba(255,255,255,.035);border:1px solid rgba(214,171,76,.14)}
 .w100r.w100me{border-color:rgba(214,171,76,.55);background:rgba(214,171,76,.08)}
 .w100ban{width:16px;height:24px;object-fit:contain;display:block}.w100nob{border-left:2px dashed rgba(255,255,255,.18);height:20px;margin-left:7px;width:0}
@@ -58640,7 +58679,39 @@ if(!ONLC.GUEST_OK.includes('here.list'))ONLC.GUEST_OK.push('here.list');
 .w100full{display:flex;flex-direction:column;gap:4px}.w100full .w100r{grid-template-columns:22px minmax(0,1fr) 92px auto;padding:6px 8px}
 .w100full .w100ban{width:20px;height:30px}.w100full .w100st{display:block}.w100full .w100bl{display:inline;margin-left:4px}.w100full .w100acts .btn{padding:2px 8px}
 .w100more{text-align:center;margin-top:6px}
-@media (max-width:760px){#onl .onl-play81.v85.w100on{grid-template-areas:"stage" "who" "pls" "forum" "week";grid-template-rows:none}
+/* the landing (a100) */
+@media(min-width:1100px){#onl .onl-play81.v85.l100{grid-template-columns:minmax(0,1fr) 340px;grid-template-areas:"stage right" "pls right";grid-template-rows:auto 1fr}}
+#onl .onl-play81.v85.l100 .a85-bot{grid-template-columns:minmax(0,1fr)}
+#onl .l100>.a100-right{grid-area:right;align-self:stretch;position:relative;min-width:0;min-height:300px}
+#onl .a100-ri{position:absolute;inset:0;display:flex;flex-direction:column;gap:10px;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+#onl .a100-ri>.a81-week{flex:none;align-self:stretch}
+#onl .a100-ri>.a85-show{flex:1 1 0;display:flex;flex-direction:column;min-height:0}
+#onl .a100-ri .a85-show .onl-h{flex:none;margin:0 0 6px}
+#onl .a100-ri .v85show{flex:1 1 0;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(0,1fr);gap:10px;min-height:0}
+#onl .a100-ri .v85sc{min-height:0;overflow:hidden;align-items:flex-start}
+#onl .a100-ri .v85sc.none{align-items:center}
+#onl .a100-ri .v85sc-fig{margin-right:6px;width:50px}#onl .a100-ri .v85sc-fig .portrait{width:50px!important;height:68px!important}#onl .a100-ri .v85sc-tok{right:-16px}
+#onl .a100-ri .v85sc-n>b{font-size:16px}
+#onl .a100-ri .v85sc{gap:12px;padding:8px 10px}
+#onl .a100-ri .v85sc-ev{white-space:normal}
+#onl .a100-acta{display:flex;flex-direction:column;gap:1px;margin-top:4px;padding-top:4px;border-top:1px dashed rgba(214,171,76,.28);min-width:0}
+#onl .a100-ah{font:600 10.5px system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#bfae88}
+#onl .a100-acta .ac87{all:unset;cursor:pointer;display:block;font:11.5px/1.3 system-ui,sans-serif;padding:2px 0;color:#eadbb8;min-width:0}
+#onl .a100-acta .ac87:hover,#onl .a100-acta .ac87:focus-visible{color:#fff}
+#onl .a100-acta .ac87t{color:#a99474;margin-right:5px;font-size:10.5px}#onl .a100-acta .ac87e{margin-right:4px}
+@media(min-width:761px) and (max-width:1099px){
+ #onl .onl-play81.v85.l100{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "right" "pls";grid-template-rows:none}
+ #onl .l100>.a100-right{min-height:0}#onl .a100-ri{position:static;overflow:visible;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);align-items:start}
+ #onl .a100-ri .v85show{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:auto}
+}
+@media(max-width:760px){
+ #onl .onl-play81.v85.l100{grid-template-areas:"stage" "pls" "right";grid-template-rows:none}
+ #onl .l100>.a100-right{min-height:0}#onl .a100-ri{position:static;overflow:visible}
+ #onl .a100-ri .v85show{grid-auto-rows:auto}
+}
+@media(min-width:1600px) and (min-height:1000px){#onl .a100-ri .v85show{grid-template-columns:minmax(0,1fr)}}
+.w100ab{color:#e8a58e!important;white-space:normal!important}
+@media (max-width:760px){
  .w100full .w100r{grid-template-columns:20px minmax(0,1fr) auto;grid-template-areas:"b w s" "b a a"}
  .w100full .w100r>.w100ban{grid-area:b}.w100full .w100r>.w100who{grid-area:w}.w100full .w100r>.w100st{grid-area:s}.w100full .w100r>.w100acts{grid-area:a;flex-wrap:wrap}
  .w100full .w100bl{display:none}}

@@ -4,6 +4,8 @@
        the menu not on top of it).
    F2  Manager start bonus +AP (training/boost, Temple Mars, gear care +1, sparring, scouting the arena, Armory level, Vulcanalia...) lands
        only on locations that already HAVE armor: 05-flow trainAP100 replaces distributeAP for s.boost.ap (lowest AP first, none = nothing).
+       Follow-up: a HUMAN places it again — trainAP100 opens the distribute dialog (199 distModal; 212's body-pick works too) with `DIST100.only` = the armored
+       locations, the others disabled with "No armor here"; CPUs / sims / headless auto-place as before; no armor = no dialog.
    F3  A fighter in an Infirmary BED never trains: yard92Lock returns "🛏 In bed" (every y92 session / drill / lock-in / care / trial refuses
        him through y92Lock), thResolve drops his hour plan + sparring pairs before resolving, ord87Apply skips him, the old yard buttons
        (data-yb76 / data-yp76 / ptrain / yj / tp) refuse him with a toast, and the weekly regime (17-manager) lists him as sat out.
@@ -16,6 +18,9 @@
        a watched bout (mgrAfterWatch wrapper); unwatched weeks are filled from the regulars (CROWD_CACHE) or generated people by a HASH of
        world + week (never the dice RNG). composeWeekPaper wrapper adds P.rabble; paperHTML wrapper prints it.
    ===================================================================== */
+
+/* ---------- F2b · humans place the start bonus again: the distribute dialog with the bare locations disabled (v1.0 follow-up) ---------- */
+const DIST100={only:null};
 
 /* ---------- F3 · bed patients do not train ---------- */
 const bed100=g=>{try{return !!(g&&typeof inBed76==='function'&&inBed76(g))}catch(e){return false}};

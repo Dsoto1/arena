@@ -69,7 +69,7 @@ const aBack=await A.evaluate(id=>{const w=mockLoad();const M=w.matches[id]||{};c
 await A.evaluate(async()=>{window.T81=[];const mt=mToast;mToast=function(m){T81.push(String(m));return mt.apply(this,arguments)};if(CUR_MODAL)CUR_MODAL.done(null);menuHide();onlineOpen('play')});await until(A,()=>!!document.querySelector('#onl #onlStageMap81 .omap-in')&&/Alpha the Bold/.test((document.getElementById('v85show')||{}).textContent||''),null,30000);await wait(500);
 const land=await A.evaluate(()=>{const o=document.getElementById('onl');const t=document.getElementById('v85show') /* v0.85: the Today ribbon became the two showcases (146-v85land) */;
   return {map:!!o.querySelector('.onl-stage #onlStageMap81 .omap-in'),dots:o.querySelectorAll('#onlStageMap81 .omap-dot').length,oval:!!o.querySelector('.omap'),row80:!!document.getElementById('onlRow80'),
-    forum:!!o.querySelector('.a81-forum #acta87')&&!o.querySelector('#onlFeed80') /* v0.87: the Acta of the day replaced the Forum box */,news:1,empire:/The empire/.test(o.textContent),cap:(document.getElementById('omapCap')||{}).textContent||'',
+    forum:!!o.querySelector('.a100-right #v85show')&&!o.querySelector('#acta87')&&!o.querySelector('#onlFeed80') /* v1.0: the Acta is merged into the showcases (right column) */,news:1,empire:/The empire/.test(o.textContent),cap:(document.getElementById('omapCap')||{}).textContent||'',
     online:(o.textContent.match(/lanistas? · \d+ guests?/g)||[]).length,today:t?{ribbon:!document.getElementById('onlToday80'),txt:t.textContent.replace(/\s+/g,' '),wheat:!!t.querySelector('svg.ico')}:null,
     stageWheat:!!o.querySelector('.onl-pstats svg.ico,.onl-pstats .ic87w'),star:/⭐\s*\d+\s*(lifetime )?CF|CF\s*⭐/.test(o.textContent),tones:[...o.querySelectorAll('.onl-pl.pl81')].filter(e=>{const s=e.closest('.rot88s');return !s||s.classList.contains('on')})/* v0.98: a cycling box (Familia + more events) counts once */.map(e=>getComputedStyle(e).borderTopColor)}});
 if(SHOT)await A.screenshot({path:path.join(SHOT,'onl_landing.png')});
@@ -106,7 +106,7 @@ const ctx2=await b.newContext({viewport:{width:390,height:844}});await ctx2.rout
 await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Delta'});await NET.req('domus.create',{name:'Domus Delta'});ONL.char=await NET.req('char.create',{name:'Delta the Bold',cls:'venatore'});onlineOpen('play')});await P.waitForFunction(()=>!!document.querySelector('.onl-pls81')&&!!document.querySelector('.a81-forum'),null,{timeout:30000}).catch(()=>{});await P.waitForTimeout(500);
 const ph=await P.evaluate(async()=>{const r=document.querySelector('.onl-pls81');const sg=document.querySelector('.onl-stage');const o={flex:r&&getComputedStyle(r).display,over:r?r.scrollWidth>r.clientWidth+10:false,cols:sg?getComputedStyle(sg).gridTemplateColumns.split(' ').length:0,hscroll:document.documentElement.scrollWidth>innerWidth+2};
   r.scrollIntoView();r.dispatchEvent(new WheelEvent('wheel',{deltaY:240,bubbles:true,cancelable:true}));await new Promise(q=>setTimeout(q,200));o.left=r.scrollLeft;
-  const pos=s=>{const e=document.querySelector(s);return e?e.getBoundingClientRect().top:-1};o.order=[pos('.a81-stage'),pos('.a81-pls'),pos('#v85show'),pos('.a81-forum')];return o});
+  const pos=s=>{const e=document.querySelector(s);return e?e.getBoundingClientRect().top:-1};o.order=[pos('.a81-stage'),pos('.a81-pls'),pos('.a100-right'),pos('#v85show')];return o});
 if(SHOT){await P.evaluate(()=>{const b=document.getElementById('mBody');if(b)b.scrollTop=0});await P.screenshot({path:path.join(SHOT,'onl_phone.png')})}
 console.log(JSON.stringify({sign0:{box:sign0.box,who:/Other players see only your gladiator/.test(sign0.txt)},word,same,atEnd,aEnd,bOnl,bAb:{...bAb,txt:bAb.txt.slice(0,160)},aBack,land,big,wheat,hall,inv0,inv1,dead1,inv2,dead2,ph}));
 const miss=[];
@@ -126,5 +126,5 @@ if(!wheat)miss.push('result toast wheat');if(!hall)miss.push('Hall wheat');
 if(inv0)miss.push('invite to a missing room popped up');if(!inv1||!dead1.toast||dead1.joined||dead1.pop)miss.push('closed room → message');
 if(!inv2||!dead2||!dead2.watch||!/That room closed before you got there/.test(dead2.txt))miss.push('started room → message + Watch');
 if(ph.flex!=='flex'||!ph.over||!(ph.left>0)||ph.cols!==1||ph.hscroll)miss.push('phone: one-column stage, sideways playlists');
-if(!(ph.order[0]<ph.order[1]&&ph.order[1]<ph.order[2]&&ph.order[2]<ph.order[3]))miss.push('phone order stage → Playlists → Showcases → Forum');
+if(!(ph.order[0]<ph.order[1]&&ph.order[1]<ph.order[2]&&ph.order[2]<ph.order[3]))miss.push('phone order stage → Playlists → right column → Showcases');
 console.log('MISS',miss);console.log('ERRS',errs);await b.close();srv.close();process.exit(miss.length||errs.length?1:0)})();

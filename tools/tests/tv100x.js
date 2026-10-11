@@ -26,14 +26,36 @@ await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(
 /* F2 — the start bonus lands only on armored locations */
 out.f2=await pg.evaluate(async()=>{const r={};const p=S.players[0];
   p.hp={head:5,chest:6,rarm:5,larm:5,rleg:5,lleg:5};p.ap={head:0,chest:3,rarm:0,larm:2,rleg:0,lleg:0};
+  p.cpu=true; /* the auto-placement path (CPUs / sims); humans get the dialog (F2e below) */
   await trainAP100(p,4,'test');r.a={...p.ap};
   p.ap={head:0,chest:0,rarm:0,larm:0,rleg:0,lleg:0};await trainAP100(p,3,'test');r.none={...p.ap};
   p.ap={head:6,chest:0,rarm:0,larm:0,rleg:0,lleg:0};await trainAP100(p,5,'test');r.cap={...p.ap};
+  p.cpu=false;
   /* the real start: seat 1 had boost ap 3 — a bare location of his was never given any (his class armor map = the gear he holds) */
   const q=S.players[1];r.q=LOCS.map(l=>[l,q.ap[l],(q.pieces[l]||[]).length]);return r});
 ok(out.f2.a.head===0&&out.f2.a.rarm===0&&out.f2.a.rleg===0&&out.f2.a.lleg===0&&out.f2.a.chest+out.f2.a.larm===9,'F2a points only on chest/left arm '+JSON.stringify(out.f2.a));
 ok(Object.values(out.f2.none).every(v=>v===0),'F2b no armor = nothing placed '+JSON.stringify(out.f2.none));ok(out.f2.cap.head===7&&out.f2.cap.chest===0,'F2c cap 7, bare chest untouched '+JSON.stringify(out.f2.cap));
 ok(out.f2.q.every(([l,ap,n])=>ap===0?true:n>0||ap>0),'F2d seat start sane');
+/* F2e — a HUMAN places the start bonus in the distribute dialog: only armored locations take points, the bare ones are disabled with the reason */
+out.f2e=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};const p=S.players[0];p.cpu=false;
+  p.hp={head:5,chest:6,rarm:5,larm:5,rleg:5,lleg:5};p.ap={head:0,chest:3,rarm:0,larm:2,rleg:0,lleg:0};
+  const pr=trainAP100(p,4,'test');for(let i=0;i<60&&!document.querySelector('#mBody .dist [data-d]');i++)await W8(50);
+  const btn=(l,d)=>document.querySelector(`#mBody .dist [data-d="${d}"][data-l="${l}"]`);
+  r.open=!!btn('chest','+');r.title=(document.getElementById('mTitle')||{}).textContent;
+  r.plusOn=LOCS.filter(l=>btn(l,'+')&&!btn(l,'+').disabled);r.bareTip=['head','rarm','rleg','lleg'].map(l=>(btn(l,'+')||{}).title||'');r.note=/armor/i.test((document.getElementById('mBody')||{}).textContent||'');
+  /* a click on a bare location does nothing */
+  const bare=btn('head','+');if(bare)bare.click();await W8(60);r.headAfter=(document.querySelector('#mBody .dist [data-l="head"][data-d="-"]')||{}).disabled;
+  for(const l of ['chest','chest','larm','larm']){const b=btn(l,'+');if(b&&!b.disabled)b.click();await W8(60)}
+  r.left=(document.getElementById('distLeft')||{}).textContent;CUR_MODAL.done('ok');await pr;r.ap={...p.ap};
+  /* Auto (the dialog's own button) also keeps to armored locations */
+  p.ap={head:0,chest:3,rarm:0,larm:2,rleg:0,lleg:0};const pr2=trainAP100(p,6,'test');for(let i=0;i<60&&!CUR_MODAL;i++)await W8(50);CUR_MODAL.done('auto');await pr2;r.auto={...p.ap};
+  /* no armor at all: no dialog */
+  p.ap={head:0,chest:0,rarm:0,larm:0,rleg:0,lleg:0};await trainAP100(p,3,'test');r.noDialog=!CUR_MODAL;r.none={...p.ap};return r});
+ok(out.f2e.open&&out.f2e.plusOn.slice().sort().join()==='chest,larm','F2e only the armored locations can take points '+JSON.stringify(out.f2e));
+ok(out.f2e.bareTip.every(t=>/No armor here/.test(t))&&out.f2e.note,'F2e the bare locations say why '+JSON.stringify(out.f2e.bareTip));
+ok(out.f2e.headAfter===true&&out.f2e.ap.head===0&&out.f2e.ap.chest===5&&out.f2e.ap.larm===4&&out.f2e.ap.rarm===0,'F2e the player\'s own split lands '+JSON.stringify(out.f2e.ap));
+ok(out.f2e.auto.head===0&&out.f2e.auto.rarm===0&&out.f2e.auto.rleg===0&&out.f2e.auto.lleg===0&&out.f2e.auto.chest+out.f2e.auto.larm===11,'F2e Auto keeps to armored locations '+JSON.stringify(out.f2e.auto));
+ok(out.f2e.noDialog&&Object.values(out.f2e.none).every(v=>v===0),'F2e no armor = no dialog, nothing placed '+JSON.stringify(out.f2e.none));
 /* F4 — a declared Focus! card: popup pick, no roll, movement kept */
 out.f4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};SPEED='pause';const p=S.players[0],q=S.players[1];S.ri=1;
   p.wR=mkW('gladius');p.attacks=0;p.armUses={R:0,L:0};p.hitTargets=new Set();p.mv=5;q.alive=true;for(const l of LOCS){q.hp[l]=5;q.ap[l]=0}

@@ -28,6 +28,15 @@ function units(){
   const p1=C.whoPage100(many);assert.ok(p1.rows.length<=C.WHO100.MAX&&JSON.stringify(p1.rows).length<=C.WHO100.BYTES&&p1.next&&p1.n===450,'a capped page '+p1.rows.length);
   const p2=C.whoPage100(many,p1.next);assert.strictEqual(p2.rows[0].id,'a'+p1.rows.length,'the cursor continues');
   let seen=0,cur=null;do{const p=C.whoPage100(many,cur);seen+=p.rows.length;cur=p.next}while(cur);assert.strictEqual(seen,450,'every row once');
+  /* per gladiator: ab = a match still fighting after the lanista abandoned it */
+  const m2=C.whoMaps100([{id:'L2',status:'live',name:'x',players:[{id:'c',name:'Gaius'},{id:'z',name:'Zed'}]},{id:'L4',status:'live',players:[{id:'c',name:'Cato Two'}]}],1000);
+  assert.deepStrictEqual(C.whoStatus100({id:'z'},m2,{m:'L2'}),{st:'idle'},'the abandoned match is not his current activity');
+  assert.deepStrictEqual(C.whoStatus100({id:'c'},m2,{m:'L2'}),{st:'fight',m:'L4'},'another live match (another gladiator) still is');
+  const abM={id:'L2',status:'live',abandoned:{z:'cpu'}};const ab=C.whoAb100({id:'z'},abM,m2,false);assert.deepStrictEqual(ab,{m:'L2',g:'Zed'});
+  assert.strictEqual(C.whoAb100({id:'z'},abM,m2,true),null,'Ranked abandon = a recorded Fate, nothing fights on');assert.strictEqual(C.whoAb100({id:'c'},abM,m2,false),null,'not abandoned');
+  assert.strictEqual(C.whoAb100({id:'z'},{...abM,status:'done'},m2,false),null,'match over');assert.strictEqual(C.whoAb100({id:'z'},{...abM,reports:{z:1}},m2,false),null,'reported');
+  const rz=C.whoRow100({id:'z',lname:'Z',here:{glad:'Zed Two',rank:'tiro'}},m2,{ab});assert.ok(rz.st==='idle'&&rz.ab.m==='L2'&&rz.ab.g==='Zed','the row carries ab');
+  assert.ok(!('ab' in C.whoRow100({id:'z',here:{}},m2,{ab:{m:'L9',g:'x'}})),'ab for a match that is not live is dropped');
   console.log('v1.0 who units: all checks passed')}
 
 async function routes(){
@@ -70,6 +79,20 @@ async function routes(){
   const fb=(await list(ann)).rows.find(r=>r.id===bob.acct);assert.ok(fb.fo===1&&fb.ni===1,'following + takes no invitations '+JSON.stringify(fb));
   /* unwatch → idle */
   await ann.req('match.unwatch',{id:SL.id});assert.strictEqual((await list(ann)).rows[0].st,'idle','unwatched');
+  /* PER GLADIATOR (his pick 3): eve abandons the Custom match (a CPU takes the seat) and opens a room with ANOTHER gladiator — her row says "in a room", a second
+     mark names the one still fighting; dan, who stayed, is unmarked; once the match ends the mark goes */
+  {const before=(await list(ann)).rows.find(r=>r.id===eve.acct);assert.ok(before.st==='fight'&&!before.ab,'before: fighting, no mark');
+   const rd=await eve.req('match.abandon',{id:SL.id});assert.ok(rd.done&&!rd.out,'abandoned a Custom match');
+   assert.ok((await db.get('ACCT#'+eve.acct,'PROFILE')).ab100.m===SL.id,'the abandoned-match flag is set');
+   const r1=(await list(ann)).rows.find(r=>r.id===eve.acct);assert.ok(r1.st==='idle'&&r1.ab&&r1.ab.m===SL.id&&r1.ab.g==='Eve Gladius','abandoned: idle now, Eve Gladius still fighting '+JSON.stringify(r1));
+   assert.ok(!(await list(ann)).rows.find(r=>r.id===dan.acct).ab,'the one who stayed has no mark');
+   let opened=null;try{const R2=await eve.req('lobby.create',{ev:'egidious',cry:false});opened=R2.id||(R2.lobby&&R2.lobby.id)}catch(e){console.log('  open failed:',e.message)}
+   if(opened){const r2=(await list(ann)).rows.find(r=>r.id===eve.acct);assert.ok(r2.st==='room'&&r2.rm===opened&&r2.ab&&r2.ab.m===SL.id,'in a room, while the abandoned match still has a mark '+JSON.stringify(r2));
+     await eve.req('lobby.leave',{id:opened})}
+   const mine=(await list(eve)).rows[0];assert.ok(mine.me===1&&mine.ab&&mine.ab.g==='Eve Gladius','my own row carries the mark too');
+   /* a reclaim clears the abandoned mark on the match record → the mark goes */
+   const M=await db.get('MATCH#'+SL.id,'META');await db.set('MATCH#'+SL.id,'META',{abandoned:{...M.abandoned,[eve.acct]:null}});
+   await new Promise(r=>setTimeout(r,0));T+=C.WHO100.AB_TTL+1000;assert.ok(!(await list(ann)).rows.find(r=>r.id===eve.acct).ab,'reclaimed → no mark')}
   /* a lanista who goes offline drops out */
   await h({requestContext:{routeKey:'$disconnect',connectionId:eve.conn}});live.delete(eve.conn);assert.ok(!(await list(ann)).rows.some(r=>r.id===eve.acct),'gone offline → not listed');
   /* guests read it, without marks */

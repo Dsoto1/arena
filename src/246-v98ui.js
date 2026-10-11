@@ -241,7 +241,7 @@ function tac98Tut(){const img=f=>typeof assetURL==='function'?assetURL(f):'asset
   const done=k=>typeof lessonDone==='function'&&lessonDone(k);
   const card=(k,art,title,desc,n,chips)=>{const d=done(k);return `<div class="ls98"><div class="art" style="background-image:url('${art}')"></div><div class="tx">
     <span class="badge${d?' ok98':''}">${d?_T('✓ Done'):_T('Not taken yet')}</span><h3>${title}</h3><p>${desc}</p>
-    <div class="pr98"><i style="width:${d?100:0}%"></i></div><small class="sm98">${d?_T`${n} / ${n} steps`:_T`${n} steps`}</small>
+    <div class="prog98"><i style="width:${d?100:0}%"></i></div><small class="sm98">${d?_T`${n} / ${n} steps`:_T`${n} steps`}</small>
     <div class="st98">${chips.map(c=>`<span class="${d?'ok':''}">${c}</span>`).join('')}</div>
     <button type="button" class="btn${d?'':' primary'}" data-lesson="${k}">${d?_T('↻ Play it again'):_T('▶ Start the lesson')}</button></div></div>`};
   const nC=typeof TUT_STEPS!=='undefined'?TUT_STEPS.length:0,nM=typeof MTUT_STEPS!=='undefined'?MTUT_STEPS.length:0;
@@ -504,7 +504,7 @@ label.s98-row{cursor:pointer}
 .ls98 .art{flex:none;width:150px;height:200px;border-radius:8px;background-size:cover;background-position:center;box-shadow:0 6px 18px #000a,0 0 0 1px #6b5236}
 .ls98 .tx{flex:1;min-width:0}.ls98 h3{font:400 26px var(--display);color:var(--gold2);letter-spacing:.04em;margin:6px 0 4px}.ls98 p{margin:0 0 10px;color:var(--muted);font-size:15px}
 .ls98 .badge.ok98{border-color:#4d7a43;color:#bfe3b0}
-.pr98{height:8px;border-radius:4px;background:#160f0b;border:1px solid #3a2c1e;overflow:hidden;margin:6px 0 4px}.pr98 i{display:block;height:100%;background:linear-gradient(90deg,#9c7a33,var(--gold2))}
+.prog98{height:8px;border-radius:4px;background:#160f0b;border:1px solid #3a2c1e;overflow:hidden;margin:6px 0 4px}.prog98 i{display:block;height:100%;background:linear-gradient(90deg,#9c7a33,var(--gold2))}
 .st98{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 12px}.st98 span{font-size:12.5px;padding:2px 8px;border-radius:999px;border:1px solid #4a3826;color:var(--muted)}.st98 span.ok{border-color:#4d7a43;color:#bfe3b0}
 h2.h98{font:400 20px var(--display);color:var(--gold2);letter-spacing:.04em;margin:20px 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}h2.h98 small{font:14px var(--body);color:var(--muted);letter-spacing:0}
 .pops98{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}

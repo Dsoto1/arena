@@ -143,7 +143,7 @@ No protocol bump — an older page still works (it cannot set a password, and a 
 Shared rules: the "v1.0 WHO'S ONLINE" section at the end of `111-onlcore`; route: the "v1.0 WHO'S ONLINE" block in `routes.js` (just before the rate
 limiter); page + mock: `287-v100who`. No protocol bump, no new table permission (no BatchGetItem — the Lambda role only has Get/Put/Delete/Update/Query/Scan).
 
-- **`here.list {status?, region?, sort?, cursor?}`** → `{rows, n, next, at}`. One row per online lanista: `{id, ln, g, rk, dn, dom, dr, rg, st, rm?, m?, ni?, fo?,
+- **`here.list {status?, region?, sort?, cursor?}`** → `{rows, n, next, at}`. One row per online lanista: `{id, ln, g, rk, dn, dom, dr, rg, st, rm?, m?, ab?, ni?, fo?,
   me?, hid?}` (lanista name, active gladiator + rank, house name + id, Domus-rank tier key, region key, status `idle | room | fight | watch`, the waiting room /
   the live match, `ni` = takes no invitation from the caller (`invWhy89`), `fo` = the caller follows the house, `me` = the caller's own row, always first,
   `hid` when the caller hides). Filters: `status` (one of the four), `region` (a `REGIONS98` key or `none`); sort `st` (default: fighting, in a room, watching,
@@ -152,6 +152,10 @@ limiter); page + mock: `287-v100who`. No protocol bump, no new table permission 
   store the house's tier on the account (`ACCT … dr100`); an account without it yet costs one `DOMUS` read (≤ 25 a request, cached 5 min in the container).
 - **Status.** Seated in a `live` room → `fight` (`m` = its id); a member of a `waiting` room (sitting or standing) → `room`; `ACCT … w100 {id, at}` (set by
   `match.watch`, cleared by `match.unwatch`, ignored once that match is not live or after `WHO100.WATCH_MS`) → `watch`; else `idle`.
+- **Per gladiator (2026-10-11).** `st` is the lanista's *current* activity. `match.abandon` (Custom only — a Ranked abandon is a recorded Fate) writes `ACCT … ab100 {m, at}`
+  (it also clears the live-match flag `ACCT.match`). A row whose `ab100` match is still `live` costs ONE `MATCH#<m>/META` read (cached 10 s per match in the container,
+  ≤ `WHO100.AB_READS` = 20 reads a request; rows beyond the cap just carry no mark) to confirm he is still abandoned (a reclaim clears it) → the row gets
+  `ab {m, g}`: that gladiator is still fighting there even if the lanista sits in another room. Rows without the flag cost nothing (typical 0–3 reads).
 - **Privacy.** Hidden lanistas (`priv89.hide`), guests and bots are never listed. Guests may call it (`GUEST_OK`; rows carry no `ni`/`fo`).
 - **Size.** ≤ `WHO100.MAX` (200) rows and ≤ `WHO100.BYTES` (60 000) bytes of JSON a page; `next` = the numeric cursor of the following page. Measured:
   200 rows ≈ 29 KB (server/test/v100w.test.js). The general per-account limiter (`RATE93`) applies like every request; the page asks every 30 s at most.

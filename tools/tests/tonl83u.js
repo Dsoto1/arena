@@ -83,7 +83,8 @@ const pf=await pv(B,()=>({pop:!!document.querySelector('.pf83pop'),tro:document.
 await B.click('.pf83pop [data-pf83="follow"]');ok(await pv(B,()=>/Following/.test((document.querySelector('.pf83pop [data-pf83="follow"]')||{}).textContent||''),x=>x),'★ Following');
 await B.click('.pf83pop [data-pf83="share"]');const link=await pv(B,()=>ONL83U.lastShare||'',x=>x.endsWith('#domus='+sa.dom));ok(link.endsWith('#domus='+sa.dom),'the share link ('+link+')');
 await B.click('.pf83pop [data-pf83="x"]');await redraw(B);
-const fl=await pv(B,()=>[...document.querySelectorAll('#onl .fl83-r')].map(r=>r.textContent),v=>v.length===1&&/Vettii/.test(v[0]));ok(fl.length===1&&/Vettii/.test(fl[0]),'the followed list on the landing '+JSON.stringify(fl));
+const fl=await pv(B,()=>{ONL.tab='prof';onlRedraw();return [...document.querySelectorAll('#onl .pr98-fol > div')].map(r=>r.textContent)},v=>v.length===1&&/Vettii/.test(v[0]));ok(fl.length===1&&/Vettii/.test(fl[0]),'the followed list in Profile & Settings (v1.0: off the landing) '+JSON.stringify(fl));
+await B.evaluate(()=>{ONL.tab='play';onlRedraw()});ok(await B.evaluate(()=>!document.querySelector('#onl .fl83')),'no followed-houses card on the landing');
 /* the landing: the gift chest, the followed list, Ludi Infames */
 const ld=await pv(A,async()=>{ONL.tab='play';await onlRefresh();onlRedraw();return {gift:!!document.querySelector('#onl .a81-stage .gift83.stage'),inf:!!document.querySelector('#onl .inf83'),infLock:!!document.querySelector('#onl .inf83.locked')}},v=>v.gift&&v.inf&&v.infLock);
 ok(ld.gift&&ld.inf&&ld.infLock,'the landing: chest + Ludi Infames (locked for a Tiro) '+JSON.stringify(ld));
