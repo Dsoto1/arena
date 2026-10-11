@@ -58,7 +58,7 @@ const A=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms)
   r.uiPrev=q(`[data-y92c="${g.id}"] [data-y92k="spd"] .y92v`).textContent;r.before=pick.map(val);
   r.fat0=pick.map(x=>[gFat(x),y92Views(x).lock.work]);
   for(const bt of (w.night&&w.night.bouts)||[])bt.done=true;w.pend=[];const wk=w.week;const MR=Math.random;Math.random=()=>0.97; /* no training knocks: the preview is the no-injury week */
-  try{await endWeek()}finally{Math.random=MR}await W8(400);r.adv=W_().week!==wk;
+  const G96c=GROW96.chance;GROW96.chance=0;/* v0.97: the hashed 10% chance of +0.2 to another rating (245) is not in the yard preview (as tv90y) */try{await endWeek()}finally{Math.random=MR;GROW96.chance=G96c}await W8(400);r.adv=W_().week!==wk;
   r.after=pick.map(val);r.diff=pick.map((x,i)=>Math.max(...K.map(k=>Math.abs(r.after[i][k]-r.pre2[i][k]))));
   r.gained=r.after[0].spd>r.before[0].spd+0.5;r.last=JSON.stringify(W_().y92last||{});
   return r});

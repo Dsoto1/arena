@@ -43,7 +43,7 @@ ok(!o.h.mig[0]&&!o.h.mig[1],'migration drops the hours');
 /* ---------- 2 · the perk tree ---------- */
 o.p=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const r={};const w=W_(),m=me();m.perkPts=5;
   MGR.tab='ludus';MGR.run='promote';MGR_REDRAW();await W8(400);const tile=document.querySelector('[data-mg="run"][data-id="school"]');r.tileCount=!!(tile&&tile.querySelector('.ptbox'));
-  tile&&tile.click();await W8(500);r.tab=MGR.tab;const card=document.getElementById('schoolCard');r.card=!!card;r.nodes=document.querySelectorAll('#schoolCard .pk87').length;
+  /* v1.0 (294-v100ludus): the Ludus tile is now 'Upgrade School' (data-id fac) — the perk tree is reached by the Lanista tab (perk87Go: the checklist 'to school' item and the rail) */perk87Go();await W8(500);r.tab=MGR.tab;const card=document.getElementById('schoolCard');r.card=!!card;r.nodes=document.querySelectorAll('#schoolCard .pk87').length;
   r.counts=document.querySelectorAll('#mgrPane .pk87pts').length;r.br2dis=!!document.querySelector('[data-pk87="br2"][disabled]');
   const hon=m.p.honor;document.querySelector('[data-pk87="br1"]').click();await W8(400);r.br1=!!(m.perks87&&m.perks87.br1);r.pts=m.perkPts;r.hon=m.p.honor-hon;
   r.br2open=!!document.querySelector('[data-pk87="br2"]:not([disabled])');
@@ -56,7 +56,7 @@ o.p=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   /* the hone row still works */
   const hb=document.querySelector('#schoolCard [data-mg="perk"][data-id="show"]');const s0=m.p.show;hb&&hb.click();await W8(400);r.hone=m.p.show-s0;
   return r});
-ok(!o.p.tileCount&&o.p.tab==='me','the ludus tile has no count and opens the Lanista tab');ok(o.p.card&&o.p.nodes===9&&o.p.counts===1,'nine perks, one count');
+ok(!o.p.tileCount&&o.p.tab==='me','no perk tile with a count in the ludus; the perk tree opens on the Lanista tab');ok(o.p.card&&o.p.nodes===9&&o.p.counts===1,'nine perks, one count');
 ok(o.p.br2dis&&o.p.br1&&o.p.pts===4&&o.p.hon===3&&o.p.br2open,'rank I first, costs a point, lifts its trait, opens rank II');
 ok(o.p.th===2,'Drillmaster: +2 training hours');ok(o.p.bargain[1]<o.p.bargain[0],'Hard bargain: signs for less '+o.p.bargain);ok(o.p.cf===1,'Grand entrance: +1 CF');ok(o.p.hone===2,'hone a trait');
 /* ---------- 3 · standing orders → v0.92: the yard is fighter cards (213-v92yard); the week repeats with ↻ Same as last week,

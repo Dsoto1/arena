@@ -58,7 +58,7 @@ await pg.evaluate(()=>{
     finally{log=lb;hurt=hb;if(P0)P0.cpu=cpu0}
     out.L=L;out.rng=RNG.s;
     out.sig=JSON.stringify([S.players.map(p=>[p.r,p.c,p.alive,p.hp,p.ap,p.mv,p.coin,Math.round(p.cf||0)]),S.npcs.map(n=>[n.t,n.r,n.c,n.hp,n.alive,n.aggro]),S.pillars.map(p=>[p.r,p.c,(p.pots||[]).length]),S.spikes,S.turnNo,S.phase]);
-    out.full=JSON.stringify(S,(k,v)=>typeof k==='string'&&k[0]==='_'?undefined:v instanceof Set?[...v]:v instanceof Map?[...v]:v);
+    out.full=JSON.stringify(S,(k,v)=>typeof k==='string'&&(k[0]==='_'||k==='bubbles'||k==='blood')?undefined:v instanceof Set?[...v]:v instanceof Map?[...v]:v);
     out.hash=typeof onlHash==='function'?onlHash():null;return out}});
 
 /* ---- 1 + 2 Normal, ON ---- */
@@ -93,7 +93,7 @@ ok(A.pushes.length>=2&&A.pushes.length===B.pushes.length,'5b same pushes both wa
 {let k=0;while(k<A.L.length&&A.L[k]===B.L[k])k++;ok(A.L.length===B.L.length&&k===A.L.length,'5c same log ON vs OFF (first difference at '+k+'/'+A.L.length+': '+JSON.stringify([A.L[k],B.L[k]])+')')}
 ok(A.rng===B.rng,'5d same dice ON vs OFF '+A.rng+' '+B.rng);
 ok(A.sig===B.sig&&A.hash===B.hash,'5e same pieces and online hash ON vs OFF');
-{let k=0;while(k<A.full.length&&A.full[k]===B.full[k])k++;ok(A.full===B.full,'5f same S (without display-only _keys) ON vs OFF, first difference at '+k+': '+JSON.stringify([A.full.slice(Math.max(0,k-80),k+60),B.full.slice(Math.max(0,k-80),k+60)]))}
+{let k=0;while(k<A.full.length&&A.full[k]===B.full[k])k++;ok(A.full===B.full,'5f same S (without display-only _keys , the speech bubbles (wall-clock lifetime) and the blood splats (Math.random seeds)) ON vs OFF, first difference at '+k+': '+JSON.stringify([A.full.slice(Math.max(0,k-80),k+60),B.full.slice(Math.max(0,k-80),k+60)]))}
 /* the kill switch reaches the module */
 const ks=await pg.evaluate(()=>typeof push100Motion==='function'&&typeof push100Pose!=='undefined');ok(ks,'hook push100Pose exists');
 

@@ -54,6 +54,7 @@ const MATCH=async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MO
   out.mgrRail=await pg.evaluate(()=>!!document.querySelector('.mtabs .mcount.c73'));if(!out.mgrRail)miss.push('Manager rail ovals missing');
   await soak('manager');
   /* idle numbers: idle mode must be clearly lighter than the same scene without the pass */
-  if(!(out.idleBusy<out.offBusy*0.5))miss.push(`idle busy ${out.idleBusy} ms/s not clearly below the unmanaged ${out.offBusy} ms/s`);
+  /* v1.0 (288-v100perf made the looping glows compositor-only, so the unmanaged page now idles at ~35 ms/s instead of ~250): idle must be half of it OR 4% of a core (<=40 ms/s; the floor measured on v0.99 was 18, now 21-34 with the box loaded; the tray feedback loop measured 44-83) */
+  if(!(out.idleBusy<out.offBusy*0.5||out.idleBusy<=40))miss.push(`idle busy ${out.idleBusy} ms/s not clearly below the unmanaged ${out.offBusy} ms/s`);
   console.log(`busy ms/s — unmanaged ${out.offBusy} · managed active ${out.activeBusy} · managed idle ${out.idleBusy}`);
   console.log(JSON.stringify({out,miss}));const errs=[...errsB,...P.errs];console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();

@@ -16,8 +16,10 @@ await pg.evaluate(()=>menuHide());await pg.waitForTimeout(600);out.cont=await st
 out.topMgrHidden=await pg.evaluate(()=>document.getElementById('btnManager').hidden);
 // frozen photo: frame at 12s and 16s identical
 await pg.evaluate(()=>{if(document.getElementById('mainMenu').hidden)document.getElementById('btnMenu').click();else menuShow()});await pg.waitForTimeout(12500);
-const f1=await pg.evaluate(()=>document.getElementById('mmCv').toDataURL().length);await pg.waitForTimeout(3000);
-const f2=await pg.evaluate(()=>document.getElementById('mmCv').toDataURL());const f1b=await pg.evaluate(()=>0);
+/* v1.0: the 3D show draws its rendered strips from files, so on file:// the canvas is tainted (no toDataURL) — compare the element's own screenshots */
+const cvShot=()=>pg.locator('#mmCv').screenshot();
+const f1=await cvShot();await pg.waitForTimeout(3000);
+const f2=await cvShot();
 await pg.screenshot({path:'mm35_frozen.png'});
-out.frozen=(f2.length===f1);
+out.frozen=f1.equals(f2);
 console.log(JSON.stringify(out,null,0));console.log('ERRS',errs.slice(0,5));await b.close()})();
