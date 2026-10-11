@@ -148,3 +148,9 @@ Advisor levels for the other five: asked (a one effect each / b Recruiter only).
 Replays (c): each player's last 10 locally (all modes) + server keeps recent Ranked (also feeds ranked verification). Advisor levels (a): one clear effect each for the other five.
 3D look tests started (tools/plans/look100/): gear on tokens + female body/gripping hands/severed; animation strip (his notes: walk/attack/hit/die, push, pillars, pots, block, limbs, injured, scared, breathing; Fortuna's Bounty; spiders not bats; rete) + 3D stands spectators.
 My Ludus: Fight Night card dropped → bout chips in the banner carry face/name/fatigue; frieze contrast variants a/b/c.
+
+## 3D answers (2026-10-11)
+GEAR: 1a female head · 2a per-body skeleton · 3 tokens +15% AND scale pillars/pots/chest to match · 4b fused fist · 5a sheet per severed set · 6 class loadouts first, then all printed · 7a shading pass toward his minis.
+His fixes: tokens bigger than the tile, base on the raised railing → keep inside the tile; shield still mis-placed.
+ANIM: full frame set (memory measured) · 8 printed classes get 3D stand-ins · 3D crowd everywhere (benches, shading) · same 3D people walk in the city forum · modelled spider · painted rete · stepped poses + glide.
+MY LUDUS: frieze c bronze; an advisor with news lights up into his colour portrait (no seals); long task lists scroll inside the parchment.
