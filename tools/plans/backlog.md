@@ -235,3 +235,11 @@ ENTER ANY EVENT (mock tools/plans/mock100/anyevent.html; his picks 2026-10-11): 
 3a one event per fighter a week (entering moves him off his bout) · 4a team partner = your fighter / hired free agent / editor's pick · 5a one event about every 3 weeks
 rank-restricted at random · 6b restrictions "X and above" AND "X and below" (rookie bouts) · 7 cards mostly FILLED early (you see who is entered); when you TRAVEL,
 every remaining empty seat on every bout is filled so the full card shows before final decisions · 8 (banner ★ chips) not answered yet. Build in the Manager wave.
+ENTER ANY EVENT 8a: ★ chip per special on its day in the banner tracker.
+RANKED/ONLINE IMPROVEMENTS (his 2a: ALL 8, with the server batch): 1 hidden skill rating (Elo-style) per gladiator for matchmaking + queue ETA + server-random seats/turn order ·
+2 Ranked watchers one turn behind · 3 leaver mark on the house card + short Ranked cooldown after repeated drops/timeouts · 4 connection dot per seat ·
+5 per-season leaderboard by Glory gained + Tituli season rewards · 6 Report a player (logs the match for review) · 7 after-match summary with replay link + ⚔ Again ·
+8 server-checked results (after v1.0, clean layers phase E).
+ONLINE SIDELINING (his 3a, all four): cosmetic pauses (clean-up show, chest/spawn/market reveals) short, same length on every screen, never counted against a timer ·
+turn clock independent of each viewer's Speed · Ranked rooms show "Digital rules ◆" · Fortuna's Bounty / stands actions only ticket holders in the timed group turn;
+Tactics online-rules page lists what is offline-only (missio, festivals, tournaments, hot seat, lessons).
