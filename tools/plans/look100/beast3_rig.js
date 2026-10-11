@@ -149,10 +149,10 @@ export const SPECIES = {
   /* digitigrade cats: wrist + hock high, toes on the ground */
   lion: { base: [72, 42], h: 0.5, L: 10.5, y: 15.2, chest: [5.6, 7.0, 7.6], belly: [4.6, 5.0, 7.4], hips: [5.0, 5.8, 6.0], fx: 3.5, hx: 3.3, legF: [8.4, 8.0, 2.8], legH: [9.2, 8.4, 5.2], rF: [2.6, 1.7, 1.4], rH: [2.9, 1.6, 1.3], paw: [2.0, 1.2, 2.4],
     neck: [6.2, 2.7], head: [3.8, 3.9, 4.2], muz: [3.9, 2.1], ears: 'round', mane: 1, tail: [21, 0.9, 0.5], tuft: 1.8, cat: 1,
-    col: { fur: '#c8a46c', u: '#e0c898', mane: '#9a6c38', muz: '#dcc090', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
+    col: { fur: '#dcbe80', u: '#eedcb2', mane: '#cca460', muz: '#ecdab0', nose: '#4a2c1c', dark: '#1a120c', tuft: '#8a6236', claw: '#e8dcc0' } },   /* round 3: his pale gold (the mane a shade deeper, not brown) */
   lioness: { base: [72, 42], h: 0.5, L: 10.0, y: 14.2, chest: [5.4, 6.6, 7.6], belly: [4.6, 5.0, 7.2], hips: [4.8, 5.8, 6.0], fx: 3.1, hx: 3.0, legF: [8.0, 7.6, 2.6], legH: [8.8, 8.0, 5.0], rF: [2.2, 1.5, 1.25], rH: [2.5, 1.45, 1.2], paw: [1.8, 1.1, 2.2],
     neck: [6.2, 2.5], head: [3.0, 3.1, 3.7], muz: [3.7, 1.8], ears: 'round', tail: [20, 0.8, 0.45], tuft: 1.3, cat: 1,
-    col: { fur: '#ccac78', u: '#e2cca0', muz: '#e0c89c', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
+    col: { fur: '#e0c48c', u: '#f0e0bc', muz: '#eedeb8', nose: '#4a2c1c', dark: '#1a120c', tuft: '#8a6236', claw: '#e8dcc0' } },
   /* plantigrade bear: heel + palm flat, long paws, a shoulder hump, shaggy */
   bear: { base: [75, 47], h: 0.55, L: 10.5, y: 16.0, chest: [8.0, 9.0, 8.6], belly: [7.6, 8.2, 8.6], hips: [7.6, 8.6, 7.6], fx: 4.4, hx: 4.2, legF: [8.2, 7.6, 1.6], legH: [8.4, 7.8, 1.8], rF: [3.5, 2.8, 2.4], rH: [3.7, 2.6, 2.3], paw: [2.8, 1.4, 4.0], plant: 1,
     neck: [5.0, 4.2], head: [4.4, 4.4, 4.6], muz: [4.2, 2.4], ears: 'bear', tail: [3.5, 1.5, 1.0], hump: 1, shag: 1,
@@ -170,7 +170,7 @@ export const SPECIES = {
 /* variants = a recolour (sampled from his minis8: the lit 85th-percentile colour of the figure) */
 export const VARIANTS = {
   leo: ['lion'], leaena: ['lioness'], ursa: ['bear'], brutum: ['bear', { fur: '#96785a', u: '#7c6248', muz: '#bca27c' }],
-  valencia: ['wolf'], moechus: ['wolf', { fur: '#5c5856', u: '#8e8a86', muz: '#86827e' }],
+  valencia: ['wolf'], moechus: ['wolf', { fur: '#85817c', u: '#b4b0aa', muz: '#a8a49e', nose: '#1c1a18' }],   /* round 3: dark GREY like his, not near-black */
   boar: ['boar'], croc: ['croc'],
 };
 function quad(S, f, COL) {
@@ -228,12 +228,24 @@ function quad(S, f, COL) {
   if (S.ears === 'round' || S.ears === 'bear') for (const sx of [-1, 1]) P.push(ell(H([sx * S.head[0] * 0.62, S.head[1] * 0.85, -S.head[2] * 0.1]), [S.head[0] * 0.28, S.head[1] * 0.3, S.head[2] * 0.14], HF, 0.4, FUR));
   if (S.ears === 'pointy') for (const sx of [-1, 1]) P.push(cap(H([sx * S.head[0] * 0.5, S.head[1] * 0.6, -S.head[2] * 0.1]), H([sx * S.head[0] * 0.65, S.head[1] * 1.55, -S.head[2] * 0.15]), S.head[0] * 0.3, 0.12, 0.3, FUR));
   /* the lion's mane: locks radiating round the neck and the head's back, falling down over the chest */
-  if (S.mane) { const MN = M(C.mane, 'mane', { dry: 0.8 }); const ax = nrm(sub(NE, NB));
-    for (let ring = 0; ring < 5; ring++) { const c0 = lerp(NB, add(NE, mul(HF[2], -S.head[2] * 0.3)), ring / 4); const nlock = 13 + ring * 2;
-      for (let i = 0; i < nlock; i++) { const a = (i + ring * 0.5) / nlock * Math.PI * 2; const side = nrm(add(mul(HF[0], Math.cos(a)), mul(HF[1], Math.sin(a)))); const out = nrm(add(side, add(mul(ax, -0.25), [0, -0.35, 0])));
-        const rr = (S.head[0] * 1.15 + ring * 0.3); const p0 = add(c0, mul(side, rr * 0.6)); const Lk = 3.6 + 1.6 * hsh(i, ring, 9) + (Math.sin(a) < 0 ? 2.0 : 0);
-        P.push(ell(add(p0, mul(out, Lk * 0.55)), [1.7, 1.25, Lk * 0.66], frame(out, Math.abs(out[1]) > 0.9 ? [0, 0, 1] : [0, 1, 0]), 0.45, MN)); } }
-    clumps(P, 22, add(NB, [0, -S.chest[1] * 0.35, 0]), [S.chest[0] * 1.3, S.chest[1] * 0.9, 4], mv(R, [0, -1, 0.35]), [1.6, 1.1, 3.4], MN, 0.45, 5); }
+  /* round 3 MANE — framing the face like his minis: three rings of locks round the face (short inside, long outside, longer under the chin),
+     a crest down the neck over the shoulders and a bib down the chest. Locks are tapered strands with grooves (lock()). */
+  if (S.mane) { const MN = M(C.mane, 'strand', { u: C.mane, dry: 0.95 }); const Hd = S.head;
+    const FC = H([0, Hd[1] * 0.02, Hd[2] * 0.05]); const down = [0, -1, 0];
+    const RINGS = [[1.0, 18, 3.4, 1.15, 0.2], [1.32, 22, 5.0, 1.35, -0.9], [1.62, 26, 6.6, 1.5, -2.1]];
+    RINGS.forEach(([rad, n, Lk, r0, dz], ri) => { for (let i = 0; i < n; i++) { const a = (i + ri * 0.37) / n * Math.PI * 2; const ca = Math.cos(a), sa = Math.sin(a);
+      const side = nrm(add(mul(HF[0], ca), mul(HF[1], sa))); const root = add(add(FC, mul(side, rad * Hd[0])), mul(HF[2], dz));
+      const below = sa < -0.35; const out = nrm(add(add(side, mul(HF[2], -0.45 - ri * 0.18)), mul(down, below ? 0.55 : 0.15)));
+      const L2 = Lk * (below ? 1.3 : sa > 0.6 ? 0.85 : 1) * (0.85 + 0.3 * hsh(i, ri, 41)); lock(P, root, out, L2, r0 * (0.9 + 0.2 * hsh(i, ri, 42)), MN, 0.32, 0.22); } });
+    /* crest + shoulders: locks rooted over the top and sides of the neck, falling back and down */
+    for (let j = 0; j < 30; j++) { const t = (j % 10) / 9, a = (Math.floor(j / 10) - 1) * 1.05 + (hsh(j, 3, 43) - 0.5) * 0.5;
+      const at = lerp(NE, NB, 0.15 + t * 0.95); const sd = nrm(add(mul(mv(R, [1, 0, 0]), Math.sin(a)), mul([0, 1, 0], Math.cos(a))));
+      const root = add(at, mul(sd, S.neck[1] * 1.05)); const dir = nrm(add(add(mul(sd, 0.9), mv(R, [0, 0, -0.7])), mul(down, 0.6)));
+      lock(P, root, dir, 6.2 + 2.2 * hsh(j, 4, 44) - t * 1.2, 1.35, MN, 0.32, 0.3); }
+    /* the bib: under the throat and down the chest */
+    for (let j = 0; j < 16; j++) { const t = j / 15, sx = (hsh(j, 5, 45) - 0.5) * 2;
+      const root = add(lerp(add(NE, mul(HF[1], -Hd[1] * 0.8)), add(NB, [0, -S.chest[1] * 0.25, 0]), t), mv(R, [sx * S.neck[1] * 0.9, 0, 0]));
+      lock(P, root, nrm(add(down, mv(R, [sx * 0.3, 0, 0.35]))), 5.2 + 1.8 * hsh(j, 6, 46), 1.25, MN, 0.32, 0.15); } }
   if (S.ruff) clumps(P, 18, NB, [S.neck[1] * 2.2, S.neck[1] * 1.8, S.neck[0] * 0.6], mv(R, [0, -0.4, -0.6]), [0.7, 0.5, 1.4], M(C.fur, 'mane', { u: C.u, dry: 0.75 }), 0.3, 6);
   if (S.tusks) for (const sx of [-1, 1]) P.push(cap(H([sx * S.muz[1] * 0.8, -S.head[1] * 0.25, S.head[2] * 0.4 + S.muz[0] * 0.7]), H([sx * S.muz[1] * 1.3, S.head[1] * 0.25, S.head[2] * 0.4 + S.muz[0] * 0.55]), 0.4, 0.12, 0.2, M(C.tusk, null, { dry: 0.3 })));
   if (S.croc) for (let i = 1; i <= 6; i++) for (const sx of [-1, 1]) P.push(cap(add(lerp(mz0, mz1, i / 7), mul(HF[0], sx * S.muz[1] * 0.85)), add(lerp(mz0, mz1, i / 7), add(mul(HF[0], sx * S.muz[1] * 0.85), mul(HF[1], -0.9))), 0.22, 0.06, 0, M(C.tooth, null)));
@@ -324,43 +336,55 @@ export function quadFrames(sp) {
 }
 
 /* ======================= SNAKE (spline chain) ======================= */
-export const SNAKES = { glykon: { c: '#b4a27a', b: '#5a4a34', u: '#e2d6b4', p: 'band', nb: 18 }, arenosus: { c: '#b8a486', b: '#7a644a', u: '#e6dcc4', p: 'diam' } };
+/* round 3 SNAKE — slim like his mini: ≈1 mm body radius (round 2: 2.1 → "like a turd"), a long tapering tail, a narrower neck behind a
+   wedge head; lying in a loose S on the base with the neck raised in a '?' (his glykon/arenosus); scales painted on (m.sc). */
+export const SNAKES = { glykon: { c: '#bca880', b: '#6a583c', u: '#e8dcbc', p: 'band', nb: 26, sc: 0.62 }, arenosus: { c: '#bea88a', b: '#7e664a', u: '#ece2cc', p: 'diam', sc: 0.62 } };
+const SN = { R: 1.05, neck: 0.6 };
+function snRad(s) { if (s < 0.4) return SN.R * (0.1 + 0.9 * Math.pow(s / 0.4, 0.8)); if (s < 0.82) return SN.R; if (s < 0.95) return SN.R + (SN.neck - SN.R) * (s - 0.82) / 0.13; return SN.neck; }
 function snakeFrame(f, col) {
-  const P = []; const N = 40, Ltot = 62, r = 2.1; const pts = [];
-  /* a coil on the base: tail tip at the outside of a spiral, the body winding in, the last part rising as the neck */
-  const rise = f.rise != null ? f.rise : 0.25, ext = f.ext || 0, wave = f.wave || 0, ph = f.ph || 0, flat = f.flat || 0;
-  for (let i = 0; i <= N; i++) { const s = i / N; let x, y, z;
-    if (s < 1 - rise) { const u = s / (1 - rise); const a = (f.turn || 0) + u * Math.PI * (2.2 - flat * 1.4) ; const R = (9.5 - u * 5.5) * (1 + flat * 0.5); x = Math.cos(a) * R + Math.sin(u * 8 + ph) * wave; z = Math.sin(a) * R - 1 + Math.cos(u * 8 + ph) * wave * 0.5; y = r * 0.95; }
-    else { const u = (s - (1 - rise)) / rise; const a0 = (f.turn || 0) + Math.PI * (2.2 - flat * 1.4); const R0 = 4 * (1 + flat * 0.5); const bx = Math.cos(a0) * R0, bz = Math.sin(a0) * R0 - 1;
-      x = bx * (1 - u) + Math.sin(u * 3 + ph) * (1.5 + wave) * u; z = bz * (1 - u) + u * (2 + ext * 10); y = r * 0.95 + (f.h != null ? f.h : 9) * Math.sin(u * Math.PI / 2) * (1 - flat); }
+  const P = []; const pts = []; const NG = 56, NN = 22;
+  const A = f.A != null ? f.A : 4.2, ph = f.ph || 0, h = f.h != null ? f.h : 7.5, back = f.back != null ? f.back : 2.6, ext = f.ext || 0, flat = f.flat || 0, lean = f.lean || 0;
+  /* the ground S: tail at the back, winding forward */
+  for (let i = 0; i <= NG; i++) { const u = i / NG; const z = -10.5 + 15 * u; const env = 0.55 + 0.45 * Math.sin(Math.PI * Math.min(1, u * 1.25));
+    pts.push([A * env * Math.sin(Math.PI * 2 * 1.15 * u + ph) + (f.kink || 0) * Math.sin(u * 19), SN.R * 0.92, z]); }
+  /* the neck: rises from the S's front end, bows back, then the head comes forward (a '?') */
+  const E = pts[pts.length - 1], dx = pts[NG][0] - pts[NG - 2][0];
+  for (let i = 1; i <= NN; i++) { const v = i / NN; const y = SN.R * 0.92 + h * (1 - flat) * Math.sin(v * Math.PI / 2);
+    const z = E[2] + 1.2 * v - back * Math.sin(v * Math.PI) * (1 - flat) + ext * 7 * v * v; const x = E[0] + dx * 3 * v + lean * 2.2 * Math.sin(v * Math.PI);
     pts.push([x, y, z]); }
-  JL = []; { let prev = null; for (let i = 0; i <= N; i += 4) { const s = i / N; const n = 'c' + i; J(n, pts[i], s < 0.16 ? 'tail' : 'spine', prev); prev = n; } }
-  for (let i = 0; i < N; i++) { const s = i / N; const rr = (s < 0.12 ? 0.35 + 0.65 * s / 0.12 : s > 0.9 ? 1 - (s - 0.9) * 2.5 : 1) * r; const rr2 = ((s + 1 / N) < 0.12 ? 0.35 + 0.65 * (s + 1 / N) / 0.12 : (s + 1 / N) > 0.9 ? 1 - ((s + 1 / N) - 0.9) * 2.5 : 1) * r;
-    P.push(cap(pts[i], pts[i + 1], rr, rr2, 0.5, { c: col.c, b: col.b, u: col.u, p: col.p, nb: col.nb, dry: 0.5 }, { t: s })); }
-  /* head */
-  const hd = nrm(sub(pts[N], pts[N - 3])); const HF = frame(add(hd, [0, -0.15 - (f.headDown || 0), 0]));
-  const HC = add(pts[N], mul(HF[2], 1.6)); const H = (p) => add(HC, add(add(mul(HF[0], p[0]), mul(HF[1], p[1])), mul(HF[2], p[2])));
-  P.push(ell(HC, [2.1, 1.3, 2.9], HF, 0.8, { c: col.c, p: 'none', u: col.u, dry: 0.6 }));
-  J('head', HC, 'head', 'c' + (Math.floor(N / 4) * 4));
-  const jaw = (f.jaw || 0) * D2R; if (jaw > 0.05) { const jd = nrm(add(mul(HF[2], Math.cos(jaw)), mul(HF[1], -Math.sin(jaw)))); const j0 = H([0, -0.6, -1.4]); P.push(cap(j0, add(j0, mul(jd, 3.6)), 1.0, 0.6, 0.2, { c: col.u, p: 'none' }));
-    P.push(sph(H([0, -0.9, 0.6]), 0.9, 0.1, { c: '#8a2420', dry: 0.2 })); for (const sx of [-1, 1]) P.push(cap(H([sx * 0.6, -0.9, 2.2]), H([sx * 0.6, -2.1, 2.0]), 0.22, 0.05, 0, { c: '#f4eedc' })); }
-  for (const sx of [-1, 1]) P.push(sph(H([sx * 1.25, 0.45, 1.0]), 0.42, 0.05, { c: '#120c08', dry: 0.9 }));
-  if (f.tongue) { const t0 = H([0, -0.4, 2.8]); P.push(cap(t0, add(t0, mul(HF[2], 2.2)), 0.18, 0.12, 0.05, { c: '#c0281e' })); }
+  const N = pts.length - 1;
+  JL = []; { let prev = null; for (let i = 0; i <= N; i += 6) { const s = i / N; const n = 'c' + i; J(n, pts[i], s < 0.3 ? 'tail' : 'spine', prev); prev = n; } }
+  const M0 = { c: col.c, b: col.b, u: col.u, p: col.p, nb: col.nb, sc: col.sc, dry: 0.5 };
+  for (let i = 0; i < N; i++) { const s0 = i / N, s1 = (i + 1) / N; P.push(cap(pts[i], pts[i + 1], snRad(s0), snRad(s1), 0.18, M0, { t: s0 })); }
+  /* the wedge head: wide at the jaw corners, narrowing to the snout, a touch flat */
+  const hdv = nrm(sub(pts[N], pts[N - 2])); const hd = nrm(add([hdv[0], 0, hdv[2]], [0, -0.25 - (f.headDown || 0), 0]));
+  const HF = frame(hd); const HC = add(pts[N], mul(HF[2], 1.1)); const H = (p) => add(HC, add(add(mul(HF[0], p[0]), mul(HF[1], p[1])), mul(HF[2], p[2])));
+  const HM = { c: col.c, p: 'none', u: col.u, sc: col.sc, dry: 0.6 };
+  P.push(ell(H([0, 0, 0]), [1.15, 0.62, 1.15], HF, 0.25, HM));
+  for (const sx of [-1, 1]) P.push(ell(H([sx * 0.62, -0.08, -0.35]), [0.62, 0.52, 0.8], HF, 0.25, HM));
+  P.push(cap(H([0, 0.02, 0.4]), H([0, -0.08, 1.9]), 0.82, 0.42, 0.3, HM));
+  J('head', HC, 'head', 'c' + Math.floor(N / 6) * 6);
+  const jaw = (f.jaw || 0) * D2R; if (jaw > 0.05) { const jd = nrm(add(mul(HF[2], Math.cos(jaw)), mul(HF[1], -Math.sin(jaw)))); const j0 = H([0, -0.42, -0.6]); P.push(cap(j0, add(j0, mul(jd, 2.4)), 0.6, 0.32, 0.12, { c: col.u, p: 'none' }));
+    P.push(sph(H([0, -0.55, 0.5]), 0.5, 0.06, { c: '#8a2420', dry: 0.2 })); for (const sx of [-1, 1]) P.push(cap(H([sx * 0.38, -0.5, 1.3]), H([sx * 0.38, -1.25, 1.15]), 0.14, 0.04, 0, { c: '#f4eedc' })); }
+  for (const sx of [-1, 1]) P.push(sph(H([sx * 0.78, 0.28, 0.45]), 0.26, 0.03, { c: '#120c08', dry: 0.9 }));
+  if (f.tongue) { const t0 = H([0, -0.2, 1.95]); const t1 = add(t0, mul(HF[2], 1.3)); P.push(cap(t0, t1, 0.11, 0.08, 0.03, { c: '#c0281e' })); for (const sx of [-1, 1]) P.push(cap(t1, add(t1, add(mul(HF[2], 0.5), mul(HF[0], sx * 0.3))), 0.07, 0.04, 0, { c: '#c0281e' })); }
   return P;
 }
 export function snakeFrames() { return [
-  { n: 'idle0', ph: 0 }, { n: 'idle1', ph: 0.4, tongue: 1 }, { n: 'idle2', ph: 0.8, h: 9.6 }, { n: 'idle3', ph: 0.4, tongue: 1, h: 9.3 },
-  ...[0, 1, 2, 3, 4, 5].map(t => ({ n: 'walk' + t, ph: t / 6 * Math.PI * 2, wave: 1.4, h: 6, rise: 0.2, turn: t * 0.08 })),
-  { n: 'attack0', rise: 0.32, h: 11, ext: -0.25, jaw: 10 }, { n: 'attack1', rise: 0.32, h: 12, ext: -0.4, jaw: 40, headDown: -0.2 }, { n: 'attack2', rise: 0.38, h: 7, ext: 0.9, jaw: 55, headDown: 0.25 },
-  { n: 'attack3', rise: 0.38, h: 5, ext: 1.1, jaw: 0, headDown: 0.4 }, { n: 'attack4', rise: 0.28, h: 9, ext: 0.1 },
-  { n: 'hit0', wave: 2.2, ph: 1, h: 7, ext: -0.3 }, { n: 'hit1', wave: 1.8, ph: 2, h: 5, jaw: 20 }, { n: 'hit2', h: 8 },
-  { n: 'die0', h: 6, wave: 1.5, jaw: 20 }, { n: 'die1', h: 3, flat: 0.3, wave: 1.0 }, { n: 'die2', h: 1, flat: 0.55, headDown: 0.3 }, { n: 'die3', h: 0, flat: 0.75, headDown: 0.5, jaw: 15 }, { n: 'die4', h: 0, flat: 0.9, headDown: 0.6, jaw: 20 },
+  { n: 'idle0', ph: 0 }, { n: 'idle1', ph: 0.15, tongue: 1, lean: 0.3 }, { n: 'idle2', ph: 0.3, h: 8.0 }, { n: 'idle3', ph: 0.15, tongue: 1, h: 7.8, lean: -0.3 },
+  ...[0, 1, 2, 3, 4, 5].map(t => ({ n: 'walk' + t, ph: t / 6 * Math.PI * 2, A: 4.8, h: 5.2, back: 1.6, lean: 0.4 * Math.sin(t / 6 * Math.PI * 2) })),
+  { n: 'attack0', h: 8.5, back: 3.8, ext: -0.15, jaw: 10 }, { n: 'attack1', h: 9, back: 4.4, ext: -0.25, jaw: 45, headDown: -0.25 }, { n: 'attack2', h: 6.2, back: 1.2, ext: 0.75, jaw: 60, headDown: 0.25 },
+  { n: 'attack3', h: 4.4, back: 0.4, ext: 0.95, jaw: 10, headDown: 0.45 }, { n: 'attack4', h: 7.2, back: 2.4, ext: 0.15 },
+  { n: 'hit0', kink: 1.2, ph: 0.4, h: 6.5, back: 3.4, lean: 0.8 }, { n: 'hit1', kink: 0.9, ph: 0.8, h: 5.2, jaw: 25, lean: -0.8 }, { n: 'hit2', h: 7.2 },
+  { n: 'die0', h: 5.5, kink: 0.8, jaw: 25, lean: 0.6 }, { n: 'die1', h: 3.5, flat: 0.3, kink: 0.5 }, { n: 'die2', h: 2, flat: 0.55, headDown: 0.3, A: 3.6 },
+  { n: 'die3', h: 1, flat: 0.8, headDown: 0.5, jaw: 15, A: 3.2 }, { n: 'die4', h: 0.5, flat: 0.95, headDown: 0.6, jaw: 20, A: 3.0 },
 ]; }
 
 /* ======================= ZORA, the golden eagle ======================= */
 function eagleFrame(f) {
-  JL = []; const P = []; const BR = { c: '#947658', p: 'feath', u: '#76583e', dry: 0.75 }, GOLD = { c: '#d8aa58', p: 'feath', dry: 0.7 }, BEAK = { c: '#e0b040', dry: 0.5 }, TAL = { c: '#e6c040', dry: 0.4 }, DK = { c: '#141008', dry: 0.9 }, TIP = { c: '#6a4e34', p: 'feath', dry: 0.7 };
-  const lift = f.lift || 0, pitch = (f.pitch || 0) * D2R, roll = (f.roll || 0) * D2R; const R = mm(Rz(roll), Rx(-pitch)); const root = [0, 8.2 + lift, f.z || 0]; const T = (p) => add(mv(R, p), root);
+  /* round 3: lighter like his (gold wings, warm brown body), built at the old size then scaled by ZORA3.s (his mini is small) and perched low */
+  JL = []; const P = []; const BR = { c: '#8e6e4c', p: 'feath', u: '#6e5238', dry: 0.8 }, WG = { c: '#d6ae60', p: 'feath', u: '#b48a48', dry: 0.8 }, GOLD = { c: '#e2ba6a', p: 'feath', dry: 0.75 }, BEAK = { c: '#e8c04a', dry: 0.5 }, TAL = { c: '#ecc84a', dry: 0.4 }, DK = { c: '#141008', dry: 0.9 }, TIP = { c: '#7a5634', p: 'feath', dry: 0.75 };
+  const lift = f.lift || 0, pitch = (f.pitch || 0) * D2R, roll = (f.roll || 0) * D2R; const R = mm(Rz(roll), Rx(-pitch)); const root = [0, (lift > 0.5 ? 8.2 : ZORA3.perch) + lift, f.z || 0]; const T = (p) => add(mv(R, p), root);
   P.push(ell(T([0, 0, 0]), [3.4, 3.7, 5.4], mm(R, Rx(-0.25)), 1.4, BR));
   P.push(ell(T([0, 1.9, 2.6]), [2.6, 2.6, 2.6], R, 1.2, BR));
   /* head */
@@ -373,14 +397,14 @@ function eagleFrame(f) {
   /* wings: shoulder → elbow → wrist → tip, with feather plates; spread 0 (folded along the back) .. 1, flap = raise angle */
   const sp = f.spread || 0, fl = (f.flap || 0) * D2R;
   for (const sx of [-1, 1]) {
-    const S0 = T([sx * 2.4, 1.8, 1.6]); const back = mv(R, [0, -0.08, -1]);
-    const wd = nrm(mv(R, lerp([sx * 0.18, 0.12, -1], [sx * Math.cos(fl), Math.sin(fl), -0.12], sp))); const span = 6 + sp * 8;
+    const S0 = T([sx * 2.4, 1.8, 1.6]); const back = mv(R, [0, -0.08, -1]); const fl2 = fl + sx * (f.asym || 0) * D2R;   /* round 3: one wing raised, one level (his mini) */
+    const wd = nrm(mv(R, lerp([sx * 0.18, 0.12, -1], [sx * Math.cos(fl2), Math.sin(fl2), -0.12], sp))); const span = 6 + sp * 8;
     let n = nrm(cross(wd, back)); if (dot(n, mv(R, [0, 1, 0])) < 0) n = mul(n, -1);
     P.push(cap(S0, add(S0, mul(wd, span * 0.45)), 1.5, 1.0, 0.8, BR));
     J('wS' + sx, S0, 'chest', 'chest'); J('wE' + sx, add(S0, mul(wd, span * 0.35)), 'limb', 'wS' + sx); J('wW' + sx, add(S0, mul(wd, span * 0.68)), 'limb', 'wE' + sx); J('wT' + sx, add(add(S0, mul(wd, span)), mul(back, 3)), 'foot', 'wW' + sx);
     for (let i = 0; i <= 8; i++) { const t = i / 8; const c0 = add(S0, mul(wd, span * (0.05 + t * 0.95)));
       const prim = t > 0.6; const cd = nrm(prim ? add(mul(back, 1), mul(wd, (t - 0.5) * 1.6)) : back); const chord = prim ? 7.0 - (t - 0.6) * 3 : 6.4 + (1 - sp) * 1.5;
-      const F2 = frame(cd, n); P.push(ell(add(c0, mul(cd, chord * 0.45)), [2.1, 0.4, chord * 0.58], F2, 0.35, prim ? TIP : BR)); }
+      const F2 = frame(cd, n); P.push(ell(add(c0, mul(cd, chord * 0.45)), [2.1, 0.4, chord * 0.58], F2, 0.35, prim ? (t > 0.85 ? TIP : WG) : (t < 0.2 ? BR : WG))); }
   }
   /* tail fan */
   const tb = T([0, -0.6, -4.8]); J('tail', add(tb, mv(R, [0, -0.8, -4.5])), 'tail', 'pelvis'); for (let i = -2; i <= 2; i++) { const d = mv(R, nrm([i * 0.22, -0.35 + (f.tailUp || 0), -1])); P.push(ell(add(tb, mul(d, 2.6)), [1.0, 0.3, 2.8], frame(d), 0.3, i % 2 ? TIP : BR)); }
@@ -389,14 +413,17 @@ function eagleFrame(f) {
   for (const sx of [-1, 1]) { const hip = T([sx * 1.4, -2.2, 0.4]); const foot = lift > 0.5 ? add(hip, mv(R, [sx * 0.3, -4.2 + reach * 1.5, 0.8 + reach * 4.5])) : [sx * 1.5 + root[0] * 0, 0.3, root[2] + 0.8];
     P.push(cap(hip, foot, 0.9, 0.55, 0.4, GOLD)); J('leg' + sx, hip, 'limb', 'pelvis'); J('ft' + sx, foot, 'foot', 'leg' + sx); for (const a of [-0.6, 0, 0.6]) { const d = mv(Ry(a), [0, 0, 1]); P.push(cap(foot, add(foot, add(mul(d, 1.6), [0, -0.25, 0])), 0.35, 0.18, 0.15, TAL)); P.push(cap(add(foot, mul(d, 1.6)), add(foot, add(mul(d, 2.0), [0, -0.6, 0])), 0.16, 0.08, 0, DK)); }
     P.push(cap(foot, add(foot, [0, -0.2, -1.3]), 0.3, 0.15, 0.1, TAL)); }
-  return P;
+  return scaleP(P, ZORA3.s);
 }
+export const ZORA3 = { s: 0.6, perch: 6.4 };
+/* scale a finished build about the origin (prims + joints) */
+function scaleP(P, s) { for (const q of P) { const f0 = q.f; q.f = (x, y, z) => f0(x / s, y / s, z / s) * s; q.box = q.box.map(b => b.map(v => v * s)); q.k *= s; } for (const j of JL) j.p = j.p.map(v => v * s); return P; }
 export function eagleFrames() { return [
-  { n: 'idle0', spread: 1, flap: 48 }, { n: 'idle1', spread: 1, flap: 52, head: [0, 20] }, { n: 'idle2', spread: 0.95, flap: 44, head: [-5, -15] }, { n: 'idle3', spread: 1, flap: 50, head: [5, 5] },
-  ...[0, 1, 2, 3, 4, 5].map(t => ({ n: 'walk' + t, lift: 9 + Math.sin(t / 6 * Math.PI * 2) * 1.2, spread: 1, flap: Math.cos(t / 6 * Math.PI * 2) * 38, pitch: -4, tailUp: 0.2 })),
-  { n: 'attack0', lift: 12, spread: 1, flap: 50, pitch: 10 }, { n: 'attack1', lift: 10, spread: 0.6, flap: 60, pitch: -25, head: [-25, 0], z: 3 }, { n: 'attack2', lift: 5, spread: 0.9, flap: 20, pitch: 15, talons: 1, z: 6, head: [-10, 0] },
-  { n: 'attack3', lift: 3, spread: 1, flap: -10, pitch: 25, talons: 1.2, z: 7, head: [-20, 0] }, { n: 'attack4', lift: 7, spread: 1, flap: 35, pitch: 0, z: 3 },
-  { n: 'hit0', spread: 0.6, flap: 30, head: [25, 0], pitch: 10 }, { n: 'hit1', spread: 0.3, flap: 10, head: [-15, 20], roll: 10 }, { n: 'hit2' },
+  { n: 'idle0', spread: 1, flap: 30, asym: 26, pitch: 8 }, { n: 'idle1', spread: 1, flap: 34, asym: 24, head: [0, 22], pitch: 8 }, { n: 'idle2', spread: 0.95, flap: 26, asym: 28, head: [-6, -16], pitch: 10 }, { n: 'idle3', spread: 1, flap: 32, asym: 22, head: [4, 6], pitch: 8 },
+  ...[0, 1, 2, 3, 4, 5].map(t => ({ n: 'walk' + t, lift: 3 + Math.sin(t / 6 * Math.PI * 2) * 1.2, spread: 1, flap: Math.cos(t / 6 * Math.PI * 2) * 40, pitch: 2, tailUp: 0.2 })),
+  { n: 'attack0', lift: 5, spread: 1, flap: 50, pitch: 10 }, { n: 'attack1', lift: 4, spread: 0.6, flap: 60, pitch: -25, head: [-25, 0], z: 3 }, { n: 'attack2', lift: 2.5, spread: 0.9, flap: 20, pitch: 15, talons: 1, z: 6, head: [-10, 0] },
+  { n: 'attack3', lift: 1.5, spread: 1, flap: -10, pitch: 25, talons: 1.2, z: 7, head: [-20, 0] }, { n: 'attack4', lift: 3, spread: 1, flap: 35, pitch: 0, z: 3 },
+  { n: 'hit0', spread: 0.6, flap: 30, head: [25, 0], pitch: 10 }, { n: 'hit1', spread: 0.3, flap: 10, head: [-15, 20], roll: 10 }, { n: 'hit2', spread: 1, flap: 30, asym: 26, pitch: 8 },
   { n: 'die0', spread: 0.5, flap: 20, head: [-30, 0], roll: 12 }, { n: 'die1', spread: 0.8, flap: -5, head: [-40, 10], roll: 30, lift: -1.5 }, { n: 'die2', spread: 0.9, flap: -15, head: [-45, 20], roll: 55, lift: -3 },
   { n: 'die3', spread: 0.7, flap: 0, head: [-50, 30], roll: 62, lift: -3.6 }, { n: 'die4', spread: 0.6, flap: 5, head: [-55, 35], roll: 70, lift: -4 },
 ]; }
