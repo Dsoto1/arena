@@ -262,3 +262,4 @@ SPECTATE → LOBBY BROWSER (his a): sub-tabs ⚔ Rooms · 👁 Live matches · �
 BABYLON: whatever the prototype shows, any Babylon work is a LATER release (his note 2026-10-11).
 QUEUE wave 5 (Play Now) explicitly includes: the sandstone mock A1–A5 AND the event card CAROUSEL for the event chooser (V99 2b) — confirmed in line (his note 2026-10-11).
 FPS TARGET (his a, 2026-10-11): 60 laptop / 30+ phone (rule in CLAUDE.md VISUAL POLISH RULE) + an FPS meter switch in Settings (building).
+FOUNDATIONS = v1.01 (his ok 2026-10-11): after v1.0 ships, first job: replay tests → folder regrouping by topic → clean layers A–C → card/beast effects as data → rules in Node → server Ranked check → Manager morph + rendering items. Tray buttons use Play Now's porphyry red + gold letters (his note).
