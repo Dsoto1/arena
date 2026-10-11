@@ -145,3 +145,6 @@ ONLINE ISSUED KIT (his pick: per house): one Issued set per house; the daily cla
 
 ## v1.0 EXTRAS (his picks 2026-10-11): 1 first hour (guided first match + first Manager week) · 2 achievements UNIFIED across all modes (merge Manager trophy case, online trophies, Immortalis, Annals feats → one "Tituli" set) · 3 replays (asked: whose — each player locally vs server) · 4 daily/weekly fixed-seed challenges offline · 5 sound pass · 8 balance pass with sims · 9 release hygiene (phones, a11y, 9 languages, help/Tactics). Not picked: 6 photo mode, 7 desktop build.
 Advisor levels for the other five: asked (a one effect each / b Recruiter only).
+Replays (c): each player's last 10 locally (all modes) + server keeps recent Ranked (also feeds ranked verification). Advisor levels (a): one clear effect each for the other five.
+3D look tests started (tools/plans/look100/): gear on tokens + female body/gripping hands/severed; animation strip (his notes: walk/attack/hit/die, push, pillars, pots, block, limbs, injured, scared, breathing; Fortuna's Bounty; spiders not bats; rete) + 3D stands spectators.
+My Ludus: Fight Night card dropped → bout chips in the banner carry face/name/fatigue; frieze contrast variants a/b/c.
