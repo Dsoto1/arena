@@ -5,10 +5,11 @@
    Armory → the Armory tab), the bronze frieze (#council83 with 6 heads; an unread advisor letter lights his head), the popover (level,
    ⬆ Train for coin = 249's handler, the earned line at Lv 3, 📜 Read it opens the letter, Esc closes), the advisor level effects
    (Doctore yard level, Medicus wounds, Consilium / Clerk week-end lines), phones (390: one column, 6 rows + fold, bottom-sheet popover,
-   no sideways scroll) and the kill switch flavius_ludus100off=1 (270's page). */
+   no sideways scroll) and the kill switch flavius_ludus100off=1 (270's page).
+   v1.0 round 2: runs with flavius_ludus2100off=1 — 297's own switch must give back exactly this page (297 itself: tv100l2). */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const open=async(W,H,off)=>{const pg=await b.newPage({viewport:{width:W,height:H}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-  await pg.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');if(o)localStorage.setItem('flavius_ludus100off','1')},off?1:0);
+  await pg.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_ludus2100off','1');if(o)localStorage.setItem('flavius_ludus100off','1')},off?1:0);
   await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:30000});
   await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
     const w=W_(),pm=me(),ros=rosterOf(pm);w.welc99=1;ros[0].inj={until:w.week+2,label:'a gashed thigh',pen:3};pm.perkPts=2;w.train='off';ros[1].fat=10;ros[2].fat=45;ros[3].fat=75;
