@@ -53,7 +53,7 @@ const REC98={hrs:20,perLv:4,cap:8,lvMax:5,
   up:[0,60,120,200,320],coinMax:2,
   pitch:{'A+':9,A:8,'B+':7,B:6,'C+':4,C:3,D:1,F:-2},wantX:2,motX:10,
   deal:1.25,dealP:6,rivalLv:2};
-const REC98_ACT_L=()=>({ask:[_T('Ask around the forum'),_T('one rough grade')],watch:[_T('Watch him train'),_T('Speed · Strength')],cup:[_T('Share a cup'),_T('Intelligence · Charisma')],study:[_T('Study his bouts'),_T('every grade sharper · Luck')],trial:[_T('Trial bout'),_T('everything sure · interest')]});
+const REC98_ACT_L=g=>({ask:[_T('Ask around the forum'),_T('one rough grade')],watch:[sx(g,_T('Watch him train'),_T('Watch her train')),_T('Speed · Strength')],cup:[_T('Share a cup'),_T('Intelligence · Charisma')],study:[sx(g,_T('Study his bouts'),_T('Study her bouts')),_T('every grade sharper · Luck')],trial:[_T('Trial bout'),_T('everything sure · interest')]});
 const REC98_SURE=()=>[_T('not graded yet'),_T('a rough guess — could be a grade or two off'),_T('a fair read — maybe one step off'),_T('sure — your recruiter would bet on it')];
 const REC98_MEAN=()=>({'A+':_T('among the very best in the empire'),A:_T('elite'),'B+':_T('very good'),B:_T('good'),'C+':_T('decent'),C:_T('ordinary'),D:_T('weak'),F:_T('poor')});
 const rec98G=v=>trait96Grade(v);
@@ -124,13 +124,13 @@ function rec98Act(g,a){const [ok,why]=rec98Can(g,a);if(!ok)return {ok:false,why}
     if(!g.inj&&(hashStr(`rec98i:${w.id}:${g.id}:${w.week}`)%1000)/1000<A.inj){g.inj={until:w.week+1,label:_T('a bruise from the trial bout'),pen:2};hurt=true}
     ghist(g,_T`fought a trial bout on ${esc(m.ludus)}'s sand`)}
   rec98Sync(g,K);return {ok:true,gain,revealed:before<2&&(g.scout||0)>=2,bump,hurt}}
-function rec98Say(g,a,r){const L=REC98_ACT_L()[a][0];const gs=r.gain.map(([k])=>{const e=rec98Est(g,k);const n=(STATS.find(x=>x[0]===k)||[])[1]||k;return `${n} ${e?e.g:'?'}`}).join(' · ');
-  return `${REC98.acts[a].ic} ${esc(L)} — ${esc(g.name)}: ${esc(gs)}${r.bump?_T` · interest +${r.bump}`:''}${r.hurt?_T(' · he took a bruise'):''}${r.revealed?_T(' · all five graded: his personality is on the card.'):'.'}`}
+function rec98Say(g,a,r){const L=REC98_ACT_L(g)[a][0];const gs=r.gain.map(([k])=>{const e=rec98Est(g,k);const n=(STATS.find(x=>x[0]===k)||[])[1]||k;return `${n} ${e?e.g:'?'}`}).join(' · ');
+  return `${REC98.acts[a].ic} ${esc(L)} — ${esc(g.name)}: ${esc(gs)}${r.bump?_T` · interest +${r.bump}`:''}${r.hurt?sx(g,_T(' · he took a bruise'),_T(' · she took a bruise')):''}${r.revealed?sx(g,_T(' · all five graded: his personality is on the card.'),_T(' · all five graded: her personality is on the card.')):'.'}`}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-rec98a]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.disabled)return;
   const g=gById(b.dataset.id);const a=b.dataset.rec98a;if(!g)return;const r=rec98Act(g,a);if(!r.ok){if(r.why&&typeof mToast==='function')mToast(esc(r.why));return}
   const msg=rec98Say(g,a,r);tnews(msg);MGR.msg=msg;if(typeof mToast==='function')mToast(msg);saveWorld();MGR_REDRAW()},true);
 function rec98Next(g){for(const a of ['watch','cup','study','ask','trial'])if(rec98Can(g,a)[0])return a;return REC98.order.find(a=>rec98Gain(g,a).length)||null}
-function rec98Btn(g,a,cls){const [ok,why]=rec98Can(g,a);const A=REC98.acts[a];const [l,sub]=REC98_ACT_L()[a];const tiny=/\btksm\b/.test(cls||'');
+function rec98Btn(g,a,cls){const [ok,why]=rec98Can(g,a);const A=REC98.acts[a];const [l,sub]=REC98_ACT_L(g)[a];const tiny=/\btksm\b/.test(cls||'');
   return `<button class="btn ${cls||''}" type="button" data-rec98a="${a}" data-id="${g.id}" ${ok?'':dis88(why)} title="${esc(sub)}">${A.ic} ${esc(l)}<small>⏳${A.h} h${A.coin?' · '+coinAmt87(A.coin):''}${tiny?'':' · '+esc(sub)}</small></button>`}
 
 /* ---------- personality + dealbreakers ---------- */
@@ -141,9 +141,9 @@ function rec98Deal(g){if(!g||!g.id)return null;const h=hashStr('deal98:'+g.id);i
 function rec98DealHit(g,m){const D=rec98Deal(g);return D&&m&&m.p&&D.bad(m.p[D.t]||0)?D:null}
 {const base=offerVerdict;offerVerdict=function(g,wage,weeks,bonus,pledge){const v=base.apply(this,arguments);try{const m=me();if(v&&v.ok&&g&&!g.contract&&m){const D=rec98DealHit(g,m);
   const eff=wage+(bonus||0)/Math.max(1,weeks||1);const need=Math.ceil(askWage(g)*REC98.deal*((typeof pk87==='function'&&pk87('br2'))?0.9:1));
-  if(D&&eff<need)return {ok:false,why:(g.scout||0)>=2?_T`${g.name} balks: ${D.txt()}. Only about ${need} coin a week would make him overlook it.`:_T`Something about your house bothers ${g.name}. About ${need} coin a week would settle it — or grade him to learn what.`}}}catch(e){console.error(e)}return v}}
+  if(D&&eff<need)return {ok:false,why:(g.scout||0)>=2?sx(g,_T`${g.name} balks: ${D.txt()}. Only about ${need} coin a week would make him overlook it.`,_T`${g.name} balks: ${D.txt()}. Only about ${need} coin a week would make her overlook it.`):sx(g,_T`Something about your house bothers ${g.name}. About ${need} coin a week would settle it — or grade him to learn what.`,_T`Something about your house bothers ${g.name}. About ${need} coin a week would settle it — or grade her to learn what.`)}}}catch(e){console.error(e)}return v}}
 function rec98PersHTML(g,m){const K=rec98K(g);const n=STATS.filter(([k])=>K.p[k]>=1).length;
-  if((g.scout||0)<2)return `<div class="pe98 lock"><b>${_T`🔒 Personality`}</b><span class="rc-sub">${_T`Grade all five ratings to read him — wants, temper, dealbreakers.`} (${n}/5)</span></div>`;
+  if((g.scout||0)<2)return `<div class="pe98 lock"><b>${_T`🔒 Personality`}</b><span class="rc-sub">${sx(g,_T`Grade all five ratings to read him — wants, temper, dealbreakers.`,_T`Grade all five ratings to read her — wants, temper, dealbreakers.`)} (${n}/5)</span></div>`;
   const tags=typeof persTags73==='function'?persTags73(g):[];const W=typeof wants88==='function'?wants88(g):[];const D=rec98Deal(g);const hit=D&&rec98DealHit(g,m);
   const wants=W.map(k=>{const [,ic,nm]=want88Def(k);const ok=want88Fits(g,m,k,null);return `<span class="want88 ${ok?'ok':''}" data-w98="${k}" title="${esc(ok?_T('Your house answers this now'):want88How(g,k))}">${ic} ${esc(nm)}${ok?' ✓':''}</span>`}).join(' ');
   const mot=(g.motives||[]).map(([k,wt])=>MOTIVES[k]?`<span class="mo98">${esc(MOTIVES[k][0])} <i>${Math.round(wt*100)}%</i></span>`:'').join(' ');
@@ -155,7 +155,7 @@ function rec98PersHTML(g,m){const K=rec98K(g);const n=STATS.filter(([k])=>K.p[k]
 
 /* ---------- the grade blocks ---------- */
 function rec98Block(g,k,n,ic){const e=rec98Est(g,k);const p=e?e.p:0;const S=REC98_SURE();const M=REC98_MEAN();
-  const tip=e?_T`${n}: ${e.g} — ${M[e.g]||''}. How sure: ${S[Math.min(3,p)]}.`:_T`${n}: ${S[0]} — ask around, watch him train, share a cup or study his bouts.`;
+  const tip=e?_T`${n}: ${e.g} — ${M[e.g]||''}. How sure: ${S[Math.min(3,p)]}.`:sx(g,_T`${n}: ${S[0]} — ask around, watch him train, share a cup or study his bouts.`,_T`${n}: ${S[0]} — ask around, watch her train, share a cup or study her bouts.`);
   return `<div class="gb98 p${p}" data-gb98="${k}" data-p="${p}" title="${esc(tip)}"><b style="${e?`color:${gradeCol(e.g)}`:''}">${e?e.g:'?'}</b><span>${esc(n)}</span><i class="su98">${ic} ${'●'.repeat(p)}${'○'.repeat(3-p)}</i></div>`} /* i18n:skip */
 function rec98Strip(g){const o=rec98Ovr(g);const S=REC98_SURE();
   return `<div class="gs98"><div class="gb98 ov98 p${o.p}" data-gb98="ovr" title="${esc(o.p?_T`Overall: ${o.txt} — your recruiter's estimate. How sure: ${S[Math.min(3,o.p)]}.`:_T`Overall: ${o.txt} — the street's word. Grade all five to know better.`)}"><b style="color:${gradeCol(o.txt.replace('~',''))}">${o.txt}</b><span>${_T`Overall`}</span><i class="su98">${'●'.repeat(o.p)}${'○'.repeat(3-o.p)}</i></div>${STATS.map(([k,n,ic])=>rec98Block(g,k,n,ic)).join('')}</div>`}
@@ -165,42 +165,42 @@ function rec98Strip(g){const o=rec98Ovr(g);const S=REC98_SURE();
 /* ---------- court: house grades + pitches ---------- */
 const PITCH98=[{k:'yard',ic:'🏋',t:'discipline',want:'rudis',mot:'training'},{k:'table',ic:'🍷',t:'show',want:'friend',mot:'spectacle'},{k:'sand',ic:'⚔',t:'risk',want:'arena',mot:'playing'},
   {k:'ward',ic:'⚕',t:'honor',want:null,mot:'honor'},{k:'champ',ic:'🏆',t:'ambition',want:'fame',mot:'glory'},{k:'purse',ic:'💰',t:'cunning',want:'coin',mot:'coin'}];
-const PITCH98_L=()=>({yard:_T('Show him the Training Yard'),table:_T('Dine at the lanista’s table'),sand:_T('Promise him the sand'),ward:_T('Tour the infirmary'),champ:_T('Meet your champion'),purse:_T('Talk terms with the Clerk')});
+const PITCH98_L=g=>({yard:sx(g,_T('Show him the Training Yard'),_T('Show her the Training Yard')),table:_T('Dine at the lanista’s table'),sand:sx(g,_T('Promise him the sand'),_T('Promise her the sand')),ward:_T('Tour the infirmary'),champ:_T('Meet your champion'),purse:_T('Talk terms with the Clerk')});
 const trait98N=t=>(MGR_KEYS.find(x=>x[0]===t)||[t,t])[1];
 function rec98PGain(g,m,P,known){const gr=rec98G((m.p&&m.p[P.t])||0);let n=REC98.pitch[gr]||0;const W=known?(typeof wants88Known==='function'?wants88Known(g):[]):(typeof wants88==='function'?wants88(g):[]);
   const wm=!!(P.want&&W.includes(P.want));if(wm&&n>0)n*=REC98.wantX;const mw=known&&(g.scout||0)<2?0:(((g.motives||[]).find(x=>x[0]===P.mot)||[0,0])[1]||0);n+=Math.round(mw*REC98.motX);
   try{if(typeof pk87==='function'&&pk87('br1'))n+=3}catch(e){}return {n,gr,wm,mw}}
 function rec98Proj(g,m,P){try{
   if(P.k==='yard'){const ks=['spd','str'].map(k=>[k,rec98Est(g,k)]).filter(x=>x[1]);const grow=Math.round(2+((m.p&&m.p.discipline)||50)/20+(typeof facLvl==='function'?facLvl(m,'yard'):0)*1.5);
-    if(!ks.length)return _T('Grade his Speed or Strength to see how far our Doctore could take him.');ks.sort((a,b)=>b[1].v-a[1].v);const [k,e]=ks[0];const n=(STATS.find(x=>x[0]===k)||[])[1];
-    const to=rec98G(Math.min(STAT_MAX,e.v+grow));return to!==e.g?_T`With our Doctore his ${n} ${e.g} could reach ${to} within a season.`:_T`With our Doctore his ${n} ${e.g} would hold firm.`}
-  if(P.k==='champ'){const best=rosterOf(m).filter(x=>x.alive!==false).sort((a,b)=>effOvr(b)-effOvr(a))[0];return best?_T`He would train beside ${esc(best.name)} (${rec98G(effOvr(best))}).`:_T('Your house has no champion yet — this pitch lands soft.')}
-  if(P.k==='ward'){const a=council83(W_()).find(x=>x.k==='medicus');return a?_T`${esc(a.name)}, your Medicus, shows him the cots and the baths.`:''}
-  if(P.k==='sand')return _T('Bold entries: he would see the sand often.');
+    if(!ks.length)return sx(g,_T('Grade his Speed or Strength to see how far our Doctore could take him.'),_T('Grade her Speed or Strength to see how far our Doctore could take her.'));ks.sort((a,b)=>b[1].v-a[1].v);const [k,e]=ks[0];const n=(STATS.find(x=>x[0]===k)||[])[1];
+    const to=rec98G(Math.min(STAT_MAX,e.v+grow));return to!==e.g?sx(g,_T`With our Doctore his ${n} ${e.g} could reach ${to} within a season.`,_T`With our Doctore her ${n} ${e.g} could reach ${to} within a season.`):sx(g,_T`With our Doctore his ${n} ${e.g} would hold firm.`,_T`With our Doctore her ${n} ${e.g} would hold firm.`)}
+  if(P.k==='champ'){const best=rosterOf(m).filter(x=>x.alive!==false).sort((a,b)=>effOvr(b)-effOvr(a))[0];return best?sx(g,_T`He would train beside ${esc(best.name)} (${rec98G(effOvr(best))}).`,_T`She would train beside ${esc(best.name)} (${rec98G(effOvr(best))}).`):_T('Your house has no champion yet — this pitch lands soft.')}
+  if(P.k==='ward'){const a=council83(W_()).find(x=>x.k==='medicus');return a?sx(g,_T`${esc(a.name)}, your Medicus, shows him the cots and the baths.`,_T`${esc(a.name)}, your Medicus, shows her the cots and the baths.`):''}
+  if(P.k==='sand')return sx(g,_T('Bold entries: he would see the sand often.'),_T('Bold entries: she would see the sand often.'));
   if(P.k==='table')return _T('Wine, a full table and the house’s best stories.');
   if(P.k==='purse')return _T('Your Clerk lays out wages, bonuses and the purse.')}catch(e){}return ''}
 function rec98HouseHTML(g,m){const W=typeof wants88Known==='function'?wants88Known(g):[];const mot=(g.scout||0)>=2?(g.motives||[]).map(x=>x[0]):[];const D=(g.scout||0)>=2?rec98Deal(g):null;
   const hot=new Set(PITCH98.filter(P=>(P.want&&W.includes(P.want))||mot.includes(P.mot)).map(P=>P.t));
   return `<div class="sect" style="margin-top:0">${_T`🏛 Your house grades`} <span class="rc-sub">${_T`what every recruit sees`}</span></div><div class="hg98">${MGR_KEYS.map(([k,l,d])=>{const gr=rec98G((m.p&&m.p[k])||0);
-    return `<span class="hg98c ${hot.has(k)?'hot':''} ${D&&D.t===k?'deal':''}" data-hg98="${k}" title="${esc(d)}${hot.has(k)?' — '+esc(_T('he cares about this')):''}">${esc(l)} ${gradeChip(gr)}</span>`}).join('')}</div>`}
-function rec98PitchHTML(g,m){const w=W_();const sent=(()=>{try{return recGate(g,'pitch')[0]}catch(e){return false}})();const left=pitchesLeft();const L=PITCH98_L();
+    return `<span class="hg98c ${hot.has(k)?'hot':''} ${D&&D.t===k?'deal':''}" data-hg98="${k}" title="${esc(d)}${hot.has(k)?' — '+esc(sx(g,_T('he cares about this'),_T('she cares about this'))):''}">${esc(l)} ${gradeChip(gr)}</span>`}).join('')}</div>`}
+function rec98PitchHTML(g,m){const w=W_();const sent=(()=>{try{return recGate(g,'pitch')[0]}catch(e){return false}})();const left=pitchesLeft();const L=PITCH98_L(g);
   const why=sent?_T('One pitch per recruit a week.'):left<=0?_T`All ${PITCH_MAX} of this week's pitches are spent.`:'';
   const best=why?null:rec98BestPitch(g,m);const cards=PITCH98.map(P=>{const r=rec98PGain(g,m,P,true);const adv=best&&best.k===P.k;const want=P.want&&typeof want88Def==='function'?want88Def(P.want):null;const known=P.want&&wants88Known(g).includes(P.want);
     return `<button class="btn pc98 ${r.wm?'wm':''}${adv?' adv74':''}" type="button" data-rec98p="${P.k}|${g.id}" ${why?dis88(why):''}><span class="pc98h">${adv?star98(''):''}${P.ic} <b>${esc(L[P.k])}</b><span class="pc98g ${r.n<0?'neg':''}" title="${esc(_T('Interest this pitch wins'))}">${r.n>=0?'+':''}${r.n}${(g.scout||0)<2?'<i>?</i>':''}</span></span>
       <span class="pc98t">${esc(trait98N(P.t))} ${gradeChip(r.gr)}${known?` <span class="want88 ok">🎯 ${want[1]} ${esc(want[2])}</span>`:''}${r.mw?` <span class="mo98">${esc(MOTIVES[P.mot][0])}</span>`:''}</span>
       <small class="pc98p">${esc(rec98Proj(g,m,P).replace(/<[^>]*>/g,''))}</small></button>`}).join('');
-  return `<div class="sect">${_T`🗣 Pitch`} <span class="rc-sub">${_T`${left} of ${PITCH_MAX} left this week · one per recruit · a pitch on his wish counts double`}</span></div><div class="pg98">${cards}</div>`}
+  return `<div class="sect">${_T`🗣 Pitch`} <span class="rc-sub">${sx(g,_T`${left} of ${PITCH_MAX} left this week · one per recruit · a pitch on his wish counts double`,_T`${left} of ${PITCH_MAX} left this week · one per recruit · a pitch on her wish counts double`)}</span></div><div class="pg98">${cards}</div>`}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-rec98p]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.disabled)return;
   const [k,id]=b.dataset.rec98p.split('|');const g=gById(id);const w=W_(),m=me();const P=PITCH98.find(x=>x.k===k);if(!g||!P||!w||!m||g.contract)return;
   if(recGate(g,'pitch')[0]||pitchesLeft()<=0)return;recMark(g,'pitch');w.pitchN={wk:w.week,n:(w.pitchN&&w.pitchN.wk===w.week?w.pitchN.n:0)+1};
   try{if(typeof clk87Used==='function')w.clk87={wk:w.week,n:clk87Used(w)+1}}catch(err){}
   const r=rec98PGain(g,m,P,false);const b0=interestOf(g,m);g.interest[m.id]=capInterest(g,m,b0+r.n);const d=g.interest[m.id]-b0;
-  const msg=_T`${P.ic} ${esc(PITCH98_L()[k])} — ${esc(g.name)}: interest ${d>=0?'+':''}${d}${r.wm?_T(' (it answered his wish)'):''}.`;tnews(msg);MGR.msg=msg;if(typeof mToast==='function')mToast(msg);saveWorld();MGR_REDRAW()},true);
+  const msg=_T`${P.ic} ${esc(PITCH98_L(g)[k])} — ${esc(g.name)}: interest ${d>=0?'+':''}${d}${r.wm?sx(g,_T(' (it answered his wish)'),_T(' (it answered her wish)')):''}.`;tnews(msg);MGR.msg=msg;if(typeof mToast==='function')mToast(msg);saveWorld();MGR_REDRAW()},true);
 
 /* ---------- the card ---------- */
 function rec98ScoutPane(g,m){const w=W_();const left=rec98Left(w),mx=rec98HrsMax(w),on=rec98On(g,w);const a=council83(w).find(x=>x.k==='recruiter');
   return `<div class="rpane rs98"><div class="rh98"><b>${_T`🔍 Recruiter's hours`}</b> <span class="rh98n">${_T`${left} of ${mx} left this week`}</span> ${typeof hoursPips73==='function'?hoursPips73(left,mx,'#7fae5f'):''}<span class="rc-sub">${_T`${on} of ${REC98.cap} h on ${esc(g.name)}`}${a?` · ${esc(a.name)} · ${_T`Lv ${a.lv||1}`}`:''}</span></div>
-    <div class="ra98">${REC98.order.map(x=>{const nx=x===rec98Next(g);let b=rec98Btn(g,x,nx?'primary adv74':'');if(nx){const why=_T('The next thing your recruiter can learn about him.');b=b.replace(/ title="[^"]*">/,` title="${esc(_T`★ Advisor suggests — ${why}`)}" data-adv85="${esc(why)}">`).replace(/(<button [^>]*>)/,'$1'+star98(why))}return b}).join('')}</div>${rec98PersHTML(g,m)}</div>`}
+    <div class="ra98">${REC98.order.map(x=>{const nx=x===rec98Next(g);let b=rec98Btn(g,x,nx?'primary adv74':'');if(nx){const why=sx(g,_T('The next thing your recruiter can learn about him.'),_T('The next thing your recruiter can learn about her.'));b=b.replace(/ title="[^"]*">/,` title="${esc(_T`★ Advisor suggests — ${why}`)}" data-adv85="${esc(why)}">`).replace(/(<button [^>]*>)/,'$1'+star98(why))}return b}).join('')}</div>${rec98PersHTML(g,m)}</div>`}
 {const base=detailHTML;detailHTML=function(g){try{if(g&&!g.contract&&W_())rec98K(g)}catch(e){}let h=base.apply(this,arguments);try{const w=W_(),m=me();if(!g||g.contract||!w||!m||!h.includes('class="rsteps"'))return h;
   const step=MGR.recStep||recStepNow(g,m);
   /* head: no potential number */
@@ -219,8 +219,8 @@ function rec98ScoutPane(g,m){const w=W_();const left=rec98Left(w),mx=rec98HrsMax
   }catch(e){console.error(e)}return h}}
 /* the advisor's ★: the next scouting action (step 1), the strongest pitch (step 2) */
 function rec98BestPitch(g,m){let best=null;for(const P of PITCH98){const r=rec98PGain(g,m,P,true);if(!best||r.n>best.n)best={...P,...r}}return best&&best.n>0?best:null}
-{const base=recAdvice74;recAdvice74=function(g,m,step){try{if(g&&!g.contract&&m){if(step===1){const a=rec98Next(g);return a?['rec98:'+a,_T('The next thing your recruiter can learn about him.')]:null}
-  if(step===2){const b=rec98BestPitch(g,m);if(b&&pitchesLeft()>0)return ['rec98p:'+b.k,b.wm?_T`It answers his wish, and your ${trait98N(b.t)} grade backs it.`:_T`Your ${trait98N(b.t)} grade makes this the strongest pitch.`]}}}catch(e){console.error(e)}return base.apply(this,arguments)}}
+{const base=recAdvice74;recAdvice74=function(g,m,step){try{if(g&&!g.contract&&m){if(step===1){const a=rec98Next(g);return a?['rec98:'+a,sx(g,_T('The next thing your recruiter can learn about him.'),_T('The next thing your recruiter can learn about her.'))]:null}
+  if(step===2){const b=rec98BestPitch(g,m);if(b&&pitchesLeft()>0)return ['rec98p:'+b.k,b.wm?sx(g,_T`It answers his wish, and your ${trait98N(b.t)} grade backs it.`,_T`It answers her wish, and your ${trait98N(b.t)} grade backs it.`):_T`Your ${trait98N(b.t)} grade makes this the strongest pitch.`]}}}catch(e){console.error(e)}return base.apply(this,arguments)}}
 const star98=t=>`<i class="star85" title="${esc(t||'')}">${_T`★ advised`}</i>`;
 /* the board's next step for a recruit still being graded */
 {const base=nextStep;nextStep=function(g,m){try{if(g&&!g.contract&&!(g.scout>=2)){const a=rec98Next(g);if(a)return rec98Btn(g,a,'tksm primary')}}catch(e){console.error(e)}return base.apply(this,arguments)}} /* i18n:skip */

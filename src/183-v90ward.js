@@ -64,12 +64,12 @@ function sweep90(w){const m=me();if(!w||!w.night||!w.night.bouts||!m)return 0;le
   return r}}
 
 /* ---------- 1 · resting fighters can't fight ---------- */
-const restMsg90=g=>_T`🛏 ${esc(g.name)} is resting this week — undo the rest in the Infirmary to enter him.`;
+const restMsg90=g=>sx(g,_T`🛏 ${esc(g.name)} is resting this week — undo the rest in the Infirmary to enter him.`,_T`🛏 ${esc(g.name)} is resting this week — undo the rest in the Infirmary to enter her.`);
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#mgrBody [data-mg="enter"]');if(!b)return;const s=document.getElementById('ent'+b.dataset.id);if(!s)return;const g=gById(s.value);
   if(!g){e.preventDefault();e.stopImmediatePropagation();mToast(_T('🛏 Nobody free to enter — the fighters left are resting this week.'));return}
   if(resting90(g)){e.preventDefault();e.stopImmediatePropagation();mToast(restMsg90(g))}},true);
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#mgrBody [data-rest]');if(!b)return;const g=gById(b.dataset.rest);const w=W_();if(!g||!w)return;
-  if(g.restWk!==w.week&&typeof onCard==='function'&&onCard(g)){e.preventDefault();e.stopImmediatePropagation();mToast(_T`⚔ ${esc(g.name)} is on this week's card — withdraw him on Match Week first.`)}},true);
+  if(g.restWk!==w.week&&typeof onCard==='function'&&onCard(g)){e.preventDefault();e.stopImmediatePropagation();mToast(sx(g,_T`⚔ ${esc(g.name)} is on this week's card — withdraw him on Match Week first.`,_T`⚔ ${esc(g.name)} is on this week's card — withdraw her on Match Week first.`))}},true);
 {const base=exhibSetup;exhibSetup=function(myGid){const g=gById(myGid);if(resting90(g)){mToast(restMsg90(g));return null}return base.apply(this,arguments)}}
 if(typeof dealBout85==='function'){const base=dealBout85;dealBout85=function(n,g){if(resting90(g)){try{mToast(restMsg90(g))}catch(e){}return -1}return base.apply(this,arguments)}}
 if(typeof ord87Apply==='function'){const base=ord87Apply;ord87Apply=function(w,g){try{if(g&&g.ord87&&g.ord87.r==='rest'&&g.restWk!==w.week&&typeof onCard==='function'&&onCard(g))return}catch(e){}return base.apply(this,arguments)}}
@@ -141,7 +141,7 @@ function care90HTML(g,w,m){const i=g.inj,war=i&&i.war;const f=gFat(g);const X=x7
     out.push(sec('🌿',_T('Hygeia'),_T('the only way to regrow a limb'),`<div class="acts"><button class="btn tksm" type="button" data-mg="heal" data-id="${g.id}" ${!inBed76(g)?_T('disabled title="Needs a bed"'):left<HYGEIA?_T`disabled title="The physicians' budget is spent this week"`:m.coin<HYGEIA?_T('disabled title="Not enough coin"'):''}>${_T`🌿 Regrow ${g.severed.map(l=>esc(LOCN[l]).toLowerCase()).join(', ')}<small>${coinAmt87(HYGEIA)} a limb · needs a bed</small>`}</button></div>`,'sv'))}
   if(!war){const r=resting90(g);const rub=X.rub.includes(g.id);const care=g.ord87&&g.ord87.r==='care';const oc=typeof onCard==='function'&&onCard(g);
     const btns=[`<button class="yd76b ${rub?'on':''}" type="button" data-bath="${g.id}" ${rub||th<1||!(f>0)?'disabled':''}>${_T`🛁 Rubdown<small>${rub?_T('done this week'):_T`1 training hour · fatigue ${f} → ${Math.max(0,f-10)}`}</small>`}</button>`];
-    if(!i)btns.push(`<button class="yd76b ${r?'on':''}" type="button" data-rest="${g.id}" ${!r&&oc?_T`disabled title="On this week's card — withdraw him on Match Week first"`:''}>${r?_T`🛏 Resting<small>sits out every bout · tap to undo</small>`:_T`🛏 Rest week<small>sits out every bout · ${f} → ${Math.max(0,f-FAT_REST)} at the week's end</small>`}</button>`);
+    if(!i)btns.push(`<button class="yd76b ${r?'on':''}" type="button" data-rest="${g.id}" ${!r&&oc?sx(g,_T`disabled title="On this week's card — withdraw him on Match Week first"`,_T`disabled title="On this week's card — withdraw her on Match Week first"`):''}>${r?_T`🛏 Resting<small>sits out every bout · tap to undo</small>`:_T`🛏 Rest week<small>sits out every bout · ${f} → ${Math.max(0,f-FAT_REST)} at the week's end</small>`}</button>`);
     if(typeof ord87Set==='function'&&!i)btns.push(`<button class="yd76b ${care?'on':''}" type="button" data-care90="${g.id}">${care?_T`📋 Care routine<small>on · every week −${FAT_CARE90} fatigue · tap to stop</small>`:_T`📋 Care routine<small>every week: morale talk + gear care · −${FAT_CARE90} fatigue</small>`}</button>`);
     out.push(sec('🛁',_T('The bathhouse'),_T`fatigue ${f}`,`<div class="iv90ba">${btns.join('')}</div><div class="rc-sub iv90rate">${_T`Each week: a bout +25 · drills +3 / +8 / +15 (light / normal / hard) · Care −20 · Rest week −50.`}</div>`,'ba'))}
   const done=wardDone76(g,w);if(done.length)out.push(`<div class="yd76res">${done.map(x=>`<span>${x}</span>`).join('')}</div>`);
