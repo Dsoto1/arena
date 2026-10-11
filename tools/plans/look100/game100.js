@@ -47,7 +47,7 @@ export async function createToken(opts = {}) {
     ink.position.y = -BASE_H / 2; baseG.add(ink);
   }
   /* ---------- the body (time-sliced build) ---------- */
-  const B = await buildBodyAsync({ res: o.res, hair: 'cap' }, o.slice, o.onStep);
+  const B = await buildBodyAsync(Object.assign({ res: o.res, hair: 'cap' }, o.body || {}), o.slice, o.onStep);
   turn.add(B.group);
   const rig = B.rig, gear = makeGear(B);
   const presets = PRESET_ORDER.map(k => [k, PRESETS[k].label, poseToJSON(resolveSpec(rig, PRESETS[k].spec))]);
@@ -300,7 +300,21 @@ export async function createToken(opts = {}) {
     for (const [s, on] of [['L', L], ['R', Rt]]) { if (on && !(pose.f && pose.f[s])) pose.f[s] = footNow(rig, s); if (!on && pose.f) delete pose.f[s]; }
     applyPose(rig, pose);
   }
+  /* look100: a big close render (any yaw / elevation / framing), transparent */
+  function hero(ho = {}) {
+    const h = Object.assign({ w: 512, h: 512, ss: 2, el: 22, yaw: 25, span: 2.25, cy: 0.9, cx: 0, outlinePx: 1.5 }, ho);
+    const W = h.w * h.ss, H = h.h * h.ss, ppm = H / h.span;
+    turn.rotation.y = h.yaw * D2R; turn.updateMatrixWorld(true);
+    const tgt = new THREE.Vector3(h.cx, h.cy, h.cz || 0);
+    if (h.focus) { rig.bones[h.focus].getWorldPosition(tgt); tgt.y -= 0.06; }   /* frame a bone (the hand close-ups) */
+    const cam = orthoCam(W, H, ppm, h.el, tgt); lightFor(cam); B.setOutline(h.outlinePx * h.ss / ppm);
+    const r = renderer(W, H); turn.rotation.y = h.yaw * D2R; turn.updateMatrixWorld(true); baseG.visible = h.base !== false;
+    r.render(scene, cam); turn.rotation.y = 0; turn.updateMatrixWorld(true); baseG.visible = true;
+    let c = grab(r, W, H); for (let k = h.ss; k > 1; k /= 2) c = halve(c); return c;
+  }
+  const specPose = (spec) => poseToJSON(resolveSpec(rig, spec));
   return {
+    hero, specPose, B, rig, turn, scene, baseG,
     apply, setPose, pose: poseJSON, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },
     dispose() { gear.clear(); if (R) { R.dispose(); R.forceContextLoss(); R = null; } },
   };

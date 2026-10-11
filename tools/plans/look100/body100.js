@@ -11,6 +11,10 @@
    rings, buckles, studs and soles are small rigid meshes riding their bone.
    Look: cel (toon) shading with a 3-step ramp, crease ink from the field (cavities darken), an inverted-hull outline.
    buildBody(opts) → { group, mesh, rig, setOutline(px world), stats } — all positions in metres (see rig.js). */
+/* look100 (v1.0 LOOK TEST, not game code): a copy of tools/art/rig92/body.js with three test options —
+   opt.fem   a female (Amazonia-type) build on the same rig: lighter muscles, breasts, narrower waist, wider hips, softer face
+   opt.grip  {L,R: 'open' | 'hilt' | 'bar'} — fingers + thumb closed round a bar along the hand's forward axis (a hilt or a shield handle)
+   kit.sever(side, t)  cut the forearm away below t (0 elbow … 1 wrist) and return the cut frame for a stump cap */
 import * as THREE from 'three';
 import { JK, ENDS, makeBones, SOLE_Y } from '../../art/rig92/rig.js';
 
@@ -102,11 +106,16 @@ function limbFrame(a, b, sx, frontHint = [0, 0, 1]) {
 /* v0.98 ATHLETIC BUILD (his ask): broader chest, lats and shoulders, fuller arms and legs, a slimmer waist. opt.ath 1 = athletic (default), 0 = the v0.92 build;
    each value scales the muscle's cross radii (girdle and abdomen: width only) by 1 + (f - 1) * ath */
 export const ATH = { pec: 1.16, lat: 1.16, girdle: 1.07, trap: 1.12, neck: 1.06, abd: 0.93, delt: 1.15, bi: 1.15, fore: 1.07, thigh: 1.08, calf: 1.1 };
+/* look100: where the gripped bar runs (rest pose): d along the hand from the wrist, o off the palm (− = palm side), axis = hand frame f */
+export function gripBar(W0, tip, sx, kind) { const Lh = Math.hypot(tip[0] - W0[0], tip[1] - W0[1], tip[2] - W0[2]); const r = kind === 'bar' ? 0.011 : 0.015;
+  const hd = limbFrame(W0, tip, sx, [0, 0, 1]); return { r, d: 0.52 * Lh + 0.020, o: -0.026 - (r - 0.011), Lh, u: hd.u, f: hd.f, o3: hd.o,
+    c: add(add(W0, mul(hd.u, 0.52 * Lh + 0.020)), mul(hd.o, -0.026 - (r - 0.011))) }; }
+export const FEM = { pec: 0.5, lat: 0.72, girdle: 0.84, trap: 0.62, neck: 0.8, abd: 0.8, delt: 0.74, bi: 0.74, fore: 0.8, thigh: 1.04, calf: 0.95 };
 export function sculpt(opt = {}) {
   const prims = [];
   const add_ = (p) => { prims.push(p); return p; };
-  const ath = opt.ath == null ? 1 : +opt.ath || 0;
-  const bulk = (p, k) => { const f = 1 + ((ATH[k] || 1) - 1) * ath; if (f === 1) return p; const wOnly = k === 'girdle' || k === 'abd';
+  const ath = opt.ath == null ? 1 : +opt.ath || 0; const FEMT = opt.fem ? FEM : null;
+  const bulk = (p, k) => { const f = FEMT ? (FEMT[k] || 1) : 1 + ((ATH[k] || 1) - 1) * ath; if (f === 1) return p; const wOnly = k === 'girdle' || k === 'abd';
     if (p.t === 'e') { p.r = [p.r[0] * f, p.r[1], wOnly ? p.r[2] : p.r[2] * f]; } else { p.r1 *= f; p.r2 *= f; } return p; };
   /* ---------------- torso (T) ---------------- */
   const T = (b, k = 0.03) => ({ g: 'T', b, k, op: 'add' });
@@ -131,7 +140,14 @@ export function sculpt(opt = {}) {
     /* abs: four rows of the six-pack (+ the lower pair) */
     for (let i = 0; i < 4; i++) {
       const y = 1.238 - i * 0.058, z = [0.066, 0.075, 0.075, 0.060][i];
-      add_(E([sx * 0.029, y, z], [0.027, 0.023, 0.013], T('sp', 0.014)));
+      add_(E([sx * 0.029, y, z - (opt.fem ? 0.008 : 0)], [0.027, 0.023, opt.fem ? 0.008 : 0.013], T('sp', opt.fem ? 0.02 : 0.014)));
+    }
+  }
+  if (opt.fem) {   /* look100: the gladiatrix — breasts, a fuller hip line and seat */
+    for (const sx of [1, -1]) {
+      add_(E([sx * 0.066, 1.336, 0.072], [0.062, 0.058, 0.056], T('ch', 0.035), sx * -8, sx * 10));     /* breast */
+      add_(E([sx * 0.132, 0.935, -0.010], [0.066, 0.095, 0.086], T({ a: 'pe', b: 'h' + (sx > 0 ? 'L' : 'R'), t0: 0.3, t1: 1.0 }, 0.06)));  /* hip */
+      add_(E([sx * 0.070, 0.905, -0.074], [0.072, 0.080, 0.062], T({ a: 'pe', b: 'h' + (sx > 0 ? 'L' : 'R'), t0: 0.2, t1: 1.2 }, 0.05)));   /* fuller seat */
     }
   }
   bulk(add_(E([0, 1.400, -0.070], [0.095, 0.110, 0.042], T('ch', 0.04))),'trap');  /* mid trapezius */
@@ -146,9 +162,9 @@ export function sculpt(opt = {}) {
   add_(E(h(0, 0.078, 0.022), [0.056 * hs, 0.070 * hs, 0.068 * hs], Hd(0.022)));     /* face mass */
   add_(E(h(0, 0.012, 0.072), [0.025 * hs, 0.019 * hs, 0.018 * hs], Hd(0.016)));     /* chin */
   for (const sx of [1, -1]) {
-    add_(C(h(sx * 0.052, 0.064, -0.018), h(sx * 0.026, 0.010, 0.058), 0.015 * hs, 0.015 * hs, Hd(0.02)));    /* jaw line */
+    add_(C(h(sx * 0.050, 0.064, -0.018), h(sx * 0.024, 0.014, 0.056), (opt.fem ? 0.012 : 0.015) * hs, (opt.fem ? 0.011 : 0.015) * hs, Hd(0.02)));    /* jaw line */
     add_(E(h(sx * 0.046, 0.094, 0.058), [0.022 * hs, 0.014 * hs, 0.020 * hs], Hd(0.014)));                 /* cheekbone */
-    add_(C(h(sx * 0.050, 0.123, 0.074), h(sx * 0.006, 0.126, 0.091), 0.011 * hs, 0.010 * hs, Hd(0.012)));  /* brow ridge */
+    add_(C(h(sx * 0.050, 0.123, 0.074), h(sx * 0.006, 0.126, 0.091), (opt.fem ? 0.008 : 0.011) * hs, (opt.fem ? 0.007 : 0.010) * hs, Hd(0.012)));  /* brow ridge */
     add_(E(h(sx * 0.031, 0.100, 0.094), [0.017 * hs, 0.010 * hs, 0.013 * hs], Hd(0.008, 'sub')));         /* eye socket */
   }
   for (const sx of [1, -1]) {
@@ -156,7 +172,7 @@ export function sculpt(opt = {}) {
     add_(S(h(sx * 0.011, 0.073, 0.100), 0.0085 * hs, Hd(0.006)));                                           /* nostril wing */
     add_(E(h(sx * 0.079, 0.092, -0.012), [0.010 * hs, 0.030 * hs, 0.018 * hs], Hd(0.006), 0, sx * -14));   /* ear */
   }
-  add_(C(h(0, 0.112, 0.094), h(0, 0.074, 0.111), 0.0075 * hs, 0.0105 * hs, Hd(0.008)));                    /* nose */
+  add_(C(h(0, 0.112, 0.094), h(0, 0.074, 0.111), (opt.fem ? 0.006 : 0.0075) * hs, (opt.fem ? 0.0085 : 0.0105) * hs, Hd(0.008)));                    /* nose */
   add_(E(h(0, 0.046, 0.087), [0.018 * hs, 0.0058 * hs, 0.0070 * hs], Hd(0.010)));                           /* upper lip */
   add_(E(h(0, 0.035, 0.085), [0.015 * hs, 0.0058 * hs, 0.0070 * hs], Hd(0.010)));                           /* lower lip */
   add_(E(h(0, 0.0405, 0.0935), [0.017 * hs, 0.0013 * hs, 0.007 * hs], Hd(0.002, 'sub')));                 /* mouth line */
@@ -182,12 +198,27 @@ export function sculpt(opt = {}) {
     const Hn = (k = 0.006) => ({ g, b: w, k, op: 'add' });
     add_(M(hd.at(0.02, 0.0, 0.002), hd.at(0.57, 0.0, 0.004), 0.022, 0.052, hd.f, Hn(0.008)));  /* palm (thin side-to-side) */
     const fingers = [[0.033, 0.44], [0.0115, 0.48], [-0.0105, 0.46], [-0.031, 0.38]];
+    const gk = (opt.grip || {})[sd] || 'open';
+    if (gk !== 'open') {   /* look100: a closed fist round a bar along hd.f (hilt: r 15 mm, shield handle: r 11 mm) */
+      const Lh = Math.hypot(...sub(tip, W0)), bar = gripBar(W0, tip, sx, gk);
+      const pt = (d, o, f) => add(add(add(W0, mul(hd.u, d)), mul(hd.o, o)), mul(hd.f, f));
+      const R = bar.r + 0.0112;
+      for (const [fw, L] of fingers) {
+        const len = L * Lh * 0.5, th0 = Math.atan2(0.024, -0.016), sweep = len / R;   /* knuckle angle in the (u, o) plane round the bar */
+        const ring = (a) => pt(bar.d + Math.cos(a) * R, bar.o + Math.sin(a) * R, fw * 0.92);
+        const n = 3; let prev = pt(0.52 * Lh, -0.002, fw * 0.92);
+        for (let i = 1; i <= n; i++) { const p2 = ring(th0 - sweep * i / n); add_(C(prev, p2, 0.0122 - i * 0.0007, 0.0118 - i * 0.0008, Hn(0.003))); prev = p2; }
+      }
+      /* thumb: from the heel of the hand over the curled fingers, on the palm side */
+      const t0 = pt(0.10 * Lh, -0.008, 0.026), t1 = pt(bar.d - 0.012, bar.o - R * 0.75, 0.05), t2 = pt(bar.d + 0.012, bar.o - R * 0.95, 0.032);
+      add_(C(t0, t1, 0.0135, 0.0115, Hn(0.006))); add_(C(t1, t2, 0.0115, 0.0102, Hn(0.003)));
+    } else
     for (const [fw, L] of fingers) {
       const k0 = hd.at(0.52, -0.002, fw);
       const ang = 0.35; const k1 = add(add(k0, mul(hd.u, L * 0.19 * Math.cos(ang))), mul(hd.o, -L * 0.19 * Math.sin(ang)));
       add_(C(k0, k1, 0.0122, 0.0102, Hn(0.004)));
     }
-    add_(C(hd.at(0.10, -0.006, 0.026), hd.at(0.40, -0.024, 0.046), 0.014, 0.011, Hn(0.006)));  /* thumb */
+    if (gk === 'open') add_(C(hd.at(0.10, -0.006, 0.026), hd.at(0.40, -0.024, 0.046), 0.014, 0.011, Hn(0.006)));  /* thumb */
   }
 
   /* ---------------- legs (LL / LR) ---------------- */
@@ -635,7 +666,18 @@ function* buildSteps(opts = {}) {
     if (m.geometry) m.geometry.dispose(); if (m.userData.ownMat && m.material) m.material.dispose(); if (ink && ink.material) ink.material.dispose();
   };
   /* what gear.js builds with */
-  const kit = { shellFrom, rigid, kill, nAt, P, GI, HO, hs, mats, lin, hexRGB, showAll,
+  /* look100: cut the forearm away below t (0 elbow … 1 wrist); the cut frame comes back for a stump cap */
+  const triAll = sn.tri.slice();
+  const sever = (sd, t = 0.3) => {
+    const E0 = P('e' + sd), W0 = P('w' + sd), ab = sub(W0, E0), l2 = dot(ab, ab), gi = GI['A' + sd];
+    const gone = (v) => grp[v] === gi && dot(sub([pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]], E0), ab) / l2 > t;
+    const keep = []; for (let i = 0; i < triAll.length; i += 3) { const a = triAll[i], b = triAll[i + 1], c = triAll[i + 2]; if (gone(a) || gone(b) || gone(c)) continue; keep.push(a, b, c); }
+    geo.setIndex(new THREE.Uint32BufferAttribute(keep, 1));
+    let rmax = 0; const C0 = add(E0, mul(ab, t)), u = nrm(ab);
+    for (let v = 0; v < nv; v++) { if (grp[v] !== gi) continue; const r = sub([pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]], C0); const along = dot(r, u); if (Math.abs(along) < 0.006) rmax = Math.max(rmax, Math.hypot(...sub(r, mul(u, along)))); }
+    return { at: C0, n: u, r: rmax };
+  };
+  const kit = { sever, shellFrom, rigid, kill, nAt, P, GI, HO, hs, mats, lin, hexRGB, showAll,
     makeToon: (c, ex) => toonMat(c, mats, ex),
     maskedMat: (ex) => maskedToon(Object.assign({ vertexColors: true, gradientMap: mats.gm, side: THREE.DoubleSide }, ex || {}), 0.0024),
     hitSkin: (from, dir, maxd) => hitSkin(fd, from, dir, maxd), rig, group, setHarness: (on) => showAll(harnessBits, on) };

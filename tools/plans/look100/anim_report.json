@@ -1,0 +1,212 @@
+{
+ "bodyBuildMs": 3432,
+ "glad": {
+  "main": {
+   "meta": [
+    124,
+    143,
+    62,
+    111.6,
+    39
+   ],
+   "frames": 39,
+   "cells": 312,
+   "ms": 197745,
+   "msPerFrame8": 5069,
+   "kb8": 696.9,
+   "kb8q65": 585.6,
+   "kb4": 356.2
+  },
+  "fall": {
+   "meta": [
+    146,
+    144,
+    73,
+    98.7,
+    8
+   ],
+   "frames": 8,
+   "cells": 64,
+   "ms": 46570,
+   "msPerFrame8": 5819,
+   "kb8": 135.6,
+   "kb8q65": 112.8,
+   "kb4": 68.9
+  }
+ },
+ "labels": [
+  [
+   "idle",
+   4,
+   "idle breathing + weight shift (n19)"
+  ],
+  [
+   "walk",
+   6,
+   "walk cycle (animated tokens)"
+  ],
+  [
+   "attack",
+   5,
+   "attack: wind-up, raise, slash, thrust, recover (n19)"
+  ],
+  [
+   "block",
+   3,
+   "block: shield up, brace (n19)"
+  ],
+  [
+   "hit",
+   3,
+   "hit / recoil (n19 injured)"
+  ],
+  [
+   "limp",
+   4,
+   "injured limp, sword dragging (n19 injured)"
+  ],
+  [
+   "cower",
+   3,
+   "scared cower, peek (n19 scared)"
+  ],
+  [
+   "push",
+   4,
+   "push: set, contact, drive, follow-through (n19 push)"
+  ],
+  [
+   "topple",
+   4,
+   "topple a pillar: set, shoulder, heave, stumble (n19 pillars)"
+  ],
+  [
+   "knock",
+   3,
+   "knock a pot off a pillar: wind, swipe up, follow (n19 pots)"
+  ],
+  [
+   "fall",
+   5,
+   "fall / die: struck, knees buckle, slump, topple, lying (n19 + die)"
+  ],
+  [
+   "sever",
+   3,
+   "severed limb: hit, forearm gone + clutch, stagger (n19 limbs)"
+  ]
+ ],
+ "ret": {
+  "meta": [
+   116,
+   154,
+   58,
+   122.6,
+   7
+  ],
+  "ms": 32678,
+  "kb8": 130.4,
+  "rows": [
+   "ridle0",
+   "rete0",
+   "rete1",
+   "rete2",
+   "rhit0",
+   "rhit1",
+   "rhit2"
+  ]
+ },
+ "spider": {
+  "meta": [
+   94,
+   72,
+   47,
+   47.6,
+   4
+  ],
+  "ms": 760,
+  "kb8": 34
+ },
+ "spec": {
+  "metas": [
+   [
+    56,
+    133,
+    28,
+    115,
+    5
+   ],
+   [
+    56,
+    133,
+    28,
+    115,
+    5
+   ],
+   [
+    56,
+    133,
+    28,
+    115,
+    5
+   ],
+   [
+    56,
+    133,
+    28,
+    115,
+    5
+   ],
+   [
+    56,
+    133,
+    28,
+    115,
+    5
+   ],
+   [
+    56,
+    133,
+    28,
+    115,
+    5
+   ],
+   [
+    56,
+    133,
+    28,
+    115,
+    5
+   ],
+   [
+    56,
+    133,
+    28,
+    115,
+    5
+   ]
+  ],
+  "ms": 328495,
+  "kbOneLook": 65.7,
+  "looks": 8,
+  "poses": [
+   "sit",
+   "sitcheer",
+   "sitfist",
+   "stand",
+   "standcheer"
+  ]
+ },
+ "clip": {
+  "ms": 110,
+  "tiles": [
+   2,
+   5
+  ],
+  "scale": 1.042,
+  "w": 364,
+  "h": 296,
+  "n": 21,
+  "kb": 114.5
+ }
+}

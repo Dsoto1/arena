@@ -1,0 +1,12 @@
+<!doctype html><html><head><meta charset="utf-8"><title>look100</title>
+<script type="importmap">{"imports":{"three":"../../art/rig92/vendor/three.module.min.js"}}</script>
+</head><body style="background:#ddd">
+<script type="module">
+import * as THREE from 'three';
+import { createToken } from './game100.js';
+import { murmKit } from './gear100.js';
+window.THREE = THREE;
+window.LOOK = { createToken, murmKit };
+await import('./page.js');
+window.LOOK_READY = true;
+</script></body></html>

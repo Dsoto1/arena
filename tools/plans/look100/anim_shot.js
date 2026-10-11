@@ -18,22 +18,30 @@ const OUT = __dirname, PAGE = 'file://' + path.resolve(__dirname, '../../../flav
   await pg.waitForTimeout(9000);   /* crowd walk-in done, a few CPU moves */
   await pg.evaluate(() => { SPEED = 'pause'; });
   await pg.waitForTimeout(2500);
-  const info = await pg.evaluate(() => {
-    draw(); const R = cv.getBoundingClientRect(); const k = R.width / cv.width;
-    const T = CR91.T || ctx.getTransform(); const sc = Math.hypot(T.a, T.b);
-    const P = (x, y) => { const p = T.transformPoint(new DOMPoint(x, y)); return { x: +(R.left + p.x * k).toFixed(1), y: +(R.top + p.y * k).toFixed(1) }; };
-    const tiles = {}; for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) { const m = center(r, c); tiles[r + ',' + c] = P(m.x, m.y); }
-    const occ = []; for (const p of S.players) if (p.alive !== false && p.r != null) occ.push([p.r, p.c]); for (const n of (S.npcs || [])) if (n.r != null) occ.push([n.r, n.c]);
-    for (const q of (S.pillars || [])) if (q.r != null) occ.push([q.r, q.c]);
-    const mid = P(...Object.values(center((N - 1) / 2, (N - 1) / 2)));
-    const seats = (CR91.seen || []).map(s => ({ ...P(s.x, s.y), back: s.back, mood: s.mood, sec: s.sec }));
-    return { canvas: { x: R.left, y: R.top, w: R.width, h: R.height }, N, tw: +(TW * sc * k).toFixed(2), crowdH: +(TW * SIZE91 * sc * k).toFixed(2), tiles, occ, mid, seats, ev: S.ev || 'democritus' };
-  });
-  await pg.screenshot({ path: path.join(OUT, 'anim_board.png') });
-  /* the same frame with the 193 crowd painter skipped (benches stay): the stage for the rig92 spectators */
-  await pg.evaluate(() => { window.__d91 = draw91; draw91 = function () {}; draw(); });
-  await pg.screenshot({ path: path.join(OUT, 'spec_stands_empty.png') });
-  fs.writeFileSync(path.join(OUT, 'anim_board.json'), JSON.stringify(info));
-  console.log('tw', info.tw, 'crowdH', info.crowdH, 'seats', info.seats.length, 'occ', info.occ.length);
+  const ALL = {};
+  for (const [tag, z] of [['z1', null], ['z2', 2]]) {
+    const info = await pg.evaluate((z) => {
+      /* overlays off (cards, bubbles, wager bubbles, floating numbers, buttons over the sand) */
+      for (const el of cv.parentElement.children) if (el !== cv) el.style.visibility = 'hidden';
+      for (const s of ['#cardShow', '#bubbles', '#wbubs', '#fx95', '#tip']) { const e = document.querySelector(s); if (e) e.style.visibility = 'hidden'; }
+      CAM.z = z; S.zoomIn = !!z; if (window.__d91) { draw91 = window.__d91; }
+      for (let i = 0; i < 30; i++) draw();
+      const R = cv.getBoundingClientRect(); const k = R.width / cv.width;
+      const T = CR91.T || ctx.getTransform(); const sc = Math.hypot(T.a, T.b);
+      const P = (x, y) => { const p = T.transformPoint(new DOMPoint(x, y)); return { x: +(R.left + p.x * k).toFixed(1), y: +(R.top + p.y * k).toFixed(1) }; };
+      const tiles = {}; for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) { const m = center(r, c); tiles[r + ',' + c] = P(m.x, m.y); }
+      const occ = []; for (const p of S.players) if (p.alive !== false && p.r != null) occ.push([p.r, p.c]); for (const n of (S.npcs || [])) if (n.r != null) occ.push([n.r, n.c]);
+      for (const q of (S.pillars || [])) if (q.r != null) occ.push([q.r, q.c]);
+      const mm = center((N - 1) / 2, (N - 1) / 2); const mid = P(mm.x, mm.y);
+      const seats = (CR91.seen || []).map(s => ({ ...P(s.x, s.y), back: s.back, mood: s.mood, sec: s.sec }));
+      return { canvas: { x: R.left, y: R.top, w: R.width, h: R.height }, N, tw: +(TW * sc * k).toFixed(2), crowdH: +(TW * SIZE91 * sc * k).toFixed(2), tiles, occ, mid, seats };
+    }, z);
+    await pg.waitForTimeout(400);
+    await pg.screenshot({ path: path.join(OUT, `anim_board_${tag}.png`) });
+    await pg.evaluate(() => { window.__d91 = window.__d91 || draw91; draw91 = function () {}; draw(); });
+    await pg.screenshot({ path: path.join(OUT, `spec_stands_empty_${tag}.png`) });
+    ALL[tag] = info; console.log(tag, 'tw', info.tw, 'crowdH', info.crowdH, 'seats', info.seats.length);
+  }
+  fs.writeFileSync(path.join(OUT, 'anim_board.json'), JSON.stringify(ALL));
   await b.close();
 })().catch(e => { console.error(e); process.exit(1); });
