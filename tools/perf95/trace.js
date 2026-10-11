@@ -9,8 +9,8 @@ await pg.goto(await require('./serve.js')(PAGE));await pg.waitForFunction(()=>wi
 await pg.evaluate(async sc=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}try{menuHide()}catch(e){}
   startEvent({ev:'democritus',loc:6,seats:['hero','soldier','royalty','venatore'].map(c=>({cls:c,cpu:true})),opts:sc.spect?{}:{spect:0}});
   for(let i=0;i<200;i++){await W8(100);if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);else if(S&&S.phase!=='setup'&&i>8)break}
-  SPEED=sc.speed;setInterval(()=>{if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null)},300)},SCEN);
-await pg.waitForTimeout(2000);const TURN0=await pg.evaluate(()=>S.turnNo);
+  SPEED=sc.speed;if(sc.zoom){S.zoomIn=true;draw()} /* {"zoom":1}: zoomed in */setInterval(()=>{if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null)},300)},SCEN);
+await pg.waitForTimeout(SCEN.wait||2000) /* {"wait":ms} before the trace starts */;const TURN0=await pg.evaluate(()=>S.turnNo);
 await b.startTracing(pg,{path:(process.env.TRACE_OUT||require('os').tmpdir()+'/perf95-trace.json'),categories:['devtools.timeline','disabled-by-default-devtools.timeline']});
 await pg.waitForTimeout(SCEN.secs*1000);await b.stopTracing();
 const ev=JSON.parse(require('fs').readFileSync((process.env.TRACE_OUT||require('os').tmpdir()+'/perf95-trace.json'))).traceEvents;

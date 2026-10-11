@@ -1024,6 +1024,16 @@ One global script; files are concatenated in order. Later "version modules" patc
   native, left mirrored, front row 1:1 (`MM100_FRONT`), beasts `MM100_BOOST`. menuShow wrapper HOLDS the show until the strips decode (≤1.5 s, `MM100S.cap`;
   late strips take over only during the walk-in); else the flat show (230's MM95/mm95Raster) for that visit. Reduce motion / Animations Off = one still
   group photo, no loop. The canvas is tainted on file:// (screenshots, not toDataURL). Kill switch localStorage flavius_mm100off=1. Test `tv100mm`.
+- **v1.0 ZOOMED CAMERA WITHOUT HITCHES (294-v100zoomcam, last before 08-setup; display only):** cause measured (tools/perf95/zoomab.js, zoomflush.js,
+  zoom100.js, trace.js `{"zoom":1,"wait":ms}`): every ~0.18 screen of follow-camera travel 208's padded stone layers (192 under/deco/top/light) took a new
+  reference and repainted all four (a turn change = 3-6 repaints, each a 70-450 ms draw on the test box); pinch/zoom toggles repainted them + 260's
+  tiles + 194's wear every frame. (1) zoomed by z (z² ≤ `Z100.maxK` 2.25) the stone layers are painted ONCE in a frame holding the whole arena
+  (padding (z−1)/2 + `Z100.m` 0.1, origin from the unzoomed draw captured in a duelCam wrapper) — panning never repaints; above it 208's margin with
+  the new reference centred on the camera's destination; (2) while TW changes (this or the previous draw) the last crisp stone layers, 260's tiles
+  chunks and 194's wear bake are drawn SCALED through 260's ImageBitmap pieces (`z100PutS`), crisp again `Z100.hold` 160 ms after the zoom holds;
+  (3) zoomed while a CPU acts (p95Defer), a second draw with the same document.timeline time waits for the next frame. Kill switch
+  localStorage flavius_zoomcam100off=1; stats `Z100.stats`. Remaining zoomed cost = rasterising a full board every frame the camera moves
+  (headless software raster ≈ 16 ms a draw, same as unzoomed); next lever: static layers as GPU-composited canvases. Test `tv100z`.
 - **v1.0 FRAME METER (288-v100fps, last before 08-setup; display only):** Settings → General → Performance "Show frame meter" (`SETTINGS.fps100`, default off; row added by a `set98General` wrapper, `applySettings` wrapper runs `fps100Sync`). On = corner overlay `#fps100` (bl/br/tl/tr, ⇱ in the expanded view, localStorage flavius_fps100pos): fps over 1 s, slowest frame of 5 s, share of frames >16.7 / >33 ms, 60-frame sparkline, green >=55 · amber 30-54 · red <30; click expands to the measured screen (`fps100Screen`) + top 3 `LAYERS93.report()` layers. rAF timestamps only (`F100`), loop stops when hidden or off (no loop, no element when off); it keeps the page awake while shown (tooltip says so; idle92 still pauses CSS animations). Test `tv100fps`, shots tools/plans/fps100/.
 - **v1.0 THE ARENA LOOK (277-v100arena + small 192 edits; his picks 1a 2b 3b 4a 5a; prototype tools/plans/look100/NOTES-arena.md, shots tools/plans/arena100/
   via shots.js):** a stone family per arena `A100[k]` (k = THEME.arena99 → S.locIdx → Roma) with its own tileable texture assets/stone100_<k>_<key>.webp
