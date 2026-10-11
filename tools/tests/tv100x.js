@@ -85,9 +85,9 @@ ok(out.f3.same&&!out.f3.plan,'F3b planned drills / sessions dropped, no gain '+J
 ok(out.f3.ord,'F3d standing order skips him');ok(/bed/i.test(out.f3.cardText),'F3e his card says In bed');ok(out.f3.guard,'F3f old yard buttons refuse him');ok(out.f3.sat&&out.f3.noGain,'F3g the week\'s regime sat him out '+JSON.stringify([out.f3.sat,out.f3.noGain]));
 /* C1 */
 await pm.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const w=W_(),m=me();const o=w.mgrs.find(x=>!x.isPlayer);msp(m).pts=7;msp(m).w=2;msp(m).b=3;msp(o).pts=4;msp(o).w=1;msp(o).b=2;MGR.tab='league';MGR_REDRAW();await W8(500)});
-out.c1=await pm.evaluate(()=>{const t=document.querySelector('.lp96t');const th=[...t.querySelectorAll('th')].map(x=>x.textContent.trim());const rows=[...t.querySelectorAll('tr.me .lp100pt')].map(x=>x.textContent.trim());
-  const i=document.querySelector('.lp96 summary .lp100i');return {th,rows,tip:i?i.dataset.tip:'',pts:[...t.querySelectorAll('.lp100pt')].map(x=>x.textContent.trim())}});
-ok(out.c1.th.includes('Points')&&out.c1.th.indexOf('Points')===2,'C1a Points column '+out.c1.th);ok(out.c1.rows[0]==='7'&&out.c1.pts.length>=3,'C1b my points shown '+JSON.stringify(out.c1.pts));
+out.c1=await pm.evaluate(()=>{const t=document.querySelector('#mgrBody .wd100lgt');const hs=[...t.querySelectorAll('.wd100rh>span')];const th=hs.map(x=>x.textContent.trim());const rows=[...t.querySelectorAll('.wd100r.me .pts')].map(x=>x.textContent.trim());
+  const i=hs.find(x=>x.textContent.trim()==='Pts');return {th,rows,tip:i?i.title:'',pts:[...t.querySelectorAll('.wd100r .pts')].map(x=>x.textContent.trim())}});
+ok(out.c1.th.includes('Pts')&&out.c1.th.indexOf('Pts')===3,'C1a Points column '+out.c1.th);ok(out.c1.rows[0]==='7'&&out.c1.pts.length>=3,'C1b my points shown '+JSON.stringify(out.c1.pts));
 ok(/win/.test(out.c1.tip)&&/3/.test(out.c1.tip)&&/runner-up/.test(out.c1.tip),'C1c ⓘ explains points '+out.c1.tip);
 if(SHOT){await pm.screenshot({path:path.join(SHOT,'c1_league.png')})}
 const pp=await boot({width:390,height:844});

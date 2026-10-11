@@ -13,7 +13,7 @@ out.a=await pg.evaluate(async()=>{newWorld({type:'pre',key:MGR_PRE[0].key});cons
   r.op=opinionOf(w.mgrs.find(x=>!x.isPlayer)).v;r.pay=betPay(100,8);r.maxStake=betMaxStake(8,1000);
   return r});
 await pg.evaluate(()=>{MGR.tab='league';openManager()});await pg.waitForTimeout(700);
-await pg.click('tr.lrowlink:not(.me)');await pg.waitForTimeout(400);await pg.click('.lg90 [data-mg="team"]');await pg.waitForTimeout(400); /* v0.90: a row opens its scouting card first */await pg.screenshot({path:'shot_team.png'});
+await pg.click('#mgrBody [data-wd100h]:not(.me)');await pg.waitForTimeout(400);await pg.click('#mgrBody .wd100hc [data-mg="team"]');await pg.waitForTimeout(400); /* v0.90: a row opens its scouting card first */await pg.screenshot({path:'shot_team.png'});
 await pg.evaluate(()=>{const m=mgrById(MGR.teamId);m.relB=60;document.querySelector('#mgrBody').innerHTML=mgrHTML()});await pg.click('[data-mg="envoy"][data-id$="|trade"]');await pg.waitForTimeout(300);
 await pg.click('[data-mg="tradego"]');await pg.waitForTimeout(300);await pg.screenshot({path:'shot_trade.png'});
 out.tradeMsg=await pg.evaluate(()=>MGR.trade?MGR.trade.msg:'done');

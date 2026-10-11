@@ -22,10 +22,10 @@ ok(a.next==='','A (v0.96) the next-prize line is a letter now, not a line on Mat
 if(SHOT){await W(300);await pg.screenshot({path:SHOT+'/tv90k_matchweek.png'})}
 /* B · the League tab */
 await pg.evaluate(()=>{MGR.tab='league';MGR_REDRAW()});await W(400);
-const b1=await pg.evaluate(()=>{const w=W_();const t=document.querySelector('#mgrBody .lp90 .lp90t');const rows=t?t.querySelectorAll('tr').length-1:0;
-  return {rows,n:w.mgrs.length,first:(document.querySelector('#mgrBody .lp96p.p1')||{}).title||'',next:!!document.querySelector('#mgrBody .lp90 .lp90next'),me:!!(t&&t.querySelector('tr.me'))}});
-ok(b1.rows>=Math.min(6,b1.n)&&b1.rows<=8&&/120/.test(b1.first)&&b1.me&&b1.next,'B standings: podium prizes in the hover + table '+JSON.stringify(b1));
-await pg.click('#mgrBody tr.lrowlink:not(.me)');await W(400);
+const b1=await pg.evaluate(()=>{const w=W_();const t=document.querySelector('#mgrBody .wd100lgt');const rows=t?t.querySelectorAll('.wd100r').length:0;
+  return {rows,n:w.mgrs.length,first:(document.querySelector('#mgrBody .lp96p.p1')||{}).title||'',next:!!document.querySelector('#mgrBody .wd100next'),me:!!(t&&t.querySelector('.wd100r.me'))}});
+ok(b1.rows===b1.n&&/120/.test(b1.first)&&b1.me&&b1.next,'B standings: podium prizes in the hover + table '+JSON.stringify(b1));
+await pg.click('#mgrBody [data-wd100h]:not(.me)');await W(400);await pg.click('#mgrBody [data-wd100sc]');await W(400); /* v1.0: a row opens its house card; 🔍 Scout opens the scouting card */
 const b2=await pg.evaluate(()=>{const box=document.querySelector('#mgrBody .lg90row .lg90');if(!box)return {box:false};const R=mgrById(box.dataset.lg90box);
   return {box:true,tab:MGR.tab,rows:box.querySelectorAll('.lg90r tr').length-1,ros:rosterOf(R).length,team:!!box.querySelector('[data-mg="team"]'),ch:!!box.querySelector('[data-lg90ch]'),week:!!box.querySelector('.lg90week')}});
 ok(b2.box&&b2.tab==='league'&&b2.rows===b2.ros&&b2.team&&b2.ch&&b2.week,'B a rival row opens its scouting card '+JSON.stringify(b2));
@@ -64,7 +64,7 @@ const d2=await pg.evaluate(async()=>{document.getElementById('btnZoom').click();
 ok(d2<1.05,'D the player can zoom out '+d2);
 /* E · a phone */
 if(SHOT){await pg.evaluate(async()=>{S.over=true;try{menuHide()}catch(e){}openManager();await new Promise(r=>setTimeout(r,800));MGR.tab='night';MGR_REDRAW()});await pg.setViewportSize({width:390,height:844});await W(900);
-  await pg.screenshot({path:SHOT+'/tv90k_phone_night.png'});await pg.evaluate(()=>{MGR.tab='league';MGR.lg90=null;MGR_REDRAW()});await W(400);await pg.screenshot({path:SHOT+'/tv90k_phone_league.png'});await pg.click('#mgrBody tr.lrowlink:not(.me)');await W(400);
+  await pg.screenshot({path:SHOT+'/tv90k_phone_night.png'});await pg.evaluate(()=>{MGR.tab='league';MGR.lg90=null;MGR_REDRAW()});await W(400);await pg.screenshot({path:SHOT+'/tv90k_phone_league.png'});await pg.click('#mgrBody [data-wd100h]:not(.me)');await W(400);await pg.click('#mgrBody [data-wd100sc]');await W(400);
   await pg.evaluate(()=>{const x=document.querySelector('#mgrBody .lg90');if(x)x.scrollIntoView()});await W(200);await pg.screenshot({path:SHOT+'/tv90k_phone_scout.png'});
   const sw=await pg.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth);ok(sw,'E phone: no sideways page scroll')}
 console.log(miss.length?'MISS '+JSON.stringify(miss):'ALL OK');console.log('ERRS',JSON.stringify(errs.slice(0,5)));await b.close();process.exit(miss.length||errs.length?1:0)})();

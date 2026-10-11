@@ -33,7 +33,7 @@ if(SHOT)await pg.screenshot({path:SHOT+'/cart.png'});
 /* ---- 3 · podium inside the banner ---- */
 const shotLeague=async(w,h,name)=>{await pg.setViewportSize({width:w,height:h});await W(400);return pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),rv=w.mgrs.filter(x=>!x.isPlayer);const fx=(x,pts,wn,b)=>{const q=msp(x);q.pts=pts;q.w=wn;q.b=b};fx(rv[0],9,3,3);fx(rv[1],8,2,4);fx(me(),3,1,3);/* consistent with play: a win = 3 pts, a runner-up place = 1, each counts a bout (9 pts = 3-0, 8 = 2 wins + 2 seconds in 4, 3 = one win in 3) */MGR.tab='league';MGR_REDRAW();await W8(500);
   const B=document.getElementById('mgrBody');const bn=B.querySelector('.b73-league');const o={};o.banner=!!bn;o.inBanner=!!(bn&&bn.querySelector('.lp96pod .lp96p.p1 .lp96cup svg'));o.n=B.querySelectorAll('.lp96pod').length;
-  o.pod=bn?[...bn.querySelectorAll('.lp96p')].map(x=>x.className.replace(/\s*me/,'').replace('lp96p ','')).join():'';o.below=!!B.querySelector('.lp96 .lp96pod');o.table=!!B.querySelector('.lp96t');
+  o.pod=bn?[...bn.querySelectorAll('.lp96p')].map(x=>x.className.replace(/\s*me/,'').replace('lp96p ','')).join():'';o.below=!!B.querySelector('.lp96 .lp96pod');o.table=!!B.querySelector('.wd100lgt .wd100r');
   o.tip=(bn&&bn.querySelector('.lp96p.p1')||{}).title||'';
   if(bn){const pr=bn.querySelector('.lp96pod').getBoundingClientRect(),tr=bn.querySelector('.roomttl').getBoundingClientRect(),br=bn.getBoundingClientRect();const sr=bn.querySelector('.roomstat');const rr=sr?sr.getBoundingClientRect():null;
     const hit=(a,c)=>c&&a.left<c.right&&a.right>c.left&&a.top<c.bottom&&a.bottom>c.top;o.overTitle=hit(pr,tr);o.overStat=hit(pr,rr);o.inside=pr.left>=br.left-1&&pr.right<=br.right+1&&pr.top>=br.top-1&&pr.bottom<=br.bottom+1;

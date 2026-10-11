@@ -69,7 +69,9 @@ for(let iter=0;iter<200;iter++){
    case 'enter2':await pg.evaluate(()=>{const s=document.getElementById('ent2');if(!s)return;s.value=MTUT.B;document.querySelector('[data-mg="enter"][data-id="2"]').click()});break;
    case 'simall':await clk('[data-mg="simall"]');await until(()=>!MGR.busy&&mtW().night.bouts.every(b=>b.done),null,30000);break;
    case 'league':await clk('[data-mg="tab"][data-id="league"]');break;
-   case 'rival':await pg.evaluate(()=>{const box=document.querySelector(`#mgrPane [data-lg90box="${mtRivalId()}"] [data-mg="team"]`);if(box){box.click();return}const e=document.querySelector(`tr[data-mg="team"][data-id="${mtRivalId()}"]`);e&&e.click()});break;
+   case 'rival':{const id=await pg.evaluate(()=>mtRivalId());const has=await pg.evaluate(id=>!!document.querySelector(`#mgrPane [data-lg90box="${id}"] [data-mg="team"]`),id);
+      if(!has){await pg.evaluate(id=>{const row=document.querySelector(`#mgrPane [data-wd100h="${id}"]`);if(row)row.click()},id);await pg.waitForTimeout(350)} /* v1.0: click the house row, then 🏛 Team screen on its card */
+      await pg.evaluate(id=>{const box=document.querySelector(`#mgrPane [data-lg90box="${id}"] [data-mg="team"]`);if(box){box.click();return}const e=document.querySelector(`tr[data-mg="team"][data-id="${id}"]`);e&&e.click()},id);break}
    case 'envoy':await pg.evaluate(()=>{const e=document.querySelector(`[data-mg="envoy"][data-id="${mtRivalId()}|gift"]`);e&&e.click()});break;
    case 'imp':await clk('[data-mg="tab"][data-id="imp"]');break;
    case 'sched':await clk('[data-mg="tab"][data-id="sched"]');break;
