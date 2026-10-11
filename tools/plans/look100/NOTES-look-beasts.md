@@ -215,3 +215,90 @@ All renders are SwiftShader (CPU WebGL in headless Chromium). "Decoded" means ce
 6. **Zora's size:**
    - a) match his mini (smaller, on the perch)
    - b) keep her big and spread like now
+
+---
+
+# Round 3 — his round-2 answers (1a Leo split · snake much slimmer · 3a mane framing the face · 4a Commodus pelt hood + segmented armour · 5a Tholo's cape swings · 6a Zora smaller + perched)
+
+Pictures only, not game code. Nothing in `src/` or `tools/art/rig92` was touched. `anim_rig.js` got one additive export line at the end
+(`LOOK100X`) so the round-3 humanoid module can reuse its frames and renderer; rounds 1–2 render as before.
+An earlier, unfinished round-3 attempt (strand fur, a sculpted pelt geometry) is in git history (commits a7fc185 / 23cd995); this round replaces it.
+
+## What changed
+| beast | round 3 |
+|---|---|
+| **Leo** (1a + 3a) | Sheet SPLIT: `beast3_leo_sheet.webp` = idle + walk (10 frames, cell 152×124, cropped on its own) and `beast3_leo_act_sheet.webp` = attack/hit/die (13 frames, 242×180, the wide pounce). Mane rebuilt: two rings of BIG locks radiating round the face in the face plane (inner ring pale gold `#e0bc80`, outer `#c49656`), a forelock tuft, 3 neck rings behind (was 5), a bigger chest bib — the face is framed, not collared. |
+| **Glykon / Arenosus** (snake) | Body radius 0.95 mm (was 2.1), a loose S-coil over the middle of the base (1.7 turns of a widening spiral, nothing stacked, radius 6.9 → 3.3 mm), a longer raised S-neck, the head ×0.62, finer mesh (0.26 mm). Reads like his minis' thin snakes instead of a coiled rope. |
+| **Zora** (6a) | ×0.72 (figure scale 0.83 instead of 1.15), PERCHED on a pale rock on the base (body low, feet on the rock), wings spread LOW (flap 12–24° instead of 44–52°) like his mini; the flight frames are short hops off the perch; she falls off the rock in the die frames; lighter, less orange feathers. |
+| **Tholo** (5a) | The cape is CLOTH: every frame it is re-hung from the shoulders as 9 × 12 chains — gravity + that frame's motion (the walk trails it back and sways it left/right in step with the legs; the attack swirls it; the hit whips it forward; the die lets it drape) — and pushed out of the body (capsules on torso, thighs, shins), so the legs push it instead of passing through. Closed slab (two layers + rim) with fold shading and an ink outline. Cost: ~3 ms per frame (480 ms for the whole sheet). The rigid round-2 panel is gone. |
+| **Commodus** (4a) | LION-PELT HOOD: a fur shell over crown, back and sides of the head + the lion's upper face over his brow (skull, muzzle, nose, eyes, ears, two fangs) + 9 dark mane tufts framing his face + the pelt hanging down his back (the same cloth chains, shorter, fur-shaded). SEGMENTED ARMOUR: banded lorica segmentata on the torso + shoulder bands (dark seams every 43 mm, a front closure line) and leather pteruges below; the galea and the scale lorica are gone; manica, greaves, gold belt, sword stay. |
+| others | Leaena, bears, wolves, boar, croc, spider: unchanged (round-2 sheets `beast2_*` stay current; they were re-rendered only for the composites). |
+
+The rigs (one skeleton per species, his colour language — `beast3_rig_leo.png`, `beast3_rig_glykon.png`, `beast3_rig_zora.png` for the
+changed ones) follow his "BEAST 3D MODELS" note: lion = the wolf skeleton (26 joints) + a separate mane (the locks are their own pieces,
+not body joints); snake = root/head/neck + a spine chain (13 joints); Zora = spine, chest, head, wing shoulder → elbow → wrist → tip both
+sides, legs/feet, tail (17 joints). As in round 2 every frame is re-sculpted (sprite sheets), not a skinned mesh.
+
+## Files
+| file | what |
+|---|---|
+| `beast3_r2_vs_r3.webp` | **round 2 above round 3** for the six changed beasts (idle, 8 facings, as drawn at zoom ×2; Tholo/Commodus ×1.4 and their walk) |
+| `beast3_board.png` | every beast + two ×1.15 gladiators on the real board |
+| `beast3_vs_minis.webp` | his mini above ours, 8 facings, both as drawn at zoom ×2 |
+| `beast3_cape_frames.png`, `beast3_clip_cape.webp` | Tholo's cape: walk0–5 at four facings (×1.8); Tholo walking two tiles, the cape trailing and swaying (48 × 40 ms, 194 KB) |
+| `beast3_clip_pounce.webp`, `beast3_clip_frames.png` | Leo's pounce with the new mane (46 × 40 ms, 121 KB) |
+| `beast3_strip_<leo|glykon|arenosus|zora|tholo|commodus>.png` | animation strips (facings 1 and 3) |
+| `beast3_<key>_sheet.webp` | game-format sheets: `leo` (idle+walk) + `leo_act`, `glykon`, `arenosus`, `zora`, `tholo`, `commodus` |
+| `beast3_rig_<leo|glykon|zora>.png` | rig diagrams |
+| `beast3_rig.js/.html`, `beast3_make.js`, `beast3_comp.js`, `beast3_hum.js/.html`, `beast3_humanoid.js`, `beast3_report.json`, `beast3_hum.json` | how it was made |
+
+**Re-run** (with `LOOK_SCRATCH` = the round-2 scratch, which also holds `beast2_glad.png` and the `beast2_<k>.png` sheets the comparison reads):
+1. `node tools/plans/look100/beast3_make.js render` (all quadrupeds/snakes/Zora/spider, ~12 min on a loaded box)
+2. `node tools/plans/look100/beast3_make.js diag leo glykon zora`
+3. `node tools/plans/look100/beast3_humanoid.js` (Tholo + Commodus; 9–20 min each under load)
+4. `node tools/plans/look100/beast3_make.js comp`
+
+## Numbers (SwiftShader; decoded = cells × w × h × 4)
+| beast | cell | WebP | decoded, all | decoded, idle + walk | render |
+|---|---|---|---|---|---|
+| leo — idle+walk sheet | 152×124 | 207 KB | 5.8 MB | **5.8 MB** (round 2: 12.8) | 124 s for both |
+| leo — action sheet | 242×180 | 262 KB | 17.3 MB | — | |
+| glykon / arenosus | 96×83 | 242 / 238 KB | 5.6 MB (r2 8.3) | 2.4 MB | 34–36 s |
+| zora | 110×130 | 271 KB | 10.0 MB (r2 20.4) | 4.4 MB | 76 s |
+| tholo | 212×228 | 512 KB | 33.9 MB (r2 25.4) | 14.8 MB | 21 min (box load 12–40) |
+| commodus | 182×203 | 517 KB | 25.9 MB (r2 21.2) | 11.3 MB | 9 min |
+
+- **All 14 loaded:** ≈ 184 MB decoded (round 2: 193); idle + walk only ≈ 76 MB (round 2: 84). Leo's split, the slim snakes and the small Zora
+  saved ~31 MB; the cape and the pelt cost ~13 MB because their swinging/draping frames widen the humanoids' cells.
+- Tholo's and Commodus's cells grow with the cloth in the attack/die frames — the same split as Leo's (idle + walk vs actions) would bring
+  their idle + walk back to about 6–7 MB each.
+- Cloth simulation itself is cheap (0.5 s for a sheet); the humanoid render time is the rig92 body + gear shells, as before.
+
+## What still falls short
+1. **Commodus's lion face** is small at board size — the pelt reads as a tawny hood, the muzzle only from the front facings. His mini's hood reads as a grey wolf-like head; ours is a lion (his 4a word).
+2. **Pteruges** read as puffy shorts more than strips at board size.
+3. **The cape's top edge** follows the shoulders but has no clasp or brooch; in the back facings it covers his back fully (that is how a cape hangs, but it hides the tunic).
+4. **Zora's perch rock** is a plain rounded stone; his mini's perch is hard to see — he may want no rock at all, just low on the base.
+5. **Mane locks** are still smooth ellipsoids (no strand grooves); colour is closer to his pale gold than round 2.
+
+## Open questions (multiple choice)
+1. **Split the humanoids like Leo** (idle + walk sheet and an action sheet, each cropped on its own)?
+   - a) yes — Tholo and Commodus too (idle + walk ≈ 6–7 MB each instead of 11–15)
+   - b) yes — every beast whose actions widen the cell (lions, bears, croc as well)
+   - c) no, Leo only
+2. **Tholo's cape:**
+   - a) good as is (red, to the calves, swinging)
+   - b) shorter (to the knees) so the legs read better from behind
+   - c) add a bronze clasp/brooch at the shoulders
+3. **Commodus's hood:**
+   - a) lion as built, but a bigger muzzle/face so it reads at board size
+   - b) a grey wolf-like pelt like his mini
+   - c) keep as is
+4. **Zora's perch:**
+   - a) keep the rock
+   - b) no rock — low over the bare base like his mini
+   - c) a wooden stump/post instead
+5. **Snake:**
+   - a) good as is (thin, loose S, raised neck)
+   - b) even thinner / smaller coil
+   - c) a little thicker (between round 2 and round 3)

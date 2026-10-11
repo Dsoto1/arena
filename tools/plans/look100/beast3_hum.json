@@ -1,1 +1,86 @@
-{}
+{
+ "tholo": {
+  "key": "tholo",
+  "meta": [
+   212,
+   228,
+   106,
+   141.6,
+   23
+  ],
+  "rows": [
+   "idle0",
+   "idle1",
+   "idle2",
+   "idle3",
+   "walk0",
+   "walk1",
+   "walk2",
+   "walk3",
+   "walk4",
+   "walk5",
+   "attack0",
+   "attack1",
+   "attack2",
+   "attack3",
+   "attack4",
+   "hit0",
+   "hit1",
+   "hit2",
+   "die0",
+   "die1",
+   "die2",
+   "die3",
+   "die4"
+  ],
+  "ms": 1293256,
+  "clothMs": 480,
+  "kb": 512,
+  "decodedMB": 33.93,
+  "idleWalkMB": 14.75,
+  "frames": 23,
+  "pxmm": 3.143
+ },
+ "commodus": {
+  "key": "commodus",
+  "meta": [
+   182,
+   203,
+   91,
+   129.6,
+   23
+  ],
+  "rows": [
+   "idle0",
+   "idle1",
+   "idle2",
+   "idle3",
+   "walk0",
+   "walk1",
+   "walk2",
+   "walk3",
+   "walk4",
+   "walk5",
+   "attack0",
+   "attack1",
+   "attack2",
+   "attack3",
+   "attack4",
+   "hit0",
+   "hit1",
+   "hit2",
+   "die0",
+   "die1",
+   "die2",
+   "die3",
+   "die4"
+  ],
+  "ms": 516184,
+  "clothMs": 84,
+  "kb": 517.3,
+  "decodedMB": 25.93,
+  "idleWalkMB": 11.28,
+  "frames": 23,
+  "pxmm": 3.143
+ }
+}
