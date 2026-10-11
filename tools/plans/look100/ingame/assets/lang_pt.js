@@ -1,0 +1,1 @@
+../../../../../assets/lang_pt.js

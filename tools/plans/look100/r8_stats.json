@@ -1,0 +1,598 @@
+{
+ "build": 15423,
+ "sculpt": {
+  "legwrapsU": {
+   "wearMs": 5333,
+   "tris": 60470,
+   "trisFine": 180756,
+   "verts": 30052,
+   "ms": 5330
+  },
+  "femoralia": {
+   "wearMs": 5521,
+   "tris": 60470,
+   "trisFine": 180756,
+   "verts": 30052,
+   "ms": 5517
+  },
+  "thighplate": {
+   "wearMs": 5363,
+   "tris": 60470,
+   "trisFine": 180756,
+   "verts": 30052,
+   "ms": 5360
+  },
+  "balteus": {
+   "wearMs": 982,
+   "tris": 21938,
+   "trisFine": 110836,
+   "verts": 10905,
+   "ms": 980
+  },
+  "balteus1": {
+   "wearMs": 909,
+   "tris": 20432,
+   "trisFine": 103704,
+   "verts": 10167,
+   "ms": 908
+  }
+ },
+ "maxTries": [
+  {
+   "b": -0.1,
+   "at": [
+    -0.33,
+    0.44
+   ],
+   "shieldX": 0,
+   "shield": 0,
+   "body": 0
+  }
+ ],
+ "max": {
+  "kb": 31.9,
+  "meta": [
+   132,
+   139,
+   66,
+   115.9
+  ],
+  "ms": 16573,
+  "msUnmerged": 17278,
+  "kbUnmerged": 31.8,
+  "wrist": {
+   "R": {
+    "flex": 1.6,
+    "dev": 2.1,
+    "total": 2.6
+   },
+   "L": {
+    "flex": 4.4,
+    "dev": 1.8,
+    "total": 4.7
+   },
+   "clamped": [],
+   "miss": 2.8
+  },
+  "clear": {
+   "body": 0,
+   "shield": 0,
+   "n": 68
+  },
+  "shield": {
+   "label": "max load",
+   "pts": 2030,
+   "facings": [
+    {
+     "yaw": 0,
+     "inside": 2030,
+     "front": 0,
+     "worst": -1000,
+     "ang": 1.4,
+     "along": 0
+    },
+    {
+     "yaw": 45,
+     "inside": 2030,
+     "front": 0,
+     "worst": -1000,
+     "ang": 1.4,
+     "along": 0
+    },
+    {
+     "yaw": 90,
+     "inside": 2030,
+     "front": 0,
+     "worst": -1000,
+     "ang": 1.4,
+     "along": 0
+    },
+    {
+     "yaw": 135,
+     "inside": 2030,
+     "front": 0,
+     "worst": -1000,
+     "ang": 1.4,
+     "along": 0
+    },
+    {
+     "yaw": 180,
+     "inside": 2030,
+     "front": 0,
+     "worst": -1000,
+     "ang": 1.4,
+     "along": 0
+    },
+    {
+     "yaw": 225,
+     "inside": 2030,
+     "front": 0,
+     "worst": -1000,
+     "ang": 1.4,
+     "along": 0
+    },
+    {
+     "yaw": 270,
+     "inside": 2030,
+     "front": 0,
+     "worst": -1000,
+     "ang": 1.4,
+     "along": 0
+    },
+    {
+     "yaw": 315,
+     "inside": 2030,
+     "front": 0,
+     "worst": -1000,
+     "ang": 1.4,
+     "along": 0
+    }
+   ],
+   "ok": true,
+   "alongMax": 0,
+   "angMax": 1.4,
+   "frontMax": 0
+  },
+  "tris": 402424
+ },
+ "cloth": {
+  "soldier": [
+   "#3f0b06",
+   "#7a1c14"
+  ],
+  "royalty": [
+   "#222630",
+   "#2c3550"
+  ],
+  "hero": [
+   "#534824",
+   "#5c6a2a"
+  ],
+  "slave": [
+   "#7c5f3a",
+   "#9c7a46"
+  ],
+  "veteranus": [
+   "#b1a391",
+   "#b1a391"
+  ],
+  "amazonia": [
+   "#73492e",
+   "#8a4a2a"
+  ],
+  "venatore": [
+   "#452c45",
+   "#5a3466"
+  ],
+  "damnatio": [
+   "#3e2e22",
+   "#4a3a2e"
+  ]
+ },
+ "classes": {
+  "soldier": {
+   "kb": 29.7,
+   "ms": 11668,
+   "msUnmerged": 12278,
+   "kbUnmerged": 28.1,
+   "meta": [
+    114,
+    142,
+    57,
+    118.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 1.8,
+     "dev": 2.1,
+     "total": 2.8
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 2.8
+   },
+   "shield": null
+  },
+  "royalty": {
+   "kb": 27.6,
+   "ms": 9515,
+   "msUnmerged": 9081,
+   "kbUnmerged": 27.6,
+   "meta": [
+    84,
+    147,
+    42,
+    123.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 5.3,
+     "dev": 0.6,
+     "total": 5.3
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 0.6
+   },
+   "shield": null
+  },
+  "hero": {
+   "kb": 30.5,
+   "ms": 10530,
+   "msUnmerged": 11353,
+   "kbUnmerged": 30.6,
+   "meta": [
+    108,
+    146,
+    54,
+    122.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 1.8,
+     "dev": 2.1,
+     "total": 2.8
+    },
+    "L": {
+     "flex": 4.4,
+     "dev": 1.8,
+     "total": 4.7
+    },
+    "clamped": [],
+    "miss": 2.8
+   },
+   "shield": {
+    "angMax": 1.4,
+    "alongMax": 0,
+    "frontMax": 0,
+    "pts": 2030
+   }
+  },
+  "slave": {
+   "kb": 35.4,
+   "ms": 10876,
+   "msUnmerged": 10569,
+   "kbUnmerged": 35.4,
+   "meta": [
+    164,
+    154,
+    82,
+    130.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 0,
+     "dev": -0.7,
+     "total": 0.7
+    },
+    "L": {
+     "flex": 2.5,
+     "dev": -3.2,
+     "total": 4.1
+    },
+    "clamped": [],
+    "miss": 2.6
+   },
+   "shield": null
+  },
+  "veteranus": {
+   "kb": 29.8,
+   "ms": 10404,
+   "msUnmerged": 10959,
+   "kbUnmerged": 29.8,
+   "meta": [
+    114,
+    139,
+    57,
+    115.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 1.8,
+     "dev": 2.1,
+     "total": 2.8
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 2.8
+   },
+   "shield": null
+  },
+  "amazonia": {
+   "kb": 31.6,
+   "ms": 9404,
+   "msUnmerged": 10615,
+   "kbUnmerged": 31.6,
+   "meta": [
+    120,
+    154,
+    60,
+    130.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 4.3,
+     "dev": 1.8,
+     "total": 4.7
+    },
+    "L": {
+     "flex": 2.1,
+     "dev": 2.2,
+     "total": 3.1
+    },
+    "clamped": [],
+    "miss": 0.6
+   },
+   "shield": null
+  },
+  "venatore": {
+   "kb": 30.6,
+   "ms": 9778,
+   "msUnmerged": 9593,
+   "kbUnmerged": 30.6,
+   "meta": [
+    144,
+    154,
+    72,
+    130.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 5.5,
+     "dev": -0.3,
+     "total": 5.5
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 0.3
+   },
+   "shield": null
+  },
+  "damnatio": {
+   "kb": 27.7,
+   "ms": 8862,
+   "msUnmerged": 8861,
+   "kbUnmerged": 27.7,
+   "meta": [
+    84,
+    135,
+    42,
+    111.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 2.6,
+     "dev": -3.2,
+     "total": 4.1
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 3.4
+   },
+   "shield": null
+  }
+ },
+ "sculptAll": {
+  "legwrapsUL": {
+   "tris": 60470,
+   "trisFine": 180756,
+   "verts": 30052,
+   "ms": 5330
+  },
+  "femoraliaL": {
+   "tris": 60470,
+   "trisFine": 180756,
+   "verts": 30052,
+   "ms": 5517
+  },
+  "thighplateL": {
+   "tris": 60470,
+   "trisFine": 180756,
+   "verts": 30052,
+   "ms": 5360
+  },
+  "balteus": {
+   "tris": 21938,
+   "trisFine": 110836,
+   "verts": 10905,
+   "ms": 980
+  },
+  "balteus1": {
+   "tris": 20432,
+   "trisFine": 103704,
+   "verts": 10167,
+   "ms": 908
+  },
+  "murmillo": {
+   "tris": 55398,
+   "trisFine": 235032,
+   "verts": 27419,
+   "ms": 1133
+  },
+  "thorax": {
+   "tris": 53463,
+   "trisFine": 608292,
+   "verts": 22788,
+   "ms": 9044
+  },
+  "galerusR": {
+   "tris": 25662,
+   "trisFine": 128652,
+   "verts": 12404,
+   "ms": 4971
+  },
+  "wrapsR": {
+   "tris": 10950,
+   "trisFine": 55784,
+   "verts": 5353,
+   "ms": 3040
+  },
+  "bracersR": {
+   "tris": 8989,
+   "trisFine": 45504,
+   "verts": 4375,
+   "ms": 3187
+  },
+  "manicaL": {
+   "tris": 32306,
+   "trisFine": 161332,
+   "verts": 15490,
+   "ms": 6920
+  },
+  "wrapsL": {
+   "tris": 10838,
+   "trisFine": 55720,
+   "verts": 5323,
+   "ms": 3478
+  },
+  "thighplateR": {
+   "tris": 60340,
+   "trisFine": 180500,
+   "verts": 29975,
+   "ms": 5398
+  },
+  "legwrapsL": {
+   "tris": 15319,
+   "trisFine": 84596,
+   "verts": 7597,
+   "ms": 5104
+  },
+  "legwrapsR": {
+   "tris": 15275,
+   "trisFine": 84656,
+   "verts": 7579,
+   "ms": 4771
+  },
+  "cnemisL": {
+   "tris": 16186,
+   "trisFine": 87856,
+   "verts": 8036,
+   "ms": 6497
+  },
+  "ocreaR": {
+   "tris": 15290,
+   "trisFine": 82676,
+   "verts": 7595,
+   "ms": 5950
+  },
+  "centurion": {
+   "tris": 33882,
+   "trisFine": 151024,
+   "verts": 16694,
+   "ms": 816
+  },
+  "legwrapsUR": {
+   "tris": 60340,
+   "trisFine": 180500,
+   "verts": 29975,
+   "ms": 5477
+  },
+  "cassis": {
+   "tris": 41925,
+   "trisFine": 179248,
+   "verts": 20745,
+   "ms": 1057
+  },
+  "ornate": {
+   "tris": 38668,
+   "trisFine": 305004,
+   "verts": 19077,
+   "ms": 5410
+  },
+  "thrachelm": {
+   "tris": 60130,
+   "trisFine": 256248,
+   "verts": 29684,
+   "ms": 1547
+  },
+  "provmanicaL": {
+   "tris": 27590,
+   "trisFine": 126436,
+   "verts": 13357,
+   "ms": 5601
+  },
+  "galea": {
+   "tris": 34816,
+   "trisFine": 142804,
+   "verts": 16877,
+   "ms": 622
+  },
+  "flavhelm": {
+   "tris": 34420,
+   "trisFine": 144384,
+   "verts": 17025,
+   "ms": 1164
+  },
+  "musculata": {
+   "tris": 38740,
+   "trisFine": 309488,
+   "verts": 19141,
+   "ms": 6999
+  },
+  "amazon": {
+   "tris": 38295,
+   "trisFine": 293904,
+   "verts": 18820,
+   "ms": 5933
+  },
+  "greavesL": {
+   "tris": 16150,
+   "trisFine": 85092,
+   "verts": 8019,
+   "ms": 5460
+  },
+  "greavesR": {
+   "tris": 16213,
+   "trisFine": 85076,
+   "verts": 8048,
+   "ms": 5604
+  },
+  "steelhelm": {
+   "tris": 30581,
+   "trisFine": 136552,
+   "verts": 15142,
+   "ms": 755
+  }
+ },
+ "totalMs": 376411
+}
