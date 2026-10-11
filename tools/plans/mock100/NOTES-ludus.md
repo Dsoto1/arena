@@ -111,3 +111,13 @@ Shots: `ludus_advisor-pop_1440.png`, `ludus_advisor-pop_390.png`, `ludus_advisor
   - `#week` now shows the same, so it differs from `#week-b` only in the parchment's stretch and the "Coming up" line.
 - **The "Coming up" line in `#week-b` is kept.** It fills the stretched parchment's empty bottom without crowding the tasks.
 Shots: `ludus_frieze-{a,b,c}_{1440,390}.png` (the 390 `_full` versions show the frieze), plus a re-take of `ludus_week(-b)_{1440,390}.png`.
+
+## ROUND 6 (2026-10-11)
+- **Frieze = (c) BRONZE, now the default** (`#frieze-a`/`-b` remain only for comparison). The wax seals are gone.
+  - An advisor with something for you LIGHTS UP: his bronze head becomes his colour portrait in a gold ring with a soft warm glow (it breathes gently, with no motion under Reduce motion).
+  - A tiny italic label under his name says what it is: GNAEVS "pick of the week", MARCIA "a note on Aper's contract".
+  - The other four stay bronze. The caption reads "2 advisors have something for you: tap a lit face", with a "2 lit" chip.
+- **`#week-long`: 12 tasks.** On desktop the parchment is pinned to the height of the tiles column, so the tiles never move; the list scrolls inside it.
+  - A soft fade at the bottom plus a "▾ 3 more" pill show there is more; the header reads 1/12.
+  - On the phone the parchment has a fixed 560 px height and scrolls inside, with the tiles below unchanged.
+Shots: `ludus_week-b_{1440,390}`, `ludus_week-long_{1440,390}` (plus the 390 `_full` versions).

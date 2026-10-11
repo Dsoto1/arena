@@ -398,6 +398,31 @@ body.fz-c .frieze .clip .ring img{content:var(--bz)}
 body.fz-c .frieze .clip b{color:#e8b860;text-shadow:0 1px 0 #000}body.fz-c .frieze .clip small{color:#a88a5a}
 body.fz-c .frieze .clip .wax{background:radial-gradient(circle at 38% 34%,#e2584a,#8a1a10 72%)}
 @media (max-width:600px){.fnbtn .lg,.fnbtn .days .bc .tn{display:none}body.s-week-b .trow .ti{width:34px;height:34px;font-size:17px}body.s-week-b .trow{padding:8px 4px}.fnbtn .days{flex-wrap:nowrap;width:100%}.fnbtn .days .bc{min-width:0;flex:1;padding:3px 5px}.fnbtn .days .bc span{font-size:11.5px;gap:3px}.fnbtn .days .bc u{width:15px;height:15px;font-size:9px}.fnbtn small .fd,.fnbtn small{font-size:11.5px}}
+
+/* ---------- round 6 ---------- */
+.fnbtn .days .bc em .tn{display:inline}
+/* bronze frieze by default; an advisor with something for you LIGHTS UP: colour portrait + warm glow + a tiny label */
+.clip .note{font:italic 11px/1.1 var(--body);color:#ffd99a;text-shadow:0 1px 2px #000;margin-top:2px;white-space:nowrap}
+.clip.lit .ring{background:radial-gradient(circle at 32% 28%,#fff1c4,#e2b04e 50%,#8a5a1a)!important;box-shadow:0 0 0 2px #ffd36a,0 0 18px 6px rgba(255,190,90,.55),0 0 36px 10px rgba(255,160,60,.25)!important}
+body .frieze .clip.lit .ring img{content:var(--col)!important;filter:none}
+.clip.lit b{color:#ffe7a8!important}
+@media (prefers-reduced-motion:no-preference){.clip.lit .ring{animation:lit6 3.2s ease-in-out infinite}}
+@keyframes lit6{50%{box-shadow:0 0 0 2px #ffd36a,0 0 24px 9px rgba(255,190,90,.65),0 0 44px 14px rgba(255,160,60,.3)}}
+/* #week-long: the parchment keeps its height (= the tiles column) and scrolls inside */
+body:not(.s-week-long) .long-only{display:none!important}
+body.s-week-long .short-only,body.s-week-long .nextwk{display:none!important}
+body.s-week-long .lcol{position:relative}
+body.s-week-long .tasks{position:absolute;inset:0}
+body.s-week-long .tl{flex:1;min-height:0;overflow:auto;-webkit-mask:linear-gradient(#000 85%,transparent);mask:linear-gradient(#000 85%,transparent);padding-bottom:30px;scrollbar-width:thin}
+body.s-week-long .trow{padding:6px 4px}body.s-week-long .trow .ti{width:40px;height:40px;font-size:20px}body.s-week-long .trow .tx b{font-size:15.5px}body.s-week-long .trow .tx>span{font-size:13px}
+.more{align-self:center;margin:-22px 0 2px;position:relative;z-index:2;font:700 12px var(--body);color:#2a1708;background:#f0e2be;border:1px solid #9c8058;border-radius:12px;padding:2px 12px;box-shadow:0 2px 4px rgba(60,40,20,.3);cursor:pointer}
+@media (max-width:600px){
+ body.s-week-long .tasks{position:static;height:560px}
+ body.s-week-long .trow .ti{width:34px;height:34px;font-size:17px}
+ .fnbtn .days .bc em .tn{display:none}
+ .fz{gap:2px}.clip{flex:1 1 0;min-width:0;padding:2px 0}.clip .note{white-space:normal;text-align:center;font-size:9px;line-height:1.1}
+ .thd h2{font-size:16px}
+}
 </style></head>
 <body>
 <div class="app">
@@ -460,10 +485,10 @@ body.fz-c .frieze .clip .wax{background:radial-gradient(circle at 38% 34%,#e2584
       <svg class="wr" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#5c4326" stroke-width="1.5"/><path d="M12 30q-6-8-3-18M28 30q6-8 3-18" stroke="#5c4326" stroke-width="2" fill="none"/><text x="20" y="25" text-anchor="middle" font-size="13" fill="#5c4326">✦</text></svg>
       <h2>Weekly tasks</h2><span class="sp"></span>
       <span class="mailbtn" title="All letters (opens the letters drawer)">📬 <span>Letters</span> <b class="week-only">5</b><b class="bye-only">3</b></span>
-      <span class="bar"><i class="week-only" style="width:25%"></i><i class="bye-only" style="width:0%"></i></span><span class="n"><span class="week-only">1/4</span><span class="bye-only">0/6</span></span>
+      <span class="bar"><i class="week-only short-only" style="width:25%"></i><i class="long-only" style="width:8%"></i><i class="bye-only" style="width:0%"></i></span><span class="n"><span class="week-only short-only">1/4</span><span class="long-only">1/12</span><span class="bye-only">0/6</span></span>
      </div>
      <!-- week 3: a light week, 4 tasks -->
-     <div class="week-only">
+     <div class="week-only short-only">
       <div class="trow"><span class="ck"></span><span class="ti">✉️</span><span class="tx"><b>Read the morning letters</b><span>The Quaestor, the Consilium and your barracks master wrote</span></span><span class="cnt">0/5</span><span class="go">›</span></div>
       <div class="trow"><span class="ck"></span><span class="ti">🗣</span><span class="tx"><b>Answer the eager <span class="due">this week</span></b><span>The Fox of Roma, Hostus "Lupa" Regulus, Lupercus ask for a fight</span></span><span class="cnt">0/3<small>+4 morale</small></span><span class="go">›</span></div>
       <div class="trow done"><span class="ck">✓</span><span class="ti">⚔</span><span class="tx"><b>Fill the Fight Night card</b><span>Undercard, Feature and Main in Pompeii carry your fighters</span></span><span class="cnt">3/3</span><span class="go">›</span></div>
@@ -471,6 +496,9 @@ body.fz-c .frieze .clip .wax{background:radial-gradient(circle at 38% 34%,#e2584
       <div class="ok">Already in order: <b>✓</b> no untreated wounds · <b>✓</b> no contract runs out · <b>✓</b> 5 on the roster · <b>✓</b> no perk points</div>
       <div class="nextwk">📅 <b>Coming up:</b> week 4 is a bye (no games) · week 5 Fight Night at home in Capua · contracts: Aper the Gilded ends in 3 weeks</div>
      </div>
+     <!-- #week-long: 12 tasks, the parchment scrolls inside -->
+     <div class="long-only tl"><div class="trow"><span class="ck"></span><span class="ti">✉️</span><span class="tx"><b>Read the morning letters</b><span>The Quaestor, the Consilium and your barracks master wrote</span></span><span class="cnt">0/5</span><span class="go">›</span></div><div class="trow"><span class="ck"></span><span class="ti">🗣</span><span class="tx"><b>Answer the eager <span class="due">this week</span></b><span>The Fox of Roma, Hostus "Lupa" Regulus, Lupercus ask for a fight</span></span><span class="cnt">0/3<small>+4 morale</small></span><span class="go">›</span></div><div class="trow done"><span class="ck">✓</span><span class="ti">⚔</span><span class="tx"><b>Fill the Fight Night card</b><span>Undercard, Feature and Main in Pompeii carry your fighters</span></span><span class="cnt">3/3</span><span class="go">›</span></div><div class="trow"><span class="ck"></span><span class="ti">🏋</span><span class="tx"><b>Set the week's training</b><span>Drills for 5 fighters, 10 hours in the Training Yard</span></span><span class="cnt">0/10 h</span><span class="go">›</span></div><div class="trow"><span class="ck"></span><span class="ti">📜</span><span class="tx"><b>Renew Aper the Gilded <span class="due">by week 6</span></b><span>His contract ends in 3 weeks — he asks 34/wk</span></span><span class="cnt">0/1</span><span class="go">›</span></div><div class="trow"><span class="ck"></span><span class="ti">🤝</span><span class="tx"><b>Answer Ludus Severianus <span class="due">by week 4</span></b><span>Lupercus for Pompeia Ferreus + 25 coin</span></span><span class="cnt">0/1</span><span class="go">›</span></div><div class="trow"><span class="ck"></span><span class="ti">🎟</span><span class="tx"><b>The Golden Trident Challenge <span class="due">this week</span></b><span>The editors invite one fighter</span></span><span class="cnt">0/1</span><span class="go">›</span></div><div class="trow"><span class="ck"></span><span class="ti">🗡</span><span class="tx"><b>Domitia Severa mocks your training <span class="due">this week</span></b><span>Answer in kind: +1 fame, +4 rivalry</span></span><span class="cnt">0/1</span><span class="go">›</span></div><div class="trow"><span class="ck"></span><span class="ti">🔨</span><span class="tx"><b>Mend the damaged gear</b><span>2 pieces on the shelf · 🔨 Repair all · 18 coin</span></span><span class="cnt">0/2</span><span class="go">›</span></div><div class="trow"><span class="ck"></span><span class="ti">🎓</span><span class="tx"><b>Learn from the season</b><span>2 perk points wait on the lanista's tree</span></span><span class="cnt">0/2</span><span class="go">›</span></div><div class="trow"><span class="ck"></span><span class="ti">★</span><span class="tx"><b>Meet the Recruiter's pick <span class="due new">new</span></b><span>Galba Bone-Breaker · Soldier · ~B+ · asks 38/wk</span></span><span class="cnt">0/1</span><span class="go">›</span></div><div class="trow"><span class="ck"></span><span class="ti">🖌</span><span class="tx"><b>Keep the name on the walls</b><span>Your programmata in Capua run out this week</span></span><span class="cnt">0/1</span><span class="go">›</span></div><div class="ok">Already in order: <b>✓</b> no untreated wounds · <b>✓</b> 5 on the roster</div></div>
+     <div class="more long-only">▾ 3 more</div>
      <!-- week 4, bye: 6 tasks -->
      <div class="bye-only">
       <div class="trow"><span class="ck"></span><span class="ti">✉️</span><span class="tx"><b>Read the morning letters</b><span>The bye letter, the Quaestor, a rival's taunt</span></span><span class="cnt">0/3</span><span class="go">›</span></div>
@@ -498,8 +526,8 @@ body.fz-c .frieze .clip .wax{background:radial-gradient(circle at 38% 34%,#e2584
       <div class="cap"><i class="em">🏛</i><span><b>Upgrade School</b><span>The buildings · next: Barracks I · <img class="coin" src="../../../assets/coin.webp" alt="">250</span></span><i class="chev">›</i></div></div>
      <div class="tile"><div class="art"><div class="bg" data-sc="armory"></div><div class="st"><span>12 on the shelf</span><span class="w">2 to repair</span></div></div>
       <div class="cap"><i class="em">⚒</i><span><b>Armory</b><span>Better gear. Shelf, repairs, the stalls</span></span><i class="chev">›</i></div></div>
-     <div class="tile wide adv"><div class="art frieze"><div class="fz"><button class="clip" data-adv="0" type="button"><span class="ring"><img src="ludus_img/marble_0.png" style="--bz:url(ludus_img/bronze_0.png)" alt=""><i class=wax></i></span><b>KAESO</b><small>CONSILIVM</small></button><button class="clip" data-adv="1" type="button"><span class="ring"><img src="ludus_img/marble_1.png" style="--bz:url(ludus_img/bronze_1.png)" alt=""><i class=wax></i></span><b>GNAEVS</b><small>RECRVITER</small></button><button class="clip" data-adv="2" type="button"><span class="ring"><img src="ludus_img/marble_2.png" style="--bz:url(ludus_img/bronze_2.png)" alt=""></span><b>QVINTVS</b><small>DOCTORE</small></button><button class="clip" data-adv="3" type="button"><span class="ring"><img src="ludus_img/marble_3.png" style="--bz:url(ludus_img/bronze_3.png)" alt=""></span><b>SEPTIMVS</b><small>MEDICVS</small></button><button class="clip" data-adv="4" type="button"><span class="ring"><img src="ludus_img/marble_4.png" style="--bz:url(ludus_img/bronze_4.png)" alt=""></span><b>MARCIA</b><small>CLERK</small></button><button class="clip" data-adv="5" type="button"><span class="ring"><img src="ludus_img/marble_5.png" style="--bz:url(ludus_img/bronze_5.png)" alt=""></span><b>NONVS</b><small>BARRACKS MASTER</small></button></div></div>
-      <div class="cap"><i class="em">🏛</i><span><b>Advisors <i class="cnt">2 new</i></b><span class="week-only">Tap a face to hear him · Consilium: "Hold our fighters back in Pompeii."</span><span class="bye-only">Tap a face to hear him · Doctore: "A bye is a gift. Use the extra hours."</span></span></div></div>
+     <div class="tile wide adv"><div class="art frieze"><div class="fz"><button class="clip" data-adv="0" type="button"><span class="ring"><img src="ludus_img/marble_0.png" style="--bz:url(ludus_img/bronze_0.png);--col:url(ludus_img/face_0.png)" alt=""></span><b>KAESO</b><small>CONSILIVM</small></button><button class="clip lit" data-adv="1" type="button"><span class="ring"><img src="ludus_img/marble_1.png" style="--bz:url(ludus_img/bronze_1.png);--col:url(ludus_img/face_1.png)" alt=""></span><b>GNAEVS</b><small>RECRVITER</small><em class="note">pick of the week</em></button><button class="clip" data-adv="2" type="button"><span class="ring"><img src="ludus_img/marble_2.png" style="--bz:url(ludus_img/bronze_2.png);--col:url(ludus_img/face_2.png)" alt=""></span><b>QVINTVS</b><small>DOCTORE</small></button><button class="clip" data-adv="3" type="button"><span class="ring"><img src="ludus_img/marble_3.png" style="--bz:url(ludus_img/bronze_3.png);--col:url(ludus_img/face_3.png)" alt=""></span><b>SEPTIMVS</b><small>MEDICVS</small></button><button class="clip lit" data-adv="4" type="button"><span class="ring"><img src="ludus_img/marble_4.png" style="--bz:url(ludus_img/bronze_4.png);--col:url(ludus_img/face_4.png)" alt=""></span><b>MARCIA</b><small>CLERK</small><em class="note">a note on Aper's contract</em></button><button class="clip" data-adv="5" type="button"><span class="ring"><img src="ludus_img/marble_5.png" style="--bz:url(ludus_img/bronze_5.png);--col:url(ludus_img/face_5.png)" alt=""></span><b>NONVS</b><small>BARRACKS MASTER</small></button></div></div>
+      <div class="cap"><i class="em">🏛</i><span><b>Advisors <i class="cnt">2 lit</i></b><span class="week-only">2 advisors have something for you: tap a lit face</span><span class="bye-only">Tap a face to hear him · Doctore: "A bye is a gift. Use the extra hours."</span></span></div></div>
     </div>
    </div>
 
@@ -596,11 +624,11 @@ body.fz-c .frieze .clip .wax{background:radial-gradient(circle at 38% 34%,#e2584
   <span class="req">Level 2 gives <span class="gain">+4 recruiter's hours (24 h) · grades 20% sharper</span>. Levels 3–5 are earned by deeds.</span></div>
 </div>
 <div id="phoneFrame"><iframe title="phone" src="ludus.html#week"></iframe></div>
-<div class="statebar"><a href="#week">#week</a><a href="#week-b">#week-b</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#mail-open">#mail-open</a><a href="#frieze-a">#frieze-a</a><a href="#frieze-b">#frieze-b</a><a href="#frieze-c">#frieze-c</a><a href="#advisor-pop">#advisor-pop</a><a href="#advisor-train">#advisor-train</a><a href="#team-a">#team-a</a><a href="#team-b">#team-b</a><a href="#rooms">#rooms</a><a href="#phone">#phone</a></div>
+<div class="statebar"><a href="#week">#week</a><a href="#week-b">#week-b</a><a href="#week-long">#week-long</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#mail-open">#mail-open</a><a href="#frieze-a">#frieze-a</a><a href="#frieze-b">#frieze-b</a><a href="#frieze-c">#frieze-c</a><a href="#advisor-pop">#advisor-pop</a><a href="#advisor-train">#advisor-train</a><a href="#team-a">#team-a</a><a href="#team-b">#team-b</a><a href="#rooms">#rooms</a><a href="#phone">#phone</a></div>
 <script src="ludus_scenes.js"></script>
 <script>
 document.querySelectorAll('[data-sc]').forEach(e=>e.innerHTML=SCENE99(e.dataset.sc,e.dataset.mode||'tile'));
-function st(){const h=(location.hash||'#week').slice(1);document.body.className=h.startsWith('frieze-')?'s-week-b fz-'+h.slice(7):'s-'+h;document.querySelectorAll('.statebar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h));
+function st(){const h=(location.hash||'#week').slice(1);document.body.className=(h.startsWith('frieze-')?'s-week-b fz-'+h.slice(7):h==='week-long'?'s-week-b s-week-long':'s-'+h)+(/frieze-[ab]/.test(h)?'':' fz-c');document.querySelectorAll('.statebar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h));
  document.querySelectorAll('.rail .t.a-on').forEach(t=>t.classList.toggle('on',h==='team-a'))}
 addEventListener('hashchange',st);st();
 document.querySelector('.mailbtn').onclick=()=>location.hash='#mail';
