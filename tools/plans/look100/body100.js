@@ -485,7 +485,8 @@ function* buildSteps(opts = {}) {
     let k = Math.max(0, Math.min(1, (0.62 - f) / 0.3));
     /* no crease ink where a shoulder meets the torso: raising the arm would stretch it into a blot */
     let wS = 0, wT = 0; for (let q = 0; q < 4; q++) { const b = skinI[i * 4 + q], w = skinW[i * 4 + q]; if (b === bi.sL || b === bi.sR) wS += w; if (b === bi.ch || b === bi.sp) wT += w; }
-    if (grp[i] === GI.H) k = Math.max(0, (k - (o.face2 ? 0.42 : 0.2)) / (o.face2 ? 0.58 : 0.8));   /* the face keeps only its tight creases (no grey smudge) */
+    if (grp[i] === GI.H) k = Math.max(0, (k - (o.face2 ? 0.42 : 0.2)) / (o.face2 ? 0.58 : 0.8));
+    if (o.face2 && grp[i] === GI.H) { const lx = Math.abs(p[0] - HO[0]) / hs, ly2 = (p[1] - HO[1]) / hs; if (lx < 0.022 && ly2 > 0.028 && ly2 < 0.068 && n[2] > 0.3) k = 0; }   /* no crease smudge round the mouth: the painted line does it */   /* the face keeps only its tight creases (no grey smudge) */
     ink[i] = (wS > 0.04 && wT > 0.04) || (grp[i] !== GI.T && wT > 0.04 && (grp[i] === GI.AL || grp[i] === GI.AR)) ? k * 0.2 : k;
     col.set(c, i * 3);
   }

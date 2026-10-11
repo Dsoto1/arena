@@ -30,22 +30,49 @@ c=ramp(t);pat=(t<0.3)[...,None]*np.array([-.05,.12,.06])*(noise(fw,fh,6,11)[...,
 yy,xx=np.mgrid[0:fh,0:fw];r=np.hypot(xx-fw/2,yy-fh/2)/(fw/2);alpha=(r<0.98).astype(np.float32)
 Image.fromarray((np.dstack([c,alpha])*255).astype(np.uint8)).save(os.path.join(D,'r4_doctore_bronze.png'))
 print('ok')
-# --- round 4b: the LOST LEFT ARM from the statue's own pixels (body's left = image right). Cut on SEV92's shoulder line (×2.4 to avatar px).
+# --- round 4b/4c: the LOST LEFT ARM from the statue's own pixels (body's left = image right), broken like an antique marble.
+from PIL import ImageDraw
 mk=np.array(Image.open(A))[...,3]>200;Hh,Ww=mk.shape;yy,xx=np.mgrid[0:Hh,0:Ww]
-p1=np.array([243.4,248.6]);p2=np.array([253.7,145.2])        # shoulder cut (x,y)
+p1=np.array([243.4,248.6]);p2=np.array([253.7,145.2])        # SEV92 shoulder cut (x,y) ×2.4
 def linex(y):return p1[0]+(p2[0]-p1[0])*(y-p1[1])/(p2[1]-p1[1])
-rr=np.random.default_rng(3);jag=np.repeat(rr.integers(-5,6,Hh//6+2),6)[:Hh].astype(float)  # jagged break, 6 px steps
-side=xx-np.vectorize(linex)(yy)
+rr=np.random.default_rng(11)
+jag=np.zeros(Hh);y=0;v=0.0
+while y<Hh:                                                     # chipped edge: uneven steps 2-7 px, offsets -6..7
+  L=int(rr.integers(2,8));v=float(np.clip(v+rr.normal(0,3.2),-6,7));jag[y:y+L]=v+np.linspace(0,rr.normal(0,1.5),L)[:max(0,min(L,Hh-y))];y+=L
+LX=np.array([linex(t) for t in range(Hh)]);side=xx-LX[yy]
 arm=mk&(((yy<=262)&(side>jag[yy]))|((yy>262)&(xx>=259)))&(yy>=120)
-# the stump's broken face: a dark rim on the body side of the break
-rim=mk&~arm&(np.abs(side-jag[yy])<4)&(yy>=140)&(yy<=262)
 ma=np.array(Image.open(os.path.join(D,'r4_marble.png'))).astype(np.float32)
-halo=np.array(Image.fromarray((arm*255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5)))>0   # the arm + its antialiased edge; the soft glow around the statue stays
-ma[(halo|arm)&~(mk&~arm),3]=0
-ma[rim,:3]*=0.62;ma[rim,:3]+=np.array([20,16,12])
+near=np.array(Image.fromarray((arm*255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5)))>0
+body=mk&~arm
+ma[near&~mk,3]*=0.6
+# the fracture face: a band on the body side of the break — darker granular core, lit top facets, a bright lip at the very edge
+d=jag[yy]-side                                                  # >0 inside the body, distance from the break
+brk=body&(yy>=142)&(yy<=262)&(d>=0)&(d<9)
+gr=noise(Ww,Hh,2,21)
+core=np.array([148,141,132])+(gr[...,None]-.5)*60
+w_=np.clip(1-d/9,0,1)[...,None]
+ma[brk,:3]=(ma[...,:3]*(1-w_*0.75)+core*w_*0.75)[brk]
+dj=np.gradient(jag)[yy]                                         # facets facing up-left (the light) catch it
+lit=brk&(d<3.2)&(dj< -0.2)
+ma[lit,:3]=np.array([252,249,240])
+lip=brk&(d<1.4)&~lit;ma[lip,:3]=ma[lip,:3]*0.55+np.array([60,55,50])*0.45
+im2=Image.fromarray(np.clip(ma,0,255).astype(np.uint8));dr=ImageDraw.Draw(im2)
+for k in range(5):                                              # fine cracks running into the shoulder
+  y0=float(rr.uniform(150,255));x0=linex(y0)+jag[int(y0)]-2;pts=[(x0,y0)]
+  for _ in range(int(rr.integers(4,8))):x0-=float(rr.uniform(4,9));y0+=float(rr.normal(0,3.5));pts.append((x0,y0))
+  dr.line(pts,fill=(96,90,84,255),width=1)
+for k in range(3):                                              # small chips knocked off the edge
+  y0=float(rr.uniform(150,250));x0=linex(y0)+jag[int(y0)];r=float(rr.uniform(2,4))
+  dr.polygon([(x0+1,y0-r),(x0-r*1.4,y0),(x0+1,y0+r)],fill=(0,0,0,0))
+ma=np.array(im2).astype(np.float32)
+# the missing arm: a pale, faint "was here" — light marble-white at low alpha, no dark interior
+ma[arm,:3]=np.array([244,240,228]);ma[arm,3]=22
+er=arm.copy();acc=np.zeros(arm.shape,np.float32)                 # a soft pale inner rim, fading inward
+for k in range(6):
+  er=np.array(Image.fromarray((er*255).astype(np.uint8)).filter(ImageFilter.MinFilter(3)))>0;acc+=er
+rimw=np.clip(1-acc/6,0,1);ma[arm,3]=84+60*rimw[arm]**2
 Image.fromarray(np.clip(ma,0,255).astype(np.uint8)).save(os.path.join(D,'r4_marble_lost.png'))
-# ghost: the arm at FULL size, a faint fill + a dashed outline
 am=Image.fromarray((arm*255).astype(np.uint8));ed=np.array(am.filter(ImageFilter.FIND_EDGES).filter(ImageFilter.MaxFilter(3)))>0
 dash=((xx+yy)//7)%2==0
-g=np.zeros((Hh,Ww,4),np.uint8);g[arm]=(236,226,214,34);g[ed&dash]=(216,168,240,200)
+g=np.zeros((Hh,Ww,4),np.uint8);g[ed&dash&~body]=(246,234,196,215)     # pale-gold dashed outline
 Image.fromarray(g).save(os.path.join(D,'r4_ghost_larm.png'));print('lost arm ok',int(arm.sum()))

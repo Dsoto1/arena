@@ -54,3 +54,6 @@ Open points:
   - The missing arm shows at full size as a faint fill with a dashed outline (`r4_marble_lost.png` + `r4_ghost_larm.png`). Before, the shrunken SEV92 shape was masked out.
   - The chest wound glows only on a small soft spot with a gash mark, no longer over the whole torso.
   - No other state has a severed limb.
+- **Polish (4c):** the shoulder is now a chipped marble fracture: an uneven jagged edge, a darker granular core and lit top facets (light from the upper left). Three small chips are knocked off and five fine dark cracks run into the shoulder.
+  - The missing arm is a pale, translucent marble ghost with a soft inner rim and a cream dashed outline, no dark interior.
+  - The chest wound spot is unchanged.
