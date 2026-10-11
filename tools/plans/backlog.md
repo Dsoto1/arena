@@ -275,5 +275,5 @@ BEASTS ROUND 3 ANSWERS (his 2026-10-11): 1a split Tholo + Commodus like Leo · 2
 MY LUDUS ANSWERS: 1a advisor effects as built · FACILITIES (FAC 250/600/1200 builds under the advisors) go INTO the advisors — each building under the advisor who runs it, built from
 his popover · 2b Clerk's rebate shown in the header wages badge · 3a Roster + Armory banners swap to the new scenes now · 4b Consilium's counsel + Ledger links move where they belong
 thematically (counsel → Consilium's popover, Ledger → the Clerk's popover / money badge).
-ENTER ANY EVENT built (296-v100any, merged). OPEN for him: 1 specials bookable before travel (bouts need the road paid) ok? · 2 all specials on Sunday after the Main event, or own days (mock had Familia Sat)? ·
+ENTER ANY EVENT built (296-v100any, merged). HIS ANSWERS: 1a 2a (own days) 3a 4a 5b (Gauntlet out + never the Commodus event as a special) 6a — building. Was: 1 specials bookable before travel (bouts need the road paid) ok? · 2 all specials on Sunday after the Main event, or own days (mock had Familia Sat)? ·
 3 restrictions only on specials ok? · 4 invitationals stay separate ok? · 5 Gauntlet in the pool (survives ~1 in 6 sims)? · 6 fee/purse first guess: solo fee = purse/10, purse = main ×1.8.
