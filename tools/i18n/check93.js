@@ -10,7 +10,8 @@
    the ceilings leave room for one batch; lower them after a pass. */
 const fs=require('fs'),path=require('path'),{execSync}=require('child_process');
 const ROOT=path.resolve(__dirname,'..','..');
-const CEIL={missing:+(process.env.I18N_MAX_MISSING||400),unused:+(process.env.I18N_MAX_UNUSED||1200),broken:+(process.env.I18N_MAX_BROKEN||0)};
+/* v1.0: the v1.0 features are written in English first; the translation pass (prep.sh -> TRANSLATE.md -> finish.sh) closes the gap — 561 new keys untranslated at the v1.0 build, ceiling 600 until then (lower it after the pass) */
+const CEIL={missing:+(process.env.I18N_MAX_MISSING||600),unused:+(process.env.I18N_MAX_UNUSED||1200),broken:+(process.env.I18N_MAX_BROKEN||0)};
 const args=new Set(process.argv.slice(2));
 /* the keys the page uses */
 const used=new Map();

@@ -5,7 +5,7 @@
 function tray100(){try{const box=document.querySelector('#mainMenu .mmbtns');if(!box)return;
   const still=typeof SETTINGS!=='undefined'&&SETTINGS.anim88==='off';
   for(const [sel,id] of TR){const b=box.querySelector(sel),t=document.getElementById(id);if(!b||!t)continue;
-    b.classList.add('tray100');t.classList.add('tray100p');b.classList.toggle('still100',still);
+    if(!b.classList.contains('tray100'))b.classList.add('tray100');if(!t.classList.contains('tray100p'))t.classList.add('tray100p');if(b.classList.contains('still100')!==still)b.classList.toggle('still100',still);
     const open=id==='mmMulti'?!t.hidden:t.classList.contains('on');
     if(b.getAttribute('aria-expanded')!==String(open))b.setAttribute('aria-expanded',String(open));
     if(!b.getAttribute('aria-controls'))b.setAttribute('aria-controls',id)}}catch(e){}}
