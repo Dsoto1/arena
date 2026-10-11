@@ -189,3 +189,25 @@ unchanged), page6.js, make6.js.
 - Triangles 30.7k–60.3k per piece (thorax 71.0k), helmets build 0.5–1.0 s, cuirasses 3.7–9.8 s, once per body.
 - Sword 15° off the forearm line; max load searched until no gladius point is in the scutum board or the body: 0/68 with the shield
   hand 230 mm left of round 5 and the sword hand at (−0.33, 1.20, 0.44).
+
+## Round 7 — belts + limb pieces sculpted, engraving dropped, cloth per class (r7_*)
+
+Files: r7_sculpt.png (15 new belt/limb sculpts: his art · round 4 · round 7 two views), r7_maxload.png + r7_maxload_sheet.png,
+r7_classes.png + r7_cls_<class>.png, r7_board.png, r7_stats.json. Code: r7_sculpt.js (fork of r6), page7.js, make7.js.
+
+- 1b Reinforced Chest 53,463 tris (cell 12.1 mm; was 71k).
+- 2c dropped: Thracian palmette + cheek medallions, Hoplomachus brow medallion, Centurian bosses, Horned Helm brow medallion, Iron
+  Helm brow rivets, Steel Helm skulls, Bronze Chest wreath. Kept: silhouettes, colour blocks (Flavius' Chest figures, Ornate rosettes),
+  the Centurian scroll band, scales, the highlight bands.
+- 3b loincloth per class = k-means of the hip band of his minis8 front+back cells, lifted to survive the toon ramp (sampled → used):
+  soldier #3f0b06 → #7a1c14, royalty #222630 → #2c3550, hero #534824 → #5c6a2a, slave #7c5f3a → #9c7a46, veteranus #b1a391,
+  amazonia #73492e → #8a4a2a, venatore #452c45 → #5a3466, damnatio #3e2e22 → #4a3a2e.
+- 4a limb sculptor (LIMB7 + sculptLimb): an offset shell of the body field around one limb segment (span along the bone, sector around
+  it, never wrapping a neighbouring bone), solid into the limb, layer offsets pad 6 / plate 12.5 / belt 19 mm, lames / spiral wraps /
+  knee cops (round, pointed) / shoulder flange / fur + scaled plate; skinned from that limb's own body vertices. Pieces: wraps 10.8k,
+  legwraps 15.3k, bracers 9.0k, manica (Galerus) 32.3k, provmanica (Manica) 27.6k, galerus (Lorica arm) 25.6k, tassets 23.6–24.7k,
+  greaves 15.3–16.5k, leather greaves 18.8k, belts 23–24k triangles; 3.7–8.6 s each (belts 1.3–1.7 s), once per body and side.
+  Fix found on the way: the vertex re-projection now uses a normalised gradient and a capped step (a cut region in the field had flung
+  vertices a metre away).
+- Cost: class sheets now 16.8–21.1 s each (were 6–8 s) and the max-load sheet 30.3 s — the SwiftShader render of many skinned meshes
+  with outlines; sizes unchanged (27.6–35.4 KB per class, 33.5 KB max load). Full run 446 s.

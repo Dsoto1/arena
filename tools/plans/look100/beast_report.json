@@ -571,6 +571,47 @@
    "idleWalkMB": 6.15,
    "frames": 23,
    "bodyBuildMs": 4998
+  },
+  "commodus": {
+   "key": "commodus",
+   "meta": [
+    142,
+    144,
+    71,
+    98.5,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 265503,
+   "kb": 430,
+   "decodedMB": 14.35,
+   "idleWalkMB": 6.24,
+   "frames": 23,
+   "bodyBuildMs": 4998
   }
  }
 }
