@@ -90,6 +90,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 .rd .nm b{font:400 19px var(--display);color:var(--bone);letter-spacing:.02em}
 .rd .nm span{font:12px var(--mono);color:var(--muted)}
 .rd .nm em{font:600 10px var(--mono);letter-spacing:.12em;font-style:normal;color:#140f0b;background:var(--gold2);padding:1px 6px;border-radius:3px}
+.rd.done{opacity:.5}.rd.done .n{color:var(--muted)}.rd .nm em.dn{background:#4d7a43;color:#e8f5df}
 .rd.now{background:linear-gradient(90deg,#3a2a18,#2a1f17 60%);box-shadow:inset 3px 0 0 var(--gold)}
 .rch{display:flex;gap:4px;justify-content:flex-end}
 .rch span{font:600 11px var(--mono);padding:2px 6px;border-radius:3px;border:1px solid}
@@ -115,7 +116,9 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 .seats{padding:4px 20px 12px}
 .strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .st{position:relative;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;border:1px solid #3a2c1e;border-left:4px solid var(--pc);background:linear-gradient(90deg,color-mix(in srgb,var(--pc) 16%,#2a1f17),#211811 70%);min-width:0}
-.st .fc{flex:none;width:52px;height:52px;border-radius:50%;background-size:cover;box-shadow:0 0 0 2px var(--pc),0 3px 8px #000a}
+.st .fc{position:relative;flex:none;width:56px;height:56px;border-radius:50%;background-size:92px 129px;background-position:-18px -24px;background-color:#2a1f30;box-shadow:0 0 0 2px var(--pc),0 3px 8px #000a}
+.st .fc i{position:absolute;right:-7px;bottom:-5px;width:26px;height:26px;border-radius:50%;background-size:cover;box-shadow:0 0 0 1.5px #140f0b,0 2px 4px #000b}
+.st.out{opacity:.5;filter:grayscale(.7)}.st.out .fc::after{content:"✝";position:absolute;inset:0;display:grid;place-items:center;font-size:26px;color:#efe3cc;text-shadow:0 1px 3px #000}
 .st .tx{min-width:0;flex:1}
 .st .tx b{display:block;font-size:14.5px;color:var(--bone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .st .tx>span{display:block;font-size:12.5px;color:var(--muted)}
@@ -143,6 +146,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
   .win{margin:0;width:100%;border-radius:0;border:0;min-height:100vh;padding-bottom:84px}
   .hd{grid-template-columns:72px minmax(0,1fr);gap:12px;padding:12px 16px}
   .card{width:72px}
+  .kick{display:block;letter-spacing:.14em;font-size:10.5px}
   .ttl{flex-wrap:wrap;gap:8px}.ttl h1{font-size:27px}
   .sr img{width:30px;height:30px}.sr span{font-size:11px}.sr b{font-size:12px}
   .meta span{font-size:12px;padding:2px 7px}
@@ -156,8 +160,6 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
   .rd .n{font-size:20px;grid-row:1/4}
   .rch{justify-content:flex-start}.rd .nm,.rd .rch,.rd .end,.rd .rw{grid-column:2}.rd .rw{text-align:left;white-space:normal}
   .rules{grid-template-columns:1fr}
-  .rules .rc.xm{display:none}
-  .more{display:block;margin-top:6px;font-size:13.5px;color:var(--gold2)}
   .seats{padding:4px 0 10px}
   .seats .sh{padding:0 16px}
   .strip{display:flex;overflow-x:auto;padding:0 16px 4px;scroll-snap-type:x mandatory}
@@ -187,7 +189,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
    <div class="legend"><span>PvP</span> = not allowed this round · hover a chip for the full rule</div>
   </div>
   <div>
-   <div class="sh">Rules &amp; conditions <span class="sp"></span><small><span style="color:var(--dig2)">◆</span> digital rule</small></div>
+   <div class="sh">Rules &amp; conditions <small>· this event</small></div>
    <div class="rules" id="rules"></div>
    <div class="more" id="more"></div>
   </div>
@@ -219,13 +221,12 @@ const D={
           ['III','Duel','5×5',[1,1,0,0],'<b>One</b> gladiator left standing','Winner '+WH+' 15']],
   rules:[['🎴','The Fate','Under 17 CF at the end: condemned. 17–19: the Thumb of Flavius.','ev'],
          ['🐾','Arena deck','Tholo, Leo, Leaena and Commodus may be drawn.',''],
-         ['📜','Mandata Flavi off','No secret objectives this event.',''],
-         ['◎','Focus needs 3 movement','Focus spends all your movement; below 3 it is refused.','dg'],
-         ['🏺','Focus on a Blessing','A focused ranged hit on a pot does +1 damage (PvP rounds).','dg'],
-         ['🗝','Lifting the chest','Picking up the Arena Chest costs 1 movement.','dg']],
+         ['🏺','Blessings on the pillars','Topple a pillar or break a pot: 2 coin · 1 CF, or an offering.',''],
+         ['📜','Mandata Flavi off','No secret objectives this event.','']],
   ssub:'· every one for himself',
   seats:[['Varinius Gracchi','royalty','Royalty','you'],['Galla "Fatum" Aquila','amazonia','Amazonia','Veteran'],['The Scourge of Arles','soldier','Soldier','Fighter'],['Nonus Messala','damnatio','Damnatio','Apprentice']]},
- special:{card:[1,1],kick:'TEAMS · <span class="k">SPECIAL EVENT</span>',name:'Golden Eagle',sr:0,
+ reopen:null,
+ special:{fo:4,card:[1,1],kick:'TEAMS · <span class="k">SPECIAL EVENT</span>',name:'Golden Eagle',sr:0,
   meta:['📍 <b>Leptis Magna</b>','📅 January 8','☾ Night','⚔ 4 gladiators · 2 teams','🏟 15K in the stands'],
   how:'Carry the Golden Eagle to a capture tile. After <b>three captures</b> your team may exit — the first team out wins <b>'+WH+' 15 CF</b>.',
   face:'pleased',say:'Gold for the swift. Sand for the slow.',
@@ -234,16 +235,16 @@ const D={
   rules:[['🦅','One Golden Eagle','It waits on the centre tile and returns there if its carrier leaves.','ev'],
          ['🚩','Three captures','Then your team may leave through a starting tile. First team out wins.','ev'],
          ['🎒','Start with nothing','Three items and two Arena Keys lie in the sand.','ev'],
-         ['🚫','No Crowd Favor, no abilities','CF is not earned or spent; class abilities are off.',''],
-         ['🌾','Eagle offerings still pay','Eagle and CF offerings found on the sand still count in no-CF rounds.','dg'],
-         ['◎','Focus needs 3 movement','Focus spends all your movement; below 3 it is refused.','dg']],
+         ['🚫','No Crowd Favor, no abilities','CF is not earned or spent; class abilities are off.','']],
   ssub:'· Team A <span class="tag ta">A</span> vs Team B <span class="tag tb">B</span>',
   seats:[['Thraex Murmillo','hero','Hero','you','A'],['Tigris the Twice-Freed','amazonia','Amazonia','Veteran','A'],['Ferrum the Unkillable','veteranus','Veteranus','Fighter','B'],['Tertius Audax','venatore','Venatore','Apprentice','B']]}
 };
 function show(){
  const h=(location.hash||'#classic').slice(1);
  const wide=h==='phone'&&innerWidth>600;document.body.classList.toggle('phonewide',wide);
- const d=D[h==='special'?'special':'classic'];
+ const d=h==='special'?D.special:h==='reopen'?D.reopen:D.classic;
+ document.getElementById('go').querySelector('.t').textContent=h==='reopen'?'Back to the sand':'Enter the arena';
+ document.querySelector('.ft .note').innerHTML=h==='reopen'?'Opened from <b>📋 Event</b> · the fight waits for you.':'Reopen any time: <b>📋 Event</b> on the top bar.';
  document.getElementById('card').style.backgroundPosition=`${d.card[0]*25}% ${d.card[1]*50}%`;
  document.getElementById('kick').innerHTML=d.kick;document.getElementById('bTitle').textContent=d.name;
  document.getElementById('sr').hidden=!d.sr;
@@ -252,12 +253,14 @@ function show(){
  document.getElementById('fface').style.backgroundImage=`url(../../../assets/flavmood_${d.face}.webp)`;
  document.getElementById('fsay').textContent='“'+d.say+'”';
  document.getElementById('rsub').innerHTML=d.rsub;document.getElementById('ssub').innerHTML=d.ssub;
- document.getElementById('rounds').innerHTML=d.rounds.map(([n,nm,z,f,end,rw,now])=>`<div class="rd ${now?'now':''}"><span class="n">${n}</span><span class="nm"><b>${nm}</b><span>${z}</span>${now?'<em>FIRST</em>':''}</span><span class="rch">${f.map((v,i)=>`<span class="${v?'y':'n0'}" title="${KT[i]}${v?'':' — not this round'}">${K[i]}</span>`).join('')}</span><span class="end">⏱ ${end}</span><span class="rw">${rw}</span></div>`).join('');
- document.getElementById('rules').innerHTML=d.rules.map(([ic,b,t,k],i)=>`<div class="rc ${k} ${i>=3?'xm':''}"><span class="ic">${ic}</span><div><b>${b}</b><span>${t}</span></div>${k==='dg'?'<span class="dgm">◆ DIGITAL</span>':''}</div>`).join('');
- document.getElementById('more').textContent=`＋ ${d.rules.length-3} more rules ▾`;
- document.getElementById('seats').innerHTML=d.seats.map(([nm,k,cl,mind,tm])=>{const you=mind==='you';const [fx,fy]=FACE[k]||[400,230];
-  return `<div class="st ${you?'you':''}" style="--pc:${CC[k]}"><span class="fc" style="background-image:url(../../../assets/ptokf81_${k}.webp)" title="Token round (the game shows his portrait here)"></span><span class="tx"><b>${nm}</b><span><span class="cl">${cl}</span>${tm?` <span class="tag t${tm.toLowerCase()}">${tm}</span>`:''}${you?' <span class="tag">YOU</span>':` <span class="tag cpu">CPU · ${mind}</span>`}</span></span><span class="tk" style="background-image:url(../../../assets/mini_${k}.webp)"></span></div>`}).join('');
+ document.getElementById('rounds').innerHTML=d.rounds.map(([n,nm,z,f,end,rw,now],ri)=>{const st=d.ri==null?(now?'first':''):ri<d.ri?'done':ri===d.ri?'now':'';return `<div class="rd ${st==='first'||st==='now'?'now':''} ${st==='done'?'done':''}"><span class="n">${n}</span><span class="nm"><b>${nm}</b><span>${z}</span>${st==='first'?'<em>FIRST</em>':st==='now'?'<em>NOW</em>':st==='done'?'<em class="dn">✓ DONE</em>':''}</span><span class="rch">${f.map((v,i)=>`<span class="${v?'y':'n0'}" title="${KT[i]}${v?'':' — not this round'}">${K[i]}</span>`).join('')}</span><span class="end">⏱ ${end}</span><span class="rw">${rw}</span></div>`}).join('');
+ document.getElementById('rules').innerHTML=d.rules.map(([ic,b,t,k],i)=>`<div class="rc ${k} "><span class="ic">${ic}</span><div><b>${b}</b><span>${t}</span></div></div>`).join('');
+ 
+ document.getElementById('seats').innerHTML=d.seats.map(([nm,k,cl,mind,tm,out],si)=>{const fi=(d.fo||0)+si;const you=mind==='you';const [fx,fy]=FACE[k]||[400,230];
+  return `<div class="st ${you?'you':''} ${out?'out':''}" style="--pc:${CC[k]}"><span class="fc" style="background-image:url(img/brief_face${fi}.png)"><i style="background-image:url(../../../assets/ptokf81_${k}.webp)"></i></span><span class="tx"><b>${nm}</b><span><span class="cl">${cl}</span>${tm?` <span class="tag t${tm.toLowerCase()}">${tm}</span>`:''}${out?' <span class="tag cpu">✝ fell in round I</span>':you?' <span class="tag">YOU</span>':` <span class="tag cpu">CPU · ${mind}</span>`}</span></span><span class="tk" style="background-image:url(../../../assets/mini_${k}.webp)"></span></div>`}).join('');
 }
+D.reopen={...D.classic,ri:1,kick:'CLASSIC · <span class="k">ROUND II OF III · IN PROGRESS</span>',face:'pleased',say:'Better. Now earn the next one.',
+ seats:D.classic.seats.map((x,i)=>i===3?[...x,undefined,1]:x),ssub:'· three still standing'};
 addEventListener('hashchange',show);show();
 </script>
 </body></html>
