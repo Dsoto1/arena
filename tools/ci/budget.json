@@ -3,7 +3,7 @@
   "month_cap": 5000,
   "billing_day": 1,
   "reserve": 300,
-  "exclusive_until": "2026-10-10",
+  "exclusive_until": "2026-10-11",
   "shards_full": 8,
   "shard_target_s": 600,
   "setup_min": 3,
