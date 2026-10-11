@@ -9,6 +9,9 @@ import { LAYER, outfitCheck } from './outfit100.js';
 import { ENDS } from './rig100.js';
 
 const V3 = (a) => new THREE.Vector3(...a);
+/* the painted pass shades deep: pieces are authored a little lighter than his art so they read at the same value on the board */
+const LI = (hex, k = 0.2) => '#' + new THREE.Color(hex).lerp(new THREE.Color('#fff4e0'), k).getHexString();
+const mergeL = (parts) => merge(parts.map(([g, c]) => [g, LI(c)]));
 const tube = (pts, r, seg = 24, rs = 8) => new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(V3)), seg, r, rs, false);
 /* a tapered tube (horns, fangs, spikes): stacked cones along a curve */
 function taper(pts, r0, r1, n = 10) { const c = new THREE.CatmullRomCurve3(pts.map(V3)); const parts = [];
@@ -26,40 +29,39 @@ const holesTex = (base, hole, edge) => canvasTex(256, 160, (g, w, h) => { g.fill
 
 /* ======================= HELMETS (head-local, origin = the head pivot HO, metres × hs) ======================= */
 /* each returns [[geometry, colour] …] (one merged vertex-coloured mesh) + optional textured extras [[geometry, material] …] */
-const IRON = '#4f5a4c', IRON_D = '#3a3f3a', GOLDH = '#d6ab4c', BLK = '#1e1b19', RED_P = '#a8241c', STEEL_B = '#5c6a7c', SILVER = '#c9ced3';
+const IRON = '#4f5a4c', IRON_D = '#3a3f3a', GOLDH = '#d6ab4c', BLK = '#1e1b19', RED_P = '#a8241c', STEEL_B = '#7f93ad', SILVER = '#c9ced3';
 const HELM = {
   /* Iron Helm (cell 0): a green-iron dome, gold riveted bands crossing over the top, a long nasal, cheek guards */
-  galea: (T) => { const P = [[domeG(0.102, 0.12, 0.114, 0.125, -0.006, 0, Math.PI * 0.6), IRON]];
+  galea: (T) => { const P = [[domeG(0.104, 0.108, 0.116, 0.13, -0.006, 0, Math.PI * 0.58), '#6c7a62']];
     P.push([ringG(0.1, 0.006, 0.1, -0.006, 1.02, 1.12), GOLDH]);
     for (const rot of [0, Math.PI / 2]) { const g = new THREE.TorusGeometry(0.118, 0.006, 6, 40, Math.PI); if (rot) g.rotateY(Math.PI / 2); g.scale(rot ? 1 : 0.88, 1, rot ? 0.97 : 1); g.translate(0, 0.125, -0.006); P.push([g, GOLDH]); }
     for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; P.push([ball(0.0065, Math.sin(a) * 0.103, 0.1, Math.cos(a) * 0.112 - 0.006), '#f0d080']); }
-    P.push([at(new THREE.BoxGeometry(0.022, 0.085, 0.012), 0, 0.07, 0.112), IRON], [at(new THREE.BoxGeometry(0.03, 0.006, 0.014), 0, 0.03, 0.114), GOLDH]);
-    for (const sx of [1, -1]) { const g = plate([[0, 0], [0.045, 0], [0.05, -0.07], [0.02, -0.1], [0.0, -0.06]], 0.008); g.rotateY(sx * 1.2 + (sx > 0 ? 0 : Math.PI)); g.translate(sx * 0.088, 0.105, 0.04); P.push([g, IRON]); }
+    P.push([at(new THREE.BoxGeometry(0.024, 0.095, 0.012), 0, 0.075, 0.128), '#6c7a62'], [at(new THREE.BoxGeometry(0.032, 0.008, 0.016), 0, 0.03, 0.13), GOLDH]);
+    for (const sx of [1, -1]) { const g = plate([[0, 0], [0.045, 0], [0.05, -0.07], [0.02, -0.1], [0.0, -0.06]], 0.008); g.rotateY(sx * 1.2 + (sx > 0 ? 0 : Math.PI)); g.translate(sx * 0.1, 0.11, 0.05); P.push([g, '#6c7a62']); }
     return { P }; },
   /* Horned Helm (cell 1): dark steel, two big black horns, a gold-trimmed face mask pointed at the chin */
-  cassis: (T) => { const P = [[domeG(0.104, 0.125, 0.116, 0.12, -0.006, 0, Math.PI * 0.62), '#3d4247']];
-    P.push([cylSeg(0.112, 0.108, 0.13, -1.0, 2.0, 0.045, -0.004), '#3d4247'], [cylSeg(0.113, 0.109, 0.016, -1.0, 2.0, 0.11, -0.004), GOLDH]);
-    P.push([at(new THREE.BoxGeometry(0.014, 0.14, 0.02), 0, 0.12, 0.112), GOLDH], [at(new THREE.ConeGeometry(0.025, 0.05, 4).rotateZ(Math.PI), 0, -0.02, 0.1), GOLDH]);
+  cassis: (T) => { const P = [[domeG(0.106, 0.118, 0.118, 0.12, -0.006, 0, Math.PI * 0.58), '#5d656c']];
+    P.push([cylSeg(0.118, 0.112, 0.11, -0.95, 1.9, 0.06, -0.004), '#7d858c'], [cylSeg(0.119, 0.113, 0.014, -0.95, 1.9, 0.112, -0.004), GOLDH], [at(new THREE.BoxGeometry(0.07, 0.018, 0.01), 0, 0.09, 0.125), '#151313']);
+    P.push([at(new THREE.BoxGeometry(0.016, 0.15, 0.02), 0, 0.14, 0.122), GOLDH], [at(new THREE.ConeGeometry(0.03, 0.06, 4).rotateZ(Math.PI), 0, -0.015, 0.11), GOLDH], [at(new THREE.SphereGeometry(0.018, 10, 8), 0, 0.2, 0.11), '#3a6aa0']);
     for (const sx of [1, -1]) for (const g of taper([[sx * 0.095, 0.17, 0], [sx * 0.17, 0.2, 0.02], [sx * 0.2, 0.29, 0.05], [sx * 0.17, 0.36, 0.07]], 0.024, 0.003, 12)) P.push([g, BLK]);
-    P.push([at(new THREE.BoxGeometry(0.06, 0.012, 0.01), 0, 0.085, 0.118), '#151313']);
     return { P }; },
   /* Hoplomachus Helm (arm81_crista): gold, a wide flat brim, a tall crest fin with a red plume, a grille visor */
   crista: (T) => { const P = [[domeG(0.104, 0.12, 0.114, 0.125, -0.006, 0, Math.PI * 0.55), GOLDH]];
-    P.push([cylSeg(0.175, 0.112, 0.03, 0, Math.PI * 2, 0.05, -0.008), '#c79a3c'], [ringG(0.176, 0.006, 0.035, -0.008), '#9a7428']);
-    const fin = plate([[-0.11, 0], [0.12, 0], [0.09, 0.07], [0.03, 0.12], [-0.05, 0.1]], 0.012); fin.rotateY(Math.PI / 2); fin.translate(0, 0.22, -0.006); P.push([fin, GOLDH]);
-    P.push([at(new THREE.CylinderGeometry(0.006, 0.006, 0.14), 0, 0.38, 0.02), GOLDH]); for (let i = 0; i < 5; i++) P.push([ball(0.016 - i * 0.002, 0, 0.42 + i * 0.022, 0.02 - i * 0.012), RED_P]);
+    P.push([cylSeg(0.152, 0.112, 0.03, 0, Math.PI * 2, 0.05, -0.008), '#c79a3c'], [ringG(0.153, 0.005, 0.035, -0.008), '#9a7428']);
+    const fin = plate([[-0.09, 0], [0.1, 0], [0.06, 0.05], [0.02, 0.09], [-0.03, 0.08]], 0.008); fin.rotateY(Math.PI / 2); fin.translate(0, 0.235, -0.006); P.push([fin, GOLDH]);
+    P.push([at(new THREE.CylinderGeometry(0.005, 0.005, 0.12), 0, 0.37, 0.01), GOLDH]); for (let i = 0; i < 5; i++) P.push([ball(0.014 - i * 0.0015, 0, 0.42 + i * 0.02, 0.01 - i * 0.012), RED_P]);
     const X = [[cylSeg(0.11, 0.115, 0.1, -1.05, 2.1, 0.05, -0.004), new THREE.MeshToonMaterial({ map: holesTex('#b7913f', '#1a130c', '#d6ab4c'), side: THREE.DoubleSide })]];
     return { P, X }; },
   /* Steel Dome Helm (cell 4): a smooth blue-steel secutor dome to the chin, two red round eyes, a low ridge */
   helm5: (T) => { const P = [[domeG(0.104, 0.15, 0.12, 0.1, -0.002, 0, Math.PI * 0.86), STEEL_B]];
     for (const sx of [1, -1]) P.push([at(new THREE.SphereGeometry(0.014, 12, 8).scale(1, 1, 0.5), sx * 0.034, 0.1, 0.116), '#b51e18'], [at(new THREE.TorusGeometry(0.016, 0.004, 6, 16), sx * 0.034, 0.1, 0.118), '#2a3240']);
-    const r = plate([[-0.14, 0], [0.13, 0], [0.12, 0.02], [-0.13, 0.02]], 0.012); r.rotateY(Math.PI / 2); r.translate(0, 0.24, -0.002); P.push([r, '#4a5666']);
+    const r = plate([[-0.09, -0.01], [0.09, -0.01], [0.07, 0.018], [-0.07, 0.018]], 0.012); r.rotateY(Math.PI / 2); r.translate(0, 0.245, -0.002); P.push([r, '#5f7088']);
     P.push([ringG(0.106, 0.005, -0.015, 0, 1, 1.12), '#2a3240']);
     return { P }; },
   /* Helm of Flavius (arm81_flavhelm): a gold lion — a mane round the face, ears, a muzzle on the brow, fangs down the cheeks, a spike */
   flavhelm: (T) => { const P = [[domeG(0.106, 0.122, 0.116, 0.125, -0.006, 0, Math.PI * 0.58), GOLDH]];
-    for (let i = 0; i < 18; i++) { const a = -1.9 + i / 17 * 3.8; const g = new THREE.ConeGeometry(0.022, 0.06, 6); const d = V3([Math.sin(a), 0.25, Math.cos(a)]).normalize();
-      g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d)); g.translate(Math.sin(a) * 0.118, 0.17 - Math.abs(a) * 0.03, Math.cos(a) * 0.118 - 0.006); P.push([g, i % 2 ? '#b8862e' : GOLDH]); }
+    for (let i = 0; i < 20; i++) { const a = -2.4 + i / 19 * 4.8; const d = V3([Math.sin(a), Math.cos(a), 0.35]).normalize(); const g = new THREE.ConeGeometry(0.024, 0.07, 6);
+      g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d)); g.translate(Math.sin(a) * 0.112, 0.075 + Math.cos(a) * 0.115, 0.07 - Math.abs(Math.sin(a)) * 0.04); P.push([g, i % 2 ? '#b8862e' : GOLDH]); }
     P.push([at(new THREE.SphereGeometry(0.05, 14, 10).scale(1.1, 0.7, 0.8), 0, 0.21, 0.08), '#c99a3c'], [ball(0.012, 0, 0.215, 0.125), '#3a2610']);
     for (const sx of [1, -1]) { P.push([ball(0.016, sx * 0.05, 0.25, 0.04), GOLDH]); for (const g of taper([[sx * 0.075, 0.07, 0.07], [sx * 0.08, 0.0, 0.08], [sx * 0.07, -0.05, 0.075]], 0.012, 0.002, 6)) P.push([g, '#efe2c0']); }
     P.push([at(new THREE.ConeGeometry(0.014, 0.09, 8), 0, 0.29, -0.01), GOLDH]);
@@ -72,14 +74,14 @@ const HELM = {
     return { P }; },
   /* Steel Helm (arm81_steelhelm): a dark iron pointed helm, a raised ridge, a face mask with red eye slits, long cheek flaps */
   steelhelm: (T) => { const prof = [[0, 0.33], [0.04, 0.28], [0.08, 0.22], [0.104, 0.15], [0.108, 0.09], [0.106, 0.0], [0.1, -0.03]].map(([x, y]) => new THREE.Vector2(x, y));
-    const L = new THREE.LatheGeometry(prof, 32); L.scale(1, 1, 1.1); L.translate(0, 0, -0.006); const P = [[L, '#53585c']];
-    const r = plate([[-0.12, 0], [0.13, 0], [0.04, 0.12], [-0.02, 0.12]], 0.014); r.rotateY(Math.PI / 2); r.translate(0, 0.2, -0.006); P.push([r, '#6b7176']);
+    const L = new THREE.LatheGeometry(prof, 32); L.scale(1, 1, 1.1); L.translate(0, 0, -0.006); const P = [[L, '#7a8085']];
+    const r = plate([[-0.12, 0], [0.13, 0], [0.04, 0.12], [-0.02, 0.12]], 0.014); r.rotateY(Math.PI / 2); r.translate(0, 0.2, -0.006); P.push([r, '#959ba0']);
     for (const sx of [1, -1]) P.push([at(new THREE.BoxGeometry(0.03, 0.007, 0.01).rotateZ(sx * -0.25), sx * 0.034, 0.1, 0.12), '#b51e18']);
     P.push([at(new THREE.BoxGeometry(0.016, 0.12, 0.012), 0, 0.075, 0.122), '#6b7176'], [at(new THREE.BoxGeometry(0.03, 0.012, 0.03), 0, 0.018, 0.105), '#151313']);
     return { P }; },
   /* Thracian Helm (arm81_thracian): silver, a wide sloping brim, a griffin crest curving forward, a gold grille over the eyes */
   thrachelm: (T) => { const P = [[domeG(0.104, 0.12, 0.114, 0.125, -0.006, 0, Math.PI * 0.55), SILVER], [cylSeg(0.112, 0.17, 0.045, 0, Math.PI * 2, 0.045, -0.008), '#b3b8bd'], [ringG(0.17, 0.006, 0.023, -0.008), GOLDH]];
-    for (const g of taper([[0, 0.23, -0.1], [0, 0.32, -0.07], [0, 0.38, 0.0], [0, 0.37, 0.07], [0, 0.32, 0.11]], 0.02, 0.012, 14)) P.push([g, '#b3b8bd']);
+    for (const g of taper([[0, 0.2, -0.1], [0, 0.3, -0.08], [0, 0.37, 0.0], [0, 0.36, 0.07], [0, 0.31, 0.11]], 0.03, 0.018, 16)) P.push([g, '#b3b8bd']);
     P.push([at(new THREE.SphereGeometry(0.03, 12, 8).scale(0.7, 1, 1.2), 0, 0.31, 0.12), GOLDH], [at(new THREE.ConeGeometry(0.012, 0.04, 6).rotateX(Math.PI / 2), 0, 0.3, 0.16), GOLDH]);
     const X = [[cylSeg(0.11, 0.115, 0.09, -1.0, 2.0, 0.055, -0.004), new THREE.MeshToonMaterial({ map: holesTex('#c99a3c', '#1a130c', '#e2c06a'), side: THREE.DoubleSide })]];
     return { P, X }; },
@@ -110,7 +112,7 @@ export function arm4(B, k, sd = 'L') {
   const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
   const tAl = (p, a, b) => { const ab = sub(b, a); return dot(sub(p, a), ab) / dot(ab, ab); };
   const lin = (hex) => { const c = new THREE.Color(hex).convertSRGBToLinear(); return [c.r, c.g, c.b]; };
-  const sh = (c, v) => lin(c).map(x => x * v);
+  const sh = (c, v) => lin(LI(c)).map(x => x * v);
   const toon = (c, ex) => K.makeToon(c, ex);
   const vmat = () => toon('#ffffff', { vertexColors: true, side: THREE.DoubleSide });
   const rig_ = (geo, mat, bone, at2, q) => { const m = K.rigid(geo, mat, bone, at2, null); const bp = P(bone); m.position.set(at2[0] - bp[0], at2[1] - bp[1], at2[2] - bp[2]); if (q) m.quaternion.copy(q);
@@ -127,19 +129,20 @@ export function arm4(B, k, sd = 'L') {
     const len = Math.hypot(...sub(b, a)) * (t1 - t0) / n;
     for (let i = 0; i < n; i++) { const t = t0 + (t1 - t0) * (i + 0.5) / n, c = a.map((v, j) => v + (b[j] - v) * t);
       const r = radAt(a, b, t, o) + LAYER.plate + extra + i * 0.0012; const g = new THREE.CylinderGeometry(r + 0.004, r - 0.001, len * 1.35, 24, 1, true, Math.PI - arc / 2, arc);
-      const rim = new THREE.TorusGeometry(r + 0.004, 0.0028, 4, 24, arc); rim.rotateX(Math.PI / 2); rim.rotateY(Math.PI / 2 + arc / 2 - Math.PI); rim.translate(0, len * 0.67, 0);
-      rig_(merge([[g, i % 2 ? col : darker(col, 0.9)], [rim, darker(col, 0.6)]]), vmat(), bone, c, q); }
+      const rim = new THREE.CylinderGeometry(r + 0.0055, r + 0.005, len * 0.18, 24, 1, true, Math.PI - arc / 2, arc); rim.translate(0, -len * 0.58, 0);
+      rig_(mergeL([[g, i % 2 ? col : darker(col, 0.9)], [rim, darker(col, 0.62)]]), vmat(), bone, c, q); }
   };
   if (D.seg === 'head') {
     if (k === 'murmillo') { out.push(...murmKit(B, { manica: false, greave: false, belt: false, wraps: false, sword: false, shield: false })); return out; }
-    const s = 1.07 * K.hs, H = HELM[k](), geo = merge(H.P); geo.scale(s, s, s);
+    const s = 1.07 * K.hs, H = HELM[k](), geo = mergeL(H.P); geo.scale(s, s, s);
     rig_(geo, vmat(), 'he', K.HO, null);
     for (const [g, m] of H.X || []) { g.scale(s, s, s); rig_(g, m, 'he', K.HO, null); }
     return out;
   }
   if (D.seg === 'torso') {
     const top = D.high ? 1.49 : 1.465, bot = D.style === 'scale' ? 1.06 : 1.1, base = LAYER[D.layer || 'plate'];
-    const mask = (p, g) => g === GI.T || (D.high && (g === GI.AL || g === GI.AR) && p[1] > 1.37 && Math.abs(p[0]) < 0.24) ? Math.min(p[1] - bot, top - p[1] + (Math.abs(p[0]) < 0.065 ? -0.04 + Math.abs(p[0]) * 0.4 : 0), 0.03) : -1;
+    const topAt = (x) => { const ax = Math.abs(x); return ax < 0.065 ? top - 0.045 + ax * 0.45 : ax < 0.165 ? 1.535 : 1.52 - (ax - 0.165) * 1.2; };   /* a neckline, then over the shoulders */
+    const mask = (p, g) => g === GI.T || (D.high && (g === GI.AL || g === GI.AR) && p[1] > 1.37 && Math.abs(p[0]) < 0.24) ? Math.min(p[1] - bot, topAt(p[0]) - p[1], 0.03) : -1;
     const rim = (m) => m < 0.007 ? 0.0028 : 0;                                             /* a rolled edge all round */
     const DISP = {
       plain: (p) => 0.001 * Math.max(0, 1 - Math.hypot(p[0], p[1] - 1.36) / 0.05),
@@ -160,11 +163,9 @@ export function arm4(B, k, sd = 'L') {
     };
     shell('r4_' + k, mask, COLF[D.style], (p, m) => base + DISP[D.style](p) + rim(m), hexA(darker(D.col, 0.55)));
     /* shoulder straps: the breast and back plates joined over each shoulder */
-    for (const s2 of [1, -1]) { const g = tube([[s2 * 0.105, 1.445, 0.075], [s2 * 0.12, 1.515, -0.01], [s2 * 0.105, 1.45, -0.095]], 0.011, 16, 6); g.scale(1, 1, 1);
-      rig_(colorize(g, darker(D.col, 0.8)), vmat(), 'ch', [0, 0, 0], null); }
     if (D.pauldron) for (const s2 of ['L', 'R']) { const S0 = P('s' + s2), x2 = s2 === 'L' ? 1 : -1;
       for (let i = 0; i < 3; i++) { const g = new THREE.SphereGeometry(1, 22, 10, 0, Math.PI * 2, 0, Math.PI * (0.36 + i * 0.02)); const kk = 1 + i * 0.1; g.scale(0.085 * kk, 0.06 * kk, 0.085 * kk);
-        const m = rig_(colorize(g, i % 2 ? D.col : darker(D.col, 0.85)), vmat(), 's' + s2, [S0[0] + x2 * (0.025 + i * 0.012), S0[1] + 0.02 - i * 0.03, S0[2]]); m.rotation.z = x2 * (0.55 + i * 0.2); } }
+        g.scale(1.15, 1.15, 1.15); const m = rig_(colorize(g, LI(i % 2 ? D.col : darker(D.col, 0.85))), vmat(), 's' + s2, [S0[0] + x2 * (0.04 + i * 0.012), S0[1] + 0.045 - i * 0.032, S0[2]]); m.rotation.z = x2 * (0.45 + i * 0.25); } }
     if (D.skirt) for (let i = 0; i < 16; i++) { const a = -Math.PI + i / 16 * Math.PI * 2 + 0.1; const g = new THREE.BoxGeometry(0.036, 0.1, 0.006); const r = 0.155;
       const m = rig_(colorize(g, i % 2 ? D.skirt : darker(D.skirt, 0.75)), vmat(), 'pe', [Math.sin(a) * r, 1.02, Math.cos(a) * r * 0.85]); m.rotation.y = a; }
     return out;
@@ -187,7 +188,7 @@ export function arm4(B, k, sd = 'L') {
       const fl = plate([[-0.06, 0], [0.06, 0], [0.05, 0.05], [-0.04, 0.06]], 0.008); fl.rotateY(Math.PI / 2); const m2 = rig_(colorize(fl, '#b89a62'), vmat(), 's' + sd, [S0[0] + sx * 0.06, S0[1] + 0.07, S0[2]]); m2.rotation.z = sx * 0.6; }
     if (D.shoulder) for (let i = 0; i < D.shoulder; i++) { const g = new THREE.SphereGeometry(1, 22, 10, 0, Math.PI * 2, 0, Math.PI * (0.32 + i * 0.03)); const kk = 1 + i * 0.07; g.scale(0.088 * kk, 0.055 * kk, 0.085 * kk);
       const rv = new THREE.TorusGeometry(1, 0.035, 4, 30); rv.rotateX(Math.PI / 2); const th = Math.PI * (0.32 + i * 0.03); rv.scale(0.088 * kk * Math.sin(th), 1, 0.085 * kk * Math.sin(th)); rv.translate(0, 0.055 * kk * Math.cos(th), 0);
-      const m = rig_(merge([[g, i % 2 ? D.col : darker(D.col, 0.88)], [rv, darker(D.col, 0.6)]]), vmat(), 's' + sd, [S0[0] + sx * (0.03 + i * 0.006), S0[1] + 0.03 - i * 0.032, S0[2]]); m.rotation.z = sx * (0.5 + i * 0.22); }
+      const m = rig_(mergeL([[g, i % 2 ? D.col : darker(D.col, 0.88)], [rv, darker(D.col, 0.6)]]), vmat(), 's' + sd, [S0[0] + sx * (0.03 + i * 0.006), S0[1] + 0.03 - i * 0.032, S0[2]]); m.rotation.z = sx * (0.5 + i * 0.22); }
     return out; }
   if (D.seg === 'armL') { const E0 = P('e' + sd), W0 = P('w' + sd), gi = GI['A' + sd];
     if (D.style === 'pad') { shell('r4_' + k + sd, (p, g) => g === gi ? band(tAl(p, E0, W0), 0.16, 0.99) : -1, (p) => sh(D.col, Math.sin(tAl(p, E0, W0) * 44) > 0 ? 1 : 0.72), (p) => LAYER.pad + 0.0025 * Math.max(0, Math.sin(tAl(p, E0, W0) * 44)), null); return out; }
@@ -198,11 +199,11 @@ export function arm4(B, k, sd = 'L') {
   if (D.seg === 'legU') {   /* TASSETS: three overlapping curved plates hanging over the thigh front + outside — rigid on the hip bone, so they swing with the leg */
     const H0 = P('h' + sd), K0 = P('k' + sd), axis = nrm(sub(K0, H0)), o = outward(axis, [sx * 0.55, 0, 0.85]), X = cross(axis, o), q = basisQ(X, axis.map(v => -v));
     for (let i = 0; i < 3; i++) { const t = 0.2 + i * 0.22, c = H0.map((v, j) => v + (K0[j] - v) * t), r = radAt(H0, K0, t, o) + LAYER.plate + 0.006 + i * 0.003, hgt = 0.13, arc = Math.PI * 1.1;
-      const g = new THREE.CylinderGeometry(r + 0.003, r, hgt, 24, 1, true, Math.PI - arc / 2, arc); const bt = new THREE.TorusGeometry(r, 0.004, 4, 24, arc); bt.rotateX(Math.PI / 2); bt.rotateY(Math.PI / 2 + arc / 2 - Math.PI); bt.translate(0, -hgt / 2, 0);
+      const g = new THREE.CylinderGeometry(r + 0.003, r, hgt, 24, 1, true, Math.PI - arc / 2, arc); const bt = new THREE.CylinderGeometry(r + 0.0035, r + 0.003, 0.014, 24, 1, true, Math.PI - arc / 2, arc); bt.translate(0, -hgt / 2 + 0.007, 0);
       const rv = []; for (const a of [-0.9, 0, 0.9]) rv.push([ball(0.005, Math.sin(Math.PI + a) * (r + 0.004), hgt / 2 - 0.012, Math.cos(Math.PI + a) * (r + 0.004)), '#d8c79a']);
       const parts = [[g, i % 2 ? D.col : darker(D.col, 0.88)], [bt, darker(D.col, 0.55)], ...rv];
       if (k === 'legwrapsU') for (let s2 = 1; s2 < 5; s2++) { const a = Math.PI - arc / 2 + arc * s2 / 5; parts.push([at(new THREE.BoxGeometry(0.003, hgt, 0.003), Math.sin(a) * (r + 0.0035), 0, Math.cos(a) * (r + 0.0035)), darker(D.col, 0.5)]); }
-      rig_(merge(parts), vmat(), 'h' + sd, c, q); }
+      rig_(mergeL(parts), vmat(), 'h' + sd, c, q); }
     return out; }
   if (D.seg === 'legL') { const K0 = P('k' + sd), A0 = P('a' + sd), gi = GI['L' + sd];
     if (D.style === 'pad') { shell('r4_' + k + sd, (p, g) => g === gi ? band(tAl(p, K0, A0), 0.06, 0.9) : -1, (p) => sh(D.col, Math.sin(tAl(p, K0, A0) * 40) > 0 ? 1 : 0.72), (p) => LAYER.pad + 0.0025 * Math.max(0, Math.sin(tAl(p, K0, A0) * 40)), null); return out; }
@@ -214,7 +215,7 @@ export function arm4(B, k, sd = 'L') {
     if (D.knee) { const cap = new THREE.SphereGeometry(1, 18, 12, -1.3, 2.6, 0.25, 1.9); cap.scale(0.056, 0.066, 0.046); const parts = [[cap, D.col]];
       if (D.knee === 'dome') parts.push([at(new THREE.SphereGeometry(0.02, 10, 8).scale(1, 1, 0.6), 0, 0, 0.044), darker(D.col, 0.8)]);
       if (D.knee === 'lion') parts.push([at(new THREE.SphereGeometry(0.022, 10, 8).scale(1, 1, 0.6), 0, 0.005, 0.044), '#a37c28']);
-      const KK = P('k' + sd); rig_(merge(parts), vmat(), 'k' + sd, [KK[0], KK[1] + 0.015, KK[2] + 0.034]); }
+      const KK = P('k' + sd); rig_(mergeL(parts), vmat(), 'k' + sd, [KK[0], KK[1] + 0.012, KK[2] + 0.05]); }
     return out; }
   return out;
   function band(t, t0, t1) { return Math.min(t - t0, t1 - t) * 0.25; }
@@ -232,7 +233,7 @@ export const WGEO4 = {
     ...Array.from({ length: 10 }, (_, i) => { const a = i * 2.4, y = 0.48 + (i % 3) * 0.035; return [at(new THREE.ConeGeometry(0.01, 0.035, 5).applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), V3([Math.cos(a), 0.2, Math.sin(a)]).normalize())), Math.cos(a) * 0.058, y, Math.sin(a) * 0.058), '#c9ced3']; })]),
   sica: () => merge([...hilt('#c99a3e', '#c99a3e'), [plate([[-0.018, 0.07], [0.02, 0.07], [0.032, 0.24], [0.02, 0.38], [-0.04, 0.5], [-0.012, 0.36], [-0.004, 0.22]], 0.008), STL]]),
   hasta: () => merge([[cyl(0.013, 0.013, 1.8, 0.15, 8), '#4a3420'], [at(leaf(0.22, 0.05, 0), 0, 1.04, 0), STL], [at(new THREE.ConeGeometry(0.014, 0.06, 6).rotateZ(Math.PI), 0, -0.76, 0), DSTL]]),
-  stones: () => merge([[ball(0.026, 0, 0, 0.01), '#8a7a66'], [ball(0.022, 0.03, 0.025, 0), '#7a6a58'], [ball(0.02, -0.025, 0.03, 0.012), '#958570']]),
+  stones: () => merge([[ball(0.036, 0, 0.06, 0.03), '#9a8a74'], [ball(0.03, 0.04, 0.09, 0.02), '#8a7a66'], [ball(0.028, -0.035, 0.1, 0.035), '#a59580']]),
   knives: () => merge([[cyl(0.012, 0.012, 0.09, 0, 8), '#3a2a20'], [box(0.05, 0.014, 0.026, 0, 0.05), BRZ], [plate([[-0.016, 0.055], [0.016, 0.055], [0.0, 0.25]], 0.006), STL]]),
   trident: () => merge([[cyl(0.013, 0.013, 1.75, 0.15, 8), '#5a3a22'], [box(0.22, 0.02, 0.02, 0, 1.02), DSTL], ...[-0.1, 0, 0.1].map(x => [at(new THREE.CylinderGeometry(0.006, 0.008, 0.22, 6), x, 1.13, 0), DSTL]),
     ...[-0.1, 0, 0.1].map(x => [at(new THREE.ConeGeometry(0.016, 0.05, 4), x, 1.26, 0), STL])]),
@@ -241,7 +242,7 @@ export const WGEO4 = {
     [at(new THREE.SphereGeometry(0.035, 10, 8).scale(0.8, 1.5, 1.2), 0, -0.04, 0), '#c08a68']]),
   severedLeg: () => merge([[cyl(0.05, 0.038, 0.42, 0.2, 10), '#c08a68'], [at(new THREE.CylinderGeometry(0.052, 0.052, 0.012, 12), 0, 0.41, 0), '#8e1612'], [at(new THREE.SphereGeometry(0.045, 10, 8).scale(1, 0.8, 2.3), 0, -0.03, 0.07), '#6a4a30'],
     ...[0.05, 0.12, 0.2].map(y => [at(new THREE.TorusGeometry(0.046, 0.005, 4, 14).rotateX(Math.PI / 2), 0, y, 0), '#4f4941'])]),
-  axe: () => merge([[tube([[0, -0.1, 0], [0.01, 0.2, 0], [0.0, 0.45, 0], [-0.02, 0.6, 0]], 0.016, 16, 8), '#3a2a1c'], [at(plate([[0, -0.04], [0.11, -0.07], [0.15, 0.0], [0.11, 0.07], [0, 0.04]], 0.012), 0, 0.53, 0), STL], [box(0.035, 0.06, 0.03, 0, 0.53, 0), DSTL]]),
+  axe: () => merge([[tube([[0, -0.1, 0], [0.01, 0.2, 0], [0.0, 0.45, 0], [-0.02, 0.6, 0]], 0.016, 16, 8), '#3a2a1c'], [at(plate([[0, -0.05], [0.14, -0.1], [0.19, 0.0], [0.14, 0.1], [0, 0.05]], 0.014), 0, 0.53, 0), STL], [box(0.035, 0.06, 0.03, 0, 0.53, 0), DSTL]]),
   falcata: () => merge([[cyl(0.014, 0.014, 0.1, 0, 10), '#3a2a20'], [tube([[0, -0.05, 0], [0.04, -0.07, 0], [0.05, -0.02, 0]], 0.008, 8, 6), BRZ], [box(0.07, 0.02, 0.035, 0, 0.06), BRZ],
     [plate([[-0.02, 0.07], [0.022, 0.07], [0.035, 0.22], [0.055, 0.4], [0.02, 0.56], [-0.01, 0.42], [-0.025, 0.22]], 0.008), STL]]),
   bow: () => { const R = 0.6, arc = new THREE.TorusGeometry(R, 0.014, 6, 32, 1.7); arc.rotateZ(Math.PI - 0.85); arc.translate(R, 0, 0);
@@ -279,10 +280,10 @@ export const HOLD4 = {
   hafted: { arm: RH([-310, 1420, 120], [1, -0.6, -0.6]), f: [-0.15, 1, -0.25], mount: 'f', note: 'raised, head up' },
   throw: { arm: RH([-260, 1640, -60], [1, 0.3, -1]), f: [0, 1, 0], mount: 'f', note: 'raised to throw' },
   bow: { arm: { L: [60, 1460, 560], hpL: [1, -0.2, -0.2], R: [-60, 1500, 160], hpR: [1, -0.3, -1] }, fL: [0, 1, 0.05], mount: 'f', hand: 'L', string: 1, note: 'drawn' },
-  crossbow: { arm: { R: [-120, 1420, 220], hpR: [1, -1, -0.4] }, f: [0.05, 0.02, 1], mount: 'f', two: 0.32, note: 'shouldered' },
+  crossbow: { arm: { R: [-150, 1420, 280], hpR: [1, -1, -0.4] }, f: [0.05, 0.02, 1], mount: 'f', two: 0.32, note: 'shouldered' },
   labrys: { arm: RH([-170, 1020, 300]), f: [0.35, 1, 0.35], mount: 'f', two: 0.32, note: 'two-handed' },
-  sling: { arm: RH([-270, 900, 60], [1, -1, 0]), f: [0, 0, 1], mount: '-u', note: 'hanging' },
-  lyre: { arm: { L: [80, 1240, 300], hpL: [1, -0.6, -0.2], R: [-60, 1240, 330], hpR: [1, -1, -0.3] }, fL: [0, 1, 0.1], mount: 'f', hand: 'L', note: 'held, plucked' },
+  sling: { arm: RH([-400, 980, 140], [1, -1, 0]), f: [0, 0, 1], mount: '-u', note: 'hanging' },
+  lyre: { arm: { L: [120, 1120, 400], hpL: [1, -0.6, -0.2], R: [-40, 1150, 420], hpR: [1, -1, -0.3] }, fL: [0, 1, 0.1], mount: 'f', hand: 'L', note: 'held, plucked' },
   arm: { arm: RH([-260, 1060, 300]), f: [0, 0.05, 1], mount: 'u', note: 'strapped on the forearm, blade past the fist' },
   shield: { note: 'strapped + handle (round 3)' },
 };

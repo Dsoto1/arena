@@ -49,7 +49,7 @@ function bowString(T, m) {   /* the string from both tips to the drawing hand */
   const g = T.B.group; g.updateWorldMatrix(true, true); m.updateWorldMatrix(true, false);
   const tips = m.userData.w4.tips.map(t => g.worldToLocal(m.localToWorld(new THREE.Vector3(...t))));
   const hb = T.B.rig.bones.wR; hb.updateWorldMatrix(true, false); const hand = g.worldToLocal(hb.localToWorld(new THREE.Vector3(...JK.wR.pos.map((v, i) => (ENDS.wR[i] - v) * 0.5))));
-  const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([tips[0], hand, tips[1]], false, 'catmullrom', 0), 24, 0.0035, 4, false);
+  const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([tips[0], hand, tips[1]], false, 'catmullrom', 0), 24, 0.006, 5, false);
   const s = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xe8dcc0 })); s.userData.raw = 1; g.add(s); return [s];
 }
 /* clearance: weapon vertices inside the posed body (bone capsules) or inside the shield board */
@@ -80,7 +80,7 @@ window.LOOK_RUN4 = async function () {
     const A = inv.arm.filter(a => PIECES4[a.k]); const COLS = 4, CW = 590, CH = 290; const rows = Math.ceil(A.length / COLS);
     const [c, g] = cv(20 + COLS * CW, 60 + rows * CH + 30); txt(g, `Round 4 · every printed armor piece (${A.length}) modelled from his art — his art left, the 3D piece in two views`, 20, 32, 20, INK, 1);
     M.B.kit.setHarness(false); const t0 = performance.now();
-    const FOC = { head: ['he', 0.5, 0.1, 30, -40], torso: ['ch', 0.82, 0.02, 25, 200], belt: ['sp', 0.7, -0.05, 25, 200], armU: ['eL', 0.6, 0.12, -60, -150], armL: ['wL', 0.55, 0.1, -60, 160], hand: ['wL', 0.4, -0.05, -60, 140], legU: ['kL', 0.75, 0.16, -35, -110], legL: ['kL', 0.8, -0.2, -25, 160] };
+    const FOC = { head: ['he', 0.62, 0.15, 30, -60], torso: ['ch', 0.82, 0.02, 25, 200], belt: ['sp', 0.7, -0.05, 25, 200], armU: ['eL', 0.6, 0.12, -60, -150], armL: ['wL', 0.55, 0.1, -60, 160], hand: ['wL', 0.4, -0.05, -60, 140], legU: ['kL', 0.75, 0.16, -35, -110], legL: ['kL', 0.8, -0.2, -25, 160] };
     for (let i = 0; i < A.length; i++) { const a = A[i], d = PIECES4[a.k]; const both = !['head', 'torso', 'belt'].includes(d.seg);
       const L = both ? [...arm4(M.B, a.k, 'L'), ...arm4(M.B, a.k, 'R')] : arm4(M.B, a.k, 'L'); M.apply({ pose: stand });
       const [bone, span, dy, y1, y2] = FOC[d.seg]; const v1 = M.hero({ yaw: y1, w: 210, h: 230, span, focus: bone, fdy: dy, el: 14, outlinePx: 1.4 }), v2 = M.hero({ yaw: y2, w: 210, h: 230, span, focus: bone, fdy: dy, el: 14, outlinePx: 1.4 });
@@ -99,7 +99,7 @@ window.LOOK_RUN4 = async function () {
     for (let i = 0; i < Wk.length; i++) { const w = Wk[i], hk = WHOLD4[w.k]; const kit = isShield(w.k) ? { L: w.k } : hk === 'bow' || hk === 'lyre' ? { R: w.k } : { R: w.k };
       const L = equip(M, kit); const holds = isShield(w.k) ? ['L'] : HOLD4[hk].two ? ['L', 'R'] : [HOLD4[hk].hand || 'R'].concat(w.k === 'knives' || w.k === 'trident' ? ['L'] : []);
       const cl = clearance(M, L.filter(m => m.userData && (m.userData.w4 || m.isMesh)).filter(m => !(m.name || '').startsWith('r4_')), holds, isShield(w.k) ? null : null); R.stats.clear[w.k] = cl;
-      const vs = [25, 95, -60].map(y => M.hero({ yaw: y, w: 200, h: 250, span: 2.75, cy: 1.05, el: 16, outlinePx: 1.3 }));
+      const vs = [45, 100, -70].map(y => M.hero({ yaw: y, w: 200, h: 250, span: 2.75, cy: 1.05, el: 16, outlinePx: 1.3 }));
       const x = 20 + (i % COLS) * CW, y = 50 + Math.floor(i / COLS) * CH; const ci = IMG[w.k];
       if (ci != null) fit(g, wsheet, (ci % 9) * 600, Math.floor(ci / 9) * 416, 600, 416, x, y + 40, 250, 174); else { g.fillStyle = '#4a4440'; g.fillRect(x, y + 40, 250, 174); txt(g, 'no card art', x + 80, y + 130, 13, '#ddd'); }
       vs.forEach((v, j) => g.drawImage(v, x + 260 + j * 205, y + 30));

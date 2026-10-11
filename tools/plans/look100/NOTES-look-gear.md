@@ -112,3 +112,31 @@ weapon additions in `gear100.js` `weaponKit`, face sculpt + 2.2 mm head grid in 
 | greaves | Flavius' Greaves | leg/lower | 3 | legL | plate | 12.5 | shell  engr + knee cap (front) |
 | cnemis | Steel Greaves | leg/lower | 5 | legL | plate | 12.5 | shell + knee cap (front) |
 | lgreaves | Leather Greaves | leg/lower | 3 | legL | plate | 12.5 | shell (front) |
+
+
+## Round 4 — every piece modelled from his art, every weapon from his card with its hold
+Re-render: `node tools/plans/look100/make4.js` (~3.2 min). Code: `r4_pieces.js` (HELM builders, PIECES4 table with the reference per piece,
+`arm4`/`outfit4`, WGEO4 weapon models, HOLD4 stances + WHOLD4 weapon → stance, `weapon4`), `page4.js` (equip = armor + weapons + stance +
+two-hand partner + bow string + net; `clearance` = weapon points inside posed bone capsules / the shield board).
+
+| file | what |
+|---|---|
+| r4_armor.png | all 32 printed pieces: his art (arm81_* / armor2 cell) beside the 3D piece in two views |
+| r4_weapons.png | all 28 weapons: his card (weapons.jpg cell) beside 3 facings in their hold + the clearance check |
+| r4_maxload.png + r4_maxload_sheet.png | maximum load with the modelled pieces |
+| r4_classes.png + r4_cls_<class>.png | the 8 class loadouts, his mini beside each |
+
+- Helmets: own silhouettes (Iron: nasal, cheek guards, riveted crossing bands · Horned: horns + gold-trimmed mask · Hoplomachus: brim, crest fin,
+  plume, grille · Steel Gated: grille + flared bottom brim · Steel Dome: enclosed, red eyes, ridge · Flavius: lion mane, ears, brow muzzle, fangs,
+  spike · Centurian: cap, cheek guards, neck guard, fore-aft plume · Steel: pointed lathe dome, ridge, eye slits, nasal · Thracian: brim, griffin
+  crest, gold grille).
+- Cuirasses: shells over the neckline AND the shoulders (no floating straps), rolled rim (+2.8 mm at the edge + a hem), relief by type (scale
+  rows, overlapping plates on the Reinforced, crossing wing straps, the red figures + a red pteruges skirt on Flavius', medallions + a striped
+  collar on the Ornate); the Reinforced is lighter steel with 3-plate pauldrons.
+- Tassets: three separate curved plates per thigh on the hip bone (they swing with the leg), rivets, a bottom band; the Leather Tasset has strips.
+- Greaves: shaped shell (shin ridge, ankle flare, rolled edge) + a knee cap (plain, dome for the Steel Greaves, lion boss for Flavius').
+- Arms: Galerus (key manica) = 6 overlapping lames + a flanged shoulder; Lorica Segmentata = 4 stacked riveted shoulder plates + 3 lames;
+  Manica (provmanica) = fur mantle + 2 iron shoulder plates + the octagonal plate; Bracers engraved; wraps/leg wraps padded rings; cestus ribbed.
+- Holds (HOLD4): sword-type forward and low · dagger/knives reverse grip · spear/trident/pilum/jade overhand, point forward (trident + a net in
+  the off hand) · mace/axe/charun/flail/severed limbs raised · stones raised to throw · bow drawn (string to the drawing hand) · crossbow
+  shouldered, off hand under the stock · labrys two-handed · sling hanging · lyre held + plucked · scissor on the forearm · shields strapped.
