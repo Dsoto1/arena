@@ -197,3 +197,4 @@ that swings with the walk · 6a Zora smaller + perched like his mini. → beasts
 3D GEAR integration: 1a keep the ~300 KB simplified bake · 2a pre-bake the body the same way · 3a bow string drawn · 4a base 0.8 tile
 ("best fit": keep 0.8 but nothing may spill out of the tile — check every class/pose/facing).
 FREE AGENT HEALING (his pick a, 2026-10-11): BUILT — free agents' surgeon wounds close on their due week (city physician), never fester; test tv100f.
+BABYLON.JS (his call 2026-10-11): KEEP the current 2D canvas + render-once 3D approach. A look-only Babylon.js arena prototype is being built in tools/plans/babylon100/ (live 3D board, tokens, day/night, speed + size measured) — not in the game.
