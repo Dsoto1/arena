@@ -77,8 +77,8 @@ function lu100Advice(w,k){try{for(const L of (w.letters||[])){const a=advisor83(
 
 /* ---------- 1 · the banner ---------- */
 const LU100_FAC=()=>({yard:_T('Yard'),barracks:_T('Barracks'),valet:_T('Beds'),kitchen:_T('Kitchen'),shrine:_T('Shrine'),stands:_T('Stands'),armory:_T('Armory'),stables:_T('Stables')});
-const LU100_DAY=()=>({under:_T('Fri'),feature:_T('Sat'),main:_T('Sun')});
-const LU100_TIER=()=>({under:_T('Undercard'),feature:_T('Feature'),main:_T('Main')});
+const LU100_DAY=()=>({under:_T('Fri'),feature:_T('Sat'),main:_T('Sun'),spc100:_T('Sun ★')}); /* spc100 = 296-v100any headline specials */
+const LU100_TIER=()=>({under:_T('Undercard'),feature:_T('Feature'),main:_T('Main'),spc100:_T('Special')});
 function lu100Bouts(w,pm){const n=w.night;if(!n||n.bye||!n.bouts||!n.bouts.length)return [];const mine=lu100Mine(pm);
   return n.bouts.map(b=>{const id=(b.ents||[]).find(x=>mine.has(x));return {b,g:id?gById(id):null}})}
 function lu100MatchCard(w,pm){const n=w.night;const L=n&&LOCATIONS[n.loc];

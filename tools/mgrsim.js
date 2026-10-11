@@ -9,7 +9,7 @@
    Armory (225-v94armory), arm94Stats: pieces owned / damaged / lost / bought / coin spent on gear. Prints JSON lines + a table. */
 const {chromium}=require('playwright');const path=require('path');
 (async()=>{const page=path.resolve(process.argv[2]);const SEASONS=+(process.argv[3]||2),RUNS=+(process.argv[4]||4);const STRATS=(process.argv[5]||'base,yard,cheap').split(',');const GEARM=process.argv[6]||'on';const GEAR=GEARM==='off';
-const b=await chromium.launch();const pg=await b.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message));
+const b=await chromium.launch();const pg=await b.newPage();if(process.env.ANY100==='off')await pg.addInitScript(()=>localStorage.setItem('flavius_any100off','1'));await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_lfpool','0')});
 await pg.goto('file://'+page);await pg.waitForTimeout(2000);
 if(process.env.ADV98)await pg.evaluate(o=>{for(const [k,v] of Object.entries(o.ADV98R||{}))ADV98R[k]=v;for(const [k,v] of Object.entries(o.REC98||{}))REC98[k]=v},JSON.parse(process.env.ADV98)); /* tuning study: ADV98='{"ADV98R":{"start":[[55,5],[35,4],[0,3]]}}' */
@@ -18,7 +18,7 @@ await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openMan
   window.modal=async(t,b,btns)=>{const p=(btns||[]).find(x=>x.primary)||(btns||[])[0];return p?p.value:null};window.mToast=()=>{};window.say=()=>{};SPEED='snap'});
 const rows=[];
 for(const strat of STRATS)for(let run=0;run<RUNS;run++){
-  const r=await pg.evaluate(async({strat,run,SEASONS,GEAR,GEARM})=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));
+  const r=await pg.evaluate(async({strat,run,SEASONS,GEAR,GEARM,ANYM})=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));
     ARM94.disabled=GEAR;if(/^rk\d+$/.test(GEARM))ARM94.repK=1/+GEARM.slice(2);if(GEARM==='old'){ARM94.repK=1/3;ARM94.sellK=0.4;ARM94.sellMax=999;ARM94.mkHome=true}newWorld({type:'pre',key:MGR_PRE[run%MGR_PRE.length].key});MGR.view=null;const w=W_(),m=me();
     const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;const rivals=()=>w.mgrs.filter(x=>!x.isPlayer&&!x.dead);
     const start={mine:avg(rosterOf(m).map(effOvr)),riv:avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))};let nCard=0,bare=0,miss=0,sev=0,injuries=0,lost=0,c6=null,c12=null,c24=null,minCoin=1e9,collapsed=0;const n0=rosterOf(m).length;
@@ -46,6 +46,12 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       const used=new Set();for(const bo of w.night.bouts){if(bo.done)continue;const T=TIERS[bo.tier];
         const g=ros().filter(g=>!g.inj&&g.morale>15&&!used.has(g.id)&&!bo.ents.includes(g.id)&&effOvr(g)>=T.lo-4&&effOvr(g)<=T.hi+2).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(!g)continue;
         const out=bo.ents.map(gById).filter(x=>x&&!x.contract).sort((x,y)=>effOvr(x)-effOvr(y))[0];if(!out)continue;bo.ents[bo.ents.indexOf(out.id)]=g.id;used.add(g.id)}
+      /* v1.0 ENTER ANY EVENT (296-v100any): ANY100=off → no specials (the old week); ANY100=play → the scripted lanista also books every special with
+         his best fighter left over (a team special takes a second one of his, else the editor's pick) while the treasury keeps 60 coin above the fee */
+      if(ANYM==='play'&&typeof any100Book==='function')w.night.bouts.forEach((bo,bi)=>{if(!any100Sp(bo)||bo.done||bo.ents.some(id=>any100Own(id,m)))return;
+        const g=ros().filter(g=>!used.has(g.id)&&g.morale>15&&!any100Cur(w,g.id)&&!any100Why(w,bo,g)).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(!g||m.coin<bo.any100.fee*2+60)return;
+        const mate=any100Team(bo)?ros().filter(x=>x.id!==g.id&&!used.has(x.id)&&!any100Cur(w,x.id)&&!any100Why(w,bo,x))[0]:null;
+        if(any100Book(bi,g.id,any100Team(bo)?(mate?{k:'mine',gid:mate.id}:{k:'ed'}):null).ok){used.add(g.id);if(mate)used.add(mate.id)}});
       /* gear audit: fighters on the card with an empty hand, and the armor pieces they are missing against the class kit */
       if(typeof arm94Issues==='function'&&!ARM94.disabled){for(const bo of w.night.bouts){if(bo.done)continue;for(const id of bo.ents){const g=gById(id);if(!g||!g.contract||g.contract.mgr!==m.id||!g.eq94)continue;nCard++;if(arm94Issues(g).empty.length)bare++;
         const K=arm94Kit(g.cls);miss+=Math.max(0,K.a.length-g.eq94.a.filter(P=>!P.dmg).length)}}}
@@ -59,7 +65,7 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       if(m.dead||w.dead||(!ros().length&&m.coin<0)){collapsed=wk;break}}
     const table=w.mgrs.filter(x=>!x.dead).map(x=>({p:x.isPlayer,wins:x.wins||0})).sort((a,b)=>b.wins-a.wins);
     return {strat,run,wins:m.wins||0,rank:table.findIndex(x=>x.p)+1,wage:rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0),houses:table.length,mine:+avg(rosterOf(m).map(effOvr)).toFixed(1),riv:+avg(rivals().flatMap(x=>rosterOf(x).map(effOvr))).toFixed(1),
-      gain:+(avg(rosterOf(m).map(effOvr))-start.mine).toFixed(1),rivGain:+(avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))-start.riv).toFixed(1),coin:m.coin,c6,c12,c24,minCoin,collapsed,fighters:rosterOf(m).length,n0,injuries,lost,weeks:w.week,rivLv:typeof advLvM==="function"?+avg(rivals().map(x=>advLvM(x,"recruiter"))).toFixed(2):0,rivCoin:Math.round(avg(rivals().map(x=>x.coin))),deaths:w.glads.filter(g=>!g.alive&&!g.retired&&g.debut).length,nCard,bare,miss,sev:rosterOf(m).reduce((a,g)=>a+(g.severed||[]).length,0),gear:typeof arm94Stats==='function'?arm94Stats(w):null,rivMin:Math.min(...rivals().map(x=>x.coin)),rivBroke:rivals().filter(x=>x.coin<30).length,shelf:avg(w.mgrs.filter(x=>!x.dead).map(x=>(x.arm94?x.arm94.sh.length:0)))}},{strat,run,SEASONS,GEAR,GEARM});
+      gain:+(avg(rosterOf(m).map(effOvr))-start.mine).toFixed(1),rivGain:+(avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))-start.riv).toFixed(1),coin:m.coin,c6,c12,c24,minCoin,collapsed,fighters:rosterOf(m).length,n0,injuries,lost,weeks:w.week,rivLv:typeof advLvM==="function"?+avg(rivals().map(x=>advLvM(x,"recruiter"))).toFixed(2):0,rivCoin:Math.round(avg(rivals().map(x=>x.coin))),deaths:w.glads.filter(g=>!g.alive&&!g.retired&&g.debut).length,nCard,bare,miss,sev:rosterOf(m).reduce((a,g)=>a+(g.severed||[]).length,0),gear:typeof arm94Stats==='function'?arm94Stats(w):null,rivMin:Math.min(...rivals().map(x=>x.coin)),rivBroke:rivals().filter(x=>x.coin<30).length,shelf:avg(w.mgrs.filter(x=>!x.dead).map(x=>(x.arm94?x.arm94.sh.length:0)))}},{strat,run,SEASONS,GEAR,GEARM,ANYM:process.env.ANY100||''});
   rows.push(r);process.stderr.write(JSON.stringify(r)+'\n')}
 const by={};for(const r of rows)(by[r.strat]=by[r.strat]||[]).push(r);const A=(a,k)=>(a.reduce((s,x)=>s+x[k],0)/a.length).toFixed(1);
 console.log('strategy   wins  rank/12  myOvr  rivOvr  myGain  rivGain  coin  roster  injuries  lost  coin@6  coin@12  coin@24  lowest  collapsed  rivCoin  deaths');
