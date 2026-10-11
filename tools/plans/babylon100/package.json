@@ -1,0 +1,2 @@
+{ "name": "babylon100-mock", "private": true, "description": "look-only Babylon.js arena mock-up (tools/plans/babylon100)",
+  "dependencies": { "babylonjs": "9.27.1", "babylonjs-loaders": "9.27.1" } }
