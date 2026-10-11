@@ -4,9 +4,9 @@
    "key": "leo",
    "meta": [
     242,
-    173,
+    180,
     121,
-    121,
+    127,
     23
    ],
    "rows": [
@@ -34,37 +34,24 @@
     "die3",
     "die4"
    ],
-   "ms": 161081,
-   "sculptMs": 59706,
-   "renderMs": 101152,
-   "tris": 34928,
-   "verts": 17393,
+   "ms": 123906,
+   "sculptMs": 48636,
+   "renderMs": 75077,
+   "tris": 34752,
+   "verts": 17368,
    "h": 0.5,
-   "kb": 486.4,
-   "decodedMB": 29.39,
-   "idleWalkMB": 12.78,
+   "kb": 434.6,
+   "decodedMB": 30.57,
+   "idleWalkMB": 13.29,
    "frames": 23,
-   "pxmm": 1.588888888888889,
-   "sc": 1.4949999999999999,
-   "out": {
-    "single": {
-     "meta": [
-      242,
-      173,
-      121,
-      121,
-      23
-     ],
-     "decodedMB": 29.39,
-     "idleWalkMB": 12.78
-    },
-    "split": true,
-    "idlewalk": {
+   "parts": [
+    {
+     "name": "leo",
      "meta": [
       152,
-      118,
+      124,
       76,
-      83,
+      89,
       10
      ],
      "rows": [
@@ -79,15 +66,16 @@
       "walk4",
       "walk5"
      ],
-     "kb": 182.2,
-     "decodedMB": 5.47
+     "kb": 207.3,
+     "decodedMB": 5.75
     },
-    "actions": {
+    {
+     "name": "leo_act",
      "meta": [
       242,
-      172,
+      180,
       121,
-      120,
+      127,
       13
      ],
      "rows": [
@@ -105,20 +93,19 @@
       "die3",
       "die4"
      ],
-     "kb": 240.2,
-     "decodedMB": 16.51
-    },
-    "kb": 422.4,
-    "decodedMB": 21.99,
-    "idleWalkMB": 5.47
-   }
+     "kb": 262.3,
+     "decodedMB": 17.28
+    }
+   ],
+   "pxmm": 1.588888888888889,
+   "sc": 1.4949999999999999
   },
   "leaena": {
    "key": "leaena",
    "meta": [
-    156,
+    158,
     120,
-    78,
+    79,
     84,
     23
    ],
@@ -147,92 +134,27 @@
     "die3",
     "die4"
    ],
-   "ms": 108634,
-   "sculptMs": 28142,
-   "renderMs": 80208,
+   "ms": 63272,
+   "sculptMs": 15983,
+   "renderMs": 47171,
    "tris": 20792,
    "verts": 10391,
    "h": 0.5,
-   "kb": 383.3,
-   "decodedMB": 13.14,
-   "idleWalkMB": 5.71,
+   "kb": 362.5,
+   "decodedMB": 13.31,
+   "idleWalkMB": 5.79,
    "frames": 23,
+   "parts": [],
    "pxmm": 1.588888888888889,
-   "sc": 1.4949999999999999,
-   "out": {
-    "single": {
-     "meta": [
-      156,
-      120,
-      78,
-      84,
-      23
-     ],
-     "decodedMB": 13.14,
-     "idleWalkMB": 5.71
-    },
-    "split": true,
-    "idlewalk": {
-     "meta": [
-      144,
-      106,
-      72,
-      71,
-      10
-     ],
-     "rows": [
-      "idle0",
-      "idle1",
-      "idle2",
-      "idle3",
-      "walk0",
-      "walk1",
-      "walk2",
-      "walk3",
-      "walk4",
-      "walk5"
-     ],
-     "kb": 136.7,
-     "decodedMB": 4.66
-    },
-    "actions": {
-     "meta": [
-      156,
-      119,
-      78,
-      83,
-      13
-     ],
-     "rows": [
-      "attack0",
-      "attack1",
-      "attack2",
-      "attack3",
-      "attack4",
-      "hit0",
-      "hit1",
-      "hit2",
-      "die0",
-      "die1",
-      "die2",
-      "die3",
-      "die4"
-     ],
-     "kb": 171.7,
-     "decodedMB": 7.36
-    },
-    "kb": 308.4,
-    "decodedMB": 12.02,
-    "idleWalkMB": 4.66
-   }
+   "sc": 1.4949999999999999
   },
   "ursa": {
    "key": "ursa",
    "meta": [
     118,
-    126,
+    127,
     59,
-    91.1,
+    92.1,
     23
    ],
    "rows": [
@@ -260,92 +182,27 @@
     "die3",
     "die4"
    ],
-   "ms": 162222,
-   "sculptMs": 50094,
-   "renderMs": 111948,
-   "tris": 36864,
-   "verts": 18267,
+   "ms": 99655,
+   "sculptMs": 38134,
+   "renderMs": 61375,
+   "tris": 36628,
+   "verts": 18121,
    "h": 0.55,
-   "kb": 337.6,
-   "decodedMB": 10.44,
-   "idleWalkMB": 4.54,
+   "kb": 336.4,
+   "decodedMB": 10.52,
+   "idleWalkMB": 4.57,
    "frames": 23,
+   "parts": [],
    "pxmm": 1.5253333333333334,
-   "sc": 1.3,
-   "out": {
-    "single": {
-     "meta": [
-      118,
-      126,
-      59,
-      91.1,
-      23
-     ],
-     "decodedMB": 10.44,
-     "idleWalkMB": 4.54
-    },
-    "split": true,
-    "idlewalk": {
-     "meta": [
-      118,
-      100,
-      59,
-      65.1,
-      10
-     ],
-     "rows": [
-      "idle0",
-      "idle1",
-      "idle2",
-      "idle3",
-      "walk0",
-      "walk1",
-      "walk2",
-      "walk3",
-      "walk4",
-      "walk5"
-     ],
-     "kb": 114.8,
-     "decodedMB": 3.6
-    },
-    "actions": {
-     "meta": [
-      118,
-      126,
-      59,
-      91.1,
-      13
-     ],
-     "rows": [
-      "attack0",
-      "attack1",
-      "attack2",
-      "attack3",
-      "attack4",
-      "hit0",
-      "hit1",
-      "hit2",
-      "die0",
-      "die1",
-      "die2",
-      "die3",
-      "die4"
-     ],
-     "kb": 153.4,
-     "decodedMB": 5.9
-    },
-    "kb": 268.2,
-    "decodedMB": 9.5,
-    "idleWalkMB": 3.6
-   }
+   "sc": 1.3
   },
   "brutum": {
    "key": "brutum",
    "meta": [
     118,
-    126,
+    127,
     59,
-    91.1,
+    92.1,
     23
    ],
    "rows": [
@@ -373,92 +230,27 @@
     "die3",
     "die4"
    ],
-   "ms": 208615,
-   "sculptMs": 67824,
-   "renderMs": 140577,
-   "tris": 36864,
-   "verts": 18267,
+   "ms": 91451,
+   "sculptMs": 37779,
+   "renderMs": 53416,
+   "tris": 36628,
+   "verts": 18121,
    "h": 0.55,
-   "kb": 316.9,
-   "decodedMB": 10.44,
-   "idleWalkMB": 4.54,
+   "kb": 315.1,
+   "decodedMB": 10.52,
+   "idleWalkMB": 4.57,
    "frames": 23,
+   "parts": [],
    "pxmm": 1.5253333333333334,
-   "sc": 1.3,
-   "out": {
-    "single": {
-     "meta": [
-      118,
-      126,
-      59,
-      91.1,
-      23
-     ],
-     "decodedMB": 10.44,
-     "idleWalkMB": 4.54
-    },
-    "split": true,
-    "idlewalk": {
-     "meta": [
-      118,
-      100,
-      59,
-      65.1,
-      10
-     ],
-     "rows": [
-      "idle0",
-      "idle1",
-      "idle2",
-      "idle3",
-      "walk0",
-      "walk1",
-      "walk2",
-      "walk3",
-      "walk4",
-      "walk5"
-     ],
-     "kb": 105.5,
-     "decodedMB": 3.6
-    },
-    "actions": {
-     "meta": [
-      118,
-      126,
-      59,
-      91.1,
-      13
-     ],
-     "rows": [
-      "attack0",
-      "attack1",
-      "attack2",
-      "attack3",
-      "attack4",
-      "hit0",
-      "hit1",
-      "hit2",
-      "die0",
-      "die1",
-      "die2",
-      "die3",
-      "die4"
-     ],
-     "kb": 141.4,
-     "decodedMB": 5.9
-    },
-    "kb": 246.9,
-    "decodedMB": 9.5,
-    "idleWalkMB": 3.6
-   }
+   "sc": 1.3
   },
   "valencia": {
    "key": "valencia",
    "meta": [
     140,
-    118,
+    120,
     70,
-    86.5,
+    87.5,
     23
    ],
    "rows": [
@@ -486,37 +278,3676 @@
     "die3",
     "die4"
    ],
-   "ms": 78381,
-   "sculptMs": 18432,
-   "renderMs": 59748,
-   "tris": 18740,
-   "verts": 9349,
+   "ms": 55476,
+   "sculptMs": 15188,
+   "renderMs": 39924,
+   "tris": 18808,
+   "verts": 9387,
    "h": 0.36,
-   "kb": 289.1,
-   "decodedMB": 11.6,
-   "idleWalkMB": 5.04,
+   "kb": 304.7,
+   "decodedMB": 11.79,
+   "idleWalkMB": 5.13,
    "frames": 23,
+   "parts": [],
    "pxmm": 3.143,
-   "sc": 1.15,
-   "out": {
-    "single": {
-     "meta": [
-      140,
-      118,
-      70,
-      86.5,
-      23
-     ],
-     "decodedMB": 11.6,
-     "idleWalkMB": 5.04
-    },
-    "split": false,
-    "kb": 256.8,
-    "decodedMB": 11.6,
-    "idleWalkMB": 5.04,
-    "would_split_iwMB": 4.38
-   }
+   "sc": 1.15
+  },
+  "moechus": {
+   "key": "moechus",
+   "meta": [
+    140,
+    120,
+    70,
+    87.5,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 66297,
+   "sculptMs": 15404,
+   "renderMs": 50714,
+   "tris": 18808,
+   "verts": 9387,
+   "h": 0.36,
+   "kb": 230.9,
+   "decodedMB": 11.79,
+   "idleWalkMB": 5.13,
+   "frames": 23,
+   "parts": [],
+   "pxmm": 3.143,
+   "sc": 1.15
+  },
+  "glykon": {
+   "key": "glykon",
+   "meta": [
+    96,
+    83,
+    48,
+    52.1,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 35536,
+   "sculptMs": 5434,
+   "renderMs": 29981,
+   "tris": 11836,
+   "verts": 5918,
+   "h": 0.26,
+   "kb": 241.5,
+   "decodedMB": 5.59,
+   "idleWalkMB": 2.43,
+   "frames": 23,
+   "parts": [],
+   "pxmm": 3.143,
+   "sc": 1.15
+  },
+  "arenosus": {
+   "key": "arenosus",
+   "meta": [
+    96,
+    83,
+    48,
+    52.1,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 34000,
+   "sculptMs": 3918,
+   "renderMs": 29928,
+   "tris": 11836,
+   "verts": 5918,
+   "h": 0.26,
+   "kb": 237.8,
+   "decodedMB": 5.59,
+   "idleWalkMB": 2.43,
+   "frames": 23,
+   "parts": [],
+   "pxmm": 3.143,
+   "sc": 1.15
+  },
+  "zora": {
+   "key": "zora",
+   "meta": [
+    110,
+    130,
+    55,
+    90.5,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 76096,
+   "sculptMs": 26403,
+   "renderMs": 49254,
+   "tris": 30952,
+   "verts": 15402,
+   "h": 0.32,
+   "kb": 270.6,
+   "decodedMB": 10.04,
+   "idleWalkMB": 4.36,
+   "frames": 23,
+   "parts": [],
+   "pxmm": 3.143,
+   "sc": 0.828
+  },
+  "boar": {
+   "key": "boar",
+   "meta": [
+    144,
+    118,
+    72,
+    86.8,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 52403,
+   "sculptMs": 19473,
+   "renderMs": 32270,
+   "tris": 20740,
+   "verts": 10350,
+   "h": 0.36,
+   "kb": 214.5,
+   "decodedMB": 11.93,
+   "idleWalkMB": 5.19,
+   "frames": 23,
+   "parts": [],
+   "pxmm": 3.143,
+   "sc": 1.15
+  },
+  "croc": {
+   "key": "croc",
+   "meta": [
+    148,
+    88,
+    74,
+    50.9,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 49337,
+   "sculptMs": 11059,
+   "renderMs": 37639,
+   "tris": 19236,
+   "verts": 9609,
+   "h": 0.45,
+   "kb": 222,
+   "decodedMB": 9.14,
+   "idleWalkMB": 3.97,
+   "frames": 23,
+   "parts": [],
+   "pxmm": 1.5253333333333334,
+   "sc": 1.3
+  },
+  "spider": {
+   "key": "spider",
+   "meta": [
+    50,
+    50,
+    25,
+    36.2,
+    14
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "attack0",
+    "attack1",
+    "attack2",
+    "hit0",
+    "hit1",
+    "die0",
+    "die1",
+    "die2"
+   ],
+   "ms": 11208,
+   "sculptMs": 1667,
+   "renderMs": 9489,
+   "tris": 12192,
+   "verts": 6085,
+   "h": 0.22,
+   "kb": 34.8,
+   "decodedMB": 1.07,
+   "idleWalkMB": 0.46,
+   "frames": 14,
+   "parts": [],
+   "pxmm": 3.143,
+   "sc": 1
+  },
+  "tholo": {
+   "key": "tholo",
+   "meta": [
+    212,
+    228,
+    106,
+    141.6,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 1293256,
+   "clothMs": 480,
+   "kb": 512,
+   "decodedMB": 33.93,
+   "idleWalkMB": 14.75,
+   "frames": 23,
+   "pxmm": 3.143
+  },
+  "commodus": {
+   "key": "commodus",
+   "meta": [
+    182,
+    203,
+    91,
+    129.6,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 516184,
+   "clothMs": 84,
+   "kb": 517.3,
+   "decodedMB": 25.93,
+   "idleWalkMB": 11.28,
+   "frames": 23,
+   "pxmm": 3.143
   }
  },
- "diag": {}
+ "diag": {
+  "leo": {
+   "meta": [
+    450,
+    364,
+    225,
+    260.7,
+    1
+   ],
+   "joints": [
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -125
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -102.3
+     },
+     {
+      "n": "withers",
+      "par": "mid",
+      "cat": "spine",
+      "x": 0,
+      "y": -98
+     },
+     {
+      "n": "neck",
+      "par": "withers",
+      "cat": "chest",
+      "x": 0,
+      "y": -71.6
+     },
+     {
+      "n": "head",
+      "par": "neck",
+      "cat": "head",
+      "x": 0,
+      "y": -56.5
+     },
+     {
+      "n": "jaw",
+      "par": "head",
+      "cat": "head",
+      "x": 0,
+      "y": -16.9
+     },
+     {
+      "n": "LF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": 25.2,
+      "y": -60.9
+     },
+     {
+      "n": "LF_knee",
+      "par": "LF_top",
+      "cat": "limb",
+      "x": 24,
+      "y": -43.4
+     },
+     {
+      "n": "LF_low",
+      "par": "LF_knee",
+      "cat": "limb",
+      "x": 22.7,
+      "y": 12
+     },
+     {
+      "n": "LF_foot",
+      "par": "LF_low",
+      "cat": "foot",
+      "x": 22.7,
+      "y": 34.6
+     },
+     {
+      "n": "RF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": -25.2,
+      "y": -60.9
+     },
+     {
+      "n": "RF_knee",
+      "par": "RF_top",
+      "cat": "limb",
+      "x": -24,
+      "y": -43.4
+     },
+     {
+      "n": "RF_low",
+      "par": "RF_knee",
+      "cat": "limb",
+      "x": -22.7,
+      "y": 12
+     },
+     {
+      "n": "RF_foot",
+      "par": "RF_low",
+      "cat": "foot",
+      "x": -22.7,
+      "y": 34.6
+     },
+     {
+      "n": "LH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": 23.8,
+      "y": -125.5
+     },
+     {
+      "n": "LH_knee",
+      "par": "LH_top",
+      "cat": "limb",
+      "x": 22.2,
+      "y": -59.6
+     },
+     {
+      "n": "LH_low",
+      "par": "LH_knee",
+      "cat": "limb",
+      "x": 21.4,
+      "y": -71.1
+     },
+     {
+      "n": "LH_foot",
+      "par": "LH_low",
+      "cat": "foot",
+      "x": 21.4,
+      "y": -25.9
+     },
+     {
+      "n": "RH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": -23.8,
+      "y": -125.5
+     },
+     {
+      "n": "RH_knee",
+      "par": "RH_top",
+      "cat": "limb",
+      "x": -22.2,
+      "y": -59.6
+     },
+     {
+      "n": "RH_low",
+      "par": "RH_knee",
+      "cat": "limb",
+      "x": -21.4,
+      "y": -71.1
+     },
+     {
+      "n": "RH_foot",
+      "par": "RH_low",
+      "cat": "foot",
+      "x": -21.4,
+      "y": -25.9
+     },
+     {
+      "n": "tail0",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": 0,
+      "y": -147.8
+     },
+     {
+      "n": "tail3",
+      "par": "tail0",
+      "cat": "tail",
+      "x": 0,
+      "y": -132.3
+     },
+     {
+      "n": "tail6",
+      "par": "tail3",
+      "cat": "tail",
+      "x": 0,
+      "y": -143
+     },
+     {
+      "n": "tail8",
+      "par": "tail6",
+      "cat": "tail",
+      "x": 0,
+      "y": -163.8
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": -37.4,
+      "y": -117.2
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -102.3
+     },
+     {
+      "n": "withers",
+      "par": "mid",
+      "cat": "spine",
+      "x": 29.4,
+      "y": -104.1
+     },
+     {
+      "n": "neck",
+      "par": "withers",
+      "cat": "chest",
+      "x": 54.4,
+      "y": -82.8
+     },
+     {
+      "n": "head",
+      "par": "neck",
+      "cat": "head",
+      "x": 89.5,
+      "y": -75
+     },
+     {
+      "n": "jaw",
+      "par": "head",
+      "cat": "head",
+      "x": 111.4,
+      "y": -40
+     },
+     {
+      "n": "LF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": 59.5,
+      "y": -78.5
+     },
+     {
+      "n": "LF_knee",
+      "par": "LF_top",
+      "cat": "limb",
+      "x": 29.4,
+      "y": -54.5
+     },
+     {
+      "n": "LF_low",
+      "par": "LF_knee",
+      "cat": "limb",
+      "x": 57.7,
+      "y": -4.7
+     },
+     {
+      "n": "LF_foot",
+      "par": "LF_low",
+      "cat": "foot",
+      "x": 64.9,
+      "y": 16.4
+     },
+     {
+      "n": "RF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": 23.9,
+      "y": -60.7
+     },
+     {
+      "n": "RF_knee",
+      "par": "RF_top",
+      "cat": "limb",
+      "x": -4.5,
+      "y": -37.5
+     },
+     {
+      "n": "RF_low",
+      "par": "RF_knee",
+      "cat": "limb",
+      "x": 25.6,
+      "y": 11.4
+     },
+     {
+      "n": "RF_foot",
+      "par": "RF_low",
+      "cat": "foot",
+      "x": 32.8,
+      "y": 32.5
+     },
+     {
+      "n": "LH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": -24.9,
+      "y": -125.3
+     },
+     {
+      "n": "LH_knee",
+      "par": "LH_top",
+      "cat": "limb",
+      "x": 1.4,
+      "y": -64.5
+     },
+     {
+      "n": "LH_low",
+      "par": "LH_knee",
+      "cat": "limb",
+      "x": -39.6,
+      "y": -67.3
+     },
+     {
+      "n": "LH_foot",
+      "par": "LH_low",
+      "cat": "foot",
+      "x": -21.5,
+      "y": -25.9
+     },
+     {
+      "n": "RH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": -58.5,
+      "y": -108.5
+     },
+     {
+      "n": "RH_knee",
+      "par": "RH_top",
+      "cat": "limb",
+      "x": -30,
+      "y": -48.8
+     },
+     {
+      "n": "RH_low",
+      "par": "RH_knee",
+      "cat": "limb",
+      "x": -69.8,
+      "y": -52.2
+     },
+     {
+      "n": "RH_foot",
+      "par": "RH_low",
+      "cat": "foot",
+      "x": -51.8,
+      "y": -10.8
+     },
+     {
+      "n": "tail0",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": -54.5,
+      "y": -136.5
+     },
+     {
+      "n": "tail3",
+      "par": "tail0",
+      "cat": "tail",
+      "x": -82.1,
+      "y": -115.3
+     },
+     {
+      "n": "tail6",
+      "par": "tail3",
+      "cat": "tail",
+      "x": -119.7,
+      "y": -118.2
+     },
+     {
+      "n": "tail8",
+      "par": "tail6",
+      "cat": "tail",
+      "x": -146.3,
+      "y": -133.5
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": -52.9,
+      "y": -98.5
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -102.3
+     },
+     {
+      "n": "withers",
+      "par": "mid",
+      "cat": "spine",
+      "x": 41.6,
+      "y": -118.8
+     },
+     {
+      "n": "neck",
+      "par": "withers",
+      "cat": "chest",
+      "x": 77,
+      "y": -110.1
+     },
+     {
+      "n": "head",
+      "par": "neck",
+      "cat": "head",
+      "x": 126.5,
+      "y": -119.8
+     },
+     {
+      "n": "jaw",
+      "par": "head",
+      "cat": "head",
+      "x": 157.5,
+      "y": -95.7
+     },
+     {
+      "n": "LF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": 59,
+      "y": -103
+     },
+     {
+      "n": "LF_knee",
+      "par": "LF_top",
+      "cat": "limb",
+      "x": 17.6,
+      "y": -64.2
+     },
+     {
+      "n": "LF_low",
+      "par": "LF_knee",
+      "cat": "limb",
+      "x": 58.9,
+      "y": -28.8
+     },
+     {
+      "n": "LF_foot",
+      "par": "LF_low",
+      "cat": "foot",
+      "x": 69.1,
+      "y": -11.3
+     },
+     {
+      "n": "RF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": 59,
+      "y": -77.8
+     },
+     {
+      "n": "RF_knee",
+      "par": "RF_top",
+      "cat": "limb",
+      "x": 17.6,
+      "y": -40.2
+     },
+     {
+      "n": "RF_low",
+      "par": "RF_knee",
+      "cat": "limb",
+      "x": 58.9,
+      "y": -6.1
+     },
+     {
+      "n": "RF_foot",
+      "par": "RF_low",
+      "cat": "foot",
+      "x": 69.1,
+      "y": 11.3
+     },
+     {
+      "n": "LH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": -59,
+      "y": -107.9
+     },
+     {
+      "n": "LH_knee",
+      "par": "LH_top",
+      "cat": "limb",
+      "x": -20.2,
+      "y": -60.6
+     },
+     {
+      "n": "LH_low",
+      "par": "LH_knee",
+      "cat": "limb",
+      "x": -77.3,
+      "y": -43.1
+     },
+     {
+      "n": "LH_foot",
+      "par": "LH_low",
+      "cat": "foot",
+      "x": -51.8,
+      "y": -10.7
+     },
+     {
+      "n": "RH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": -59,
+      "y": -84.1
+     },
+     {
+      "n": "RH_knee",
+      "par": "RH_top",
+      "cat": "limb",
+      "x": -20.2,
+      "y": -38.5
+     },
+     {
+      "n": "RH_low",
+      "par": "RH_knee",
+      "cat": "limb",
+      "x": -77.3,
+      "y": -21.7
+     },
+     {
+      "n": "RH_foot",
+      "par": "RH_low",
+      "cat": "foot",
+      "x": -51.8,
+      "y": 10.7
+     },
+     {
+      "n": "tail0",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": -77.1,
+      "y": -109.2
+     },
+     {
+      "n": "tail3",
+      "par": "tail0",
+      "cat": "tail",
+      "x": -116.2,
+      "y": -74.2
+     },
+     {
+      "n": "tail6",
+      "par": "tail3",
+      "cat": "tail",
+      "x": -169.3,
+      "y": -58.4
+     },
+     {
+      "n": "tail8",
+      "par": "tail6",
+      "cat": "tail",
+      "x": -207,
+      "y": -60.3
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": -37.4,
+      "y": -79.8
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -102.3
+     },
+     {
+      "n": "withers",
+      "par": "mid",
+      "cat": "spine",
+      "x": 29.4,
+      "y": -133.5
+     },
+     {
+      "n": "neck",
+      "par": "withers",
+      "cat": "chest",
+      "x": 54.4,
+      "y": -137.3
+     },
+     {
+      "n": "head",
+      "par": "neck",
+      "cat": "head",
+      "x": 89.5,
+      "y": -164.5
+     },
+     {
+      "n": "jaw",
+      "par": "head",
+      "cat": "head",
+      "x": 111.4,
+      "y": -151.4
+     },
+     {
+      "n": "LF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": 23.9,
+      "y": -120.2
+     },
+     {
+      "n": "LF_knee",
+      "par": "LF_top",
+      "cat": "limb",
+      "x": -4.5,
+      "y": -66.9
+     },
+     {
+      "n": "LF_low",
+      "par": "LF_knee",
+      "cat": "limb",
+      "x": 25.6,
+      "y": -46.3
+     },
+     {
+      "n": "LF_foot",
+      "par": "LF_low",
+      "cat": "foot",
+      "x": 32.8,
+      "y": -32.5
+     },
+     {
+      "n": "RF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": 59.5,
+      "y": -102.4
+     },
+     {
+      "n": "RF_knee",
+      "par": "RF_top",
+      "cat": "limb",
+      "x": 29.4,
+      "y": -50
+     },
+     {
+      "n": "RF_low",
+      "par": "RF_knee",
+      "cat": "limb",
+      "x": 57.7,
+      "y": -30.3
+     },
+     {
+      "n": "RF_foot",
+      "par": "RF_low",
+      "cat": "foot",
+      "x": 64.9,
+      "y": -16.4
+     },
+     {
+      "n": "LH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": -58.5,
+      "y": -83.6
+     },
+     {
+      "n": "LH_knee",
+      "par": "LH_top",
+      "cat": "limb",
+      "x": -30,
+      "y": -50.3
+     },
+     {
+      "n": "LH_low",
+      "par": "LH_knee",
+      "cat": "limb",
+      "x": -69.8,
+      "y": -12.6
+     },
+     {
+      "n": "LH_foot",
+      "par": "LH_low",
+      "cat": "foot",
+      "x": -51.8,
+      "y": 10.8
+     },
+     {
+      "n": "RH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": -24.9,
+      "y": -66.8
+     },
+     {
+      "n": "RH_knee",
+      "par": "RH_top",
+      "cat": "limb",
+      "x": 1.4,
+      "y": -34.6
+     },
+     {
+      "n": "RH_low",
+      "par": "RH_knee",
+      "cat": "limb",
+      "x": -39.6,
+      "y": 2.5
+     },
+     {
+      "n": "RH_foot",
+      "par": "RH_low",
+      "cat": "foot",
+      "x": -21.5,
+      "y": 25.9
+     },
+     {
+      "n": "tail0",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": -54.5,
+      "y": -82
+     },
+     {
+      "n": "tail3",
+      "par": "tail0",
+      "cat": "tail",
+      "x": -82.1,
+      "y": -33.1
+     },
+     {
+      "n": "tail6",
+      "par": "tail3",
+      "cat": "tail",
+      "x": -119.7,
+      "y": 1.5
+     },
+     {
+      "n": "tail8",
+      "par": "tail6",
+      "cat": "tail",
+      "x": -146.3,
+      "y": 12.8
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -72.1
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -102.3
+     },
+     {
+      "n": "withers",
+      "par": "mid",
+      "cat": "spine",
+      "x": 0,
+      "y": -139.6
+     },
+     {
+      "n": "neck",
+      "par": "withers",
+      "cat": "chest",
+      "x": 0,
+      "y": -148.5
+     },
+     {
+      "n": "head",
+      "par": "neck",
+      "cat": "head",
+      "x": 0,
+      "y": -183
+     },
+     {
+      "n": "jaw",
+      "par": "head",
+      "cat": "head",
+      "x": 0,
+      "y": -174.5
+     },
+     {
+      "n": "LF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": -25.2,
+      "y": -119.9
+     },
+     {
+      "n": "LF_knee",
+      "par": "LF_top",
+      "cat": "limb",
+      "x": -24,
+      "y": -61
+     },
+     {
+      "n": "LF_low",
+      "par": "LF_knee",
+      "cat": "limb",
+      "x": -22.7,
+      "y": -46.9
+     },
+     {
+      "n": "LF_foot",
+      "par": "LF_low",
+      "cat": "foot",
+      "x": -22.7,
+      "y": -34.6
+     },
+     {
+      "n": "RF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": 25.2,
+      "y": -119.9
+     },
+     {
+      "n": "RF_knee",
+      "par": "RF_top",
+      "cat": "limb",
+      "x": 24,
+      "y": -61
+     },
+     {
+      "n": "RF_low",
+      "par": "RF_knee",
+      "cat": "limb",
+      "x": 22.7,
+      "y": -46.9
+     },
+     {
+      "n": "RF_foot",
+      "par": "RF_low",
+      "cat": "foot",
+      "x": 22.7,
+      "y": -34.6
+     },
+     {
+      "n": "LH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": -23.8,
+      "y": -66.5
+     },
+     {
+      "n": "LH_knee",
+      "par": "LH_top",
+      "cat": "limb",
+      "x": -22.2,
+      "y": -39.5
+     },
+     {
+      "n": "LH_low",
+      "par": "LH_knee",
+      "cat": "limb",
+      "x": -21.4,
+      "y": 6.2
+     },
+     {
+      "n": "LH_foot",
+      "par": "LH_low",
+      "cat": "foot",
+      "x": -21.4,
+      "y": 25.9
+     },
+     {
+      "n": "RH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": 23.8,
+      "y": -66.5
+     },
+     {
+      "n": "RH_knee",
+      "par": "RH_top",
+      "cat": "limb",
+      "x": 22.2,
+      "y": -39.5
+     },
+     {
+      "n": "RH_low",
+      "par": "RH_knee",
+      "cat": "limb",
+      "x": 21.4,
+      "y": 6.2
+     },
+     {
+      "n": "RH_foot",
+      "par": "RH_low",
+      "cat": "foot",
+      "x": 21.4,
+      "y": 25.9
+     },
+     {
+      "n": "tail0",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": 0,
+      "y": -70.7
+     },
+     {
+      "n": "tail3",
+      "par": "tail0",
+      "cat": "tail",
+      "x": 0,
+      "y": -16.1
+     },
+     {
+      "n": "tail6",
+      "par": "tail3",
+      "cat": "tail",
+      "x": 0,
+      "y": 26.3
+     },
+     {
+      "n": "tail8",
+      "par": "tail6",
+      "cat": "tail",
+      "x": 0,
+      "y": 43.1
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": 37.4,
+      "y": -79.8
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -102.3
+     },
+     {
+      "n": "withers",
+      "par": "mid",
+      "cat": "spine",
+      "x": -29.4,
+      "y": -133.5
+     },
+     {
+      "n": "neck",
+      "par": "withers",
+      "cat": "chest",
+      "x": -54.4,
+      "y": -137.3
+     },
+     {
+      "n": "head",
+      "par": "neck",
+      "cat": "head",
+      "x": -89.5,
+      "y": -164.5
+     },
+     {
+      "n": "jaw",
+      "par": "head",
+      "cat": "head",
+      "x": -111.4,
+      "y": -151.4
+     },
+     {
+      "n": "LF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": -59.5,
+      "y": -102.4
+     },
+     {
+      "n": "LF_knee",
+      "par": "LF_top",
+      "cat": "limb",
+      "x": -29.4,
+      "y": -50
+     },
+     {
+      "n": "LF_low",
+      "par": "LF_knee",
+      "cat": "limb",
+      "x": -57.7,
+      "y": -30.3
+     },
+     {
+      "n": "LF_foot",
+      "par": "LF_low",
+      "cat": "foot",
+      "x": -64.9,
+      "y": -16.4
+     },
+     {
+      "n": "RF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": -23.9,
+      "y": -120.2
+     },
+     {
+      "n": "RF_knee",
+      "par": "RF_top",
+      "cat": "limb",
+      "x": 4.5,
+      "y": -66.9
+     },
+     {
+      "n": "RF_low",
+      "par": "RF_knee",
+      "cat": "limb",
+      "x": -25.6,
+      "y": -46.3
+     },
+     {
+      "n": "RF_foot",
+      "par": "RF_low",
+      "cat": "foot",
+      "x": -32.8,
+      "y": -32.5
+     },
+     {
+      "n": "LH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": 24.9,
+      "y": -66.8
+     },
+     {
+      "n": "LH_knee",
+      "par": "LH_top",
+      "cat": "limb",
+      "x": -1.4,
+      "y": -34.6
+     },
+     {
+      "n": "LH_low",
+      "par": "LH_knee",
+      "cat": "limb",
+      "x": 39.6,
+      "y": 2.5
+     },
+     {
+      "n": "LH_foot",
+      "par": "LH_low",
+      "cat": "foot",
+      "x": 21.5,
+      "y": 25.9
+     },
+     {
+      "n": "RH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": 58.5,
+      "y": -83.6
+     },
+     {
+      "n": "RH_knee",
+      "par": "RH_top",
+      "cat": "limb",
+      "x": 30,
+      "y": -50.3
+     },
+     {
+      "n": "RH_low",
+      "par": "RH_knee",
+      "cat": "limb",
+      "x": 69.8,
+      "y": -12.6
+     },
+     {
+      "n": "RH_foot",
+      "par": "RH_low",
+      "cat": "foot",
+      "x": 51.8,
+      "y": 10.8
+     },
+     {
+      "n": "tail0",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": 54.5,
+      "y": -82
+     },
+     {
+      "n": "tail3",
+      "par": "tail0",
+      "cat": "tail",
+      "x": 82.1,
+      "y": -33.1
+     },
+     {
+      "n": "tail6",
+      "par": "tail3",
+      "cat": "tail",
+      "x": 119.7,
+      "y": 1.5
+     },
+     {
+      "n": "tail8",
+      "par": "tail6",
+      "cat": "tail",
+      "x": 146.3,
+      "y": 12.8
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": 52.9,
+      "y": -98.5
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -102.3
+     },
+     {
+      "n": "withers",
+      "par": "mid",
+      "cat": "spine",
+      "x": -41.6,
+      "y": -118.8
+     },
+     {
+      "n": "neck",
+      "par": "withers",
+      "cat": "chest",
+      "x": -77,
+      "y": -110.1
+     },
+     {
+      "n": "head",
+      "par": "neck",
+      "cat": "head",
+      "x": -126.5,
+      "y": -119.8
+     },
+     {
+      "n": "jaw",
+      "par": "head",
+      "cat": "head",
+      "x": -157.5,
+      "y": -95.7
+     },
+     {
+      "n": "LF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": -59,
+      "y": -77.8
+     },
+     {
+      "n": "LF_knee",
+      "par": "LF_top",
+      "cat": "limb",
+      "x": -17.6,
+      "y": -40.2
+     },
+     {
+      "n": "LF_low",
+      "par": "LF_knee",
+      "cat": "limb",
+      "x": -58.9,
+      "y": -6.1
+     },
+     {
+      "n": "LF_foot",
+      "par": "LF_low",
+      "cat": "foot",
+      "x": -69.1,
+      "y": 11.3
+     },
+     {
+      "n": "RF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": -59,
+      "y": -103
+     },
+     {
+      "n": "RF_knee",
+      "par": "RF_top",
+      "cat": "limb",
+      "x": -17.6,
+      "y": -64.2
+     },
+     {
+      "n": "RF_low",
+      "par": "RF_knee",
+      "cat": "limb",
+      "x": -58.9,
+      "y": -28.8
+     },
+     {
+      "n": "RF_foot",
+      "par": "RF_low",
+      "cat": "foot",
+      "x": -69.1,
+      "y": -11.3
+     },
+     {
+      "n": "LH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": 59,
+      "y": -84.1
+     },
+     {
+      "n": "LH_knee",
+      "par": "LH_top",
+      "cat": "limb",
+      "x": 20.2,
+      "y": -38.5
+     },
+     {
+      "n": "LH_low",
+      "par": "LH_knee",
+      "cat": "limb",
+      "x": 77.3,
+      "y": -21.7
+     },
+     {
+      "n": "LH_foot",
+      "par": "LH_low",
+      "cat": "foot",
+      "x": 51.8,
+      "y": 10.7
+     },
+     {
+      "n": "RH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": 59,
+      "y": -107.9
+     },
+     {
+      "n": "RH_knee",
+      "par": "RH_top",
+      "cat": "limb",
+      "x": 20.2,
+      "y": -60.6
+     },
+     {
+      "n": "RH_low",
+      "par": "RH_knee",
+      "cat": "limb",
+      "x": 77.3,
+      "y": -43.1
+     },
+     {
+      "n": "RH_foot",
+      "par": "RH_low",
+      "cat": "foot",
+      "x": 51.8,
+      "y": -10.7
+     },
+     {
+      "n": "tail0",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": 77.1,
+      "y": -109.2
+     },
+     {
+      "n": "tail3",
+      "par": "tail0",
+      "cat": "tail",
+      "x": 116.2,
+      "y": -74.2
+     },
+     {
+      "n": "tail6",
+      "par": "tail3",
+      "cat": "tail",
+      "x": 169.3,
+      "y": -58.4
+     },
+     {
+      "n": "tail8",
+      "par": "tail6",
+      "cat": "tail",
+      "x": 207,
+      "y": -60.3
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": 37.4,
+      "y": -117.2
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -102.3
+     },
+     {
+      "n": "withers",
+      "par": "mid",
+      "cat": "spine",
+      "x": -29.4,
+      "y": -104.1
+     },
+     {
+      "n": "neck",
+      "par": "withers",
+      "cat": "chest",
+      "x": -54.4,
+      "y": -82.8
+     },
+     {
+      "n": "head",
+      "par": "neck",
+      "cat": "head",
+      "x": -89.5,
+      "y": -75
+     },
+     {
+      "n": "jaw",
+      "par": "head",
+      "cat": "head",
+      "x": -111.4,
+      "y": -40
+     },
+     {
+      "n": "LF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": -23.9,
+      "y": -60.7
+     },
+     {
+      "n": "LF_knee",
+      "par": "LF_top",
+      "cat": "limb",
+      "x": 4.5,
+      "y": -37.5
+     },
+     {
+      "n": "LF_low",
+      "par": "LF_knee",
+      "cat": "limb",
+      "x": -25.6,
+      "y": 11.4
+     },
+     {
+      "n": "LF_foot",
+      "par": "LF_low",
+      "cat": "foot",
+      "x": -32.8,
+      "y": 32.5
+     },
+     {
+      "n": "RF_top",
+      "par": "withers",
+      "cat": "chest",
+      "x": -59.5,
+      "y": -78.5
+     },
+     {
+      "n": "RF_knee",
+      "par": "RF_top",
+      "cat": "limb",
+      "x": -29.4,
+      "y": -54.5
+     },
+     {
+      "n": "RF_low",
+      "par": "RF_knee",
+      "cat": "limb",
+      "x": -57.7,
+      "y": -4.7
+     },
+     {
+      "n": "RF_foot",
+      "par": "RF_low",
+      "cat": "foot",
+      "x": -64.9,
+      "y": 16.4
+     },
+     {
+      "n": "LH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": 58.5,
+      "y": -108.5
+     },
+     {
+      "n": "LH_knee",
+      "par": "LH_top",
+      "cat": "limb",
+      "x": 30,
+      "y": -48.8
+     },
+     {
+      "n": "LH_low",
+      "par": "LH_knee",
+      "cat": "limb",
+      "x": 69.8,
+      "y": -52.2
+     },
+     {
+      "n": "LH_foot",
+      "par": "LH_low",
+      "cat": "foot",
+      "x": 51.8,
+      "y": -10.8
+     },
+     {
+      "n": "RH_top",
+      "par": "pelvis",
+      "cat": "chest",
+      "x": 24.9,
+      "y": -125.3
+     },
+     {
+      "n": "RH_knee",
+      "par": "RH_top",
+      "cat": "limb",
+      "x": -1.4,
+      "y": -64.5
+     },
+     {
+      "n": "RH_low",
+      "par": "RH_knee",
+      "cat": "limb",
+      "x": 39.6,
+      "y": -67.3
+     },
+     {
+      "n": "RH_foot",
+      "par": "RH_low",
+      "cat": "foot",
+      "x": 21.5,
+      "y": -25.9
+     },
+     {
+      "n": "tail0",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": 54.5,
+      "y": -136.5
+     },
+     {
+      "n": "tail3",
+      "par": "tail0",
+      "cat": "tail",
+      "x": 82.1,
+      "y": -115.3
+     },
+     {
+      "n": "tail6",
+      "par": "tail3",
+      "cat": "tail",
+      "x": 119.7,
+      "y": -118.2
+     },
+     {
+      "n": "tail8",
+      "par": "tail6",
+      "cat": "tail",
+      "x": 146.3,
+      "y": -133.5
+     }
+    ]
+   ]
+  },
+  "glykon": {
+   "meta": [
+    166,
+    143,
+    83,
+    82,
+    1
+   ],
+   "joints": [
+    [
+     {
+      "n": "c0",
+      "par": null,
+      "cat": "tail",
+      "x": 49.7,
+      "y": -9.2
+     },
+     {
+      "n": "c4",
+      "par": "c0",
+      "cat": "tail",
+      "x": 35.6,
+      "y": 5.6
+     },
+     {
+      "n": "c8",
+      "par": "c4",
+      "cat": "spine",
+      "x": 7.8,
+      "y": 11.9
+     },
+     {
+      "n": "c12",
+      "par": "c8",
+      "cat": "spine",
+      "x": -19.3,
+      "y": 8
+     },
+     {
+      "n": "c16",
+      "par": "c12",
+      "cat": "spine",
+      "x": -33.8,
+      "y": -2.7
+     },
+     {
+      "n": "c20",
+      "par": "c16",
+      "cat": "spine",
+      "x": -31.1,
+      "y": -14.5
+     },
+     {
+      "n": "c24",
+      "par": "c20",
+      "cat": "spine",
+      "x": -15.4,
+      "y": -21.8
+     },
+     {
+      "n": "c28",
+      "par": "c24",
+      "cat": "spine",
+      "x": 3.7,
+      "y": -22.2
+     },
+     {
+      "n": "c32",
+      "par": "c28",
+      "cat": "spine",
+      "x": 13,
+      "y": -24.7
+     },
+     {
+      "n": "c36",
+      "par": "c32",
+      "cat": "spine",
+      "x": 11.9,
+      "y": -42.4
+     },
+     {
+      "n": "c40",
+      "par": "c36",
+      "cat": "spine",
+      "x": 6.3,
+      "y": -53.3
+     },
+     {
+      "n": "c44",
+      "par": "c40",
+      "cat": "spine",
+      "x": -6.5,
+      "y": -53.5
+     },
+     {
+      "n": "head",
+      "par": "c44",
+      "cat": "head",
+      "x": -12,
+      "y": -52.1
+     }
+    ],
+    [
+     {
+      "n": "c0",
+      "par": null,
+      "cat": "tail",
+      "x": 30,
+      "y": -25.7
+     },
+     {
+      "n": "c4",
+      "par": "c0",
+      "cat": "tail",
+      "x": 41,
+      "y": -10.3
+     },
+     {
+      "n": "c8",
+      "par": "c4",
+      "cat": "spine",
+      "x": 30.3,
+      "y": 4
+     },
+     {
+      "n": "c12",
+      "par": "c8",
+      "cat": "spine",
+      "x": 5.7,
+      "y": 10.9
+     },
+     {
+      "n": "c16",
+      "par": "c12",
+      "cat": "spine",
+      "x": -19.8,
+      "y": 8.4
+     },
+     {
+      "n": "c20",
+      "par": "c16",
+      "cat": "spine",
+      "x": -34.5,
+      "y": -0.9
+     },
+     {
+      "n": "c24",
+      "par": "c20",
+      "cat": "spine",
+      "x": -33.8,
+      "y": -11.6
+     },
+     {
+      "n": "c28",
+      "par": "c24",
+      "cat": "spine",
+      "x": -20.7,
+      "y": -18.6
+     },
+     {
+      "n": "c32",
+      "par": "c28",
+      "cat": "spine",
+      "x": -7.1,
+      "y": -25.9
+     },
+     {
+      "n": "c36",
+      "par": "c32",
+      "cat": "spine",
+      "x": 0.1,
+      "y": -44.9
+     },
+     {
+      "n": "c40",
+      "par": "c36",
+      "cat": "spine",
+      "x": 4.1,
+      "y": -55.4
+     },
+     {
+      "n": "c44",
+      "par": "c40",
+      "cat": "spine",
+      "x": 3,
+      "y": -52.8
+     },
+     {
+      "n": "head",
+      "par": "c44",
+      "cat": "head",
+      "x": 2.4,
+      "y": -50.1
+     }
+    ],
+    [
+     {
+      "n": "c0",
+      "par": null,
+      "cat": "tail",
+      "x": -7.2,
+      "y": -30.5
+     },
+     {
+      "n": "c4",
+      "par": "c0",
+      "cat": "tail",
+      "x": 22.4,
+      "y": -23.4
+     },
+     {
+      "n": "c8",
+      "par": "c4",
+      "cat": "spine",
+      "x": 35,
+      "y": -9.5
+     },
+     {
+      "n": "c12",
+      "par": "c8",
+      "cat": "spine",
+      "x": 27.3,
+      "y": 4
+     },
+     {
+      "n": "c16",
+      "par": "c12",
+      "cat": "spine",
+      "x": 5.8,
+      "y": 11.3
+     },
+     {
+      "n": "c20",
+      "par": "c16",
+      "cat": "spine",
+      "x": -17.7,
+      "y": 9.9
+     },
+     {
+      "n": "c24",
+      "par": "c20",
+      "cat": "spine",
+      "x": -32.3,
+      "y": 2.1
+     },
+     {
+      "n": "c28",
+      "par": "c24",
+      "cat": "spine",
+      "x": -33.1,
+      "y": -7.5
+     },
+     {
+      "n": "c32",
+      "par": "c28",
+      "cat": "spine",
+      "x": -23,
+      "y": -19.7
+     },
+     {
+      "n": "c36",
+      "par": "c32",
+      "cat": "spine",
+      "x": -11.8,
+      "y": -42.5
+     },
+     {
+      "n": "c40",
+      "par": "c36",
+      "cat": "spine",
+      "x": -0.5,
+      "y": -56.2
+     },
+     {
+      "n": "c44",
+      "par": "c40",
+      "cat": "spine",
+      "x": 10.8,
+      "y": -55.7
+     },
+     {
+      "n": "head",
+      "par": "c44",
+      "cat": "head",
+      "x": 15.4,
+      "y": -53.8
+     }
+    ],
+    [
+     {
+      "n": "c0",
+      "par": null,
+      "cat": "tail",
+      "x": -40.2,
+      "y": -20.6
+     },
+     {
+      "n": "c4",
+      "par": "c0",
+      "cat": "tail",
+      "x": -9.3,
+      "y": -26.1
+     },
+     {
+      "n": "c8",
+      "par": "c4",
+      "cat": "spine",
+      "x": 19.2,
+      "y": -20.8
+     },
+     {
+      "n": "c12",
+      "par": "c8",
+      "cat": "spine",
+      "x": 33,
+      "y": -8.5
+     },
+     {
+      "n": "c16",
+      "par": "c12",
+      "cat": "spine",
+      "x": 28,
+      "y": 4.3
+     },
+     {
+      "n": "c20",
+      "par": "c16",
+      "cat": "spine",
+      "x": 9.5,
+      "y": 11.6
+     },
+     {
+      "n": "c24",
+      "par": "c20",
+      "cat": "spine",
+      "x": -11.9,
+      "y": 11.3
+     },
+     {
+      "n": "c28",
+      "par": "c24",
+      "cat": "spine",
+      "x": -26,
+      "y": 4.7
+     },
+     {
+      "n": "c32",
+      "par": "c28",
+      "cat": "spine",
+      "x": -25.5,
+      "y": -9.7
+     },
+     {
+      "n": "c36",
+      "par": "c32",
+      "cat": "spine",
+      "x": -16.7,
+      "y": -36.6
+     },
+     {
+      "n": "c40",
+      "par": "c36",
+      "cat": "spine",
+      "x": -4.8,
+      "y": -55.1
+     },
+     {
+      "n": "c44",
+      "par": "c40",
+      "cat": "spine",
+      "x": 12.3,
+      "y": -60.4
+     },
+     {
+      "n": "head",
+      "par": "c44",
+      "cat": "head",
+      "x": 19.3,
+      "y": -61
+     }
+    ],
+    [
+     {
+      "n": "c0",
+      "par": null,
+      "cat": "tail",
+      "x": -49.7,
+      "y": -2
+     },
+     {
+      "n": "c4",
+      "par": "c0",
+      "cat": "tail",
+      "x": -35.6,
+      "y": -16.8
+     },
+     {
+      "n": "c8",
+      "par": "c4",
+      "cat": "spine",
+      "x": -7.8,
+      "y": -23.1
+     },
+     {
+      "n": "c12",
+      "par": "c8",
+      "cat": "spine",
+      "x": 19.3,
+      "y": -19.3
+     },
+     {
+      "n": "c16",
+      "par": "c12",
+      "cat": "spine",
+      "x": 33.8,
+      "y": -8.5
+     },
+     {
+      "n": "c20",
+      "par": "c16",
+      "cat": "spine",
+      "x": 31.1,
+      "y": 3.2
+     },
+     {
+      "n": "c24",
+      "par": "c20",
+      "cat": "spine",
+      "x": 15.4,
+      "y": 10.5
+     },
+     {
+      "n": "c28",
+      "par": "c24",
+      "cat": "spine",
+      "x": -3.7,
+      "y": 10.9
+     },
+     {
+      "n": "c32",
+      "par": "c28",
+      "cat": "spine",
+      "x": -13,
+      "y": -1.7
+     },
+     {
+      "n": "c36",
+      "par": "c32",
+      "cat": "spine",
+      "x": -11.9,
+      "y": -30.7
+     },
+     {
+      "n": "c40",
+      "par": "c36",
+      "cat": "spine",
+      "x": -6.3,
+      "y": -52.8
+     },
+     {
+      "n": "c44",
+      "par": "c40",
+      "cat": "spine",
+      "x": 6.5,
+      "y": -64.3
+     },
+     {
+      "n": "head",
+      "par": "c44",
+      "cat": "head",
+      "x": 12,
+      "y": -67.5
+     }
+    ],
+    [
+     {
+      "n": "c0",
+      "par": null,
+      "cat": "tail",
+      "x": -30,
+      "y": 14.5
+     },
+     {
+      "n": "c4",
+      "par": "c0",
+      "cat": "tail",
+      "x": -41,
+      "y": -1
+     },
+     {
+      "n": "c8",
+      "par": "c4",
+      "cat": "spine",
+      "x": -30.3,
+      "y": -15.2
+     },
+     {
+      "n": "c12",
+      "par": "c8",
+      "cat": "spine",
+      "x": -5.7,
+      "y": -22.1
+     },
+     {
+      "n": "c16",
+      "par": "c12",
+      "cat": "spine",
+      "x": 19.8,
+      "y": -19.6
+     },
+     {
+      "n": "c20",
+      "par": "c16",
+      "cat": "spine",
+      "x": 34.5,
+      "y": -10.4
+     },
+     {
+      "n": "c24",
+      "par": "c20",
+      "cat": "spine",
+      "x": 33.8,
+      "y": 0.3
+     },
+     {
+      "n": "c28",
+      "par": "c24",
+      "cat": "spine",
+      "x": 20.7,
+      "y": 7.4
+     },
+     {
+      "n": "c32",
+      "par": "c28",
+      "cat": "spine",
+      "x": 7.1,
+      "y": -0.5
+     },
+     {
+      "n": "c36",
+      "par": "c32",
+      "cat": "spine",
+      "x": -0.1,
+      "y": -28.2
+     },
+     {
+      "n": "c40",
+      "par": "c36",
+      "cat": "spine",
+      "x": -4.1,
+      "y": -50.6
+     },
+     {
+      "n": "c44",
+      "par": "c40",
+      "cat": "spine",
+      "x": -3,
+      "y": -65.1
+     },
+     {
+      "n": "head",
+      "par": "c44",
+      "cat": "head",
+      "x": -2.4,
+      "y": -69.4
+     }
+    ],
+    [
+     {
+      "n": "c0",
+      "par": null,
+      "cat": "tail",
+      "x": 7.2,
+      "y": 19.2
+     },
+     {
+      "n": "c4",
+      "par": "c0",
+      "cat": "tail",
+      "x": -22.4,
+      "y": 12.2
+     },
+     {
+      "n": "c8",
+      "par": "c4",
+      "cat": "spine",
+      "x": -35,
+      "y": -1.7
+     },
+     {
+      "n": "c12",
+      "par": "c8",
+      "cat": "spine",
+      "x": -27.3,
+      "y": -15.3
+     },
+     {
+      "n": "c16",
+      "par": "c12",
+      "cat": "spine",
+      "x": -5.8,
+      "y": -22.5
+     },
+     {
+      "n": "c20",
+      "par": "c16",
+      "cat": "spine",
+      "x": 17.7,
+      "y": -21.2
+     },
+     {
+      "n": "c24",
+      "par": "c20",
+      "cat": "spine",
+      "x": 32.3,
+      "y": -13.3
+     },
+     {
+      "n": "c28",
+      "par": "c24",
+      "cat": "spine",
+      "x": 33.1,
+      "y": -3.8
+     },
+     {
+      "n": "c32",
+      "par": "c28",
+      "cat": "spine",
+      "x": 23,
+      "y": -6.7
+     },
+     {
+      "n": "c36",
+      "par": "c32",
+      "cat": "spine",
+      "x": 11.8,
+      "y": -30.6
+     },
+     {
+      "n": "c40",
+      "par": "c36",
+      "cat": "spine",
+      "x": 0.5,
+      "y": -49.9
+     },
+     {
+      "n": "c44",
+      "par": "c40",
+      "cat": "spine",
+      "x": -10.8,
+      "y": -62.2
+     },
+     {
+      "n": "head",
+      "par": "c44",
+      "cat": "head",
+      "x": -15.4,
+      "y": -65.8
+     }
+    ],
+    [
+     {
+      "n": "c0",
+      "par": null,
+      "cat": "tail",
+      "x": 40.2,
+      "y": 9.4
+     },
+     {
+      "n": "c4",
+      "par": "c0",
+      "cat": "tail",
+      "x": 9.3,
+      "y": 14.9
+     },
+     {
+      "n": "c8",
+      "par": "c4",
+      "cat": "spine",
+      "x": -19.2,
+      "y": 9.5
+     },
+     {
+      "n": "c12",
+      "par": "c8",
+      "cat": "spine",
+      "x": -33,
+      "y": -2.8
+     },
+     {
+      "n": "c16",
+      "par": "c12",
+      "cat": "spine",
+      "x": -28,
+      "y": -15.5
+     },
+     {
+      "n": "c20",
+      "par": "c16",
+      "cat": "spine",
+      "x": -9.5,
+      "y": -22.9
+     },
+     {
+      "n": "c24",
+      "par": "c20",
+      "cat": "spine",
+      "x": 11.9,
+      "y": -22.5
+     },
+     {
+      "n": "c28",
+      "par": "c24",
+      "cat": "spine",
+      "x": 26,
+      "y": -16
+     },
+     {
+      "n": "c32",
+      "par": "c28",
+      "cat": "spine",
+      "x": 25.5,
+      "y": -16.8
+     },
+     {
+      "n": "c36",
+      "par": "c32",
+      "cat": "spine",
+      "x": 16.7,
+      "y": -36.5
+     },
+     {
+      "n": "c40",
+      "par": "c36",
+      "cat": "spine",
+      "x": 4.8,
+      "y": -50.9
+     },
+     {
+      "n": "c44",
+      "par": "c40",
+      "cat": "spine",
+      "x": -12.3,
+      "y": -57.4
+     },
+     {
+      "n": "head",
+      "par": "c44",
+      "cat": "head",
+      "x": -19.3,
+      "y": -58.6
+     }
+    ]
+   ]
+  },
+  "zora": {
+   "meta": [
+    286,
+    269,
+    143,
+    184.8,
+    1
+   ],
+   "joints": [
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -73.2
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -71.8
+     },
+     {
+      "n": "chest",
+      "par": "mid",
+      "cat": "chest",
+      "x": 0,
+      "y": -74.1
+     },
+     {
+      "n": "head",
+      "par": "chest",
+      "cat": "head",
+      "x": 0,
+      "y": -88.9
+     },
+     {
+      "n": "wS-1",
+      "par": "chest",
+      "cat": "chest",
+      "x": -17.3,
+      "y": -76.4
+     },
+     {
+      "n": "wE-1",
+      "par": "wS-1",
+      "cat": "limb",
+      "x": -50.6,
+      "y": -88
+     },
+     {
+      "n": "wW-1",
+      "par": "wE-1",
+      "cat": "limb",
+      "x": -82,
+      "y": -98.9
+     },
+     {
+      "n": "wT-1",
+      "par": "wW-1",
+      "cat": "foot",
+      "x": -112.5,
+      "y": -116.7
+     },
+     {
+      "n": "wS1",
+      "par": "chest",
+      "cat": "chest",
+      "x": 17.3,
+      "y": -76.4
+     },
+     {
+      "n": "wE1",
+      "par": "wS1",
+      "cat": "limb",
+      "x": 50.6,
+      "y": -88
+     },
+     {
+      "n": "wW1",
+      "par": "wE1",
+      "cat": "limb",
+      "x": 82,
+      "y": -98.9
+     },
+     {
+      "n": "wT1",
+      "par": "wW1",
+      "cat": "foot",
+      "x": 112.5,
+      "y": -116.7
+     },
+     {
+      "n": "tail",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": 0,
+      "y": -87.2
+     },
+     {
+      "n": "leg-1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": -10.1,
+      "y": -53.6
+     },
+     {
+      "n": "ft-1",
+      "par": "leg-1",
+      "cat": "foot",
+      "x": -10.8,
+      "y": -18.9
+     },
+     {
+      "n": "leg1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": 10.1,
+      "y": -53.6
+     },
+     {
+      "n": "ft1",
+      "par": "leg1",
+      "cat": "foot",
+      "x": 10.8,
+      "y": -18.9
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": -12.4,
+      "y": -70.7
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": -0.2,
+      "y": -71.8
+     },
+     {
+      "n": "chest",
+      "par": "mid",
+      "cat": "chest",
+      "x": 12.2,
+      "y": -76.6
+     },
+     {
+      "n": "head",
+      "par": "chest",
+      "cat": "head",
+      "x": 15.8,
+      "y": -92.2
+     },
+     {
+      "n": "wS-1",
+      "par": "chest",
+      "cat": "chest",
+      "x": -5.1,
+      "y": -71.7
+     },
+     {
+      "n": "wE-1",
+      "par": "wS-1",
+      "cat": "limb",
+      "x": -32.4,
+      "y": -70.8
+     },
+     {
+      "n": "wW-1",
+      "par": "wE-1",
+      "cat": "limb",
+      "x": -58.1,
+      "y": -69.9
+     },
+     {
+      "n": "wT-1",
+      "par": "wW-1",
+      "cat": "foot",
+      "x": -98.2,
+      "y": -73.1
+     },
+     {
+      "n": "wS1",
+      "par": "chest",
+      "cat": "chest",
+      "x": 19.4,
+      "y": -84
+     },
+     {
+      "n": "wE1",
+      "par": "wS1",
+      "cat": "limb",
+      "x": 39.2,
+      "y": -106.6
+     },
+     {
+      "n": "wW1",
+      "par": "wE1",
+      "cat": "limb",
+      "x": 57.8,
+      "y": -127.9
+     },
+     {
+      "n": "wT1",
+      "par": "wW1",
+      "cat": "foot",
+      "x": 60.9,
+      "y": -152.6
+     },
+     {
+      "n": "tail",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": -46.3,
+      "y": -77.6
+     },
+     {
+      "n": "leg-1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": -3.9,
+      "y": -50.7
+     },
+     {
+      "n": "ft-1",
+      "par": "leg-1",
+      "cat": "foot",
+      "x": -3.6,
+      "y": -16
+     },
+     {
+      "n": "leg1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": 10.3,
+      "y": -57.8
+     },
+     {
+      "n": "ft1",
+      "par": "leg1",
+      "cat": "foot",
+      "x": 11.7,
+      "y": -23.6
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": -17.5,
+      "y": -64.5
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": -0.3,
+      "y": -71.7
+     },
+     {
+      "n": "chest",
+      "par": "mid",
+      "cat": "chest",
+      "x": 17.2,
+      "y": -82.7
+     },
+     {
+      "n": "head",
+      "par": "chest",
+      "cat": "head",
+      "x": 22.3,
+      "y": -100.1
+     },
+     {
+      "n": "wS-1",
+      "par": "chest",
+      "cat": "chest",
+      "x": 10.1,
+      "y": -72.8
+     },
+     {
+      "n": "wE-1",
+      "par": "wS-1",
+      "cat": "limb",
+      "x": 4.8,
+      "y": -65.1
+     },
+     {
+      "n": "wW-1",
+      "par": "wE-1",
+      "cat": "limb",
+      "x": -0.2,
+      "y": -57.8
+     },
+     {
+      "n": "wT-1",
+      "par": "wW-1",
+      "cat": "foot",
+      "x": -26.4,
+      "y": -47.3
+     },
+     {
+      "n": "wS1",
+      "par": "chest",
+      "cat": "chest",
+      "x": 10.1,
+      "y": -90.1
+     },
+     {
+      "n": "wE1",
+      "par": "wS1",
+      "cat": "limb",
+      "x": 4.8,
+      "y": -115.7
+     },
+     {
+      "n": "wW1",
+      "par": "wE1",
+      "cat": "limb",
+      "x": -0.2,
+      "y": -139.8
+     },
+     {
+      "n": "wT1",
+      "par": "wW1",
+      "cat": "foot",
+      "x": -26.4,
+      "y": -159.8
+     },
+     {
+      "n": "tail",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": -65.5,
+      "y": -54.5
+     },
+     {
+      "n": "leg-1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": 4.5,
+      "y": -50.8
+     },
+     {
+      "n": "ft-1",
+      "par": "leg-1",
+      "cat": "foot",
+      "x": 5.8,
+      "y": -16.4
+     },
+     {
+      "n": "leg1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": 4.5,
+      "y": -60.9
+     },
+     {
+      "n": "ft1",
+      "par": "leg1",
+      "cat": "foot",
+      "x": 5.8,
+      "y": -27.2
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": -12.4,
+      "y": -58.3
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": -0.2,
+      "y": -71.6
+     },
+     {
+      "n": "chest",
+      "par": "mid",
+      "cat": "chest",
+      "x": 12.2,
+      "y": -88.8
+     },
+     {
+      "n": "head",
+      "par": "chest",
+      "cat": "head",
+      "x": 15.8,
+      "y": -108
+     },
+     {
+      "n": "wS-1",
+      "par": "chest",
+      "cat": "chest",
+      "x": 19.4,
+      "y": -78.9
+     },
+     {
+      "n": "wE-1",
+      "par": "wS-1",
+      "cat": "limb",
+      "x": 39.2,
+      "y": -74.2
+     },
+     {
+      "n": "wW-1",
+      "par": "wE-1",
+      "cat": "limb",
+      "x": 57.8,
+      "y": -69.7
+     },
+     {
+      "n": "wT-1",
+      "par": "wW-1",
+      "cat": "foot",
+      "x": 60.9,
+      "y": -54.4
+     },
+     {
+      "n": "wS1",
+      "par": "chest",
+      "cat": "chest",
+      "x": -5.1,
+      "y": -91.1
+     },
+     {
+      "n": "wE1",
+      "par": "wS1",
+      "cat": "limb",
+      "x": -32.4,
+      "y": -109.9
+     },
+     {
+      "n": "wW1",
+      "par": "wE1",
+      "cat": "limb",
+      "x": -58.1,
+      "y": -127.7
+     },
+     {
+      "n": "wT1",
+      "par": "wW1",
+      "cat": "foot",
+      "x": -98.2,
+      "y": -134
+     },
+     {
+      "n": "tail",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": -46.3,
+      "y": -31.3
+     },
+     {
+      "n": "leg-1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": 10.3,
+      "y": -53.9
+     },
+     {
+      "n": "ft-1",
+      "par": "leg-1",
+      "cat": "foot",
+      "x": 11.7,
+      "y": -20
+     },
+     {
+      "n": "leg1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": -3.9,
+      "y": -61
+     },
+     {
+      "n": "ft1",
+      "par": "leg1",
+      "cat": "foot",
+      "x": -3.6,
+      "y": -27.7
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -55.7
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0,
+      "y": -71.5
+     },
+     {
+      "n": "chest",
+      "par": "mid",
+      "cat": "chest",
+      "x": 0,
+      "y": -91.3
+     },
+     {
+      "n": "head",
+      "par": "chest",
+      "cat": "head",
+      "x": 0,
+      "y": -111.2
+     },
+     {
+      "n": "wS-1",
+      "par": "chest",
+      "cat": "chest",
+      "x": 17.3,
+      "y": -86.5
+     },
+     {
+      "n": "wE-1",
+      "par": "wS-1",
+      "cat": "limb",
+      "x": 50.6,
+      "y": -92.8
+     },
+     {
+      "n": "wW-1",
+      "par": "wE-1",
+      "cat": "limb",
+      "x": 82,
+      "y": -98.7
+     },
+     {
+      "n": "wT-1",
+      "par": "wW-1",
+      "cat": "foot",
+      "x": 112.5,
+      "y": -90.3
+     },
+     {
+      "n": "wS1",
+      "par": "chest",
+      "cat": "chest",
+      "x": -17.3,
+      "y": -86.5
+     },
+     {
+      "n": "wE1",
+      "par": "wS1",
+      "cat": "limb",
+      "x": -50.6,
+      "y": -92.8
+     },
+     {
+      "n": "wW1",
+      "par": "wE1",
+      "cat": "limb",
+      "x": -82,
+      "y": -98.7
+     },
+     {
+      "n": "wT1",
+      "par": "wW1",
+      "cat": "foot",
+      "x": -112.5,
+      "y": -90.3
+     },
+     {
+      "n": "tail",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": 0,
+      "y": -21.7
+     },
+     {
+      "n": "leg-1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": 10.1,
+      "y": -58.1
+     },
+     {
+      "n": "ft-1",
+      "par": "leg-1",
+      "cat": "foot",
+      "x": 10.8,
+      "y": -24.7
+     },
+     {
+      "n": "leg1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": -10.1,
+      "y": -58.1
+     },
+     {
+      "n": "ft1",
+      "par": "leg1",
+      "cat": "foot",
+      "x": -10.8,
+      "y": -24.7
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": 12.4,
+      "y": -58.3
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0.2,
+      "y": -71.6
+     },
+     {
+      "n": "chest",
+      "par": "mid",
+      "cat": "chest",
+      "x": -12.2,
+      "y": -88.8
+     },
+     {
+      "n": "head",
+      "par": "chest",
+      "cat": "head",
+      "x": -15.8,
+      "y": -108
+     },
+     {
+      "n": "wS-1",
+      "par": "chest",
+      "cat": "chest",
+      "x": 5.1,
+      "y": -91.1
+     },
+     {
+      "n": "wE-1",
+      "par": "wS-1",
+      "cat": "limb",
+      "x": 32.4,
+      "y": -109.9
+     },
+     {
+      "n": "wW-1",
+      "par": "wE-1",
+      "cat": "limb",
+      "x": 58.1,
+      "y": -127.7
+     },
+     {
+      "n": "wT-1",
+      "par": "wW-1",
+      "cat": "foot",
+      "x": 98.2,
+      "y": -134
+     },
+     {
+      "n": "wS1",
+      "par": "chest",
+      "cat": "chest",
+      "x": -19.4,
+      "y": -78.9
+     },
+     {
+      "n": "wE1",
+      "par": "wS1",
+      "cat": "limb",
+      "x": -39.2,
+      "y": -74.2
+     },
+     {
+      "n": "wW1",
+      "par": "wE1",
+      "cat": "limb",
+      "x": -57.8,
+      "y": -69.7
+     },
+     {
+      "n": "wT1",
+      "par": "wW1",
+      "cat": "foot",
+      "x": -60.9,
+      "y": -54.4
+     },
+     {
+      "n": "tail",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": 46.3,
+      "y": -31.3
+     },
+     {
+      "n": "leg-1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": 3.9,
+      "y": -61
+     },
+     {
+      "n": "ft-1",
+      "par": "leg-1",
+      "cat": "foot",
+      "x": 3.6,
+      "y": -27.7
+     },
+     {
+      "n": "leg1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": -10.3,
+      "y": -53.9
+     },
+     {
+      "n": "ft1",
+      "par": "leg1",
+      "cat": "foot",
+      "x": -11.7,
+      "y": -20
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": 17.5,
+      "y": -64.5
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0.3,
+      "y": -71.7
+     },
+     {
+      "n": "chest",
+      "par": "mid",
+      "cat": "chest",
+      "x": -17.2,
+      "y": -82.7
+     },
+     {
+      "n": "head",
+      "par": "chest",
+      "cat": "head",
+      "x": -22.3,
+      "y": -100.1
+     },
+     {
+      "n": "wS-1",
+      "par": "chest",
+      "cat": "chest",
+      "x": -10.1,
+      "y": -90.1
+     },
+     {
+      "n": "wE-1",
+      "par": "wS-1",
+      "cat": "limb",
+      "x": -4.8,
+      "y": -115.7
+     },
+     {
+      "n": "wW-1",
+      "par": "wE-1",
+      "cat": "limb",
+      "x": 0.2,
+      "y": -139.8
+     },
+     {
+      "n": "wT-1",
+      "par": "wW-1",
+      "cat": "foot",
+      "x": 26.4,
+      "y": -159.8
+     },
+     {
+      "n": "wS1",
+      "par": "chest",
+      "cat": "chest",
+      "x": -10.1,
+      "y": -72.8
+     },
+     {
+      "n": "wE1",
+      "par": "wS1",
+      "cat": "limb",
+      "x": -4.8,
+      "y": -65.1
+     },
+     {
+      "n": "wW1",
+      "par": "wE1",
+      "cat": "limb",
+      "x": 0.2,
+      "y": -57.8
+     },
+     {
+      "n": "wT1",
+      "par": "wW1",
+      "cat": "foot",
+      "x": 26.4,
+      "y": -47.3
+     },
+     {
+      "n": "tail",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": 65.5,
+      "y": -54.5
+     },
+     {
+      "n": "leg-1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": -4.5,
+      "y": -60.9
+     },
+     {
+      "n": "ft-1",
+      "par": "leg-1",
+      "cat": "foot",
+      "x": -5.8,
+      "y": -27.2
+     },
+     {
+      "n": "leg1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": -4.5,
+      "y": -50.8
+     },
+     {
+      "n": "ft1",
+      "par": "leg1",
+      "cat": "foot",
+      "x": -5.8,
+      "y": -16.4
+     }
+    ],
+    [
+     {
+      "n": "pelvis",
+      "cat": "spine",
+      "x": 12.4,
+      "y": -70.7
+     },
+     {
+      "n": "mid",
+      "par": "pelvis",
+      "cat": "spine",
+      "x": 0.2,
+      "y": -71.8
+     },
+     {
+      "n": "chest",
+      "par": "mid",
+      "cat": "chest",
+      "x": -12.2,
+      "y": -76.6
+     },
+     {
+      "n": "head",
+      "par": "chest",
+      "cat": "head",
+      "x": -15.8,
+      "y": -92.2
+     },
+     {
+      "n": "wS-1",
+      "par": "chest",
+      "cat": "chest",
+      "x": -19.4,
+      "y": -84
+     },
+     {
+      "n": "wE-1",
+      "par": "wS-1",
+      "cat": "limb",
+      "x": -39.2,
+      "y": -106.6
+     },
+     {
+      "n": "wW-1",
+      "par": "wE-1",
+      "cat": "limb",
+      "x": -57.8,
+      "y": -127.9
+     },
+     {
+      "n": "wT-1",
+      "par": "wW-1",
+      "cat": "foot",
+      "x": -60.9,
+      "y": -152.6
+     },
+     {
+      "n": "wS1",
+      "par": "chest",
+      "cat": "chest",
+      "x": 5.1,
+      "y": -71.7
+     },
+     {
+      "n": "wE1",
+      "par": "wS1",
+      "cat": "limb",
+      "x": 32.4,
+      "y": -70.8
+     },
+     {
+      "n": "wW1",
+      "par": "wE1",
+      "cat": "limb",
+      "x": 58.1,
+      "y": -69.9
+     },
+     {
+      "n": "wT1",
+      "par": "wW1",
+      "cat": "foot",
+      "x": 98.2,
+      "y": -73.1
+     },
+     {
+      "n": "tail",
+      "par": "pelvis",
+      "cat": "tail",
+      "x": 46.3,
+      "y": -77.6
+     },
+     {
+      "n": "leg-1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": -10.3,
+      "y": -57.8
+     },
+     {
+      "n": "ft-1",
+      "par": "leg-1",
+      "cat": "foot",
+      "x": -11.7,
+      "y": -23.6
+     },
+     {
+      "n": "leg1",
+      "par": "pelvis",
+      "cat": "limb",
+      "x": 3.9,
+      "y": -50.7
+     },
+     {
+      "n": "ft1",
+      "par": "leg1",
+      "cat": "foot",
+      "x": 3.6,
+      "y": -16
+     }
+    ]
+   ]
+  }
+ },
+ "clip": {
+  "n": 46,
+  "ms": 40,
+  "tiles": [
+   5,
+   4
+  ],
+  "w": 265,
+  "h": 199,
+  "lionScale": 0.85,
+  "gladScale": 0.886,
+  "kb": 120.9
+ },
+ "cape": {
+  "n": 48,
+  "ms": 40,
+  "tiles": [
+   5,
+   4
+  ],
+  "w": 248,
+  "h": 274,
+  "scale": 1.417,
+  "kb": 194.2
+ },
+ "placed": [
+  "tholo",
+  "arenosus",
+  "zora",
+  "leaena",
+  "croc",
+  "spider",
+  "ursa",
+  "brutum",
+  "leo",
+  "commodus",
+  "boar",
+  "valencia",
+  "moechus",
+  "glykon",
+  "glad",
+  "glad2"
+ ]
 }

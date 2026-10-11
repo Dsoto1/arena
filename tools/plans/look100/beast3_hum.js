@@ -1,324 +1,139 @@
 /* =====================================================================
-   look100/beast3_hum.js — v1.0 LOOK TEST round 3 (not game code): the humanoid beasts on the rig92 gladiator body.
-   Lines marked COPIED are anim_rig.js's frames + renderFrames (copied, not imported, so anim_rig.js stays untouched for the other look tests).
-   Round 3 (his answers 2026-10-11):
-     · THOLO (5a): a CLOTH CAPE rebuilt every frame — a two-sided slab hung from the shoulders, swinging with the walk phase (lagging hem,
-       lateral sway, vertical folds), flaring back in the attack, then pushed BEHIND the posed body: a z-height-map of the skinned body
-       (getVertexPosition, all vertices) clamps every cape point behind whatever is in front of it (+ margin) and is smoothed. capeCheck()
-       then FAILS THE RENDER if any leg vertex (hip/knee/ankle-weighted) lies behind the cape's front surface inside its footprint.
-     · COMMODUS (4a): a lion-pelt hood (skull over the head, muzzle over the brow, fangs, ears, hide down the neck + back, a mane ruff)
-       and the forelegs knotted on the chest (sculpted in beast3_rig.js peltGeo/pawsGeo), a LORICA SEGMENTATA shell (silver lames with dark
-       gaps and a lip, readable at board size), segmented shoulder guards, pteruges, white tunic, manica + greaves, sword.
+   look100/beast3_hum.js — v1.0 LOOK TEST ROUND 3 (not game code): the humanoid beasts on the rig92 body (anim_rig.js), his round-2 answers:
+     5a THOLO's cape = CLOTH that swings with the walk: rebuilt for every frame as a closed slab (two layers + a rim) hanging from the
+        shoulders as R×C chains — gravity + a per-frame "wind" (the motion of that frame: trailing back on the walk with a left/right sway
+        in step with the legs, a swirl on the swing, a forward whip on the hit) — and pushed out of the body (capsules on the torso, thighs
+        and shins), so the legs push it instead of passing through it (round 2: a rigid panel on the chest bone).
+     4a COMMODUS: a LION-PELT HOOD (a fur shell over the head + the lion's sculpted upper face, ears and mane tufts framing his face, the pelt
+        hanging down his back = the same cloth chains, shorter) and SEGMENTED ARMOUR (lorica segmentata: banded torso + shoulder bands with
+        dark seams, pteruges below; the galea and the scale lorica are gone).
+   Driven by beast3_humanoid.js through beast3_hum.html → window.LOOK100.humanoid3(key).
    ===================================================================== */
-/* COPIED from anim_rig.js (frames) */
 import * as THREE from 'three';
-import { createToken } from '../../art/rig92/game.js';
-import { resolveSpec, MM_PER_M } from '../../art/rig92/rig.js';
+import { LOOK100X as X } from './anim_rig.js';
+const D2R = Math.PI / 180, V = (a) => new THREE.Vector3(...a);
 
-const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45];
-const D2R = Math.PI / 180;
-let TOK, B, GM, PROPS, REND, WOUND = null, BASE = null, BENCH = null;
-const TIMES = { render: 0, post: 0, cells: 0 };
-
-/* ---------------- the murmillo's frames ---------------- */
-const RD = { L: [240, 1060, 260], R: [-210, 990, 280] }, HP0 = { L: [1, -0.6, -0.3], R: [1, -1, -0.3] };
-const F = (p, j, f, h, hp, ex) => Object.assign({ p, j, f, h, hp: hp || HP0 }, ex || {});
-const ready = (dy = 0, dx = 0, sp = 4, sh = 0) => F([dx, -55 + dy, 0], { pe: [4, -10, 0], sp: [sp, 4, 0], he: [-4, 4, 0], wR: [-20, 0, 0] },
-  { L: [140, 100, 10], R: [-140, -90, -28] }, { L: [240, 1060 + sh, 260], R: [-210, 990, 280] });
-const UP = (j) => j;   /* a swinging (unpinned) leg: FK eulers in j */
-function walk(t) {   /* 6 frames: contact L, load, pass (R swings), contact R, load, pass (L swings) */
-  const sw = [60, 30, 0, -60, -30, 0][t], twist = [6, 4, 0, -6, -4, 0][t];
-  const feet = [{ L: [115, 220, 6], R: [-115, -220, -10] }, { L: [115, 140, 6], R: [-115, -250, -10] }, { L: [115, 10, 6] },
-    { L: [115, -220, 6], R: [-115, 220, -10] }, { L: [115, -250, 6], R: [-115, 140, -10] }, { R: [-115, 10, -10] }][t];
-  const j = { pe: [3, twist, 0], sp: [5, -twist, 0], he: [-5, 0, 0], wR: [-20, 0, 0] };
-  if (t === 2) Object.assign(j, { hR: [-32, 0, 0], kR: [62, 0, 0], aR: [-10, 0, 0] });
-  if (t === 5) Object.assign(j, { hL: [-32, 0, 0], kL: [62, 0, 0], aL: [-10, 0, 0] });
-  const py = [-50, -72, -28, -50, -72, -28][t];
-  return F([0, py, 0], j, feet, { L: [235, 1080, 270 - sw * 0.4], R: [-220, 1010, 220 + sw] });
+/* ---------- the cloth: chains from the shoulders, gravity + wind, pushed out of the body ---------- */
+function windOf(k, i, o) {   /* figure space (+z forward, +x his left), in "g" units; o.k scales the swing */
+  const K = o.k || 1;
+  if (k === 'walk') { const ph = i / 6 * Math.PI * 2; return { w: [0.24 * Math.sin(ph) * K, 0.12, -0.6 * K], flut: 0.16 * K, ph }; }
+  if (k === 'idle') { const ph = i / 4 * Math.PI * 2; return { w: [0.06 * Math.sin(ph), 0, -0.1 - 0.04 * Math.cos(ph)], flut: 0.04, ph }; }
+  if (k === 'attack') return { w: [[0.1, -0.32, 0.42, 0.55, 0.15][i] * K, [0, 0.1, 0.15, 0.25, 0][i], -[0.25, 0.45, 0.7, 0.8, 0.35][i] * K], flut: 0.1, ph: i };   /* the swing swirls it */
+  if (k === 'hit') return { w: [[0.1, 0.05, 0.45], [-0.15, 0.05, 0.2], [0, 0, -0.05]][i], flut: 0.06, ph: i };
+  return { w: [0, 0, -0.05 * (1 - i / 4)], flut: 0.02, ph: i };   /* die: it drapes */
 }
-const GLAD_ROWS = [
-  ['idle', [ready(0, 0, 4, 0), ready(4, 8, 2, 8), ready(8, 14, 0, 14), ready(4, 6, 2, 6)], 'idle breathing + weight shift (n19)'],
-  ['walk', [0, 1, 2, 3, 4, 5].map(walk), 'walk cycle (animated tokens)'],
-  ['attack', [
-    F([0, -120, -30], { pe: [4, -20, 0], sp: [4, -8, 0], ch: [0, -10, 0], he: [-6, 16, 0], wR: [-30, 0, 0] }, { L: [150, 230, 6], R: [-150, -230, -36] }, { L: [200, 1150, 350], R: [-330, 1250, -200] }),
-    F([0, -100, 0], { pe: [0, -26, 0], sp: [-2, -10, 0], ch: [-4, -12, 0], he: [-8, 20, 0], wR: [-40, 0, 0] }, { L: [150, 230, 6], R: [-150, -230, -36] }, { L: [220, 1180, 330], R: [-300, 1650, -60] }, { L: [1, -0.6, -0.3], R: [1, 0.3, -0.6] }),
-    F([0, -150, 40], { pe: [8, 6, 0], sp: [8, 8, 0], ch: [4, 10, 0], he: [-10, 0, 0], wR: [0, 0, 0] }, { L: [150, 320, 6], R: [-140, -300, -36] }, { L: [260, 1080, 150], R: [-120, 1400, 520] }),
-    F([0, -200, 70], { pe: [8, -22, 0], sp: [10, -10, 0], ch: [6, -8, 0], he: [-14, 14, 0], wR: [60, 0, 0] }, { L: [140, 360, 6], R: [-130, -340, -38] }, { L: [200, 1180, 230], R: [-70, 1240, 720] }, { L: [1, -1, -0.2], R: [1, -1, 0] }),
-    ready(-10, 0, 6, 0)], 'attack: wind-up, raise, slash, thrust, recover (n19)'],
-  ['block', [ready(-20, 0, 6, 60),
-    F([0, -130, -10], { pe: [6, -24, 0], sp: [12, 12, 0], ch: [8, 10, 0], he: [-16, 4, 0], wL: [0, 60, 0], wR: [-40, 0, 0] }, { L: [165, 200, 10], R: [-170, -180, -40] }, { L: [-10, 1300, 340], R: [-240, 1540, -90] }, { L: [1, -0.5, -0.2], R: [1, 0.2, -1] }),
-    F([0, -235, -20], { pe: [16, -12, 0], sp: [16, 0, 0], ch: [6, 0, 0], he: [-24, 6, 0], wL: [0, 60, 0], wR: [-20, 0, 0] }, { L: [180, 300, 10], R: [-200, -300, -32] }, { L: [160, 1180, 440], R: [-210, 940, 200] }, { L: [0, 0, -1], R: [1, -1, -0.3] })],
-    'block: shield up, brace (n19)'],
-  ['hit', [
-    F([0, -60, -60], { sp: [-14, 0, 6], ch: [-10, 0, 4], he: [-22, 12, 0] }, { L: [140, 60, 10], R: [-140, -200, -20] }, { L: [330, 1150, 120], R: [-380, 1000, -60] }),
-    F([20, -120, -120], { pe: [0, 6, 6], sp: [-6, 0, 10], he: [12, -10, 0] }, { L: [160, -120, 10], R: [-120, -260, -20] }, { L: [260, 920, 100], R: [-300, 840, 0] }),
-    F([0, -110, -20], { sp: [16, 0, 0], ch: [6, 0, 0], he: [-6, 0, 0] }, { L: [150, 80, 10], R: [-150, -120, -20] }, { L: [220, 1100, 250], R: [-220, 950, 200] })],
-    'hit / recoil (n19 injured)'],
-  ['limp', [
-    F([40, -70, 0], { pe: [4, 0, 8], sp: [16, 0, -8], ch: [10, 0, -6], he: [18, 0, 6], wR: [40, 0, 0] }, { L: [170, 60, 12], R: [-110, 150, -6] }, { L: [120, 1110, 110], R: [-320, 780, 60] }, { L: [1, -0.6, -0.4], R: [1, -0.6, -0.4] }),
-    F([55, -105, 0], { pe: [4, 0, 12], sp: [18, 0, -10], ch: [10, 0, -6], he: [22, 0, 8], wR: [40, 0, 0] }, { L: [170, 60, 12], R: [-110, 100, -6] }, { L: [130, 1080, 110], R: [-330, 740, 40] }, { L: [1, -0.6, -0.4], R: [1, -0.6, -0.4] }),
-    F([30, -60, 30], { pe: [4, 0, 4], sp: [14, 0, -6], ch: [8, 0, -4], he: [14, 0, 4], wR: [40, 0, 0] }, { L: [170, 220, 12], R: [-110, 40, -6] }, { L: [120, 1120, 160], R: [-320, 790, 90] }, { L: [1, -0.6, -0.4], R: [1, -0.6, -0.4] }),
-    F([35, -75, 20], { pe: [4, 0, 6], sp: [15, 0, -7], ch: [9, 0, -5], he: [16, 0, 5], wR: [40, 0, 0] }, { L: [170, 180, 12], R: [-110, 120, -6] }, { L: [120, 1110, 140], R: [-320, 770, 80] }, { L: [1, -0.6, -0.4], R: [1, -0.6, -0.4] })],
-    'injured limp, sword dragging (n19 injured)'],
-  ['cower', [
-    F([0, -120, -60], { sp: [10, 0, 0], he: [20, 0, 0] }, { L: [150, 60, 10], R: [-150, -120, -20] }, { L: [170, 1480, 330], R: [-190, 1350, 300] }, { L: [1, -1, 0], R: [1, -1, 0] }),
-    F([0, -330, -80], { pe: [25, 0, 0], sp: [25, 0, 0], ch: [10, 0, 0], he: [30, 0, 0] }, { L: [170, 150, 10], R: [-170, -60, -20] }, { L: [130, 1330, 330], R: [-130, 1300, 330] }, { L: [1, -1, 0], R: [1, -1, 0] }),
-    F([0, -280, -60], { pe: [20, 0, 0], sp: [20, 0, 0], he: [-5, 0, 0] }, { L: [170, 150, 10], R: [-170, -60, -20] }, { L: [200, 1250, 380], R: [-180, 1000, 200] })],
-    'scared cower, peek (n19 scared)'],
-  ['push', [
-    F([0, -120, 0], { sp: [10, 0, 0] }, { L: [150, 180, 6], R: [-150, -200, -20] }, { L: [180, 1250, 350], R: [-180, 1250, 350] }, { L: [1, -1, -0.2], R: [1, -1, -0.2] }),
-    F([0, -150, 60], { sp: [20, 0, 0], ch: [8, 0, 0], he: [-14, 0, 0] }, { L: [150, 250, 6], R: [-150, -330, -20] }, { L: [170, 1250, 560], R: [-170, 1250, 560] }, { L: [1, -1, -0.2], R: [1, -1, -0.2] }),
-    F([0, -200, 110], { pe: [15, 0, 0], sp: [24, 0, 0], he: [-24, 0, 0] }, { L: [150, 300, 6], R: [-140, -420, -20] }, { L: [160, 1200, 650], R: [-160, 1200, 650] }, { L: [1, -1, -0.2], R: [1, -1, -0.2] }),
-    F([0, -170, 140], { sp: [18, 0, 0], he: [-18, 0, 0] }, { L: [150, 380, 6], R: [-150, -300, -20] }, { L: [170, 1280, 760], R: [-170, 1280, 760] }, { L: [1, -1, -0.2], R: [1, -1, -0.2] })],
-    'push: set, contact, drive, follow-through (n19 push)'],
-  ['topple', [
-    F([0, -260, -30], { pe: [20, -30, 0], sp: [18, -10, 0], he: [-20, 20, 0] }, { L: [170, 200, 10], R: [-170, -200, -20] }, { L: [150, 1100, 300], R: [-200, 950, 150] }),
-    F([0, -200, 120], { pe: [18, -40, 0], sp: [16, -20, 0], he: [-20, 26, 0] }, { L: [150, 320, 10], R: [-150, -350, -20] }, { L: [150, 1250, 250], R: [-260, 1100, 300] }),
-    F([0, -180, 140], { sp: [10, 0, 0], he: [-24, 0, 0] }, { L: [150, 300, 10], R: [-150, -420, -20] }, { L: [180, 1700, 550], R: [-180, 1700, 550] }, { L: [1, -0.4, -0.4], R: [1, -0.4, -0.4] }),
-    F([0, -150, 180], { sp: [22, 0, 0], he: [-14, 0, 0] }, { L: [150, 420, 10], R: [-150, -250, -20] }, { L: [200, 1350, 650], R: [-200, 1350, 650] }, { L: [1, -1, -0.2], R: [1, -1, -0.2] })],
-    'topple a pillar: set, shoulder, heave, stumble (n19 pillars)'],
-  ['knock', [
-    F([0, -180, 0], { pe: [8, 25, 0], sp: [8, 10, 0], he: [-10, -10, 0], wR: [-20, 0, 0] }, { L: [150, 150, 10], R: [-150, -150, -20] }, { L: [220, 1150, 250], R: [-350, 850, -150] }),
-    F([0, -60, 60], { pe: [0, -15, 0], sp: [-8, -6, 0], ch: [-10, -6, 0], he: [-25, 0, 0], wR: [-40, 0, 0] }, { L: [150, 250, 10], R: [-150, -150, -20] }, { L: [230, 1150, 250], R: [-150, 1950, 450] }, { L: [1, -0.6, -0.3], R: [1, 0.2, -0.6] }),
-    F([0, -80, 40], { pe: [0, -25, 0], sp: [-4, -10, 0], he: [-18, -10, 0], wR: [-40, 0, 0] }, { L: [150, 250, 10], R: [-150, -150, -20] }, { L: [260, 1100, 200], R: [150, 1800, 250] }, { L: [1, -0.6, -0.3], R: [1, 0.2, -0.6] })],
-    'knock a pot off a pillar: wind, swipe up, follow (n19 pots)'],
-];
-const KNEEL = { L: [150, 330, 6], R: [-130, -380, -10] };
-const LIMBS = { hL: [0, 0, 8], hR: [0, 0, -8], sL: [10, 0, 70], sR: [10, 0, -70], eL: [-30, 0, 0], eR: [-30, 0, 0], he: [0, 40, 0] };
-const FALL_ROWS = [
-  ['fall', [
-    F([0, -80, -90], { sp: [-20, 0, 0], ch: [-14, 0, 0], he: [-30, 0, 0] }, { L: [140, 60, 10], R: [-140, -200, -20] }, { L: [420, 1250, -50], R: [-420, 1250, -50] }, { L: [1, 0, -1], R: [1, 0, -1] }),
-    F([0, -400, -20], { sp: [10, 0, 0], he: [20, 0, 0] }, KNEEL, { L: [250, 720, 150], R: [-260, 660, 100] }),
-    F([0, -470, -60], { pe: [20, 0, 0], sp: [30, 0, 0], ch: [15, 0, 0], he: [30, 0, 0] }, KNEEL, { L: [200, 520, 350], R: [-200, 470, 300] }),
-    F([0, -470, -60], { pe: [20, 0, 0], sp: [30, 0, 0], ch: [15, 0, 0], he: [30, 0, 0] }, KNEEL, { L: [200, 520, 350], R: [-200, 470, 300] }, null, { rot: 48, piv: [0, 0, 0.32] }),
-    { p: [0, 0, 0], j: LIMBS, f: {}, rot: 90, lift: 0.17, dz: -0.85 }],
-    'fall / die: struck, knees buckle, slump, topple, lying (n19 + die)'],
-  ['sever', [
-    F([0, -60, -60], { sp: [-14, 0, 6], ch: [-10, 0, 4], he: [-22, 12, 0] }, { L: [140, 60, 10], R: [-140, -200, -20] }, { L: [330, 1150, 120], R: [-380, 1000, -60] }),
-    F([0, -90, -60], { sp: [-6, 8, 0], ch: [-4, 10, 0], he: [14, 20, 0] }, { L: [140, 60, 10], R: [-140, -200, -20] }, { L: [-110, 1220, 260], R: [-330, 1150, 80] }, { L: [1, -1, -0.2], R: [1, -1, -0.2] }, { sever: 1 }),
-    F([40, -90, 0], { pe: [4, 0, 8], sp: [16, 0, -8], ch: [10, 0, -6], he: [18, 0, 6] }, { L: [170, 60, 12], R: [-110, 150, -6] }, { L: [140, 1050, 180], R: [-300, 1080, 40] }, null, { sever: 1 })],
-    'severed limb: hit, forearm gone + clutch, stagger (n19 limbs)'],
-];
-/* the retiarius: rete in the LEFT hand, trident in the right */
-const RET_ROWS = [
-  ['ridle', [F([0, -55, 0], { pe: [4, 10, 0], sp: [4, -4, 0], he: [-4, -4, 0] }, { L: [140, 100, 10], R: [-140, -90, -28] }, { L: [260, 1000, 250], R: [-220, 1100, 260] })]],
-  ['rete', [
-    F([0, -130, -40], { pe: [4, -30, 0], sp: [4, -16, 0], ch: [-4, -16, 0], he: [-6, 30, 0] }, { L: [170, 220, 20], R: [-170, -200, -30] }, { L: [420, 1150, -320], R: [-260, 1050, 260] }, { L: [1, -0.4, -0.6], R: [1, -1, -0.3] }),
-    F([0, -120, 20], { pe: [4, 28, 0], sp: [6, 14, 0], ch: [0, 14, 0], he: [-8, -10, 0] }, { L: [190, 240, 24], R: [-170, -200, -30] }, { L: [470, 1450, 380], R: [-260, 950, -80] }, { L: [1, -0.4, -0.6], R: [1, -0.6, -0.6] }),
-    F([0, -150, 60], { pe: [8, 34, 0], sp: [10, 18, 0], ch: [4, 16, 0], he: [-10, -16, 0] }, { L: [190, 330, 24], R: [-170, -260, -30] }, { L: [300, 1250, 650], R: [-260, 950, -60] }, { L: [1, -0.6, -0.4], R: [1, -0.6, -0.6] })]],
-  ['rhit', GLAD_ROWS[4][1]],
-];
-
-/* ---------------- spectators ---------------- */
-const SEAT = (cheer, fist) => ({ bench: 1, p: [0, -455, -120], j: { hL: [-84, 0, 4], kL: [84, 0, 0], hR: [-84, 0, -4], kR: [84, 0, 0], he: cheer ? [-14, 0, 0] : [4, 0, 0] }, f: {},
-  h: cheer ? { L: [250, 1500, -20], R: [-250, 1500, -20] } : fist ? { L: [140, 620, 160], R: [-230, 1420, 20] } : { L: [120, 600, 170], R: [-120, 600, 170] },
-  hp: cheer ? { L: [1, 0, -1], R: [1, 0, -1] } : { L: [1, -1, -0.3], R: [1, -1, -0.3] } });
-const STANDP = (cheer) => ({ p: [0, -6, 0], j: { he: cheer ? [-16, 0, 0] : [0, 0, 0], sL: [-4, 0, -12], eL: [-14, 0, 0], sR: [-4, 0, 12], eR: [-14, 0, 0] }, f: { L: [118, -10, 8], R: [-118, -10, -8] },
-  h: cheer ? { L: [300, 2050, 80], R: [-300, 2050, 80] } : undefined, hp: { L: [1, 0, -0.6], R: [1, 0, -0.6] } });
-export const SPEC_POSES = [['sit', SEAT(0, 0)], ['sitcheer', SEAT(1, 0)], ['sitfist', SEAT(0, 1)], ['stand', STANDP(0)], ['standcheer', STANDP(1)]];
-export const SPEC_LOOKS = [
-  { look: { skin: '#c99a72', hair: '#2a1d14', hs: 'crop', bs: 'full' }, tunic: '#8a3b2a', toga: null },
-  { look: { skin: '#e0b48e', hair: '#5a3b20', hs: 'curly' }, tunic: '#3f6b8a', toga: null },
-  { look: { skin: '#a8754e', hair: '#141010', hs: 'long', fem: 1, band: '#e8dcc0' }, tunic: '#c9a23e', toga: null },
-  { look: { skin: '#d8a882', hair: '#8c8a86', hs: 'crop', bs: 'stubble' }, tunic: '#e8e0cc', toga: '#f0eadb', border: '#7a1e2a' },
-  { look: { skin: '#8a5a3a', hair: '#121010', hs: 'curly', bs: 'goatee' }, tunic: '#4f7a3a', toga: null },
-  { look: { skin: '#e8c0a0', hair: '#9a5a2a', hs: 'long', fem: 1, band: '#3a6ab0' }, tunic: '#7a4a8a', toga: null },
-  { look: { skin: '#c48e66', hair: '#3a2a1e', hs: 'crop', bs: 'stache' }, tunic: '#d8cfb6', toga: '#ece4d2', border: '#c9a23e' },
-  { look: { skin: '#b7835d', hair: '#22160e', hs: 'cap' }, tunic: '#a0522d', toga: null },
-];
-
-/* COPIED from anim_rig.js (helpers + renderFrames) */
-/* ---------------- helpers ---------------- */
-function renderer(w, h) {
-  if (!REND) { REND = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); REND.outputColorSpace = THREE.SRGBColorSpace; REND.setClearColor(0x000000, 0); REND.setPixelRatio(1); }
-  if (REND.domElement.width !== w || REND.domElement.height !== h) REND.setSize(w, h, false); return REND;
+function capOf(a, b, r) { return { a, b, r }; }
+function pushOut(p, cols, m) {
+  for (const c of cols) { const ab = new THREE.Vector3().subVectors(c.b, c.a), ap = new THREE.Vector3().subVectors(p, c.a); const t = Math.max(0, Math.min(1, ap.dot(ab) / (ab.lengthSq() || 1e-9)));
+    const q = c.a.clone().addScaledVector(ab, t); const d = p.distanceTo(q); const R = c.r + m; if (d < R) { if (d < 1e-6) p.z -= R; else { const n = new THREE.Vector3().subVectors(p, q).divideScalar(d); p.copy(q).addScaledVector(n, R); } } }
+  if (p.y < 0.006) p.y = 0.006;
 }
-function alphaBox(c) {
-  const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1;
-  for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) if (d[(y * c.width + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
-  return [x0, y0, x1, y1];
+/* returns world points [r][c] */
+function simCloth(B, frameKey, frameI, o) {
+  const bones = B.rig.bones, gw = (k, off = [0, 0, 0]) => bones[k].localToWorld(V(off));
+  B.group.updateMatrixWorld(true); const sc = B.group.scale, s = (sc.x + sc.y + sc.z) / 3;
+  const cols = [capOf(gw('pe', [0, -0.02, -0.01]), gw('ne', [0, -0.05, 0]), 0.13 * s), capOf(gw('pe', [0, -0.06, -0.02]), gw('sp', [0, 0.02, -0.02]), 0.14 * s)];
+  for (const sd of ['L', 'R']) { cols.push(capOf(gw('h' + sd), gw('k' + sd), 0.088 * s), capOf(gw('k' + sd), gw('a' + sd), 0.066 * s)); }
+  const R = o.rows, C = o.cols, seg = o.len * sc.y / (R - 1); const W = windOf(frameKey, frameI, o);
+  const qG = new THREE.Quaternion(); B.group.getWorldQuaternion(qG);   /* the die frames tilt the group: wind follows the figure, gravity stays down */
+  const wind = V(W.w).applyQuaternion(qG); const side = V([1, 0, 0]).applyQuaternion(qG);
+  const P = []; const top = [];
+  /* the body's own frame from the joints (the rig92 bones are not axis-aligned): right = his left shoulder - right shoulder, up = chest → neck */
+  const CH = gw('ch'), NE = gw('ne'), SL = gw('sL'), SR = gw('sR'); const rt = new THREE.Vector3().subVectors(SL, SR).normalize(), up = new THREE.Vector3().subVectors(NE, CH).normalize();
+  const bk = new THREE.Vector3().crossVectors(rt, up).normalize(); if (bk.dot(V([0, 0, -1]).applyQuaternion(new THREE.Quaternion().copy(B.group.getWorldQuaternion(new THREE.Quaternion())))) < 0) bk.negate();
+  const sx = (sc.x + sc.z) / 2;
+  for (let c = 0; c < C; c++) { const u = c / (C - 1) * 2 - 1; top.push(CH.clone().addScaledVector(rt, u * o.halfW * sx).addScaledVector(up, (o.topY - 0.035 * u * u) * sc.y).addScaledVector(bk, (0.11 + 0.02 * (1 - u * u)) * sx)); }
+  P.push(top);
+  for (let r = 1; r < R; r++) { const t = r / (R - 1); const row = [];
+    for (let c = 0; c < C; c++) { const u = c / (C - 1) * 2 - 1; const prev = P[r - 1][c];
+      const fl = W.flut * Math.sin(W.ph * 1.7 + u * 2.4 + t * 3.0) * t;
+      const d = V([0, -1, 0]).addScaledVector(wind, Math.pow(t, 1.2)).addScaledVector(side, u * o.flare * t + fl); d.normalize();
+      const p = prev.clone().addScaledVector(d, seg); pushOut(p, cols, 0.016 * s);
+      const e = new THREE.Vector3().subVectors(p, prev); p.copy(prev).addScaledVector(e.normalize(), seg); pushOut(p, cols, 0.014 * s); row.push(p); }
+    /* keep the columns together (cloth does not split): pull each point toward the midpoint of its neighbours, a little */
+    for (let it = 0; it < 2; it++) for (let c = 1; c < C - 1; c++) { const m = row[c - 1].clone().add(row[c + 1]).multiplyScalar(0.5); row[c].lerp(m, 0.25); pushOut(row[c], cols, 0.014 * s); }
+    P.push(row); }
+  return P;
 }
-const toon = (c) => new THREE.MeshToonMaterial({ color: new THREE.Color(c), gradientMap: GM });
-function inkOf(mesh, w) {
-  const m = new THREE.MeshBasicMaterial({ color: 0x120c0a, side: THREE.BackSide }); const u = { value: w }; m.userData.u = u;
-  m.onBeforeCompile = (sh) => { sh.uniforms.uOut = u; sh.vertexShader = 'uniform float uOut;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed += normalize(normal) * uOut;'); };
-  m.customProgramCacheKey = () => 'lookInk';
-  const o = new THREE.Mesh(mesh.geometry, m); o.position.copy(mesh.position); o.quaternion.copy(mesh.quaternion); o.scale.copy(mesh.scale); return o;
+/* world grid → a closed slab mesh in the group's space (front + back layers + rim), vertex colours: folds + optional fur */
+function slabGeo(B, P, o) {
+  const R = P.length, C = P[0].length, inv = new THREE.Matrix4().copy(B.group.matrixWorld).invert();
+  const L = P.map(row => row.map(p => p.clone().applyMatrix4(inv)));
+  const nrm = (r, c) => { const a = L[Math.min(R - 1, r + 1)][c].clone().sub(L[Math.max(0, r - 1)][c]); const b = L[r][Math.min(C - 1, c + 1)].clone().sub(L[r][Math.max(0, c - 1)]); return new THREE.Vector3().crossVectors(b, a).normalize(); };
+  const pos = [], col = [], idx = []; const th = o.th;
+  for (const sgn of [1, -1]) for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) { const p = L[r][c].clone().addScaledVector(nrm(r, c), sgn * th); pos.push(p.x, p.y, p.z);
+    const u = c / (C - 1), t = r / (R - 1); let f = 0.86 + 0.14 * Math.cos(u * Math.PI * o.folds); if (o.fur) f *= 0.82 + 0.3 * Math.abs(Math.sin(u * 37 + t * 23) * Math.sin(u * 11 - t * 31)); if (t > 0.94 && o.hem) f *= 0.72; col.push(f, f, f); }
+  const id = (l, r, c) => l * R * C + r * C + c;
+  for (let r = 0; r < R - 1; r++) for (let c = 0; c < C - 1; c++) { const a = id(0, r, c), b = id(0, r, c + 1), d = id(0, r + 1, c), e = id(0, r + 1, c + 1); idx.push(a, d, b, b, d, e);
+    const a1 = id(1, r, c), b1 = id(1, r, c + 1), d1 = id(1, r + 1, c), e1 = id(1, r + 1, c + 1); idx.push(a1, b1, d1, b1, e1, d1); }
+  const rim = []; for (let c = 0; c < C; c++) rim.push([0, c]); for (let r = 1; r < R; r++) rim.push([r, C - 1]); for (let c = C - 2; c >= 0; c--) rim.push([R - 1, c]); for (let r = R - 2; r > 0; r--) rim.push([r, 0]);
+  for (let i = 0; i < rim.length; i++) { const [r0, c0] = rim[i], [r1, c1] = rim[(i + 1) % rim.length]; const a = id(0, r0, c0), b = id(0, r1, c1), a1 = id(1, r0, c0), b1 = id(1, r1, c1); idx.push(a, b, a1, b, b1, a1); }
+  return { pos, col, idx };
+}
+class Cloth {
+  constructor(B, o) { this.B = B; this.o = o; const K = B.kit;
+    const g = new THREE.BufferGeometry(); const n = 2 * o.rows * o.cols; g.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(n * 3), 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(n * 3), 3));
+    this.geo = g; this.mesh = new THREE.Mesh(g, K.makeToon(o.color, { vertexColors: true, side: THREE.DoubleSide })); this.mesh.frustumCulled = false; B.group.add(this.mesh); this.ink = K.addOutline(this.mesh, false); this.ink.frustumCulled = false; this.mesh.userData.ink = this.ink;   /* so kit.kill() takes the outline too */ this.first = true; }
+  update(k, i) { const P = simCloth(this.B, k, i, this.o); const { pos, col, idx } = slabGeo(this.B, P, this.o);
+    this.geo.attributes.position.array.set(pos); this.geo.attributes.position.needsUpdate = true; this.geo.attributes.color.array.set(col); this.geo.attributes.color.needsUpdate = true;
+    if (this.first) { this.geo.setIndex(idx); this.first = false; } this.geo.computeVertexNormals(); this.geo.computeBoundingSphere(); }
+  kill() { this.B.kit.kill(this.mesh); }
 }
 
-/* put one frame on the rig (group tilt for the fall, a severed forearm) */
-function setFrame(spec) {
-  B.group.rotation.set(0, 0, 0); B.group.position.set(0, 0, 0); B.group.updateMatrixWorld(true);
-  const bones = B.rig.bones; bones.eR.scale.set(1, 1, 1); if (WOUND) WOUND.visible = false; if (BENCH) BENCH.visible = !!spec.bench;
-  TOK.setPose(resolveSpec(B.rig, spec));
-  if (spec.sever) { bones.eR.scale.set(0.02, 0.02, 0.02); if (WOUND) WOUND.visible = true; }
-  if (spec.rot) {
-    const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), spec.rot * D2R); const piv = new THREE.Vector3(...(spec.piv || [0, 0, 0]));
-    B.group.quaternion.copy(q); B.group.position.copy(piv).sub(piv.clone().applyQuaternion(q)); B.group.position.y += spec.lift || 0; B.group.position.z += spec.dz || 0;
-  }
-  B.group.updateMatrixWorld(true);
+/* ---------- Commodus: lion-pelt hood + segmented armour ---------- */
+function commodusKit(B) {
+  const K = B.kit, GI = K.GI, HO = K.HO, hs = K.hs, out = []; const mat = (c) => { const m = K.maskedMat(); m.color.set(c); m.userData.ownMat = 1; return m; };
+  const hl = (p) => [(p[0] - HO[0]) / hs, (p[1] - HO[1]) / hs, (p[2] - HO[2]) / hs];
+  const fur = (p) => { const f = 0.8 + 0.3 * Math.abs(Math.sin(p[0] * 300 + p[1] * 520) * Math.sin(p[2] * 410 - p[1] * 260)); return [f, f, f]; };
+  /* the hood: over the crown, the back and the sides of the head down the nape; the face stays bare */
+  out.push(K.shellFrom('hood3', (p, g) => { if (g !== GI.H && !(g === GI.T && p[1] > 1.45 && p[2] < 0.0)) return -1; const lp = hl(p);
+    const thr = lp[2] > 0.035 ? 0.07 : lp[2] > -0.01 ? 0.0 : -0.14; return Math.min(lp[1] - thr, 0.03); }, fur, 0.015, { mat: mat('#b88a48') }));
+  /* armour: banded torso (lorica segmentata) + shoulder bands; seams dark, a front closure line */
+  out.push(K.shellFrom('seg3', (p, g) => { if (g === GI.T) return Math.min(p[1] - 1.06, 1.475 - p[1], 0.03); if ((g === GI.AL || g === GI.AR) && Math.abs(p[0]) < 0.3) return Math.min(p[1] - 1.31, 0.03); return -1; },
+    (p) => { const f = (((1.48 - p[1]) / 0.043) % 1 + 1) % 1; let v = f < 0.13 ? 0.42 : 0.86 + 0.14 * (1 - f); if (Math.abs(p[0]) < 0.007 && p[2] > 0 && p[1] < 1.3) v *= 0.55; return [v, v, v]; }, 0.013, { mat: mat('#d6d9de') }));
+  /* pteruges: leather strips below the armour */
+  out.push(K.shellFrom('pter3', (p, g) => { if (g !== GI.T && g !== GI.LL && g !== GI.LR) return -1; return Math.min(p[1] - 0.8, 1.075 - p[1], 0.03); },
+    (p) => { const a = Math.atan2(p[0], p[2]); const f = ((a / 0.24) % 1 + 1) % 1; const v = f < 0.16 ? 0.5 : 0.95; return [v, v * 0.97, v * 0.92]; }, 0.017, { mat: mat('#cdb88e') }));
+  /* the lion's upper face over his brow (sculpted bits riding the head bone) */
+  const PEL = K.makeToon('#b88a48'), MANE = K.makeToon('#7a4e26'), DK = K.makeToon('#2a1a12'), TOOTH = K.makeToon('#efe6cc');
+  const at = (x, y, z) => [HO[0] + x * hs, HO[1] + y * hs, HO[2] + z * hs];
+  const blob = (r, a, b, c, m, p, look) => { const g = new THREE.SphereGeometry(1, 18, 12); g.scale(a, b, c); const q = K.rigid(g, m, 'he', p, look || null); out.push(q); return q; };
+  blob(1, 0.088, 0.05, 0.085, PEL, at(0, 0.112, 0.045));            /* the lion's skull over his crown */
+  blob(1, 0.05, 0.034, 0.052, PEL, at(0, 0.098, 0.13));             /* muzzle over the brow */
+  blob(1, 0.018, 0.013, 0.014, DK, at(0, 0.112, 0.178));            /* nose */
+  for (const sx of [-1, 1]) { blob(1, 0.013, 0.008, 0.008, DK, at(sx * 0.038, 0.128, 0.115)); blob(1, 0.024, 0.03, 0.012, PEL, at(sx * 0.072, 0.158, 0.02));
+    const fg = new THREE.ConeGeometry(0.008, 0.032, 8); fg.rotateX(Math.PI); out.push(K.rigid(fg, TOOTH, 'he', at(sx * 0.022, 0.06, 0.155))); }
+  for (let i = 0; i < 9; i++) { const a = (i / 8 - 0.5) * 2.6; const x = Math.sin(a) * 0.112, y = 0.07 - (1 - Math.cos(a)) * 0.12, z = 0.04 - (1 - Math.cos(a)) * 0.03;
+    blob(1, 0.024, 0.04, 0.02, MANE, at(x, y, z), [x * 3, 0.2, 1]); }   /* mane tufts framing his face */
+  return out;
 }
 
-/* render frames → a minis8-format sheet (rows × 8 yaws), cells cropped round the base anchor like rig92 sheet() */
-async function renderFrames(frames, o = {}) {
-  const t0 = performance.now(); const { scene, turn } = TOK._dbg; const sun = scene.children.find(x => x.isDirectionalLight);
-  const ss = o.ss || 2, pxmm = o.pxmm || 3.143, ppm = pxmm * MM_PER_M * ss, S = Math.ceil((o.box || 4.2) * ppm / 4) * 4;
-  const target = new THREE.Vector3(0, o.ty != null ? o.ty : 0.82, 0); const hw = S / 2 / ppm;
-  const cam = new THREE.OrthographicCamera(-hw, hw, hw, -hw, 0.01, 50);
-  cam.position.set(target.x, target.y + Math.sin(30 * D2R) * 10, target.z + Math.cos(30 * D2R) * 10); cam.lookAt(target); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
-  const dir = new THREE.Vector3(-0.55, 0.85, 0.55).applyQuaternion(cam.quaternion);
-  sun.position.copy(cam.position).add(dir.multiplyScalar(5)); sun.target.position.copy(cam.position).add(new THREE.Vector3(0, 0, -10).applyQuaternion(cam.quaternion)); sun.target.updateMatrixWorld();
-  const outPx = o.outlinePx || 0.85; if (B) B.setOutline(outPx * ss / ppm);
-  for (const m of (o.inks || [])) m.material.userData.u.value = outPx * ss / ppm;
-  const r = renderer(S, S);
-  const anc = new THREE.Vector3(0, o.noBase ? 0 : -0.0, 0).project(cam); const AX = (anc.x * 0.5 + 0.5) * S / ss, AY = (-anc.y * 0.5 + 0.5) * S / ss;
-  const yaws = o.yaws || MINI_YAW; const cells = []; const per = [];
-  for (const fr of frames) {
-    const t1 = performance.now(); if (o.set) o.set(fr); const row = [];
-    for (const yaw of yaws) {
-      const q0 = performance.now(); turn.rotation.y = yaw * D2R; turn.updateMatrixWorld(true); r.render(scene, cam);
-      let c = document.createElement('canvas'); c.width = S; c.height = S; c.getContext('2d').drawImage(r.domElement, 0, 0);
-      const q1 = performance.now(); TIMES.render += q1 - q0; TIMES.cells++;
-      for (let k = ss; k > 1; k /= 2) { const d = document.createElement('canvas'); d.width = Math.ceil(c.width / 2); d.height = Math.ceil(c.height / 2); const g = d.getContext('2d'); g.imageSmoothingQuality = 'high'; if (o.shade && k === 2) g.filter = o.shade; g.drawImage(c, 0, 0, d.width, d.height); c = d; }
-      row.push({ c, box: alphaBox(c) }); TIMES.post += performance.now() - q1; await new Promise(ok => setTimeout(ok, 0));
-    }
-    turn.rotation.y = 0; turn.updateMatrixWorld(true); cells.push(row); per.push(performance.now() - t1);
-  }
-  let L = 0, Rr = 0, T = 0, Bm = 0;
-  for (const row of cells) for (const { box } of row) { if (box[2] < 0) continue; L = Math.max(L, AX - box[0]); Rr = Math.max(Rr, box[2] + 1 - AX); T = Math.max(T, AY - box[1]); Bm = Math.max(Bm, box[3] + 1 - AY); }
-  const half = Math.ceil(Math.max(L, Rr)) + 1, w = half * 2, top = Math.ceil(T) + 1, h = top + Math.ceil(Bm) + 1;
-  const x0 = Math.floor(AX) - half, y0 = Math.floor(AY) - top;
-  const out = document.createElement('canvas'); out.width = w * yaws.length; out.height = h * cells.length; const g = out.getContext('2d');
-  cells.forEach((row, j) => row.forEach(({ c }, i) => g.drawImage(c, x0, y0, w, h, i * w, j * h, w, h)));
-  return { canvas: out, meta: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1), cells.length], ms: Math.round(performance.now() - t0), msPerFrame: Math.round(per.reduce((a, b) => a + b, 0) / per.length) };
-}
-const enc = (c, type, q) => { const u = c.toDataURL(type, q); return { url: u, bytes: Math.round((u.length - u.indexOf(',') - 1) * 0.75) }; };
-
-
-/* ============================ round 3 ============================ */
-import { peltGeo, pawsGeo } from './beast3_rig.js';
-const lin3 = (h) => { const c = new THREE.Color(h); return [c.r, c.g, c.b]; };   /* THREE.Color(hex) is already linear in r152+ colour management */
-const frac = (v) => v - Math.floor(v);
-let BODYV = null;   /* per body vertex: dominant bone name (for the leg check + head bbox) */
-function bodyInfo() {
-  if (BODYV) return BODYV; const body = B.body, g = body.geometry, si = g.attributes.skinIndex, sw = g.attributes.skinWeight, n = g.attributes.position.count, bones = body.skeleton.bones;
-  const dom = new Array(n); for (let i = 0; i < n; i++) { let bi = 0, bw = -1; for (let q = 0; q < 4; q++) { const w = sw.getComponent(i, q); if (w > bw) { bw = w; bi = si.getComponent(i, q); } } dom[i] = bones[bi].name; }
-  const legs = []; for (let i = 0; i < n; i++) if (/^(hip|knee|ankle)_/.test(dom[i])) legs.push(i);
-  BODYV = { n, dom, legs }; return BODYV;
-}
-function posed() { const body = B.body, n = body.geometry.attributes.position.count, v = new THREE.Vector3(), out = new Float32Array(n * 3);
-  for (let i = 0; i < n; i++) { body.getVertexPosition(i, v); out[i * 3] = v.x; out[i * 3 + 1] = v.y; out[i * 3 + 2] = v.z; } return out; }
-const boneLocal = (k) => { const p = new THREE.Vector3(); B.rig.bones[k].getWorldPosition(p); return B.group.worldToLocal(p); };
-
-/* ---------- Tholo's cloth cape ---------- */
-const CAPE = { NU: 22, NT: 34, cell: 0.02, margin: 0.03, th: 0.008, outer: '#9a2a20', inner: '#5c1410', hw0: 0.17, hw1: 0.27 };
-let CAPEM = null;
-function capeSwing(fr) { const i = fr.i, k = fr.k;
-  if (k === 'walk') { const ph = i / 6 * Math.PI * 2; return { z: 0.035 + 0.03 * Math.sin(ph), x: 0.04 * Math.sin(ph + 0.9), ph }; }
-  if (k === 'idle') { const ph = i / 4 * Math.PI * 2; return { z: 0.012 + 0.008 * Math.sin(ph), x: 0.008 * Math.cos(ph), ph }; }
-  if (k === 'attack') return { z: [0.03, 0.05, 0.1, 0.14, 0.06][i], x: [0, -0.02, 0.03, 0.04, 0.01][i], ph: i };
-  if (k === 'hit') return { z: [0.07, 0.09, 0.04][i], x: [0.04, -0.05, 0.01][i], ph: i * 2 };
-  return { z: 0.03, x: 0, ph: 0 }; }
-function capeBuild(fr) {
-  const { NU, NT, cell } = CAPE; const P = posed(); const n = P.length / 3;
-  /* the body's z-height-map: for each 2 cm (x,y) cell the backmost body point */
-  const HM = new Map(); for (let i = 0; i < n; i++) { const key = Math.floor(P[i * 3] / cell) + ',' + Math.floor(P[i * 3 + 1] / cell); const z = P[i * 3 + 2]; const o = HM.get(key); if (o === undefined || z < o) HM.set(key, z); }
-  const limit = (x, y) => { const ix = Math.floor(x / cell), iy = Math.floor(y / cell); let m = Infinity; for (let dy = -2; dy <= 2; dy++) for (let dx = -1; dx <= 1; dx++) { const z = HM.get((ix + dx) + ',' + (iy + dy)); if (z !== undefined && z < m) m = z; } return m - CAPE.margin; };
-  const sL = boneLocal('sL'), sR = boneLocal('sR'), kL = boneLocal('kL'), kR = boneLocal('kR');
-  const yTop = (sL.y + sR.y) / 2 + 0.035, yHem = Math.min(kL.y, kR.y) - 0.07, xc0 = (sL.x + sR.x) / 2, span = Math.abs(sL.x - sR.x) / 0.38;
-  const sw = capeSwing(fr); const geom = { yTop, yHem, xc0, span, sw };
-  const xcOf = (t) => xc0 + sw.x * Math.pow(t, 1.5), hwOf = (t) => (CAPE.hw0 + (CAPE.hw1 - CAPE.hw0) * t) * span;
-  let zA = Infinity; for (let a = 0; a <= NU; a++) { const u = a / NU * 2 - 1; zA = Math.min(zA, limit(xcOf(0) + u * hwOf(0), yTop - 0.02)); }
-  if (!isFinite(zA)) zA = Math.min(sL.z, sR.z) - 0.12;
-  const X = [], Y = [], Z = [], LIM = [];
-  for (let b = 0; b <= NT; b++) { const t = b / NT; const y = yTop - t * (yTop - yHem);
-    for (let a = 0; a <= NU; a++) { const u = a / NU * 2 - 1; const x = xcOf(t) + u * hwOf(t);
-      const fold = 0.016 * t * Math.sin(u * Math.PI * 2.5 + sw.ph * 0.6) + 0.006 * Math.sin(u * Math.PI * 6 + t * 3);
-      const zDes = zA - 0.012 - 0.05 * t - sw.z * Math.pow(t, 1.4) + fold + 0.035 * u * u * (1 - t);
-      const L = limit(x, y); X.push(x); Y.push(y); LIM.push(L); Z.push(Math.min(zDes, L)); } }
-  /* smooth under the constraint (a cloth can't crease round every knuckle), re-clamped each pass */
-  const W = NU + 1; for (let it = 0; it < 6; it++) { const Z2 = Z.slice(); for (let b = 1; b <= NT; b++) for (let a = 0; a <= NU; a++) { const i = b * W + a; const nb = [Z[i - W], b < NT ? Z[i + W] : Z[i], a > 0 ? Z[i - 1] : Z[i], a < NU ? Z[i + 1] : Z[i]]; Z2[i] = Math.min(LIM[i], 0.5 * Z[i] + 0.125 * (nb[0] + nb[1] + nb[2] + nb[3])); } for (let i = 0; i < Z.length; i++) Z[i] = Z2[i]; }
-  return { X, Y, Z, geom, P, xcOf, hwOf };
-}
-function capeMesh(c) {
-  const { NU, NT, th } = CAPE, W = NU + 1, NV = W * (NT + 1);
-  if (!CAPEM) { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(NV * 2 * 3), 3)); const col = new Float32Array(NV * 2 * 3);
-    const ci = lin3(CAPE.inner), co = lin3(CAPE.outer); for (let i = 0; i < NV; i++) { col.set(ci, i * 3); col.set(co, (NV + i) * 3); } g.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    const idx = []; for (let b = 0; b < NT; b++) for (let a = 0; a < NU; a++) { const i = b * W + a; idx.push(i, i + W, i + 1, i + 1, i + W, i + W + 1); const j = NV + i; idx.push(j, j + 1, j + W, j + 1, j + W + 1, j + W); }
-    const edge = []; for (let a = 0; a <= NU; a++) edge.push(a); for (let b = 1; b <= NT; b++) edge.push(b * W + NU); for (let a = NU - 1; a >= 0; a--) edge.push(NT * W + a); for (let b = NT - 1; b >= 1; b--) edge.push(b * W);
-    for (let e = 0; e < edge.length; e++) { const p = edge[e], q = edge[(e + 1) % edge.length]; idx.push(p, NV + p, q, q, NV + p, NV + q); }
-    g.setIndex(idx); const m = new THREE.Mesh(g, B.kit.makeToon('#ffffff', { vertexColors: true, side: THREE.DoubleSide })); m.userData.ownMat = 1; B.group.add(m); B.kit.addOutline(m, false); CAPEM = m; }
-  const pa = CAPEM.geometry.attributes.position.array;
-  for (let i = 0; i < NV; i++) { pa[i * 3] = c.X[i]; pa[i * 3 + 1] = c.Y[i]; pa[i * 3 + 2] = c.Z[i]; pa[(NV + i) * 3] = c.X[i]; pa[(NV + i) * 3 + 1] = c.Y[i]; pa[(NV + i) * 3 + 2] = c.Z[i] - th; }
-  CAPEM.geometry.attributes.position.needsUpdate = true; CAPEM.geometry.computeVertexNormals(); CAPEM.geometry.computeBoundingSphere();
-}
-/* THE CHECK (his 5a): every leg vertex inside the cape's footprint must be in FRONT of the cape's inner surface; else the render fails */
-function capeCheck(c, name) {
-  const { NU, NT } = CAPE, W = NU + 1, { yTop, yHem } = c.geom; const legs = bodyInfo().legs; let min = Infinity, bad = 0, inside = 0;
-  for (const i of legs) { const x = c.P[i * 3], y = c.P[i * 3 + 1], z = c.P[i * 3 + 2]; const t = (yTop - y) / (yTop - yHem); if (t < 0 || t > 1) continue; const u = (x - c.xcOf(t)) / c.hwOf(t); if (u < -1 || u > 1) continue;
-    inside++; const fb = t * NT, fa = (u + 1) / 2 * NU; const b0 = Math.min(NT - 1, Math.floor(fb)), a0 = Math.min(NU - 1, Math.floor(fa)), tb = fb - b0, ta = fa - a0;
-    const zc = (c.Z[b0 * W + a0] * (1 - ta) + c.Z[b0 * W + a0 + 1] * ta) * (1 - tb) + (c.Z[(b0 + 1) * W + a0] * (1 - ta) + c.Z[(b0 + 1) * W + a0 + 1] * ta) * tb;
-    const d = z - zc; if (d < min) min = d; if (d < 0) bad++; }
-  if (bad) throw new Error(`CAPE CHECK FAILED in ${name}: ${bad} leg points pass through the cape (min clearance ${(min * 1000).toFixed(1)} mm)`);
-  return { inside, minMM: isFinite(min) ? +(min * 1000).toFixed(1) : null };
-}
-
-/* ---------- Commodus: segmented armour + pelt ---------- */
-function commodusDress(extra) {
-  const K = B.kit, GI = K.GI;
-  /* lorica segmentata: silver lames with dark gaps, each lame a touch proud at its lower edge; shoulder guards in the same lames */
-  const lam = K.maskedMat(); lam.color.set('#ffffff'); lam.userData.ownMat = 1; lam.userData.hem = { w: 0.006, col: [201, 154, 62], bw: 0, bcol: [0, 0, 0] };
-  const isArm = (g) => g === GI.AL || g === GI.AR;
-  const mask = (p, g) => { if (g === GI.T) return Math.min(p[1] - 0.99, 1.47 - p[1], 0.03); if (isArm(g)) return Math.min(p[1] - 1.23, 0.03); return -1; };
-  const step = (p, g) => isArm(g) ? 0.034 : 0.04;
-  const LT = lin3('#e4e8ee'), DK = lin3('#2a2c32'), MD = lin3('#8a909a'), BR = lin3('#b88a3a');
-  extra.push(K.shellFrom('seg3', mask, (p, m, g) => { const f = frac(p[1] / step(p, g)); if (f < 0.16) return DK; if (g === GI.T && Math.abs(p[0]) < 0.007 && p[2] > 0) return BR;
-    const k = (f - 0.16) / 0.84; return [LT[0] + (MD[0] - LT[0]) * (1 - k), LT[1] + (MD[1] - LT[1]) * (1 - k), LT[2] + (MD[2] - LT[2]) * (1 - k)]; },
-    (p, m) => 0.017 + 0.007 * frac(p[1] / 0.04), { mat: lam }));
-  /* pteruges: leather/linen strips below the armour */
-  const pt = K.maskedMat(); pt.color.set('#ffffff'); pt.userData.ownMat = 1; const W1 = lin3('#f2ece0'), W2 = lin3('#cfc4ac'), GP = lin3('#3a3026');
-  extra.push(K.shellFrom('pter3', (p, g) => { if (g === GI.T) return Math.min(p[1] - 0.8, 1.0 - p[1], 0.03); if (g === GI.LL || g === GI.LR) return Math.min(p[1] - 0.76, 0.03); return -1; },
-    (p) => { const a = Math.atan2(p[0], p[2]); const f = frac(a / Math.PI * 9); return f < 0.12 ? GP : (Math.floor(a / Math.PI * 9) % 2 ? W1 : W2); }, 0.015, { mat: pt }));
-  /* the lion's hide down the back (over the armour) */
-  const hide = K.maskedMat(); hide.color.set('#ffffff'); hide.userData.ownMat = 1; const H1 = lin3('#b08a58'), H2 = lin3('#8a6a40');
-  extra.push(K.shellFrom('hide3', (p, g) => { if (g !== GI.T && g !== GI.H) return -1; if (g === GI.H) return Math.min(-p[2] - 0.03, 1.66 - p[1], 0.03); return Math.min(-p[2] - 0.035, p[1] - 0.86 + p[0] * p[0] * 3, 0.03); },
-    (p) => { const s = 0.5 + 0.5 * Math.sin(p[0] * 90 + Math.sin(p[1] * 40) * 3) * Math.sin(p[1] * 70); return [H2[0] + (H1[0] - H2[0]) * s, H2[1] + (H1[1] - H2[1]) * s, H2[2] + (H1[2] - H2[2]) * s]; },
-    0.036, { mat: hide }));
-  /* the hood + paws (sculpted) */
-  const vb = posed(); const inf = bodyInfo(); let hb = { x0: 1e9, x1: -1e9, y0: 1e9, y1: -1e9, z0: 1e9, z1: -1e9 };
-  for (let i = 0; i < inf.n; i++) if (inf.dom[i] === 'head') { const x = vb[i * 3] * 1000, y = vb[i * 3 + 1] * 1000, z = vb[i * 3 + 2] * 1000; hb.x0 = Math.min(hb.x0, x); hb.x1 = Math.max(hb.x1, x); hb.y0 = Math.min(hb.y0, y); hb.y1 = Math.max(hb.y1, y); hb.z0 = Math.min(hb.z0, z); hb.z1 = Math.max(hb.z1, z); }
-  hb.eye = K.HO[1] * 1000 + 14; const hood = peltGeo(hb);
-  extra.push(K.rigid(hood.geo, K.makeToon('#ffffff', { vertexColors: true }), 'he', [0, 0, 0], null));
-  const sk = (x, y) => { const h = K.hitSkin([x, y, 0.4], [0, 0, -1]); return h ? h.map(v => v * 1000) : [x * 1000, y * 1000, 120]; };
-  const paws = pawsGeo({ L: sk(0.12, 1.42), R: sk(-0.12, 1.42), knot: sk(0, 1.31), out: [0, 0.15, 1] });
-  extra.push(K.rigid(paws.geo, K.makeToon('#ffffff', { vertexColors: true }), 'ch', [0, 0, 0], null));
-  return { hb, hoodTris: hood.tris, pawTris: paws.tris };
-}
-
-window.LOOK300 = {
-  async init(res = 0.005) { TOK = await createToken({ res }); B = TOK._dbg.B; GM = B.mats.gm; const { turn } = TOK._dbg; BASE = turn.children[0]; PROPS = new THREE.Group(); turn.add(PROPS); return B.stats; },
-  async humanoid3(key, only) {
-    const H = {
-      glad: { look: { skin: '#c08a64', hair: '#2a1c12', hs: 'crop', bs: 'stubble', cloth: '#b8933c' }, gear: { head: { t: 'murmillo' }, belt: { t: 'balteus' }, arm: { R: { lower: { t: 'manica' } } }, leg: { L: { lower: { t: 'ocrea' } } }, wR: { t: 'sword' }, wL: { t: 'scutum', c: '#9c2f25' } }, sc: [1.15, 1.15, 1.15] },
-      tholo: { look: { skin: '#b07a52', hair: '#8a847c', hs: 'crop', bs: 'full', cloth: '#7a3a22' }, gear: { helm: 'laurel', arm: { L: { wraps: 1 }, R: { wraps: 1 } }, wR: { t: 'club' } }, sc: [1.15 * 1.24, 1.15 * 1.13, 1.15 * 1.2], tunic: '#7a3a22', cape: 1 },
-      commodus: { look: { skin: '#e0b48e', hair: '#5a3b20', hs: 'curly', bs: 'full', cloth: '#ece6da' }, gear: { arm: { R: { lower: { t: 'manica', c: '#cfd2d8' } } }, leg: { L: { lower: { t: 'ocrea', c: '#cfd2d8' } }, R: { lower: { t: 'ocrea', c: '#cfd2d8' } } }, wR: { t: 'sword' } }, sc: [1.21, 1.21, 1.21], tunic: '#ece6da', pelt: 1 } }[key];
-    TOK.apply({ look: H.look, gear: H.gear }); BASE.visible = true; const K = B.kit, GI = K.GI; const extra = []; let info = {};
-    if (H.tunic) { const m = K.maskedMat(); m.color.set(H.tunic); m.userData.ownMat = 1;
-      extra.push(K.shellFrom('tun3_' + key, (p, g) => { if (g === GI.T) return Math.min(p[1] - 0.68, 1.47 - p[1], 0.03); if (g === GI.LL || g === GI.LR) return Math.min(p[1] - 0.64, 0.03); return -1; },
-        (p) => { const f = Math.sin(p[0] * 60 + p[1] * 22) * 0.5 + 0.5; return [0.82 + 0.18 * f, 0.82 + 0.18 * f, 0.82 + 0.18 * f]; }, 0.011, { mat: m })); }
-    setFrame({ p: [0, 0, 0], j: {}, f: {} });
-    if (H.pelt) info = commodusDress(extra);
-    B.group.scale.set(...H.sc);
-    const rows = [GLAD_ROWS[0], GLAD_ROWS[1], GLAD_ROWS[2], GLAD_ROWS[4], FALL_ROWS[0]];
-    let fr = rows.flatMap(([k, fs]) => fs.map((s, i) => ({ k: k === 'fall' ? 'die' : k, i, s }))); if (only) fr = fr.filter(x => only.includes(x.k + x.i));
-    const cape = H.cape ? { clear: {}, inside: {}, ms: 0 } : null;
-    const S = await renderFrames(fr, { box: 6.2, ty: 0.85, set: (x) => { setFrame(x.s);
-      if (cape) { const t0 = performance.now(); const c = capeBuild(x); capeMesh(c); const nm = x.k + x.i; if (x.k !== 'die') { const r = capeCheck(c, nm); cape.clear[nm] = r.minMM; cape.inside[nm] = r.inside; } cape.ms += performance.now() - t0; } } });
-    B.group.scale.set(1, 1, 1); for (const m of extra) K.kill(m); if (CAPEM) { K.kill(CAPEM); CAPEM = null; } setFrame({ p: [0, 0, 0], j: {}, f: {} });
-    const rowsN = fr.map(x => x.k + x.i); const w = enc(S.canvas, 'image/webp', 0.8);
-    if (cape) { const v = Object.values(cape.clear).filter(x => x != null); cape.minMM = Math.min(...v); cape.ms = Math.round(cape.ms); cape.checked = Object.keys(cape.clear).length; cape.note = 'leg points inside the cape footprint must be in front of its inner surface (die frames lie down: not checked)'; }
-    return { key, meta: S.meta, rows: rowsN, ms: S.ms, kb: +(w.bytes / 1024).toFixed(1), png: S.canvas.toDataURL('image/png'), cape, info,
-      decodedMB: +(S.meta[0] * S.meta[1] * 4 * 8 * rowsN.length / 1048576).toFixed(2), idleWalkMB: +(S.meta[0] * S.meta[1] * 4 * 8 * 10 / 1048576).toFixed(2), frames: rowsN.length, pxmm: 3.143 };
-  },
+const CONF = {
+  tholo: { look: { skin: '#b07a52', hair: '#8a847c', hs: 'crop', bs: 'full', cloth: '#7a3a22' }, gear: { helm: 'laurel', arm: { L: { wraps: 1 }, R: { wraps: 1 } }, wR: { t: 'club' } }, sc: [1.15 * 1.24, 1.15 * 1.13, 1.15 * 1.2], tunic: '#7a3a22',
+    cloth: { color: '#9a2a20', rows: 12, cols: 9, len: 1.12, halfW: 0.22, topY: 0.215, flare: 0.2, th: 0.008, hem: 1, folds: 7, k: 1 } },
+  commodus: { look: { skin: '#e0b48e', hair: '#5a3b20', hs: 'crop', bs: 'full', cloth: '#ece6da' }, gear: { belt: { t: 'balteus' }, arm: { R: { lower: { t: 'manica', c: '#cfd2d8' } } }, leg: { L: { lower: { t: 'ocrea', c: '#cfd2d8' } }, R: { lower: { t: 'ocrea', c: '#cfd2d8' } } }, wR: { t: 'sword' } }, sc: [1.21, 1.21, 1.21], tunic: '#ece6da',
+    cloth: { color: '#b88a48', rows: 10, cols: 9, len: 0.78, halfW: 0.16, topY: 0.25, flare: 0.1, th: 0.011, fur: 1, folds: 3, k: 0.7 }, kit: commodusKit },
 };
-window.LOOK300_READY = true;
+window.LOOK100.humanoid3 = async function (key, o = {}) {
+  const B = X.B, TOK = X.TOK, H = CONF[key]; TOK.apply({ look: H.look, gear: H.gear }); const K = B.kit, GI = K.GI; const extra = [];
+  if (H.tunic) { const m = K.maskedMat(); m.color.set(H.tunic); m.userData.ownMat = 1;
+    extra.push(K.shellFrom('tun3_' + key, (p, g) => { if (g === GI.T) return Math.min(p[1] - 0.68, 1.47 - p[1], 0.03); if (g === GI.LL || g === GI.LR) return Math.min(p[1] - 0.64, 0.03); return -1; },
+      (p) => { const f = Math.sin(p[0] * 60 + p[1] * 22) * 0.5 + 0.5; return [0.82 + 0.18 * f, 0.82 + 0.18 * f, 0.82 + 0.18 * f]; }, 0.011, { mat: m })); }
+  if (H.kit) extra.push(...H.kit(B));
+  B.group.scale.set(...H.sc); B.group.updateMatrixWorld(true);
+  const cloth = new Cloth(B, H.cloth);
+  const rows = [X.GLAD_ROWS[0], X.GLAD_ROWS[1], X.GLAD_ROWS[2], X.GLAD_ROWS[4], X.FALL_ROWS[0]];
+  let fr = rows.flatMap(([k, fs]) => fs.map((s, i) => ({ k: k === 'fall' ? 'die' : k, i, s }))); if (o.only) fr = fr.filter(x => o.only.includes(x.k + x.i));
+  let clothMs = 0;
+  const S = await X.renderFrames(fr, { set: (x) => { X.setFrame(x.s); const t = performance.now(); cloth.update(x.k, x.i); clothMs += performance.now() - t; }, box: 6.4, ty: 0.85, yaws: o.yaws });
+  B.group.scale.set(1, 1, 1); cloth.kill(); for (const m of extra) K.kill(m); X.setFrame({ p: [0, 0, 0], j: {}, f: {} });
+  const rowsN = fr.map(x => x.k + x.i); const w = X.enc(S.canvas, 'image/webp', 0.8);
+  return { key, meta: S.meta, rows: rowsN, ms: S.ms, clothMs: Math.round(clothMs), kb: +(w.bytes / 1024).toFixed(1), webp: w.url, png: S.canvas.toDataURL('image/png'),
+    decodedMB: +(S.meta[0] * S.meta[1] * 4 * 8 * rowsN.length / 1048576).toFixed(2), idleWalkMB: +(S.meta[0] * S.meta[1] * 4 * 8 * 10 / 1048576).toFixed(2), frames: rowsN.length, pxmm: 3.143 };
+};
+/* debug: the cloth points of one frame next to the body's joints (world space) */
+window.LOOK100.cloth3dbg = function (key, fi = 0) { const B = X.B, H = CONF[key]; X.TOK.apply({ look: H.look, gear: H.gear }); B.group.scale.set(...H.sc); B.group.updateMatrixWorld(true);
+  X.setFrame(X.GLAD_ROWS[0][1][fi]); const P = simCloth(B, 'idle', fi, H.cloth); const r = (v) => v.toArray().map(x => +x.toFixed(3));
+  const j = {}; for (const k of ['pe', 'ch', 'ne', 'sL', 'sR']) j[k] = r(B.rig.bones[k].getWorldPosition(new THREE.Vector3()));
+  const out = { j, top: P[0].map(r), mid: P[Math.floor(P.length / 2)].map(r) }; B.group.scale.set(1, 1, 1); return out; };
+window.LOOK100_R3 = true;

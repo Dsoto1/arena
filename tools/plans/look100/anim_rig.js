@@ -428,3 +428,5 @@ Object.assign(window.LOOK100, {
   },
 });
 window.LOOK100_READY = true;
+/* beasts round 3 (beast3_hum.js): read-only access to this module's frames + renderer for the humanoid beasts (additive, nothing above changes) */
+export const LOOK100X = { GLAD_ROWS, FALL_ROWS, renderFrames, setFrame, enc, get B() { return B; }, get TOK() { return TOK; } };

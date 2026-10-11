@@ -103,14 +103,34 @@
     const lx = W - 240; label(g, 'JOINT LEGEND', lx, 60, { px: 13, b: 1, c: '#c8ccd8' }); JLAB.forEach(([cat, t], i) => { g.fillStyle = JCOL[cat]; g.beginPath(); g.arc(lx + 8, 92 + i * 26, 7, 0, 7); g.fill(); label(g, t, lx + 24, 84 + i * 26, { px: 13, c: '#d8dce8' }); });
     return c;
   }
-  /* ---------- 6. Tholo's cape: the walk cycle in four facings (side, back three-quarter, back, other side), at the minis' 3.143 px/mm ---------- */
-  function tholoClip(S, cape) {
-    const FAC = [[2, 'side'], [3, 'back ¾'], [4, 'back'], [6, 'other side'], [1, 'front ¾']]; const [w, h] = S.meta; const W = FAC.length * (w + 10) + 10, H = h + 52; const frames = [];
-    for (let loop = 0; loop < 3; loop++) for (let t = 0; t < 6; t++) { const c = cnv(W, H, '#e4d6b4'); const g = c.getContext('2d');
-      label(g, `Round 3 — Tholo walks: the cape swings with the walk phase and is pushed behind the legs (walk${t}; min clearance ${cape && cape['walk' + t] != null ? cape['walk' + t] + ' mm' : '?'})`, 8, 6, { px: 13, b: 1 });
-      FAC.forEach(([f, n], i) => { const x = 10 + i * (w + 10) + w / 2; label(g, n, x - 20, 26, { px: 11, c: '#6a5236' }); shadow(g, x + 2, 44 + S.meta[3] + 2, w * 0.28, w * 0.1, 0.2); cell(g, S, rowOf(S, 'walk' + t), f, x, 44 + S.meta[3]); });
-      frames.push(c); }
-    return frames;
+  /* ---------- 6. round 2 | round 3 for the changed beasts (idle, 8 facings, as drawn at zoom x2) + walk for the humanoids ---------- */
+  const scaled = (S0, k3) => { const c = cnv(S0.canvas.width * k3, S0.canvas.height * k3); const g = c.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(S0.canvas, 0, 0, c.width, c.height); return { meta: S0.meta.map((v, i) => i < 4 ? v * k3 : v), rows: S0.rows, canvas: c }; };
+  function r2vs3(SH, R2) {
+    const TW = 104, KEYS = ['leo', 'glykon', 'arenosus', 'zora', 'tholo', 'commodus'].filter(k => SH[k] && R2[k]); const blocks = [];
+    for (const k of KEYS) { const hum = k === 'tholo' || k === 'commodus'; const z = hum ? 1.4 : 1; const A = scaled(R2[k], drawnPx(k, TW) / (R2[k].pxmm || PXMM) * z), B = scaled(SH[k], drawnPx(k, TW) / (SH[k].pxmm || PXMM) * z); blocks.push({ k, A, B, hum }); }
+    const cw = (b) => Math.max(b.A.meta[0], b.B.meta[0]) + 6; const W = 150 + Math.max(...blocks.map(b => cw(b) * 8)) + 20; let H = 50; for (const b of blocks) H += 26 + (b.A.meta[1] + b.B.meta[1]) * (b.hum ? 2 : 1) + (b.hum ? 40 : 16);
+    const c = cnv(W, H, '#e4d6b4'); const g = c.getContext('2d'); label(g, 'Round 2 (upper row) | round 3 (lower row): idle0, 8 facings, as drawn at zoom ×2; Tholo and Commodus ×1.4 and also walk0–5 at facing 3', 12, 12, { px: 15, b: 1 });
+    let y = 50;
+    for (const b of blocks) { const w = cw(b); label(g, NAMES[b.k] + (b.hum ? '  (×1.4)' : ''), 12, y + 4, { px: 14, b: 1 }); y += 26;
+      for (const [S, t] of [[b.A, 'round 2'], [b.B, 'round 3']]) { label(g, t, 12, y + S.meta[1] / 2 - 8, { px: 12, c: t === 'round 3' ? '#7a2a10' : '#6a5236', b: t === 'round 3' }); for (let i = 0; i < 8; i++) cell(g, S, 0, i, 150 + i * w + w / 2, y + S.meta[3]); y += S.meta[1]; }
+      if (b.hum) { y += 12; for (const [S, t] of [[b.A, 'r2 walk'], [b.B, 'r3 walk']]) { label(g, t, 12, y + S.meta[1] / 2 - 8, { px: 12, c: '#6a5236' }); for (let i = 0; i < 6; i++) cell(g, S, rowOf(S, 'walk' + i), 3, 150 + i * w + w / 2, y + S.meta[3]); y += S.meta[1]; } }
+      y += b.hum ? 28 : 16; }
+    return c;
+  }
+  /* ---------- 7. Tholo walks two tiles: the cape trails and sways with the steps (pose every 120 ms, base glides) ---------- */
+  function capeClip(B, shot, T) {
+    const free = freeTile(B), clr = clearOf(B); let P = null, bd = 1e9; const cx = B.canvas.x + B.canvas.w / 2, cy = B.canvas.y + B.canvas.h * 0.55;
+    for (let r = 1; r < B.N - 1; r++) for (let c = 1; c + 2 < B.N - 1; c++) { let ok = true; for (let k = 0; k < 3; k++) if (!free(r, c + k) || !clr(r, c + k)) ok = false; if (!ok) continue; const p = B.tiles[r + ',' + (c + 1)]; const d = Math.hypot(p.x - cx, p.y - cy); if (d < bd) { bd = d; P = { r, c }; } }
+    const t = [0, 1, 2].map(k => B.tiles[P.r + ',' + (P.c + k)]); const sc = 0.8 * B.tw / (25.4 * PXMM) * 1.6;   /* x1.6 so the cloth reads */
+    const x0 = Math.min(t[0].x, t[2].x) - B.tw * 0.9, y0 = Math.min(t[0].y, t[2].y) - B.tw * 2.2, W = Math.round(Math.abs(t[2].x - t[0].x) + B.tw * 1.8), H = Math.round(Math.abs(t[2].y - t[0].y) + B.tw * 2.6);
+    const seq = []; for (let i = 0; i < 6; i++) seq.push({ r: 'idle' + (Math.floor(i / 3) % 4), u: 0 });
+    const N = 36; for (let f = 0; f < N; f++) seq.push({ r: 'walk' + (Math.floor(f / 3) % 6), u: f / (N - 1) }); for (let i = 0; i < 6; i++) seq.push({ r: 'idle' + (Math.floor(i / 3) % 4), u: 1 });
+    const frames = seq.map(q => { const c = cnv(W, H); const g = c.getContext('2d'); g.drawImage(shot, x0, y0, W, H, 0, 0, W, H); g.save(); g.translate(W / 2, H * 0.62); g.scale(1.0, 1.0); g.restore();
+      const x = t[0].x + (t[2].x - t[0].x) * q.u - x0, y = t[0].y + (t[2].y - t[0].y) * q.u - y0; shadow(g, x + 2, y + 3, B.tw * 0.45, B.tw * 0.2, 0.24); cell(g, T, rowOf(T, q.r), 1, x, y, sc); return c; });
+    const still = (() => { const fac = [1, 2, 3, 5], s2 = 0.8 * B.tw / (25.4 * PXMM) * 1.8, w = T.meta[0] * s2, h = T.meta[1] * s2; const c = cnv(110 + 6 * w, 40 + fac.length * h, '#e4d6b4'); const g = c.getContext('2d');
+      label(g, 'Tholo walk0–5 (×1.8): the cape is re-hung every frame (gravity + the step’s sway, pushed out of the legs)', 8, 8, { px: 14, b: 1 });
+      fac.forEach((fc, j) => { label(g, 'facing ' + fc, 8, 40 + j * h + h / 2, { px: 12, c: '#6a5236' }); for (let i = 0; i < 6; i++) cell(g, T, rowOf(T, 'walk' + i), fc, 110 + i * w + w / 2, 40 + j * h + T.meta[3] * s2, s2); }); return c; })();
+    return { frames, still, info: { n: frames.length, ms: 40, tiles: [P.r, P.c], w: W, h: H, scale: +sc.toFixed(3) } };
   }
   window.B3COMP = {
     async run(a) {
@@ -123,9 +143,10 @@
       const shot = await img('beast_board_empty.png'); const bd = board(a.board, shot, SH, G); put('beast3_board.png', bd.c);
       const pc = pounce(a.board, shot, SH.leo, G); pc.frames.forEach((f, i) => put(`b3frame_${String(i).padStart(3, '0')}.png`, f));
       { const pick = [3, 8, 20, 26, 29, 33, 37, 40, 44].filter(i => i < pc.frames.length); const w = pc.frames[0].width, h = pc.frames[0].height; const c = cnv(pick.length * (w + 4), h + 26, '#1f1812'); const g = c.getContext('2d');
-        label(g, 'Round 3 — Leo pounces: stepped poses every 120 ms, the base glides — frames from beast3_clip_pounce.webp', 6, 5, { px: 14, b: 1, c: '#f0dca8' }); pick.forEach((i, n) => g.drawImage(pc.frames[i], n * (w + 4), 26)); put('beast3_clip_frames.png', c); }
-      if (SH.tholo) { const tf = tholoClip(SH.tholo, a.cape); tf.forEach((f, i) => put(`b3tframe_${String(i).padStart(3, '0')}.png`, f)); }
-      return { files, clip: pc.info, placed: bd.placed };
+        label(g, 'Round 3 — Leo pounces (longer reach): stepped poses every 120 ms, the base glides — frames from beast3_clip_pounce.webp', 6, 5, { px: 14, b: 1, c: '#f0dca8' }); pick.forEach((i, n) => g.drawImage(pc.frames[i], n * (w + 4), 26)); put('beast3_clip_frames.png', c); }
+      if (a.r2) { const R2 = {}; for (const [k, v] of Object.entries(a.r2)) R2[k] = { meta: v.meta, rows: v.rows, pxmm: v.pxmm, canvas: await toCv(v.png) }; put('beast3_r2_vs_r3.webp', r2vs3(SH, R2), 'image/webp', 0.9); }
+      let cape = null; if (SH.tholo) { const cc = capeClip(a.board, shot, SH.tholo); cc.frames.forEach((f, i) => put(`b3cape_${String(i).padStart(3, '0')}.png`, f)); put('beast3_cape_frames.png', cc.still); cape = cc.info; }
+      return { files, clip: pc.info, cape, placed: bd.placed };
     },
   };
 })();
