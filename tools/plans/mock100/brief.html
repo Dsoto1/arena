@@ -52,7 +52,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 /* backdrop: the arena behind, dimmed */
 .bd{position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 55%,#3a2a1a 0%,#1a120c 60%,#0b0705 100%)}
 .bd::after{content:"";position:absolute;inset:0;background:url(../../../assets/map.jpg) center/cover;opacity:.06;filter:blur(2px)}
-.win{position:relative;margin:24px auto;width:min(1240px,calc(100vw - 48px));border:1px solid #6b5236;border-radius:12px;background:linear-gradient(#21180f,#181009);box-shadow:0 30px 80px #000d,0 0 0 1px #000;overflow:hidden}
+.win{position:relative;margin:max(24px,calc((100vh - 716px)/2)) auto 24px;width:min(1240px,calc(100vw - 48px));border:1px solid #6b5236;border-radius:12px;background:linear-gradient(#21180f,#181009);box-shadow:0 30px 80px #000d,0 0 0 1px #000;overflow:hidden}
 /* header */
 .hd{position:relative;display:grid;grid-template-columns:118px minmax(0,1fr) auto;gap:18px;padding:16px 20px 14px;border-bottom:1px solid var(--line2);
   background:radial-gradient(ellipse 70% 120% at 30% 0%,#3a2a18 0%,transparent 70%),linear-gradient(#24190f,#1b130d)}
@@ -105,23 +105,23 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 .rc{position:relative;display:flex;gap:10px;padding:9px 10px;border-radius:8px;border:1px solid #3a2c1e;background:var(--panel2);min-height:64px}
 .rc .ic{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:16px;background:#160f0b;box-shadow:0 0 0 1px #4a3826}
 .rc b{display:block;font-size:14.5px;color:var(--bone);line-height:1.2}
-.rc span{display:block;font-size:13px;color:var(--muted);line-height:1.25;margin-top:2px}
+.rc>div>span{display:block;font-size:13px;color:var(--muted);line-height:1.25;margin-top:2px}
 .rc.dg{border-color:#5b3f86;background:linear-gradient(135deg,#2a1f30,#231a20 70%)}
 .rc.dg .ic{box-shadow:0 0 0 1px var(--dig)}
-.dgm{position:absolute;right:8px;top:7px;font:600 9.5px var(--mono);letter-spacing:.1em;color:var(--dig2);padding:1px 5px;border-radius:3px;border:1px solid #6a4f9a;background:#1e1626}
+.rc .dgm{position:absolute;right:8px;top:7px;font:600 9.5px var(--mono);letter-spacing:.1em;white-space:nowrap;color:var(--dig2);padding:1px 5px;border-radius:3px;border:1px solid #6a4f9a;background:#1e1626}
 .rc.dg b{padding-right:64px}
 .rc.ev{border-color:#7a5a24;background:linear-gradient(135deg,#33261a,#251b13 70%)}
 /* seats */
 .seats{padding:4px 20px 12px}
 .strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .st{position:relative;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;border:1px solid #3a2c1e;border-left:4px solid var(--pc);background:linear-gradient(90deg,color-mix(in srgb,var(--pc) 16%,#2a1f17),#211811 70%);min-width:0}
-.st .fc{flex:none;width:48px;height:48px;border-radius:50%;background-size:243px 352px;box-shadow:0 0 0 2px var(--pc),0 0 0 3px #000;background-color:#d9cbb0}
+.st .fc{flex:none;width:52px;height:52px;border-radius:50%;background-size:cover;box-shadow:0 0 0 2px var(--pc),0 3px 8px #000a}
 .st .tx{min-width:0;flex:1}
 .st .tx b{display:block;font-size:14.5px;color:var(--bone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.st .tx span{display:block;font-size:12.5px;color:var(--muted)}
+.st .tx>span{display:block;font-size:12.5px;color:var(--muted)}
 .st .tx .cl{color:var(--pc);font-family:var(--display);font-size:14px;letter-spacing:.03em}
 .st .tk{flex:none;width:40px;height:50px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:drop-shadow(0 3px 4px #000a)}
-.tag{font:600 9.5px var(--mono);padding:1px 5px;border-radius:3px;color:#140f0b;background:var(--gold2);margin-left:4px;vertical-align:1px}
+.tag{white-space:nowrap;font:600 9.5px var(--mono);padding:1px 5px;border-radius:3px;color:#140f0b;background:var(--gold2);margin-left:4px;vertical-align:1px}
 .tag.cpu{background:#6b5a46;color:#efe3cc}
 .tag.ta{background:#5b9bd5}.tag.tb{background:#e8923a}
 .st.you{box-shadow:0 0 0 1px var(--gold),0 0 16px #d6ab4c30}
@@ -132,10 +132,10 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 .ft .note b{color:var(--muted)}
 /* phone frames sheet (#phone on a wide screen) */
 .ph{display:none;gap:30px;justify-content:center;padding:26px}
-.ph .dev{width:390px;height:844px;border-radius:44px;border:10px solid #0b0705;box-shadow:0 0 0 1px #6b5236,0 30px 70px #000c;overflow:hidden;background:#000;position:relative}
+.ph .dev{width:410px;height:864px;border-radius:44px;border:10px solid #0b0705;box-shadow:0 0 0 1px #6b5236,0 30px 70px #000c;overflow:hidden;background:#000;position:relative}
 .ph iframe{width:390px;height:844px;border:0}
 .ph p{text-align:center;color:var(--muted);margin:8px 0 0;font-size:13.5px}
-.phonewide .bd,.phonewide .win{display:none}.phonewide .ph{display:flex}
+.phonewide .bd,.phonewide .win{display:none}.phonewide .ph{display:flex;transform:scale(.92);transform-origin:top center;padding-top:12px}
 .phtitle{display:none;text-align:center;font:400 24px var(--display);color:var(--gold2);padding-top:18px}
 .phonewide .phtitle{display:block}
 .more{display:none}
@@ -154,9 +154,9 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
   .bodyg{grid-template-columns:1fr;padding:12px 16px 6px}
   .rd{grid-template-columns:30px minmax(0,1fr);padding:9px 10px}
   .rd .n{font-size:20px;grid-row:1/4}
-  .rch{justify-content:flex-start}.rd .rw{text-align:left;white-space:normal}
+  .rch{justify-content:flex-start}.rd .nm,.rd .rch,.rd .end,.rd .rw{grid-column:2}.rd .rw{text-align:left;white-space:normal}
   .rules{grid-template-columns:1fr}
-  .rules .rc.x{display:none}
+  .rules .rc.xm{display:none}
   .more{display:block;margin-top:6px;font-size:13.5px;color:var(--gold2)}
   .seats{padding:4px 0 10px}
   .seats .sh{padding:0 16px}
@@ -253,10 +253,10 @@ function show(){
  document.getElementById('fsay').textContent='“'+d.say+'”';
  document.getElementById('rsub').innerHTML=d.rsub;document.getElementById('ssub').innerHTML=d.ssub;
  document.getElementById('rounds').innerHTML=d.rounds.map(([n,nm,z,f,end,rw,now])=>`<div class="rd ${now?'now':''}"><span class="n">${n}</span><span class="nm"><b>${nm}</b><span>${z}</span>${now?'<em>FIRST</em>':''}</span><span class="rch">${f.map((v,i)=>`<span class="${v?'y':'n0'}" title="${KT[i]}${v?'':' — not this round'}">${K[i]}</span>`).join('')}</span><span class="end">⏱ ${end}</span><span class="rw">${rw}</span></div>`).join('');
- document.getElementById('rules').innerHTML=d.rules.map(([ic,b,t,k],i)=>`<div class="rc ${k} ${i>=3?'x':''}"><span class="ic">${ic}</span><div><b>${b}</b><span>${t}</span></div>${k==='dg'?'<span class="dgm">◆ DIGITAL</span>':''}</div>`).join('');
+ document.getElementById('rules').innerHTML=d.rules.map(([ic,b,t,k],i)=>`<div class="rc ${k} ${i>=3?'xm':''}"><span class="ic">${ic}</span><div><b>${b}</b><span>${t}</span></div>${k==='dg'?'<span class="dgm">◆ DIGITAL</span>':''}</div>`).join('');
  document.getElementById('more').textContent=`＋ ${d.rules.length-3} more rules ▾`;
  document.getElementById('seats').innerHTML=d.seats.map(([nm,k,cl,mind,tm])=>{const you=mind==='you';const [fx,fy]=FACE[k]||[400,230];
-  return `<div class="st ${you?'you':''}" style="--pc:${CC[k]}"><span class="fc" style="background-image:url(../../../assets/cls_${k}.webp);background-position:${-(fx*.44-24)}px ${-(fy*.44-24)}px"></span><span class="tx"><b>${nm}</b><span><span class="cl">${cl}</span>${tm?` <span class="tag t${tm.toLowerCase()}">${tm}</span>`:''}${you?' <span class="tag">YOU</span>':` <span class="tag cpu">CPU · ${mind}</span>`}</span></span><span class="tk" style="background-image:url(../../../assets/mini_${k}.webp)"></span></div>`}).join('');
+  return `<div class="st ${you?'you':''}" style="--pc:${CC[k]}"><span class="fc" style="background-image:url(../../../assets/ptokf81_${k}.webp)" title="Token round (the game shows his portrait here)"></span><span class="tx"><b>${nm}</b><span><span class="cl">${cl}</span>${tm?` <span class="tag t${tm.toLowerCase()}">${tm}</span>`:''}${you?' <span class="tag">YOU</span>':` <span class="tag cpu">CPU · ${mind}</span>`}</span></span><span class="tk" style="background-image:url(../../../assets/mini_${k}.webp)"></span></div>`}).join('');
 }
 addEventListener('hashchange',show);show();
 </script>

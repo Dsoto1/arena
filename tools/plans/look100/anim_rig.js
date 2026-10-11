@@ -369,6 +369,20 @@ Object.assign(window.LOOK100, {
     turn.rotation.y = 0; turn.updateMatrixWorld(true);
     return { px: S, raster: +(tr / n).toFixed(1), readback: +(tb / n).toFixed(1), post2d: +(tp / n).toFixed(1) };
   },
+
+  /* the humanoid beasts (Tholo, Commodus) on the gladiator body: idle 4 · walk 6 · attack 5 · hit 3 · die 5 (the murmillo's frames, no shield) */
+  async humanoid(key) {
+    const H = { tholo: { look: { skin: '#c48e66', hair: '#9a948c', hs: 'crop', bs: 'full', cloth: '#8c2a22' }, gear: { helm: 'laurel', belt: { t: 'balteus1' }, arm: { L: { wraps: 1 }, R: { wraps: 1 } }, wR: { t: 'club' } } },
+      commodus: { look: { skin: '#e0b48e', hair: '#5a3b20', hs: 'curly', bs: 'full', cloth: '#e8e4dc' }, gear: { chest: { t: 'lorica', c: '#d4d6da' }, head: { t: 'galea', c: '#e2e4e8' }, arm: { R: { lower: { t: 'manica', c: '#d4d6da' } } }, leg: { L: { lower: { t: 'ocrea', c: '#d4d6da' } }, R: { lower: { t: 'ocrea', c: '#d4d6da' } } }, wR: { t: 'sword' } } } }[key];
+    TOK.apply({ look: H.look, gear: H.gear }); BASE.visible = true;
+    const rows = [GLAD_ROWS[0], GLAD_ROWS[1], GLAD_ROWS[2], GLAD_ROWS[4], FALL_ROWS[0]];
+    const fr = rows.flatMap(([k, fs]) => fs.map((s, i) => ({ k: k === 'fall' ? 'die' : k, i, s })));
+    const S = await renderFrames(fr, { set: (x) => setFrame(x.s), box: 5.2, ty: 0.7 });
+    setFrame({ p: [0, 0, 0], j: {}, f: {} });
+    const rowsN = fr.map(x => x.k + x.i); const w = enc(S.canvas, 'image/webp', 0.8);
+    return { key, meta: S.meta, rows: rowsN, ms: S.ms, kb: +(w.bytes / 1024).toFixed(1), webp: w.url, png: S.canvas.toDataURL('image/png'),
+      decodedMB: +(S.meta[0] * S.meta[1] * 4 * 8 * rowsN.length / 1048576).toFixed(2), idleWalkMB: +(S.meta[0] * S.meta[1] * 4 * 8 * 10 / 1048576).toFixed(2), frames: rowsN.length };
+  },
   async classes() {
     const out = {}; const yaws = [45, 135];
     for (const [k, C] of Object.entries(CLASS_STAND)) {

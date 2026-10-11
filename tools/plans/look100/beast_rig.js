@@ -82,7 +82,7 @@ function paint(p, n, P) {
   let c = hexL(P.m.c); const pat = P.m.p;
   if (P.m.u && n[1] < -0.15) c = lerp(c, hexL(P.m.u), cl((-n[1] - 0.15) * 1.6, 0, 1));
   if (pat === 'fur') { const s = 0.86 + 0.26 * vnoise(p[0] * 0.9, p[1] * 2.2, p[2] * 0.9); c = mul(c, s); }
-  else if (pat === 'mane') { const s = 0.7 + 0.55 * vnoise(p[0] * 1.3, p[1] * 1.3, p[2] * 1.3); c = mul(c, s); }
+  else if (pat === 'mane') { const s = 0.78 + 0.42 * vnoise(p[0] * 1.6, p[1] * 0.9, p[2] * 1.6); c = mul(c, s); }
   else if (pat === 'band') { const t = (P.t || 0) * (P.m.nb || 22); const b = Math.abs(Math.sin(t * Math.PI)); if (b > 0.78) c = lerp(c, hexL(P.m.b || '#2a2014'), 0.75); if (n[1] < -0.2) c = lerp(c, hexL(P.m.u || '#e8d8a0'), 0.6); }
   else if (pat === 'diam') { const t = (P.t || 0) * 30; const a = Math.abs(((t + Math.atan2(n[0], n[1]) * 0.6) % 1 + 1) % 1 - 0.5); if (a < 0.14 && n[1] > -0.1) c = lerp(c, hexL(P.m.b), 0.7); if (n[1] < -0.2) c = lerp(c, hexL(P.m.u || '#e8d8a0'), 0.6); }
   else if (pat === 'scale') { const g = Math.abs(Math.sin(p[0] * 1.9)) * Math.abs(Math.sin(p[2] * 1.6)); c = mul(c, 0.78 + 0.3 * g); }
@@ -105,7 +105,7 @@ function meshOf(prims, h) {
     const wear = cl(lap / e * 1.6 - 0.12, 0, 1), cav = cl(-lap / e * 2.2 - 0.05, 0, 1);
     const up = cl(n[1] * 0.5 + 0.5, 0, 1);   /* a painted top light: upper surfaces a touch warmer/lighter (zenithal highlight) */
     const a2 = Math.pow(ao, 1.25) * (1 - cav * 0.55);
-    for (let k = 0; k < 3; k++) { let v = c[k] * (0.55 + 0.45 * a2) * (0.9 + 0.18 * up); v = v + (Math.min(1, c[k] * 1.45 + 0.1) - v) * wear * (P.m.dry != null ? P.m.dry : 0.6); col[i * 3 + k] = Math.pow(cl(v, 0, 1), 2.2); } }
+    for (let k = 0; k < 3; k++) { let v = c[k] * (0.66 + 0.34 * a2) * (0.92 + 0.16 * up); v = v + (Math.min(1, c[k] * 1.45 + 0.1) - v) * wear * (P.m.dry != null ? P.m.dry : 0.6); col[i * 3 + k] = Math.pow(cl(v, 0, 1), 2.2); } }
   const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('normal', new THREE.BufferAttribute(nor, 3)); geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
   geo.setIndex(nv > 65535 ? new THREE.Uint32BufferAttribute(sn.tri, 1) : new THREE.Uint16BufferAttribute(sn.tri, 1));
   return { geo, verts: nv, tris: sn.tri.length / 3, cells: fd.nx * fd.ny * fd.nz };
@@ -118,28 +118,28 @@ function ik2(A, T, L1, L2, pole) { let d = sub(T, A); let D = len(d); const mx =
   return [add(A, add(mul(u, L1 * ca), mul(v, L1 * sa))), T]; }
 export const SPECIES = {
   lion: { kind: 'quad', base: [72, 42], h: 0.55, L: 10.5, y: 13.5, chest: [6.4, 7.6, 8.4], belly: [5.6, 6.0, 8], hips: [5.6, 6.6, 6.6], fx: 3.6, hx: 3.4, legF: [7.8, 7.4, 2.6], legH: [8.6, 7.6, 4.6], rF: [2.7, 1.8, 1.5], rH: [3.0, 1.7, 1.4], paw: [2.1, 1.2, 2.6],
-    neck: [6.5, 2.8], head: [3.6, 3.7, 4.1], muz: [4.2, 2.2], ears: 'round', mane: [7.4, 7.6, 7.2], tail: [21, 0.95, 0.5], tuft: 1.8,
-    col: { fur: '#c99848', u: '#e8cc90', mane: '#7a4a20', nose: '#3a2418', dark: '#1a120c', tuft: '#5a3416', claw: '#e8dcc0' } },
+    neck: [6.5, 2.8], head: [3.6, 3.7, 4.1], muz: [4.2, 2.2], ears: 'round', mane: [5.4, 6.0, 4.6], tail: [21, 0.95, 0.5], tuft: 1.8,
+    col: { fur: '#c49a58', u: '#ead6a8', mane: '#8a5426', nose: '#3a2418', dark: '#1a120c', tuft: '#5a3416', claw: '#e8dcc0' } },
   lioness: { kind: 'quad', base: [72, 42], h: 0.55, L: 10.0, y: 12.6, chest: [5.6, 6.8, 7.8], belly: [4.9, 5.4, 7.6], hips: [5.0, 6.0, 6.2], fx: 3.2, hx: 3.1, legF: [7.4, 7.0, 2.5], legH: [8.2, 7.2, 4.4], rF: [2.3, 1.6, 1.3], rH: [2.6, 1.5, 1.25], paw: [1.9, 1.1, 2.4],
     neck: [6.4, 2.6], head: [3.2, 3.3, 3.8], muz: [3.9, 1.9], ears: 'round', tail: [20, 0.85, 0.45], tuft: 1.3,
     col: { fur: '#c9a060', u: '#ead2a0', nose: '#3a2418', dark: '#1a120c', tuft: '#5a3416', claw: '#e8dcc0' } },
   bear: { kind: 'quad', base: [75, 47], h: 0.6, L: 10.5, y: 16.5, chest: [8.4, 9.4, 9.0], belly: [8.0, 8.6, 9], hips: [8.0, 9.2, 8.0], fx: 4.6, hx: 4.4, legF: [8.0, 7.6, 3.0], legH: [8.4, 7.4, 4.2], rF: [3.6, 2.8, 2.4], rH: [3.8, 2.6, 2.3], paw: [2.8, 1.4, 3.4],
     neck: [5.5, 4.4], head: [4.6, 4.6, 4.6], muz: [4.4, 2.6], ears: 'bear', tail: [4, 1.6, 1.0], hump: 1,
-    col: { fur: '#6b4526', u: '#5a3a20', muz: '#a07848', nose: '#1a120c', dark: '#120c08', claw: '#e8dcc0' } },
+    col: { fur: '#8a5c36', u: '#6e4828', muz: '#b8925e', nose: '#1a120c', dark: '#120c08', claw: '#e8dcc0' } },
   wolf: { kind: 'quad', base: [25.4, 25.4], h: 0.4, L: 6.0, y: 9.4, chest: [3.3, 4.4, 4.8], belly: [2.8, 3.2, 4.6], hips: [3.0, 3.6, 3.8], fx: 2.0, hx: 1.9, legF: [5.2, 5.0, 2.0], legH: [5.8, 5.2, 3.2], rF: [1.4, 0.95, 0.8], rH: [1.7, 0.9, 0.75], paw: [1.1, 0.7, 1.5],
     neck: [4.2, 1.9], head: [2.4, 2.4, 2.6], muz: [3.2, 1.2], ears: 'pointy', tail: [11, 1.2, 0.6], brush: 1,
     col: { fur: '#7d7f84', u: '#d9d4c8', muz: '#c8c2b4', nose: '#141210', dark: '#141210', claw: '#d8d0c0' } },
   boar: { kind: 'quad', base: [25.4, 25.4], h: 0.4, L: 5.6, y: 8.2, chest: [4.4, 5.2, 5.2], belly: [4.2, 4.6, 5], hips: [4.0, 4.6, 4.2], fx: 2.3, hx: 2.2, legF: [4.0, 3.6, 1.4], legH: [4.4, 3.6, 2.2], rF: [1.6, 1.0, 0.8], rH: [1.9, 1.0, 0.8], paw: [0.9, 0.9, 1.1],
     neck: [2.6, 3.4], head: [3.0, 3.2, 3.6], muz: [3.6, 2.0], ears: 'pointy', tail: [4, 0.5, 0.35], tusks: 1, ridge: 1,
-    col: { fur: '#4a3426', u: '#3a2a1e', muz: '#8a6a58', nose: '#5a3a30', dark: '#120c08', claw: '#2a2018', tusk: '#efe6cc' } },
+    col: { fur: '#6e4e38', u: '#5a3e2c', muz: '#a08070', nose: '#5a3a30', dark: '#120c08', claw: '#2a2018', tusk: '#efe6cc' } },
   croc: { kind: 'quad', base: [75, 34], h: 0.5, L: 9.5, y: 3.4, chest: [5.0, 2.6, 6.0], belly: [5.2, 2.6, 6.5], hips: [4.6, 2.5, 5.0], fx: 5.0, hx: 4.6, legF: [3.6, 3.2, 1.2], legH: [4.2, 3.6, 1.6], rF: [1.3, 1.0, 0.8], rH: [1.6, 1.1, 0.9], paw: [1.4, 0.5, 1.6], sprawl: 1,
     neck: [2.4, 2.8], head: [2.8, 1.8, 3.4], muz: [10, 1.6], ears: null, tail: [26, 2.6, 0.3], scutes: 1, croc: 1,
-    col: { fur: '#55633a', u: '#c8bf86', muz: '#55633a', nose: '#2a3018', dark: '#141a0c', claw: '#d8d0b0', tooth: '#efe8d0' } },
+    col: { fur: '#6e7c48', u: '#d2c88e', muz: '#6e7c48', nose: '#2a3018', dark: '#141a0c', claw: '#d8d0b0', tooth: '#efe8d0' } },
 };
 /* variants = a recolour of a species (one model, his named tokens) */
 export const VARIANTS = {
-  leo: ['lion'], leaena: ['lioness'], ursa: ['bear'], brutum: ['bear', { fur: '#4e3220', u: '#3e2818', muz: '#8a6038' }],
-  valencia: ['wolf', { fur: '#9a6a3a', u: '#e2cfa8', muz: '#d8c4a0' }], moechus: ['wolf', { fur: '#3a393c', u: '#6a6a6e', muz: '#5a5a5e' }],
+  leo: ['lion'], leaena: ['lioness'], ursa: ['bear'], brutum: ['bear', { fur: '#6a4428', u: '#56361e', muz: '#a07848' }],
+  valencia: ['wolf', { fur: '#9a6a3a', u: '#e2cfa8', muz: '#d8c4a0' }], moechus: ['wolf', { fur: '#4a494e', u: '#86868c', muz: '#707076' }],
   boar: ['boar'], croc: ['croc'],
 };
 function quad(S, f, COL) {
@@ -184,7 +184,7 @@ function quad(S, f, COL) {
   for (const sx of [-1, 1]) P.push(sph(H([sx * S.head[0] * 0.48, S.head[1] * 0.25, S.head[2] * 0.62]), Math.max(0.35, S.head[0] * 0.12), 0.1, DARK));
   if (S.ears === 'round' || S.ears === 'bear') for (const sx of [-1, 1]) P.push(ell(H([sx * S.head[0] * 0.62, S.head[1] * 0.85, -S.head[2] * 0.1]), [S.head[0] * 0.28, S.head[1] * 0.3, S.head[2] * 0.14], HF, 0.4, FUR));
   if (S.ears === 'pointy') for (const sx of [-1, 1]) P.push(cap(H([sx * S.head[0] * 0.5, S.head[1] * 0.6, -S.head[2] * 0.1]), H([sx * S.head[0] * 0.65, S.head[1] * 1.55, -S.head[2] * 0.15]), S.head[0] * 0.3, 0.12, 0.3, FUR));
-  if (S.mane) { P.push(ell(add(NE, mul(HF[2], -S.head[2] * 0.25)), S.mane, HF, 1.8, M(C.mane, 'mane', { dry: 0.75 }))); P.push(ell(add(NB, [0, S.chest[1] * 0.35, 0]), [S.mane[0] * 0.85, S.mane[1] * 0.9, S.mane[2] * 0.8], R, 2.2, M(C.mane, 'mane', { dry: 0.75 }))); }
+  if (S.mane) { P.push(ell(add(NE, add(mul(HF[2], -S.head[2] * 0.75), mul(HF[1], S.head[1] * 0.15))), S.mane, HF, 1.8, M(C.mane, 'mane', { dry: 0.75 }))); P.push(ell(add(NB, [0, S.chest[1] * 0.2, 0]), [S.mane[0] * 0.95, S.mane[1] * 0.95, S.mane[2] * 1.1], R, 2.2, M(C.mane, 'mane', { dry: 0.75 }))); }
   if (S.tusks) for (const sx of [-1, 1]) P.push(cap(H([sx * S.muz[1] * 0.8, -S.head[1] * 0.25, S.head[2] * 0.4 + S.muz[0] * 0.7]), H([sx * S.muz[1] * 1.3, S.head[1] * 0.25, S.head[2] * 0.4 + S.muz[0] * 0.55]), 0.4, 0.12, 0.2, M(C.tusk, null, { dry: 0.3 })));
   if (S.croc) for (let i = 1; i <= 6; i++) for (const sx of [-1, 1]) P.push(cap(add(lerp(mz0, mz1, i / 7), mul(HF[0], sx * S.muz[1] * 0.85)), add(lerp(mz0, mz1, i / 7), add(mul(HF[0], sx * S.muz[1] * 0.85), mul(HF[1], -0.9))), 0.22, 0.06, 0, M(C.tooth, null)));
   /* legs */
@@ -295,7 +295,7 @@ export function snakeFrames() { return [
 
 /* ======================= ZORA, the golden eagle ======================= */
 function eagleFrame(f) {
-  const P = []; const BR = { c: '#6a4426', p: 'feath', u: '#4a2e18', dry: 0.7 }, GOLD = { c: '#c99a4a', p: 'feath', dry: 0.7 }, BEAK = { c: '#e0b040', dry: 0.5 }, TAL = { c: '#e6c040', dry: 0.4 }, DK = { c: '#141008', dry: 0.9 }, TIP = { c: '#3a2614', p: 'feath', dry: 0.6 };
+  const P = []; const BR = { c: '#8e6038', p: 'feath', u: '#6a4426', dry: 0.75 }, GOLD = { c: '#d8aa58', p: 'feath', dry: 0.7 }, BEAK = { c: '#e0b040', dry: 0.5 }, TAL = { c: '#e6c040', dry: 0.4 }, DK = { c: '#141008', dry: 0.9 }, TIP = { c: '#5a3a1e', p: 'feath', dry: 0.7 };
   const lift = f.lift || 0, pitch = (f.pitch || 0) * D2R, roll = (f.roll || 0) * D2R; const R = mm(Rz(roll), Rx(-pitch)); const root = [0, 8.2 + lift, f.z || 0]; const T = (p) => add(mv(R, p), root);
   P.push(ell(T([0, 0, 0]), [3.4, 3.7, 5.4], mm(R, Rx(-0.25)), 1.4, BR));
   P.push(ell(T([0, 1.9, 2.6]), [2.6, 2.6, 2.6], R, 1.2, BR));
@@ -308,14 +308,13 @@ function eagleFrame(f) {
   /* wings: shoulder → elbow → wrist → tip, with feather plates; spread 0 (folded along the back) .. 1, flap = raise angle */
   const sp = f.spread || 0, fl = (f.flap || 0) * D2R;
   for (const sx of [-1, 1]) {
-    const S0 = T([sx * 2.6, 1.6, 1.8]);
-    const out = (a) => mv(R, nrm([sx * Math.cos(fl) * a, Math.sin(fl) * a + (1 - a) * 0.15, -(1 - a)]));
-    const E = add(S0, mul(out(sp * 0.9 + 0.05), 5.2)), W = add(E, mul(nrm(add(out(sp), mv(R, [0, 0, -(1 - sp) * 0.6]))), 6)), Tp = add(W, mul(nrm(add(out(sp * 0.95), mv(R, [0, -0.05, -0.35 - (1 - sp) * 0.6]))), 8));
-    P.push(cap(S0, E, 1.6, 1.3, 0.8, BR)); P.push(cap(E, W, 1.3, 0.9, 0.6, BR));
-    /* primaries + secondaries as thin plates trailing back from the arm */
-    const back = mv(R, [0, 0, -1]); const nup = nrm(cross(nrm(sub(Tp, S0)), back));
-    for (let i = 0; i <= 7; i++) { const t = i / 7; const root2 = lerp(E, Tp, t); const fd = nrm(add(mul(back, 1 - t * 0.5), mul(nrm(sub(Tp, W)), t * 0.8))); const Lf = 4.5 + t * 2.5;
-      const F2 = frame(fd, len(nup) > 0.1 ? (dot(nup, [0, 1, 0]) < 0 ? mul(nup, -1) : nup) : [0, 1, 0]); P.push(ell(add(root2, mul(fd, Lf * 0.5)), [1.3, 0.28, Lf * 0.55], F2, 0.25, i > 4 ? TIP : BR)); }
+    const S0 = T([sx * 2.4, 1.8, 1.6]); const back = mv(R, [0, -0.08, -1]);
+    const wd = nrm(mv(R, lerp([sx * 0.18, 0.12, -1], [sx * Math.cos(fl), Math.sin(fl), -0.12], sp))); const span = 6 + sp * 8;
+    let n = nrm(cross(wd, back)); if (dot(n, mv(R, [0, 1, 0])) < 0) n = mul(n, -1);
+    P.push(cap(S0, add(S0, mul(wd, span * 0.45)), 1.5, 1.0, 0.8, BR));
+    for (let i = 0; i <= 8; i++) { const t = i / 8; const c0 = add(S0, mul(wd, span * (0.05 + t * 0.95)));
+      const prim = t > 0.6; const cd = nrm(prim ? add(mul(back, 1), mul(wd, (t - 0.5) * 1.6)) : back); const chord = prim ? 5.6 - (t - 0.6) * 3 : 4.6 + (1 - sp) * 1.5;
+      const F2 = frame(cd, n); P.push(ell(add(c0, mul(cd, chord * 0.5)), [1.55, 0.36, chord * 0.58], F2, 0.35, prim ? TIP : BR)); }
   }
   /* tail fan */
   const tb = T([0, -0.6, -4.8]); for (let i = -2; i <= 2; i++) { const d = mv(R, nrm([i * 0.22, -0.35 + (f.tailUp || 0), -1])); P.push(ell(add(tb, mul(d, 2.6)), [1.0, 0.3, 2.8], frame(d), 0.3, i % 2 ? TIP : BR)); }
@@ -332,8 +331,8 @@ export function eagleFrames() { return [
   { n: 'attack0', lift: 12, spread: 1, flap: 50, pitch: 10 }, { n: 'attack1', lift: 10, spread: 0.6, flap: 60, pitch: -25, head: [-25, 0], z: 3 }, { n: 'attack2', lift: 5, spread: 0.9, flap: 20, pitch: 15, talons: 1, z: 6, head: [-10, 0] },
   { n: 'attack3', lift: 3, spread: 1, flap: -10, pitch: 25, talons: 1.2, z: 7, head: [-20, 0] }, { n: 'attack4', lift: 7, spread: 1, flap: 35, pitch: 0, z: 3 },
   { n: 'hit0', spread: 0.6, flap: 30, head: [25, 0], pitch: 10 }, { n: 'hit1', spread: 0.3, flap: 10, head: [-15, 20], roll: 10 }, { n: 'hit2' },
-  { n: 'die0', spread: 0.5, flap: 20, head: [-30, 0], roll: 12 }, { n: 'die1', spread: 0.8, flap: -5, head: [-40, 10], roll: 30, lift: -2 }, { n: 'die2', spread: 0.9, flap: -15, head: [-45, 20], roll: 55, lift: -4 },
-  { n: 'die3', spread: 1, flap: -20, head: [-50, 30], roll: 75, lift: -5 }, { n: 'die4', spread: 1, flap: -25, head: [-55, 35], roll: 85, lift: -5.5 },
+  { n: 'die0', spread: 0.5, flap: 20, head: [-30, 0], roll: 12 }, { n: 'die1', spread: 0.8, flap: -5, head: [-40, 10], roll: 30, lift: -1.5 }, { n: 'die2', spread: 0.9, flap: -15, head: [-45, 20], roll: 55, lift: -3 },
+  { n: 'die3', spread: 0.7, flap: 0, head: [-50, 30], roll: 62, lift: -3.6 }, { n: 'die4', spread: 0.6, flap: 5, head: [-55, 35], roll: 70, lift: -4 },
 ]; }
 
 /* ======================= SPIDER ======================= */
@@ -363,7 +362,7 @@ function setup() {
   if (REND) return; REND = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); REND.outputColorSpace = THREE.SRGBColorSpace; REND.setClearColor(0, 0); REND.setPixelRatio(1);
   SCENE = new THREE.Scene(); SCENE.add(new THREE.AmbientLight(0xffffff, 0.5 * Math.PI)); SUN = new THREE.DirectionalLight(0xfff4e6, 0.62 * Math.PI); SCENE.add(SUN); SCENE.add(SUN.target);
   TURN = new THREE.Group(); SCENE.add(TURN);
-  GM = new THREE.DataTexture(new Uint8Array([105, 105, 165, 165, 215, 215, 255, 255]), 8, 1, THREE.RedFormat); GM.needsUpdate = true; GM.minFilter = GM.magFilter = THREE.NearestFilter;
+  GM = new THREE.DataTexture(new Uint8Array([135, 135, 185, 185, 225, 225, 255, 255]), 8, 1, THREE.RedFormat); GM.needsUpdate = true; GM.minFilter = GM.magFilter = THREE.NearestFilter;
   MATS.body = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap: GM });
   const ink = new THREE.MeshBasicMaterial({ color: 0x120c0a, side: THREE.BackSide }); const u = { value: 0.3 }; ink.userData.u = u;
   ink.onBeforeCompile = (sh) => { sh.uniforms.uOut = u; sh.vertexShader = 'uniform float uOut;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed += normalize(normal) * uOut;'); }; ink.customProgramCacheKey = () => 'beastInk'; MATS.ink = ink;
@@ -377,9 +376,9 @@ function makeBase(dims, rim) {
   for (let i = 0; i < 12; i++) { g.strokeStyle = 'rgba(120,100,76,.22)'; g.lineWidth = 3; g.beginPath(); const y = rnd() * 256; g.moveTo(0, y); g.bezierCurveTo(80, y + 16, 170, y - 16, 256, y + 4); g.stroke(); }
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
   const H = 3.4, rx = dims[0] / 2, rz = dims[1] / 2; const G = new THREE.Group();
-  const geo = new THREE.CylinderGeometry(1 * 0.955, 1, H, 72); geo.scale(rz, 1, rx); geo.rotateY(Math.PI / 2);
+  const geo = new THREE.CylinderGeometry(1 * 0.955, 1, H, 72); geo.scale(rz, 1, rx);
   const m = new THREE.Mesh(geo, [new THREE.MeshToonMaterial({ color: new THREE.Color(rim), gradientMap: GM }), new THREE.MeshToonMaterial({ map: tex, gradientMap: GM }), new THREE.MeshToonMaterial({ color: new THREE.Color(rim), gradientMap: GM })]); m.position.y = -H / 2; G.add(m);
-  const ig = new THREE.CylinderGeometry(1, 1, H + 0.25, 72); ig.scale(rz + 0.3, 1, rx + 0.3); ig.rotateY(Math.PI / 2); const i2 = new THREE.Mesh(ig, new THREE.MeshBasicMaterial({ color: 0x120c0a, side: THREE.BackSide })); i2.position.y = -H / 2; G.add(i2);
+  const ig = new THREE.CylinderGeometry(1, 1, H + 0.25, 72); ig.scale(rz + 0.3, 1, rx + 0.3); const i2 = new THREE.Mesh(ig, new THREE.MeshBasicMaterial({ color: 0x120c0a, side: THREE.BackSide })); i2.position.y = -H / 2; G.add(i2);
   BASE = G; TURN.add(G);
 }
 function alphaBox(c) { const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1; for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) if (d[(y * c.width + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } return [x0, y0, x1, y1]; }
@@ -393,7 +392,7 @@ async function sheet(build, frames, o) {
   REND.setSize(S, S, false);
   const anc = new THREE.Vector3(0, 0, 0).project(cam); const AX = (anc.x * 0.5 + 0.5) * S / ss, AY = (-anc.y * 0.5 + 0.5) * S / ss;
   const cells = [], st = { sculpt: 0, render: 0, tris: 0, verts: 0 };
-  for (const f of frames) { const q0 = performance.now(); const prims = build(f); const r = meshOf(prims, o.h); MESH.geometry.dispose(); MESH.geometry = r.geo; INK.geometry = r.geo; st.tris = Math.max(st.tris, r.tris); st.verts = Math.max(st.verts, r.verts);
+  for (const f of frames) { const q0 = performance.now(); const prims = build(f); const r = meshOf(prims, o.h); MESH.scale.setScalar(o.sc || 1); INK.scale.setScalar(o.sc || 1); MESH.geometry.dispose(); MESH.geometry = r.geo; INK.geometry = r.geo; st.tris = Math.max(st.tris, r.tris); st.verts = Math.max(st.verts, r.verts);
     const q1 = performance.now(); st.sculpt += q1 - q0; const row = [];
     for (const yaw of MINI_YAW) { TURN.rotation.y = yaw * D2R; TURN.updateMatrixWorld(true); REND.render(SCENE, cam); let c = document.createElement('canvas'); c.width = S; c.height = S; c.getContext('2d').drawImage(REND.domElement, 0, 0);
       const d = document.createElement('canvas'); d.width = S / 2; d.height = S / 2; const g = d.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(c, 0, 0, d.width, d.height); row.push({ c: d, box: alphaBox(d) }); }
@@ -406,13 +405,14 @@ async function sheet(build, frames, o) {
 const enc = (c, q = 0.8) => { const u = c.toDataURL('image/webp', q); return { url: u, bytes: Math.round((u.length - u.indexOf(',') - 1) * 0.75) }; };
 /* the beasts to render: key → [builder, frames, options] */
 export const BEASTS = {
-  leo: { sp: 'lion', base: [72, 42], rim: '#5a2a18', box: 120, ty: 12 }, leaena: { sp: 'lioness', base: [72, 42], rim: '#5a2a18', box: 116, ty: 12 },
+  leo: { sp: 'lion', base: [72, 42], rim: '#5a2a18', box: 120, ty: 13, sc: 1.15 }, leaena: { sp: 'lioness', base: [72, 42], rim: '#5a2a18', box: 116, ty: 13, sc: 1.15 },
   ursa: { sp: 'bear', base: [75, 47], rim: '#8a3a22', box: 120, ty: 15 }, brutum: { sp: 'bear', base: [75, 47], rim: '#8a3a22', box: 120, ty: 15 },
   valencia: { sp: 'wolf', base: [25.4, 25.4], rim: '#6a2a1a', box: 62, ty: 8 }, moechus: { sp: 'wolf', base: [25.4, 25.4], rim: '#6a2a1a', box: 62, ty: 8 },
   glykon: { snake: 'glykon', base: [25.4, 25.4], rim: '#b08a2a', box: 50, ty: 6 }, arenosus: { snake: 'arenosus', base: [25.4, 25.4], rim: '#b08a2a', box: 50, ty: 6 },
   zora: { eagle: 1, base: [25.4, 25.4], rim: '#5a2a18', box: 70, ty: 12 }, boar: { sp: 'boar', base: [25.4, 25.4], rim: '#4a3a2a', box: 56, ty: 7 },
   croc: { sp: 'croc', base: [75, 34], rim: '#3a4a3a', box: 130, ty: 5 }, spider: { spider: 1, base: null, box: 34, ty: 3 },
 };
+window.BEASTS_KEYS = () => BEASTS;
 window.BEAST100 = {
   async render(key, opt = {}) {
     const B = BEASTS[key]; let build, frames, h;
@@ -422,7 +422,7 @@ window.BEAST100 = {
     else { build = spiderFrame; frames = spiderFrames(); h = 0.22; }
     if (opt.only) frames = frames.filter(f => opt.only.includes(f.n));
     if (opt.h) h = opt.h;
-    const r = await sheet(build, frames, { base: B.base, rim: B.rim, box: B.box, ty: B.ty, h });
+    const r = await sheet(build, frames, { base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: B.sc });
     window.BSHEET = window.BSHEET || {}; BSHEET[key] = r;
     const w8 = enc(r.canvas); const idleWalk = frames.filter(f => /^(idle|walk)/.test(f.n)).length;
     return { key, meta: r.meta, rows: r.rows, ms: r.ms, sculptMs: r.sculptMs, renderMs: r.renderMs, tris: r.tris, verts: r.verts, h, kb: +(w8.bytes / 1024).toFixed(1), png: r.canvas.toDataURL('image/png'),
