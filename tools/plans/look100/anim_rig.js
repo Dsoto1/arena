@@ -371,6 +371,29 @@ Object.assign(window.LOOK100, {
   },
 
   /* the humanoid beasts (Tholo, Commodus) on the gladiator body: idle 4 · walk 6 · attack 5 · hit 3 · die 5 (the murmillo's frames, no shield) */
+
+  /* round 2 (beasts): the humanoids at the board's figure scale — gladiator ×1.15 (the gear agent's r7), Tholo ×1.13 taller + bulkier on top
+     with a TUNIC and a CAPE, Commodus a touch taller (his mini 107.8 vs 102.8) in a white tunic + silver armour. The base stays 25.4 mm. */
+  async humanoid2(key) {
+    const H = {
+      glad: { look: { skin: '#c08a64', hair: '#2a1c12', hs: 'crop', bs: 'stubble', cloth: '#b8933c' }, gear: { head: { t: 'murmillo' }, belt: { t: 'balteus' }, arm: { R: { lower: { t: 'manica' } } }, leg: { L: { lower: { t: 'ocrea' } } }, wR: { t: 'sword' }, wL: { t: 'scutum', c: '#9c2f25' } }, sc: [1.15, 1.15, 1.15] },
+      tholo: { look: { skin: '#b07a52', hair: '#8a847c', hs: 'crop', bs: 'full', cloth: '#7a3a22' }, gear: { helm: 'laurel', arm: { L: { wraps: 1 }, R: { wraps: 1 } }, wR: { t: 'club' } }, sc: [1.15 * 1.24, 1.15 * 1.13, 1.15 * 1.2], tunic: '#7a3a22', cape: '#8c241c' },
+      commodus: { look: { skin: '#e0b48e', hair: '#5a3b20', hs: 'curly', bs: 'full', cloth: '#ece6da' }, gear: { chest: { t: 'lorica', c: '#cfd2d8' }, head: { t: 'galea', c: '#dcdee2' }, arm: { R: { lower: { t: 'manica', c: '#cfd2d8' } } }, leg: { L: { lower: { t: 'ocrea', c: '#cfd2d8' } }, R: { lower: { t: 'ocrea', c: '#cfd2d8' } } }, wR: { t: 'sword' } }, sc: [1.21, 1.21, 1.21], tunic: '#ece6da' } }[key];
+    TOK.apply({ look: H.look, gear: H.gear }); BASE.visible = true; const K = B.kit, GI = K.GI; const extra = [];
+    if (H.tunic) { const m = K.maskedMat(); m.color.set(H.tunic); m.userData.ownMat = 1;
+      extra.push(K.shellFrom('tun2_' + key, (p, g) => { if (g === GI.T) return Math.min(p[1] - 0.68, 1.47 - p[1], 0.03); if (g === GI.LL || g === GI.LR) return Math.min(p[1] - 0.64, 0.03); return -1; },
+        (p) => { const f = Math.sin(p[0] * 60 + p[1] * 22) * 0.5 + 0.5; return [0.82 + 0.18 * f, 0.82 + 0.18 * f, 0.82 + 0.18 * f]; }, 0.011, { mat: m })); }
+    if (H.cape) { const geo = new THREE.CylinderGeometry(0.21, 0.36, 1.0, 20, 1, true, Math.PI - 1.25, 2.5); const mat = K.makeToon(H.cape, { side: THREE.DoubleSide });
+      extra.push(K.rigid(geo, mat, 'ch', [0, 0.98, -0.04], null)); }
+    B.group.scale.set(...H.sc);
+    const rows = [GLAD_ROWS[0], GLAD_ROWS[1], GLAD_ROWS[2], GLAD_ROWS[4], FALL_ROWS[0]];
+    const fr = rows.flatMap(([k, fs]) => fs.map((s, i) => ({ k: k === 'fall' ? 'die' : k, i, s })));
+    const S = await renderFrames(fr, { set: (x) => setFrame(x.s), box: 6.2, ty: 0.85 });
+    B.group.scale.set(1, 1, 1); for (const m of extra) K.kill(m); setFrame({ p: [0, 0, 0], j: {}, f: {} });
+    const rowsN = fr.map(x => x.k + x.i); const w = enc(S.canvas, 'image/webp', 0.8);
+    return { key, meta: S.meta, rows: rowsN, ms: S.ms, kb: +(w.bytes / 1024).toFixed(1), webp: w.url, png: S.canvas.toDataURL('image/png'),
+      decodedMB: +(S.meta[0] * S.meta[1] * 4 * 8 * rowsN.length / 1048576).toFixed(2), idleWalkMB: +(S.meta[0] * S.meta[1] * 4 * 8 * 10 / 1048576).toFixed(2), frames: rowsN.length, pxmm: 3.143 };
+  },
   async humanoid(key) {
     const H = { tholo: { look: { skin: '#c48e66', hair: '#9a948c', hs: 'crop', bs: 'full', cloth: '#8c2a22' }, gear: { helm: 'laurel', belt: { t: 'balteus1' }, arm: { L: { wraps: 1 }, R: { wraps: 1 } }, wR: { t: 'club' } } },
       commodus: { look: { skin: '#e0b48e', hair: '#5a3b20', hs: 'curly', bs: 'full', cloth: '#e8e4dc' }, gear: { chest: { t: 'lorica', c: '#d4d6da' }, head: { t: 'galea', c: '#e2e4e8' }, arm: { R: { lower: { t: 'manica', c: '#d4d6da' } } }, leg: { L: { lower: { t: 'ocrea', c: '#d4d6da' } }, R: { lower: { t: 'ocrea', c: '#d4d6da' } } }, wR: { t: 'sword' } } } }[key];

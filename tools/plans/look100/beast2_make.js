@@ -27,7 +27,8 @@ const RP = path.join(HERE, 'beast2_report.json'); const ALL = ['leo', 'leaena', 
       const b64 = (f) => 'data:image/png;base64,' + fs.readFileSync(f).toString('base64');
       const sheets = {}; for (const [k, r] of Object.entries(rep.beasts)) { const f = path.join(SCR, `beast2_${k}.png`); if (fs.existsSync(f)) sheets[k] = { meta: r.meta, rows: r.rows, png: b64(f), pxmm: r.pxmm || 3.143 }; }
       const diag = {}; for (const [k, d] of Object.entries(rep.diag)) diag[k] = { meta: d.meta, joints: d.joints, png: b64(path.join(SCR, `beast2_${k}_diag.png`)) };
-      const g = rep.glad; const glad = { meta: g.meta, rows: g.rows, png: b64(path.join(SCR, 'beast2_glad.png')) };
+      const hum = JSON.parse(fs.readFileSync(path.join(HERE, 'beast2_hum.json'))); for (const k of ['tholo', 'commodus']) if (hum[k]) { rep.beasts[k] = hum[k]; sheets[k] = { meta: hum[k].meta, rows: hum[k].rows, png: b64(path.join(SCR, `beast2_${k}.png`)), pxmm: 3.143 }; }
+      const g = hum.glad; const glad = { meta: g.meta, rows: g.rows, png: b64(path.join(SCR, 'beast2_glad.png')) };
       const board = JSON.parse(fs.readFileSync(path.join(HERE, 'beast_board.json')));
       const out = await pg.evaluate((a) => B2COMP.run(a), { sheets, diag, glad, board });
       for (const f of fs.readdirSync(SCR)) if (/^b2frame_/.test(f)) fs.unlinkSync(path.join(SCR, f));
