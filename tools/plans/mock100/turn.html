@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Online Turn Flow</title>
+<link rel="stylesheet" href="../mock98/mock98.css">
+<style>
+/* mock100 turn.html — ONLINE TURN FLOW + TIMERS (backlog.md, his picks 2026-10-11). Static mock-up, no game code. */
+:root{--teal:#3fa59a;--ph-res:#3fa59a;--ph-cho:#d6ab4c;--ph-act:#c8463a;--ph-end:#7d7268;--warn:#e8862e;--late:#e0503e}
+html{background:#140d09}body{overflow:auto;height:auto;background:radial-gradient(ellipse at 50% 0%,#2a1d14 0%,#170f0a 40%,#0e0906 100%)}
+.page{max-width:1420px;margin:0 auto;padding:18px 14px 40px}
+.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.top h1{font:400 28px/1.1 var(--display);color:var(--gold2);letter-spacing:.05em}
+.top .sub{color:var(--muted);font-size:14px}
+.picks{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 16px}
+.pk{font:12px var(--mono);color:var(--muted);border:1px solid var(--line2);border-radius:20px;padding:3px 10px;background:#1a120d}
+.pk b{color:var(--gold2);font-weight:500}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pnl{border:1px solid var(--line2);border-radius:10px;background:var(--panel);padding:10px 12px 12px;min-width:0}
+.pnl.wide{grid-column:1/-1}
+.ph{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.ph .lt{font:400 22px/1 var(--display);color:var(--ink);background:var(--gold);border-radius:6px;width:30px;height:30px;display:grid;place-items:center;flex:none}
+.ph h2{font:400 18px var(--display);color:var(--gold2);letter-spacing:.03em}
+.ph .d{color:var(--muted);font-size:13px}
+.cap{color:var(--dim);font-size:12.5px;margin-top:8px;line-height:1.4}
+.cap b{color:var(--bone);font-weight:500}
+
+/* ---------- a game screen ---------- */
+.scr{position:relative;border:1px solid #3a2a1c;border-radius:8px;background:#120c08;overflow:hidden;display:grid;grid-template-columns:1fr 196px;grid-template-rows:auto auto auto}
+.scr.dock{grid-template-columns:1fr 268px}
+.sbar{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:5px 9px;background:linear-gradient(#21180f,#1a120d);border-bottom:1px solid #3a2a1c;font-size:12px;color:var(--muted)}
+.sbar .ev{color:var(--bone);font-family:var(--display);letter-spacing:.03em}
+.sbar .chip{border:1px solid var(--line2);border-radius:12px;padding:1px 8px;font:11px var(--mono)}
+.sbar .rk{color:var(--gold2);border-color:#6b5228}
+.sbar .sp{flex:1}
+.board{position:relative;min-width:0;background:#cfe0ea}
+.board img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 40%}
+.side{border-left:1px solid #3a2a1c;background:#18110c;display:flex;flex-direction:column;gap:8px;padding:8px;min-width:0}
+.barrow{grid-column:1/-1;border-top:1px solid #3a2a1c}
+
+/* turn panel */
+.tp{border:1px solid var(--line2);border-radius:8px;background:var(--panel2);padding:8px}
+.tp .who{display:flex;align-items:center;gap:9px}
+.tp .nm{font:400 15px var(--display);color:var(--gold2);line-height:1.1}
+.tp .nm small{display:block;font:11px var(--body);color:var(--muted);letter-spacing:0}
+.tp .t{margin-left:auto;font:600 17px var(--mono);color:var(--bone)}
+.tp.late .t{color:var(--late)}
+.tbar{height:5px;border-radius:3px;background:#0d0906;margin:8px 0 4px;overflow:hidden}
+.tbar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.tp.late .tbar i{background:linear-gradient(90deg,var(--late),#f07a5c)}
+.tp.other .tbar i{background:linear-gradient(90deg,#6c7f8a,#9fb3bd)}
+.tp .nx{font-size:11.5px;color:var(--dim);display:flex;align-items:center;gap:6px}
+.tp .nx img{width:18px;height:18px;border-radius:50%;object-fit:cover;object-position:50% 18%}
+
+/* face + timer ring */
+.face{position:relative;flex:none}
+.face img{position:absolute;inset:5px;width:calc(100% - 10px);height:calc(100% - 10px);border-radius:50%;object-fit:cover;object-position:50% 16%}
+.face svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.face.f44{width:48px;height:48px}.face.f30{width:34px;height:34px}.face.f30 img{inset:4px;width:calc(100% - 8px);height:calc(100% - 8px)}
+
+/* seats */
+.seats{display:flex;flex-direction:column;gap:5px}
+.seat{display:flex;align-items:center;gap:7px;font-size:12.5px;padding:3px 5px;border-radius:6px}
+.seat.on{background:#2c2015}
+.seat .s{margin-left:auto;font:11px var(--mono);color:var(--dim)}
+.seat .cl{width:8px;height:8px;border-radius:50%;flex:none}
+.seat.cpu .s{color:#8fb2c4}
+
+/* log */
+.log{list-style:none;margin:0;padding:6px 7px;border:1px solid #2e2218;border-radius:6px;background:#140e0a;font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.log li.n{color:var(--bone)}
+.log li.n::before{content:"◆ ";color:var(--dig)}
+
+/* choosing line */
+.choosing{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#1c1520;border-bottom:1px solid #3a2a1c;font-size:13px;color:var(--bone)}
+.choosing .dots{display:inline-flex;gap:3px}
+.choosing .dots i{width:5px;height:5px;border-radius:50%;background:var(--dig2);opacity:.35}
+.choosing .dots i:nth-child(2){opacity:.65}.choosing .dots i:nth-child(3){opacity:1}
+.choosing .what{color:var(--dim);font-size:12px}
+.choosing .t{margin-left:auto;font:12px var(--mono);color:var(--dig2)}
+
+/* action bar (compact, v0.98 look) */
+.ab{background:#1a130e;padding:6px}
+.rail{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin:0 0 6px;width:auto;border:0;background:none;overflow:visible}
+.rail span{font:11px var(--mono);letter-spacing:.12em;text-align:center;padding:3px 0;color:var(--dim);border-bottom:2px solid #3a2a1c;background:#140e0a}
+.rail .r.done{color:var(--ph-res);border-color:var(--ph-res)}
+.rail .c.done{color:var(--ph-cho);border-color:var(--ph-cho)}
+.rail .a.cur{color:#1a0d0b;background:#f0a597;border-color:var(--ph-act)}
+.rail .c.cur{color:#1a140b;background:#f3d995;border-color:var(--ph-cho)}
+.grps{display:grid;grid-template-columns:1fr 1.25fr 1fr 96px;gap:6px}
+.g{border:1px solid #3d2d1e;border-radius:6px;background:#211810;overflow:hidden}
+.g h4{display:flex;align-items:center;gap:6px;padding:3px 8px;font:500 12.5px var(--body);color:var(--gold2);background:linear-gradient(90deg,#3a2a18,#261b12);border-bottom:1px solid #3d2d1e}
+.g h4 .pp{margin-left:auto;font:11px var(--mono);color:var(--mv)}
+.g .bs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:5px}
+.g .bs.one{grid-template-columns:1fr}
+.b{border:1px solid #4a3826;border-radius:5px;background:#2a1f17;padding:4px 7px;font-size:12.5px;color:var(--bone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b small{color:var(--dim);font:10.5px var(--mono);margin-left:3px}
+.b.dim{opacity:.38}
+.b.hot{border-color:var(--gold);box-shadow:inset 0 0 0 1px #d6ab4c55}
+.end{border:1px solid #d6ab4c;border-radius:6px;background:linear-gradient(#a3281f,#7a1d16);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font:400 15px/1.1 var(--display);color:#fff4dc;padding:4px}
+.end small{font:10.5px var(--body);color:#f2c9b6;margin-top:3px}
+.ab.wait .grps{opacity:.32;filter:saturate(.4)}
+.ab .hint{font-size:11.5px;color:var(--dim);margin-top:5px}
+
+/* big countdown */
+.big{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:118px;height:118px;display:grid;place-items:center;pointer-events:none}
+.big svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.big b{position:relative;font:400 64px/1 var(--display);color:#fff1d8;text-shadow:0 2px 0 #5a160f,0 0 18px #e0503ecc}
+.big::before{content:"";position:absolute;inset:8px;border-radius:50%;background:radial-gradient(#3a0f0bcc,#1a0806aa)}
+.tick{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font:11.5px var(--body);color:#fff1d8;background:#000a;border-radius:12px;padding:2px 10px;white-space:nowrap}
+
+/* toasts */
+.toast{position:absolute;left:10px;bottom:10px;display:flex;align-items:center;gap:8px;background:#211810ee;border:1px solid var(--line2);border-left:3px solid var(--dig);border-radius:6px;padding:5px 10px;font-size:12.5px;max-width:78%}
+.toast.time{border-left-color:var(--late);left:50%;top:10px;bottom:auto;transform:translateX(-50%);font-size:13.5px;white-space:nowrap}
+
+/* docked step panel */
+.dockp{border-left:1px solid #3a2a1c;background:linear-gradient(#22190f,#1a120c);display:flex;flex-direction:column;min-width:0}
+.dk-hd{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid #3a2a1c}
+.dk-hd h3{font:400 17px var(--display);color:var(--gold2)}
+.dk-hd .of{font:11px var(--mono);color:var(--muted)}
+.dk-hd .clk{margin-left:auto;display:flex;align-items:center;gap:5px;font:600 14px var(--mono)}
+.clk .face{width:26px;height:26px}
+.steps{display:flex;align-items:center;gap:5px;padding:7px 10px 2px}
+.steps i{width:9px;height:9px;border-radius:50%;background:#3a2a1c;border:1px solid #5a4630}
+.steps i.ok{background:var(--ph-res);border-color:var(--ph-res)}
+.steps i.cur{background:var(--gold2);border-color:var(--gold2);box-shadow:0 0 0 3px #d6ab4c33}
+.steps span{font-size:11.5px;color:var(--dim);margin-left:4px}
+.dk-b{padding:8px 10px;display:flex;flex-direction:column;gap:7px;flex:1}
+.opt{display:flex;align-items:center;gap:9px;border:1px solid #4a3826;border-radius:7px;background:#2a1f17;padding:8px 10px}
+.opt img{width:26px;height:26px}
+.opt b{font:400 15px var(--display);color:var(--bone)}
+.opt small{display:block;color:var(--dim);font-size:11.5px}
+.opt .k{margin-left:auto;font:10.5px var(--mono);color:var(--muted);border:1px solid #4a3826;border-radius:4px;padding:0 5px}
+.opt.def{border-color:var(--gold)}
+.opt.def .k{color:var(--gold2);border-color:var(--gold)}
+.nextup{font-size:11.5px;color:var(--dim);border-top:1px dashed #3a2a1c;padding-top:6px}
+.nextup b{color:var(--muted);font-weight:500}
+.dk-ft{padding:6px 10px 9px;font-size:11.5px;color:var(--dim)}
+.dk-ft .tbar{margin:0 0 5px}
+
+/* drop prompt */
+.drop{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:250px;border:1px solid var(--gold);border-radius:9px;background:linear-gradient(#2a1f17,#1f1711);box-shadow:0 10px 30px #000a;padding:10px 12px}
+.drop .who{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.drop h3{font:400 16px var(--display);color:var(--gold2)}
+.drop p{margin:0 0 8px;font-size:12.5px;color:var(--muted)}
+.drop .bt{display:flex;gap:6px}
+.btn{border:1px solid var(--line2);border-radius:6px;background:var(--panel2);padding:5px 10px;font-size:13px;cursor:default}
+.btn.go{background:linear-gradient(#3a2a18,#2a1f17);border-color:var(--gold);color:var(--gold2)}
+.drop .votes{font:11px var(--mono);color:var(--dim);margin-top:7px}
+
+/* room settings inset */
+.inset{border:1px solid var(--line2);border-radius:8px;background:var(--panel2);padding:10px 12px;max-width:560px}
+.inset h3{font:400 15px var(--display);color:var(--gold2);margin-bottom:8px}
+.srow{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid #ffffff0a;font-size:13.5px;flex-wrap:wrap}
+.srow:first-of-type{border-top:0}
+.srow .l{width:120px;color:var(--bone)}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:6px;overflow:hidden}
+.seg span{padding:3px 10px;font:12px var(--mono);color:var(--muted);border-left:1px solid var(--line2)}
+.seg span:first-child{border-left:0}
+.seg span.on{background:#3a2a18;color:var(--gold2)}
+.srow .n{color:var(--dim);font-size:12px}
+.lock{font:12px var(--mono);color:var(--muted)}
+
+/* phones */
+.phones{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+.phone{width:390px;max-width:100%;border:1px solid #3a2a1c;border-radius:14px;background:#120c08;overflow:hidden;position:relative}
+.phone .sbar{font-size:11px}
+.phone .board{height:300px;overflow:hidden}.phone .board img{width:100%;height:auto;object-fit:initial}
+.ptp{display:flex;align-items:center;gap:8px;padding:6px 9px;background:#1a130e;border-top:1px solid #3a2a1c}
+.ptp .nm{font:400 14px var(--display);color:var(--gold2);line-height:1.1}
+.ptp .nm small{display:block;font:10.5px var(--body);color:var(--muted)}
+.ptp .tb{flex:1;min-width:40px}
+.ptp .tb .tbar{margin:0}
+.ptp .t{font:600 14px var(--mono)}
+.swipe{display:flex;gap:6px;padding:6px;background:#1a130e;overflow:hidden}
+.swipe .g{flex:none;width:150px}
+.swipe .end{flex:none;width:84px;position:sticky;right:0}
+.sheet{border-top:2px solid var(--gold);border-radius:12px 12px 0 0;background:linear-gradient(#22190f,#1a120c);margin-top:-12px;position:relative}
+.sheet .grab{width:38px;height:4px;border-radius:2px;background:#5a4630;margin:6px auto 0}
+.phone .board.short{height:220px;overflow:hidden}
+.phone .board.short img{margin-top:-20px}
+
+@media (max-width:760px){
+  .page{padding:12px 10px 30px}
+  .grid{grid-template-columns:1fr}
+  .scr,.scr.dock{grid-template-columns:1fr}
+  .side{border-left:0;border-top:1px solid #3a2a1c}
+  .dockp{border-left:0;border-top:1px solid #3a2a1c}
+  .grps{grid-template-columns:1fr 1fr}
+  .grps .end{grid-column:1/-1;min-height:40px}
+  .drop{position:static;transform:none;width:auto;margin:8px}
+  .toast.time{white-space:normal;width:88%;text-align:left}
+  .big{width:90px;height:90px}.big b{font-size:48px}
+  .srow .l{width:auto}
+}
+</style></head><body><div class="page">
+
+<div class="top"><h1>Online turn flow + timers</h1><span class="sub">Mock-up · v1.0 plan · no game code</span></div>
+<div class="picks">
+  <span class="pk"><b>1a</b> only decisions open windows</span><span class="pk"><b>2b</b> one docked step panel</span>
+  <span class="pk"><b>3a</b> "… is choosing"</span><span class="pk"><b>4a</b> Ranked 60 s</span><span class="pk"><b>6a</b> 20 s per decision</span>
+  <span class="pk"><b>7a</b> Custom Off/30–120 s</span><span class="pk"><b>8c</b> ring · bar · big 10 s · tick 5 s</span><span class="pk"><b>5b+c</b> CPU finishes · drop seat</span>
+</div>
+
+<div class="grid">
+
+<!-- ================= A ================= -->
+<section class="pnl" id="pA">
+  <div class="ph"><span class="lt">A</span><h2>Your turn · 42 s</h2><span class="d">ring, bar, action bar</span></div>
+  <div class="scr">
+    <div class="sbar"><span class="ev">Democritus</span><span class="chip rk">Ranked</span><span class="chip">Round 2</span><span class="sp"></span><span>⏱ 60 s turns</span></div>
+    <div class="board"><img src="img/turn_board.png" alt="">
+      <div class="toast">🐾 Leo prowls to C-5 <span class="muted" style="font-size:11px">· notice, no window</span></div></div>
+    <div class="side">
+      <div class="tp"><div class="who"><div class="face f44 ring" data-p=".70" data-c="gold"><img src="img/brief_face2.png" alt=""></div>
+        <div class="nm">Trajan<small>Your turn · Action</small></div><div class="t">0:42</div></div>
+        <div class="tbar"><i style="width:70%"></i></div><div class="nx">next: <img src="img/brief_face1.png" alt=""> Rufus</div></div>
+      <div class="seats">
+        <div class="seat on"><div class="face f30 ring" data-p=".70" data-c="gold"><img src="img/brief_face2.png" alt=""></div>Trajan<span class="s">you</span></div>
+        <div class="seat"><div class="face f30"><img src="img/brief_face1.png" alt=""></div>Rufus<span class="s">60 s</span></div>
+        <div class="seat"><div class="face f30"><img src="img/brief_face0.png" alt=""></div>Cassius<span class="s">60 s</span></div>
+        <div class="seat cpu"><div class="face f30"><img src="img/brief_face3.png" alt=""></div>Thraex<span class="s">CPU</span></div>
+      </div>
+    </div>
+    <div class="barrow">
+      <div class="ab"><div class="rail"><span class="r done">✓ RESOLVE</span><span class="c done">✓ CHOICE</span><span class="a cur">III · ACTION</span><span>END</span></div>
+        <div class="grps">
+          <div class="g"><h4>🏃 Move<span class="pp">●●●●● 5</span></h4><div class="bs"><span class="b hot">Move <small>diag 2</small></span><span class="b">Push <small>2</small></span><span class="b dim">Topple</span><span class="b dim">Tunnel</span></div></div>
+          <div class="g"><h4>⚔ Attack<span class="pp" style="color:var(--gold2)">🗡🗡</span></h4><div class="bs one"><span class="b">Hasta <small>1 dmg · rng 2 · ◎ ↗</small></span><span class="b">Gladius <small>1 dmg · rng 1 · ◎</small></span></div></div>
+          <div class="g"><h4>🏛 Forum<span class="pp" style="color:var(--muted)">2 · 0 CF</span></h4><div class="bs"><span class="b">Market</span><span class="b dim">Crowd</span><span class="b dim">Loot</span><span class="b">Trade · Truce</span></div></div>
+          <div class="end">End turn<small>Enter</small></div>
+        </div></div>
+    </div>
+  </div>
+  <div class="cap"><b>Ring</b> around your face empties over 60 s; the same ring sits on your seat. <b>Bar</b> under the name. Beast moves and other notices = a toast + log line, never a window (1a).</div>
+</section>
+
+<!-- ================= B ================= -->
+<section class="pnl" id="pB">
+  <div class="ph"><span class="lt">B</span><h2>Your turn · last 8 s</h2><span class="d">big countdown, tick</span></div>
+  <div class="scr">
+    <div class="sbar"><span class="ev">Democritus</span><span class="chip rk">Ranked</span><span class="chip">Round 2</span><span class="sp"></span><span>⏱ 60 s turns</span></div>
+    <div class="board"><img src="img/turn_board.png" alt="">
+      <div class="big"><svg viewBox="0 0 118 118"><circle cx="59" cy="59" r="54" fill="none" stroke="#ffffff22" stroke-width="7"/><circle cx="59" cy="59" r="54" fill="none" stroke="#e0503e" stroke-width="7" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="(calc)" data-big=".8"/></svg><b>8</b></div>
+      <div class="tick">🔊 soft tick from 5 s — marble coasters lightly clapping</div></div>
+    <div class="side">
+      <div class="tp late"><div class="who"><div class="face f44 ring" data-p=".133" data-c="late"><img src="img/brief_face2.png" alt=""></div>
+        <div class="nm">Trajan<small>Your turn · Action</small></div><div class="t">0:08</div></div>
+        <div class="tbar"><i style="width:13.3%"></i></div><div class="nx">then the CPU finishes your turn</div></div>
+      <ul class="log"><li>Trajan moves to D-4.</li><li>Trajan hits Rufus (chest −1).</li><li class="n">Hasta: 1 throw left.</li></ul>
+    </div>
+    <div class="barrow">
+      <div class="ab"><div class="rail"><span class="r done">✓ RESOLVE</span><span class="c done">✓ CHOICE</span><span class="a cur">III · ACTION</span><span>END</span></div>
+        <div class="grps">
+          <div class="g"><h4>🏃 Move<span class="pp">●● 2</span></h4><div class="bs"><span class="b">Move <small>diag 2</small></span><span class="b dim">Push</span><span class="b dim">Topple</span><span class="b dim">Tunnel</span></div></div>
+          <div class="g"><h4>⚔ Attack<span class="pp" style="color:var(--gold2)">🗡</span></h4><div class="bs one"><span class="b">Hasta <small>1 dmg · rng 2 · ↗</small></span><span class="b dim">Gladius <small>no target</small></span></div></div>
+          <div class="g"><h4>🏛 Forum<span class="pp" style="color:var(--muted)">2 · 0 CF</span></h4><div class="bs"><span class="b">Market</span><span class="b dim">Crowd</span><span class="b dim">Loot</span><span class="b">Trade · Truce</span></div></div>
+          <div class="end" style="box-shadow:0 0 0 2px #e0503e88">End turn<small>Enter</small></div>
+        </div></div>
+    </div>
+  </div>
+  <div class="cap"><b>Last 10 s:</b> big number over the board (no click blocked), ring + bar turn red. <b>Last 5 s:</b> one soft tick a second. Reduce motion: the number stays, no pulse.</div>
+</section>
+
+<!-- ================= C ================= -->
+<section class="pnl" id="pC">
+  <div class="ph"><span class="lt">C</span><h2>Decision steps · 2 of 3</h2><span class="d">docked beside the board</span></div>
+  <div class="scr dock">
+    <div class="sbar"><span class="ev">Democritus</span><span class="chip rk">Ranked</span><span class="chip">Round 2</span><span class="sp"></span><span>Turn 0:51</span></div>
+    <div class="board"><img src="img/turn_board.png" alt="">
+      <div class="toast">🐍 Snake stirs — no one in reach <span class="muted" style="font-size:11px">· log</span></div></div>
+    <div class="dockp">
+      <div class="dk-hd"><h3>Choose one</h3><span class="of">2 of 3</span><span class="clk"><span class="face ring" data-p=".70" data-c="gold"></span>14 s</span></div>
+      <div class="steps"><i class="ok"></i><i class="cur"></i><i></i><span>Resolve ✓ · Choice · Armor</span></div>
+      <div class="dk-b">
+        <div class="opt def"><img src="../../../assets/coin.webp" alt=""><div><b>Take coin</b><small>+2 coin</small></div><span class="k">1 · default</span></div>
+        <div class="opt"><span style="font-size:22px;width:26px;text-align:center">🌾</span><div><b>Take Crowd Favor</b><small>+1 CF</small></div><span class="k">2</span></div>
+        <div class="nextup">Next: <b>Distribute armor</b> · +2 AP</div>
+      </div>
+      <div class="dk-ft"><div class="tbar"><i style="width:70%"></i></div>No answer in 14 s → Take coin.</div>
+    </div>
+    <div class="barrow"><div class="ab wait"><div class="rail"><span class="r done">✓ RESOLVE</span><span class="c cur">II · CHOICE</span><span>ACTION</span><span>END</span></div>
+      <div class="hint" style="margin:0">Action bar waits until the steps are done.</div></div></div>
+  </div>
+  <div class="cap"><b>One panel</b> walks Resolve → Choice → a market pick → armor: step dots, its own 20 s clock, the default marked. The board stays visible and live (hover, zoom); no centred window.</div>
+</section>
+
+<!-- ================= D ================= -->
+<section class="pnl" id="pD">
+  <div class="ph"><span class="lt">D</span><h2>Rufus's turn</h2><span class="d">"is choosing…" + his ring</span></div>
+  <div class="scr">
+    <div class="sbar"><span class="ev">Democritus</span><span class="chip rk">Ranked</span><span class="chip">Round 2</span><span class="sp"></span><span>⏱ 60 s turns</span></div>
+    <div class="board"><img src="img/turn_board.png" alt=""></div>
+    <div class="side">
+      <div class="tp other"><div class="who"><div class="face f44 ring" data-p=".52" data-c="steel"><img src="img/brief_face1.png" alt=""></div>
+        <div class="nm">Rufus<small>House Varro · Action</small></div><div class="t">0:31</div></div>
+        <div class="tbar"><i style="width:52%"></i></div><div class="nx">next: <img src="img/brief_face0.png" alt=""> Cassius · you in 2</div></div>
+      <div class="seats">
+        <div class="seat"><div class="face f30"><img src="img/brief_face2.png" alt=""></div>Trajan<span class="s">you</span></div>
+        <div class="seat on"><div class="face f30 ring" data-p=".52" data-c="steel"><img src="img/brief_face1.png" alt=""></div>Rufus<span class="s">0:31</span></div>
+        <div class="seat"><div class="face f30"><img src="img/brief_face0.png" alt=""></div>Cassius<span class="s">60 s</span></div>
+        <div class="seat cpu"><div class="face f30"><img src="img/brief_face3.png" alt=""></div>Thraex<span class="s">CPU</span></div>
+      </div>
+    </div>
+    <div class="barrow">
+      <div class="choosing"><div class="face f30 ring" data-p=".7" data-c="dig" style="width:26px;height:26px"><img src="img/brief_face1.png" alt="" style="inset:3px;width:20px;height:20px"></div>
+        <b style="font-weight:500">Rufus is choosing</b><span class="dots"><i></i><i></i><i></i></span><span class="what">Market pick</span><span class="t">14 s</span></div>
+      <div class="ab wait"><div class="rail"><span class="r done">✓ RESOLVE</span><span class="c done">✓ CHOICE</span><span class="a cur">III · ACTION</span><span>END</span></div>
+        <div class="grps">
+          <div class="g"><h4>🏃 Move</h4><div class="bs"><span class="b">Move</span><span class="b">Push</span><span class="b">Topple</span><span class="b">Tunnel</span></div></div>
+          <div class="g"><h4>⚔ Attack</h4><div class="bs one"><span class="b">Hasta</span><span class="b">Gladius</span></div></div>
+          <div class="g"><h4>🏛 Forum</h4><div class="bs"><span class="b">Market</span><span class="b">Crowd</span><span class="b">Loot</span><span class="b">Trade · Truce</span></div></div>
+          <div class="end">Rufus<small>is playing</small></div>
+        </div></div>
+    </div>
+  </div>
+  <div class="cap"><b>One line</b> above the action bar names who decides and what (no options shown — hidden info stays hidden). His ring runs on the turn panel and his seat; the decision clock shows on the line.</div>
+</section>
+
+<!-- ================= E ================= -->
+<section class="pnl" id="pE">
+  <div class="ph"><span class="lt">E</span><h2>Timeout + drop the seat</h2><span class="d">server-ordered</span></div>
+  <div class="scr">
+    <div class="sbar"><span class="ev">Democritus</span><span class="chip rk">Ranked</span><span class="chip">Round 3</span><span class="sp"></span><span>⏱ 60 s turns</span></div>
+    <div class="board"><img src="img/turn_board.png" alt="">
+      <div class="toast time">⌛ Time — the CPU finishes Rufus's turn</div>
+      <div class="drop"><div class="who"><div class="face f44 ring" data-p="0" data-c="late"><img src="img/brief_face1.png" alt="" style="filter:grayscale(.7)"></div><div><h3>Rufus timed out twice</h3><span class="lock">2 of 2 turns · away 1:40</span></div></div>
+        <p>Hand his seat to a CPU for the rest of the bout? He still faces the Fate.</p>
+        <div class="bt"><span class="btn go">🤖 Hand to CPU</span><span class="btn">Wait</span></div>
+        <div class="votes">Votes: Trajan ✓ · Cassius … · needs 2</div></div>
+    </div>
+    <div class="side">
+      <div class="tp other"><div class="who"><div class="face f44 ring" data-p=".9" data-c="cpu"><img src="img/brief_face1.png" alt=""></div>
+        <div class="nm">Rufus · CPU<small>finishing this turn</small></div><div class="t" style="color:#8fb2c4">🤖</div></div>
+        <div class="tbar"><i style="width:100%;background:#4f6a78"></i></div><div class="nx">next: <img src="img/brief_face0.png" alt=""> Cassius</div></div>
+      <ul class="log"><li>⌛ Rufus ran out of time.</li><li>CPU: Rufus moves to F-6.</li><li>CPU: Rufus ends the turn.</li></ul>
+    </div>
+  </div>
+  <div class="cap"><b>First timeout:</b> toast + log, the CPU plays out that turn only. <b>Repeated:</b> the others get the prompt (majority of the other humans), like the 3-min away rule; he can reclaim in the window. The server, not a client clock, says time ran out.</div>
+</section>
+
+<!-- ================= G (room setting) ================= -->
+<section class="pnl" id="pG">
+  <div class="ph"><span class="lt">7a</span><h2>Room · table settings</h2><span class="d">inset, host only</span></div>
+  <div class="inset">
+    <h3>⚙ Table settings · Custom</h3>
+    <div class="srow"><span class="l">Event</span><span class="muted">Democritus · Capua</span></div>
+    <div class="srow"><span class="l">⏱ Turn timer</span><span class="seg"><span class="on">Off</span><span>30</span><span>60</span><span>90</span><span>120 s</span></span><span class="n">Decisions: 20 s</span></div>
+    <div class="srow"><span class="l">If away</span><span class="muted">CPU finishes · then a vote</span></div>
+    <div class="srow"><span class="l">🎟 Tickets</span><span class="muted">5 coin</span></div>
+  </div>
+  <div class="inset" style="margin-top:10px">
+    <h3>⚙ Table settings · Ranked</h3>
+    <div class="srow"><span class="l">⏱ Turn timer</span><span class="lock">🔒 60 s · decisions 20 s</span></div>
+  </div>
+  <div class="cap"><b>Custom:</b> default Off (decisions still 20 s only when a timer is on). <b>Ranked:</b> fixed, shown locked.</div>
+</section>
+
+<!-- ================= F phones ================= -->
+<section class="pnl wide" id="pF">
+  <div class="ph"><span class="lt">F</span><h2>Phone · 390 portrait</h2><span class="d">A and C</span></div>
+  <div class="phones">
+    <div class="phone" id="fA">
+      <div class="sbar"><span class="ev">Democritus</span><span class="chip rk">Ranked</span><span class="sp"></span><span>R2</span></div>
+      <div class="board"><img src="img/turn_board_390.png" alt=""></div>
+      <div class="ptp"><div class="face f30 ring" data-p=".70" data-c="gold"><img src="img/brief_face2.png" alt=""></div><div class="nm">Your turn<small>Action · next Rufus</small></div><div class="tb"><div class="tbar"><i style="width:70%"></i></div></div><div class="t">0:42</div></div>
+      <div class="ab" style="padding:4px 6px 0"><div class="rail" style="margin:0"><span class="r done">✓</span><span class="c done">✓</span><span class="a cur">III</span><span>IV</span></div></div>
+      <div class="swipe">
+        <div class="g"><h4>🏃 Move<span class="pp">5</span></h4><div class="bs"><span class="b hot">Move</span><span class="b">Push</span></div></div>
+        <div class="g"><h4>⚔ Attack<span class="pp" style="color:var(--gold2)">🗡🗡</span></h4><div class="bs one"><span class="b">Hasta ◎ ↗</span></div></div>
+        <div class="end">End turn</div>
+      </div>
+    </div>
+    <div class="phone" id="fC">
+      <div class="sbar"><span class="ev">Democritus</span><span class="chip rk">Ranked</span><span class="sp"></span><span>Turn 0:51</span></div>
+      <div class="board short"><img src="img/turn_board_390.png" alt=""></div>
+      <div class="sheet"><div class="grab"></div>
+        <div class="dk-hd" style="border:0;padding-bottom:2px"><h3>Choose one</h3><span class="of">2 of 3</span><span class="clk"><span class="face ring" data-p=".70" data-c="gold"></span>14 s</span></div>
+        <div class="steps" style="padding-top:2px"><i class="ok"></i><i class="cur"></i><i></i><span>Next: armor +2 AP</span></div>
+        <div class="dk-b">
+          <div class="opt def"><img src="../../../assets/coin.webp" alt=""><div><b>Take coin</b><small>+2 coin</small></div><span class="k">default</span></div>
+          <div class="opt"><span style="font-size:22px;width:26px;text-align:center">🌾</span><div><b>Take Crowd Favor</b><small>+1 CF</small></div></div>
+        </div>
+        <div class="dk-ft"><div class="tbar"><i style="width:70%"></i></div>No answer → Take coin.</div>
+      </div>
+    </div>
+  </div>
+  <div class="cap"><b>Phone:</b> the turn panel shrinks to one strip (ring · name · bar · time) above the swipe row; steps come up as a bottom sheet over the lower board, the board above stays visible and pannable.</div>
+</section>
+
+</div></div>
+<script>
+/* rings: data-p = time left (0–1), data-c = colour */
+const COL={gold:'#f0cf7d',late:'#e0503e',steel:'#9fb3bd',dig:'#cdb2f5',cpu:'#4f6a78'};
+document.querySelectorAll('.ring').forEach(el=>{const p=+el.dataset.p,c=COL[el.dataset.c]||COL.gold,r=45,L=2*Math.PI*r;
+  el.insertAdjacentHTML('afterbegin',`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="${r}" fill="none" stroke="#0d0906" stroke-width="9"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${c}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${L}" stroke-dashoffset="${L*(1-p)}"/></svg>`)});
+document.querySelectorAll('[data-big]').forEach(c=>c.setAttribute('stroke-dashoffset',339.3*(1-+c.dataset.big)));
+</script>
+</body></html>
