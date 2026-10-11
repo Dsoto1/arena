@@ -154,3 +154,4 @@ GEAR: 1a female head · 2a per-body skeleton · 3 tokens +15% AND scale pillars/
 His fixes: tokens bigger than the tile, base on the raised railing → keep inside the tile; shield still mis-placed.
 ANIM: full frame set (memory measured) · 8 printed classes get 3D stand-ins · 3D crowd everywhere (benches, shading) · same 3D people walk in the city forum · modelled spider · painted rete · stepped poses + glide.
 MY LUDUS: frieze c bronze; an advisor with news lights up into his colour portrait (no seals); long task lists scroll inside the parchment.
+SPEED × ANIMATION (his pick a): Slow/Normal full animation; Fast = CPU tokens still + glide + hit flash, YOUR OWN moves still animate; To the end/sims draw nothing; Animations Off/Reduce motion = still always; online per viewer (display only). Advisor glow pulse: keep.
