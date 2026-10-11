@@ -49,3 +49,8 @@ Open points:
 - Roster still has about 60 px empty at the bottom at 1440.
 - The bed plate uses the barracks scene, since the game has no bed art.
 - The trials' payout texts and the infirmary's fit weeks are illustrative, not computed.
+- **Fix (4b):** the lost left arm is now cut from the statue's own pixels (avatar alpha, split on SEV92's shoulder line).
+  - The statue ends in a jagged break with a darker rim at the shoulder.
+  - The missing arm shows at full size as a faint fill with a dashed outline (`r4_marble_lost.png` + `r4_ghost_larm.png`). Before, the shrunken SEV92 shape was masked out.
+  - The chest wound glows only on a small soft spot with a gash mark, no longer over the whole torso.
+  - No other state has a severed limb.

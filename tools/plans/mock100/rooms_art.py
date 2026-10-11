@@ -30,3 +30,22 @@ c=ramp(t);pat=(t<0.3)[...,None]*np.array([-.05,.12,.06])*(noise(fw,fh,6,11)[...,
 yy,xx=np.mgrid[0:fh,0:fw];r=np.hypot(xx-fw/2,yy-fh/2)/(fw/2);alpha=(r<0.98).astype(np.float32)
 Image.fromarray((np.dstack([c,alpha])*255).astype(np.uint8)).save(os.path.join(D,'r4_doctore_bronze.png'))
 print('ok')
+# --- round 4b: the LOST LEFT ARM from the statue's own pixels (body's left = image right). Cut on SEV92's shoulder line (×2.4 to avatar px).
+mk=np.array(Image.open(A))[...,3]>200;Hh,Ww=mk.shape;yy,xx=np.mgrid[0:Hh,0:Ww]
+p1=np.array([243.4,248.6]);p2=np.array([253.7,145.2])        # shoulder cut (x,y)
+def linex(y):return p1[0]+(p2[0]-p1[0])*(y-p1[1])/(p2[1]-p1[1])
+rr=np.random.default_rng(3);jag=np.repeat(rr.integers(-5,6,Hh//6+2),6)[:Hh].astype(float)  # jagged break, 6 px steps
+side=xx-np.vectorize(linex)(yy)
+arm=mk&(((yy<=262)&(side>jag[yy]))|((yy>262)&(xx>=259)))&(yy>=120)
+# the stump's broken face: a dark rim on the body side of the break
+rim=mk&~arm&(np.abs(side-jag[yy])<4)&(yy>=140)&(yy<=262)
+ma=np.array(Image.open(os.path.join(D,'r4_marble.png'))).astype(np.float32)
+halo=np.array(Image.fromarray((arm*255).astype(np.uint8)).filter(ImageFilter.MaxFilter(5)))>0   # the arm + its antialiased edge; the soft glow around the statue stays
+ma[(halo|arm)&~(mk&~arm),3]=0
+ma[rim,:3]*=0.62;ma[rim,:3]+=np.array([20,16,12])
+Image.fromarray(np.clip(ma,0,255).astype(np.uint8)).save(os.path.join(D,'r4_marble_lost.png'))
+# ghost: the arm at FULL size, a faint fill + a dashed outline
+am=Image.fromarray((arm*255).astype(np.uint8));ed=np.array(am.filter(ImageFilter.FIND_EDGES).filter(ImageFilter.MaxFilter(3)))>0
+dash=((xx+yy)//7)%2==0
+g=np.zeros((Hh,Ww,4),np.uint8);g[arm]=(236,226,214,34);g[ed&dash]=(216,168,240,200)
+Image.fromarray(g).save(os.path.join(D,'r4_ghost_larm.png'));print('lost arm ok',int(arm.sum()))
