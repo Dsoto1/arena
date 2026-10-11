@@ -128,16 +128,16 @@ function clumps(P, n, at, spread, dir, size, m, k = 0.35, seed = 1) {
     P.push(ell(add(c, mul(d, size[2] * 0.4)), [size[0] * (0.8 + 0.4 * hsh(i, seed, 4)), size[1], size[2] * (0.8 + 0.5 * hsh(i, seed, 5))], F, k, m)); } }
 export const SPECIES = {
   /* digitigrade cats: wrist + hock high, toes on the ground */
-  lion: { base: [72, 42], h: 0.5, L: 10.5, y: 13.8, chest: [6.0, 7.4, 8.0], belly: [5.2, 5.6, 7.6], hips: [5.4, 6.2, 6.2], fx: 3.5, hx: 3.3, legF: [7.6, 7.4, 2.6], legH: [8.6, 7.8, 4.8], rF: [2.6, 1.7, 1.4], rH: [2.9, 1.6, 1.3], paw: [2.0, 1.2, 2.4],
-    neck: [6.2, 2.7], head: [3.4, 3.5, 3.9], muz: [3.9, 2.1], ears: 'round', mane: 1, tail: [21, 0.9, 0.5], tuft: 1.8, cat: 1,
-    col: { fur: '#a87a3c', u: '#c9a46a', mane: '#5e3a18', muz: '#c8a46c', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
-  lioness: { base: [72, 42], h: 0.5, L: 10.0, y: 12.8, chest: [5.4, 6.6, 7.6], belly: [4.6, 5.0, 7.2], hips: [4.8, 5.8, 6.0], fx: 3.1, hx: 3.0, legF: [7.4, 7.0, 2.5], legH: [8.2, 7.4, 4.6], rF: [2.2, 1.5, 1.25], rH: [2.5, 1.45, 1.2], paw: [1.8, 1.1, 2.2],
+  lion: { base: [72, 42], h: 0.5, L: 10.5, y: 15.2, chest: [5.6, 7.0, 7.6], belly: [4.6, 5.0, 7.4], hips: [5.0, 5.8, 6.0], fx: 3.5, hx: 3.3, legF: [8.4, 8.0, 2.8], legH: [9.2, 8.4, 5.2], rF: [2.6, 1.7, 1.4], rH: [2.9, 1.6, 1.3], paw: [2.0, 1.2, 2.4],
+    neck: [6.2, 2.7], head: [3.8, 3.9, 4.2], muz: [3.9, 2.1], ears: 'round', mane: 1, tail: [21, 0.9, 0.5], tuft: 1.8, cat: 1,
+    col: { fur: '#a87c44', u: '#c9a670', mane: '#7a4c22', muz: '#c8a46c', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
+  lioness: { base: [72, 42], h: 0.5, L: 10.0, y: 14.2, chest: [5.4, 6.6, 7.6], belly: [4.6, 5.0, 7.2], hips: [4.8, 5.8, 6.0], fx: 3.1, hx: 3.0, legF: [8.0, 7.6, 2.6], legH: [8.8, 8.0, 5.0], rF: [2.2, 1.5, 1.25], rH: [2.5, 1.45, 1.2], paw: [1.8, 1.1, 2.2],
     neck: [6.2, 2.5], head: [3.0, 3.1, 3.7], muz: [3.7, 1.8], ears: 'round', tail: [20, 0.8, 0.45], tuft: 1.3, cat: 1,
     col: { fur: '#a47c46', u: '#c6a676', muz: '#c8a87a', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
   /* plantigrade bear: heel + palm flat, long paws, a shoulder hump, shaggy */
   bear: { base: [75, 47], h: 0.55, L: 10.5, y: 16.0, chest: [8.0, 9.0, 8.6], belly: [7.6, 8.2, 8.6], hips: [7.6, 8.6, 7.6], fx: 4.4, hx: 4.2, legF: [8.2, 7.6, 1.6], legH: [8.4, 7.8, 1.8], rF: [3.5, 2.8, 2.4], rH: [3.7, 2.6, 2.3], paw: [2.8, 1.4, 4.0], plant: 1,
     neck: [5.0, 4.2], head: [4.4, 4.4, 4.6], muz: [4.2, 2.4], ears: 'bear', tail: [3.5, 1.5, 1.0], hump: 1, shag: 1,
-    col: { fur: '#6a4a2c', u: '#523820', muz: '#9a7a52', nose: '#141010', dark: '#120c08', claw: '#e8dcc0' } },
+    col: { fur: '#9a7048', u: '#7a583a', muz: '#c09a66', nose: '#141010', dark: '#120c08', claw: '#e8dcc0' } },
   wolf: { base: [25.4, 25.4], h: 0.36, L: 6.0, y: 9.6, chest: [3.2, 4.3, 4.6], belly: [2.6, 3.0, 4.4], hips: [2.9, 3.5, 3.6], fx: 1.9, hx: 1.85, legF: [5.2, 5.0, 2.0], legH: [5.8, 5.4, 3.4], rF: [1.35, 0.9, 0.75], rH: [1.65, 0.85, 0.72], paw: [1.05, 0.7, 1.45],
     neck: [4.0, 1.9], head: [2.3, 2.3, 2.5], muz: [3.3, 1.15], ears: 'pointy', tail: [11, 1.2, 0.6], brush: 1, ruff: 1,
     col: { fur: '#8a6e50', u: '#c8b494', muz: '#c0aa88', nose: '#141210', dark: '#141210', claw: '#d8d0c0' } },
@@ -150,7 +150,7 @@ export const SPECIES = {
 };
 /* variants = a recolour (sampled from his minis8: the lit 85th-percentile colour of the figure) */
 export const VARIANTS = {
-  leo: ['lion'], leaena: ['lioness'], ursa: ['bear'], brutum: ['bear', { fur: '#5e4228', u: '#4a321c', muz: '#8a6a44' }],
+  leo: ['lion'], leaena: ['lioness'], ursa: ['bear'], brutum: ['bear', { fur: '#74543a', u: '#5c422c', muz: '#a08460' }],
   valencia: ['wolf'], moechus: ['wolf', { fur: '#6e625a', u: '#a49a8c', muz: '#9a9084' }],
   boar: ['boar'], croc: ['croc'],
 };
@@ -158,7 +158,7 @@ function quad(S, f, COL) {
   JL = []; const P = [], C = COL;
   const M = (c, p, extra) => Object.assign({ c, p }, extra || {});
   const FUR = M(C.fur, S.croc ? 'scale' : 'fur', { u: C.u, dry: S.croc ? 0.45 : 0.6 }), DARK = M(C.dark, null, { dry: 0.3 }), NOSE = M(C.nose, null, { dry: 0.8 }), CLAW = M(C.claw, null, { dry: 0.4 });
-  const SHAG = M(C.fur, 'mane', { u: C.u, dry: 0.75 });
+  const SHAG = M(C.fur, 'mane', { u: C.u, dry: 0.95 });
   const pitch = (f.pitch || 0) * D2R, roll = (f.roll || 0) * D2R, yawB = (f.yaw || 0) * D2R;
   const R = mm(Ry(yawB), mm(Rz(roll), Rx(-pitch)));
   const root = [f.x || 0, (f.y != null ? f.y : S.y) + (f.dy || 0), f.z || 0];
@@ -175,8 +175,8 @@ function quad(S, f, COL) {
   if (S.ridge) P.push(cap(T([0, S.chest[1] * 0.95, L * 0.75]), T([0, S.hips[1] * 0.8, -L * 0.4]), 1.0, 0.5, 1.4, M(C.dark, 'mane')));
   if (S.scutes) for (let i = -3; i <= 3; i++) for (const sx of [-1, 1]) P.push(sph(T([sx * 1.3, S.chest[1] * 0.92, i * L * 0.28]), 0.6, 0.3, FUR));
   /* shaggy coat: clumps along the back and flanks, flowing back and down */
-  if (S.shag) { const n = Math.round(46 * S.shag); clumps(P, n, T([0, S.chest[1] * 0.7, L * 0.1]), [S.chest[0] * 1.4, S.chest[1] * 0.7, L * 2.0], mv(R, [0, -0.35, -1]), [S.chest[0] * 0.24, S.chest[0] * 0.14, S.chest[0] * 0.42], SHAG, 0.45, 3);
-    clumps(P, Math.round(n / 2), T([0, -S.belly[1] * 0.55, 0]), [S.belly[0] * 1.6, 1.2, L * 1.6], mv(R, [0, -1, -0.3]), [S.chest[0] * 0.2, S.chest[0] * 0.12, S.chest[0] * 0.34], SHAG, 0.4, 7); }
+  if (S.shag) { const n = Math.round(130 * S.shag); clumps(P, n, T([0, S.chest[1] * 0.55, L * 0.1]), [S.chest[0] * 1.7, S.chest[1] * 0.95, L * 2.1], mv(R, [0, -0.5, -1]), [S.chest[0] * 0.13, S.chest[0] * 0.08, S.chest[0] * 0.34], SHAG, 0.2, 3);
+    clumps(P, Math.round(n / 2), T([0, -S.belly[1] * 0.5, 0]), [S.belly[0] * 1.7, 1.6, L * 1.8], mv(R, [0, -1, -0.3]), [S.chest[0] * 0.12, S.chest[0] * 0.08, S.chest[0] * 0.3], SHAG, 0.2, 7); }
   /* head + neck */
   const hp = (f.head ? f.head[0] : 0) * D2R, hy = (f.head ? f.head[1] : 0) * D2R;
   const NB = T([0, S.chest[1] * 0.35, L * 0.62 + S.chest[2] * 0.55]);
@@ -210,11 +210,11 @@ function quad(S, f, COL) {
   if (S.ears === 'pointy') for (const sx of [-1, 1]) P.push(cap(H([sx * S.head[0] * 0.5, S.head[1] * 0.6, -S.head[2] * 0.1]), H([sx * S.head[0] * 0.65, S.head[1] * 1.55, -S.head[2] * 0.15]), S.head[0] * 0.3, 0.12, 0.3, FUR));
   /* the lion's mane: locks radiating round the neck and the head's back, falling down over the chest */
   if (S.mane) { const MN = M(C.mane, 'mane', { dry: 0.8 }); const ax = nrm(sub(NE, NB));
-    for (let ring = 0; ring < 4; ring++) { const c0 = lerp(NB, add(NE, mul(HF[2], -S.head[2] * 0.4)), ring / 3); const nlock = 12 + ring * 2;
+    for (let ring = 0; ring < 5; ring++) { const c0 = lerp(NB, add(NE, mul(HF[2], -S.head[2] * 0.3)), ring / 4); const nlock = 13 + ring * 2;
       for (let i = 0; i < nlock; i++) { const a = (i + ring * 0.5) / nlock * Math.PI * 2; const side = nrm(add(mul(HF[0], Math.cos(a)), mul(HF[1], Math.sin(a)))); const out = nrm(add(side, add(mul(ax, -0.25), [0, -0.35, 0])));
-        const rr = (S.head[0] * 1.05 + ring * 0.35); const p0 = add(c0, mul(side, rr * 0.55)); const Lk = 2.4 + 1.2 * hsh(i, ring, 9) + (Math.sin(a) < 0 ? 1.4 : 0);
-        P.push(ell(add(p0, mul(out, Lk * 0.6)), [1.15, 0.9, Lk * 0.7], frame(out, Math.abs(out[1]) > 0.9 ? [0, 0, 1] : [0, 1, 0]), 0.45, MN)); } }
-    clumps(P, 14, add(NB, [0, -S.chest[1] * 0.35, 0]), [S.chest[0] * 1.2, S.chest[1] * 0.8, 3], mv(R, [0, -1, 0.35]), [1.2, 0.9, 2.6], MN, 0.45, 5); }
+        const rr = (S.head[0] * 1.15 + ring * 0.3); const p0 = add(c0, mul(side, rr * 0.6)); const Lk = 3.6 + 1.6 * hsh(i, ring, 9) + (Math.sin(a) < 0 ? 2.0 : 0);
+        P.push(ell(add(p0, mul(out, Lk * 0.55)), [1.7, 1.25, Lk * 0.66], frame(out, Math.abs(out[1]) > 0.9 ? [0, 0, 1] : [0, 1, 0]), 0.45, MN)); } }
+    clumps(P, 22, add(NB, [0, -S.chest[1] * 0.35, 0]), [S.chest[0] * 1.3, S.chest[1] * 0.9, 4], mv(R, [0, -1, 0.35]), [1.6, 1.1, 3.4], MN, 0.45, 5); }
   if (S.ruff) clumps(P, 18, NB, [S.neck[1] * 2.2, S.neck[1] * 1.8, S.neck[0] * 0.6], mv(R, [0, -0.4, -0.6]), [0.7, 0.5, 1.4], M(C.fur, 'mane', { u: C.u, dry: 0.75 }), 0.3, 6);
   if (S.tusks) for (const sx of [-1, 1]) P.push(cap(H([sx * S.muz[1] * 0.8, -S.head[1] * 0.25, S.head[2] * 0.4 + S.muz[0] * 0.7]), H([sx * S.muz[1] * 1.3, S.head[1] * 0.25, S.head[2] * 0.4 + S.muz[0] * 0.55]), 0.4, 0.12, 0.2, M(C.tusk, null, { dry: 0.3 })));
   if (S.croc) for (let i = 1; i <= 6; i++) for (const sx of [-1, 1]) P.push(cap(add(lerp(mz0, mz1, i / 7), mul(HF[0], sx * S.muz[1] * 0.85)), add(lerp(mz0, mz1, i / 7), add(mul(HF[0], sx * S.muz[1] * 0.85), mul(HF[1], -0.9))), 0.22, 0.06, 0, M(C.tooth, null)));

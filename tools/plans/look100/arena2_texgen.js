@@ -76,8 +76,8 @@ leptis(){const [c,g]=cv(),rn=RNG(909);g.fillStyle='#f5f3ee';g.fillRect(0,0,W,H);
   for(let i=0;i<26;i++){const y=rn()*H,h=2+rn()*14,a=0.05+rn()*0.14;g.fillStyle=`rgba(120,124,128,${a.toFixed(2)})`;wrap((dx,dy)=>{g.save();g.translate(dx,dy);g.beginPath();g.moveTo(0,y);for(let x=0;x<=W;x+=32)g.lineTo(x,y+Math.sin(x*0.012+i)*6);g.lineTo(W,y+h);for(let x=W;x>=0;x-=32)g.lineTo(x,y+h+Math.sin(x*0.012+i)*6);g.closePath();g.fill();g.restore()})}
   veins(g,rn,5,'#7a7e84',0.15,0.3,0.05,16,[0.4,1]);slabs(g,rn,128,250,320,'rgba(150,146,140,.55)','rgba(255,255,255,.8)');noise(g,3000,0.05,rn);return c},
 /* 10 Uthina — Punic opus africanum: tall ashlar piers between rubble panels, dusk-violet sandstone */
-uthina(){const [c,g]=cv(),rn=RNG(1010);g.fillStyle='#6a5054';g.fillRect(0,0,W,H);
-  const P=[];for(let i=0;i<300;i++)P.push([rn()*W,rn()*H,10+rn()*10,8+rn()*8,rn(),rn()]);
+uthina(){const [c,g]=cv(),rn=RNG(1010);g.fillStyle='#8a7072';g.fillRect(0,0,W,H);
+  const P=[];for(let i=0;i<620;i++)P.push([rn()*W,rn()*H,10+rn()*9,8+rn()*7,rn(),rn()]);
   wrap((dx,dy)=>{for(const [x,y,a,b,t,r] of P){const cc=mix(hex('#b8968e'),hex('#9a7a7c'),t);g.fillStyle=rgb(cc);g.beginPath();const n=6;for(let k=0;k<n;k++){const an=k/n*Math.PI*2+r,rr=(k%2?a:b)*(0.8+0.3*Math.sin(k+r*9));const px=x+dx+Math.cos(an)*rr,py=y+dy+Math.sin(an)*rr*0.75;k?g.lineTo(px,py):g.moveTo(px,py)}g.closePath();g.fill();g.fillStyle='rgba(255,240,236,.15)';g.fill()}});
   for(const px of [0,128,256,384]){for(let y=0;y<H;y+=64){/* alternating upright + flat blocks */block(g,px,y,44,40,{c0:'#dcbcae',c1:'#ccaa9a',j:3,grad:1},rn);block(g,px-10,y+40,64,24,{c0:'#dcbcae',c1:'#ccaa9a',j:3,grad:1},rn)}
     if(px===0)for(let y=0;y<H;y+=64){block(g,W,y,44,40,{c0:'#dcbcae',c1:'#ccaa9a',j:3,grad:1},rn);block(g,W-10,y+40,64,24,{c0:'#dcbcae',c1:'#ccaa9a',j:3,grad:1},rn)}}
