@@ -47,7 +47,7 @@ body{overflow:hidden}
 .dos{flex:1;min-width:0;overflow-y:auto;overflow-x:hidden;padding-bottom:10px}
 .dw{display:flex;flex-direction:column;gap:7px}
 .panel{position:relative;border:1px solid #5a4430;border-radius:8px;background:linear-gradient(#251b13,#1c140e);min-width:0}
-.ph{font:500 9.5px var(--mono);letter-spacing:.14em;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:14px;line-height:14px}
+.phd{font:500 9.5px var(--mono);letter-spacing:.14em;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:14px;line-height:14px}
 /* banner */
 .ban{height:62px}
 .ban .pic{background-image:url(img3/m_pano.jpg);background-position:center 62%}
@@ -143,7 +143,7 @@ body.s-scout .pane.scout,body.s-court .pane.court,body.s-offer .pane.offer{displ
 #suit2 .su{height:24px}.su.me{color:var(--gold2)}
 .need{font-size:11.5px;color:var(--muted);height:16px;margin-top:2px}.need b{color:var(--gold2)}
 .notes{background:linear-gradient(90deg,#c9b083,var(--parch) 6%,var(--parch) 94%,#c9b083);color:#3a2616;border-color:#8a6a3a}
-.notes .ph{color:#6b4a22}
+.notes .phd{color:#6b4a22}
 .nr{display:grid;grid-template-columns:78px minmax(0,1fr) 68px;gap:6px;align-items:center;height:32px;border-top:1px solid #8a6a3a44;font-size:12.5px}
 .nr:first-of-type{border-top:0}
 .nr b{font:400 14px var(--display);color:#3a1a0c}
@@ -185,7 +185,7 @@ body.ph .acts{grid-template-columns:repeat(2,minmax(0,1fr))}
 body.ph .act{grid-template-rows:90px 20px 18px 16px}body.ph .act .fr{height:90px}
 body.ph .pg{grid-template-columns:repeat(2,minmax(0,1fr))}
 body.ph .pit{grid-template-rows:84px 20px 20px 16px}body.ph .pit .fr{height:84px}body.ph .pit .t2{grid-template-columns:70px 26px}body.ph .pit .t2 .tags{display:none}
-body.ph .hg{grid-template-columns:repeat(2,minmax(0,1fr))}body.ph .hg .ph{grid-column:1/-1}
+body.ph .hg{grid-template-columns:repeat(2,minmax(0,1fr))}body.ph .hg .phd{grid-column:1/-1}
 body.ph .hrs .sub{display:none}
 .steps{grid-template-columns:repeat(3,minmax(0,1fr))}.step{min-width:0;white-space:nowrap;overflow:hidden}
 body.ph .step small{display:none}body.ph .step{font-size:15px;gap:5px}
@@ -221,8 +221,8 @@ body.ph .sign{min-height:170px}
       <div class="chips"><span class="ch" id="wants" title="his wants">🎯 wants: ?</span></div>
      </div>
     </section>
-    <section class="panel grades"><div class="ph">Ratings · recruiter's grades</div><div id="grows"></div></section>
-    <section class="panel pers"><div class="ph">Personality</div><div id="pers"></div></section>
+    <section class="panel grades"><div class="phd">Ratings · recruiter's grades</div><div id="grows"></div></section>
+    <section class="panel pers"><div class="phd">Personality</div><div id="pers"></div></section>
    </div>
 
    <div class="steps">
@@ -236,12 +236,12 @@ body.ph .sign{min-height:170px}
     <section class="panel hrs"><b>🔍 Recruiter's hours</b><span class="n">14 of 20 left</span><span class="pips" id="pips"></span><span class="sub one">3 of 8 h on him · each action once a week</span></section>
     <div class="acts" id="acts"></div>
     <div class="learn">
-     <section class="panel lg"><div class="ph">What your recruiter learned · this week</div>
+     <section class="panel lg"><div class="phd">What your recruiter learned · this week</div>
       <div class="row"><span>🍺 1 h</span><span class="one">Ask around: Charisma looks C (rough)</span><span>C ●</span></div>
       <div class="row"><span>👁 2 h</span><span class="one">Watched him train: Speed C+, Strength B (fair)</span><span>●●</span></div>
       <div class="row"><span>— not yet</span><span class="one">Intelligence and Luck are still unknown</span><span>? ?</span></div>
       <div class="row"><span>★ next</span><span class="one">Share a cup → Intelligence + Charisma, then his personality</span><span>2 h</span></div></section>
-     <section class="panel lg"><div class="ph">On the street</div>
+     <section class="panel lg"><div class="phd">On the street</div>
       <div class="row"><span>Rival bid</span><span class="one">Ludus Severianus bids in 2 weeks</span><span>48</span></div>
       <div class="row"><span>Rumour</span><span class="one">Severianus and Crispinus are courting him</span><span>—</span></div>
       <div class="row"><span>Fame</span><span class="one">wants a house with fame 40+ · yours is 58</span><span>✓</span></div>
@@ -251,16 +251,16 @@ body.ph .sign{min-height:170px}
 
    <!-- ② COURT -->
    <div class="pane court">
-    <section class="panel hg" id="hg"><span class="ph" title="Your house grades — what every recruit sees">🏛 House grades</span></section>
+    <section class="panel hg" id="hg"><span class="phd" title="Your house grades — what every recruit sees">🏛 House grades</span></section>
     <div class="pmeta"><span>🗣 Pitch · 2 of 3 left this week · one per recruit</span><span>his wish ×2 · green = he cares</span></div>
     <div class="pg" id="pg"></div>
     <div class="low">
-     <section class="panel"><div class="ph">Win him over</div>
+     <section class="panel"><div class="phd">Win him over</div>
       <div class="wo"><div class="fr" id="feastArt"><div class="pic" id="feastPic"></div></div><div><b>🍷 Host a feast</b><span class="l2"><small>big swing · every 3 wk</small><span class="c"><span class="coin"></span> 26</span></span></div></div>
       <div class="wo"><div class="fr"><div class="pic" style="background-image:url(img3/m_stalls.jpg)"></div><img class="mini" src="../../../assets/coin.webp" style="right:8px;bottom:6px;width:20px"></div><div><b>🎁 Send a gift</b><span class="l2"><small>coin-hungry love it · weekly</small><span class="c"><span class="coin"></span> 13</span></span></div></div>
      </section>
-     <section class="panel"><div class="ph">Suitors</div><div id="suit"></div><div class="need one">Signs at ~<b>52</b> · you are <b>3rd</b> · Severianus bids in 2 wk</div></section>
-     <section class="panel notes"><div class="ph">✉ Private note · once a week · tone</div>
+     <section class="panel"><div class="phd">Suitors</div><div id="suit"></div><div class="need one">Signs at ~<b>52</b> · you are <b>3rd</b> · Severianus bids in 2 wk</div></section>
+     <section class="panel notes"><div class="phd">✉ Private note · once a week · tone</div>
       <div class="nr" title="Speaks to Glory and Spectacle — proud fighters like it"><b>Praise</b><span class="one">Glory · Spectacle · proud fighters</span><span class="fit fair">fair</span></div>
       <div class="nr" title="More interest now, but he asks +10% at signing"><b>Promise</b><span class="one">Coin · Arena · +3, asks +10%</span><span class="fit weak">weak</span></div>
       <div class="nr best" title="Speaks to Honor and Training — +2 more when your Honor is C+ or better"><b>Plain truth</b><span class="one">Honor · Training · +2 if Honor C+</span><span class="fit good">lands well</span></div>
@@ -271,7 +271,7 @@ body.ph .sign{min-height:170px}
    <!-- ③ OFFER -->
    <div class="pane offer">
     <div class="offr">
-     <section class="panel off"><div class="ph">The contract</div>
+     <section class="panel off"><div class="phd">The contract</div>
       <div class="wage"><span class="big">Wage 24/wk</span><div class="slider"><i></i><b></b><u style="left:0">15</u><u style="left:48%">ask 23</u><u style="left:100%">40</u></div></div>
       <div class="oform"><label>Weeks <select class="tin" style="width:auto"><option>4</option><option selected>8</option><option>12</option></select></label><label>Bonus <input class="tin" value="0"></label><label title="Pledge him the main event within 2 weeks: +12 interest now"><span class="ck"></span> Pledge the main event (+12)</label></div>
       <div class="verdict"><div class="vbar"><i></i><u></u></div><div>✗ <b>Not yet</b> · pull 45 (money +3) · needs 52 · Severianus 48</div><p>Raise the wage, or pitch, feast and gift next week · dealbreaker safe</p></div>
@@ -280,8 +280,8 @@ body.ph .sign{min-height:170px}
      <div class="fr sign"><div class="pic"></div><span class="rd big"></span><span class="rd cl" title="Fabia Dura, your Clerk"></span><span class="coins"><i></i><i></i><i></i><i></i></span><span class="cap">Fabia Dura draws up the tablets</span></div>
     </div>
     <div class="offr">
-     <section class="panel" style="padding:6px 8px"><div class="ph">Where he stands</div><div id="suit2"></div></section>
-     <section class="panel lg"><div class="ph">On your ledger · if he signs</div>
+     <section class="panel" style="padding:6px 8px"><div class="phd">Where he stands</div><div id="suit2"></div></section>
+     <section class="panel lg"><div class="phd">On your ledger · if he signs</div>
       <div class="row"><span>Wage</span><span class="one">24 a week × 8 weeks</span><span><span class="coin"></span> 192</span></div>
       <div class="row"><span>Bonus</span><span class="one">none · counts toward the weekly wage</span><span>0</span></div>
       <div class="row"><span>Net / wk</span><span class="one">+26 → +2 a week before fees</span><span>+2</span></div>

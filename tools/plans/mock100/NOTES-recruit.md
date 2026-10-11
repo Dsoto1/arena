@@ -62,3 +62,34 @@ All data shapes are the real ones: 249-v98rec (REC98, PITCH98, DEAL98), 157 WANT
   - Scout actions: 122 px cards. Win-over cards: 76 px. Suitors rows: 28 px. Note columns: 84 px with the fit badge beside the title. Offer lines: one line each.
 - **E2:** `#chart` shows the tablet three ways: (a) chart + certainty band, (b) chart without the band, (c) grade rows only. Each is shown for a barely scouted recruit (one ask around) and a fully graded one (watch + cup + study). Shots: `recruit_chart_1440.png`, `recruit_chart_390*.png`.
 - **E3a** (sepia avatar sketch) and **E4a** (flat SVG scenes) are kept.
+
+## Round 3: `recruit3.html` (recruit.html kept as is)
+His notes: newly painted, mural-like art with no stick figures; only the recruit's portrait (no avatar sketch); more compact; grade rows without a chart.
+- States: `#scout` `#court` `#offer` `#phone`. Shots: `recruit3_{scout,court,offer}_1440.png` (each state fits one 1440×900 screen) and `recruit3_{phone,scout,offer}_390*.png` (scrolled).
+- Scripts:
+  - `recruit3_art.js` renders the game's painters from the built `flavius-arena.html` (served over http) into `img3/r3_*`.
+  - `recruit3_crop.py` cuts the city/arena canvases into plates `img3/m_*.jpg`.
+  - `recruit3_shot.js` takes the shots.
+- Fresco frame (CSS only): a plaster texture, a Pompeian-red painted border with an ochre line, and a soft vignette over every picture. The picture itself is lightly sepia'd.
+
+| Picture | Made by (game system) |
+|---|---|
+| Recruit portrait (Profile, contract scene, list row) | `gArt` → `portraitHTML` → v0.99 painterly `face99` (263/268) at size xl |
+| Champion portrait ("Meet your champion") | same painter, size lg (a Hero free agent stands in) |
+| Council roundels: Recruiter (banner, scout cards), Doctore (yard), Medicus (infirmary), Clerk (terms, contract), Consilium + Barracks (table) | `council83` names + `face83` → `face99Spect` (131 + 263) |
+| Rival lanistas in Suitors | `portraitHTML({portrait:m.portrait})` of the league's managers (face99) |
+| Crowd in "Promise the sand", list faces | `face99Spect` with spectator looks (SKINS/HAIRS, hats, robes) |
+| Banner panorama, Training-yard plates, stalls, temple, baths, tavern | the painted city square canvas (172-v89city, Roma + Capua), building labels switched off for the capture |
+| The sand, Flavius's box | the arena canvas of a live all-CPU event (192-v91arena stone, stands, banners, crowd) |
+| Sparring/trial/infirmary figures | his 3D minis `assets/mini_<class>.webp` |
+| The lanista's table, feast | `SCENE99('council')` (mock100/ludus_scenes.js, painted SVG hall) |
+| Study his bouts | `SCENE99('promote')` (forum wall with painted programmata) |
+| Coins | `assets/coin.webp` (his coin) |
+Also rendered but not used: lit sculpted figures (`figureSVG` + `lit89`, `img3/r3_fig_*.png`). The minis read better at mural size. `roomScene73('recruit')` (`r3_room_recruit.svg`) was replaced by the painted city panorama.
+
+Layout: a compact top bar, rail and list (34 px rows), and a 62 px fresco banner. The head row holds portrait · six grade rows with precision dots (no chart) · personality (or the lock). The steps are a 36 px bar.
+- Scout: an hours line, then 5 action cards with tall frescoes, then two dense panels: what the recruiter learned, and the street.
+- Court: house grades in one row, 3×2 pitch cards (80 px fresco + 3 one-line rows), then Win him over · Suitors · Private note.
+- Offer: the contract + a signing fresco, then Where he stands + On your ledger.
+- Every label is one line; ellipsis + hover where needed.
+- Some text in the new panels is made up for the mock (e.g. "On your ledger"); the numbers there are not computed.
