@@ -1,0 +1,245 @@
+{
+ "build": 13389,
+ "armorMs": 31005,
+ "clear": {
+  "gladius": {
+   "body": 0,
+   "shield": 0,
+   "n": 256
+  },
+  "mace": {
+   "body": 0,
+   "shield": 0,
+   "n": 348
+  },
+  "sica": {
+   "body": 0,
+   "shield": 0,
+   "n": 244
+  },
+  "hasta": {
+   "body": 0,
+   "shield": 0,
+   "n": 68
+  },
+  "stones": {
+   "body": 0,
+   "shield": 0,
+   "n": 420
+  },
+  "thracian": {
+   "body": 0,
+   "shield": 0,
+   "n": 701
+  },
+  "knives": {
+   "body": 0,
+   "shield": 0,
+   "n": 260
+  },
+  "trident": {
+   "body": 0,
+   "shield": 0,
+   "n": 140
+  },
+  "rudis": {
+   "body": 0,
+   "shield": 0,
+   "n": 244
+  },
+  "severedArm": {
+   "body": 0,
+   "shield": 0,
+   "n": 268
+  },
+  "severedLeg": {
+   "body": 0,
+   "shield": 0,
+   "n": 564
+  },
+  "axe": {
+   "body": 0,
+   "shield": 0,
+   "n": 284
+  },
+  "falcata": {
+   "body": 0,
+   "shield": 0,
+   "n": 172
+  },
+  "bow": {
+   "body": 0,
+   "shield": 0,
+   "n": 436
+  },
+  "pugio": {
+   "body": 0,
+   "shield": 0,
+   "n": 208
+  },
+  "scissor": {
+   "body": 0,
+   "shield": 0,
+   "n": 448
+  },
+  "scutum": {
+   "body": 0,
+   "shield": 0,
+   "n": 701
+  },
+  "sling": {
+   "body": 376,
+   "shield": 0,
+   "n": 472
+  },
+  "arcu": {
+   "body": 6,
+   "shield": 0,
+   "n": 332
+  },
+  "charun": {
+   "body": 0,
+   "shield": 0,
+   "n": 56
+  },
+  "flavgl": {
+   "body": 0,
+   "shield": 0,
+   "n": 256
+  },
+  "jade": {
+   "body": 0,
+   "shield": 0,
+   "n": 86
+  },
+  "flail": {
+   "body": 0,
+   "shield": 0,
+   "n": 740
+  },
+  "pilum": {
+   "body": 0,
+   "shield": 0,
+   "n": 204
+  },
+  "labrys": {
+   "body": 0,
+   "shield": 0,
+   "n": 76
+  },
+  "psykhe": {
+   "body": 0,
+   "shield": 0,
+   "n": 296
+  },
+  "achilles": {
+   "body": 0,
+   "shield": 0,
+   "n": 277
+  },
+  "lyre": {
+   "body": 48,
+   "shield": 0,
+   "n": 540
+  }
+ },
+ "weaponMs": 48246,
+ "maxClear": {
+  "body": 0,
+  "shield": 0,
+  "n": 256
+ },
+ "max": {
+  "kb": 30,
+  "meta": [
+   116,
+   138,
+   58,
+   114.9
+  ],
+  "ms": 7797
+ },
+ "classes": {
+  "soldier": {
+   "kb": 29.3,
+   "ms": 5696,
+   "meta": [
+    116,
+    142,
+    58,
+    118.9
+   ]
+  },
+  "royalty": {
+   "kb": 27.8,
+   "ms": 5855,
+   "meta": [
+    84,
+    146,
+    42,
+    122.9
+   ]
+  },
+  "hero": {
+   "kb": 29.9,
+   "ms": 6289,
+   "meta": [
+    106,
+    146,
+    53,
+    122.9
+   ]
+  },
+  "slave": {
+   "kb": 31.9,
+   "ms": 5426,
+   "meta": [
+    164,
+    154,
+    82,
+    130.9
+   ]
+  },
+  "veteranus": {
+   "kb": 28.6,
+   "ms": 6669,
+   "meta": [
+    116,
+    140,
+    58,
+    116.9
+   ]
+  },
+  "amazonia": {
+   "kb": 31,
+   "ms": 7919,
+   "meta": [
+    114,
+    154,
+    57,
+    130.9
+   ]
+  },
+  "venatore": {
+   "kb": 29.1,
+   "ms": 5955,
+   "meta": [
+    164,
+    154,
+    82,
+    130.9
+   ]
+  },
+  "damnatio": {
+   "kb": 27,
+   "ms": 5898,
+   "meta": [
+    84,
+    135,
+    42,
+    111.9
+   ]
+  }
+ },
+ "totalMs": 189798
+}
