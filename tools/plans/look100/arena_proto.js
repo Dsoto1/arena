@@ -154,7 +154,7 @@ function railParapet(g,R){const h=R.Hc*0.96,wall=h*0.62,iv=inV(R,TW*0.06);
 const RAIL={bronze:railBronze,balus:railBalus,parapet:railParapet};
 ar91Under=function(g){const r=B.under.apply(this,arguments);if(PR.rail&&!ar91Lud()){try{for(const R of railEdges())RAIL[PR.rail](g,R)}catch(e){console.error(e)}}return r};
 /* ---------- switch + measure ---------- */
-PR.set=function(o){Object.assign(PR,o);for(const id of ['cardShow','bubbles','wbubs','tip']){const e=document.getElementById(id);if(e){if(id==='tip')e.style.display='none';else e.innerHTML=''}}AR91.ver++;for(const k in AR91TEX)delete AR91TEX[k];try{if(typeof Z99!=='undefined'&&Z99&&Z99.cache)Z99.cache=null}catch(e){}draw();draw()};
+PR.set=function(o){Object.assign(PR,o);try{S.bubbles=[];S.emotes=[]}catch(e){}for(const id of ['cardShow','bubbles','wbubs','tip']){const e=document.getElementById(id);if(e){if(id==='tip')e.style.display='none';else e.innerHTML=''}}AR91.ver++;for(const k in AR91TEX)delete AR91TEX[k];try{if(typeof Z99!=='undefined'&&Z99&&Z99.cache)Z99.cache=null}catch(e){}draw();draw()};
 /* one cached frame vs one rebuild (all static layers re-baked) */
 PR.cost=function(n=12){const cachedA=[],rebuildA=[];for(let i=0;i<n;i++){draw();let t=performance.now();draw();cachedA.push(performance.now()-t);AR91.ver++;t=performance.now();draw();rebuildA.push(performance.now()-t)}
   const med=a=>{a=a.slice().sort((x,y)=>x-y);return +a[a.length>>1].toFixed(2)};return {cached:med(cachedA),rebuild:med(rebuildA),under:+(AR91.ms[0]||0).toFixed(2),top:+(AR91.ms[1]||0).toFixed(2),texMs:+(PR.texMs||0).toFixed(1)}};
