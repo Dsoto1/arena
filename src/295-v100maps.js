@@ -92,7 +92,7 @@ function mapInset100(o){if(MI100.off())return '';o=o||{};const w=o.w||120,h=o.h|
 /* ---------- 1 · 3 · 5 · the Manager pages (a final mgrHTML wrapper over the finished HTML) ---------- */
 function mi100Strip(T,w,m){const strip=T.content.querySelector('.travelcard.strip96,.card2.strip96');if(!strip||!w.night||w.night.bye||!LOCATIONS[w.night.loc])return;
   const host=LOCATIONS[w.night.loc].n,home=m.city;const same=!home||home===host;
-  const ins=mapInset100({w:116,h:74,cls:'mi100tr',minW:120,label:same?_T`${host}: the games are at home this week`:_T`From ${home} to ${host}`,
+  const ins=mapInset100({w:70,h:44,cls:'mi100tr',minW:120,label:same?_T`${host}: the games are at home this week`:_T`From ${home} to ${host}`,
     pts:[...(same?[]:[{p:home,k:'home',tip:_T`${home} · home`}]),{p:host,k:'host',lab:host,tip:_T`${host} · this week's games`}],route:same?null:[home,host]});
   if(ins)strip.insertAdjacentHTML('afterbegin',ins)}
 function mi100Recruit(T,w,m){const rows=[...T.content.querySelectorAll('tr[data-mg="sel"][data-id]')];
@@ -184,7 +184,7 @@ if(typeof BUS!=='undefined'&&BUS.on)BUS.on('window.close',()=>mi100TipHide());
 .mi100.mi100still .mi100glow,body.calm .mi100 .mi100glow{animation:none}
 @keyframes mi100glow{from{opacity:.15}to{opacity:.55}}
 @media (prefers-reduced-motion:reduce){.mi100 .mi100glow{animation:none}}
-#mgrBody .strip96 .mi100tr{margin:-2px 4px -2px -6px!important}
+#mgrBody .strip96 .mi100tr{margin:-2px 4px -2px -6px!important;flex:none}
 .mi100let{float:right;margin:0 0 6px 10px;line-height:0}
 .mi100rcard{display:flex;flex-direction:column;align-items:center;gap:3px;margin-left:auto;flex:none}
 .mi100rcard small{font-size:11.5px;color:var(--dim,#a3907a);white-space:nowrap;line-height:1.2}
@@ -208,7 +208,7 @@ body.calm .mi100road .mi100rt{transition:none}
 #mi100tip small{display:block;font:13px var(--display,Georgia);color:#fff1cf;line-height:1.5;margin-top:2px}
 #mi100tip .mi100{width:100%;height:auto;aspect-ratio:150/110}
 @media (max-width:600px){
- #mgrBody .strip96 .mi100tr{--mw:84px;--mh:54px}
+ #mgrBody .strip96 .mi100tr{--mw:60px;--mh:38px}
  .mi100let{float:none;display:block;margin:6px 0 0}
  .mi100rcard .mi100{--mw:84px;--mh:62px}
  .mi100road{flex-direction:column}.mi100road .mi100rd{width:100%;max-width:320px;align-self:center}.mi100rl{columns:2;width:100%}

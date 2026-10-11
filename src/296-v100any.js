@@ -344,6 +344,7 @@ document.addEventListener('click',e=>{const t=e.target;if(!t||!t.closest)return;
 .any100wk .a1ft{display:flex;flex-wrap:wrap;gap:4px 16px;padding:8px 14px;border-top:1px solid #4a3826;background:#160f0b;font-size:12.5px;color:var(--dim)}.any100wk .a1ft b{color:var(--bone,#efe3cc);font-weight:500}
 .card2.bout.spc100{border-color:#7a4f8a}.card2.bout.spc100 .a1chips{margin-top:4px}.a1open{margin:4px 0 0}
 .roomstat.bt85w .bt85.bt100s{border-color:#b98ad0!important}.roomstat.bt85w .bt85.bt100s .bt85d{color:#e4b9f5}
+@media (max-width:600px){#mgrBody .roomhd.has-walk96 .roomstat.bt85w{top:6px;transform:none}}
 .any100bg{position:fixed;inset:0;z-index:9000;background:#000a;display:flex;align-items:center;justify-content:center;padding:16px}
 .any100pk{width:min(820px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;background:linear-gradient(#251b13,#1c140e);border:1px solid #8a6a3a;border-radius:9px;box-shadow:0 16px 50px #000c;color:var(--bone,#efe3cc)}
 .a1pkhd{display:flex;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid #4a3826}.a1pkhd>.card,.a1pkhd>:first-child{width:52px;flex:none}.a1pkhd .a1x{align-self:flex-start}
