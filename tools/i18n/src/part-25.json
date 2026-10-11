@@ -712,28 +712,56 @@
   "w": "server/src/routes.js:1369"
  },
  {
+  "k": "Only after a second timeout.",
+  "w": "server/src/routes.js:1445"
+ },
+ {
+  "k": "You left too many matches — Ranked opens again in {0} min.",
+  "w": "server/src/routes.js:1498"
+ },
+ {
+  "k": "Ranked: watchers follow one turn behind — no snapshots.",
+  "w": "server/src/routes.js:1517"
+ },
+ {
+  "k": "That match is too long ago to report.",
+  "w": "server/src/routes.js:1578"
+ },
+ {
+  "k": "Pick a player.",
+  "w": "server/src/routes.js:1579"
+ },
+ {
+  "k": "Enough reports for today.",
+  "w": "server/src/routes.js:1580"
+ },
+ {
+  "k": "You already reported this match.",
+  "w": "server/src/routes.js:1582"
+ },
+ {
   "k": "Unknown request:",
-  "w": "server/src/routes.js:1378"
+  "w": "server/src/routes.js:1586"
  },
  {
   "k": "Too many requests — wait a moment.",
-  "w": "server/src/routes.js:1379"
+  "w": "server/src/routes.js:1587"
  },
  {
   "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1381"
+  "w": "server/src/routes.js:1589"
  },
  {
   "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1382"
+  "w": "server/src/routes.js:1590"
  },
  {
   "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1385"
+  "w": "server/src/routes.js:1593"
  },
  {
   "k": "Test houses play Custom only.",
-  "w": "server/src/routes.js:1389"
+  "w": "server/src/routes.js:1597"
  },
  {
   "k": "The arena hit a snag — try again (ref {0}).",
@@ -1382,5 +1410,29 @@
  {
   "k": "Velox II",
   "w": "src/111-onlcore.js:1274"
+ },
+ {
+  "k": "Ranked turns are always 60 seconds.",
+  "w": "src/111-onlcore.js:1370"
+ },
+ {
+  "k": "Turn timer: Off, 30, 60, 90 or 120 seconds.",
+  "w": "src/111-onlcore.js:1371"
+ },
+ {
+  "k": "Victor of the Season",
+  "w": "src/111-onlcore.js:1428"
+ },
+ {
+  "k": "On the Season’s Podium",
+  "w": "src/111-onlcore.js:1428"
+ },
+ {
+  "k": "One of the Season’s Ten",
+  "w": "src/111-onlcore.js:1428"
+ },
+ {
+  "k": "Pick a reason.",
+  "w": "src/111-onlcore.js:1434"
  }
 ]
