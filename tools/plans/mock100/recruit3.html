@@ -98,8 +98,8 @@ body.s-scout .pane.scout,body.s-court .pane.court,body.s-offer .pane.offer{displ
 .pips{display:flex;gap:2px}.pips i{width:10px;height:10px;border-radius:2px;background:#7fae5f}.pips i.u{background:#3a3020}.pips i.him{background:#d6ab4c}
 .hrs .sub{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;margin-left:auto}
 .acts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
-.act{position:relative;border:1px solid #5a4430;border-radius:7px;background:linear-gradient(#2a1f17,#1e160f);padding:5px;display:grid;grid-template-rows:118px 20px 18px 16px;gap:2px}
-.act .fr{height:118px}
+.act{position:relative;border:1px solid #5a4430;border-radius:7px;background:linear-gradient(#2a1f17,#1e160f);padding:5px;display:grid;grid-template-rows:176px 20px 18px 16px;gap:2px}
+.act .fr{height:176px}
 .act b{font-size:13.5px}.act .cost{font:11.5px var(--mono);color:var(--gold2)}.act small{font:11px var(--mono);color:var(--muted)}
 .act.done{opacity:.6}.act.done .fr::marker{}
 .done-tag{position:absolute;z-index:6;top:9px;right:9px;font:10px var(--mono);color:#9be86c;background:#1a2a12e0;border-radius:3px;padding:0 5px}
@@ -107,7 +107,7 @@ body.s-scout .pane.scout,body.s-court .pane.court,body.s-offer .pane.offer{displ
 .adv74{position:absolute;z-index:7;top:-8px;left:8px;font:600 9px var(--mono);letter-spacing:.08em;color:#1a1008;background:linear-gradient(#f0cf7d,#c99a3a);border-radius:3px;padding:1px 5px}
 .learn{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
 .lg{padding:7px 10px}
-.lg .row{display:grid;grid-template-columns:62px minmax(0,1fr) 40px;gap:8px;align-items:center;height:24px;border-top:1px solid #ffffff0a;font-size:12.5px}
+.lg .row{display:grid;grid-template-columns:70px minmax(0,1fr) 44px;white-space:nowrap;gap:8px;align-items:center;height:24px;border-top:1px solid #ffffff0a;font-size:12.5px}
 .lg .row:first-of-type{border-top:0}.lg .row span:first-child{font:11px var(--mono);color:var(--dim)}.lg .row span:last-child{text-align:right;font:11.5px var(--mono);color:var(--gold2)}
 /* court */
 .hg{display:grid;grid-template-columns:110px repeat(7,minmax(0,1fr));gap:5px;align-items:center;padding:5px 8px}
@@ -118,20 +118,21 @@ body.s-scout .pane.scout,body.s-court .pane.court,body.s-offer .pane.offer{displ
 .pmeta{display:flex;justify-content:space-between;gap:10px;height:16px;align-items:center}
 .pmeta span{font-size:11.5px;color:var(--dim);white-space:nowrap}
 .pg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
-.pit{position:relative;border:1px solid #5a4430;border-radius:7px;background:linear-gradient(#2a1f17,#1e160f);padding:5px;display:grid;grid-template-rows:84px 20px 20px 16px;gap:2px;text-align:left}
-.pit .fr{height:84px}
+.pit{position:relative;border:1px solid #5a4430;border-radius:7px;background:linear-gradient(#2a1f17,#1e160f);padding:5px;display:grid;grid-template-rows:80px 20px 20px 16px;gap:2px;text-align:left}
+.pit .fr{height:80px}
 .pit .t1{display:flex;align-items:center;gap:6px}.pit .t1 b{flex:1;font:400 14.5px var(--display);color:#f3e3bd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gain{flex:none;width:36px;text-align:center;font:500 12.5px var(--mono);color:#160f0b;background:linear-gradient(#b9e39a,#7fae5f);border-radius:3px}.gain.lo{background:linear-gradient(#e9d9a0,#b9a050)}
 .pit .t2{display:grid;grid-template-columns:80px 26px minmax(0,1fr);gap:5px;align-items:center;font-size:12px;color:var(--muted)}
 .pit .t2 .tags{white-space:nowrap;overflow:hidden}
 .pit p{margin:0;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pit{min-width:0;width:100%;overflow:visible;font:inherit;color:inherit}.pit>*{min-width:0}
 .pit.adv{border-color:#d6ab4c;box-shadow:0 0 0 1px #d6ab4c,0 0 12px #d6ab4c30}
 .low{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.1fr) minmax(0,1.1fr);gap:7px}
-.low .panel{padding:6px 8px;height:124px;overflow:hidden}
+.low .panel{padding:6px 8px;height:134px;overflow:hidden}
 .won2{display:grid;grid-template-columns:1fr;gap:4px}
 .wo{display:grid;grid-template-columns:70px minmax(0,1fr);gap:8px;align-items:center;height:48px;margin-top:4px}
 .wo .fr{height:46px}
-.wo .l2{display:flex;justify-content:space-between;gap:6px}
+.wo .l2{display:flex;justify-content:space-between;gap:6px;white-space:nowrap}.wo .l2 small{min-width:0}.wo .c{flex:none}
 .wo b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wo small{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wo .c{font:11.5px var(--mono);color:var(--gold2)}
 .coin{display:inline-block;width:12px;height:12px;background:url(../../../assets/coin.webp) center/contain no-repeat;vertical-align:-2px}
@@ -142,10 +143,10 @@ body.s-scout .pane.scout,body.s-court .pane.court,body.s-offer .pane.offer{displ
 .need{font-size:11.5px;color:var(--muted);height:16px;margin-top:2px}.need b{color:var(--gold2)}
 .notes{background:linear-gradient(90deg,#c9b083,var(--parch) 6%,var(--parch) 94%,#c9b083);color:#3a2616;border-color:#8a6a3a}
 .notes .ph{color:#6b4a22}
-.nr{display:grid;grid-template-columns:78px minmax(0,1fr) 60px;gap:6px;align-items:center;height:32px;border-top:1px solid #8a6a3a44;font-size:12.5px}
+.nr{display:grid;grid-template-columns:78px minmax(0,1fr) 68px;gap:6px;align-items:center;height:32px;border-top:1px solid #8a6a3a44;font-size:12.5px}
 .nr:first-of-type{border-top:0}
 .nr b{font:400 14px var(--display);color:#3a1a0c}
-.fit{font:600 10px var(--mono);border-radius:3px;padding:1px 5px;text-align:center}
+.fit{white-space:nowrap;font:600 10px var(--mono);border-radius:3px;padding:1px 5px;text-align:center}
 .fit.good{background:#4a7a2a;color:#eaf6d8}.fit.fair{background:#9a7a2a;color:#fff3d0}.fit.weak{background:#8a3a2a;color:#ffe0d6}
 .nr.best{background:#ffffff40}
 /* offer */
@@ -185,6 +186,11 @@ body.ph .pg{grid-template-columns:repeat(2,minmax(0,1fr))}
 body.ph .pit{grid-template-rows:84px 20px 20px 16px}body.ph .pit .fr{height:84px}body.ph .pit .t2{grid-template-columns:70px 26px}body.ph .pit .t2 .tags{display:none}
 body.ph .hg{grid-template-columns:repeat(2,minmax(0,1fr))}body.ph .hg .ph{grid-column:1/-1}
 body.ph .hrs .sub{display:none}
+.steps{grid-template-columns:repeat(3,minmax(0,1fr))}.step{min-width:0;white-space:nowrap;overflow:hidden}
+body.ph .step small{display:none}body.ph .step{font-size:15px;gap:5px}
+body.ph .pips{display:none}
+.pmeta span{overflow:hidden;text-overflow:ellipsis;min-width:0}body.ph .pmeta span:last-child{display:none}
+body.ph .offr .oform{flex-wrap:wrap;height:auto;row-gap:6px}body.ph .wage .big{font-size:18px}
 body.ph .ban .hrb{display:none}
 body.ph .sign{min-height:170px}
 </style></head>
@@ -232,10 +238,12 @@ body.ph .sign{min-height:170px}
      <section class="panel lg"><div class="ph">What your recruiter learned · this week</div>
       <div class="row"><span>🍺 1 h</span><span class="one">Ask around: Charisma looks C (rough)</span><span>C ●</span></div>
       <div class="row"><span>👁 2 h</span><span class="one">Watched him train: Speed C+, Strength B (fair)</span><span>●●</span></div>
+      <div class="row"><span>— not yet</span><span class="one">Intelligence and Luck are still unknown</span><span>? ?</span></div>
       <div class="row"><span>★ next</span><span class="one">Share a cup → Intelligence + Charisma, then his personality</span><span>2 h</span></div></section>
      <section class="panel lg"><div class="ph">On the street</div>
       <div class="row"><span>Rival bid</span><span class="one">Ludus Severianus bids in 2 weeks</span><span>48</span></div>
       <div class="row"><span>Rumour</span><span class="one">Severianus and Crispinus are courting him</span><span>—</span></div>
+      <div class="row"><span>Fame</span><span class="one">wants a house with fame 40+ · yours is 58</span><span>✓</span></div>
       <div class="row"><span>Ask</span><span class="one">about 23 a week · a 4★ premium</span><span><span class="coin"></span> 23</span></div></section>
     </div>
    </div>

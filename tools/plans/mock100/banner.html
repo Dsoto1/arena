@@ -129,6 +129,8 @@ body{padding:22px 0 60px;overflow:auto}
 .use{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
 .use .pic{height:110px;display:flex;align-items:flex-end;justify-content:center}
 .use .pic svg{height:100%;width:auto;max-width:100%}
+.use .pic .ov{position:absolute;left:50%;top:2%;transform:translateX(-50%);height:34px;filter:drop-shadow(0 2px 3px #000a)}
+.use .pic .ov svg{height:34px}
 .use span{font:500 10.5px var(--mono);color:var(--muted);text-align:center;letter-spacing:.04em}
 .use span b{display:block;color:var(--bone);font:400 12.5px var(--display);letter-spacing:.03em}
 
@@ -355,7 +357,7 @@ function sets(){L('sets').innerHTML=HOUSES.map(h=>{const uses=[
   ['flag',h,'Masthead · square','Flag'],['tapestry',h,'Stands tapestry','Tapestry'],['banner',h,'Ludus room · gate poles','Banner'],
   ['crest',h,'League row · records','Crest'],h.rank?['pennant',rankD(h.rank),'Rank pennant (system)','Pennant','crest']:['pennant',h,'Studio · Play Now seat','Pennant'],['flagS',h,'Fan flag · chips','Flag ≤ 44px']];
  return `<div class="hs"><div class="who"><span class="pill ${h.id==='val'?'go':''}">${h.who}</span><h3>${h.name}</h3><span class="k">${h.src}</span><span class="k">${h.div} · ${h.dev} · “${h.motto}”${h.wear?` · wear ${Math.round(h.wear*100)}`:''}</span></div>
-  <div class="uses">${uses.map(([k,d,lab,kn,extra])=>`<div class="use"><div class="pic">${k==='flagS'?`<div style="display:flex;gap:6px;align-items:flex-end">${sv('flag',d,{px:40})}${sv('crest',d,{px:28})}${sv('crest',d,{px:18})}</div>`:extra?`<div style="position:relative;height:100%">${sv(k,d)}<div style="position:absolute;left:50%;top:6%;transform:translateX(-50%)">${sv('crest',h,{px:30})}</div></div>`:sv(k,d)}</div><span><b>${kn}</b>${lab}</span></div>`).join('')}</div></div>`}).join('')}
+  <div class="uses">${uses.map(([k,d,lab,kn,extra])=>`<div class="use"><div class="pic">${k==='flagS'?`<div style="display:flex;gap:6px;align-items:flex-end">${sv('flag',d,{px:40})}${sv('crest',d,{px:28})}${sv('crest',d,{px:18})}</div>`:extra?`<div style="position:relative;height:100%">${sv(k,d)}<div class="ov">${sv('crest',h,{px:30})}</div></div>`:sv(k,d)}</div><span><b>${kn}</b>${lab}</span></div>`).join('')}</div></div>`}).join('')}
 
 /* ---------------- §4 quality ---------------- */
 function quality(){L('drrow').innerHTML=BT.dr.map(r=>`<img src="${r.u}" alt="">${sv('pennant',rankD(r.k))}`).join('<span style="width:8px"></span>');
