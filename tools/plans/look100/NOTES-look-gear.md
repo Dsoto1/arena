@@ -140,3 +140,30 @@ two-hand partner + bow string + net; `clearance` = weapon points inside posed bo
 - Holds (HOLD4): sword-type forward and low · dagger/knives reverse grip · spear/trident/pilum/jade overhand, point forward (trident + a net in
   the off hand) · mace/axe/charun/flail/severed limbs raised · stones raised to throw · bow drawn (string to the drawing hand) · crossbow
   shouldered, off hand under the stock · labrys two-handed · sling hanging · lyre held + plucked · scissor on the forearm · shields strapped.
+
+## Round 5 — straight wrists + sculpted helmets and cuirasses (r5_*)
+
+Files: r5_wrists.png (round 4 vs round 5, 4 holds × 3 facings, wrist numbers), r5_holds.png (all 25 held weapons, wrist numbers),
+r5_sculpt.png (his art · round 4 · round-5 sculpt in 3 views, triangles, build ms), r5_maxload.png + r5_maxload_sheet.png,
+r5_classes.png + r5_cls_<class>.png, r5_stats.json. Code: r5_sculpt.js (SDF sculpts), page5.js (hold solver + sheets), make5.js;
+game100.js gained align(sd, {tf}) = twist about the forearm only.
+
+Wrists. Each weapon now leaves the fist at a fixed angle θ in the hand's own frame (sword 28° toward the thumb, spear/dagger −90/−100°
+= out of the little-finger side, haft 80°, two-handed trident 25°, bow/lyre 90° in the left hand). From the wanted blade direction the
+solver derives the forearm direction, places the elbow on the shoulder's reach sphere, the wrist one forearm further, and gives the
+two-bone IK that elbow as its pole; only a forearm twist turns the thumb. Clamp: ≤15° flex, ≤10° deviation (strip to twist + re-solve).
+Measured (hand vs neutral, in the hand's frame): round 4 gladius 94°/92°, hasta 47°/33°, axe 70°/50°, knives 70°/75° (flex/dev);
+round 5 every one of the 25 weapons ≤5.5° total, the clamp never fired; the blade lands within 0.1–3.4° of its aim.
+
+Sculpts (SDF → surface nets 2.2 mm helmets / 2.5 mm cuirasses → normal-aware vertex clustering 4.5 / 7.2 mm → AO + wear + palette):
+murmillo 55,268 tris (built 0.69 s), thrachelm 60,032 (0.94 s), crista 55,138 (0.72 s), centurion 32,671 (0.46 s),
+musculata 38,121 (4.1 s), thorax 56,458 (5.4 s); cached per body. Helmets are SOLID (the head fills them: no inner face, no thin-shell
+speckle), brims use an exact slanted-segment SDF (no toon ripples), grilles are real holes over a dark liner. Cuirasses = the body
+field offset 13.5 mm, solid down into the body, skinned from the nearest body vertex. Sheets stay ~28–35 KB WebP per class; a class
+sheet renders in 6.1–7.4 s, full run 142 s.
+
+Short of his minis: muscle relief and lames read weakly through the 4-band toon at board size; the Thracian griffin is a smooth swan
+neck (no feathers/mane detail); no embossed figures (his helmets' engraved crests/medallions); pauldrons are one plate with stepped
+lames, not his riveted scales; metals have no specular highlight/reflection, so steel and silver look matte; the gladius tip touches
+the scutum edge in the front view of the max load; sculpts not yet made for the other helmets/chests (cassis, galea, flavhelm,
+steelhelm, ornate, amazon).

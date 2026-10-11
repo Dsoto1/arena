@@ -731,7 +731,7 @@ function* buildSteps(opts = {}) {
     for (let v = 0; v < nv; v++) { if (grp[v] !== gi) continue; const r = sub([pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]], C0); const along = dot(r, u); if (Math.abs(along) < 0.006) rmax = Math.max(rmax, Math.hypot(...sub(r, mul(u, along)))); }
     return { at: C0, n: u, r: rmax };
   };
-  const kit = { sever, shellFrom, rigid, kill, nAt, P, GI, HO, hs, mats, lin, hexRGB, showAll,
+  const kit = { fd, addOutline, sever, shellFrom, rigid, kill, nAt, P, GI, HO, hs, mats, lin, hexRGB, showAll,
     makeToon: (c, ex) => toonMat(c, mats, ex),
     maskedMat: (ex) => maskedToon(Object.assign({ vertexColors: true, gradientMap: mats.gm, side: THREE.DoubleSide }, ex || {}), 0.0024),
     hitSkin: (from, dir, maxd) => hitSkin(fd, from, dir, maxd), rig, group, setHarness: (on) => showAll(harnessBits, on) };
@@ -821,3 +821,6 @@ function outlineMesh(src, mats, masked) {
     om.onBeforeRender = () => { om.position.copy(src.position); om.quaternion.copy(src.quaternion); om.scale.copy(src.scale); }; }
   return om;
 }
+
+/* look100 round 5: the sculpt tools reuse the field mesher */
+export { surfaceNets as surfaceNets100, sampleF as sampleF100, gradF as gradF100, sdPrim as sdPrim100 };

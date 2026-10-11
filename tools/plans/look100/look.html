@@ -7,8 +7,10 @@ import { createToken } from './game100.js';
 import { murmKit, weaponKit } from './gear100.js';
 import { setBody, FEM_BODY } from './rig100.js';
 import { outfit, outfitCheck, PIECES, LAYER, WEAPONS } from './outfit100.js';
+import * as S5 from './r5_sculpt.js';
 window.THREE = THREE;
+window.S5 = S5;
 window.LOOK = { createToken, murmKit, weaponKit, setBody, FEM_BODY, outfit, outfitCheck, PIECES, LAYER, WEAPONS };
-await import('./page.js'); await import('./page2.js'); await import('./page3.js'); await import('./page4.js');
+await import('./page.js'); await import('./page2.js'); await import('./page3.js'); await import('./page4.js'); await import('./page5.js');
 window.LOOK_READY = true;
 </script></body></html>

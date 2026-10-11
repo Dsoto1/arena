@@ -330,6 +330,10 @@ export async function createToken(opts = {}) {
       const fa = new THREE.Vector3(...JK['w' + sd].pos).sub(new THREE.Vector3(...JK['e' + sd].pos)).normalize().applyQuaternion(qE);
       const od = new THREE.Vector3(...want.o); od.sub(fa.clone().multiplyScalar(od.dot(fa))).normalize(); const o2 = o1.clone().sub(fa.clone().multiplyScalar(o1.dot(fa))).normalize();
       const ang = Math.atan2(new THREE.Vector3().crossVectors(o2, od).dot(fa), o2.dot(od)); q = new THREE.Quaternion().setFromAxisAngle(fa, ang).multiply(qE); }
+    if (want.tf) {   /* round 5: TWIST ONLY about the forearm so the thumb side (hand f) faces tf — the wrist itself stays straight */
+      const fa = new THREE.Vector3(...JK['w' + sd].pos).sub(new THREE.Vector3(...JK['e' + sd].pos)).normalize().applyQuaternion(qE);
+      const td = new THREE.Vector3(...want.tf); td.sub(fa.clone().multiplyScalar(td.dot(fa))).normalize(); const f2 = f1.clone().sub(fa.clone().multiplyScalar(f1.dot(fa))).normalize();
+      const ang = Math.atan2(new THREE.Vector3().crossVectors(f2, td).dot(fa), f2.dot(td)); q = new THREE.Quaternion().setFromAxisAngle(fa, ang).multiply(qE); }
     if (want.f) { const fd = new THREE.Vector3(...want.f).normalize(); q = new THREE.Quaternion().setFromUnitVectors(f1, fd).multiply(qE); }
     rig.bones['w' + sd].quaternion.copy(qE.clone().invert().multiply(q)); rig.bones['w' + sd].updateMatrixWorld(true);
   }

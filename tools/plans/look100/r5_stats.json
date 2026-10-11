@@ -1,0 +1,786 @@
+{
+ "build": 11002,
+ "wrists": {
+  "gladius_r4": {
+   "R": {
+    "flex": -93.8,
+    "dev": -92.3,
+    "total": 92
+   },
+   "L": {
+    "flex": -83.2,
+    "dev": -80.2,
+    "total": 84.4
+   }
+  },
+  "gladius_r5": {
+   "R": {
+    "flex": 3,
+    "dev": 2.3,
+    "total": 3.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 2.4
+  },
+  "hasta_r4": {
+   "R": {
+    "flex": 46.6,
+    "dev": 32.9,
+    "total": 51.1
+   },
+   "L": {
+    "flex": -83.2,
+    "dev": -80.2,
+    "total": 84.4
+   }
+  },
+  "hasta_r5": {
+   "R": {
+    "flex": 5.5,
+    "dev": -0.3,
+    "total": 5.5
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.3
+  },
+  "axe_r4": {
+   "R": {
+    "flex": -70.2,
+    "dev": -50.2,
+    "total": 71.7
+   },
+   "L": {
+    "flex": -83.2,
+    "dev": -80.2,
+    "total": 84.4
+   }
+  },
+  "axe_r5": {
+   "R": {
+    "flex": 4.4,
+    "dev": 1.7,
+    "total": 4.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.7
+  },
+  "knives_r4": {
+   "R": {
+    "flex": -69.5,
+    "dev": -75.1,
+    "total": 77.8
+   },
+   "L": {
+    "flex": -83.2,
+    "dev": -80.2,
+    "total": 84.4
+   }
+  },
+  "knives_r5": {
+   "R": {
+    "flex": 5.3,
+    "dev": 0.6,
+    "total": 5.3
+   },
+   "L": {
+    "flex": 4.9,
+    "dev": 1.2,
+    "total": 5.1
+   },
+   "miss": 0.6
+  }
+ },
+ "wristMs": 6180,
+ "holds": {
+  "gladius": {
+   "hold": "sword",
+   "R": {
+    "flex": 3,
+    "dev": 2.3,
+    "total": 3.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 2.4,
+   "clamped": []
+  },
+  "mace": {
+   "hold": "hafted",
+   "R": {
+    "flex": 4.4,
+    "dev": 1.7,
+    "total": 4.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.7,
+   "clamped": []
+  },
+  "sica": {
+   "hold": "sword",
+   "R": {
+    "flex": 3,
+    "dev": 2.3,
+    "total": 3.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 2.4,
+   "clamped": []
+  },
+  "hasta": {
+   "hold": "spear",
+   "R": {
+    "flex": 5.5,
+    "dev": -0.3,
+    "total": 5.5
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.3,
+   "clamped": []
+  },
+  "stones": {
+   "hold": "throw",
+   "R": {
+    "flex": 5.2,
+    "dev": 0.8,
+    "total": 5.2
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 2.5,
+   "clamped": []
+  },
+  "knives": {
+   "hold": "dagger",
+   "R": {
+    "flex": 5.3,
+    "dev": 0.6,
+    "total": 5.3
+   },
+   "L": {
+    "flex": 4.9,
+    "dev": 1.2,
+    "total": 5.1
+   },
+   "miss": 0.6,
+   "clamped": []
+  },
+  "trident": {
+   "hold": "trident",
+   "R": {
+    "flex": 0,
+    "dev": -0.7,
+    "total": 0.7
+   },
+   "L": {
+    "flex": 2.5,
+    "dev": -3.2,
+    "total": 4.1
+   },
+   "miss": 2.6,
+   "clamped": []
+  },
+  "rudis": {
+   "hold": "sword",
+   "R": {
+    "flex": 3,
+    "dev": 2.3,
+    "total": 3.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 2.4,
+   "clamped": []
+  },
+  "severedArm": {
+   "hold": "hafted",
+   "R": {
+    "flex": 4.4,
+    "dev": 1.7,
+    "total": 4.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.7,
+   "clamped": []
+  },
+  "severedLeg": {
+   "hold": "hafted",
+   "R": {
+    "flex": 4.4,
+    "dev": 1.7,
+    "total": 4.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.7,
+   "clamped": []
+  },
+  "axe": {
+   "hold": "hafted",
+   "R": {
+    "flex": 4.4,
+    "dev": 1.7,
+    "total": 4.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.7,
+   "clamped": []
+  },
+  "falcata": {
+   "hold": "sword",
+   "R": {
+    "flex": 3,
+    "dev": 2.3,
+    "total": 3.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 2.4,
+   "clamped": []
+  },
+  "bow": {
+   "hold": "bow",
+   "R": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "L": {
+    "flex": 5.3,
+    "dev": -1.5,
+    "total": 5.5
+   },
+   "miss": 0.1,
+   "clamped": []
+  },
+  "pugio": {
+   "hold": "dagger",
+   "R": {
+    "flex": 5.3,
+    "dev": 0.6,
+    "total": 5.3
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.6,
+   "clamped": []
+  },
+  "scissor": {
+   "hold": "arm",
+   "R": {
+    "flex": 0.3,
+    "dev": 0.9,
+    "total": 0.9
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 2.5,
+   "clamped": []
+  },
+  "sling": {
+   "hold": "sling",
+   "R": {
+    "flex": 2.6,
+    "dev": -3.2,
+    "total": 4.1
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 3.4,
+   "clamped": []
+  },
+  "arcu": {
+   "hold": "crossbow",
+   "R": {
+    "flex": 0.1,
+    "dev": 0.4,
+    "total": 0.5
+   },
+   "L": {
+    "flex": 4.6,
+    "dev": -2.4,
+    "total": 5.2
+   },
+   "miss": 0.1,
+   "clamped": []
+  },
+  "charun": {
+   "hold": "hafted",
+   "R": {
+    "flex": 4.4,
+    "dev": 1.7,
+    "total": 4.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.7,
+   "clamped": []
+  },
+  "flavgl": {
+   "hold": "sword",
+   "R": {
+    "flex": 3,
+    "dev": 2.3,
+    "total": 3.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 2.4,
+   "clamped": []
+  },
+  "jade": {
+   "hold": "spear",
+   "R": {
+    "flex": 5.5,
+    "dev": -0.3,
+    "total": 5.5
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.3,
+   "clamped": []
+  },
+  "flail": {
+   "hold": "hafted",
+   "R": {
+    "flex": 4.4,
+    "dev": 1.7,
+    "total": 4.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.7,
+   "clamped": []
+  },
+  "pilum": {
+   "hold": "spear",
+   "R": {
+    "flex": 5.5,
+    "dev": -0.3,
+    "total": 5.5
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 0.3,
+   "clamped": []
+  },
+  "labrys": {
+   "hold": "labrys",
+   "R": {
+    "flex": 0,
+    "dev": -0.7,
+    "total": 0.7
+   },
+   "L": {
+    "flex": 1.3,
+    "dev": -2.8,
+    "total": 3.1
+   },
+   "miss": 0.7,
+   "clamped": []
+  },
+  "psykhe": {
+   "hold": "sword",
+   "R": {
+    "flex": 3,
+    "dev": 2.3,
+    "total": 3.8
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "miss": 2.4,
+   "clamped": []
+  },
+  "lyre": {
+   "hold": "lyre",
+   "R": {
+    "flex": 0,
+    "dev": 0,
+    "total": 0
+   },
+   "L": {
+    "flex": 0,
+    "dev": 0.2,
+    "total": 0.2
+   },
+   "miss": 0.4,
+   "clamped": []
+  }
+ },
+ "holdsMs": 8162,
+ "sculpt": {
+  "murmillo": {
+   "wearMs": 714,
+   "tris": 55268,
+   "trisFine": 234856,
+   "verts": 27365,
+   "ms": 706
+  },
+  "thrachelm": {
+   "wearMs": 900,
+   "tris": 60032,
+   "trisFine": 256092,
+   "verts": 29631,
+   "ms": 893
+  },
+  "crista": {
+   "wearMs": 750,
+   "tris": 55138,
+   "trisFine": 224164,
+   "verts": 27420,
+   "ms": 745
+  },
+  "centurion": {
+   "wearMs": 482,
+   "tris": 32671,
+   "trisFine": 149068,
+   "verts": 16143,
+   "ms": 479
+  },
+  "musculata": {
+   "wearMs": 4007,
+   "tris": 38121,
+   "trisFine": 307336,
+   "verts": 18851,
+   "ms": 4005
+  },
+  "thorax": {
+   "wearMs": 6152,
+   "tris": 56458,
+   "trisFine": 431308,
+   "verts": 27742,
+   "ms": 6150
+  }
+ },
+ "max": {
+  "kb": 30.6,
+  "meta": [
+   114,
+   139,
+   57,
+   115.9
+  ],
+  "ms": 8775,
+  "equipMs": 236,
+  "wrist": {
+   "R": {
+    "flex": 3,
+    "dev": 2.3,
+    "total": 3.8
+   },
+   "L": {
+    "flex": 1,
+    "dev": 1.7,
+    "total": 2
+   },
+   "clamped": [],
+   "miss": 2.4
+  }
+ },
+ "classes": {
+  "soldier": {
+   "kb": 28.5,
+   "ms": 5679,
+   "meta": [
+    114,
+    142,
+    57,
+    118.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 3,
+     "dev": 2.3,
+     "total": 3.8
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 2.4
+   }
+  },
+  "royalty": {
+   "kb": 27.7,
+   "ms": 6360,
+   "meta": [
+    84,
+    146,
+    42,
+    122.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 5.3,
+     "dev": 0.6,
+     "total": 5.3
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 0.6
+   }
+  },
+  "hero": {
+   "kb": 29.6,
+   "ms": 6821,
+   "meta": [
+    106,
+    146,
+    53,
+    122.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 3,
+     "dev": 2.3,
+     "total": 3.8
+    },
+    "L": {
+     "flex": 1,
+     "dev": 1.7,
+     "total": 2
+    },
+    "clamped": [],
+    "miss": 2.4
+   }
+  },
+  "slave": {
+   "kb": 34.9,
+   "ms": 5539,
+   "meta": [
+    164,
+    154,
+    82,
+    130.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 0,
+     "dev": -0.7,
+     "total": 0.7
+    },
+    "L": {
+     "flex": 2.5,
+     "dev": -3.2,
+     "total": 4.1
+    },
+    "clamped": [],
+    "miss": 2.6
+   }
+  },
+  "veteranus": {
+   "kb": 29.6,
+   "ms": 6919,
+   "meta": [
+    114,
+    140,
+    57,
+    116.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 3,
+     "dev": 2.3,
+     "total": 3.8
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 2.4
+   }
+  },
+  "amazonia": {
+   "kb": 31.3,
+   "ms": 8001,
+   "meta": [
+    120,
+    154,
+    60,
+    130.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 4.3,
+     "dev": 1.8,
+     "total": 4.7
+    },
+    "L": {
+     "flex": 2.6,
+     "dev": 2.3,
+     "total": 3.5
+    },
+    "clamped": [],
+    "miss": 0.6
+   }
+  },
+  "venatore": {
+   "kb": 30.7,
+   "ms": 5531,
+   "meta": [
+    144,
+    154,
+    72,
+    130.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 5.5,
+     "dev": -0.3,
+     "total": 5.5
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 0.3
+   }
+  },
+  "damnatio": {
+   "kb": 27.7,
+   "ms": 5778,
+   "meta": [
+    84,
+    135,
+    42,
+    111.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 2.6,
+     "dev": -3.2,
+     "total": 4.1
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 3.4
+   }
+  }
+ },
+ "sculptAll": {
+  "murmillo": {
+   "tris": 55268,
+   "trisFine": 234856,
+   "verts": 27365,
+   "ms": 706
+  },
+  "thrachelm": {
+   "tris": 60032,
+   "trisFine": 256092,
+   "verts": 29631,
+   "ms": 893
+  },
+  "crista": {
+   "tris": 55138,
+   "trisFine": 224164,
+   "verts": 27420,
+   "ms": 745
+  },
+  "centurion": {
+   "tris": 32671,
+   "trisFine": 149068,
+   "verts": 16143,
+   "ms": 479
+  },
+  "musculata": {
+   "tris": 38121,
+   "trisFine": 307336,
+   "verts": 18851,
+   "ms": 4005
+  },
+  "thorax": {
+   "tris": 56458,
+   "trisFine": 431308,
+   "verts": 27742,
+   "ms": 6150
+  }
+ },
+ "totalMs": 142186
+}
