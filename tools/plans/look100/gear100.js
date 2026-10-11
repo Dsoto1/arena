@@ -394,23 +394,37 @@ export function weaponKit(B, spec, sink) {
         [at(new THREE.SphereGeometry(0.028, 14, 10).scale(1, 0.8, 1), 0, -0.066, 0), wood ? '#8a6234' : '#3a2a20'], [box(0.084, 0.024, 0.038, 0, 0.058), wood ? '#8a6234' : DARKBR], [box(0.09, 0.008, 0.042, 0, 0.069), BRASS],
         [blade, wood ? '#c79a5a' : '#d3d8dc'], ...(wood ? [] : [[fuller, '#8e979e']])]);
     }
+    /* round 3: the rest of W */
+    if (t === 'stones') return merge([[ball(0.026, 0.0, 0.0, 0.0), '#8a7a66'], [ball(0.022, 0.03, 0.02, 0.0), '#7a6a58'], [ball(0.02, -0.025, 0.03, 0.01), '#958570']]);
+    if (t === 'severedArm' || t === 'severedLeg') { const leg = t === 'severedLeg';
+      return merge([[cyl(leg ? 0.05 : 0.04, leg ? 0.038 : 0.03, leg ? 0.42 : 0.3, leg ? 0.22 : 0.16, 10), '#c08a68'], [at(new THREE.CylinderGeometry(leg ? 0.05 : 0.04, leg ? 0.05 : 0.04, 0.012, 12), 0, leg ? 0.43 : 0.31, 0), '#8e1612'],
+        [at(new THREE.SphereGeometry(leg ? 0.045 : 0.035, 10, 8).scale(leg ? 1 : 0.8, 1, leg ? 2.2 : 1.4), 0, -0.02, leg ? 0.06 : 0.02), leg ? '#6a4a30' : '#c08a68']]); }
+    if (t === 'scissor') return merge([[cyl(0.04, 0.035, 0.22, -0.06, 12), '#6d6a64'], [at(new THREE.TorusGeometry(0.09, 0.014, 6, 20, Math.PI).rotateY(Math.PI / 2), 0, 0.12, 0), '#cfd4d8']]);
+    if (t === 'pilum') return merge([[cyl(0.014, 0.014, 1.3, 0.1, 8), WOOD], [cyl(0.006, 0.006, 0.55, 1.02, 6), '#8f969b'], [at(new THREE.ConeGeometry(0.016, 0.06, 4), 0, 1.32, 0), '#cfd4d8'], [ball(0.022, 0, 0.75, 0), '#6d6a64']]);
+    if (t === 'psykhe') { const bl = plate([[-0.02, 0.06], [0.02, 0.06], [0.026, 0.25], [0.016, 0.45], [0.024, 0.58], [0, 0.7], [-0.024, 0.58], [-0.016, 0.45], [-0.026, 0.25]], 0.008);
+      return merge([[cyl(0.015, 0.015, 0.11, 0, 10), '#20202a'], [box(0.12, 0.022, 0.04, 0, 0.065), '#4a4f7a'], [ball(0.028, 0, -0.07), '#6a72b8'], [bl, '#5d6db8']]); }
+    if (t === 'pugio') return weaponGeo('dagger');
+    if (t === 'hasta') return weaponGeo('spear');
     return weaponGeo(t);
   };
   for (const sd of ['R', 'L']) {
     const t0 = spec[sd]; if (!t0) continue;
-    if (t0 === 'scutum' || t0 === 'thracian') {
+    if (t0 === 'scutum' || t0 === 'thracian' || t0 === 'achilles') {
       /* STRAPPED + HELD: the forearm runs along the back of the board (a strap round it), the fist holds the handle behind the boss;
          board plane = forearm × hand-forward, face = the back of the hand (the pose's grip constraint turns that forward) */
       const b = held(sd, 'bar'), big = t0 === 'scutum', W = big ? 0.66 : 0.46, Hh = big ? 1.02 : 0.62;
       /* round 3 (his elbow bug): the board's long axis follows the FOREARM (elbow → wrist), not the hand, and stands 85 mm off the forearm's
          axis (forearm r ≈ 40 mm + wraps + elbow bulge + strap) — so the elbow and forearm always stay behind it */
       const E0 = P('e' + sd), W0 = P('w' + sd), fa = (() => { const v = [W0[0] - E0[0], W0[1] - E0[1], W0[2] - E0[2]], l = Math.hypot(...v); return v.map(x => x / l); })();
+      const sub3v = (a, c) => [a[0] - c[0], a[1] - c[1], a[2] - c[2]];
       const dotv = (a, c) => a[0] * c[0] + a[1] * c[1] + a[2] * c[2], nrmv = (v) => { const l = Math.hypot(...v); return v.map(x => x / l); };
       const on = nrmv(b.o3.map((v, i) => v - fa[i] * dotv(b.o3, fa))), hd2 = nrmv([on[1] * fa[2] - on[2] * fa[1], on[2] * fa[0] - on[0] * fa[2], on[0] * fa[1] - on[1] * fa[0]]);
-      const OFF = big ? 0.085 : 0.075, ctr = [0, 1, 2].map(i => W0[i] - fa[i] * (big ? 0.06 : 0.03) + on[i] * OFF);
+      const OFF = big ? 0.085 : 0.075, ctr = [0, 1, 2].map(i => b.c[i] - fa[i] * dotv(sub3v(b.c, W0), fa) + on[i] * (OFF - dotv(sub3v(b.c, W0), on)));   /* centred on the fist (boss over the hand) */
       let q = basisQ(fa, hd2); { const zz = new THREE.Vector3(0, 0, 1).applyQuaternion(q); if (zz.dot(new THREE.Vector3(...on)) < 0) q = basisQ(fa.map(v => -v), hd2); }
-      const geo = boardGeo(W, Hh, big ? 0.07 : 0.05, big ? 0.6 : 0.5, 0.026);
-      const m = rig_(geo, [toon('#ffffff', { map: big ? scutumTex() : thracianTex() }), toon('#6e4a2c')], 'w' + sd, ctr, q);
+      const ach = t0 === 'achilles';
+      const geo = ach ? (() => { const g = new THREE.CylinderGeometry(0.34, 0.34, 0.03, 40, 1, false); g.rotateX(Math.PI / 2); g.clearGroups(); const n = g.index.count; g.addGroup(0, n, 0); return g; })() : boardGeo(W, Hh, big ? 0.07 : 0.05, big ? 0.6 : 0.5, 0.026);
+      const achTex = () => canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#b8862e'; g.fillRect(0, 0, w, h); for (let r = 120; r > 10; r -= 22) { g.strokeStyle = r % 44 ? '#f0cf6a' : '#7a4e18'; g.lineWidth = 7; g.beginPath(); g.arc(w / 2, h / 2, r, 0, 7); g.stroke(); } });
+      const m = rig_(geo, ach ? toon('#ffffff', { map: achTex() }) : [toon('#ffffff', { map: big ? scutumTex() : thracianTex() }), toon('#6e4a2c')], 'w' + sd, ctr, q);
       const boss = new THREE.SphereGeometry(big ? 0.065 : 0.05, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2); boss.rotateX(Math.PI / 2);
       const bp = [0, 1, 2].map(i => b.c[i] + on[i] * (OFF + 0.012)); const bm = rig_(boss, toon(GOLD2), 'w' + sd, bp, q);
       /* the handle in the fist + two brackets back to the board, the forearm strap riveted to it */

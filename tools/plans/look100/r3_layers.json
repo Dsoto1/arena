@@ -1,0 +1,237 @@
+{
+ "galea": {
+  "seg": "head",
+  "layer": "helm",
+  "helm": "galea",
+  "col": "#8b8d8c",
+  "offsetMm": "rigid"
+ },
+ "cassis": {
+  "seg": "head",
+  "layer": "helm",
+  "helm": "horned",
+  "col": "#b0813a",
+  "offsetMm": "rigid"
+ },
+ "crista": {
+  "seg": "head",
+  "layer": "helm",
+  "helm": "crested",
+  "col": "#d6ab4c",
+  "offsetMm": "rigid"
+ },
+ "murmillo": {
+  "seg": "head",
+  "layer": "helm",
+  "helm": "murm",
+  "offsetMm": "rigid"
+ },
+ "helm5": {
+  "seg": "head",
+  "layer": "helm",
+  "helm": "secutor",
+  "col": "#5f6873",
+  "offsetMm": "rigid"
+ },
+ "flavhelm": {
+  "seg": "head",
+  "layer": "helm",
+  "helm": "crested",
+  "col": "#d6ab4c",
+  "offsetMm": "rigid"
+ },
+ "centurion": {
+  "seg": "head",
+  "layer": "helm",
+  "helm": "centurion",
+  "col": "#d6ab4c",
+  "offsetMm": "rigid"
+ },
+ "steelhelm": {
+  "seg": "head",
+  "layer": "helm",
+  "helm": "galea",
+  "col": "#aab1b7",
+  "offsetMm": "rigid"
+ },
+ "thrachelm": {
+  "seg": "head",
+  "layer": "helm",
+  "helm": "thraex",
+  "col": "#b0813a",
+  "offsetMm": "rigid"
+ },
+ "pectorale": {
+  "seg": "torso",
+  "layer": "plate",
+  "shape": "pect",
+  "col": "#b0813a",
+  "offsetMm": 12.5
+ },
+ "lorica": {
+  "seg": "torso",
+  "layer": "mail",
+  "shape": "cuirass",
+  "pat": "scale",
+  "col": "#9ea5aa",
+  "offsetMm": 9.2
+ },
+ "musculata": {
+  "seg": "torso",
+  "layer": "plate",
+  "shape": "cuirass",
+  "pat": "muscle",
+  "col": "#b0813a",
+  "offsetMm": 12.5
+ },
+ "amazon": {
+  "seg": "torso",
+  "layer": "plate",
+  "shape": "cuirass",
+  "pat": "straps",
+  "col": "#d6ab4c",
+  "offsetMm": 12.5
+ },
+ "flavchest": {
+  "seg": "torso",
+  "layer": "plate",
+  "shape": "cuirass",
+  "pat": "muscle",
+  "col": "#e2b955",
+  "offsetMm": 12.5
+ },
+ "thorax": {
+  "seg": "torso",
+  "layer": "plate",
+  "shape": "high",
+  "pat": "plates",
+  "col": "#6f6a64",
+  "pauldron": 1,
+  "offsetMm": 12.5
+ },
+ "ornate": {
+  "seg": "torso",
+  "layer": "plate",
+  "shape": "high",
+  "pat": "medal",
+  "col": "#d6ab4c",
+  "offsetMm": 12.5
+ },
+ "balteus": {
+  "seg": "belt",
+  "layer": "belt",
+  "style": "ornate",
+  "offsetMm": 19
+ },
+ "balteus1": {
+  "seg": "belt",
+  "layer": "belt",
+  "style": "ring",
+  "col": "#7a4a2a",
+  "offsetMm": 19
+ },
+ "wraps": {
+  "seg": "armL",
+  "layer": "pad",
+  "pat": "pad",
+  "col": "#d9cfb6",
+  "offsetMm": 6.2
+ },
+ "bracers": {
+  "seg": "armL",
+  "layer": "plate",
+  "pat": "plate",
+  "col": "#d6ab4c",
+  "offsetMm": 12.5
+ },
+ "manica": {
+  "seg": "armU",
+  "layer": "plate",
+  "pat": "lames",
+  "col": "#b0813a",
+  "flare": 1,
+  "offsetMm": 12.5
+ },
+ "provmanica": {
+  "seg": "armU",
+  "layer": "plate",
+  "pat": "lames",
+  "col": "#c3c8cc",
+  "flare": 1,
+  "offsetMm": 12.5
+ },
+ "galerus": {
+  "seg": "armU",
+  "layer": "plate",
+  "pat": "lames",
+  "col": "#7d8288",
+  "flare": 2,
+  "offsetMm": 12.5
+ },
+ "cestus": {
+  "seg": "hand",
+  "layer": "pad",
+  "col": "#7a4a2a",
+  "offsetMm": 6.2
+ },
+ "legwrapsU": {
+  "seg": "legU",
+  "layer": "plate",
+  "pat": "strips",
+  "col": "#8a5a34",
+  "offsetMm": 12.5
+ },
+ "femoralia": {
+  "seg": "legU",
+  "layer": "plate",
+  "pat": "lames",
+  "col": "#6e6b5c",
+  "offsetMm": 12.5
+ },
+ "thighplate": {
+  "seg": "legU",
+  "layer": "plate",
+  "pat": "lames",
+  "col": "#d6ab4c",
+  "offsetMm": 12.5
+ },
+ "legwraps": {
+  "seg": "legL",
+  "layer": "pad",
+  "pat": "pad",
+  "col": "#d9cfb6",
+  "offsetMm": 6.2
+ },
+ "ocrea": {
+  "seg": "legL",
+  "layer": "plate",
+  "front": 1,
+  "knee": 1,
+  "col": "#e2b955",
+  "offsetMm": 12.5
+ },
+ "greaves": {
+  "seg": "legL",
+  "layer": "plate",
+  "front": 1,
+  "knee": 1,
+  "pat": "engr",
+  "col": "#d6ab4c",
+  "offsetMm": 12.5
+ },
+ "cnemis": {
+  "seg": "legL",
+  "layer": "plate",
+  "front": 1,
+  "knee": 1,
+  "col": "#c3c8cc",
+  "offsetMm": 12.5
+ },
+ "lgreaves": {
+  "seg": "legL",
+  "layer": "plate",
+  "front": 1,
+  "col": "#6a4428",
+  "offsetMm": 12.5
+ }
+}

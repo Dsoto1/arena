@@ -6,8 +6,9 @@ import * as THREE from 'three';
 import { createToken } from './game100.js';
 import { murmKit, weaponKit } from './gear100.js';
 import { setBody, FEM_BODY } from './rig100.js';
+import { outfit, outfitCheck, PIECES, LAYER, WEAPONS } from './outfit100.js';
 window.THREE = THREE;
-window.LOOK = { createToken, murmKit, weaponKit, setBody, FEM_BODY };
-await import('./page.js'); await import('./page2.js');
+window.LOOK = { createToken, murmKit, weaponKit, setBody, FEM_BODY, outfit, outfitCheck, PIECES, LAYER, WEAPONS };
+await import('./page.js'); await import('./page2.js'); await import('./page3.js');
 window.LOOK_READY = true;
 </script></body></html>

@@ -1,0 +1,79 @@
+{
+ "buildFace2": 10773,
+ "vertsFace2": 271475,
+ "shield": {
+  "kb": 30.4,
+  "meta": [
+   114,
+   138,
+   57,
+   114.9
+  ]
+ },
+ "maxRefused": [
+  [
+   "legwrapsUL",
+   "equip point taken by thighplate"
+  ],
+  [
+   "pectorale",
+   "equip point taken by thorax"
+  ],
+  [
+   "manicaR",
+   "equip point taken by provmanica"
+  ]
+ ],
+ "maxBuildMs": 284,
+ "max": {
+  "kb": 30,
+  "meta": [
+   114,
+   138,
+   57,
+   114.9
+  ],
+  "ms": 7978,
+  "px": [
+   912,
+   138
+  ]
+ },
+ "contact": {
+  "pieces": 32,
+  "weapons": 28,
+  "missingA": [],
+  "missingW": [
+   "chariotCard"
+  ],
+  "ms": 36672,
+  "perCellMs": 611
+ },
+ "faces": [
+  {
+   "lab": "male · before",
+   "verts": 109246,
+   "buildMs": 3417,
+   "kb": 27.3
+  },
+  {
+   "lab": "male · after",
+   "verts": 271475,
+   "buildMs": 10773,
+   "kb": 27.2
+  },
+  {
+   "lab": "female · before",
+   "verts": 107285,
+   "buildMs": 3412,
+   "kb": 27.9
+  },
+  {
+   "lab": "female · after",
+   "verts": 243862,
+   "buildMs": 9360,
+   "kb": 27.8
+  }
+ ],
+ "totalMs": 127670
+}

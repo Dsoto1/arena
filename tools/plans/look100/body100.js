@@ -187,7 +187,7 @@ export function sculpt(opt = {}) {
     for (const sx of [1, -1]) {
       add_(C(h(sx * 0.052, 0.066, -0.016), h(sx * F(0.030, 0.024), F(0.016, 0.022), 0.052), F(0.016, 0.012) * hs, F(0.015, 0.011) * hs, Hd(0.014)));   /* jaw: an angle under the ear */
       add_(E(h(sx * 0.045, F(0.095, 0.098), 0.060), [0.020 * hs, 0.012 * hs, 0.018 * hs], Hd(0.008)));                                  /* cheekbone */
-      add_(C(h(sx * 0.044, 0.121, 0.079), h(sx * 0.006, 0.123, 0.092), F(0.0098, 0.0075) * hs, F(0.0085, 0.0068) * hs, Hd(0.009)));       /* brow ledge */
+      add_(C(h(sx * 0.044, 0.121, 0.079), h(sx * 0.006, 0.123, 0.092), F(0.0092, 0.0072) * hs, F(0.008, 0.0065) * hs, Hd(0.015)));       /* brow ledge (blended into the brow) */
       add_(E(h(sx * 0.031, 0.101, 0.093), [0.0138 * hs, 0.0085 * hs, 0.0075 * hs], Hd(0.008, 'sub')));                                    /* eye socket (shallow) */
       add_(E(h(sx * 0.031, 0.101, 0.081), [F(0.0128, 0.0134) * hs, F(0.0072, 0.008) * hs, 0.0085 * hs], Hd(0.004)));                   /* the eye: flush, painted */
       add_(S(h(sx * F(0.0105, 0.0095), 0.071, F(0.103, 0.102)), F(0.0068, 0.0058) * hs, Hd(0.004)));                                    /* nostril wing */
@@ -196,8 +196,8 @@ export function sculpt(opt = {}) {
     }
     add_(C(h(0, 0.118, 0.093), h(0, 0.079, F(0.113, 0.110)), F(0.0066, 0.0055) * hs, F(0.0095, 0.008) * hs, Hd(0.005)));               /* nose bridge → tip (a wedge) */
     add_(S(h(0, 0.076, F(0.110, 0.107)), F(0.0078, 0.0066) * hs, Hd(0.005)));                                                          /* nose tip */
-    add_(E(h(0, 0.047, 0.086), F([0.016, 0.004, 0.0035], [0.0155, 0.0052, 0.0048]).map(v => v * hs), Hd(0.01)));                       /* upper lip */
-    add_(E(h(0, 0.034, 0.084), F([0.013, 0.0045, 0.0035], [0.013, 0.0058, 0.005]).map(v => v * hs), Hd(0.01)));                     /* lower lip */
+    add_(E(h(0, 0.047, 0.086), F([0.016, 0.0038, 0.0026], [0.0155, 0.005, 0.0036]).map(v => v * hs), Hd(0.012)));                       /* upper lip */
+    add_(E(h(0, 0.034, 0.082), F([0.013, 0.0042, 0.0026], [0.013, 0.0054, 0.0038]).map(v => v * hs), Hd(0.012)));                     /* lower lip */
     add_(E(h(0, 0.0405, 0.0955), [0.018 * hs, 0.0012 * hs, 0.008 * hs], Hd(0.001, 'sub')));                                           /* mouth line */
   }
 
@@ -481,11 +481,11 @@ function* buildSteps(opts = {}) {
       if (o.face2 && Math.abs(p[0]) < 0.0165 * hs && Math.abs(ly - 0.0405 * hs) < 0.0015 * hs && p[2] > 0.085 * hs + HO[2]) { c = L.brow; vk[i] = 3; }   /* the mouth line */
     }
     /* crease ink: how much the skin is hemmed in just above it */
-    const e = grp[i] === GI.H ? (fdH ? 0.004 : 0.0065) : 0.011; const fdk = grp[i] === GI.H && fdH ? fdH : fd; const f = sampleF(fdk, p[0] + n[0] * e, p[1] + n[1] * e, p[2] + n[2] * e) / e;
+    const e = grp[i] === GI.H ? 0.0065 : 0.011; const fdk = grp[i] === GI.H && fdH ? fdH : fd; const f = sampleF(fdk, p[0] + n[0] * e, p[1] + n[1] * e, p[2] + n[2] * e) / e;
     let k = Math.max(0, Math.min(1, (0.62 - f) / 0.3));
     /* no crease ink where a shoulder meets the torso: raising the arm would stretch it into a blot */
     let wS = 0, wT = 0; for (let q = 0; q < 4; q++) { const b = skinI[i * 4 + q], w = skinW[i * 4 + q]; if (b === bi.sL || b === bi.sR) wS += w; if (b === bi.ch || b === bi.sp) wT += w; }
-    if (grp[i] === GI.H) k = Math.max(0, (k - 0.2) / 0.8);   /* the face keeps only its tight creases (no grey smudge) */
+    if (grp[i] === GI.H) k = Math.max(0, (k - (o.face2 ? 0.42 : 0.2)) / (o.face2 ? 0.58 : 0.8));   /* the face keeps only its tight creases (no grey smudge) */
     ink[i] = (wS > 0.04 && wT > 0.04) || (grp[i] !== GI.T && wT > 0.04 && (grp[i] === GI.AL || grp[i] === GI.AR)) ? k * 0.2 : k;
     col.set(c, i * 3);
   }
