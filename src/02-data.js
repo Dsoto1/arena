@@ -1808,7 +1808,7 @@ const MANDATA = [{
 }, {
   n: 'Underground',
   d: _T('Find the nearest tunnel and enter. Once underground, reveal this card.'),
-  r: _T('All players above ground are stoned for 2 damage'),
+  r: _T('All players above ground are stoned for 2 damage to a rolled location'),
   test: player => player.underground,
   img: 11,
   reward: async player => {
