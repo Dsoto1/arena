@@ -1,0 +1,118 @@
+{
+ "beasts": {
+  "leo": {
+   "key": "leo",
+   "meta": [
+    242,
+    173,
+    121,
+    121,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 161081,
+   "sculptMs": 59706,
+   "renderMs": 101152,
+   "tris": 34928,
+   "verts": 17393,
+   "h": 0.5,
+   "kb": 486.4,
+   "decodedMB": 29.39,
+   "idleWalkMB": 12.78,
+   "frames": 23,
+   "pxmm": 1.588888888888889,
+   "sc": 1.4949999999999999,
+   "out": {
+    "single": {
+     "meta": [
+      242,
+      173,
+      121,
+      121,
+      23
+     ],
+     "decodedMB": 29.39,
+     "idleWalkMB": 12.78
+    },
+    "split": true,
+    "idlewalk": {
+     "meta": [
+      152,
+      118,
+      76,
+      83,
+      10
+     ],
+     "rows": [
+      "idle0",
+      "idle1",
+      "idle2",
+      "idle3",
+      "walk0",
+      "walk1",
+      "walk2",
+      "walk3",
+      "walk4",
+      "walk5"
+     ],
+     "kb": 182.2,
+     "decodedMB": 5.47
+    },
+    "actions": {
+     "meta": [
+      242,
+      172,
+      121,
+      120,
+      13
+     ],
+     "rows": [
+      "attack0",
+      "attack1",
+      "attack2",
+      "attack3",
+      "attack4",
+      "hit0",
+      "hit1",
+      "hit2",
+      "die0",
+      "die1",
+      "die2",
+      "die3",
+      "die4"
+     ],
+     "kb": 240.2,
+     "decodedMB": 16.51
+    },
+    "kb": 422.4,
+    "decodedMB": 21.99,
+    "idleWalkMB": 5.47
+   }
+  }
+ },
+ "diag": {}
+}
