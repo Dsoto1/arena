@@ -1,156 +1,137 @@
 {
- "roma|before": {
-  "cached": 3.6,
-  "rebuild": 36.9,
-  "under": 6.7,
-  "top": 23.2,
-  "texMs": 0
+ "note": "ms, headless Chromium software canvas; cached = one draw() with every layer baked; rebuild = one draw() after AR91.ver++ (under/deco/top/light re-baked)",
+ "desktop1440": {
+  "texBuildMs": {
+   "trav": 31.2,
+   "sand": 43.7,
+   "marble": 41.2
+  },
+  "before": {
+   "cachedMs": 4.1,
+   "rebuildMs": 50.5,
+   "underBakeMs": 13.6,
+   "topBakeMs": 28.5
+  },
+  "bronze": {
+   "cachedMs": 5.1,
+   "rebuildMs": 67.1,
+   "underBakeMs": 22.4,
+   "topBakeMs": 32.8
+  },
+  "balus": {
+   "cachedMs": 4.5,
+   "rebuildMs": 70,
+   "underBakeMs": 16.8,
+   "topBakeMs": 26.6
+  },
+  "parapet": {
+   "cachedMs": 4.3,
+   "rebuildMs": 63.7,
+   "underBakeMs": 23.8,
+   "topBakeMs": 28.6
+  },
+  "trav": {
+   "cachedMs": 3.6,
+   "rebuildMs": 54,
+   "underBakeMs": 16.4,
+   "topBakeMs": 25.1
+  },
+  "sand": {
+   "cachedMs": 3.4,
+   "rebuildMs": 61,
+   "underBakeMs": 26.5,
+   "topBakeMs": 39.4
+  },
+  "marble": {
+   "cachedMs": 3.4,
+   "rebuildMs": 53.7,
+   "underBakeMs": 17.5,
+   "topBakeMs": 24.4
+  },
+  "trav+bronze": {
+   "cachedMs": 4.3,
+   "rebuildMs": 52.3,
+   "underBakeMs": 16.8,
+   "topBakeMs": 23.4
+  },
+  "sand+balus": {
+   "cachedMs": 4.2,
+   "rebuildMs": 49.2,
+   "underBakeMs": 17,
+   "topBakeMs": 23.6
+  },
+  "marble+parapet": {
+   "cachedMs": 4,
+   "rebuildMs": 68.2,
+   "underBakeMs": 27.2,
+   "topBakeMs": 36.4
+  }
  },
- "rail|bronze": {
-  "cached": 5.7,
-  "rebuild": 56.7,
-  "under": 19.6,
-  "top": 24.2,
-  "texMs": 0
- },
- "rail|balus": {
-  "cached": 3.6,
-  "rebuild": 51,
-  "under": 26.1,
-  "top": 30,
-  "texMs": 0
- },
- "rail|parapet": {
-  "cached": 4,
-  "rebuild": 55.8,
-  "under": 15.8,
-  "top": 23.4,
-  "texMs": 0
- },
- "roma|trav": {
-  "cached": 4.3,
-  "rebuild": 54.7,
-  "under": 27.1,
-  "top": 26.3,
-  "texMs": 21.5
- },
- "roma|sand": {
-  "cached": 3.7,
-  "rebuild": 52.6,
-  "under": 16.6,
-  "top": 22.7,
-  "texMs": 59.4
- },
- "roma|marble": {
-  "cached": 3.6,
-  "rebuild": 46.9,
-  "under": 11.4,
-  "top": 29.6,
-  "texMs": 95.9
- },
- "combo|trav+bronze": {
-  "cached": 4,
-  "rebuild": 62.5,
-  "under": 18.8,
-  "top": 23.4,
-  "texMs": 95.9
- },
- "combo|sand+balus": {
-  "cached": 3.9,
-  "rebuild": 57.7,
-  "under": 31,
-  "top": 36.5,
-  "texMs": 95.9
- },
- "combo|marble+parapet": {
-  "cached": 3.9,
-  "rebuild": 54,
-  "under": 14.7,
-  "top": 28.6,
-  "texMs": 95.9
- },
- "capua|before": {
-  "cached": 3.5,
-  "rebuild": 55.9,
-  "under": 14.4,
-  "top": 23.2,
-  "texMs": 97.2
- },
- "capua|trav": {
-  "cached": 4.4,
-  "rebuild": 58.1,
-  "under": 16.1,
-  "top": 31,
-  "texMs": 98.5
- },
- "capua|sand": {
-  "cached": 3.8,
-  "rebuild": 46.8,
-  "under": 15.3,
-  "top": 23.2,
-  "texMs": 100
- },
- "capua|marble": {
-  "cached": 3.3,
-  "rebuild": 46.3,
-  "under": 16.8,
-  "top": 22.6,
-  "texMs": 100
- },
- "leptis|before": {
-  "cached": 3.4,
-  "rebuild": 48.5,
-  "under": 17,
-  "top": 28.6,
-  "texMs": 101.2
- },
- "leptis|trav": {
-  "cached": 3.7,
-  "rebuild": 51.3,
-  "under": 23.4,
-  "top": 37.3,
-  "texMs": 102.4
- },
- "leptis|sand": {
-  "cached": 3.6,
-  "rebuild": 46.2,
-  "under": 59.4,
-  "top": 80,
-  "texMs": 103.5
- },
- "leptis|marble": {
-  "cached": 3,
-  "rebuild": 49.1,
-  "under": 16.2,
-  "top": 21.9,
-  "texMs": 103.5
- },
- "phone|trav+bronze": {
-  "cached": 37.2,
-  "rebuild": 199.1,
-  "under": 46.1,
-  "top": 91.4,
-  "texMs": 22.6
- },
- "phone|sand+balus": {
-  "cached": 34.3,
-  "rebuild": 184.3,
-  "under": 46.4,
-  "top": 99.8,
-  "texMs": 59.6
- },
- "phone|marble+parapet": {
-  "cached": 30.3,
-  "rebuild": 158.1,
-  "under": 49.5,
-  "top": 103.7,
-  "texMs": 98.5
- },
- "phoneBefore": {
-  "cached": 29,
-  "rebuild": 163.8,
-  "under": 45.2,
-  "top": 96.8,
-  "texMs": 98.5
+ "phone844x390dpr2": {
+  "texBuildMs": {
+   "trav": 36.1,
+   "sand": 38.4,
+   "marble": 22.3
+  },
+  "before": {
+   "cachedMs": 30.8,
+   "rebuildMs": 192.5,
+   "underBakeMs": 41.6,
+   "topBakeMs": 145.3
+  },
+  "bronze": {
+   "cachedMs": 25.4,
+   "rebuildMs": 172.3,
+   "underBakeMs": 39.1,
+   "topBakeMs": 94.1
+  },
+  "balus": {
+   "cachedMs": 27.6,
+   "rebuildMs": 196.3,
+   "underBakeMs": 55.8,
+   "topBakeMs": 98
+  },
+  "parapet": {
+   "cachedMs": 32.5,
+   "rebuildMs": 201.1,
+   "underBakeMs": 54.2,
+   "topBakeMs": 103.1
+  },
+  "trav": {
+   "cachedMs": 36.9,
+   "rebuildMs": 195.1,
+   "underBakeMs": 51.5,
+   "topBakeMs": 152.5
+  },
+  "sand": {
+   "cachedMs": 29.1,
+   "rebuildMs": 191.8,
+   "underBakeMs": 67.4,
+   "topBakeMs": 132.6
+  },
+  "marble": {
+   "cachedMs": 26.8,
+   "rebuildMs": 182.7,
+   "underBakeMs": 53.1,
+   "topBakeMs": 119.4
+  },
+  "trav+bronze": {
+   "cachedMs": 33,
+   "rebuildMs": 203.3,
+   "underBakeMs": 49.7,
+   "topBakeMs": 124.2
+  },
+  "sand+balus": {
+   "cachedMs": 25.5,
+   "rebuildMs": 172.3,
+   "underBakeMs": 44.7,
+   "topBakeMs": 87.8
+  },
+  "marble+parapet": {
+   "cachedMs": 28.5,
+   "rebuildMs": 190.4,
+   "underBakeMs": 76.3,
+   "topBakeMs": 107.1
+  }
  }
 }

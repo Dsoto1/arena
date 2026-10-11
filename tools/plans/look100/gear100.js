@@ -421,6 +421,8 @@ export function weaponKit(B, spec, sink) {
       const on = nrmv(b.o3.map((v, i) => v - fa[i] * dotv(b.o3, fa))), hd2 = nrmv([on[1] * fa[2] - on[2] * fa[1], on[2] * fa[0] - on[0] * fa[2], on[0] * fa[1] - on[1] * fa[0]]);
       const OFF = big ? 0.085 : 0.075, ctr = [0, 1, 2].map(i => b.c[i] + on[i] * (OFF - dotv(sub3v(b.c, W0), on)));   /* centred on the fist (boss over the hand) */
       let q = basisQ(fa, hd2); { const zz = new THREE.Vector3(0, 0, 1).applyQuaternion(q); if (zz.dot(new THREE.Vector3(...on)) < 0) q = basisQ(fa.map(v => -v), hd2); }
+      /* look100 round 8 (spec.up8): the board's LONG edge (its y) along the forearm, upright when the forearm is; texture right way up */
+      if (spec.up8) { const yv = fa.map(v => -v); q = basisQ(hd2, yv); const zz = new THREE.Vector3(0, 0, 1).applyQuaternion(q); if (zz.dot(new THREE.Vector3(...on)) < 0) q = basisQ(hd2.map(v => -v), yv); }
       const ach = t0 === 'achilles';
       const geo = ach ? (() => { const g = new THREE.CylinderGeometry(0.34, 0.34, 0.03, 40, 1, false); g.rotateX(Math.PI / 2); g.clearGroups(); const n = g.index.count; g.addGroup(0, n, 0); return g; })() : boardGeo(W, Hh, big ? 0.07 : 0.05, big ? 0.6 : 0.5, 0.026);
       const achTex = () => canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#b8862e'; g.fillRect(0, 0, w, h); for (let r = 120; r > 10; r -= 22) { g.strokeStyle = r % 44 ? '#f0cf6a' : '#7a4e18'; g.lineWidth = 7; g.beginPath(); g.arc(w / 2, h / 2, r, 0, 7); g.stroke(); } });
