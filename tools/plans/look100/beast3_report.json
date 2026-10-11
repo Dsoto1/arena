@@ -112,6 +112,119 @@
     "decodedMB": 21.99,
     "idleWalkMB": 5.47
    }
+  },
+  "leaena": {
+   "key": "leaena",
+   "meta": [
+    156,
+    120,
+    78,
+    84,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 108634,
+   "sculptMs": 28142,
+   "renderMs": 80208,
+   "tris": 20792,
+   "verts": 10391,
+   "h": 0.5,
+   "kb": 383.3,
+   "decodedMB": 13.14,
+   "idleWalkMB": 5.71,
+   "frames": 23,
+   "pxmm": 1.588888888888889,
+   "sc": 1.4949999999999999,
+   "out": {
+    "single": {
+     "meta": [
+      156,
+      120,
+      78,
+      84,
+      23
+     ],
+     "decodedMB": 13.14,
+     "idleWalkMB": 5.71
+    },
+    "split": true,
+    "idlewalk": {
+     "meta": [
+      144,
+      106,
+      72,
+      71,
+      10
+     ],
+     "rows": [
+      "idle0",
+      "idle1",
+      "idle2",
+      "idle3",
+      "walk0",
+      "walk1",
+      "walk2",
+      "walk3",
+      "walk4",
+      "walk5"
+     ],
+     "kb": 136.7,
+     "decodedMB": 4.66
+    },
+    "actions": {
+     "meta": [
+      156,
+      119,
+      78,
+      83,
+      13
+     ],
+     "rows": [
+      "attack0",
+      "attack1",
+      "attack2",
+      "attack3",
+      "attack4",
+      "hit0",
+      "hit1",
+      "hit2",
+      "die0",
+      "die1",
+      "die2",
+      "die3",
+      "die4"
+     ],
+     "kb": 171.7,
+     "decodedMB": 7.36
+    },
+    "kb": 308.4,
+    "decodedMB": 12.02,
+    "idleWalkMB": 4.66
+   }
   }
  },
  "diag": {}
