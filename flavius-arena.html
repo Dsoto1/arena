@@ -58841,17 +58841,24 @@ if(typeof set98General==='function'){const base=set98General;set98General=functi
    (parma100: a round shield in the house banner's colours with its emblem, cached). A final mgrHTML wrapper re-homes: the banner element is
    swapped, the tab's new view goes into #mgrPane, and the tab's OLD content stays underneath (folded where the new view covers it) so every
    existing handler / data attribute keeps working (the scouting card, ⚔ Challenge, team screens, billing, the glass case, the Imperium layers).
+   v1.0 (his 1c, 2026-10-11): NO FOLDS any more — what was useful in the old content moved INTO the new views (below), with the old handlers / data-
+   attributes / ids intact (cm_set/cm_undo + #cm_<abs>, iv_open/iv_withdraw, arcpap/arcopen/arcback, data-hubview, data-lg90ch, data-mg="team" …).
    1 NEWS = "The Forum Wall": the latest Acta Diurna pinned on top (Darwinius · Rabble-rousers (284 w.rab100 via P.rabble) · Victors, 📜 Read
        it = data-mg="paper"), then a wall of programmata tiles 3 across from w.news + this week's world events — face / house parma / emblem,
-       tag Ours · Rival · Arena · Empire, its effect; filter chips (WD100.nf). Every notice + the Ludus Archives = the fold below.
+       tag Ours · Rival · Arena · Empire, its effect; filter chips (WD100.nf). Every notice of the old list is on the wall (Show all N notices, the four filters cover them), the Ludus Archives
+       (archiveHTML: editions, season recaps) sit under it.
    2 LEAGUE = "The Standings": the 231 podium (lp96Podium, Superbus cup) in the banner, the next-prize bar (185 lp90Next), rows: place,
        parma, house + lanista, Points (284's), a 5-dot form strip (the house's last five weeks), top gladiator face + grade, W-L, rivalry
        flames; a row selects the house (MGR.lg90) → FIXED RIGHT COLUMN house card (scutum, lanista, top three, 🔍 Scouting card = 185's lg90HTML,
-       ⚔ Challenge = 185's [data-lg90ch] (w.chal76), 🏛 Team screen). The old standings + ledger table = the fold.
+       ⚔ Challenge = 185's [data-lg90ch] (w.chal76), 🏛 Team screen). The old full ledger's per-house facts (roster, fame, treasury, morale, rivals, heat toward
+       you, all-time record, bets, personality, latest event, prize now) = the "Ledger" section of the house card (wd100Ledger); prizes on a row's hover.
    3 IMPERIUM: the empire map (assets/map.jpg) with a pin per city at MAP_PX (this week's host, home, closed, event/weather badges, fans glow)
        and the WORLD EVENTS column (severity, crowd effect); a pin opens the city card beside it (arena stone AR91MAT, stalls CITY94/SPEC94,
        temple, recruits CITY_CLS99, news, your fans, next games with the card art). 🏛 Walk the square only when citySquareGate allows it
-       (the existing data-ct="square" entry); no "Plan a trip" (his call). The old layered map + spectators = the fold (#standsHubBody).
+       (the existing data-ct="square" entry); no "Plan a trip" (his call). The old map's layers (fans & roads, weather, world events, war map) = four toggle
+       chips on the new map (WD100.lay; wd100LayerSVG runs 18-world's own drawing with them, cut down to the layers); the old map is gone in the Manager
+       (the Stands window keeps it). The rest of the old window (empire strip, city file, roster, family ties) = "The city file" under the map in
+       #standsHubBody.wd100file (a standsHubHTML wrapper keeps it on crowd refreshes).
    4 TROPHIES = "The Tituli": bronze plaques with the trophies' own art (trophySVG — never emoji), catalogue order, earned ones lit, locked =
        dark silhouette + a progress bar where it can be measured; filter Manager · Play Now (Store hallTrophies) · Online (ONL82.dg.trophies when
        this session loaded the Domus). tituli100Plaque() is the reusable plaque. The glass case (22 trophyRoomHTML) stays under it.
@@ -58859,15 +58866,17 @@ if(typeof set98General==='function'){const base=set98General;set98General=functi
        DARK tablets on the light parchment (his note: more contrast) and the current week in a gold frame with "THIS WEEK" (scrolled into view
        when the tab opens); switcher This season · Next · The one after (seasonSchedule; TBA for what is not decided). The LISTS (Your Acta,
        Still to come, the later seasons' fixtures) are dark ink on near-white striped rows (AA ≥ 4.5 incl. small text), the current week's row
-       highlighted. Billing + invitations + the old table = the fold.
+       highlighted. Billing (early billing rows, upcoming weeks) + Invitations (one-line rows, Answer ▸ = 231's
+       fighter popup) + the Superbus note sit under the lists as "Billing" / "Invitations"; a finished week's Acta results card = one line in Your Acta.
+   TROPHIES: season-award plaques show NO tally before week 12 ("awarded at season's end"); the banner shows ONLY earned trophies (wd100TroBest: cups
+       first, other awards, then the laughs; ties = most recent): none = 4 empty plinths + "Your first honour awaits", all = a laurel ring "ALL n".
    Phones (≤600): one column, 3-across tablets, the Manager rail is already a bottom pill row (99). Display only: no world data changes.
-   Kill switch localStorage flavius_world100off=1 → today's tabs. Fold open state per tab: localStorage flavius_world100fold. Test tv100w2.
+   Kill switch localStorage flavius_world100off=1 → today's tabs. Test tv100w2.
    ===================================================================== */
-const WD100={tabs:['news','league','imp','trophy','sched'],nf:'all',mf:'all',tf:'mgr',sea:0,city:null,scout:false,hall:null,hallBusy:false,last:null,
+const WD100={tabs:['news','league','imp','trophy','sched'],nf:'all',nmore:false,lay:{fans:1,weather:1,events:1,war:0},tf:'mgr',sea:0,city:null,scout:false,hall:null,hallBusy:false,last:null,
   off:(()=>{try{return localStorage.getItem('flavius_world100off')==='1'}catch(e){return false}})()};
 const wd100On=()=>{if(WD100.off)return false;try{const w=W_();return !!(w&&!w.dead&&!MGR.view&&me())}catch(e){return false}};
 const wd100Asset=f=>typeof assetURL==='function'?assetURL(f):'assets/'+f;
-const wd100Fold=(()=>{let o={};try{o=JSON.parse(localStorage.getItem('flavius_world100fold')||'{}')||{}}catch(e){}return o})();
 const wd100Key=w=>`m:${w.id}:${w.season}:${w.week}`;
 const wd100Wk=w=>((w.week-1)%12)+1;
 const WD100_ENT={'&quot;':'"','&#39;':"'",'&amp;':'&','&lt;':'<','&gt;':'>','&nbsp;':' '};
@@ -58922,14 +58931,24 @@ function wd100Grade(g,m){if(!g)return gch100('?');const mine=m&&m.isPlayer;const
 const flames100=v=>{const n=(v||0)>=60?3:(v||0)>=35?2:(v||0)>=15?1:0;return n?`<span class="wd100riv" title="${esc(rivalTier(v))}">${WD100I.flame.repeat(n)}</span>`:''};
 const plq100=(t,small)=>`<div class="wd100plq"><b>${t}</b><span class="sp"></span>${small?`<small>${small}</small>`:''}</div>`;
 const seg100=(attr,cur,opts)=>`<div class="wd100seg" role="group">${opts.map(([k,l])=>`<button type="button" ${attr}="${k}" class="${cur===k?'on':''}" aria-pressed="${cur===k}">${l}</button>`).join('')}</div>`;
-/* the fold that keeps the tab's old content (every handler intact) */
-function fold100(k,label,html){if(!html||!wd100Strip(html).length&&html.indexOf('<')<0)return '';return `<details class="wd100fold" data-wd100fold="${k}"${wd100Fold[k]?' open':''}><summary>${label}</summary><div class="wd100old">${html}</div></details>`}
+/* a dark panel for content moved in from the old tabs (archives, glass case, the city file) — their own handlers keep working */
+const dark100=(cls,html)=>html?`<div class="wd100dk ${cls||''}">${html}</div>`:'';
 
 /* ---------- the banner ---------- */
+/* the banner shows ONLY earned trophies: Flavian / Superbus / Aureus / Colossus cups first, then the other awards, then "for the laughs"; ties = the most recent */
+const TRO100_TOP=['flavian_cup','palm_roma','aureus','colossus'];
+function wd100TroBest(w){const lib=new Set(TROPHY_LIB.map(d=>d.id));const own=new Map();(w.trophies||[]).forEach((t,i)=>{if(!t||!t.tid||!lib.has(t.tid))return;const k=(t.season||0)*1000+i;if(!own.has(t.tid)||k>own.get(t.tid))own.set(t.tid,k)});
+  const rank=id=>{const i=TRO100_TOP.indexOf(id);if(i>=0)return [0,i];const d=trophyDef(id);return [d&&d.cat==='fun'?2:1,0]};
+  return [...own.entries()].sort((a,b)=>{const ra=rank(a[0]),rb=rank(b[0]);return ra[0]-rb[0]||ra[1]-rb[1]||b[1]-a[1]}).map(x=>x[0])}
+/* a gold laurel ring round the count when every trophy is earned */
+function wd100AllRing(n){const L=[];for(let i=0;i<10;i++){const t=.22+i*.28;for(const sx of [-1,1]){const x=60+sx*50*Math.sin(t),y=34+29*Math.cos(t);const ang=Math.atan2(-29*Math.sin(t),sx*50*Math.cos(t))*57.3;
+      L.push(`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="7" ry="3" transform="rotate(${ang.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="url(#w1lg)" stroke="#6a4a14" stroke-width=".5"/>`)}}
+  return `<span class="wd100all" title="${esc(_T`Every trophy earned`)}"><svg viewBox="0 0 120 68" aria-hidden="true"><defs><linearGradient id="w1lg" x1="0" x2="1"><stop offset="0" stop-color="#ffeaa8"/><stop offset="1" stop-color="#b0843a"/></linearGradient></defs><path d="M60 63v4" stroke="#b0843a" stroke-width="2"/>${L.join('')}</svg><b>${_T`ALL ${n}`}</b></span>`}
 function wd100Pic(k){try{
   if(k==='imp')return `<div class="pic" style="background-image:url('${wd100Asset('map.jpg')}');background-position:center 32%"></div>`;
-  if(k==='trophy'){const ids=['tiro','horn','darling','iron_sandal'];const w=W_();const won=(w.trophies||[]).map(t=>t.tid).filter(Boolean);const show=[...new Set([...won,...ids])].slice(0,4);
-    return `<div class="pic" style="background-image:url('${wd100Asset('stone_wall.webp')}')"></div><div class="wd100tro">${show.map(id=>{const d=trophyDef(id);return d?trophySVG(d,70):''}).join('')}</div>`}
+  if(k==='trophy'){const show=wd100TroBest(W_()).slice(0,4);const pic=`<div class="pic" style="background-image:url('${wd100Asset('stone_wall.webp')}')"></div>`;
+    if(!show.length)return pic+`<div class="wd100tro none">${[0,1,2,3].map(()=>'<div class="wd100pl"><span class="gh"></span><i></i></div>').join('')}<div class="wd100first">${_T('Your first honour awaits')}</div></div>`;
+    return pic+`<div class="wd100tro">${show.map(id=>{const d=trophyDef(id);return d?`<div class="wd100pl" title="${esc(d.name)}"><span class="tr">${trophySVG(d,64)}</span><i></i></div>`:''}).join('')}</div>`}
   if(k==='news'&&typeof SCENE99==='function')return `<div class="pic">${SCENE99('promote','banner')}</div>`;
   if(k==='sched'){const w=W_();const L=w.night&&LOCATIONS[w.night.loc];const u=L&&typeof C90T!=='undefined'?C90T[L.n]:'';if(u)return `<div class="pic" style="background-image:url(${u});background-position:center 40%"></div>`}
   return `<div class="pic">${typeof roomScene73==='function'?roomScene73(k==='league'?'night':k):''}</div>`}catch(e){console.error(e);return '<div class="pic"></div>'}}
@@ -58944,7 +58963,7 @@ function wd100Banner(k){const w=W_(),pm=me();const wk=wd100Wk(w);const L=w.night
     else if(k==='league'){const Ls=leagueSort(w.mgrs);rt=`<div class="wd100pod">${lp96Podium(Ls,Ls.length,Ls.indexOf(pm)+1)}</div>`}
     else if(k==='imp'){const key=wd100Key(w);const cl=LOCATIONS.map((x,i)=>i).filter(i=>LOCATIONS[i]&&worldImpact(i,key).closed).length;
       rt=`${L?`<span class="wd100bc"><b>${esc(L.n)}</b><small>${_T`hosts week ${wk}`}</small></span>`:''}${cl?`<span class="wd100bc"><b>${cl}</b><small>${cl===1?_T('arena closed'):_T('arenas closed')}</small></span>`:''}`}
-    else if(k==='trophy'){const T2=tit100Mgr();rt=`<span class="wd100bc"><b>${T2.filter(x=>x.won).length} / ${T2.length}</b><small>${_T('earned')}</small></span>`}
+    else if(k==='trophy'){const T2=tit100Mgr();const nw=T2.filter(x=>x.won).length;rt=nw===T2.length&&nw>0?wd100AllRing(nw):`<span class="wd100bc"><b>${nw} / ${T2.length}</b><small>${_T('earned')}</small></span>`}
     else if(k==='sched'){const f=fixtureFor(w.season,wk);rt=`<span class="wd100bc"><b>${_T`Week ${wk}`}</b><small>${esc(L?L.n:'')} · ${esc((EVENTS[f.ev]||{}).n||'')}</small></span>`}}catch(e){console.error(e)}
   return `<div class="roomhd b73 b73-${k} wd100ban">${wd100Pic(k)}<div class="wd100shade"></div>
     <div class="roomttl wd100tt"><span class="wd100ico">${WD100I[k]}</span><div><div class="kick">${T[0]}</div><h2>${T[1]}</h2><div class="sub">${T[2]}</div></div></div>
@@ -58970,28 +58989,49 @@ function wd100Acta(w){const P=w.lastPaper;if(!P)return `<div class="wd100acta"><
   return `<div class="wd100acta"><span class="pin l"></span><span class="pin r"></span><h3>${_T`ACTA DIURNA`}</h3>
     <div class="dt">${esc(P.locN||'')} · ${_T`SEASON ${P.season} · WEEK ${ROMAN[((P.wk-1)%12)+1]||P.wk}`} <button type="button" class="wd100pbtn" data-mg="paper">${_T`📜 Read it`}</button></div>
     <div class="cols"><div><h4>${_T`THE DARWINIUS AWARDS`}</h4>${darw}</div><div><h4>${_T`THE RABBLE-ROUSERS`}</h4>${rab}</div><div><h4>${_T`THE VICTORS`}</h4>${vics}</div></div></div>`}
-function wd100NewsView(old){const w=W_(),pm=me();const G=wd100Glads();const wk=wd100Wk(w);const seen=new Set();const items=[];
+function wd100NewsView(){const w=W_(),pm=me();const G=wd100Glads();const wk=wd100Wk(w);const seen=new Set();const items=[];
   const ns=[...(w.news||[])].map((n,i)=>({n,i})).sort((a,b)=>((b.n.s||0)-(a.n.s||0))||((b.n.wk||0)-(a.n.wk||0))||(a.i-b.i));
-  for(const {n} of ns){const t=wd100Strip(n.text);if(!t||seen.has(t))continue;seen.add(t);const o=wd100Classify(n.text,w,pm,G);o.wk=n.wk;o.s=n.s;o.isNew=n.s===w.season&&n.wk===wk;items.push(o);if(items.length>=40)break}
+  /* every notice of the old list (w.news keeps 90): one tile each; only an identical line in the same week is folded */
+  for(const {n} of ns){const t=wd100Strip(n.text);const k=t+'|'+n.s+'|'+n.wk;if(!t||seen.has(k))continue;seen.add(k);const o=wd100Classify(n.text,w,pm,G);o.wk=n.wk;o.s=n.s;o.bad=/\bbad\b/.test(n.cls||'');o.isNew=n.s===w.season&&n.wk===wk;items.push(o);if(items.length>=90)break}
   /* this week's world events as Empire notices */
   try{const evs=[...worldEvents(wd100Key(w))].sort((a,b)=>b.sev-a.sev);const ev2=evs.filter((e,i)=>evs.findIndex(x=>x.n===e.n&&x.city===e.city)===i).slice(0,3);
     for(const e of ev2){const att=Math.round(e.att*100);items.push({t:'e',h:e.n,sb:`${e.city}${e.war?' · '+e.war.rome+' vs '+e.war.foe:''}`,em:e.t,wk,s2:1,isNew:e.age===0,city:e.city,fx:`<span class="${att<0?'loss':'gain'}">${_T('crowd')} ${att>0?'+':''}${att}%</span>`})}}catch(e){}
-  const F=WD100.nf;const show=items.filter(o=>F==='all'||(F==='h'&&o.t==='h')||(F==='r'&&o.t==='r')||(F==='a'&&o.t==='a')||(F==='e'&&o.t==='e')).slice(0,12);
+  const F=WD100.nf;const flt=items.filter(o=>F==='all'||(F==='h'&&o.t==='h')||(F==='r'&&o.t==='r')||(F==='a'&&o.t==='a')||(F==='e'&&o.t==='e'));const show=WD100.nmore?flt:flt.slice(0,12);
   const TT={h:_T('Ours'),r:_T('Rival'),a:_T('Arena'),e:_T('Empire')};
   const tile=o=>{const em=o.g?`<span class="em">${gArt(o.g,'xs')}</span>`:o.m?`<span class="em par">${parma100(o.m,44)}</span>`:o.t==='h'?`<span class="em par">${parma100(pm,44)}</span>`:`<span class="em sym">${WD100I[o.em]||(o.t==='e'?WD100I.politics:WD100I.news)}</span>`;
     const where=o.city||(o.wk?_T`wk ${o.wk}`:'');
-    return `<div class="wd100pn${o.isNew?' new':''}" data-wd100t="${o.t}">${em}<b>${esc(o.h)}</b><span class="sb">${esc(o.sb||'')}</span><div class="ft"><span class="wd100tag t${o.t}">${TT[o.t]}</span><span class="wh">${esc(where)}</span>${o.fx||''}</div></div>`};
+    return `<div class="wd100pn${o.isNew?' new':''}${o.bad?' bad':''}" data-wd100t="${o.t}">${em}<b>${esc(o.h)}</b><span class="sb">${esc(o.sb||'')}</span><div class="ft"><span class="wd100tag t${o.t}">${TT[o.t]}</span><span class="wh">${esc(where)}</span>${o.fx||''}</div></div>`};
   const nNew=items.filter(o=>o.isNew).length;
   return `<div class="wd100tools">${seg100('data-wd100nf',F,[['all',_T('All')],['h',_T('Your house')],['r',_T('Rivals')],['a',_T('Arena')],['e',_T('Empire')]])}<span class="sp"></span><small>${_T`${nNew} new this week`}</small></div>
     ${wd100Acta(w)}
     <div class="wd100wall">${show.length?show.map(tile).join(''):`<p class="wd100empty">${_T('Nothing posted here yet.')}</p>`}</div>
-    ${fold100('news',_T('📜 Every notice · the Ludus Archives'),old)}`}
+    ${flt.length>12?`<div class="wd100more"><button type="button" class="wd100pbtn" data-wd100nm="1" aria-expanded="${!!WD100.nmore}">${WD100.nmore?_T('Show fewer'):_T`Show all ${flt.length} notices`}</button></div>`:''}
+    ${plq100(_T('The Ludus Archives'),_T('every back issue of the Acta and every season recap'))}${dark100('wd100arc',typeof archiveHTML==='function'?archiveHTML():'')}`}
 
 /* ================= 2 · LEAGUE: the Standings ================= */
 /* the house's last five weeks: w = a win that week, l = fought without a win (bye / no bout = grey) */
 function form100(m){const w=W_();const by=new Map();for(const g of rosterOf(m))for(const x of g.recent||[]){if(x.s!==w.season)continue;const k=x.wk;by.set(k,(by.get(k)||'l')==='w'||x.won?'w':'l')}
   const wk=wd100Wk(w);const out=[];for(let k=Math.max(1,wk-5);k<wk;k++)out.push(by.get(k)||'d');if(by.has(wk))out.push(by.get(wk));while(out.length<5)out.unshift('n');
   const tip={w:_T('Won'),l:_T('Lost'),d:_T('No bout'),n:''};return `<span class="wd100form">${out.slice(-5).map(c=>`<i class="${c}"${tip[c]?` title="${tip[c]}"`:''}></i>`).join('')}</span>`}
+/* the old full ledger's facts for ONE house (fame, treasury, morale, rivals, heat toward you, roster, record, bets, personality, latest event) */
+function wd100Rivals(R){const meId=me().id;const heat={...(R.rivals||{})};if(!R.isPlayer&&(R.rivalry||0)>(heat[meId]||0))heat[meId]=R.rivalry||0;
+  return Object.entries(heat).filter(([id,v])=>v>=15&&id!==R.id&&mgrById(id)).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id,v])=>({m:mgrById(id),v}))}
+function wd100Ledger(R,pos,n){const ros=rosterOf(R).sort((a,b)=>effOvr(b)-effOvr(a));const mo=ros.length?Math.round(ros.reduce((a,g)=>a+g.morale,0)/ros.length):null;const rv=R.rivalry||0;
+  const riv=wd100Rivals(R);const kv=(l,v,tip)=>`<div class="kv${l===_T('Rivals')?' rivs':''}"${tip?` title="${esc(tip)}"`:''}><span>${l}</span><span>${v}</span></div>`;
+  const pers=MGR_KEYS.map(([k,l])=>[l,R.p&&R.p[k]||0]).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([l,v])=>`${esc(l)} ${v}`).join(', ');
+  const meter=(v,col)=>`<span class="mt"><i style="width:${v}%;${col?'background:'+col:''}"></i></span><small>${v}</small>`;
+  return `<div class="wd100led" data-wd100led="${R.id}"><div class="sqh">${_T('Ledger')}</div>
+    ${kv(_T('Roster'),`${rosterRating(R)||'—'} <small>${_T`${ros.length} fighters`}</small>`,ros.map(g=>`${g.name} ${'★'.repeat(starsOf(pubOvr(g)))}`).join(', '))}
+    ${kv(_T('Fame'),`${R.fame||0} <small>${esc(mgrTier(R.fame||0))}</small>`)}
+    ${kv(_T('Treasury'),coinAmt87(R.coin||0))}
+    ${kv(_T('Morale'),mo==null?'—':meter(mo))}
+    ${R.isPlayer?'':kv(_T('Toward you'),`${meter(rv,rv>=60?'#d24a3a':rv>=35?'#d97a3a':'')}<small class="${rv>=35?'hot':''}">${esc(rivalTier(rv))}</small>`,_T('How this lanista feels about YOUR ludus'))}
+    ${kv(_T('Rivals'),riv.length?riv.map(x=>`<span class="rvl"><i style="background:${esc(x.m.color)}"></i>${esc(x.m.ludus)} <small class="${x.v>=35?'hot':''}">${esc(rivalTier(x.v))}</small></span>`).join(''):'—')}
+    ${kv(_T('All-time'),`${R.wins||0}-${Math.max(0,(R.bouts||0)-(R.wins||0))}`,_T('All-time record'))}
+    ${kv(_T('Bets'),`${(R.betNet||0)>=0?'+':''}${R.betNet||0}`)}
+    ${kv(_T('Personality'),`${pers}${R.poached?' · '+_T`poached ${R.poached}`:''}`)}
+    ${kv(_T('Latest event'),typeof lp96Latest==='function'?lp96Latest(R):'—')}
+    ${kv(_T('Prize now'),esc(typeof lp96Tip==='function'?lp96Tip(pos,n):''))}</div>`}
 function wd100HouseCard(R){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);const pos=Ls.indexOf(R)+1;const sp=msp(R);const mine=R.isPlayer;
   const ros=rosterOf(R).sort((a,b)=>effOvr(b)-effOvr(a));const top=ros.slice(0,3);
   const tr=MGR_KEYS.map(([k,l])=>[l,R.p&&R.p[k]||0]).sort((a,b)=>b[1]-a[1]).slice(0,2);
@@ -59003,15 +59043,16 @@ function wd100HouseCard(R){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);cons
       <div class="lan">${typeof mgrPortrait==='function'?`<span class="wd100fc lg">${mgrPortrait(R,'xs')}</span>`:''}<div><div class="ln2"><b>${esc(R.name)}</b></div><div class="ln2">${_T('Lanista')}${mine?' · '+_T('you'):''}</div></div></div></div></div>
     ${!mine&&heat>=15?`<div class="heat">${flames100(heat)} <b>${esc(rivalTier(heat))}</b> · ${_T('toward you')}</div>`:''}
     <div class="sq"><div class="sqh">${_T('Top gladiators')}</div>${top.length?top.map(g=>`<div class="gr">${face100(g)}<span><b>${esc(g.name)}</b> · ${CLASSES[g.cls]?esc(CLASSES[g.cls].name):''} · ${(g.rec&&g.rec.w)||0}-${Math.max(0,((g.rec&&g.rec.ev)||0)-((g.rec&&g.rec.w)||0))}</span>${wd100Grade(g,R)}</div>`).join(''):`<div class="gr"><span class="rc-sub">${_T('No fighters under contract.')}</span></div>`}</div>
+    ${wd100Ledger(R,pos,Ls.length)}
     <div class="btns">${mine?`<button type="button" class="b1" data-mg="tab" data-id="me">${_T('👤 Lanista page')}</button><button type="button" class="b1" data-mg="tab" data-id="roster">${_T('🛡 Roster')}</button>`
       :`<button type="button" class="b1${WD100.scout?' on':''}" data-wd100sc="1" aria-expanded="${WD100.scout}">${_T('🔍 Scout')}<span class="cst">${_T('fighters, form, this week')}</span></button><button type="button" class="b2" data-lg90ch="${R.id}"${why?' disabled':''} title="${esc(why||'')}">${set?_T('⚔ Challenge set'):_T('⚔ Challenge')}<span class="cst">${why&&!set?esc(why):_T('this week · purse ×2')}</span></button>
         <button type="button" class="b1 wide" data-mg="team" data-id="${R.id}">${_T('🏛 Team screen')}</button>`}</div>
     ${!mine&&WD100.scout&&typeof lg90HTML==='function'?`<div class="lg90row wd100scout">${lg90HTML(R)}</div>`:''}</div>`}
-function wd100LeagueView(old){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);const wk=wd100Wk(w);
+function wd100LeagueView(){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);const wk=wd100Wk(w);
   let sel=MGR.lg90&&mgrById(MGR.lg90);if(!sel)sel=pm;
   const N=typeof lp90Next==='function'?lp90Next():null;
   const rows=Ls.map((m,i)=>{const sp=msp(m);const g=rosterOf(m).sort((a,b)=>effOvr(b)-effOvr(a))[0];
-    return `<div class="wd100r${m.isPlayer?' me':''}${m===sel?' sel':''}" data-wd100h="${m.id}" role="button" tabindex="0" aria-pressed="${m===sel}">
+    return `<div class="wd100r${m.isPlayer?' me':''}${m===sel?' sel':''}${i<4?' top4':''}" data-wd100h="${m.id}" role="button" tabindex="0" aria-pressed="${m===sel}" title="${esc(typeof lp96Tip==='function'?lp96Tip(i+1,Ls.length):'')}">
       <span class="pl">${i+1}</span>${parma100(m,28)}<span class="hn"><b>${esc(m.ludus)}</b><small>${esc(m.name)}</small>${m.isPlayer?'':`<span class="rv">${flames100(m.rivalry)}</span>`}</span>
       <span class="pts">${sp.pts}</span>${form100(m)}<span class="tg c-tg">${g?face100(g):''}<span>${g?esc(g.name):'—'}</span>${g?wd100Grade(g,m):''}</span>
       <span class="rec c-rec">${sp.w}-${Math.max(0,sp.b-sp.w)}</span><span class="c-riv">${m.isPlayer?'':flames100(m.rivalry)}</span><span class="chev">›</span></div>`}).join('');
@@ -59019,8 +59060,7 @@ function wd100LeagueView(old){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);c
     <div class="wd100lg"><div class="wd100lgt">${plq100(_T`Season ${w.season} · week ${wk}`,_T`${Ls.length} houses`)}
       <div class="wd100rh"><span>#</span><span></span><span>${_T('House')}</span><span class="n" title="${esc(typeof LP100_TIP==='function'?LP100_TIP():'')}">${_T('Pts')}</span><span>${_T('Form')}</span><span class="c-tg">${_T('Top gladiator')}</span><span class="c-rec n">${_T('W-L')}</span><span class="c-riv">${_T('Rivalry')}</span><span></span></div>
       <div class="wd100rows">${rows}</div></div>
-    <div class="wd100side">${wd100HouseCard(sel)}</div></div>
-    ${fold100('league',_T('📜 The full ledger — prizes, fame, treasury, morale, rivals'),old)}`}
+    <div class="wd100side">${wd100HouseCard(sel)}</div></div>`}
 
 /* ================= 3 · IMPERIUM ================= */
 function wd100Fans(){const pm=me();const names=new Set(rosterOf(pm).map(g=>String(g.name).toLowerCase()));const out={};if(typeof CROWD_CACHE==='undefined')return out;
@@ -59047,24 +59087,40 @@ function wd100CityCard(li){const w=W_(),pm=me();const L=LOCATIONS[li];if(!L)retu
     ${nx?`<div class="nx"><span class="ec">${cardHTML('e:'+nx.f.ev,'sm')||''}</span><div><b>${_T('Next')}: ${esc((EVENTS[nx.f.ev]||{}).n||nx.f.ev)}</b><small>${_T`Season ${nx.s} · week ${nx.k}`} · ${esc(empireDate(nx.s,nx.k).short)}</small></div></div>`:''}
     ${gate?'':`<div class="ft2"><button type="button" class="wd100pbtn gold" data-ct="square" data-li="${li}">${_T('🏛 Walk the square')}</button></div>`}</div>`}
 const WD100_NMO={Puteoli:'translate(-34px,-30px)',Pompeii:'translate(30px,0)',Capua:'translate(26px,-20px)'};
-function wd100ImpView(old){const w=W_(),pm=me();const key=wd100Key(w);const wk=wd100Wk(w);const host=w.night&&LOCATIONS[w.night.loc];const MF=WD100.mf;
+/* the old layered map's layers (fans & roads, weather, war) painted over the new map: 18-world's own drawing, run with this view's switches and cut down to the layers */
+function wd100LayerSVG(key,focus){const L=WD100.lay;const HL=HUB.layers,HF=HUB.focus;let svg='';
+  try{HUB.layers={fans:L.fans?1:0,weather:L.weather?1:0,events:0,war:L.war?1:0};HUB.focus=focus;svg=imperiumMapSVG(key)}catch(e){console.error(e)}finally{HUB.layers=HL;HUB.focus=HF}
+  const a=svg.indexOf('<image'),b=svg.indexOf('<g class="city"');if(a<0||b<0)return '';const c=svg.indexOf('/>',a)+2;let inner=svg.slice(c,b);
+  const pm=svg.indexOf('<g class="pg84mks">'),pe=svg.lastIndexOf('</svg>');if(pm>=0&&pe>pm)inner+=svg.slice(pm,pe); /* 140's painted-programmata discs ride on the map too */
+  return inner?`<svg class="wd100lay" viewBox="0 0 ${MAPW} ${MAPH}" preserveAspectRatio="none" aria-hidden="true">${inner}</svg>`:''}
+/* the old Imperium window's other content (empire strip, the city file, spectator roster, family ties) — one dark panel under the map, same handlers */
+/* which city the map's layers + the city file follow: a selected pin, else the old Imperium focus (HUB.focus), else this week's host */
+const wd100Focus=()=>WD100.city!=null?WD100.city:(HUB.focus!=null?HUB.focus:(W_().night?W_().night.loc:null));
+function wd100FileHTML(){const key=worldKey();const HF=HUB.focus;let h='';
+  try{HUB.focus=wd100Focus();const F=hubFocus();const nReg=CROWD_CACHE.filter(r=>!r.recruited).length;const vt=(k,l)=>`<button type="button" data-hubview="${k}" class="${HUB.view===k?'on':''}">${l}</button>`;
+    h=`${typeof empireStripHTML==='function'?empireStripHTML():''}<div class="seg" style="margin:6px 0">${vt('city','🏙 '+esc(LOCATIONS[F]?LOCATIONS[F].n:_T('City')))}${vt('roster',_T`👥 Spectator roster · ${nReg}`)}</div>
+      ${HUB.view==='roster'&&typeof standsRosterViewHTML==='function'?standsRosterViewHTML():cityTileHTML(key)}${typeof familyTiesHTML==='function'?familyTiesHTML():''}`}
+  catch(e){console.error(e)}finally{HUB.focus=HF}return h}
+/* the Stands window refreshes #standsHubBody on crowd actions: while the Manager's file is the first one, keep it */
+{const base=standsHubHTML;standsHubHTML=function(){try{const el=document.querySelector('#standsHubBody');if(el&&el.classList.contains('wd100file')&&wd100On())return wd100FileHTML()}catch(e){}return base.apply(this,arguments)}}
+function wd100ImpView(){const w=W_(),pm=me();const key=wd100Key(w);const wk=wd100Wk(w);const host=w.night&&LOCATIONS[w.night.loc];const LY=WD100.lay;
   const evs=worldEvents(key);const fans=wd100Fans();
   const pins=LOCATIONS.map((L,i)=>{if(!L)return '';const [x,y]=MAP_PX(L.x,L.y);const imp=worldImpact(i,key);const isH=w.night&&w.night.loc===i;const e=evs.find(v=>v.li===i);
     const wx=typeof weatherAt==='function'?weatherAt(i,key):null;const b=[];
-    if(e&&(MF==='all'||(MF==='war'&&e.t==='military')))b.push(WD100I[e.t]||WD100I.politics);if(wx&&(MF==='all'||MF==='weather'))b.push(WD100I[wx.t]||WD100I.sun);
-    const f=fans[L.n]||0;const glow=f&&(MF==='all'||MF==='fans')?`<span class="warm" style="width:${Math.min(120,30+f*1.6)}px;height:${Math.min(120,30+f*1.6)}px"></span>`:'';
+    if(e&&(LY.events||(LY.war&&e.t==='military')))b.push(WD100I[e.t]||WD100I.politics);if(wx&&LY.weather)b.push(WD100I[wx.t]||WD100I.sun);
+    const f=fans[L.n]||0;const glow=f&&LY.fans?`<span class="warm" style="width:${Math.min(120,30+f*1.6)}px;height:${Math.min(120,30+f*1.6)}px"></span>`:'';
     return `<button type="button" class="wd100pin${isH?' host':''}${L.n===pm.city?' mine':''}${imp.closed?' closed':''}${WD100.city===i?' on':''}" style="left:${(x/MAPW*100).toFixed(2)}%;top:${(y/MAPH*100).toFixed(2)}%" data-wd100c="${i}" aria-label="${esc(L.n)}">${glow}<span class="dot">${b[0]?`<span class="badg">${b[0]}</span>`:''}${b[1]?`<span class="badg b2">${b[1]}</span>`:''}</span><span class="nm" style="${WD100_NMO[L.n]?'transform:'+WD100_NMO[L.n]:''}">${esc(L.n)}</span></button>`}).join('');
   const SEV=s=>`<span class="sev">${[1,2,3].map(k=>`<i class="${k<=s?'on':''}"></i>`).join('')}</span>`;
-  const list=[...evs].sort((a,b)=>(b.sev*10+Math.abs(b.att)*100)-(a.sev*10+Math.abs(a.att)*100)).filter((e,i,a)=>a.findIndex(x=>x.n===e.n&&x.city===e.city)===i).slice(0,8)
-    .map(e=>{const att=Math.round(e.att*100);return `<div class="wd100wev" style="--c:${esc(e.c)}" data-wd100c="${e.li}" role="button" tabindex="0"><span class="em">${WD100I[e.t]||WD100I.politics}</span><b>${esc(e.n)}</b><span class="sb">${esc(e.city)}${e.war?_T` · ${esc(e.war.rome)} vs ${esc(e.war.foe)}`:''}</span><div class="ft">${SEV(e.sev)}<span>${esc(e.tag||'')}</span><span class="${att<0?'neg':'pos'}">${_T('crowd')} ${att>0?'+':''}${att}%</span></div></div>`}).join('');
+  const list=[...evs].sort((a,b)=>(b.sev*10+Math.abs(b.att)*100)-(a.sev*10+Math.abs(a.att)*100)).filter((e,i,a)=>a.findIndex(x=>x.n===e.n&&x.city===e.city)===i).slice(0,10)
+    .map(e=>{const att=Math.round(e.att*100);return `<div class="wd100wev" title="${esc(`${e.n} — ${e.city} · ${_T('severity')} ${e.sev} · ${_T('crowd')} ${att>0?'+':''}${att}% · ${_T('mood')} ${e.mood>=0?'+':''}${e.mood}`)}" style="--c:${esc(e.c)}" data-wd100c="${e.li}" role="button" tabindex="0"><span class="em">${WD100I[e.t]||WD100I.politics}</span><b>${esc(e.n)}</b><span class="sb">${esc(e.city)}${e.war?_T` · ${esc(e.war.rome)} vs ${esc(e.war.foe)}`:''}</span><div class="ft">${SEV(e.sev)}<span>${esc(e.tag||'')}</span><span class="${att<0?'neg':'pos'}">${_T('crowd')} ${att>0?'+':''}${att}%</span></div></div>`}).join('');
   const city=WD100.city!=null&&LOCATIONS[WD100.city]?wd100CityCard(WD100.city):'';
   return `<div class="wd100imp"><div class="wd100mapcol">${plq100(_T`The Empire · week ${ROMAN[wk]||wk}`,host?`${_T('host')}: ${esc(host.n)} · ${esc((EVENTS[w.night.ev]||{}).n||'')}`:'')}
-      <div class="wd100map"><div class="mp" style="background-image:url('${wd100Asset('map.jpg')}')"></div><div class="lay2">${pins}${city}</div>
+      <div class="wd100map"><div class="mp" style="background-image:url('${wd100Asset('map.jpg')}')"></div>${wd100LayerSVG(key,wd100Focus())}<div class="lay2">${pins}${city}</div>
       <div class="leg"><span><i class="lh"></i>${_T('This week')}</span><span><i class="lm"></i>${_T('Home')}</span><span><i class="lc"></i>${_T('Closed')}</span><span><i class="lf"></i>${_T('Your fans')}</span></div>
-      <div class="mtools">${seg100('data-wd100mf',MF,[['all',_T('All')],['fans',_T('Fans')],['war',_T('War')],['weather',_T('Weather')]])}</div></div>
+      <div class="mtools" role="group" aria-label="${_T('Map layers')}">${[['fans',_T('Fans & roads')],['weather',_T('Weather')],['events',_T('World events')],['war',_T('War map')]].map(([k,l])=>`<button type="button" class="wd100chip${LY[k]?' on':''}" data-wd100lay="${k}" aria-pressed="${!!LY[k]}">${l}</button>`).join('')}</div></div>
       ${city?`<div class="wd100ccph">${city}</div>`:''}</div>
     <div class="wd100evcol">${plq100(_T('World events'),String(evs.length))}<div class="wd100wevs">${list||`<p class="wd100empty">${_T('A quiet week across the empire.')}</p>`}</div></div></div>
-    ${fold100('imp',_T('🗺 Roads, weather layers, family ties & the stands'),old)}`}
+    ${plq100(_T`The city file`,_T('who lives there, the arena’s record, local heroes, family ties'))}${dark100('wd100filew',`<div id="standsHubBody" class="wd100file">${wd100FileHTML()}</div>`)}`}
 
 /* ================= 4 · TROPHIES: the Tituli ================= */
 /* tituli100Plaque — ONE bronze plaque (reusable): {art, name, sub, won (text when earned), prog [have, need, label], id} */
@@ -59076,7 +59132,9 @@ const TIT100_STAT={aureus:g=>g.ss.w,tiro:g=>g.debut&&g.debut.s===g.ss.s?g.ss.w:0
 function tit100Mgr(){const w=W_(),pm=me();const own={};for(const t of w.trophies||[])if(t.tid)own[t.tid]=t;
   const G=(w.glads||[]).filter(g=>g.ss&&g.ss.s===w.season&&g.ss.ev>0);const mine=G.filter(g=>g.contract&&g.contract.mgr===pm.id);
   return TROPHY_LIB.map(d=>{const t=own[d.id];let prog=null,hint='';
-    if(!t){if(d.id==='flavian_cup'){const L=leagueSort(w.mgrs);prog=[msp(pm).pts,Math.max(1,msp(L[0]).pts)]}
+    const hide=wd100Wk(w)<12&&d.id!=='palm_roma'&&(d.cat==='season'||d.cat==='fun'); /* the season's awards are handed out at its end: no tally before week 12 (his 4c) */
+    if(!t&&hide)hint=_T('awarded at season’s end');
+    else if(!t){if(d.id==='flavian_cup'){const L=leagueSort(w.mgrs);prog=[msp(pm).pts,Math.max(1,msp(L[0]).pts)]}
       else if(TIT100_STAT[d.id]){const f=TIT100_STAT[d.id];const best=a=>a.reduce((m,g)=>Math.max(m,+f(g)||0),0);const lead=best(G);if(lead>0)prog=[best(mine),lead];else hint=_T('no tally yet this season')}
       else if(d.cat==='special'||d.id==='palm_roma')prog=[0,1];else hint=_T('awarded at season’s end')}
     return {id:d.id,d,won:t?`${t.who?t.who+' · ':''}${_T('Season')} ${t.season}${(t.count||1)>1?' · ×'+t.count:''}`:'',prog,hint,cat:d.cat}})}
@@ -59099,7 +59157,31 @@ function wd100TrophyView(old){const tf=WD100.tf;let body='',count='';
 
 /* ================= 5 · SEASON: the Calendar ================= */
 function wd100Acta96(w,abs){const A=w.acta96&&w.acta96[abs];if(!A)return null;let pts=0,best=null;for(const r of A.rows||[]){pts+=r.w?3:r.p===2?1:0;const p=r.w?1:r.p||99;if(!best||p<best.p)best={p,n:r.n}}return {pts,best,n:(A.rows||[]).length}}
-function wd100SeaView(old){const w=W_(),pm=me();const wk0=wd100Wk(w);const baseW=w.week-wk0;const sv=WD100.sea||0;const season=w.season+sv;const cur=sv===0;
+/* the Acta results card of a finished week as ONE line (what the old table's Acta column showed) */
+function wd100ActaLine(w,abs){const A=w.acta96&&w.acta96[abs];if(!A)return '';if(!A.rows.length)return _T('sat out');
+  return A.rows.map(r=>`${r.t||''} ${r.n||'?'} ${r.w?'🏆':r.p?lp90Ord(r.p):'·'}`.trim()).join(' · ')}
+/* early billing (name a fighter 3+ weeks ahead): the old Season table's Billing column, upcoming weeks, one line each — same ids / data-mg as before */
+function wd100BillRows(w,pm){w.commits=w.commits||{};const ros=rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a));const wk0=wd100Wk(w);const base=w.week-wk0;const out=[];
+  for(let abs=w.week;abs<=Math.min(w.week+11,base+16);abs++){const {season,wk}=absSW(w,abs);if(BYE_WKS.includes(wk))continue;if(season!==w.season&&abs>w.week+8)continue;
+    const f=fixtureFor(season,wk);const E=EVENTS[f.ev]||{};const c=w.commits[abs];const ahead=abs-w.week;const now=abs===w.week;
+    const iv=(w.invites||[]).find(x=>x.wk===abs&&['open','accepted','playing'].includes(x.status));
+    const bill=now?(()=>{const b=w.night&&w.night.bouts&&w.night.bouts.find(x=>x.billed);return b?`<b>${esc((gById(b.billed)||{}).name||'')}</b> <small>${_T('on the posters')}</small>`:`<small>${_T('enter on Match Week')}</small>`})()
+      :c?`<b>${esc((gById(c.gid)||{}).name||'?')}</b> ${ahead>=3?`<button type="button" class="wd100pbtn sm" data-mg="cm_undo" data-id="${abs}" aria-label="${_T('Withdraw')}">✕</button>`:`<small>${_T('locked in')}</small>`}`
+      :ahead>=3&&ros.length?`<select class="tin" id="cm_${abs}" aria-label="${_T('Bill a fighter')}"><option value="">${_T`bill a fighter…`}</option>${ros.map(g=>`<option value="${g.id}">${esc(g.name)} · ${effOvr(g)}</option>`).join('')}</select><button type="button" class="wd100pbtn sm" data-mg="cm_set" data-id="${abs}" aria-label="${_T('Pin')}">📌</button>`
+      :`<small>${_T('closed')}</small>`;
+    out.push(`<div class="wd100sr bill${now?' now':''}"><span class="wkn">${season!==w.season?'S'+season+' · ':''}${_T('WK')} ${wk}</span><span class="c-cy">${esc(LOCATIONS[f.loc].n)}</span><span class="c-ev">${esc(String(E.short||E.n||f.ev).replace(/^Classic · /,''))}${iv?` · ⭐ ${esc(iv.n)}`:''}</span><span class="c-bl">${bill}</span><span class="pts">×${f.purse}</span></div>`)}
+  return out}
+/* invitations / special events as one-line rows; Answer ▸ is the old iv_open (231's pick-the-fighters popup), Withdraw the old iv_withdraw */
+function wd100InvRows(w,pm){const out=[];
+  if(w.special&&!w.special.done)out.push(`<div class="wd100sr iv live"><span class="wkn">★</span><span class="c-cy"><b>${esc(w.special.D.n)}</b></span><span class="c-ev">${_T('is on this week — the league’s card waits')}</span><span class="c-bl"><button type="button" class="wd100pbtn gold sm" data-mg="tab" data-id="night">${_T('Go to it ▸')}</button></span></div>`);
+  for(const iv of (w.invites||[]).filter(x=>['open','accepted'].includes(x.status)).sort((a,b)=>a.wk-b.wk)){const D=specDef(iv.sid);if(!D)continue;const td=trophyDef(D.trophy);const Lc=LOCATIONS[D.loc];const wl=iv.wk-w.week;
+    const win=iv.exhib?Math.round(D.purse*0.67):D.purse;
+    out.push(`<div class="wd100sr iv ${iv.status}"><span class="wkn">${_T('WK')} ${absSW(w,iv.wk).wk}</span><span class="c-cy">${td?`<span class="tro">${trophySVG(td,22)}</span>`:''}<b>${esc(iv.n||D.n)}</b>${iv.exhib?` <small>${_T('exhibition')}</small>`:''}</span>
+      <span class="c-ev">${esc(Lc?Lc.n:'')} · ${esc(absDate(w,iv.wk))} · ${wl<=0?_T('this week'):_T`in ${wl} wk${wl===1?'':'s'}`}</span><span class="c-bl">${iv.status==='accepted'?`<b>✓ ${iv.ents.map(id=>esc((gById(id)||{}).name||'?')).join(' & ')}</b><button type="button" class="wd100pbtn sm" data-mg="iv_withdraw" data-id="${iv.id}" title="${_T`The host will remember (−2 fame)`}">${_T('Withdraw')}</button>`
+        :`<small title="${esc(td?td.name:'')}">${coinAmt87(win)}</small><button type="button" class="wd100pbtn gold sm" data-mg="iv_open" data-id="${iv.id}">${_T('Answer ▸')}</button>`}</span></div>`);}
+  for(const x of (w.specialLog||[]).slice(-6).reverse())out.push(`<div class="wd100sr iv past${x.mine?' mine':''}"><span class="wkn">S${x.season}</span><span class="c-cy"><b>${esc(x.n)}</b></span><span class="c-ev">${esc(x.champ||'?')}${x.mine?' 🏆':''}</span><span class="c-bl"><small>${_T('past')}</small></span></div>`);
+  return out}
+function wd100SeaView(){const w=W_(),pm=me();const wk0=wd100Wk(w);const baseW=w.week-wk0;const sv=WD100.sea||0;const season=w.season+sv;const cur=sv===0;
   const sch=seasonSchedule(season);const L=leagueSort(w.mgrs);const pos=L.indexOf(pm)+1;const N=cur&&typeof lp90Next==='function'?lp90Next():null;
   const evShort=f=>{const E=EVENTS[f.ev]||{};return String(E.short||E.n||f.ev).replace(/^Classic · /,'')};
   const riv=k=>k===(typeof RIVAL_WK!=='undefined'?RIVAL_WK:12);
@@ -59116,27 +59198,31 @@ function wd100SeaView(old){const w=W_(),pm=me();const wk0=wd100Wk(w);const baseW
   const row=(k,cells,cls,attrs)=>`<div class="wd100sr${cls?' '+cls:''}"${attrs||''}><span class="wkn">${_T('WK')} ${k}</span>${cells}</div>`;
   let lists='';
   if(cur){const acta=[];for(let k=1;k<wk0;k++){if(BYE_WKS.includes(k))continue;const f=sch[k-1];const A=wd100Acta96(w,baseW+k);
-      acta.push(row(k,`<span class="c-cy">${esc(LOCATIONS[f.loc].n)}</span><span class="c-ev">${esc(evShort(f))}</span><span class="c-bs">${A&&A.best?esc(A.best.n||'')+' · '+_T('best'):A?_T('sat out'):'—'}</span><span class="pl2">${A&&A.best&&A.best.p<99?lp90Ord(A.best.p):'—'}</span><span class="pts">${A?'+'+A.pts:''}</span>`))}
+      acta.push(row(k,`<span class="c-cy">${esc(LOCATIONS[f.loc].n)}</span><span class="c-ev">${esc(evShort(f))}</span><span class="c-bs sact96" title="${esc(wd100ActaLine(w,baseW+k))}">${esc(wd100ActaLine(w,baseW+k)||'—')}</span><span class="pl2">${A&&A.best&&A.best.p<99?lp90Ord(A.best.p):'—'}</span><span class="pts">${A?'+'+A.pts:''}</span>`))}
     const come=[];for(let k=wk0;k<=12;k++){const f=sch[k-1];const bye=BYE_WKS.includes(k);const c=(w.commits||{})[baseW+k];const now=k===wk0;
       const st=bye?_T('rest'):now?((()=>{const n=typeof onCard96==='function'?onCard96():0;return n?_T`${n} entered`:_T('enter now')})()):c?`📌 ${esc((gById(c.gid)||{}).name||'')}`:riv(k)?`${_T('vs')} ${esc(rivName()||_T('TBA'))}`:_T('open');
       come.push(row(k,`<span class="c-cy">${bye?'—':esc(LOCATIONS[f.loc].n)}</span><span class="c-ev">${bye?_T('Bye'):riv(k)?_T('Rivalry')+' · '+esc(evShort(f)):esc(evShort(f))}</span><span class="c-bs">${st}</span><span class="pl2">${now?`<span class="nowt2">${_T('THIS WEEK')}</span>`:''}</span><span class="pts">${bye?'':'×'+f.purse}</span>`,now?'now':'',now?' data-mg="tab" data-id="night" role="button" tabindex="0"':''))}
     const ptsAll=msp(pm).pts;
     lists=`<div class="wd100two"><div>${plq100(_T('Your Acta'),_T`${ptsAll} pts`)}<div class="wd100sea">${acta.join('')||`<div class="wd100sr empty"><span>${_T('No weeks fought yet this season.')}</span></div>`}</div></div>
-      <div>${plq100(_T('Still to come'),_T('prizes at week 12'))}<div class="wd100sea">${come.join('')}</div></div></div>`}
+      <div>${plq100(_T('Still to come'),_T('prizes at week 12'))}<div class="wd100sea">${come.join('')}</div></div></div>
+      <div class="wd100two wd100bill"><div>${plq100(_T('Billing'),_T('name a fighter 3+ weeks ahead'))}<div class="wd100sea">${(()=>{const r=wd100BillRows(w,pm);return r.join('')||`<div class="wd100sr empty"><span>${_T('No weeks left to bill.')}</span></div>`})()}</div>
+          <p class="wd100tba">${_T`On the night a billed fighter is entered in the biggest bout that fits: ${coinAmt87('+10')} appearance, +1 fame, and a 15% purse bonus if they win. It lapses harmlessly if they are hurt. Invitationals and the Superbus cannot be billed.`}</p></div>
+        <div>${plq100(_T('Invitations'),_T('hosts write 3–5 weeks ahead'))}<div class="wd100sea">${(()=>{const r=wd100InvRows(w,pm);return r.join('')||`<div class="wd100sr empty"><span>${_T('No invitations right now.')}</span></div>`})()}</div>
+          <p class="wd100tba">${_T('The Flavius Superbus: the top four of the league table send one fighter each to Roma when week 12 ends — invitation only.')}${(()=>{const sb=(w.specialLog||[]).filter(x=>/Superbus/.test(x.n));return sb.length?' '+_T`Past champions: ${sb.slice(-4).map(x=>`S${x.season} ${esc(x.champ||'?')}`).join(' · ')}.`:''})()}</p></div></div>
+      <p class="wd100tba">${(()=>{try{const R=w.rivalry&&w.rivalry.season===w.season&&typeof rivalOf==='function'?rivalOf(w,pm.id):null;return _T`Week ${RIVAL_WK} is Rivalry Week (Familia, two on two) vs ${R?esc(R.ludus):_T('TBD — set at the start of week 11, when the Consilium writes')} · byes in weeks ${BYE_WKS.join(' and ')}.`}catch(e){return ''}})()}</p>`}
   else{const rows=sch.map((f,i)=>{const k=i+1;const bye=BYE_WKS.includes(k);return row(k,`<span class="c-cy">${bye?'—':esc(LOCATIONS[f.loc].n)}</span><span class="c-ev">${bye?_T('Bye'):riv(k)?_T('Rivalry')+' · '+esc(evShort(f)):esc(evShort(f))}</span><span class="c-bs">${esc(empireDate(season,k).short)}</span><span class="pl2">${riv(k)?_T('TBA'):''}</span><span class="pts">${bye?'':'×'+f.purse}</span>`)}).join('');
     lists=`<div class="wd100two one">${plq100(_T`The fixtures · season ${season}`,_T('cities and games are set · rivals, closures and prizes TBA'))}<div class="wd100sea">${rows}</div><p class="wd100tba">${_T('TBA = decided later: arena closures (wars, eruptions, plague), the week-12 rival, purses of the Grand Games.')}</p></div>`}
   return `<div class="wd100seatop">${seg100('data-wd100s',String(sv),[['0',_T`This season · ${ROMAN[w.season]||w.season}`],['1',_T`Next · ${ROMAN[w.season+1]||w.season+1}`],['2',_T`The one after · ${ROMAN[w.season+2]||w.season+2}`]])}
       <div class="wd100prz"><span class="tx">${cur?(N?N.txt:_T`You are ${lp90Ord(pos)} of ${L.length}`):_T('Fixtures are set · rival weeks, closures and prizes TBA')}</span></div></div>
     ${plq100(_T`Season ${season}`,cur?_T`week ${wk0} of 12 · byes ${BYE_WKS.join(' & ')} · the Superbus in Roma`:_T('host cities + games known · the rest is announced week by week'))}
     <div class="wd100cal">${Array.from({length:12},(_,i)=>tab(i+1)).join('')}${fin}</div>
-    ${lists}
-    ${fold100('sched',_T('📌 Billing, invitations & the full table'),old)}`}
+    ${lists}`}
 
 /* ---------- the final mgrHTML wrapper ---------- */
 {const base=mgrHTML;mgrHTML=function(){const h=base.apply(this,arguments);try{if(typeof h!=='string'||!WD100.tabs.includes(MGR.tab)||!wd100On())return h;
     const k=MGR.tab;const T=document.createElement('template');T.innerHTML=h;const pane=T.content.querySelector('#mgrPane');if(!pane)return h;
     const old=pane.innerHTML;let view='';
-    if(k==='news')view=wd100NewsView(old);else if(k==='league')view=wd100LeagueView(old);else if(k==='imp')view=wd100ImpView(old);else if(k==='trophy')view=wd100TrophyView(WD100.tf==='mgr'?old:'');else view=wd100SeaView(old);
+    if(k==='news')view=wd100NewsView();else if(k==='league')view=wd100LeagueView();else if(k==='imp')view=wd100ImpView();else if(k==='trophy')view=wd100TrophyView(WD100.tf==='mgr'?old:'');else view=wd100SeaView();
     pane.innerHTML=`<div class="wd100body wd100-${k}">${view}</div>`;pane.classList.add('wd100pane');
     const ban=T.content.querySelector('.roomhd.b73-'+k);const nb=wd100Banner(k);
     if(ban){const tt=document.createElement('template');tt.innerHTML=nb;ban.replaceWith(tt.content)}else{const rm=T.content.querySelector('.railmain');if(rm){const tt=document.createElement('template');tt.innerHTML=nb;rm.insertBefore(tt.content,rm.firstChild)}}
@@ -59149,13 +59235,14 @@ document.addEventListener('click',e=>{const t=e.target;if(!t||!t.closest||!t.clo
   const h=t.closest('[data-wd100h]');if(h){e.preventDefault();e.stopPropagation();const id=h.dataset.wd100h;const R=mgrById(id);MGR.lg90=R&&!R.isPlayer?id:null;rd();return}
   const sc=t.closest('[data-wd100sc]');if(sc){e.preventDefault();e.stopPropagation();WD100.scout=!WD100.scout;rd();return}
   const nf=t.closest('[data-wd100nf]');if(nf){e.preventDefault();WD100.nf=nf.dataset.wd100nf;rd();return}
-  const mf=t.closest('[data-wd100mf]');if(mf){e.preventDefault();WD100.mf=mf.dataset.wd100mf;rd();return}
+  const nm=t.closest('[data-wd100nm]');if(nm){e.preventDefault();WD100.nmore=!WD100.nmore;rd();return}
+  const ly=t.closest('[data-wd100lay]');if(ly){e.preventDefault();const k=ly.dataset.wd100lay;WD100.lay[k]=WD100.lay[k]?0:1;rd();return}
+  const hv=t.closest('.wd100file [data-hubview]');if(hv){e.preventDefault();e.stopPropagation();HUB.view=hv.dataset.hubview;rd();return}
   const tf=t.closest('[data-wd100tf]');if(tf){e.preventDefault();WD100.tf=tf.dataset.wd100tf;rd();return}
   const s=t.closest('[data-wd100s]');if(s){e.preventDefault();WD100.sea=+s.dataset.wd100s||0;rd();return}
   const c=t.closest('[data-wd100c]');if(c&&!t.closest('[data-ct]')){e.preventDefault();e.stopPropagation();const v=c.dataset.wd100c;WD100.city=v===''||+v===WD100.city&&c.classList.contains('wd100pin')?null:+v;rd();return}},true);
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const t=e.target;if(!t||!t.closest||!t.closest('#mgrBody'))return;if(t.matches('[data-wd100h],[data-wd100c].wd100wev,.wd100wk.now,.wd100sr.now')){e.preventDefault();t.click()}},true);
-document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.wd100fold'))return;wd100Fold[d.dataset.wd100fold]=d.open?1:0;try{localStorage.setItem('flavius_world100fold',JSON.stringify(wd100Fold))}catch(er){}},true);
-/* the lesson's "rival" step lights the new house row / card first (the old table now sits in the fold) */
+/* the lesson's "rival" step lights the new house row / card first (the old table is gone) */
 try{const st=MTUT_STEPS.find(x=>x&&x.k==='rival');if(st&&typeof st.spot==='function'){const b0=st.spot;st.spot=()=>{if(wd100On()){const id=mtRivalId();const c=document.querySelector(`#mgrPane .wd100hc[data-lg90box="${id}"]`)||document.querySelector(`#mgrPane [data-wd100h="${id}"]`);if(c)return c}return b0()}}}catch(e){}
 
 {const st=document.createElement('style');st.textContent=`
@@ -59200,9 +59287,6 @@ try{const st=MTUT_STEPS.find(x=>x&&x.k==='rival');if(st&&typeof st.spot==='funct
 .wd100gch{display:inline-grid;place-items:center;min-width:24px;height:18px;padding:0 3px;border-radius:3px;font:600 11.5px var(--mono);color:#160f0b;flex:none;box-sizing:border-box}
 .wd100gch.g-a{background:#8ccf5f}.wd100gch.g-bp{background:#c8d66a}.wd100gch.g-b{background:#d8c46a}.wd100gch.g-cp{background:#e0b050}.wd100gch.g-c{background:#e09a50}.wd100gch.g-d{background:#d07a4a}.wd100gch.g-f{background:#a3281f;color:#fff}.wd100gch.g-q{background:#cbb894}
 .wd100riv{display:inline-flex;gap:1px;align-items:center;vertical-align:middle}
-.wd100fold{margin-top:14px;border:1px solid #8a6a3a;border-radius:6px;background:rgba(30,20,12,.92);color:var(--bone,#e8dcc0)}
-.wd100fold>summary{cursor:pointer;padding:7px 12px;font:400 15px var(--display);letter-spacing:.04em;color:#f0d9a0;list-style-position:inside}
-.wd100fold .wd100old{padding:6px 10px 10px;color:var(--bone,#e8dcc0)}.wd100fold .wd100old .rc-sub{color:var(--muted,#b9a888)}
 .wd100empty{color:var(--pdim);font-style:italic;margin:6px 2px}
 /* ---- rows ---- */
 .wd100rows{display:flex;flex-direction:column;gap:3px}
@@ -59360,6 +59444,51 @@ try{const st=MTUT_STEPS.find(x=>x&&x.k==='rival');if(st&&typeof st.spot==='funct
 .wd100sr.now{background-color:#f7dc8e;border-top:2px solid #7a4a10;border-bottom:2px solid #7a4a10;box-shadow:inset 4px 0 0 #7a1f12;cursor:pointer;font-weight:600}
 .wd100sr.now .c-bs,.wd100sr.now .wkn{color:#2a1a06}.wd100sr.empty{grid-template-columns:minmax(0,1fr);color:#3e2c12;font-style:italic}
 .wd100body .wd100tba{font-size:12.5px;color:#4d3a1f;font-style:italic;margin:8px 0 0}
+
+/* ---- moved in from the old tabs (v1.0 · his 1c): dark panels, the house card ledger, map layer chips, billing ---- */
+.wd100dk{margin:2px 0 12px;border:1px solid #8a6a3a;border-radius:6px;background:rgba(30,20,12,.94);color:var(--bone,#e8dcc0);padding:8px 10px;overflow-x:auto}
+.wd100dk .rc-sub{color:var(--muted,#b9a888)}.wd100dk p{margin:4px 0}
+.wd100more{display:flex;justify-content:center;margin:8px 0 14px}
+.wd100pn.bad{box-shadow:0 1px 2px rgba(60,30,10,.4),inset 0 0 14px rgba(150,110,60,.22),inset 3px 0 0 #a3281f}
+.wd100r.top4 .pl{text-decoration:underline;text-decoration-color:#b0843a;text-decoration-thickness:2px;text-underline-offset:3px}
+.wd100hc .wd100led{padding:2px 10px 8px;border-top:1px solid #ffffff14}
+.wd100hc .wd100led .sqh{font:500 9.5px var(--mono);letter-spacing:.14em;color:#b9a888;text-transform:uppercase;margin:6px 0 3px}
+.wd100hc .wd100led .kv{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;min-height:21px;font-size:12.5px;white-space:nowrap;gap:6px;color:#e8dcc0}
+.wd100hc .wd100led .kv>span:first-child{font:500 9.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#b9a888}
+.wd100hc .wd100led .kv>span:last-child{overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px;min-width:0}
+.wd100hc .wd100led small{font:11px var(--mono);color:#cdbf9f}.wd100hc .wd100led small.hot{color:#ffb3a6}
+.wd100hc .wd100led .mt{display:inline-block;width:56px;height:6px;border-radius:3px;background:#0006;box-shadow:inset 0 0 0 1px #6a5a48;position:relative;flex:none}.wd100hc .wd100led .mt i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#8a6a2a,#d6ab4c)}
+.wd100hc .wd100led .kv.rivs{align-items:start;padding:2px 0}.wd100hc .wd100led .kv.rivs>span:last-child{flex-direction:column;align-items:flex-start;gap:1px;white-space:nowrap}.wd100hc .wd100led .rvl{display:flex;align-items:center;gap:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis}.wd100hc .wd100led .rvl i{width:8px;height:8px;border-radius:2px;flex:none}
+.wd100hc .wd100led .rc-sub{color:#cdbf9f}
+.wd100lay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.wd100lay .pg84mks{pointer-events:auto}.wd100lay .flow{animation:wd100dash 1.6s linear infinite}@keyframes wd100dash{to{stroke-dashoffset:-32}}
+body.calm .wd100lay .flow,body.idle92 .wd100lay .flow{animation:none}
+@media (prefers-reduced-motion:reduce){.wd100lay .flow{animation:none}}
+.wd100map .mtools{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:62%}
+.wd100chip{border:1px solid #8a6a3a;border-radius:14px;background:rgba(246,234,206,.94);color:#22140a;font:13px var(--body);padding:2px 10px;min-height:26px;cursor:pointer;white-space:nowrap}
+.wd100chip.on{background:linear-gradient(#8a2a1a,#6a1e12);color:#ffe9c9;border-color:#3a1208}.wd100chip:focus-visible{outline:2px solid #fff}
+.wd100filew .empstrip{margin-bottom:6px}.wd100filew .seg{display:flex;gap:4px}
+.wd100tro{right:150px;bottom:6px;gap:12px}
+.wd100pl{position:relative;display:flex;flex-direction:column;align-items:center;width:62px}
+.wd100pl .tr{display:block;line-height:0;z-index:1;margin-bottom:-6px}.wd100pl .tr svg{filter:drop-shadow(0 4px 5px #000)}
+.wd100pl i{display:block;width:60px;height:14px;border-radius:3px 3px 1px 1px;background:linear-gradient(#a89878,#6e604a);box-shadow:inset 0 1px 0 #e8dcc0aa,0 3px 5px #000a}
+.wd100tro.none{align-items:flex-end}.wd100tro.none .gh{display:block;width:34px;height:46px;margin-bottom:-4px;border:2px dashed #e2c88e;border-radius:50% 50% 6px 6px/40% 40% 6px 6px;opacity:.45}
+.wd100first{position:absolute;left:0;right:0;bottom:22px;text-align:center;font:italic 13px var(--body);color:#f6e6c0;text-shadow:0 1px 3px #000,0 0 8px #000;white-space:nowrap}
+.wd100all{position:relative;display:inline-grid;place-items:center;width:132px;height:72px;filter:drop-shadow(0 2px 4px #000a)}
+.wd100ban .wd100all svg{position:absolute;inset:0;width:100%;height:100%}
+.wd100all b{position:relative;font:400 21px var(--display);color:#ffe39a;letter-spacing:.06em;text-shadow:0 1px 3px #000}
+.wd100two.wd100bill{margin-top:14px}
+.wd100sr.bill{grid-template-columns:62px minmax(0,.7fr) minmax(0,1.25fr) minmax(0,1.35fr) 46px}
+.wd100sr.bill .c-bl{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden}
+.wd100sr.bill .c-bl>b,.wd100sr.iv .c-bl>b{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.wd100sr small{font:12px var(--mono);color:#3e2c12}
+.wd100sr select.tin{max-width:150px;min-width:0;height:26px;border:1px solid #8a6a3a;border-radius:4px;background:#fffaf0;color:#1c1209;font:13px var(--body);flex:1}
+.wd100pbtn.sm{padding:1px 8px;font-size:12.5px;flex:none;min-height:24px}
+.wd100sr.iv{grid-template-columns:50px minmax(0,1.3fr) minmax(0,1.1fr) minmax(0,1.1fr)}
+.wd100sr.iv .c-cy{display:flex;align-items:center;gap:6px;min-width:0}.wd100sr.iv .c-cy .tro{display:inline-block;line-height:0;flex:none;width:22px}.wd100sr.iv .c-cy .tro svg{width:22px;height:22px}
+.wd100sr.iv .c-bl{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden}.wd100sr.iv .c-bl small{overflow:hidden;text-overflow:ellipsis}
+.wd100sr.iv.live{background-color:#f7dc8e}.wd100sr.iv.past{color:#3e2c12}.wd100sr.iv.mine{font-weight:600}
+.wd100sr .amt87{color:#1c1209}.wd100sr .amt87 .sr87{color:#3e2c12}
 /* ---- tablets / phones ---- */
 @media (max-width:1100px){.wd100cal{grid-template-columns:repeat(7,minmax(0,1fr));row-gap:16px}.wd100lg,.wd100imp{grid-template-columns:minmax(0,1fr) 260px}.wd100lgt .wd100rh,.wd100lgt .wd100r{grid-template-columns:22px 28px minmax(0,1.5fr) 40px 84px minmax(0,1.2fr) 50px 12px}.wd100lgt .c-riv{display:none}}
 @media (max-width:860px){.wd100lg,.wd100imp{grid-template-columns:minmax(0,1fr)}.wd100side{position:static}.wd100wall{grid-template-columns:repeat(2,minmax(0,1fr))}.wd100two{grid-template-columns:minmax(0,1fr)}}
@@ -59381,6 +59510,8 @@ try{const st=MTUT_STEPS.find(x=>x&&x.k==='rival');if(st&&typeof st.spot==='funct
  .wd100tit{grid-template-columns:repeat(2,minmax(0,1fr))}
  .wd100seatop{grid-template-columns:minmax(0,1fr);gap:8px}.wd100seg button{padding:4px 8px;font-size:12.5px}
  .wd100cal{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;row-gap:16px}.wd100wk{height:176px;grid-template-rows:16px 78px 18px 15px 28px}.wd100wk.now{transform:none}
+ .wd100sr.bill{grid-template-columns:50px minmax(0,.8fr) minmax(0,1.6fr);gap:7px}.wd100sr.bill .pts,.wd100sr.bill .c-ev{display:none}.wd100sr.iv{grid-template-columns:44px minmax(0,1fr) minmax(0,1.3fr)}.wd100sr.iv .c-ev{display:none}
+ .wd100map .mtools{max-width:none;left:4px;right:4px;justify-content:flex-start;top:4px}.wd100chip{font-size:11.5px;padding:1px 7px;min-height:22px}.wd100all{width:104px;height:58px}.wd100all b{font-size:17px}
  .wd100sr{grid-template-columns:44px minmax(0,1fr) minmax(0,1fr) 44px;gap:7px;padding:0 7px}.wd100sr .c-ev,.wd100sr .pl2{display:none}.wd100sr.now .pl2{display:none}
  .wd100plq small{display:none}.wd100prz{font-size:12.5px;white-space:normal;padding:4px 10px}
 }

@@ -1022,9 +1022,13 @@ One global script; files are concatenated in order. Later "version modules" patc
   mkgame.js. T93_VER 2 (one re-convert), board size = TW·MINI_BASE/(25.4·MINI_PXMM) (272's ×0.88 retired), loincloth per printed class (CLOTH100). Test tv100g.
 - **v1.0 MANAGER WORLD TABS (290-v100world, his W1–W9 all a; mock tools/plans/mock100/world.html, shots tools/plans/world100/):** ONE shell for the
   five World tabs (news, league, imp, trophy, sched): a final mgrHTML wrapper swaps 95's banner for `wd100Banner` (keeps `.roomhd.b73.b73-<k>` +
-  `.roomttl`; League keeps 231's `.lp96pod` podium in it) and puts the tab's new view in #mgrPane; the tab's OLD content stays below in a fold
-  `details.wd100fold` (open state localStorage flavius_world100fold) so every handler/test selector still works (.lp96t, .lg90, table.stable2,
-  #standsHubBody, the glass case). CSS prefix `wd100` (287 owns `w100`). Shared: `parma100(m,px)`/`scutum100(m)` house insignia (flagURI emblem,
+  `.roomttl`; League keeps 231's `.lp96pod` podium in it) and puts the tab's new view in #mgrPane. NO FOLDS (his 1c, 2026-10-11): the old content's useful parts moved INTO the views with their handlers/ids
+  intact — League's full ledger = the house card's "Ledger" (`wd100Ledger`: roster, fame, treasury, morale, rivals, heat, all-time, bets, personality, latest
+  event, prize now; prizes on a row's hover), Season's Billing (`#cm_<abs>` + cm_set/cm_undo) + Invitations (iv_open = 231's popup, iv_withdraw) = "Billing" /
+  "Invitations" under the Calendar lists (a finished week's Acta card = one line `.sact96` in Your Acta), Imperium's layers = four chips `[data-wd100lay]` on
+  the new map (`wd100LayerSVG` runs 18-world's drawing with them) + "The city file" (`#standsHubBody.wd100file`: empire strip, city tile / roster, family
+  ties; a standsHubHTML wrapper keeps it on crowd refreshes), News: every notice on the wall (Show all) + the Ludus Archives (archiveHTML) under it. The old
+  `.lp96t` / `table.stable2` / `tr.lrowlink` / `svg.impmap` no longer exist in the Manager — tests read `.wd100r`, `.wd100led`, `.wd100bill`, `.wd100lay`. CSS prefix `wd100` (287 owns `w100`). Shared: `parma100(m,px)`/`scutum100(m)` house insignia (flagURI emblem,
   cached), `face100`, `gch100` grade chips, `plq100` bronze plaque, `seg100`, `tituli100Plaque({art,name,sub,won,prog,hint})` (reusable plaque).
   NEWS = Acta pinned (P.darwin, P.rabble, victors from g.recent; 📜 Read it = data-mg="paper") + programmata wall 3 across from w.news + this week's
   world events (tags Ours/Rival/Arena/Empire, filter WD100.nf). LEAGUE = next-prize bar (lp90Next), one-line rows `[data-wd100h]` (parma, Pts, form
@@ -1032,7 +1036,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   185 lg90HTML in `.lg90row.wd100scout`, ⚔ Challenge = 185 `[data-lg90ch]`, 🏛 Team screen). IMPERIUM = map.jpg + 12 pins `[data-wd100c]` (host,
   home, closed, event/weather badges, fans glow from CROWD_CACHE) + floating city card (AR91MAT stone, CITY94/SPEC94 stalls, TEMPLE76 gods,
   CITY_CLS99, worldImpact news, next games art); 🏛 Walk the square = data-ct="square" ONLY when citySquareGate is null; no Plan a trip (his call);
-  phones: the card drops under the map. TROPHIES = Tituli plaques (trophySVG art, never emoji; progress from season tallies g.ss; filters Manager ·
+  phones: the card drops under the map. TROPHIES = Tituli plaques (trophySVG art, never emoji; progress from season tallies g.ss, HIDDEN before week 12 for the season/fun awards ("awarded at season's end");
+  the BANNER shows only earned trophies — cups first (`wd100TroBest`), none = 4 empty plinths + "Your first honour awaits", all = laurel ring "ALL n"; filters Manager ·
   Play Now (Store hallTrophies) · Online (ONL82.dg.trophies, art mapped TIT100_ONL)); the glass case stays under it. SEASON = 12 DARK tablets + Final
   on the light parchment, current week gold ring + THIS WEEK (scrolled into view), switcher This season · Next · The one after (seasonSchedule; TBA),
   listed schedule = dark ink on striped near-white rows (AA ≥ 4.5), current row highlighted. The lesson's "rival" step lights the new row/card.

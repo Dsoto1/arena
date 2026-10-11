@@ -26,15 +26,15 @@ ok(r2.includes('Save and Exit')&&!r2.some(x=>/leave this career/.test(x)),'2 Sav
 /* ---- 3 · standings ---- */
 const r3=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const rv=w.mgrs.filter(x=>!x.isPlayer);msp(rv[0]).pts=9;msp(rv[1]).pts=6;msp(m).pts=3;
   const g=rosterOf(rv[0])[0];if(g)g.recent=[{s:w.season,wk:1,t:'Feature',ev:'Egidious',loc:'Roma',place:1,won:true}];
-  MGR.tab='league';MGR_REDRAW();await W8(500);const B=document.getElementById('mgrBody');const o={};const box=B.querySelector('.lp96');o.box=!!box;
+  MGR.lg90=rv[0].id;MGR.tab='league';MGR_REDRAW();await W8(500);const B=document.getElementById('mgrBody');const o={};const box=B.querySelector('.wd100lgt');o.box=!!box;
   o.pod=[...B.querySelectorAll('.lp96pod .lp96p')].map(x=>x.className.replace(/\s*me/,'').replace('lp96p ',''));o.cup=!!B.querySelector('.lp96p.p1 .lp96cup svg');
   o.tip=(B.querySelector('.lp96p.p1')||{}).title||'';o.tip2=(B.querySelector('.lp96p.p2')||{}).title||'';
-  const th=[...B.querySelectorAll('.lp96t tr:first-child th')].map(x=>x.textContent.trim());o.th=th;o.txt=B.querySelector('.lp96').textContent;
-  o.rows=B.querySelectorAll('.lp96t tr').length-1;o.me=!!B.querySelector('.lp96t tr.me');o.latest=/won/.test(B.querySelector('.lp96t tr:nth-child(2)').textContent);
-  o.rec=/^\d+-\d+$/.test(B.querySelector('.lp96t tr:nth-child(2) td:nth-child(5)').textContent.trim());return o});
+  const th=[...B.querySelectorAll('.wd100rh>span')].map(x=>x.textContent.trim());o.th=th;o.txt=B.querySelector('.wd100lgt').textContent;
+  o.rows=B.querySelectorAll('.wd100lgt .wd100r').length;o.top4=B.querySelectorAll('.wd100lgt .wd100r.top4').length;o.me=!!B.querySelector('.wd100lgt .wd100r.me');o.latest=/won/.test((B.querySelector('.wd100led')||{}).textContent||'');o.ledger=[...B.querySelectorAll('.wd100led .kv>span:first-child')].map(x=>x.textContent.trim());
+  o.rec=/^\d+-\d+$/.test(B.querySelector('.wd100lgt .wd100r .rec').textContent.trim());return o});
 ok(r3.box&&r3.pod.join()==='p2,p1,p3'&&r3.cup,'3 podium 2nd-1st-3rd with the cup on 1st '+JSON.stringify(r3.pod));ok(/120/.test(r3.tip)&&/Superbus/.test(r3.tip)&&/Quaestor/.test(r3.tip)&&/80/.test(r3.tip2),'3 hover = the season-finish prizes '+r3.tip);
-ok(r3.th.join('|')==='Place|Ludus|Points|Top gladiator|Record|Latest event|Superbus','3 table columns '+r3.th.join('|'));ok(!/Quaestor|League prize/.test(r3.txt.replace(/Quaestor's/g,'')===r3.txt?r3.txt:r3.txt),'3 no Quaestor / prize column');
-ok(r3.rows>=Math.min(6,4)&&r3.rows<=8&&r3.me&&r3.latest&&r3.rec,'3 rows, your row lit, record + latest event '+JSON.stringify(r3));
+ok(['House','Pts','Top gladiator','W-L'].every(x=>r3.th.includes(x))&&r3.ledger.includes('Latest event')&&r3.top4===4,'3 standings columns (place, house, points, top gladiator, record) + Latest event in the house card + the four Superbus places marked '+r3.th.join('|')+' '+r3.ledger.join('|'));ok(!/Quaestor|League prize/.test(r3.txt.replace(/Quaestor's/g,'')===r3.txt?r3.txt:r3.txt),'3 no Quaestor / prize column');
+ok(r3.rows>=8&&r3.me&&r3.latest&&r3.rec,'3 rows, your row lit, record + latest event '+JSON.stringify(r3));
 if(SHOT){await W(300);await pg.screenshot({path:SHOT+'/tv96m_league.png'})}
 /* ---- 4 · Acta card per finished week ---- */
 const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};
@@ -42,11 +42,11 @@ const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   for(const x of w.night.bouts){x.done=true;x.res=x.res||{att:0,winners:[],rows:[],turns:1,lines:[],reason:''}}w.pend=[];
   const b0=w.night.bouts[0];const mine=rosterOf(m)[0];b0.ents[0]=mine.id;b0.res={att:1,winners:[mine.id],rows:[{gid:mine.id,place:1,won:true,f:5,fname:'',alive:true}],turns:3,lines:[],reason:'x'};
   const wk=w.week;const ok2=await endWeek();o.ok=ok2;o.stored=!!(w.acta96&&w.acta96[wk]);o.rows=o.stored?w.acta96[wk].rows.length:0;o.row=o.stored?w.acta96[wk].rows[0]:null;
-  MGR.tab='sched';MGR_REDRAW();await W8(500);const B=document.getElementById('mgrBody');const ths=[...B.querySelectorAll('table.stable2 tr:first-child th')].map(x=>x.textContent.trim());o.ths=ths;
-  const cell=B.querySelector('table.stable2 tr.spast td.sact96');o.cell=cell?cell.textContent.trim():null;o.past=B.querySelectorAll('table.stable2 tr.spast').length;
-  o.colsOk=[...B.querySelectorAll('table.stable2 tr')].every(tr=>[...tr.children].reduce((a,c)=>a+(c.colSpan||1),0)===ths.length);return o});
-ok(r4.ok!==false&&r4.stored&&r4.rows>=1&&r4.row&&r4.row.w===true,'4 the week\'s results card is stored in w.acta96 '+JSON.stringify(r4));ok(/Billing/.test(r4.ths[5]||'')&&/Acta/.test(r4.ths[6]||''),'4 an Acta column right of Billing '+JSON.stringify(r4.ths));
-ok(r4.past>=1&&r4.cell&&/🏆|1st/.test(r4.cell),'4 the finished week shows its bouts '+r4.cell);ok(r4.colsOk,'4 every season row spans the new column');
+  MGR.tab='sched';MGR_REDRAW();await W8(500);const B=document.getElementById('mgrBody');const ths=[...B.querySelectorAll('.wd100plq b')].map(x=>x.textContent.trim());o.ths=ths;
+  const cell=B.querySelector('.wd100sea .wd100sr .sact96');o.cell=cell?cell.textContent.trim():null;o.past=B.querySelectorAll('.wd100sea .wd100sr .sact96').length;
+  o.colsOk=!!B.querySelector('.wd100bill .wd100sr.bill')&&!B.querySelector('table.stable2');return o});
+ok(r4.ok!==false&&r4.stored&&r4.rows>=1&&r4.row&&r4.row.w===true,'4 the week\'s results card is stored in w.acta96 '+JSON.stringify(r4));ok(r4.ths.some(x=>/Billing/i.test(x))&&r4.ths.some(x=>/Your Acta/i.test(x)),'4 the Calendar has Your Acta and Billing sections '+JSON.stringify(r4.ths));
+ok(r4.past>=1&&r4.cell&&/🏆|1st/.test(r4.cell),'4 the finished week shows its bouts '+r4.cell);ok(r4.colsOk,'4 billing rows in the Calendar, the old table is gone');
 if(SHOT){await W(300);await pg.screenshot({path:SHOT+'/tv96m_season.png'})}
 /* ---- 5 · Match Week road box + next-prize letter ---- */
 const r5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};
