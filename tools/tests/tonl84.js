@@ -62,7 +62,7 @@ const drive=async p=>{const r=await p.evaluate(()=>{try{if(CUR_MODAL&&(!ONLM.on|
   if(S.phase==='action'&&document.querySelector('[data-act="end"]'))return '[data-act="end"]'}catch(e){}return null});if(r)await p.click(r,{timeout:2000,force:true}).catch(()=>{});return r};
 const both=async()=>{await drive(A);await drive(B)};
 const info=async p=>{const r=await p.evaluate(()=>CUR_MODAL&&(!ONLM.on||ONLM.info>0)?(document.querySelector('#modal .mbtns .primary')?'#modal .mbtns .primary':'#modal .mbtns button'):null);if(r)await p.click(r,{timeout:2000,force:true}).catch(()=>{})};
-for(const T_=Date.now();Date.now()-T_<60000&&!(await B.evaluate(()=>!!(ONLM.on&&S&&S.onl&&S.players.some(p=>p._na84))));){await both();await B.waitForTimeout(400)}for(const T_=Date.now();Date.now()-T_<30000&&!(await A.evaluate(()=>!!(ONLM.on&&S&&S.onl&&S.players.some(p=>p._na84))));)await A.waitForTimeout(300);await A.waitForTimeout(800);
+for(const T_=Date.now();Date.now()-T_<60000&&!(await B.evaluate(()=>!!(ONLM.on&&S&&S.onl&&S.players.some(p=>p._na84))));){await both();await B.waitForTimeout(120)}for(const T_=Date.now();Date.now()-T_<30000&&!(await A.evaluate(()=>!!(ONLM.on&&S&&S.onl&&S.players.some(p=>p._na84))));)await A.waitForTimeout(100);await A.waitForTimeout(800);
 const look=p=>p.evaluate(([k,sA])=>{const me=S.players[sA];const keep=me.pieces.head;me.pieces.head=keep.filter(pc=>pc.key!==k);const base=mvMax(me);me.pieces.head=keep;
   return {arm:ARM[k]?JSON.stringify(ARM[k]):null,worn:!!me&&Object.values(me.pieces).some(l=>l.some(pc=>pc.key===k)),mv:mvMax(me),want:base+1+(ARM[k]&&ARM[k].swift&&na84Unhurt(me)?1:0)}},[nk,seatA]);
 const la=await look(A),lb=await look(B);

@@ -3,7 +3,7 @@ const { chromium } = require('playwright');
 const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1500,height:950}});
 await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' @ '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await pg.click('#mClose');
 const out={};
 // custom char lifecycle
 out.kaeso=await pg.evaluate(async()=>{
@@ -17,9 +17,9 @@ out.kaeso=await pg.evaluate(async()=>{
   newWorld({type:'custom',mgr:{name:'T',ludus:'LT',city:'Roma',color:'#c0433a',p:{...MGR_PRESETS.balanced[1]},portrait:{}}});
   r.notInLeague=!W_().glads.some(g=>g.srcId===c.id);return r});
 // post-match windows via peek
-await pg.reload();await pg.waitForTimeout(900);await pg.click('#mClose');
+await pg.reload();await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await pg.click('#mClose');
 await pg.evaluate(()=>{SPEED='fast';SPEEDMUL.fast=0;startEvent({ev:'egidious',loc:2,seats:[{cls:'soldier',cpu:true,diff:'hard'},{cls:'hero',cpu:true,diff:'hard'},{cls:'slave',cpu:true,diff:'hard'},{cls:'venatore',cpu:true,diff:'hard'}],opts:{mods:true,mandata:true,optOffers:true,eaglePot:true,spect:'auto'}});SPEED='fast'});
-for(let i=0;i<150;i++){await pg.waitForTimeout(1000);if(await pg.evaluate(()=>S.over&&!$('#modal').hidden))break}
+await pg.waitForFunction(()=>S.over&&!$('#modal').hidden,null,{timeout:150000,polling:100}).catch(()=>{})
 out.closeX=await pg.evaluate(()=>!$('#mClose').hidden);out.mt=await pg.evaluate(()=>$('#mTitle').textContent);console.log('MT',out.mt,out.closeX);
 await pg.click('#mClose');await pg.waitForTimeout(400);await pg.evaluate(()=>document.getElementById('btnDrawS').click());await pg.waitForTimeout(700);out.imperiumOverResults=await pg.evaluate(()=>!!document.querySelector('#standsHubBody'));
 await pg.click('#mClose');await pg.waitForTimeout(300);

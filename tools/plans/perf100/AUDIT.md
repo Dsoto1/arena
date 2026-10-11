@@ -401,3 +401,40 @@ quiet scenes is all CSS repaint and hidden canvases.
 | `slowtests.tsv` | every CI test: time, fails, flaky, fixed waits, pages, boots, sims |
 | `keyframes.txt` | infinite animations by property class |
 | `scenes_*.json`, `boot.json` | the raw numbers quoted above |
+
+---
+
+## After (2026-10-11, the five cheap items; src/288-v100perf.js + test edits)
+
+Measured with the same `measure.js` (6 s windows, headless Chromium, software raster) on a machine at load 16–40 shared with other sessions:
+read the ratios. `node tools/plans/perf100/cmp.js` prints this table from `scenes_before.json` / `scenes_after.json`
+(new scene `onlsign` = the Online sign-in card with the menu intro still playing behind it).
+
+| scene | before task / script ms per s | after task / script | paints/s before → after | commits/s before → after |
+|---|---|---|---|---|
+| Manager, Your ludus | 448 / 44 | **61 / 19** | 94 → 0 | 47 → 8 |
+| Online sign-in (menu behind) | 1144 / 90 | **55 / 13** | 133 → 0.5 | 44 → 5 |
+| paused match | 658 / 21 | **57 / 21** | 152 → 0 | 50 → 3 |
+| match, CPU Normal | 1454 / 256 | 1271 / 223 | 36 → 8 | 13 → 3 |
+| main menu, intro playing | 1000 / 62 | 926 / 74 | 104 → 0 | 35 → 45 |
+| main menu, after the intro | 558 / 12 | 373 / 10 | 148 → 0 | 50 → 50 |
+
+- **1 · menu under windows.** `#modal.full` covering `#mainMenu` stops `mmLoop` (clock held, resumes where it was, checked: covered → no rAF, closed → rAF back and `MM.t0` shifted)
+  and `body.mm100cov` pauses the menu's CSS animations. The sign-in scene fell from 1144 to 55 ms/s (the other two items matter there too: the dot and caption glow).
+- **2 · glows.** Of the 21: 14 keyframes redefined as `filter` pulses (`mmglow gglow ludbeat nightbeat perkpulse chestGlow82 nw83leg onlplay89 pu96p sug96 sugpulse leadflip`),
+  `pulse` (leader + turn dots) = a `::before` ring on transform/opacity, `chestSheen82` = translateX, `cu98s` stripes and `gshine` (grade A) = translated pseudo layers.
+  Not converted, with reasons: `flow`, `glow90`, `injp` (SVG attribute paint), `holo84sheen` (its ::after is the clip box of the card), `gift83glow` (already a filter animation).
+  After: no running animation repaints (paints/s 0 in the menu, paused match and Manager; the commits left are compositor frames). Idle / calm / reduce-motion still stop them (the pause rules match `::before`/`::after`).
+  Look: the same colours and timing; glow shapes follow the element's alpha (drop-shadow) instead of its box, the dot halo is a thin expanding ring (was a filled spread), grade A's sweep is a white band over a still gold chip.
+- **3 · forced layout.** `bar88Hold` now measures inside its own ResizeObserver; the draw-time call returns once the observer has reported (sizes unchanged: the same code runs, only where layout is clean).
+  fitReserve was already cached by 230's FIT95 (the audit's 122/163 lines are the wrapped bases). Forced-layout sites in a CPU-Normal match: `bar88Hold<fitReserve<draw` gone; layout 108 → 69 ms/s.
+  The remaining sampled sites are the a11y contrast lift (`a11yBg93`, finding 5, not in this batch).
+- **4 · t12.** One on-screen event per shard (a naumachia 21 s, b gauntlet 31 s, c orpheus 36 s nominal), the other ten events as headless `simEvent` sims in one page (1–6 s each), the same
+  seats/options and the same log counts printed; the test now also prints `ERRS [...]` (page errors, a sim error/timeout, an event that never ended fail it; the old loop passed silently after 150 s).
+  Recorded under load (smartreg -j 1, regstate times): t12a 211 → 44 s, t12b 139 → 23 s, t12c 287 → 120 s (before 637 s total, after 187 s; on an idle CI runner the on-screen events take their nominal 21–36 s, so ~35–45 s a shard).
+  The umbrella `t12` (no argument) runs every shard's plan: 717 → 453 s under this load. Coverage: all 13 events still end through their own end condition (every result row prints `over:true` and the winner line).
+- **5 · sleeps.** The 1 s / 250–500 ms polling loops of tb1, tb7, tres, tseed46, ttoss, tv87i became `waitForFunction(…,{polling:100})`; 900 ms boot sleeps (tb1 ×2, tb7, tcity, ttoss) → `FLAVIUS_READY`; tcity's 2.5 s + 1.5 s → "square has npcs" + 0.6 s + 0.9 s; tv93k's 3 s → "the sheet is decoded"; the 300–500 ms poll steps in tv84 / tonl83u / tonl84 / tv93k's `until` → 100–150 ms.
+  Kept (timing, not state): the settle waits before screenshots, tv93k's 5 s "no second conversion" negative wait, tonl80/tonlws80/tv82o waits (their loops were already condition polls at 200 ms; the audit's literal-sleep sums are mostly those loop steps).
+  Run times (regstate, same load, before → after): tcity 110 → 23, ttoss 123 → 61, tb1 214 → 104, tonl83u 170 → 54, tseed46 153 → 124, tb7 165 → 138, tv84 108 → 93, tonl84 119 → 110; tres 35 → 39 and tv87i 65 → 83 are load noise (the waits there only got shorter).
+  Asserts unchanged.
+- **Tests run** (`node tools/smartreg.js -j 1 t12a t12b t12c t12 tv92p tv91r tv93l tv98a tmshow tb1 tb7 tcity tres tseed46 ttoss tv84 tv87i tv93k tonl83u tonl84`): 18 pass, tv93k flaky (failed once under the load, passed alone), tv92p failed once under load and passed alone (`ERRS []`, busy ms/s unmanaged 56 · active 54 · idle 31).

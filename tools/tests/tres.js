@@ -4,7 +4,7 @@ await pg.evaluate(()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);SETTINGS.bri
   const seats=[{cls:'slave',cpu:true,diff:'easy'},{cls:'soldier',cpu:true},{cls:'amazonia',cpu:true,diff:'easy'},{cls:'hero',cpu:true}].map(s=>({...s,pers:finalPers(s)}));
   startEvent({ev:'democritus',loc:6,seats,opts:{...CFG.opts,spect:0}});});
 await pg.waitForTimeout(1500);await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);simToEnd()});await pg.waitForTimeout(600);await pg.evaluate(()=>{const b=[...document.querySelectorAll('#mBtns button')].find(b=>/Sim to end/.test(b.textContent));b&&b.click()});
-for(let i=0;i<60;i++){await pg.waitForTimeout(1000);const t=await pg.evaluate(()=>S&&S.over&&!document.getElementById('modal').hidden&&!!document.querySelector('.rcard'));if(t)break}
+await pg.waitForFunction(()=>S&&S.over&&!document.getElementById('modal').hidden&&!!document.querySelector('.rcard'),null,{timeout:60000,polling:100}).catch(()=>{})
 await pg.waitForTimeout(800);await pg.screenshot({path:'res54.png'});
 const o=await pg.evaluate(()=>[...document.querySelectorAll('#mBtns button')].map(b=>b.textContent.slice(0,40)));console.log(JSON.stringify(o));
 await pg.evaluate(()=>{const b=[...document.querySelectorAll('#mBtns button')].find(b=>/Save all/.test(b.textContent));b&&b.click()});await pg.waitForTimeout(1200);

@@ -47,7 +47,7 @@ await pg.evaluate(()=>{const l=document.getElementById('log');if(l)l.scrollIntoV
 o.leak1=await leak(pg);ok(!o.leak1.length,'no leak in the match');
 await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);simToEnd()});await pg.waitForTimeout(600);
 await pg.evaluate(()=>{const b=[...document.querySelectorAll('#mBtns button')].find(b=>/Sim to end/.test(b.textContent));b&&b.click()});
-for(let i=0;i<80;i++){await pg.waitForTimeout(1000);if(await pg.evaluate(()=>S&&S.over&&!document.getElementById('modal').hidden&&!!document.querySelector('.rcard')))break}
+await pg.waitForFunction(()=>S&&S.over&&!document.getElementById('modal').hidden&&!!document.querySelector('.rcard'),null,{timeout:80000,polling:100}).catch(()=>{})
 await pg.waitForTimeout(800);
 o.res=await pg.evaluate(()=>{const m=document.getElementById('mBody');return {cf:m.querySelectorAll('.ic87w').length,coin:m.querySelectorAll('.ic87c').length,txt:(m.querySelector('.rcard')||m).innerText.slice(0,160)}});
 ok(o.res.cf>0,'results: CF icons');await shot(pg,'results');o.leak2=await leak(pg);ok(!o.leak2.length,'no leak in the results');

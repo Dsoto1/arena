@@ -1,8 +1,8 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1500,height:1000}});await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.evaluate(()=>{window.travelOK=()=>true;window.travelBlock=()=>false});await pg.click('#mClose');
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await pg.evaluate(()=>{window.travelOK=()=>true;window.travelBlock=()=>false});await pg.click('#mClose');
 await pg.evaluate(()=>{newWorld({type:'pre',key:MGR_PRE[0].key});me().coin=500;openCitySquare(W_().night.loc,{prematch:true})});
-await pg.waitForTimeout(2500);await pg.evaluate(()=>{CITY.beastT=0});await pg.waitForTimeout(1500);await pg.screenshot({path:'c_sq.png'});
+await pg.waitForFunction(()=>typeof CITY!=='undefined'&&CITY&&CITY.open&&CITY.npcs&&CITY.npcs.length,null,{timeout:30000,polling:100}).catch(()=>{});await pg.waitForTimeout(600);await pg.evaluate(()=>{CITY.beastT=0});await pg.waitForTimeout(900);await pg.screenshot({path:'c_sq.png'});
 // click an npc: pick a spec npc coords
 const out={};out.n=await pg.evaluate(()=>CITY.npcs.length);
 await pg.evaluate(()=>{const n=CITY.npcs.find(x=>x.kind==='spec')||CITY.npcs[0];citySelect(n)});await pg.waitForTimeout(300);await pg.screenshot({path:'c_spec.png'});

@@ -90,7 +90,7 @@ const ld=await pv(A,async()=>{ONL.tab='play';await onlRefresh();onlRedraw();retu
 ok(ld.gift&&ld.inf&&ld.infLock,'the landing: chest + Ludi Infames (locked for a Tiro) '+JSON.stringify(ld));
 await world(A,(w,[cid,did])=>{w.domus82[did].gifts=[{id:'hg3',why:'surv:10',at:Date.now()}];w.chars[cid].glory=600},[sa.ch,sa.dom]);await redraw(A);await redraw(B);await shot(B,'landing_follow');await shot(A,'landing');await A.evaluate(()=>{const x=document.querySelector('#onl .inf83');if(x)x.scrollIntoView({block:'center'})});if(SHOT)await A.screenshot({path:path.join(SHOT,'u83_landing_pls_1300.png')});
 /* a page opened with #domus=<id> opens Online on that profile */
-const P2=await ctx.newPage();P2.on('pageerror',e=>errs.push('P2:'+e.message));await P2.goto(URL0+'#domus='+sa.dom,{timeout:90000});let hp=false;for(const t0=Date.now();Date.now()-t0<40000&&!hp;){await P2.waitForTimeout(400);hp=await P2.evaluate(()=>!!document.querySelector('.pf83pop'))}ok(hp,'#domus=… opens the profile');await P2.close();
+const P2=await ctx.newPage();P2.on('pageerror',e=>errs.push('P2:'+e.message));await P2.goto(URL0+'#domus='+sa.dom,{timeout:90000});let hp=false;for(const t0=Date.now();Date.now()-t0<40000&&!hp;){await P2.waitForTimeout(100);hp=await P2.evaluate(()=>!!document.querySelector('.pf83pop'))}ok(hp,'#domus=… opens the profile');await P2.close();
 
 /* ── 9 · the countdown + ✕ Hold; 12 · the Wagers tab ── */
 await A.evaluate(()=>localStorage.setItem('flavius_onlcd83','60000'));
@@ -99,7 +99,7 @@ await world(C,(w,cid)=>{w.chars[cid].wallet=100},sc.ch);await C.evaluate(async i
 await A.evaluate(()=>{ONL.tab='play';onlRedraw()});await A.waitForTimeout(300);await A.evaluate(id=>{NET.req('lobby.start',{id}).catch(()=>{})},L1.id);for(const t0=Date.now();Date.now()-t0<40000&&!(await A.evaluate(()=>!!document.getElementById('cd83')));){await A.waitForTimeout(400);await redraw(A)}
 const cd=await A.evaluate(()=>({box:!!document.getElementById('cd83'),n:+((document.getElementById('cd83n')||{}).textContent||0),seats:document.querySelectorAll('#cd83 .cd83-s').length,hold:!!document.querySelector('#cd83 [data-onl83="hold"]'),gear:/Cassis|Galea|Pectorale|recruit/i.test((document.getElementById('cd83')||{}).textContent||'')}));
 ok(cd.box&&cd.n>30&&cd.seats===4&&cd.hold,'the countdown with the line-up and ✕ Hold '+JSON.stringify(cd));await shot(A,'countdown');
-await A.click('#cd83 [data-onl83="hold"]');for(const t0=Date.now();Date.now()-t0<30000&&!(await A.evaluate(()=>!!document.querySelector('.cd83.stop')));){await A.waitForTimeout(300);await redraw(A)}ok(await A.evaluate(()=>!document.getElementById('cd83')&&!!document.querySelector('.cd83.stop'))," '⏸ Countdown stopped' after ✕ Hold");
+await A.click('#cd83 [data-onl83="hold"]');for(const t0=Date.now();Date.now()-t0<30000&&!(await A.evaluate(()=>!!document.querySelector('.cd83.stop')));){await A.waitForTimeout(100);await redraw(A)}ok(await A.evaluate(()=>!document.getElementById('cd83')&&!!document.querySelector('.cd83.stop'))," '⏸ Countdown stopped' after ✕ Hold");
 await A.evaluate(()=>localStorage.setItem('flavius_onlcd83','0'));
 await open(C,'wagers');
 /* cross-window storage lags and an idle window's background refresh can write back a copy that predates the bet (a lost bet = no pot): the bet is re-asserted
