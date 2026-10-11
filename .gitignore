@@ -23,3 +23,4 @@ look2.png
 city_sealed.png
 # test screenshots written to the repo root
 /*.png
+.perf100-boot.html
