@@ -653,9 +653,13 @@ async function buildBodyAsync(opts = {}, sliceMs = 14, onStep) {
   const g = buildSteps(opts); let t = performance.now(), n = 0;
   for (;;) { const r = g.next(); if (r.done) return r.value; if (performance.now() - t > sliceMs) { if (onStep) onStep(++n); await new Promise(ok => setTimeout(ok, 0)); t = performance.now(); } }
 }
-function* buildSteps(opts = {}) {
+/* v1.0 (his 2a, 2026-10-11): the build is cut in two. coreSteps = the slow, deterministic part (field, surface nets, head grid, skin
+   weights, face paint, crease ink, harness lines found on the skin) — PRE-BAKED once at build time by tools/art/rig92/mkgear.js into
+   assets/body100.js (gear8.js loadBody8 decodes it); assembling (materials, clothing shells, rigid bits, the look) still runs here,
+   so every look option stays a cheap runtime choice. opts.core = a decoded core skips coreSteps (its field is not shipped: kit.fd null). */
+const beltY = (p) => 1.080 - 0.010 * Math.max(0, Math.min(1, p[2] / 0.09));
+function* coreSteps(o) {
   const t0 = performance.now();
-  const o = Object.assign({ res: 0.004, hair: 'cap', outline: 0.012 }, opts);
   const prims = sculpt(o);
   const fd = yield* buildField(prims, o.res);
   const t1 = performance.now();
@@ -756,6 +760,44 @@ function* buildSteps(opts = {}) {
     ink[i] = (wS > 0.04 && wT > 0.04) || (grp[i] !== GI.T && wT > 0.04 && (grp[i] === GI.AL || grp[i] === GI.AR)) ? k * 0.2 : k;
     col.set(c, i * 3);
   }
+  const t4 = performance.now();
+  /* v1.0: drop the vertices no triangle uses (the body's own head vertices under the fine head) — fewer to bake, skin and mask */
+  const used = new Int32Array(nv).fill(-1); let nu = 0; const tri0 = sn.tri; for (let t = 0; t < tri0.length; t++) { const v = tri0[t]; if (used[v] < 0) used[v] = nu++; }
+  const triC = new Uint32Array(tri0.length); for (let t = 0; t < tri0.length; t++) triC[t] = used[tri0[t]];
+  const cP = new Float32Array(nu * 3), cN = new Float32Array(nu * 3), cI = new Uint16Array(nu * 4), cW = new Float32Array(nu * 4), cG = new Uint8Array(nu), cV = new Uint8Array(nu), cK = new Float32Array(nu);
+  for (let v = 0; v < nv; v++) { const n = used[v]; if (n < 0) continue; for (let a = 0; a < 3; a++) { cP[n * 3 + a] = pos[v * 3 + a]; cN[n * 3 + a] = nor[v * 3 + a]; }
+    for (let a = 0; a < 4; a++) { cI[n * 4 + a] = skinI[v * 4 + a]; cW[n * 4 + a] = skinW[v * 4 + a]; } cG[n] = grp[v]; cV[n] = vk[v]; cK[n] = ink[v]; }
+  yield;
+  /* where the harness, its rings and buckles and the belt's studs sit: found on the skin (the field), kept as plain points */
+  const front = (x, y) => hitSkin(fd, [x, y, 0.35], [0, 0, -1]);
+  const back = (x, y) => hitSkin(fd, [x, y, -0.35], [0, 0, 1]);
+  const top = (x, z) => hitSkin(fd, [x, 1.75, z], [0, -1, 0], 0.5);
+  const nAt = (p) => gradF(fd, ...p);
+  const RING = front(0, 1.312), BRING = back(0, 1.318);
+  const straps = [1, -1].map(sx => [RING, front(sx * 0.05, 1.360), front(sx * 0.095, 1.425), front(sx * 0.118, 1.470), top(sx * 0.122, -0.005), back(sx * 0.115, 1.455), back(sx * 0.06, 1.378), BRING].filter(Boolean));
+  const projSkin = (p) => { for (let it = 0; it < 4; it++) { const f = sampleF(fd, ...p), g = gradF(fd, ...p); p = sub(p, mul(g, f)); } return p; };
+  const densify = (pts) => { const out = [pts[0]]; for (let i = 1; i < pts.length; i++) { const n = Math.max(1, Math.ceil(Math.hypot(...sub(pts[i], pts[i - 1])) / 0.008)); for (let j = 1; j <= n; j++) out.push(projSkin(lerp(pts[i - 1], pts[i], j / n))); } return out; };
+  for (let i = 0; i < straps.length; i++) straps[i] = densify(straps[i]);
+  const buckles = []; for (const s of straps) { const i = s.findIndex(p => p[1] > 1.395); if (i < 1) continue; const hit = s[i], prev = s[i - 1];
+    buckles.push({ at: add(hit, mul(nAt(hit), 0.010)), n: nAt(hit), rz: Math.PI / 4 + Math.atan2(hit[1] - prev[1], hit[0] - prev[0]) }); }
+  const studs = []; for (const sx of [1, -1]) for (const x of [0.05, 0.075, 0.10, 0.125]) {
+    const ang = Math.asin(Math.min(0.95, x / 0.13)); const dir = [Math.sin(ang) * sx, 0, Math.cos(ang)];
+    const hit = hitSkin(fd, [dir[0] * 0.35, beltY([0, 0, 0.1]) + 0.004, dir[2] * 0.35], [-dir[0], 0, -dir[2]]); if (!hit) continue;
+    for (const dy of [-0.0085, 0.0085]) studs.push(add(add(hit, mul(nAt(hit), 0.0135)), [0, dy, 0])); }
+  const anc = { ring: RING, bring: BRING ? { at: add(BRING, mul(nAt(BRING), 0.010)), n: nAt(BRING) } : null, straps, buckles, bf: front(0, beltY([0, 0, 0.1]) - 0.02), studs };
+  const t5 = performance.now();
+  return { nv: nu, pos: cP, nor: cN, tri: triC, skinI: cI, skinW: cW, grp: cG, vk: cV, ink: cK, anc, fd, grid: [fd.nx, fd.ny, fd.nz],
+    ms: { field: t1 - t0, mesh: t2 - t1, weights: t3 - t2, paint: t4 - t3, anchors: t5 - t4, total: t5 - t0 } };
+}
+function* buildSteps(opts = {}) {
+  const t0 = performance.now();
+  const o = Object.assign({ res: 0.004, hair: 'cap', outline: 0.012 }, opts);
+  const core = o.core || (yield* coreSteps(o)); const t3 = performance.now();
+  const { nv, pos, nor, skinI, skinW, grp, vk, ink, anc } = core; const fd = core.fd || null; const sn = { tri: core.tri };
+  const col = new Float32Array(nv * 3);
+  const L = Object.fromEntries(Object.entries(COL).map(([k, c]) => [k, lin(c)]));
+  const HO = [0, 1.605, 0], hs = o.headScale || 1;
+  const rig = makeBones();
 
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -805,15 +847,8 @@ function* buildSteps(opts = {}) {
     const m = new THREE.SkinnedMesh(g, opt2.hem ? hemMat(opt2.mat || mats.cloth, opt2.hem) : (opt2.mat || mats.cloth)); m.name = name; m.bind(skeleton, body.bindMatrix); m.frustumCulled = false;
     group.add(m); m.userData.ink = addOutline(m, true); shellParts.push(m); return m;
   };
-  /* where the harness runs: polylines found on the skin */
-  const front = (x, y) => hitSkin(fd, [x, y, 0.35], [0, 0, -1]);
-  const back = (x, y) => hitSkin(fd, [x, y, -0.35], [0, 0, 1]);
-  const top = (x, z) => hitSkin(fd, [x, 1.75, z], [0, -1, 0], 0.5);
-  const RING = front(0, 1.312), BRING = back(0, 1.318);
-  const straps = [1, -1].map(sx => [RING, front(sx * 0.05, 1.360), front(sx * 0.095, 1.425), front(sx * 0.118, 1.470), top(sx * 0.122, -0.005), back(sx * 0.115, 1.455), back(sx * 0.06, 1.378), BRING].filter(Boolean));
-  const projSkin = (p) => { for (let it = 0; it < 4; it++) { const f = sampleF(fd, ...p), g = gradF(fd, ...p); p = sub(p, mul(g, f)); } return p; };
-  const densify = (pts) => { const out = [pts[0]]; for (let i = 1; i < pts.length; i++) { const n = Math.max(1, Math.ceil(Math.hypot(...sub(pts[i], pts[i - 1])) / 0.008)); for (let j = 1; j <= n; j++) out.push(projSkin(lerp(pts[i - 1], pts[i], j / n))); } return out; };
-  for (let i = 0; i < straps.length; i++) straps[i] = densify(straps[i]);
+  /* where the harness runs: polylines found on the skin (coreSteps) */
+  const straps = anc.straps;
   const isTorsoish = (g, p) => g === GI.T || ((g === GI.AL || g === GI.AR) && Math.abs(p[0]) < 0.215 && p[1] > 1.38);
   const harnessMask = (p, g) => {
     if (!isTorsoish(g, p)) return -1;
@@ -826,7 +861,6 @@ function* buildSteps(opts = {}) {
   const leather = (p, m) => { const hi = (Math.sin(p[0] * 210 + p[1] * 160) * 0.5 + 0.5) * 0.25; return lerp(L.harness, L.harnessHi, hi); };
   yield; const harnessBits = [shellFrom('harness', harnessMask, leather, 0.0055, { mat: mats.leather })]; yield;
 
-  const beltY = (p) => 1.080 - 0.010 * Math.max(0, Math.min(1, p[2] / 0.09));
   shellFrom('belt', (p, g) => g === GI.T ? 0.027 - Math.abs(p[1] - beltY(p)) : -1,
     (p, m) => lerp(L.belt, L.harnessHi, (Math.sin(p[0] * 120) * 0.5 + 0.5) * 0.3), 0.011, { mat: mats.leather });
   shellFrom('wrap', (p, g) => g === GI.T ? 0.029 - Math.abs(p[1] - (beltY(p) - 0.052)) : -1,
@@ -925,21 +959,15 @@ function* buildSteps(opts = {}) {
     if (lookN) m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(...lookN).normalize());
     b.add(m); m.userData.ink = addOutline(m, false); return m;
   };
-  const nAt = (p) => gradF(fd, ...p);
-  if (RING) harnessBits.push(rigid(new THREE.TorusGeometry(0.020, 0.0055, 8, 24), mats.metal, 'ch', add(RING, [0, 0, 0.008]), [0, 0.1, 1]));
-  if (BRING) harnessBits.push(rigid(new THREE.TorusGeometry(0.018, 0.005, 8, 20), mats.metal, 'ch', add(BRING, mul(nAt(BRING), 0.010)), nAt(BRING)));
-  for (const s of straps) {   /* a square buckle part-way up each front strap */
-    const i = s.findIndex(p => p[1] > 1.395); if (i < 1) continue; const hit = s[i], prev = s[i - 1];
-    const bk = rigid(new THREE.TorusGeometry(0.017, 0.0035, 4, 4), mats.metal, 'ch', add(hit, mul(nAt(hit), 0.010)), nAt(hit));
-    bk.rotateZ(Math.PI / 4 + Math.atan2(hit[1] - prev[1], hit[0] - prev[0])); harnessBits.push(bk);
+  /* a pre-baked core carries no field: nAt / hitSkin answer from the field only on a fresh build (the sculptor's, at build time) */
+  const nAt = (p) => fd ? gradF(fd, ...p) : [0, 0, 1];
+  if (anc.ring) harnessBits.push(rigid(new THREE.TorusGeometry(0.020, 0.0055, 8, 24), mats.metal, 'ch', add(anc.ring, [0, 0, 0.008]), [0, 0.1, 1]));
+  if (anc.bring) harnessBits.push(rigid(new THREE.TorusGeometry(0.018, 0.005, 8, 20), mats.metal, 'ch', anc.bring.at, anc.bring.n));
+  for (const bq of anc.buckles) {   /* a square buckle part-way up each front strap */
+    const bk = rigid(new THREE.TorusGeometry(0.017, 0.0035, 4, 4), mats.metal, 'ch', bq.at, bq.n); bk.rotateZ(bq.rz); harnessBits.push(bk);
   }
-  const BF = front(0, beltY([0, 0, 0.1]) - 0.02);
-  if (BF) rigid(new THREE.TorusGeometry(0.031, 0.0072, 10, 28), mats.iron, 'pe', add(BF, [0, 0, 0.021]), [0, -0.15, 1]);
-    for (const sx of [1, -1]) for (const x of [0.05, 0.075, 0.10, 0.125]) {   /* belt studs */
-    const ang = Math.asin(Math.min(0.95, x / 0.13)); const dir = [Math.sin(ang) * sx, 0, Math.cos(ang)];
-    const hit = hitSkin(fd, [dir[0] * 0.35, beltY([0, 0, 0.1]) + 0.004, dir[2] * 0.35], [-dir[0], 0, -dir[2]]); if (!hit) continue;
-    for (const dy of [-0.0085, 0.0085]) rigid(new THREE.SphereGeometry(0.0052, 8, 6), mats.stud, 'pe', add(add(hit, mul(nAt(hit), 0.0135)), [0, dy, 0]));
-  }
+  if (anc.bf) rigid(new THREE.TorusGeometry(0.031, 0.0072, 10, 28), mats.iron, 'pe', add(anc.bf, [0, 0, 0.021]), [0, -0.15, 1]);
+  for (const st of anc.studs) rigid(new THREE.SphereGeometry(0.0052, 8, 6), mats.stud, 'pe', st);   /* belt studs */
   /* sandal soles */
   for (const sd of ['L', 'R']) {
     const sx = sd === 'L' ? 1 : -1, A0 = P('a' + sd);
@@ -1000,11 +1028,11 @@ function* buildSteps(opts = {}) {
   const kit = { fd, addOutline, sever, shellFrom, rigid, kill, nAt, P, GI, HO, hs, mats, lin, hexRGB, showAll,
     makeToon: (c, ex) => toonMat(c, mats, ex),
     maskedMat: (ex) => maskedToon(Object.assign({ vertexColors: true, gradientMap: mats.gm, side: THREE.DoubleSide }, ex || {}), 0.0024),
-    hitSkin: (from, dir, maxd) => hitSkin(fd, from, dir, maxd), rig, group, setHarness: (on) => showAll(harnessBits, on) };
+    hitSkin: (from, dir, maxd) => fd ? hitSkin(fd, from, dir, maxd) : null, rig, group, setHarness: (on) => showAll(harnessBits, on) };
   setLook({ hs: o.hair === 'none' ? 'bald' : 'cap' });
   const t4 = performance.now();
-  return { group, body, rig: Object.assign(rig, { skeleton, space: group }), setOutline, shells: shellParts, mats, setLook, kit,
-    stats: { verts: nv, tris: sn.tri.length / 3, grid: [fd.nx, fd.ny, fd.nz], ms: { field: t1 - t0, mesh: t2 - t1, weights: t3 - t2, rest: t4 - t3, total: t4 - t0 } } };
+  return { group, body, rig: Object.assign(rig, { skeleton, space: group }), setOutline, shells: shellParts, mats, setLook, kit, core,
+    stats: { verts: nv, tris: sn.tri.length / 3, grid: core.grid, baked: !!o.core, ms: Object.assign({}, o.core ? { core: t3 - t0 } : core.ms, { assemble: t4 - t3, total: t4 - t0 }) } };
 }
 
 /* ================= materials ================= */
@@ -1958,6 +1986,31 @@ async function loadBaked(data, dec) {
     has: (k) => !!data.pieces[k], kind: (k) => data.pieces[k] && data.pieces[k].t, meta: (k) => data.pieces[k], piece };
 }
 
+/* v1.0 (his 2a): THE BODY'S CORE, pre-baked by mkgear.js into assets/body100.js (window.BODY100 = {v, key, src, nv, ni, lo, hi, q, s, anc, z, b64}):
+   s.p positions 4×u16 (0…q) in the box · s.n normals (octahedral filter, 4×i8 out) · s.i skin bones 4×u8 · s.w skin weights 4×u8 (sum 255) · s.m 4×u8 [group, paint kind,
+   crease ink, 0] (all meshopt vertex codec) · s.t triangles (index codec); anc = the harness lines / ring / buckle / stud points (plain JSON).
+   → the core buildBodyAsync takes as opts.core (body.js coreSteps' shape, no field). */
+async function loadBody8(data, dec) {
+  if (!data || !data.b64 || !data.s || !dec) return null;
+  const t0 = (typeof performance !== 'undefined' ? performance : Date).now();
+  let bytes = b64bytes(data.b64); if (data.z) bytes = await inflate(bytes);
+  await dec.ready;
+  const nv = data.nv, ni = data.ni, QM = data.q || 65535, slice = (r) => bytes.subarray(r[0], r[0] + r[1]);
+  const dv = (k, st, f) => { const o = new Uint8Array(nv * st); dec.decodeVertexBuffer(o, nv, st, slice(data.s[k]), f); return o; };
+  const Pq = new Uint16Array(dv('p', 8).buffer), Nq = new Int8Array(dv('n', 4, 'OCTAHEDRAL').buffer), Iq = dv('i', 4), Wq = dv('w', 4), Mq = dv('m', 4);
+  const T = new Uint8Array(ni * 4); dec.decodeIndexBuffer(T, ni, 4, slice(data.s.t));
+  const pos = new Float32Array(nv * 3), nor = new Float32Array(nv * 3), skinI = new Uint16Array(nv * 4), skinW = new Float32Array(nv * 4), grp = new Uint8Array(nv), vk = new Uint8Array(nv), ink = new Float32Array(nv);
+  const lo = data.lo, hi = data.hi;
+  for (let v = 0; v < nv; v++) {
+    for (let a = 0; a < 3; a++) pos[v * 3 + a] = lo[a] + (hi[a] - lo[a]) * Pq[v * 4 + a] / QM;
+    const nx = Nq[v * 4] / 127, ny = Nq[v * 4 + 1] / 127, nz = Nq[v * 4 + 2] / 127, nl = Math.hypot(nx, ny, nz) || 1; nor[v * 3] = nx / nl; nor[v * 3 + 1] = ny / nl; nor[v * 3 + 2] = nz / nl;
+    for (let a = 0; a < 4; a++) { skinI[v * 4 + a] = Iq[v * 4 + a]; skinW[v * 4 + a] = Wq[v * 4 + a] / 255; }
+    grp[v] = Mq[v * 4]; vk[v] = Mq[v * 4 + 1]; ink[v] = Mq[v * 4 + 2] / 255;
+  }
+  return { nv, pos, nor, tri: new Uint32Array(T.buffer), skinI, skinW, grp, vk, ink, anc: data.anc, fd: null, grid: data.grid || null,
+    bytes: bytes.length, ms: { load: Math.round((typeof performance !== 'undefined' ? performance : Date).now() - t0) } };
+}
+
 /* a piece as a BufferGeometry: left limb pieces mirror for the right (x → −x, winding turned) */
 function bakedGeo(BK, k, sd) {
   const r = BK.piece(k); if (!r) return null; const mir = r.t === 'l' && sd === 'R';
@@ -2027,7 +2080,7 @@ function beltShow8(B, on) {
   for (const ch of B.rig.bones.pe.children) { const gg = ch.geometry, pp = gg && gg.parameters; if (pp && ((gg.type === 'SphereGeometry' && Math.abs(pp.radius - 0.0052) < 1e-4) || (gg.type === 'TorusGeometry' && Math.abs(pp.radius - 0.031) < 1e-4))) { ch.visible = on; if (ch.userData.ink) ch.userData.ink.visible = on; } }
 }
 
-return {loadBaked,bakedGeo,skin7,nearFor,wearBaked,merge8,beltShow8};})();
+return {loadBaked,loadBody8,bakedGeo,skin7,nearFor,wearBaked,merge8,beltShow8};})();
 __M.hold=(function(){
 /* =====================================================================
    rig92/hold.js — v1.0: weapons from his cards IN THE FIST, held with a STRAIGHT WRIST (look100 rounds 4–8, his picks)
@@ -2069,7 +2122,9 @@ const WGEO4 = {
     [plate([[-0.02, 0.07], [0.022, 0.07], [0.035, 0.22], [0.055, 0.4], [0.02, 0.56], [-0.01, 0.42], [-0.025, 0.22]], 0.008), STL]]),
   bow: () => { const R = 0.6, arc = new THREE.TorusGeometry(R, 0.014, 6, 32, 1.7); arc.rotateZ(Math.PI - 0.85); arc.translate(R, 0, 0);
     const tips = [[R * (1 - Math.cos(0.85)), R * Math.sin(0.85), 0], [R * (1 - Math.cos(0.85)), -R * Math.sin(0.85), 0]];
-    const g = merge([[arc, '#6a4428'], [cyl(0.018, 0.018, 0.1, 0, 8), '#3a2a20'], ...tips.map(t => [at(new THREE.ConeGeometry(0.01, 0.04, 5), t[0] + 0.01, t[1] * 1.02, 0), '#e8dcc0'])]); g.userData = { tips }; return g; },
+    const g = merge([[arc, '#6a4428'], [cyl(0.018, 0.018, 0.1, 0, 8), '#3a2a20'], ...tips.map(t => [at(new THREE.ConeGeometry(0.01, 0.04, 5), t[0] + 0.01, t[1] * 1.02, 0), '#e8dcc0'])]);
+    /* v1.0 (his 3a): turned half round so the limbs curve back toward the archer (the grip leads, the string runs on his side) */
+    g.rotateY(Math.PI); g.userData = { tips: tips.map(t => [-t[0], t[1], -t[2]]) }; return g; },
   pugio: () => merge([[cyl(0.012, 0.012, 0.09, 0, 8), '#2a2420'], [ball(0.022, 0, -0.055, 0), '#c99a3e'], [box(0.06, 0.016, 0.03, 0, 0.05), '#c99a3e'], [leaf(0.2, 0.04, 0.055), STL]]),
   scissor: () => merge([[cyl(0.046, 0.04, 0.24, -0.04, 14), '#5f5c56'], [at(new THREE.TorusGeometry(0.047, 0.005, 4, 16).rotateX(Math.PI / 2), 0, 0.075, 0), '#8e979e'],
     [at(new THREE.TorusGeometry(0.1, 0.016, 6, 22, Math.PI).rotateY(Math.PI / 2).rotateX(Math.PI), 0, 0.2, 0), '#d6dadd']]),
@@ -2114,8 +2169,10 @@ const H5 = {
   /* round 8: the sword hold the max-load search settled on (gladius clear of the scutum and the body) */
   sword: { R: { th: 15, b: [-0.1, 0.2, 1], hint: [-0.14, -0.06, 1], at: [-0.33, 1.2, 0.44] } },
   dagger: { R: { th: -100, b: [0.12, -1, 0.25], hint: [0, 0.12, 1], at: [-0.27, 1.22, 0.3] } },
-  spear: { R: { th: -90, b: [0.03, -0.08, 1], hint: [0, -1, 0.25], at: [-0.2, 1.66, 0.05] } },
-  trident: { R: { th: 25, b: [0.12, 0.22, 1], hint: [-0.05, -0.35, 1], at: [-0.2, 1.0, 0.1] }, two: { d: 0.5, th: 25, hint: [0.2, -0.35, 1] } },
+  /* v1.0 (his 4a, best fit on the tile): the long shafts STAND UPRIGHT in the armed stand, butt by the foot (round 5 held them level, which
+     made the stand 1.5–2× wider than its tile); the throw / thrust presets still carry them level */
+  spear: { R: { th: 90, b: [0.04, 1, 0.06], hint: [0, 0, 1], at: [-0.34, 0.95, 0.2] } },
+  trident: { R: { th: 90, b: [0.04, 1, 0.06], hint: [0, 0, 1], at: [-0.34, 0.95, 0.2] } },
   hafted: { R: { th: 80, b: [-0.12, 1, -0.15], hint: [0, 0.05, 1], at: [-0.28, 1.36, 0.24] } },
   throw: { R: { th: 0, b: [0, 1, -0.2], hint: [0, 0, 1], at: [-0.24, 1.66, -0.05] } },
   bow: { L: { th: 90, b: [0, 1, 0.05], hint: [0.25, 0, 1], at: [0.2, 1.42, 0.52] }, hand: 'L', drawR: { h: [-60, 1500, 160], hp: [1, -0.3, -1] } },
@@ -2209,7 +2266,32 @@ function mountWeapons(B, gear) {
   for (const [sd, k, th] of ho.mounts) out.push(mount5(B, k, sd, th));
   if (ho.shield) out.push(...weaponKit(B, { [ho.shield[0]]: ho.shield[1], up8: 1 }));
   if (ho.R === 'trident' && !ho.L) out.push(...net(B));
+  for (const m of out.slice()) if (m.userData && m.userData.w4 && m.userData.w4.k === 'bow') out.push(...bowString(B, m));
   return out;
+}
+/* v1.0 (his 3a): THE BOW STRING — rebuilt at every render (so every sheet, facing, thumbnail and the editor) from the bow's two tips
+   (the mounted bow, geometry userData.tips) and the draw hand: when the right hand's grip is beyond the chord, away from the bow's grip
+   (a drawn bow, any pose / facing / yaw), the string runs tip → hand → tip; otherwise it is straight. Two thin segments + their ink. */
+function bowString(B, bow) {
+  const tips = bow.geometry && bow.geometry.userData && bow.geometry.userData.tips; if (!tips) return [];
+  const R = 0.0032, gl = new THREE.CylinderGeometry(1, 1, 1, 6, 1, true); gl.translate(0, 0.5, 0);
+  const light = B.kit.makeToon('#efe4c8'), dark = new THREE.MeshBasicMaterial({ color: 0x120c0a, side: THREE.BackSide });
+  const segs = [0, 1].map(() => [new THREE.Mesh(gl, light), new THREE.Mesh(gl.clone(), dark)]);
+  const r = REST.R, W0 = JK.wR.pos, loc = r.u.clone().multiplyScalar(r.gl).sub(r.o.clone().multiplyScalar(0.03));
+  const t1 = V(tips[0]), t2 = V(tips[1]), q = new THREE.Quaternion(), Y = V([0, 1, 0]), sc = new THREE.Vector3();
+  const place = (m, a, b, rad) => { const d = b.clone().sub(a), l = d.length() || 1e-6; q.setFromUnitVectors(Y, d.divideScalar(l)); m.matrixWorld.compose(a, q, sc.set(rad, l, rad)); };
+  const update = () => {
+    const A = bow.localToWorld(t1.clone()), C = bow.localToWorld(t2.clone()), G = bow.localToWorld(V([0, 0, 0]));
+    const H = B.rig.bones.wR.localToWorld(loc.clone()), AC = C.clone().sub(A), L2 = AC.lengthSq() || 1e-9;
+    const t = Math.max(0, Math.min(1, H.clone().sub(A).dot(AC) / L2)), P = A.clone().add(AC.clone().multiplyScalar(t));
+    const pull = H.clone().sub(P), drawn = t > 0.15 && t < 0.85 && pull.dot(P.clone().sub(G)) > 0 && pull.length() < Math.sqrt(L2) * 1.1;
+    const mid = drawn ? H : A.clone().add(C).multiplyScalar(0.5), sw = B.group.scale.x || 1, ink = (B.mats.out.userData.u.value || 0) * sw;
+    place(segs[0][0], A, mid, R * sw); place(segs[0][1], A, mid, R * sw + ink); place(segs[1][0], mid, C, R * sw); place(segs[1][1], mid, C, R * sw + ink);
+    bow.userData.string = { drawn, t: +t.toFixed(3) };
+  };
+  const out = [];
+  for (const [m, k] of segs) for (const x of [m, k]) { x.matrixAutoUpdate = false; x.matrixWorldAutoUpdate = false; x.frustumCulled = false; x.userData.raw = 1; x.name = 'bowstring'; x.onBeforeRender = update; B.group.add(x); out.push(x); }
+  bow.userData.stringUpdate = update; return out;
 }
 function killWeapons(B, list) {
   for (const m of list || []) { if (m.userData && m.userData.raw) { if (m.parent) m.parent.remove(m); m.geometry.dispose(); if (m.material) m.material.dispose(); continue; }
@@ -2263,7 +2345,7 @@ const {buildBodyAsync}=__M.body;
 const {JOINTS,JK,HANDLE_COL,applyPose,poseToJSON,poseFromJSON,readPose,emptyPose,jointPos,jointQ,endPos,ENDS,solveArm,rotateJointWorld,footNow,solveTwoBone,resolveSpec,BASE_R,BASE_H,MM_PER_M,ANKLE_H}=__M.rig;
 const {PRESETS,PRESET_ORDER,PRESET_GROUPS}=__M.presets;
 const {makeGear}=__M.gear;
-const {loadBaked,wearBaked,merge8,beltShow8}=__M.gear8;
+const {loadBaked,loadBody8,wearBaked,merge8,beltShow8}=__M.gear8;
 const {mountWeapons,killWeapons,armedSpec,armedFinish,shieldCheck,wristBend,holdsOf,STANCE}=__M.hold;
 const {MeshoptDecoder}=__M.meshopt_decoder;
 /* v1.0 (his picks, look100 rounds 2–8): printed pieces in a token's gear spec are worn as the PRE-BAKED SDF sculpts (assets/gear100.js,
@@ -2313,8 +2395,12 @@ async function createToken(opts = {}) {
     const ink = new THREE.Mesh(new THREE.CylinderGeometry(rTop + 0.02, BASE_R + 0.02, BASE_H + 0.03, 64), new THREE.MeshBasicMaterial({ color: 0x120c0a, side: THREE.BackSide }));
     ink.position.y = -BASE_H / 2; baseG.add(ink);
   }
-  /* ---------- the body (time-sliced build) ---------- */
-  const B = await buildBodyAsync(Object.assign({ res: o.res, hair: 'cap' }, o.body || {}), o.slice, o.onStep);
+  /* ---------- the body (his 2a, v1.0: the slow core pre-baked in assets/body100.js — window.BODY100, made by mkgear.js on exactly this
+     body; opts.body8 = null builds it fresh, as mkgear.js itself does; a missing / other-body bake builds it fresh, time-sliced) ---------- */
+  let core = null, bodyWhy = '';
+  { const BD = o.body8 !== undefined ? o.body8 : (typeof window !== 'undefined' ? window.BODY100 : null);
+    if (!BD) bodyWhy = 'none'; else if (BD.key !== bodyKey8(o)) bodyWhy = 'body'; else try { core = await loadBody8(BD, MeshoptDecoder); } catch (e) { bodyWhy = String(e && e.message || e); core = null; } }
+  const B = await buildBodyAsync(Object.assign({ res: o.res, hair: 'cap', core }, o.body || {}), o.slice, o.onStep);
   turn.add(B.group);
   /* look100 round 2: the figure +15% against its base (his minis' heroic scale; the base stays 25.4 mm = 0.8 tile) */
   if (o.scale) B.group.scale.setScalar(o.scale);
@@ -2352,6 +2438,33 @@ async function createToken(opts = {}) {
   let handles = null;
   const hideHandles = (fn) => { const v = handles && handles.visible; if (handles) handles.visible = false; try { return fn(); } finally { if (handles) handles.visible = v; } };
 
+  /* v1.0 (his 4a): BEST FIT ON THE TILE. The base stays exactly 0.8 tile, so the tile is 1.25 base radii either side of the anchor; nothing
+     of the figure (+15%) may reach past that column or below the tile's lowest corner, in any of the 8 facings. reach() measures the posed
+     figure as the sheet sees it (CPU skinning, every 2nd body vertex, the sheet's own yaw + 30° projection); fitTile() scales a figure that
+     spills INSIDE the render (the base never changes) and returns what it did. */
+  const TILE_HALF = BASE_R * 1.25;
+  function reach(el = 30) {
+    turn.rotation.y = 0; turn.updateMatrixWorld(true);
+    const v = new THREE.Vector3(), ce = Math.cos(el * D2R), se = Math.sin(el * D2R), ys = MINI_YAW.map(y => [Math.cos(y * D2R), Math.sin(y * D2R)]);
+    let hw = 0, dn = -1e9, n = 0; const sk = new Set();
+    B.group.traverseVisible(o => { if (o.isSkinnedMesh && o.skeleton && !sk.has(o.skeleton)) { sk.add(o.skeleton); o.skeleton.update(); } });
+    B.group.traverseVisible(o => {
+      if (!o.isMesh || o.name === 'bowstring' || /_ink$/.test(o.name)) return;   /* raw meshes count too (the retiarius' net); the string lies between the bow's tips */ const P = o.geometry && o.geometry.attributes.position; if (!P) return;
+      const st = o.isSkinnedMesh && P.count > 30000 ? 2 : 1;
+      for (let i = 0; i < P.count; i += st) { if (o.isSkinnedMesh) o.getVertexPosition(i, v); else v.fromBufferAttribute(P, i); v.applyMatrix4(o.matrixWorld);
+        for (const [c, s2] of ys) { const xs = v.x * c + v.z * s2, zs = -v.x * s2 + v.z * c; if (Math.abs(xs) > hw) hw = Math.abs(xs); const d = zs * se - (v.y + BASE_H) * ce; if (d > dn) dn = d; } n++; }
+    });
+    return { hw, dn, n, tileHalf: TILE_HALF };
+  }
+  function fitTile(s) {
+    const s0 = o.scale || 1; B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true);
+    const pad = ((s.outlinePx || 0.85) + 1.0) / (s.pxmm * MM_PER_M), ce = Math.cos(s.el * D2R), BH = BASE_H * ce;
+    const r = reach(s.el); let f = 1;
+    if (r.hw > TILE_HALF - pad) f = Math.min(f, (TILE_HALF - pad) / r.hw);
+    if (r.dn > TILE_HALF / 2 - pad && r.dn + BH > 1e-6) f = Math.min(f, (TILE_HALF / 2 - pad + BH) / (r.dn + BH));
+    if (f < 0.999) { B.group.scale.setScalar(s0 * f); B.group.updateMatrixWorld(true); }
+    return { f: +f.toFixed(4), hw: +r.hw.toFixed(4), dn: +r.dn.toFixed(4), restore: () => { B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true); } };
+  }
   /* the minis' sheet: 8 yaw cells in one row, transparent, cropped round the anchor; meta like MINI8 */
   function sheet(so = {}) { const g = sheetSteps(so); for (;;) { const r = g.next(); if (r.done) return r.value; } }
   /* the same, one facing per step (the game awaits between them so a page never freezes for the whole sheet) */
@@ -2365,7 +2478,7 @@ async function createToken(opts = {}) {
     const r = renderer(S, S);
     const anc = new THREE.Vector3(0, -BASE_H, 0).project(cam);
     const AX = (anc.x * 0.5 + 0.5) * S / s.ss, AY = (-anc.y * 0.5 + 0.5) * S / s.ss;
-    const cells = [];
+    const cells = []; const fit = s.fit === false ? null : fitTile(s);
     for (const yaw of MINI_YAW) {
       lightFor(cam); B.setOutline(s.outlinePx * s.ss / ppm);   /* again: an editor redraw may run between the steps */
       renderer(S, S); hideHandles(() => { turn.rotation.y = yaw * D2R; turn.updateMatrixWorld(true); r.render(scene, cam); });
@@ -2373,21 +2486,23 @@ async function createToken(opts = {}) {
       let c = grab(r, S, S); for (let k = s.ss; k > 1; k /= 2) c = halve(c); cells.push({ c, box: alphaBox(c) });
       if (cells.length < MINI_YAW.length) yield;
     }
+    if (fit) fit.restore();
     let L = 0, Rr = 0, T = 0, Bm = 0;
     for (const { box } of cells) { L = Math.max(L, AX - box[0]); Rr = Math.max(Rr, box[2] + 1 - AX); T = Math.max(T, AY - box[1]); Bm = Math.max(Bm, box[3] + 1 - AY); }
+    const pxm = s.pxmm * MM_PER_M, tile = { f: fit ? fit.f : 1, half: +Math.max(L, Rr).toFixed(1), below: +Bm.toFixed(1), limH: +(TILE_HALF * pxm).toFixed(1), limD: +(TILE_HALF / 2 * pxm).toFixed(1) };
     const half = Math.ceil(Math.max(L, Rr)) + 1, w = half * 2, top = Math.ceil(T) + 1, h = top + Math.ceil(Bm) + 1;
     const x0 = Math.floor(AX) - half, y0 = Math.floor(AY) - top;
     const out = document.createElement('canvas'); out.width = w * cells.length; out.height = h; const g = out.getContext('2d');
     cells.forEach(({ c }, i) => g.drawImage(c, x0, y0, w, h, i * w, 0, w, h));
-    return { canvas: out, meta: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1)], ms: Math.round(performance.now() - t0) };
+    return { canvas: out, meta: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1)], ms: Math.round(performance.now() - t0), tile };
   }
   /* small live facings for the modeller's strip (no supersampling) */
   function facings(px = 84) {
     const S = px, ppm = S / 2.75, out = [];
     const cam = orthoCam(S, S, ppm, 30, new THREE.Vector3(0, 0.9, 0)); lightFor(cam); B.setOutline(0.9 / ppm);
-    const r = renderer(S, S);
+    const r = renderer(S, S); const fit = fitTile({ el: 30, pxmm: MINI_PXMM, outlinePx: 0.85 });   /* his 4a: the strip shows the board's fit */
     hideHandles(() => { for (const yaw of MINI_YAW) { turn.rotation.y = yaw * D2R; turn.updateMatrixWorld(true); r.render(scene, cam); out.push(grab(r, S, S)); } });
-    turn.rotation.y = 0; turn.updateMatrixWorld(true); return out;
+    fit.restore(); turn.rotation.y = 0; turn.updateMatrixWorld(true); return out;
   }
 
   /* ---------- look + gear + pose ---------- */
@@ -2624,7 +2739,8 @@ async function createToken(opts = {}) {
   return {
     hero, specPose, align, B, rig, turn, scene, baseG, sculpted: () => last8.slice(), standFor,
     /* v1.0: the bake (null when missing: bakeWhy), the shield check on what is held now, the wrists' bend */
-    baked: BK ? { keys: BK.keys.length, bytes: BK.bytes, ms: BK.ms } : null, bakeWhy, bodyKey: bodyKey8(o), shieldCheck: () => shieldCheck(B, turn, held), wrists: () => ({ L: wristBend(rig, 'L'), R: wristBend(rig, 'R') }),
+    baked: BK ? { keys: BK.keys.length, bytes: BK.bytes, ms: BK.ms } : null, bakeWhy, bodyBaked: core ? { verts: core.nv, bytes: core.bytes, ms: core.ms.load } : null, bodyWhy, bodyKey: bodyKey8(o), shieldCheck: () => shieldCheck(B, turn, held), wrists: () => ({ L: wristBend(rig, 'L'), R: wristBend(rig, 'R') }),
+    reach, fitTile: (so) => { const f = fitTile(Object.assign({ el: 30, pxmm: MINI_PXMM, outlinePx: 0.85 }, so || {})); f.restore(); return { f: f.f, hw: f.hw, dn: f.dn, tileHalf: TILE_HALF }; },
     apply, setPose, pose: poseJSON, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },
     dispose() { gear.clear(); killWeapons(B, held); held = []; if (R) { R.dispose(); R.forceContextLoss(); R = null; } },
   };

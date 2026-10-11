@@ -1,11 +1,11 @@
 {
- "at": "2026-10-11T13:29:31.151Z",
+ "at": "2026-10-11T19:09:28.699Z",
  "tris": 1550,
  "full": false,
  "pieces": {
   "murmillo": {
    "kind": "h",
-   "sculptMs": 1035,
+   "sculptMs": 6949,
    "trisSculpt": 55398,
    "trisFine": 235032,
    "tris": 1928,
@@ -15,7 +15,7 @@
   },
   "thrachelm": {
    "kind": "h",
-   "sculptMs": 1630,
+   "sculptMs": 5018,
    "trisSculpt": 60130,
    "trisFine": 256248,
    "tris": 2411,
@@ -25,7 +25,7 @@
   },
   "crista": {
    "kind": "h",
-   "sculptMs": 1281,
+   "sculptMs": 3762,
    "trisSculpt": 55138,
    "trisFine": 224164,
    "tris": 2127,
@@ -35,7 +35,7 @@
   },
   "centurion": {
    "kind": "h",
-   "sculptMs": 795,
+   "sculptMs": 2378,
    "trisSculpt": 33882,
    "trisFine": 151024,
    "tris": 1937,
@@ -45,7 +45,7 @@
   },
   "galea": {
    "kind": "h",
-   "sculptMs": 594,
+   "sculptMs": 1352,
    "trisSculpt": 34816,
    "trisFine": 142804,
    "tris": 1884,
@@ -55,7 +55,7 @@
   },
   "cassis": {
    "kind": "h",
-   "sculptMs": 1133,
+   "sculptMs": 3580,
    "trisSculpt": 41925,
    "trisFine": 179248,
    "tris": 1914,
@@ -65,7 +65,7 @@
   },
   "helm5": {
    "kind": "h",
-   "sculptMs": 1280,
+   "sculptMs": 2680,
    "trisSculpt": 46448,
    "trisFine": 196348,
    "tris": 1934,
@@ -75,7 +75,7 @@
   },
   "flavhelm": {
    "kind": "h",
-   "sculptMs": 1357,
+   "sculptMs": 2757,
    "trisSculpt": 34420,
    "trisFine": 144384,
    "tris": 2304,
@@ -85,7 +85,7 @@
   },
   "steelhelm": {
    "kind": "h",
-   "sculptMs": 808,
+   "sculptMs": 2482,
    "trisSculpt": 30581,
    "trisFine": 136552,
    "tris": 1937,
@@ -95,7 +95,7 @@
   },
   "musculata": {
    "kind": "c",
-   "sculptMs": 6061,
+   "sculptMs": 22811,
    "trisSculpt": 38740,
    "trisFine": 309488,
    "tris": 1922,
@@ -105,7 +105,7 @@
   },
   "thorax": {
    "kind": "c",
-   "sculptMs": 10026,
+   "sculptMs": 22294,
    "trisSculpt": 53463,
    "trisFine": 608292,
    "tris": 9022,
@@ -115,7 +115,7 @@
   },
   "pectorale": {
    "kind": "c",
-   "sculptMs": 4765,
+   "sculptMs": 11641,
    "trisSculpt": 36686,
    "trisFine": 298216,
    "tris": 1925,
@@ -125,7 +125,7 @@
   },
   "lorica": {
    "kind": "c",
-   "sculptMs": 5196,
+   "sculptMs": 13535,
    "trisSculpt": 50708,
    "trisFine": 348488,
    "tris": 3897,
@@ -135,7 +135,7 @@
   },
   "amazon": {
    "kind": "c",
-   "sculptMs": 5967,
+   "sculptMs": 12532,
    "trisSculpt": 40036,
    "trisFine": 308148,
    "tris": 1917,
@@ -145,7 +145,7 @@
   },
   "flavchest": {
    "kind": "c",
-   "sculptMs": 5446,
+   "sculptMs": 11145,
    "trisSculpt": 47058,
    "trisFine": 357136,
    "tris": 1930,
@@ -155,7 +155,7 @@
   },
   "ornate": {
    "kind": "c",
-   "sculptMs": 5865,
+   "sculptMs": 16598,
    "trisSculpt": 38668,
    "trisFine": 305004,
    "tris": 1916,
@@ -165,7 +165,7 @@
   },
   "balteus": {
    "kind": "b",
-   "sculptMs": 840,
+   "sculptMs": 4538,
    "trisSculpt": 21938,
    "trisFine": 110836,
    "tris": 906,
@@ -175,7 +175,7 @@
   },
   "balteus1": {
    "kind": "b",
-   "sculptMs": 969,
+   "sculptMs": 3486,
    "trisSculpt": 20432,
    "trisFine": 103704,
    "tris": 928,
@@ -185,7 +185,7 @@
   },
   "wraps": {
    "kind": "l",
-   "sculptMs": 3271,
+   "sculptMs": 10306,
    "trisSculpt": 10838,
    "trisFine": 55720,
    "tris": 523,
@@ -195,7 +195,7 @@
   },
   "legwraps": {
    "kind": "l",
-   "sculptMs": 4691,
+   "sculptMs": 16096,
    "trisSculpt": 15319,
    "trisFine": 84596,
    "tris": 578,
@@ -205,7 +205,7 @@
   },
   "bracers": {
    "kind": "l",
-   "sculptMs": 3289,
+   "sculptMs": 11661,
    "trisSculpt": 8977,
    "trisFine": 45492,
    "tris": 1150,
@@ -215,7 +215,7 @@
   },
   "manica": {
    "kind": "l",
-   "sculptMs": 6860,
+   "sculptMs": 23626,
    "trisSculpt": 32306,
    "trisFine": 161332,
    "tris": 1690,
@@ -225,7 +225,7 @@
   },
   "provmanica": {
    "kind": "l",
-   "sculptMs": 5247,
+   "sculptMs": 21168,
    "trisSculpt": 27590,
    "trisFine": 126436,
    "tris": 1501,
@@ -235,7 +235,7 @@
   },
   "galerus": {
    "kind": "l",
-   "sculptMs": 5558,
+   "sculptMs": 21585,
    "trisSculpt": 25632,
    "trisFine": 128440,
    "tris": 1141,
@@ -245,7 +245,7 @@
   },
   "legwrapsU": {
    "kind": "l",
-   "sculptMs": 4653,
+   "sculptMs": 12556,
    "trisSculpt": 33860,
    "trisFine": 180756,
    "tris": 1134,
@@ -255,7 +255,7 @@
   },
   "femoralia": {
    "kind": "l",
-   "sculptMs": 4834,
+   "sculptMs": 16735,
    "trisSculpt": 33860,
    "trisFine": 180756,
    "tris": 1144,
@@ -265,7 +265,7 @@
   },
   "thighplate": {
    "kind": "l",
-   "sculptMs": 4699,
+   "sculptMs": 19291,
    "trisSculpt": 33860,
    "trisFine": 180756,
    "tris": 1160,
@@ -275,7 +275,7 @@
   },
   "ocrea": {
    "kind": "l",
-   "sculptMs": 5455,
+   "sculptMs": 17343,
    "trisSculpt": 15302,
    "trisFine": 82684,
    "tris": 1157,
@@ -285,7 +285,7 @@
   },
   "greaves": {
    "kind": "l",
-   "sculptMs": 5701,
+   "sculptMs": 9877,
    "trisSculpt": 16516,
    "trisFine": 86996,
    "tris": 1154,
@@ -295,7 +295,7 @@
   },
   "cnemis": {
    "kind": "l",
-   "sculptMs": 5741,
+   "sculptMs": 11047,
    "trisSculpt": 16186,
    "trisFine": 87856,
    "tris": 1153,
@@ -305,7 +305,7 @@
   },
   "lgreaves": {
    "kind": "l",
-   "sculptMs": 4558,
+   "sculptMs": 13666,
    "trisSculpt": 18794,
    "trisFine": 98828,
    "tris": 1149,
@@ -314,14 +314,37 @@
    "bytes": 4863
   }
  },
- "bodyMs": 15855,
+ "bodyMs": 44654,
+ "body": {
+  "coreMs": {
+   "field": 9731.199999999953,
+   "mesh": 1466,
+   "weights": 28552.900000000023,
+   "paint": 1276.2000000000116,
+   "anchors": 497.79999999998836,
+   "total": 41524.09999999998
+  },
+  "verts": 146271,
+  "tris": 292212,
+  "codec": 1202011,
+  "deflated": 949140,
+  "fileBytes": 1271154,
+  "streams": {
+   "p": 492854,
+   "n": 191258,
+   "i": 22128,
+   "w": 129579,
+   "m": 9674,
+   "t": 356518
+  }
+ },
  "keys": 31,
- "sculptMs": 119605,
+ "sculptMs": 354495,
  "trisSculpt": 1029507,
  "trisOut": 57373,
  "rawBytes": 246038,
  "deflated": 221096,
  "fileBytes": 300349,
- "totalMs": 138805,
+ "totalMs": 416373,
  "errs": []
 }

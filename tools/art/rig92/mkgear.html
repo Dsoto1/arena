@@ -9,8 +9,11 @@ import { HELM5, CUIR6, LIMB7, sculptHelm, sculptCuirass, sculptLimb, skinRule5 }
 const b64 = (ta) => { const u = new Uint8Array(ta.buffer, ta.byteOffset, ta.byteLength); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
 let API = null;
 window.MKG = {
-  async body() { const t0 = performance.now(); API = await createToken({ gear8: null }); return { ms: Math.round(performance.now() - t0), key: API.bodyKey };
+  async body() { const t0 = performance.now(); API = await createToken({ gear8: null, body8: null }); return { ms: Math.round(performance.now() - t0), key: API.bodyKey };
   },
+  /* v1.0 (his 2a): the body's core, raw, for body100.js */
+  core() { const c = API.B.core; const out = { nv: c.nv, ni: c.tri.length, grid: c.grid, ms: c.ms, anc: c.anc };
+    for (const k of ['pos', 'nor', 'tri', 'skinI', 'skinW', 'grp', 'vk', 'ink']) out[k] = b64(c[k]); return out; },
   bodyKey: async () => { const m = await import('./game.js'); return m.bodyKey8({ res: m.BODY8.res, body: m.BODY8.body }); },
   keys: () => ({ helm: Object.keys(HELM5), cuir: Object.keys(CUIR6), limb: Object.keys(LIMB7).filter(k => !LIMB7[k].belt), belt: Object.keys(LIMB7).filter(k => LIMB7[k].belt) }),
   one(key) {

@@ -45,6 +45,31 @@ export async function loadBaked(data, dec) {
     has: (k) => !!data.pieces[k], kind: (k) => data.pieces[k] && data.pieces[k].t, meta: (k) => data.pieces[k], piece };
 }
 
+/* v1.0 (his 2a): THE BODY'S CORE, pre-baked by mkgear.js into assets/body100.js (window.BODY100 = {v, key, src, nv, ni, lo, hi, q, s, anc, z, b64}):
+   s.p positions 4×u16 (0…q) in the box · s.n normals (octahedral filter, 4×i8 out) · s.i skin bones 4×u8 · s.w skin weights 4×u8 (sum 255) · s.m 4×u8 [group, paint kind,
+   crease ink, 0] (all meshopt vertex codec) · s.t triangles (index codec); anc = the harness lines / ring / buckle / stud points (plain JSON).
+   → the core buildBodyAsync takes as opts.core (body.js coreSteps' shape, no field). */
+export async function loadBody8(data, dec) {
+  if (!data || !data.b64 || !data.s || !dec) return null;
+  const t0 = (typeof performance !== 'undefined' ? performance : Date).now();
+  let bytes = b64bytes(data.b64); if (data.z) bytes = await inflate(bytes);
+  await dec.ready;
+  const nv = data.nv, ni = data.ni, QM = data.q || 65535, slice = (r) => bytes.subarray(r[0], r[0] + r[1]);
+  const dv = (k, st, f) => { const o = new Uint8Array(nv * st); dec.decodeVertexBuffer(o, nv, st, slice(data.s[k]), f); return o; };
+  const Pq = new Uint16Array(dv('p', 8).buffer), Nq = new Int8Array(dv('n', 4, 'OCTAHEDRAL').buffer), Iq = dv('i', 4), Wq = dv('w', 4), Mq = dv('m', 4);
+  const T = new Uint8Array(ni * 4); dec.decodeIndexBuffer(T, ni, 4, slice(data.s.t));
+  const pos = new Float32Array(nv * 3), nor = new Float32Array(nv * 3), skinI = new Uint16Array(nv * 4), skinW = new Float32Array(nv * 4), grp = new Uint8Array(nv), vk = new Uint8Array(nv), ink = new Float32Array(nv);
+  const lo = data.lo, hi = data.hi;
+  for (let v = 0; v < nv; v++) {
+    for (let a = 0; a < 3; a++) pos[v * 3 + a] = lo[a] + (hi[a] - lo[a]) * Pq[v * 4 + a] / QM;
+    const nx = Nq[v * 4] / 127, ny = Nq[v * 4 + 1] / 127, nz = Nq[v * 4 + 2] / 127, nl = Math.hypot(nx, ny, nz) || 1; nor[v * 3] = nx / nl; nor[v * 3 + 1] = ny / nl; nor[v * 3 + 2] = nz / nl;
+    for (let a = 0; a < 4; a++) { skinI[v * 4 + a] = Iq[v * 4 + a]; skinW[v * 4 + a] = Wq[v * 4 + a] / 255; }
+    grp[v] = Mq[v * 4]; vk[v] = Mq[v * 4 + 1]; ink[v] = Mq[v * 4 + 2] / 255;
+  }
+  return { nv, pos, nor, tri: new Uint32Array(T.buffer), skinI, skinW, grp, vk, ink, anc: data.anc, fd: null, grid: data.grid || null,
+    bytes: bytes.length, ms: { load: Math.round((typeof performance !== 'undefined' ? performance : Date).now() - t0) } };
+}
+
 /* a piece as a BufferGeometry: left limb pieces mirror for the right (x → −x, winding turned) */
 export function bakedGeo(BK, k, sd) {
   const r = BK.piece(k); if (!r) return null; const mir = r.t === 'l' && sd === 'R';
