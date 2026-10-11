@@ -1,0 +1,77 @@
+{
+ "convert": {
+  "ok": true,
+  "ms": 66892,
+  "buildMs": 23659,
+  "sheetMs": [
+   17004
+  ],
+  "meta": [
+   92,
+   145,
+   46,
+   121.9
+  ],
+  "kb": 29.7,
+  "parts": {
+   "head": {
+    "t": "centurion"
+   },
+   "belt": {
+    "t": "balteus"
+   },
+   "arm": {
+    "R": {
+     "wraps": 1
+    },
+    "L": {
+     "wraps": 1
+    }
+   },
+   "leg": {
+    "L": {
+     "upper": {
+      "t": "legwrapsU"
+     }
+    },
+    "R": {
+     "upper": {
+      "t": "legwrapsU"
+     }
+    }
+   },
+   "wR": {
+    "t": "sword"
+   }
+  },
+  "sculpted": [
+   "centurion",
+   "balteus",
+   "wrapsL",
+   "legwrapsUL",
+   "wrapsR",
+   "legwrapsUR"
+  ],
+  "converted": true
+ },
+ "modeller": {
+  "ready": true
+ },
+ "board": {
+  "t93": true,
+  "drawn": 1,
+  "TW": 60
+ },
+ "crop": {
+  "x": 502,
+  "y": 619,
+  "k": 1,
+  "raw": {
+   "x": 485,
+   "y": 537
+  }
+ },
+ "errs": [
+  "Failed to load resource: net::ERR_FAILED"
+ ]
+}

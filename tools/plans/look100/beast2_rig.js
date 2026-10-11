@@ -116,106 +116,148 @@ function meshOf(prims, h) {
 function ik2(A, T, L1, L2, pole) { let d = sub(T, A); let D = len(d); const mx = (L1 + L2) * 0.999; if (D > mx) { d = mul(nrm(d), mx); D = mx; T = add(A, d); } D = Math.max(D, Math.abs(L1 - L2) + 0.01);
   const u = nrm(d); let v = sub(pole, mul(u, dot(pole, u))); v = len(v) < 1e-5 ? [0, 1, 0] : nrm(v); const ca = cl((L1 * L1 + D * D - L2 * L2) / (2 * L1 * D), -1, 1); const sa = Math.sqrt(1 - ca * ca);
   return [add(A, add(mul(u, L1 * ca), mul(v, L1 * sa))), T]; }
+/* ---- round 2: the skeleton every build emits (his colour language: head red · shoulder/chest orange · spine yellow ·
+   elbow/knee/wing green · paw/foot/wing tip blue · tail purple) ---- */
+export let JL = [];
+const J = (n, p, cat, par) => { JL.push({ n, p: p.slice(), cat, par }); return n; };
+export const JCOL = { head: '#e8463c', chest: '#f08c2e', spine: '#f2d23c', limb: '#58c85a', foot: '#3c86e8', tail: '#9a52e0' };
+/* fur clumps: small elongated ellipsoids over a patch, pointing along dir (+ noise) — the shaggy silhouette of his sculpts */
+function clumps(P, n, at, spread, dir, size, m, k = 0.35, seed = 1) {
+  for (let i = 0; i < n; i++) { const r1 = hsh(i, seed, 1) - 0.5, r2 = hsh(i, seed, 2) - 0.5, r3 = hsh(i, seed, 3) - 0.5;
+    const c = add(at, [r1 * spread[0], r2 * spread[1], r3 * spread[2]]); const d = nrm(add(dir, [r2 * 0.6, r3 * 0.5, r1 * 0.6])); const F = frame(d, Math.abs(d[1]) > 0.9 ? [0, 0, 1] : [0, 1, 0]);
+    P.push(ell(add(c, mul(d, size[2] * 0.4)), [size[0] * (0.8 + 0.4 * hsh(i, seed, 4)), size[1], size[2] * (0.8 + 0.5 * hsh(i, seed, 5))], F, k, m)); } }
 export const SPECIES = {
-  lion: { kind: 'quad', base: [72, 42], h: 0.55, L: 10.5, y: 13.5, chest: [6.4, 7.6, 8.4], belly: [5.6, 6.0, 8], hips: [5.6, 6.6, 6.6], fx: 3.6, hx: 3.4, legF: [7.8, 7.4, 2.6], legH: [8.6, 7.6, 4.6], rF: [2.7, 1.8, 1.5], rH: [3.0, 1.7, 1.4], paw: [2.1, 1.2, 2.6],
-    neck: [6.5, 2.8], head: [3.6, 3.7, 4.1], muz: [4.2, 2.2], ears: 'round', mane: [5.4, 6.0, 4.6], tail: [21, 0.95, 0.5], tuft: 1.8,
-    col: { fur: '#c49a58', u: '#ead6a8', mane: '#8a5426', nose: '#3a2418', dark: '#1a120c', tuft: '#5a3416', claw: '#e8dcc0' } },
-  lioness: { kind: 'quad', base: [72, 42], h: 0.55, L: 10.0, y: 12.6, chest: [5.6, 6.8, 7.8], belly: [4.9, 5.4, 7.6], hips: [5.0, 6.0, 6.2], fx: 3.2, hx: 3.1, legF: [7.4, 7.0, 2.5], legH: [8.2, 7.2, 4.4], rF: [2.3, 1.6, 1.3], rH: [2.6, 1.5, 1.25], paw: [1.9, 1.1, 2.4],
-    neck: [6.4, 2.6], head: [3.2, 3.3, 3.8], muz: [3.9, 1.9], ears: 'round', tail: [20, 0.85, 0.45], tuft: 1.3,
-    col: { fur: '#c9a060', u: '#ead2a0', nose: '#3a2418', dark: '#1a120c', tuft: '#5a3416', claw: '#e8dcc0' } },
-  bear: { kind: 'quad', base: [75, 47], h: 0.6, L: 10.5, y: 16.5, chest: [8.4, 9.4, 9.0], belly: [8.0, 8.6, 9], hips: [8.0, 9.2, 8.0], fx: 4.6, hx: 4.4, legF: [8.0, 7.6, 3.0], legH: [8.4, 7.4, 4.2], rF: [3.6, 2.8, 2.4], rH: [3.8, 2.6, 2.3], paw: [2.8, 1.4, 3.4],
-    neck: [5.5, 4.4], head: [4.6, 4.6, 4.6], muz: [4.4, 2.6], ears: 'bear', tail: [4, 1.6, 1.0], hump: 1,
-    col: { fur: '#8a5c36', u: '#6e4828', muz: '#b8925e', nose: '#1a120c', dark: '#120c08', claw: '#e8dcc0' } },
-  wolf: { kind: 'quad', base: [25.4, 25.4], h: 0.4, L: 6.0, y: 9.4, chest: [3.3, 4.4, 4.8], belly: [2.8, 3.2, 4.6], hips: [3.0, 3.6, 3.8], fx: 2.0, hx: 1.9, legF: [5.2, 5.0, 2.0], legH: [5.8, 5.2, 3.2], rF: [1.4, 0.95, 0.8], rH: [1.7, 0.9, 0.75], paw: [1.1, 0.7, 1.5],
-    neck: [4.2, 1.9], head: [2.4, 2.4, 2.6], muz: [3.2, 1.2], ears: 'pointy', tail: [11, 1.2, 0.6], brush: 1,
-    col: { fur: '#7d7f84', u: '#d9d4c8', muz: '#c8c2b4', nose: '#141210', dark: '#141210', claw: '#d8d0c0' } },
-  boar: { kind: 'quad', base: [25.4, 25.4], h: 0.4, L: 5.6, y: 8.2, chest: [4.4, 5.2, 5.2], belly: [4.2, 4.6, 5], hips: [4.0, 4.6, 4.2], fx: 2.3, hx: 2.2, legF: [4.0, 3.6, 1.4], legH: [4.4, 3.6, 2.2], rF: [1.6, 1.0, 0.8], rH: [1.9, 1.0, 0.8], paw: [0.9, 0.9, 1.1],
-    neck: [2.6, 3.4], head: [3.0, 3.2, 3.6], muz: [3.6, 2.0], ears: 'pointy', tail: [4, 0.5, 0.35], tusks: 1, ridge: 1,
-    col: { fur: '#6e4e38', u: '#5a3e2c', muz: '#a08070', nose: '#5a3a30', dark: '#120c08', claw: '#2a2018', tusk: '#efe6cc' } },
-  croc: { kind: 'quad', base: [75, 34], h: 0.5, L: 9.5, y: 3.4, chest: [5.0, 2.6, 6.0], belly: [5.2, 2.6, 6.5], hips: [4.6, 2.5, 5.0], fx: 5.0, hx: 4.6, legF: [3.6, 3.2, 1.2], legH: [4.2, 3.6, 1.6], rF: [1.3, 1.0, 0.8], rH: [1.6, 1.1, 0.9], paw: [1.4, 0.5, 1.6], sprawl: 1,
+  /* digitigrade cats: wrist + hock high, toes on the ground */
+  lion: { base: [72, 42], h: 0.5, L: 10.5, y: 13.8, chest: [6.0, 7.4, 8.0], belly: [5.2, 5.6, 7.6], hips: [5.4, 6.2, 6.2], fx: 3.5, hx: 3.3, legF: [7.6, 7.4, 2.6], legH: [8.6, 7.8, 4.8], rF: [2.6, 1.7, 1.4], rH: [2.9, 1.6, 1.3], paw: [2.0, 1.2, 2.4],
+    neck: [6.2, 2.7], head: [3.4, 3.5, 3.9], muz: [3.9, 2.1], ears: 'round', mane: 1, tail: [21, 0.9, 0.5], tuft: 1.8, cat: 1,
+    col: { fur: '#a87a3c', u: '#c9a46a', mane: '#5e3a18', muz: '#c8a46c', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
+  lioness: { base: [72, 42], h: 0.5, L: 10.0, y: 12.8, chest: [5.4, 6.6, 7.6], belly: [4.6, 5.0, 7.2], hips: [4.8, 5.8, 6.0], fx: 3.1, hx: 3.0, legF: [7.4, 7.0, 2.5], legH: [8.2, 7.4, 4.6], rF: [2.2, 1.5, 1.25], rH: [2.5, 1.45, 1.2], paw: [1.8, 1.1, 2.2],
+    neck: [6.2, 2.5], head: [3.0, 3.1, 3.7], muz: [3.7, 1.8], ears: 'round', tail: [20, 0.8, 0.45], tuft: 1.3, cat: 1,
+    col: { fur: '#a47c46', u: '#c6a676', muz: '#c8a87a', nose: '#3a2418', dark: '#1a120c', tuft: '#3e2610', claw: '#e8dcc0' } },
+  /* plantigrade bear: heel + palm flat, long paws, a shoulder hump, shaggy */
+  bear: { base: [75, 47], h: 0.55, L: 10.5, y: 16.0, chest: [8.0, 9.0, 8.6], belly: [7.6, 8.2, 8.6], hips: [7.6, 8.6, 7.6], fx: 4.4, hx: 4.2, legF: [8.2, 7.6, 1.6], legH: [8.4, 7.8, 1.8], rF: [3.5, 2.8, 2.4], rH: [3.7, 2.6, 2.3], paw: [2.8, 1.4, 4.0], plant: 1,
+    neck: [5.0, 4.2], head: [4.4, 4.4, 4.6], muz: [4.2, 2.4], ears: 'bear', tail: [3.5, 1.5, 1.0], hump: 1, shag: 1,
+    col: { fur: '#6a4a2c', u: '#523820', muz: '#9a7a52', nose: '#141010', dark: '#120c08', claw: '#e8dcc0' } },
+  wolf: { base: [25.4, 25.4], h: 0.36, L: 6.0, y: 9.6, chest: [3.2, 4.3, 4.6], belly: [2.6, 3.0, 4.4], hips: [2.9, 3.5, 3.6], fx: 1.9, hx: 1.85, legF: [5.2, 5.0, 2.0], legH: [5.8, 5.4, 3.4], rF: [1.35, 0.9, 0.75], rH: [1.65, 0.85, 0.72], paw: [1.05, 0.7, 1.45],
+    neck: [4.0, 1.9], head: [2.3, 2.3, 2.5], muz: [3.3, 1.15], ears: 'pointy', tail: [11, 1.2, 0.6], brush: 1, ruff: 1,
+    col: { fur: '#8a6e50', u: '#c8b494', muz: '#c0aa88', nose: '#141210', dark: '#141210', claw: '#d8d0c0' } },
+  boar: { base: [25.4, 25.4], h: 0.36, L: 5.6, y: 8.2, chest: [4.4, 5.2, 5.2], belly: [4.2, 4.6, 5], hips: [4.0, 4.6, 4.2], fx: 2.3, hx: 2.2, legF: [4.0, 3.6, 1.4], legH: [4.4, 3.6, 2.2], rF: [1.6, 1.0, 0.8], rH: [1.9, 1.0, 0.8], paw: [0.9, 0.9, 1.1],
+    neck: [2.6, 3.4], head: [3.0, 3.2, 3.6], muz: [3.6, 2.0], ears: 'pointy', tail: [4, 0.5, 0.35], tusks: 1, ridge: 1, shag: 0.5,
+    col: { fur: '#5e4434', u: '#4a3628', muz: '#8a6a5a', nose: '#5a3a30', dark: '#120c08', claw: '#2a2018', tusk: '#efe6cc' } },
+  croc: { base: [75, 34], h: 0.45, L: 9.5, y: 3.4, chest: [5.0, 2.6, 6.0], belly: [5.2, 2.6, 6.5], hips: [4.6, 2.5, 5.0], fx: 5.0, hx: 4.6, legF: [3.6, 3.2, 1.0], legH: [4.2, 3.6, 1.2], rF: [1.3, 1.0, 0.8], rH: [1.6, 1.1, 0.9], paw: [1.4, 0.5, 1.8], sprawl: 1, plant: 1,
     neck: [2.4, 2.8], head: [2.8, 1.8, 3.4], muz: [10, 1.6], ears: null, tail: [26, 2.6, 0.3], scutes: 1, croc: 1,
-    col: { fur: '#6e7c48', u: '#d2c88e', muz: '#6e7c48', nose: '#2a3018', dark: '#141a0c', claw: '#d8d0b0', tooth: '#efe8d0' } },
+    col: { fur: '#5e6a3e', u: '#c2b882', muz: '#5e6a3e', nose: '#2a3018', dark: '#141a0c', claw: '#d8d0b0', tooth: '#efe8d0' } },
 };
-/* variants = a recolour of a species (one model, his named tokens) */
+/* variants = a recolour (sampled from his minis8: the lit 85th-percentile colour of the figure) */
 export const VARIANTS = {
-  leo: ['lion'], leaena: ['lioness'], ursa: ['bear'], brutum: ['bear', { fur: '#6a4428', u: '#56361e', muz: '#a07848' }],
-  valencia: ['wolf', { fur: '#9a6a3a', u: '#e2cfa8', muz: '#d8c4a0' }], moechus: ['wolf', { fur: '#4a494e', u: '#86868c', muz: '#707076' }],
+  leo: ['lion'], leaena: ['lioness'], ursa: ['bear'], brutum: ['bear', { fur: '#5e4228', u: '#4a321c', muz: '#8a6a44' }],
+  valencia: ['wolf'], moechus: ['wolf', { fur: '#6e625a', u: '#a49a8c', muz: '#9a9084' }],
   boar: ['boar'], croc: ['croc'],
 };
 function quad(S, f, COL) {
-  const P = [], C = COL;
+  JL = []; const P = [], C = COL;
   const M = (c, p, extra) => Object.assign({ c, p }, extra || {});
   const FUR = M(C.fur, S.croc ? 'scale' : 'fur', { u: C.u, dry: S.croc ? 0.45 : 0.6 }), DARK = M(C.dark, null, { dry: 0.3 }), NOSE = M(C.nose, null, { dry: 0.8 }), CLAW = M(C.claw, null, { dry: 0.4 });
+  const SHAG = M(C.fur, 'mane', { u: C.u, dry: 0.75 });
   const pitch = (f.pitch || 0) * D2R, roll = (f.roll || 0) * D2R, yawB = (f.yaw || 0) * D2R;
   const R = mm(Ry(yawB), mm(Rz(roll), Rx(-pitch)));
   const root = [f.x || 0, (f.y != null ? f.y : S.y) + (f.dy || 0), f.z || 0];
   const T = (p) => add(mv(R, p), root);
-  const br = 1 + (f.breath || 0) * 0.035;
-  const arch = f.arch || 0;
-  /* body */
-  P.push(ell(T([0, (S.hump ? 1.2 : 0.4), S.L * 0.62]), mul(S.chest, br), R, S.L * 0.35, FUR));
-  P.push(ell(T([0, arch - 0.6, 0]), [S.belly[0] * br, S.belly[1] * br, S.belly[2]], R, S.L * 0.4, FUR));
-  P.push(ell(T([0, 0.2, -S.L * 0.62]), S.hips, R, S.L * 0.35, FUR));
-  if (S.hump) P.push(ell(T([0, S.chest[1] * 0.75, S.L * 0.5]), [S.chest[0] * 0.6, S.chest[1] * 0.45, S.chest[2] * 0.5], R, 2.5, FUR));
-  if (S.ridge) P.push(cap(T([0, S.chest[1] * 0.95, S.L * 0.75]), T([0, S.hips[1] * 0.8, -S.L * 0.4]), 1.0, 0.5, 1.4, M(C.dark, 'mane')));
-  if (S.scutes) for (let i = -3; i <= 3; i++) for (const sx of [-1, 1]) P.push(sph(T([sx * 1.3, S.chest[1] * 0.92, i * S.L * 0.28]), 0.6, 0.3, FUR));
+  const br = 1 + (f.breath || 0) * 0.035, arch = f.arch || 0, L = S.L;
+  /* spine (yellow): pelvis → mid → withers; chest (orange) */
+  const PEL = T([0, 0.6, -L * 0.7]), MID = T([0, 1.2 + arch, 0]), WIT = T([0, S.chest[1] * 0.55 + (S.hump ? 1.2 : 0), L * 0.55]);
+  J('pelvis', PEL, 'spine'); J('mid', MID, 'spine', 'pelvis'); J('withers', WIT, 'spine', 'mid');
+  /* body masses */
+  P.push(ell(T([0, (S.hump ? 1.2 : 0.4), L * 0.62]), mul(S.chest, br), R, L * 0.35, FUR));
+  P.push(ell(T([0, arch - 0.6, 0]), [S.belly[0] * br, S.belly[1] * br, S.belly[2]], R, L * 0.4, FUR));
+  P.push(ell(T([0, 0.2, -L * 0.62]), S.hips, R, L * 0.35, FUR));
+  if (S.hump) P.push(ell(T([0, S.chest[1] * 0.78, L * 0.48]), [S.chest[0] * 0.62, S.chest[1] * 0.45, S.chest[2] * 0.55], R, 2.5, FUR));
+  if (S.ridge) P.push(cap(T([0, S.chest[1] * 0.95, L * 0.75]), T([0, S.hips[1] * 0.8, -L * 0.4]), 1.0, 0.5, 1.4, M(C.dark, 'mane')));
+  if (S.scutes) for (let i = -3; i <= 3; i++) for (const sx of [-1, 1]) P.push(sph(T([sx * 1.3, S.chest[1] * 0.92, i * L * 0.28]), 0.6, 0.3, FUR));
+  /* shaggy coat: clumps along the back and flanks, flowing back and down */
+  if (S.shag) { const n = Math.round(46 * S.shag); clumps(P, n, T([0, S.chest[1] * 0.7, L * 0.1]), [S.chest[0] * 1.4, S.chest[1] * 0.7, L * 2.0], mv(R, [0, -0.35, -1]), [S.chest[0] * 0.24, S.chest[0] * 0.14, S.chest[0] * 0.42], SHAG, 0.45, 3);
+    clumps(P, Math.round(n / 2), T([0, -S.belly[1] * 0.55, 0]), [S.belly[0] * 1.6, 1.2, L * 1.6], mv(R, [0, -1, -0.3]), [S.chest[0] * 0.2, S.chest[0] * 0.12, S.chest[0] * 0.34], SHAG, 0.4, 7); }
   /* head + neck */
   const hp = (f.head ? f.head[0] : 0) * D2R, hy = (f.head ? f.head[1] : 0) * D2R;
-  const NB = T([0, S.chest[1] * 0.35, S.L * 0.62 + S.chest[2] * 0.55]);
+  const NB = T([0, S.chest[1] * 0.35, L * 0.62 + S.chest[2] * 0.55]);
   const neckPitch = (S.croc ? 5 : S.y > 15 ? 18 : 32) * D2R;
   const nd = mv(R, [Math.sin(hy) * Math.cos(neckPitch + hp * 0.5), Math.sin(neckPitch + hp * 0.5), Math.cos(hy) * Math.cos(neckPitch + hp * 0.5)]);
   const NE = add(NB, mul(nrm(nd), S.neck[0]));
   P.push(cap(NB, NE, S.neck[1] * 1.15, S.neck[1], S.neck[1] * 0.9, FUR));
+  J('neck', NB, 'chest', 'withers');
   const hdPitch = hp - (S.croc ? 0.05 : 0.35) + (pitch * 0.4);
-  const hd = nrm([Math.sin(hy) * Math.cos(hdPitch) , Math.sin(hdPitch), Math.cos(hy) * Math.cos(hdPitch)]); const HF = frame(mv(Ry(yawB), [hd[0], hd[1], hd[2]]), mv(mm(Ry(yawB), Rz(roll)), [0, 1, 0]));
+  const hd = nrm([Math.sin(hy) * Math.cos(hdPitch), Math.sin(hdPitch), Math.cos(hy) * Math.cos(hdPitch)]); const HF = frame(mv(Ry(yawB), hd), mv(mm(Ry(yawB), Rz(roll)), [0, 1, 0]));
   const HC = add(NE, mul(HF[2], S.head[2] * 0.25));
   const H = (p) => add(HC, add(add(mul(HF[0], p[0]), mul(HF[1], p[1])), mul(HF[2], p[2])));
+  J('head', HC, 'head', 'neck');
   P.push(ell(HC, S.head, HF, 1.2, FUR));
-  const jaw = (f.jaw || 0) * D2R;
+  /* the face: brow ridge, cheeks, a broad muzzle with whisker pads (cats), chin */
+  P.push(ell(H([0, S.head[1] * 0.42, S.head[2] * 0.42]), [S.head[0] * 0.75, S.head[1] * 0.25, S.head[2] * 0.3], HF, 0.6, FUR));
+  for (const sx of [-1, 1]) P.push(ell(H([sx * S.head[0] * 0.55, -S.head[1] * 0.2, S.head[2] * 0.3]), [S.head[0] * 0.4, S.head[1] * 0.38, S.head[2] * 0.42], HF, 0.7, FUR));
+  const jaw = (f.jaw || 0) * D2R; const MUZ = C.muz ? M(C.muz, 'fur', { u: C.u }) : FUR;
   const mz0 = H([0, -S.head[1] * 0.15, S.head[2] * 0.4]), mz1 = H([0, -S.head[1] * 0.25, S.head[2] * 0.4 + S.muz[0]]);
-  P.push(cap(mz0, mz1, S.muz[1] * 1.1, S.muz[1] * (S.croc ? 0.75 : 0.85), 0.9, C.muz ? M(C.muz, 'fur', { u: C.u }) : FUR));
-  /* the lower jaw hinges down */
+  P.push(cap(mz0, mz1, S.muz[1] * 1.1, S.muz[1] * (S.croc ? 0.75 : 0.85), 0.9, MUZ));
+  if (S.cat) for (const sx of [-1, 1]) P.push(sph(add(lerp(mz0, mz1, 0.82), add(mul(HF[0], sx * S.muz[1] * 0.55), mul(HF[1], -S.muz[1] * 0.25))), S.muz[1] * 0.62, 0.4, MUZ));
   const jd = nrm(add(mul(HF[2], Math.cos(jaw)), mul(HF[1], -Math.sin(jaw))));
   const j0 = H([0, -S.head[1] * 0.55, S.head[2] * 0.2]), j1 = add(j0, mul(jd, S.muz[0] + S.head[2] * 0.15));
-  P.push(cap(j0, j1, S.muz[1] * 0.7, S.muz[1] * 0.55, jaw > 0.05 ? 0.25 : 0.7, C.muz ? M(C.muz, 'fur', { u: C.u }) : FUR));
-  if (jaw > 0.05) { P.push(cap(add(mz0, mul(HF[1], -S.muz[1] * 0.9)), add(j0, mul(jd, S.muz[0] * 0.5)), S.muz[1] * 0.45, S.muz[1] * 0.3, 0.2, M('#7a1c1a', null, { dry: 0.2 })));   /* the mouth inside */
-    for (const t of [0.75, 0.95]) for (const sx of [-1, 1]) { P.push(cap(add(lerp(mz0, mz1, t), add(mul(HF[0], sx * S.muz[1] * 0.45), mul(HF[1], -S.muz[1] * 0.7))), add(lerp(mz0, mz1, t), add(mul(HF[0], sx * S.muz[1] * 0.45), mul(HF[1], -S.muz[1] * 1.25))), 0.28, 0.08, 0, M(C.tooth || '#f2ead6', null, { dry: 0.3 }))); } }
-  P.push(sph(add(mz1, mul(HF[1], S.muz[1] * 0.55)), S.muz[1] * 0.42, 0.3, NOSE));
-  for (const sx of [-1, 1]) P.push(sph(H([sx * S.head[0] * 0.48, S.head[1] * 0.25, S.head[2] * 0.62]), Math.max(0.35, S.head[0] * 0.12), 0.1, DARK));
+  P.push(cap(j0, j1, S.muz[1] * 0.7, S.muz[1] * 0.55, jaw > 0.05 ? 0.25 : 0.7, MUZ));
+  if (jaw > 0.05) { P.push(cap(add(mz0, mul(HF[1], -S.muz[1] * 0.9)), add(j0, mul(jd, S.muz[0] * 0.5)), S.muz[1] * 0.45, S.muz[1] * 0.3, 0.2, M('#6a1816', null, { dry: 0.2 })));
+    for (const t of [0.75, 0.95]) for (const sx of [-1, 1]) P.push(cap(add(lerp(mz0, mz1, t), add(mul(HF[0], sx * S.muz[1] * 0.45), mul(HF[1], -S.muz[1] * 0.7))), add(lerp(mz0, mz1, t), add(mul(HF[0], sx * S.muz[1] * 0.45), mul(HF[1], -S.muz[1] * 1.3))), 0.3, 0.08, 0, M(C.tooth || '#f2ead6', null, { dry: 0.3 }))); }
+  P.push(ell(add(mz1, mul(HF[1], S.muz[1] * 0.55)), [S.muz[1] * 0.55, S.muz[1] * 0.35, S.muz[1] * 0.35], HF, 0.3, NOSE));
+  J('jaw', j1, 'head', 'head');
+  for (const sx of [-1, 1]) P.push(sph(H([sx * S.head[0] * 0.46, S.head[1] * 0.22, S.head[2] * 0.64]), Math.max(0.35, S.head[0] * 0.12), 0.1, DARK));
   if (S.ears === 'round' || S.ears === 'bear') for (const sx of [-1, 1]) P.push(ell(H([sx * S.head[0] * 0.62, S.head[1] * 0.85, -S.head[2] * 0.1]), [S.head[0] * 0.28, S.head[1] * 0.3, S.head[2] * 0.14], HF, 0.4, FUR));
   if (S.ears === 'pointy') for (const sx of [-1, 1]) P.push(cap(H([sx * S.head[0] * 0.5, S.head[1] * 0.6, -S.head[2] * 0.1]), H([sx * S.head[0] * 0.65, S.head[1] * 1.55, -S.head[2] * 0.15]), S.head[0] * 0.3, 0.12, 0.3, FUR));
-  if (S.mane) { P.push(ell(add(NE, add(mul(HF[2], -S.head[2] * 0.75), mul(HF[1], S.head[1] * 0.15))), S.mane, HF, 1.8, M(C.mane, 'mane', { dry: 0.75 }))); P.push(ell(add(NB, [0, S.chest[1] * 0.2, 0]), [S.mane[0] * 0.95, S.mane[1] * 0.95, S.mane[2] * 1.1], R, 2.2, M(C.mane, 'mane', { dry: 0.75 }))); }
+  /* the lion's mane: locks radiating round the neck and the head's back, falling down over the chest */
+  if (S.mane) { const MN = M(C.mane, 'mane', { dry: 0.8 }); const ax = nrm(sub(NE, NB));
+    for (let ring = 0; ring < 4; ring++) { const c0 = lerp(NB, add(NE, mul(HF[2], -S.head[2] * 0.4)), ring / 3); const nlock = 12 + ring * 2;
+      for (let i = 0; i < nlock; i++) { const a = (i + ring * 0.5) / nlock * Math.PI * 2; const side = nrm(add(mul(HF[0], Math.cos(a)), mul(HF[1], Math.sin(a)))); const out = nrm(add(side, add(mul(ax, -0.25), [0, -0.35, 0])));
+        const rr = (S.head[0] * 1.05 + ring * 0.35); const p0 = add(c0, mul(side, rr * 0.55)); const Lk = 2.4 + 1.2 * hsh(i, ring, 9) + (Math.sin(a) < 0 ? 1.4 : 0);
+        P.push(ell(add(p0, mul(out, Lk * 0.6)), [1.15, 0.9, Lk * 0.7], frame(out, Math.abs(out[1]) > 0.9 ? [0, 0, 1] : [0, 1, 0]), 0.45, MN)); } }
+    clumps(P, 14, add(NB, [0, -S.chest[1] * 0.35, 0]), [S.chest[0] * 1.2, S.chest[1] * 0.8, 3], mv(R, [0, -1, 0.35]), [1.2, 0.9, 2.6], MN, 0.45, 5); }
+  if (S.ruff) clumps(P, 18, NB, [S.neck[1] * 2.2, S.neck[1] * 1.8, S.neck[0] * 0.6], mv(R, [0, -0.4, -0.6]), [0.7, 0.5, 1.4], M(C.fur, 'mane', { u: C.u, dry: 0.75 }), 0.3, 6);
   if (S.tusks) for (const sx of [-1, 1]) P.push(cap(H([sx * S.muz[1] * 0.8, -S.head[1] * 0.25, S.head[2] * 0.4 + S.muz[0] * 0.7]), H([sx * S.muz[1] * 1.3, S.head[1] * 0.25, S.head[2] * 0.4 + S.muz[0] * 0.55]), 0.4, 0.12, 0.2, M(C.tusk, null, { dry: 0.3 })));
   if (S.croc) for (let i = 1; i <= 6; i++) for (const sx of [-1, 1]) P.push(cap(add(lerp(mz0, mz1, i / 7), mul(HF[0], sx * S.muz[1] * 0.85)), add(lerp(mz0, mz1, i / 7), add(mul(HF[0], sx * S.muz[1] * 0.85), mul(HF[1], -0.9))), 0.22, 0.06, 0, M(C.tooth, null)));
-  /* legs */
+  /* legs: front = shoulder (orange) → elbow → wrist (green) → paw (blue); hind = hip (orange) → knee → hock (green) → foot (blue).
+     digitigrade: wrist/hock well above the toes; plantigrade (bear, croc): palm and heel flat, the paw long */
   const legs = [['LF', 1, 1], ['RF', -1, 1], ['LH', 1, -1], ['RH', -1, -1]];
   for (const [k, sx, fr] of legs) {
     const front = fr > 0, Ls = front ? S.legF : S.legH, Rr = front ? S.rF : S.rH;
-    const top = T([sx * (front ? S.fx : S.hx), front ? -S.chest[1] * 0.1 : 0.2, fr * S.L * 0.78]);
+    const top = T([sx * (front ? S.fx : S.hx), front ? -S.chest[1] * 0.1 : 0.2, fr * L * 0.78]);
     const off = (f.feet && f.feet[k]) || [0, 0, 0];
     const spread = S.sprawl ? (front ? S.fx * 2.1 : S.hx * 2.2) : (front ? S.fx : S.hx) * 0.9;
-    let foot;
-    if (f.feetLocal) foot = T([sx * spread + (off[2] || 0) * 0 + (f.feetLocal[k] ? f.feetLocal[k][0] * sx : 0), f.feetLocal[k] ? f.feetLocal[k][1] : -S.y, fr * S.L * 0.8 + (f.feetLocal[k] ? f.feetLocal[k][2] : 0)]);
-    else { const r0 = T([sx * spread, 0, fr * S.L * 0.8]); foot = [r0[0] + (off[3] || 0) * sx, off[1] || 0, r0[2] + (off[0] || 0)]; if (f.feetRel) foot[1] = Math.max(0, foot[1]); }
-    const up = f.feetLocal ? mv(R, [0, 1, 0]) : [0, 1, 0];
-    const lowP = add(foot, add(mul(up, Ls[2]), mv(Ry(yawB), [0, 0, front ? -Ls[2] * 0.05 : -Ls[2] * 0.42])));
-    const pole = S.sprawl ? add(mv(R, [sx * 1, 0.6, 0]), [0, 0, 0]) : mv(R, front ? [0, -0.1, -1] : [0, -0.1, 1]);
+    let foot, local = false;
+    if (f.feetL && f.feetL[k]) { const q = f.feetL[k]; foot = T([sx * q[0], q[1], q[2]]); local = true; }
+    else if (f.feetLocal) { foot = T([sx * spread + (f.feetLocal[k] ? f.feetLocal[k][0] * sx : 0), f.feetLocal[k] ? f.feetLocal[k][1] : -S.y, fr * L * 0.8 + (f.feetLocal[k] ? f.feetLocal[k][2] : 0)]); local = true; }
+    else { const r0 = T([sx * spread, 0, fr * L * 0.8]); foot = [r0[0] + (off[3] || 0) * sx, off[1] || 0, r0[2] + (off[0] || 0)]; }
+    const up = local ? mv(R, [0, 1, 0]) : [0, 1, 0]; const fwd = local ? mv(R, [0, 0, 1]) : mv(Ry(yawB), [0, 0, 1]);
+    const lowP = S.plant ? add(foot, add(mul(up, Ls[2] * 0.6), mul(fwd, front ? -S.paw[2] * 0.35 : -S.paw[2] * 0.75)))
+      : add(foot, add(mul(up, Ls[2]), mul(fwd, front ? -Ls[2] * 0.08 : -Ls[2] * 0.45)));
+    const pole = S.sprawl ? mv(R, [sx * 1, 0.6, 0]) : mv(R, front ? [0, -0.1, -1] : [0, -0.1, 1]);
     const [knee, low] = ik2(top, lowP, Ls[0], Ls[1], pole);
-    P.push(ell(lerp(top, knee, 0.3), [Rr[0] * 1.15, Rr[0] * 1.3, Rr[0] * 1.15], R, 1.2, FUR));
-    P.push(cap(top, knee, Rr[0], Rr[1] * 1.15, 1.0, FUR)); P.push(cap(knee, low, Rr[1] * 1.1, Rr[2], 0.6, FUR)); P.push(cap(low, add(foot, mul(up, S.paw[1] * 0.6)), Rr[2], Rr[2] * 0.95, 0.4, FUR));
-    const fwd = mv(Ry(yawB), [0, 0, 1]); const PF = frame(f.feetLocal ? mv(R, [0, 0, 1]) : fwd, up);
-    P.push(ell(add(foot, add(mul(up, S.paw[1] * 0.75), mul(PF[2], S.paw[2] * 0.35))), S.paw, PF, 0.5, FUR));
-    if (!S.croc && S.claws !== 0) for (let c = -1; c <= 1; c++) P.push(cap(add(foot, add(mul(PF[0], c * S.paw[0] * 0.45), add(mul(PF[2], S.paw[2] * 1.05), mul(up, S.paw[1] * 0.5)))), add(foot, add(mul(PF[0], c * S.paw[0] * 0.5), add(mul(PF[2], S.paw[2] * 1.4), mul(up, S.paw[1] * 0.15)))), 0.22, 0.08, 0, CLAW));
+    J(k + '_top', top, 'chest', front ? 'withers' : 'pelvis'); J(k + '_knee', knee, 'limb', k + '_top'); J(k + '_low', low, 'limb', k + '_knee'); J(k + '_foot', add(foot, mul(fwd, S.paw[2] * 0.5)), 'foot', k + '_low');
+    /* muscle masses: shoulder blade / haunch on top, forearm or gaskin below */
+    P.push(ell(lerp(top, knee, front ? 0.25 : 0.35), [Rr[0] * (front ? 1.15 : 1.35), Rr[0] * (front ? 1.5 : 1.6), Rr[0] * (front ? 1.2 : 1.45)], R, 1.2, FUR));
+    if (front) P.push(ell(add(top, mv(R, [0, Rr[0] * 0.9, -Rr[0] * 0.3])), [Rr[0] * 0.7, Rr[0] * 1.1, Rr[0] * 0.9], R, 1.0, FUR));
+    P.push(cap(top, knee, Rr[0], Rr[1] * 1.2, 1.0, FUR)); P.push(ell(lerp(knee, low, 0.3), [Rr[1] * 1.15, Rr[1] * 1.15, Rr[1] * 1.15], frame(sub(low, knee)), 0.6, FUR));
+    P.push(cap(knee, low, Rr[1] * 1.1, Rr[2], 0.6, FUR)); P.push(cap(low, add(foot, mul(up, S.paw[1] * 0.6)), Rr[2], Rr[2] * 0.95, 0.4, FUR));
+    const PF = frame(fwd, up);
+    P.push(ell(add(foot, add(mul(up, S.paw[1] * 0.75), mul(PF[2], S.paw[2] * (S.plant ? 0.15 : 0.35)))), S.paw, PF, 0.5, FUR));
+    if (S.shag && front) clumps(P, 6, lerp(top, knee, 0.7), [Rr[0] * 1.4, 1.5, Rr[0] * 1.2], mv(R, [0, -1, -0.4]), [0.9, 0.6, 1.6], SHAG, 0.3, 11 + sx);
+    if (!S.croc) for (let c = -1; c <= 1; c++) { P.push(sph(add(foot, add(mul(PF[0], c * S.paw[0] * 0.45), add(mul(PF[2], S.paw[2] * (S.plant ? 0.75 : 0.95)), mul(up, S.paw[1] * 0.55)))), S.paw[0] * 0.3, 0.25, FUR));
+      P.push(cap(add(foot, add(mul(PF[0], c * S.paw[0] * 0.45), add(mul(PF[2], S.paw[2] * (S.plant ? 1.0 : 1.1)), mul(up, S.paw[1] * 0.5)))), add(foot, add(mul(PF[0], c * S.paw[0] * 0.5), add(mul(PF[2], S.paw[2] * (S.plant ? 1.5 : 1.4)), mul(up, S.paw[1] * 0.15)))), 0.24, 0.08, 0, CLAW)); }
   }
-  /* tail */
-  if (S.tail) { const [Lt, r0, r1] = S.tail; const N = S.croc ? 10 : 8; let p = T([0, S.hips[1] * (S.croc ? 0.1 : 0.4), -S.L * 0.62 - S.hips[2] * 0.7]);
+  /* tail (purple joints) */
+  if (S.tail) { const [Lt, r0, r1] = S.tail; const N = S.croc ? 10 : 8; let p = T([0, S.hips[1] * (S.croc ? 0.1 : 0.4), -L * 0.62 - S.hips[2] * 0.7]); J('tail0', p, 'tail', 'pelvis');
     let a = ((f.tail ? f.tail[0] : 0) + (S.croc ? -6 : S.brush ? -35 : -55)) * D2R, sw = (f.tail ? f.tail[1] : 0) * D2R;
     for (let i = 0; i < N; i++) { const t = i / N; const dir = mv(R, [Math.sin(sw * (0.3 + t)) * Math.cos(a), Math.sin(a), -Math.cos(sw * (0.3 + t)) * Math.cos(a)]); const q = add(p, mul(nrm(dir), Lt / N));
       if (S.croc && q[1] < 0.9) q[1] = 0.9 + (q[1] - 0.9) * 0.1;
       const ra = r0 + (r1 - r0) * t, rb = r0 + (r1 - r0) * (t + 1 / N); P.push(cap(p, q, S.brush ? ra * (1 + 0.6 * Math.sin(t * Math.PI)) : ra, S.brush ? rb * (1 + 0.6 * Math.sin((t + 1 / N) * Math.PI)) : rb, 0.4, S.brush ? M(C.fur, 'mane', { u: C.u }) : FUR, { t }));
+      if (S.brush && i > 1) clumps(P, 3, q, [ra * 1.2, ra * 1.2, 1], nrm(dir), [ra * 0.7, ra * 0.5, ra * 1.4], M(C.fur, 'mane', { u: C.u, dry: 0.75 }), 0.3, 20 + i);
       if (S.scutes && i % 2 === 0) P.push(sph(add(q, mul(mv(R, [0, 1, 0]), ra * 0.8)), ra * 0.35, 0.2, FUR));
+      if (i % 3 === 2 || i === N - 1) J('tail' + (i + 1), q, 'tail', JL[JL.length - 1].n);
       p = q; a += ((f.tail ? f.tail[2] || 0 : 0) + (S.croc ? 0.5 : 9)) * D2R; }
-    if (S.tuft) P.push(ell(p, [S.tuft, S.tuft * 1.3, S.tuft], R, 0.6, M(C.tuft, 'mane'))); }
+    if (S.tuft) clumps(P, 7, p, [S.tuft * 0.6, S.tuft * 0.6, S.tuft * 0.6], mv(R, [0, -0.6, -0.8]), [S.tuft * 0.45, S.tuft * 0.4, S.tuft * 0.9], M(C.tuft, 'mane'), 0.3, 31); }
   return P;
 }
 /* the quadruped frames (dz/dy feet offsets in mm: [dz, dy, _, dx]) */
@@ -227,14 +269,15 @@ export function quadFrames(sp) {
   for (let t = 0; t < 6; t++) F.push({ n: 'walk' + t, feet: walkFeet(t, A, lift), dy: S.y * 0.025 * Math.cos(t / 6 * Math.PI * 4), head: [-4 + 3 * Math.cos(t / 6 * Math.PI * 4), 0], tail: [0, Math.sin(t / 6 * Math.PI * 2) * 25, 0], pitch: 0 });
   const Y = S.y, L = S.L;
   const ATK = {
-    lion: [{ dy: -Y * 0.28, pitch: -6, head: [-12, 0], tail: [25, 10, 0], feet: { LH: [2, 0], RH: [2, 0] } },
-      { dy: -Y * 0.35, z: -L * 0.2, pitch: 6, head: [-6, 0], tail: [30, 0, 0], feet: { LH: [4, 0], RH: [4, 0], LF: [1, 0], RF: [1, 0] } },
-      { dy: Y * 0.45, z: L * 0.4, pitch: 26, head: [8, 0], jaw: 26, tail: [5, 0, -4], feet: { LF: [L * 0.7, Y * 0.55], RF: [L * 0.8, Y * 0.62], LH: [-L * 0.6, Y * 0.12], RH: [-L * 0.55, Y * 0.12] } },
-      { dy: Y * 0.3, z: L * 0.9, pitch: -10, head: [-10, 0], jaw: 34, tail: [10, 0, -2], feet: { LF: [L * 1.1, Y * 0.18], RF: [L * 1.2, Y * 0.22], LH: [L * 0.2, Y * 0.3], RH: [L * 0.1, Y * 0.32] } },
-      { dy: -Y * 0.08, z: L * 0.5, pitch: -3, head: [-4, 0], jaw: 10, feet: { LF: [L * 0.55, 0], RF: [L * 0.6, 0], LH: [L * 0.35, 0], RH: [L * 0.3, 0] } }],
+    lion: [{ dy: -Y * 0.3, pitch: -7, head: [-12, 0], tail: [25, 10, 0], feet: { LH: [2, 0], RH: [2, 0] } },
+      { dy: -Y * 0.4, z: -L * 0.3, pitch: 8, head: [-6, 0], tail: [30, 0, 0], feet: { LH: [5, 0], RH: [5, 0], LF: [1, 0], RF: [1, 0] } },
+      { dy: Y * 0.7, z: L * 0.9, pitch: 24, head: [8, 0], jaw: 28, tail: [5, 0, -4], feet: { LF: [L * 1.2, Y * 0.8], RF: [L * 1.3, Y * 0.9], LH: [-L * 0.2, Y * 0.3], RH: [-L * 0.1, Y * 0.35] } },
+      { dy: Y * 0.35, z: L * 1.6, pitch: -12, head: [-12, 0], jaw: 36, tail: [10, 0, -2], feet: { LF: [L * 2.0, Y * 0.25], RF: [L * 2.1, Y * 0.3], LH: [L * 0.9, Y * 0.35], RH: [L * 0.8, Y * 0.4] } },
+      { dy: -Y * 0.08, z: L * 1.0, pitch: -3, head: [-4, 0], jaw: 10, feet: { LF: [L * 1.1, 0], RF: [L * 1.15, 0], LH: [L * 0.9, 0], RH: [L * 0.85, 0] } }],
     bear: [{ pitch: 22, dy: Y * 0.15, head: [10, 0], feet: { LF: [L * 0.2, Y * 0.35], RF: [L * 0.2, Y * 0.3], LH: [L * 0.25, 0], RH: [L * 0.25, 0] } },
-      { pitch: 58, dy: Y * 0.35, z: -L * 0.3, head: [20, 0], jaw: 30, feet: { LF: [L * 0.1, Y * 1.4, 0, 2], RF: [L * 0.2, Y * 1.5, 0, 2], LH: [L * 0.5, 0], RH: [L * 0.5, 0] } },
-      { pitch: 55, dy: Y * 0.3, z: -L * 0.2, yaw: -14, head: [10, -15], jaw: 38, feet: { LF: [L * 0.6, Y * 1.0, 0, -3], RF: [L * 0.2, Y * 1.55], LH: [L * 0.5, 0], RH: [L * 0.5, 0] } },
+      /* reared: the front paws held up and forward in the body's own frame (round 1 hid them inside the chest) */
+      { pitch: 58, dy: Y * 0.35, z: -L * 0.3, head: [24, 0], jaw: 34, feet: { LH: [L * 0.5, 0], RH: [L * 0.5, 0] }, feetL: { LF: [6.5, -1, L * 0.78 + 12], RF: [6.0, 1, L * 0.78 + 13] } },
+      { pitch: 52, dy: Y * 0.3, z: -L * 0.2, yaw: -14, head: [10, -15], jaw: 40, feet: { LH: [L * 0.5, 0], RH: [L * 0.5, 0] }, feetL: { LF: [7.5, 2, L * 0.78 + 10], RF: [-2, -2, L * 0.78 + 14] } },
       { pitch: -8, dy: -Y * 0.08, z: L * 0.3, head: [-14, 0], jaw: 34, feet: { LF: [L * 0.85, 0], RF: [L * 0.9, 0], LH: [L * 0.2, 0], RH: [L * 0.2, 0] } },
       { pitch: 0, z: L * 0.15, head: [-4, 0], jaw: 6, feet: { LF: [L * 0.3, 0], RF: [L * 0.3, 0], LH: [L * 0.1, 0], RH: [L * 0.1, 0] } }],
     wolf: [{ dy: -Y * 0.2, pitch: -8, head: [-14, 0], tail: [-10, 0, 0], feet: { LH: [2, 0], RH: [2, 0] } },
@@ -272,12 +315,14 @@ function snakeFrame(f, col) {
     else { const u = (s - (1 - rise)) / rise; const a0 = (f.turn || 0) + Math.PI * (2.2 - flat * 1.4); const R0 = 4 * (1 + flat * 0.5); const bx = Math.cos(a0) * R0, bz = Math.sin(a0) * R0 - 1;
       x = bx * (1 - u) + Math.sin(u * 3 + ph) * (1.5 + wave) * u; z = bz * (1 - u) + u * (2 + ext * 10); y = r * 0.95 + (f.h != null ? f.h : 9) * Math.sin(u * Math.PI / 2) * (1 - flat); }
     pts.push([x, y, z]); }
+  JL = []; { let prev = null; for (let i = 0; i <= N; i += 4) { const s = i / N; const n = 'c' + i; J(n, pts[i], s < 0.16 ? 'tail' : 'spine', prev); prev = n; } }
   for (let i = 0; i < N; i++) { const s = i / N; const rr = (s < 0.12 ? 0.35 + 0.65 * s / 0.12 : s > 0.9 ? 1 - (s - 0.9) * 2.5 : 1) * r; const rr2 = ((s + 1 / N) < 0.12 ? 0.35 + 0.65 * (s + 1 / N) / 0.12 : (s + 1 / N) > 0.9 ? 1 - ((s + 1 / N) - 0.9) * 2.5 : 1) * r;
     P.push(cap(pts[i], pts[i + 1], rr, rr2, 0.5, { c: col.c, b: col.b, u: col.u, p: col.p, nb: col.nb, dry: 0.5 }, { t: s })); }
   /* head */
   const hd = nrm(sub(pts[N], pts[N - 3])); const HF = frame(add(hd, [0, -0.15 - (f.headDown || 0), 0]));
   const HC = add(pts[N], mul(HF[2], 1.6)); const H = (p) => add(HC, add(add(mul(HF[0], p[0]), mul(HF[1], p[1])), mul(HF[2], p[2])));
   P.push(ell(HC, [2.1, 1.3, 2.9], HF, 0.8, { c: col.c, p: 'none', u: col.u, dry: 0.6 }));
+  J('head', HC, 'head', 'c' + (Math.floor(N / 4) * 4));
   const jaw = (f.jaw || 0) * D2R; if (jaw > 0.05) { const jd = nrm(add(mul(HF[2], Math.cos(jaw)), mul(HF[1], -Math.sin(jaw)))); const j0 = H([0, -0.6, -1.4]); P.push(cap(j0, add(j0, mul(jd, 3.6)), 1.0, 0.6, 0.2, { c: col.u, p: 'none' }));
     P.push(sph(H([0, -0.9, 0.6]), 0.9, 0.1, { c: '#8a2420', dry: 0.2 })); for (const sx of [-1, 1]) P.push(cap(H([sx * 0.6, -0.9, 2.2]), H([sx * 0.6, -2.1, 2.0]), 0.22, 0.05, 0, { c: '#f4eedc' })); }
   for (const sx of [-1, 1]) P.push(sph(H([sx * 1.25, 0.45, 1.0]), 0.42, 0.05, { c: '#120c08', dry: 0.9 }));
@@ -295,7 +340,7 @@ export function snakeFrames() { return [
 
 /* ======================= ZORA, the golden eagle ======================= */
 function eagleFrame(f) {
-  const P = []; const BR = { c: '#8e6038', p: 'feath', u: '#6a4426', dry: 0.75 }, GOLD = { c: '#d8aa58', p: 'feath', dry: 0.7 }, BEAK = { c: '#e0b040', dry: 0.5 }, TAL = { c: '#e6c040', dry: 0.4 }, DK = { c: '#141008', dry: 0.9 }, TIP = { c: '#5a3a1e', p: 'feath', dry: 0.7 };
+  JL = []; const P = []; const BR = { c: '#8e6038', p: 'feath', u: '#6a4426', dry: 0.75 }, GOLD = { c: '#d8aa58', p: 'feath', dry: 0.7 }, BEAK = { c: '#e0b040', dry: 0.5 }, TAL = { c: '#e6c040', dry: 0.4 }, DK = { c: '#141008', dry: 0.9 }, TIP = { c: '#5a3a1e', p: 'feath', dry: 0.7 };
   const lift = f.lift || 0, pitch = (f.pitch || 0) * D2R, roll = (f.roll || 0) * D2R; const R = mm(Rz(roll), Rx(-pitch)); const root = [0, 8.2 + lift, f.z || 0]; const T = (p) => add(mv(R, p), root);
   P.push(ell(T([0, 0, 0]), [3.4, 3.7, 5.4], mm(R, Rx(-0.25)), 1.4, BR));
   P.push(ell(T([0, 1.9, 2.6]), [2.6, 2.6, 2.6], R, 1.2, BR));
@@ -303,6 +348,7 @@ function eagleFrame(f) {
   const hp = (f.head ? f.head[0] : 0) * D2R, hy = (f.head ? f.head[1] : 0) * D2R; const HF = frame(mv(R, [Math.sin(hy), Math.sin(hp), Math.cos(hy) * Math.cos(hp)]), mv(R, [0, 1, 0]));
   const HC = T([0, 4.6, 3.6]); const H = (p) => add(HC, add(add(mul(HF[0], p[0]), mul(HF[1], p[1])), mul(HF[2], p[2])));
   P.push(ell(HC, [1.9, 2.0, 2.3], HF, 0.9, GOLD));
+  J('pelvis', T([0, -0.5, -2.5]), 'spine'); J('mid', T([0, 0.4, 0]), 'spine', 'pelvis'); J('chest', T([0, 1.9, 2.6]), 'chest', 'mid'); J('head', HC, 'head', 'chest');
   P.push(cap(H([0, 0.3, 1.6]), H([0, -0.4, 3.4]), 0.9, 0.45, 0.4, BEAK)); P.push(cap(H([0, -0.4, 3.4]), H([0, -1.3, 3.2]), 0.42, 0.15, 0.2, BEAK));
   for (const sx of [-1, 1]) P.push(sph(H([sx * 1.15, 0.45, 1.2]), 0.42, 0.05, DK));
   /* wings: shoulder → elbow → wrist → tip, with feather plates; spread 0 (folded along the back) .. 1, flap = raise angle */
@@ -312,21 +358,22 @@ function eagleFrame(f) {
     const wd = nrm(mv(R, lerp([sx * 0.18, 0.12, -1], [sx * Math.cos(fl), Math.sin(fl), -0.12], sp))); const span = 6 + sp * 8;
     let n = nrm(cross(wd, back)); if (dot(n, mv(R, [0, 1, 0])) < 0) n = mul(n, -1);
     P.push(cap(S0, add(S0, mul(wd, span * 0.45)), 1.5, 1.0, 0.8, BR));
+    J('wS' + sx, S0, 'chest', 'chest'); J('wE' + sx, add(S0, mul(wd, span * 0.35)), 'limb', 'wS' + sx); J('wW' + sx, add(S0, mul(wd, span * 0.68)), 'limb', 'wE' + sx); J('wT' + sx, add(add(S0, mul(wd, span)), mul(back, 3)), 'foot', 'wW' + sx);
     for (let i = 0; i <= 8; i++) { const t = i / 8; const c0 = add(S0, mul(wd, span * (0.05 + t * 0.95)));
       const prim = t > 0.6; const cd = nrm(prim ? add(mul(back, 1), mul(wd, (t - 0.5) * 1.6)) : back); const chord = prim ? 5.6 - (t - 0.6) * 3 : 4.6 + (1 - sp) * 1.5;
       const F2 = frame(cd, n); P.push(ell(add(c0, mul(cd, chord * 0.5)), [1.55, 0.36, chord * 0.58], F2, 0.35, prim ? TIP : BR)); }
   }
   /* tail fan */
-  const tb = T([0, -0.6, -4.8]); for (let i = -2; i <= 2; i++) { const d = mv(R, nrm([i * 0.22, -0.35 + (f.tailUp || 0), -1])); P.push(ell(add(tb, mul(d, 2.6)), [1.0, 0.3, 2.8], frame(d), 0.3, i % 2 ? TIP : BR)); }
+  const tb = T([0, -0.6, -4.8]); J('tail', add(tb, mv(R, [0, -0.8, -4.5])), 'tail', 'pelvis'); for (let i = -2; i <= 2; i++) { const d = mv(R, nrm([i * 0.22, -0.35 + (f.tailUp || 0), -1])); P.push(ell(add(tb, mul(d, 2.6)), [1.0, 0.3, 2.8], frame(d), 0.3, i % 2 ? TIP : BR)); }
   /* legs + talons (perched on the base when lift is 0; reaching forward in the strike) */
   const reach = f.talons || 0;
   for (const sx of [-1, 1]) { const hip = T([sx * 1.4, -2.2, 0.4]); const foot = lift > 0.5 ? add(hip, mv(R, [sx * 0.3, -4.2 + reach * 1.5, 0.8 + reach * 4.5])) : [sx * 1.5 + root[0] * 0, 0.3, root[2] + 0.8];
-    P.push(cap(hip, foot, 0.9, 0.55, 0.4, GOLD)); for (const a of [-0.6, 0, 0.6]) { const d = mv(Ry(a), [0, 0, 1]); P.push(cap(foot, add(foot, add(mul(d, 1.6), [0, -0.25, 0])), 0.35, 0.18, 0.15, TAL)); P.push(cap(add(foot, mul(d, 1.6)), add(foot, add(mul(d, 2.0), [0, -0.6, 0])), 0.16, 0.08, 0, DK)); }
+    P.push(cap(hip, foot, 0.9, 0.55, 0.4, GOLD)); J('leg' + sx, hip, 'limb', 'pelvis'); J('ft' + sx, foot, 'foot', 'leg' + sx); for (const a of [-0.6, 0, 0.6]) { const d = mv(Ry(a), [0, 0, 1]); P.push(cap(foot, add(foot, add(mul(d, 1.6), [0, -0.25, 0])), 0.35, 0.18, 0.15, TAL)); P.push(cap(add(foot, mul(d, 1.6)), add(foot, add(mul(d, 2.0), [0, -0.6, 0])), 0.16, 0.08, 0, DK)); }
     P.push(cap(foot, add(foot, [0, -0.2, -1.3]), 0.3, 0.15, 0.1, TAL)); }
   return P;
 }
 export function eagleFrames() { return [
-  { n: 'idle0' }, { n: 'idle1', head: [0, 25] }, { n: 'idle2', head: [-5, -20], spread: 0.15 }, { n: 'idle3', head: [5, 5] },
+  { n: 'idle0', spread: 1, flap: 48 }, { n: 'idle1', spread: 1, flap: 52, head: [0, 20] }, { n: 'idle2', spread: 0.95, flap: 44, head: [-5, -15] }, { n: 'idle3', spread: 1, flap: 50, head: [5, 5] },
   ...[0, 1, 2, 3, 4, 5].map(t => ({ n: 'walk' + t, lift: 9 + Math.sin(t / 6 * Math.PI * 2) * 1.2, spread: 1, flap: Math.cos(t / 6 * Math.PI * 2) * 38, pitch: -4, tailUp: 0.2 })),
   { n: 'attack0', lift: 12, spread: 1, flap: 50, pitch: 10 }, { n: 'attack1', lift: 10, spread: 0.6, flap: 60, pitch: -25, head: [-25, 0], z: 3 }, { n: 'attack2', lift: 5, spread: 0.9, flap: 20, pitch: 15, talons: 1, z: 6, head: [-10, 0] },
   { n: 'attack3', lift: 3, spread: 1, flap: -10, pitch: 25, talons: 1.2, z: 7, head: [-20, 0] }, { n: 'attack4', lift: 7, spread: 1, flap: 35, pitch: 0, z: 3 },
@@ -337,7 +384,7 @@ export function eagleFrames() { return [
 
 /* ======================= SPIDER ======================= */
 function spiderFrame(f) {
-  const P = []; const BODY = { c: '#262019', p: 'fur', dry: 0.7 }, BAND = { c: '#b8ad9c', dry: 0.5 }, LEG = { c: '#2e2620', dry: 0.7 }, EYE = { c: '#9a1a14', dry: 0.9 };
+  JL = []; const P = []; const BODY = { c: '#262019', p: 'fur', dry: 0.7 }, BAND = { c: '#b8ad9c', dry: 0.5 }, LEG = { c: '#2e2620', dry: 0.7 }, EYE = { c: '#9a1a14', dry: 0.9 };
   const flip = f.flip || 0, rear = f.rear || 0, curl = f.curl || 0; const R = mm(Rz(flip * Math.PI), Rx(-rear * 0.5)); const root = [0, 2.2 + flip * 1.2 + rear * 1.4, 0]; const T = (p) => add(mv(R, p), root);
   P.push(ell(T([0, 0.4, 1.4]), [1.6, 1.1, 1.9], R, 0.4, BODY)); P.push(ell(T([0, 0.9, -1.8]), [2.2, 1.9, 2.7], mm(R, Rx(0.3)), 0.5, BODY));
   for (const [y, z, r] of [[2.6, -1.4, 0.55], [2.4, -2.4, 0.5], [2.0, -3.3, 0.4]]) P.push(ell(T([0, y, z]), [r * 1.6, r * 0.35, r * 0.8], R, 0.1, BAND));

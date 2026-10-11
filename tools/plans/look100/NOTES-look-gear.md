@@ -211,3 +211,25 @@ r7_classes.png + r7_cls_<class>.png, r7_board.png, r7_stats.json. Code: r7_sculp
   vertices a metre away).
 - Cost: class sheets now 16.8–21.1 s each (were 6–8 s) and the max-load sheet 30.3 s — the SwiftShader render of many skinned meshes
   with outlines; sizes unchanged (27.6–35.4 KB per class, 33.5 KB max load). Full run 446 s.
+
+## Round 8 — scutum fixed + shield check, merged sculpts, hanging tassets, belts, in-game preview (r8_*)
+
+Files: r8_sculpt.png (tassets + belts), r8_maxload.png + r8_maxload_sheet.png, r8_classes.png + r8_cls_<class>.png, r8_board.png,
+r8_stats.json; in-game preview r8_ingame_{studio_1440,modeller_1440,modeller_390,board_1440,board_1440_crop,board_390}.png + r8_ingame.json.
+Code: r8_sculpt.js (merge8, plate tassets), page8.js (shield pose + shieldCheck8 + belt8 + merge timing), make8.js, r8_ingame.js;
+gear100.js gained spec.up8 (board long edge along the forearm). Preview tree: ingame/ (copy of src/ + build.sh, assets symlinked except
+tok93.js, rig92/ = the look-test modules + sculpt.js, mkgame8.js → ingame/assets/tok93.js, flavius-arena.html built there).
+
+- SCUTUM: the shield forearm stands upright (elbow over wrist) in the board's plane, upper arm reaching back; the board's LONG edge runs
+  along the forearm (round 3's code put its width there — upright forearm = landscape board, the round-6/7 tilt). SHIELD CHECK (make8
+  fails on any break): every posed skin point of the elbow + forearm inside the board's outline must be behind it, the face within 10° of
+  the facing, the long edge within 10° of the forearm — all 8 facings. Max load: 0 of 2030 points in front, face 1.4°, edge 0°; hero
+  (Thracian) the same; other classes carry no shield.
+- MERGE: one skinned mesh + one outline per figure. Sheet times merged vs unmerged: max load 16.6 vs 17.3 s; soldier 11.7/12.3,
+  royalty 9.5/9.1, hero 10.5/11.4, slave 10.9/10.6, veteranus 10.4/11.0, amazonia 9.4/10.6, venatore 9.8/9.6, damnatio 8.9/8.9 (no
+  sculpts) — the sheet's base cost (~9 s, SwiftShader at 2× supersampling, 8 facings) dominates; merging saves 0–11%.
+- TASSETS: three separate plates on two straps from the belt, each plate a thin shell standing off the thigh more toward its lower edge
+  (gap 11 → 31 mm), overlapping, skinned to the thigh. 60,470 tris each (thin shells need a 3.6 mm cluster cell).
+- BELTS: moved onto the body's belt line (1.035–1.115 m); the old belt shell, studs and front ring are hidden while one is worn.
+- IN-GAME PREVIEW: a soldier-kit Studio character converted in 67 s (modeller load 23.7 s, sheet 17.0 s, sculpts the rest) to a 29.7 KB
+  sheet (92×145); worn sculpts: centurion, balteus, wraps L/R, tassets L/R. tok93.js 128 KB → 232 KB.
