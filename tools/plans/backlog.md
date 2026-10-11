@@ -212,3 +212,11 @@ material per turn. (Board today = render-once sheets, so most of this governs th
 ## CLEAN LAYERS — his picks (2026-10-11): 1a after v1.0 · 2b INCLUDING the server Ranked check (phases 0, A, B, C, D1, E; not D2) · 3c mismatches only logged the first month, then decide · 4c CPUs make NO truce/trade offers to humans online (Familia is the legit team-up) — FIX, next build. Plan: tools/plans/layers100/PLAN.md.
 TAME BOND (his rule 2026-10-11): Meat Lure breaks a tame bond (any beast except Commodus / humanoid beasts / human NPCs); Ursa/Brutum "charges you" arena cards break a tamed BEAR's bond only. Building (tv100t). Open: Tholo (printed lure card says it works on him).
 CROWD CHEERS: today's sculpted crowd (193/209) cheers in bursts (arms up, fist shake) but never stands. The 3D token crowd (look tests only, not in the game yet) MUST keep the cheers AND stand up from the seat on big moments.
+
+## ONLINE TURN FLOW + TIMERS (his picks 2026-10-11; mock-up first, then his go; server change)
+1a only real decisions open a window; notices → toast / log line · 2b a run of windows = ONE panel that steps through them ·
+3a others see a small "<name> is choosing…" line · 4a Ranked turn 60 s · 5b+c timeout → the CPU finishes that turn; repeated timeouts
+let the others drop the seat to a CPU (like the 3-min away rule) · 6a decision windows have their own short clock (~20 s) then the default
+answer · 7a Custom: host setting Off/30/60/90/120 s (default Off) · 8c ring around the active face + bar in the turn panel + big countdown in
+the last 10 s + a SOFT tick in the last 5 s ("marble coasters lightly clapping").
+Timeouts must be SERVER-ordered inputs (lockstep: the server, not a client clock, says time ran out; same moment on every screen).
