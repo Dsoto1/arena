@@ -53,10 +53,12 @@
   }
 
   /* ------------------------------------------------ 2. the clip: walk two tiles + attack ------------------------------------------------ */
+  /* a tile is clear when nothing stands on it and no piece in front of it (lower on screen, within a tile sideways) can hide a token there */
+  function clear(B, r, c) { for (const [or, oc] of B.occ) { const dx = (oc - or) - (c - r), dy = (oc + or) - (c + r); if (dx === 0 && dy === 0) return false; if (Math.abs(dx) <= 1 && dy >= 1 && dy <= 4) return false; } return r >= 0 && c >= 0 && r < B.N && c < B.N; }
   function pickPath(B, len, extra = 1) {
     const free = freeSet(B); let best = null;
     for (let r = 0; r < B.N - 1; r++) for (let c0 = 0; c0 + len <= B.N; c0++) {
-      let ok = true; for (let k = -1; k <= len; k++) for (let dr = 0; dr <= extra; dr++) if ((r + dr >= 0 && c0 + k >= 0 && r + dr < B.N && c0 + k < B.N) && !free(r + dr, c0 + k)) ok = false;
+      let ok = true; for (let k = 0; k < len; k++) if (!clear(B, r, c0 + k)) ok = false;
       if (!ok) continue; const a = T(B, r, c0), b = T(B, r, c0 + len - 1); if (!inView(B, a, 70) || !inView(B, b, 70)) continue;
       const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; const cx = B.canvas.x + B.canvas.w / 2, cy = B.canvas.y + B.canvas.h / 2;
       const d = Math.hypot(mid.x - cx, mid.y - cy); if (!best || d < best.d) best = { r, c0, d };
@@ -147,7 +149,7 @@
   }
   function spiders(B, shot) {
     const free = freeSet(B); let tile = null, bd = 1e9; const cx = B.canvas.x + B.canvas.w * 0.45, cy = B.canvas.y + B.canvas.h * 0.55;
-    for (let r = 1; r < B.N - 1; r++) for (let c = 1; c < B.N - 1; c++) { let ok = true; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) if (!free(r + dr, c + dc)) ok = false; const p = T(B, r, c); if (!ok || !inView(B, p, 100)) continue; const d = Math.hypot(p.x - cx, p.y - cy); if (d < bd) { bd = d; tile = { r, c, p }; } }
+    for (let r = 1; r < B.N - 1; r++) for (let c = 1; c < B.N - 1; c++) { let ok = true; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) if (!free(r + dr, c + dc)) ok = false; if (!clear(B, r, c)) ok = false; const p = T(B, r, c); if (!ok || !inView(B, p, 100)) continue; const d = Math.hypot(p.x - cx, p.y - cy); if (d < bd) { bd = d; tile = { r, c, p }; } }
     const A = SHEETS.main, SP = SHEETS.spider; const s = 0.8 * B.tw / (25.4 * PXMM), ss = s * 0.42;
     const m = tile.p; const x0 = m.x - B.tw * 1.25, y0 = m.y - B.tw * 1.55, W = Math.round(B.tw * 2.5), H = Math.round(B.tw * 2.15);
     /* six spiders: start on the neighbouring tiles, crawl to him; two climb him in the last frames */
@@ -174,7 +176,7 @@
   function bounty(B, shot, rtok) {
     const free = freeSet(B);
     const seats = B.seats.filter(p => inView(B, p, 40)); let best = null;
-    for (const st of seats) for (let r = 0; r < B.N; r++) for (let c = 0; c < B.N; c++) { if (!free(r, c)) continue; const p = T(B, r, c); if (!inView(B, p, 70)) continue; const d = Math.hypot(p.x - st.x, p.y - st.y); if (d > B.tw * 1.6 && d < B.tw * 3.2 && (!best || Math.abs(d - B.tw * 2.4) < best.e)) best = { st, p, e: Math.abs(d - B.tw * 2.4) }; }
+    for (const st of seats) for (let r = 0; r < B.N; r++) for (let c = 0; c < B.N; c++) { if (!clear(B, r, c)) continue; const p = T(B, r, c); if (!inView(B, p, 70)) continue; const d = Math.hypot(p.x - st.x, p.y - st.y); if (d > B.tw * 1.6 && d < B.tw * 3.2 && (!best || Math.abs(d - B.tw * 2.4) < best.e)) best = { st, p, e: Math.abs(d - B.tw * 2.4) }; }
     const { st, p } = best; const hx = st.x, hy = st.y - B.crowdH * 0.85;
     const x0 = Math.min(hx, p.x) - B.tw * 0.8, x1 = Math.max(hx, p.x) + B.tw * 0.8, y0 = Math.min(hy, p.y) - B.tw * 1.3, y1 = Math.max(hy, p.y) + B.tw * 0.45;
     const W = Math.round(x1 - x0), H = Math.round(y1 - y0); const out = [];
