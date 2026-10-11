@@ -49,11 +49,11 @@
   const clearOf = (B) => (r, c) => { for (const [or, oc] of B.occ) { const dx = (oc - or) - (c - r), dy = (oc + or) - (c + r); if (Math.abs(dx) <= 1 && dy >= 1 && dy <= 4) return false; } return true; };
   function board(B, shot, SH, G) {
     const free = freeTile(B), clr = clearOf(B); const inV = (p) => p.x > B.canvas.x + 50 && p.x < B.canvas.x + B.canvas.w - 50 && p.y > B.canvas.y + 90 && p.y < B.canvas.y + B.canvas.h - 25;
-    const tiles = []; for (let r = 1; r < B.N - 1; r++) for (let c = 1; c < B.N - 1; c++) { const p = B.tiles[r + ',' + c]; if (free(r, c) && clr(r, c) && inV(p)) tiles.push({ r, c, p }); }
+    const tiles = []; for (let r = 1; r < B.N - 1; r++) for (let c = 1; c < B.N - 1; c++) { const p = B.tiles[r + ',' + c]; if (free(r, c) && r % 2 === 1 && c % 2 === 1 && inV(p)) tiles.push({ r, c, p }); }
     /* spread them: greedy farthest-apart from the centre outwards */
     const want = [...ORDER, 'glad', 'glad2']; const pick = []; const cx = B.canvas.x + B.canvas.w / 2, cy = B.canvas.y + B.canvas.h * 0.55;
     tiles.sort((a, b) => Math.hypot(a.p.x - cx, a.p.y - cy) - Math.hypot(b.p.x - cx, b.p.y - cy));
-    for (const t of tiles) { if (pick.length >= want.length) break; if (pick.some(q => Math.abs(q.r - t.r) + Math.abs(q.c - t.c) < 2)) continue; pick.push(t); }
+    for (const t of tiles) { if (pick.length >= want.length) break;  pick.push(t); }
     const c = cnv(B.canvas.w, B.canvas.h); const g = c.getContext('2d'); g.drawImage(shot, B.canvas.x, B.canvas.y, B.canvas.w, B.canvas.h, 0, 0, B.canvas.w, B.canvas.h);
     const items = pick.map((t, i) => ({ t, k: want[i] })).sort((a, b) => a.t.p.y - b.t.p.y);
     const yaws = [1, 7, 0, 1, 7, 1, 0, 7, 1, 0, 1, 7, 1, 0, 1, 7];

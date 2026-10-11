@@ -613,5 +613,36 @@
    "frames": 23,
    "bodyBuildMs": 4998
   }
- }
+ },
+ "clip": {
+  "n": 46,
+  "ms": 40,
+  "tiles": [
+   5,
+   4
+  ],
+  "w": 265,
+  "h": 199,
+  "lionScale": 0.43,
+  "gladScale": 0.886,
+  "kb": 106
+ },
+ "placed": [
+  "tholo",
+  "arenosus",
+  "zora",
+  "leaena",
+  "croc",
+  "spider",
+  "ursa",
+  "brutum",
+  "leo",
+  "commodus",
+  "boar",
+  "valencia",
+  "moechus",
+  "glykon",
+  "glad",
+  "glad2"
+ ]
 }

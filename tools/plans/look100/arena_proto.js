@@ -112,25 +112,26 @@ function railBronze(g,R){const h=R.Hc*0.86,pw=Math.max(1.2,TW*0.028),rt=Math.max
     g.lineCap='round';g.strokeStyle='#4a2e0e';g.lineWidth=rt+1;g.beginPath();g.moveTo(p.x,p.y-h+0.8);g.lineTo(q.x,q.y-h+0.8);g.stroke();
     g.strokeStyle='#b07a32';g.lineWidth=rt;g.beginPath();g.moveTo(p.x,p.y-h);g.lineTo(q.x,q.y-h);g.stroke();
     g.strokeStyle='rgba(255,226,150,.9)';g.lineWidth=Math.max(0.7,rt*0.35);g.beginPath();g.moveTo(p.x+iv.x,p.y-h-rt*0.25+iv.y);g.lineTo(q.x+iv.x,q.y-h-rt*0.25+iv.y);g.stroke();g.lineCap='butt'}}
-function railBalus(g,R){const h=R.Hc*0.94,pl=h*0.2,cp=Math.max(1.6,h*0.17);const iv=inV(R,TW*0.05);const stoneC=ar91Mat().cap;
+function railBalus(g,R){const h=R.Hc*0.98,pl=Math.max(1.6,h*0.2),cp=Math.max(1.8,h*0.2);const iv=inV(R,TW*0.05);const capC=hex(ar91Mat().cap),lt=rgb(mix(capC,[255,252,240],0.55)),md=rgb(mix(capC,[236,226,206],0.3)),dk=rgb(mix(capC,[70,52,32],0.55));
   for(const [p,q] of segs(R)){const L=Math.hypot(q.x-p.x,q.y-p.y);
-    g.fillStyle='rgba(30,18,8,.25)';ar91Path(g,[p,q,{x:q.x+TW*0.06,y:q.y+TW*0.04},{x:p.x+TW*0.06,y:p.y+TW*0.04}]);g.fill();
-    /* the plinth */
-    ar91Stone(g,[{x:p.x,y:p.y-pl},{x:q.x,y:q.y-pl},q,p],R.left?'rgba(255,248,230,.06)':'rgba(40,28,16,.22)');
-    /* balusters: a vase profile (neck · belly · foot) */
-    const bw=Math.max(2.2,TW*0.05),step=Math.max(bw*1.9,R.tile*0.16),n=Math.max(2,Math.floor(L/step));
+    g.fillStyle='rgba(30,18,8,.28)';ar91Path(g,[p,q,{x:q.x+TW*0.06,y:q.y+TW*0.04},{x:p.x+TW*0.06,y:p.y+TW*0.04}]);g.fill();
+    /* the dark void behind the balusters (the near wall in shadow) */
+    g.fillStyle='rgba(36,24,14,.55)';ar91Path(g,[{x:p.x,y:p.y-h},{x:q.x,y:q.y-h},q,p]);g.fill();
+    /* the plinth: a solid light stone strip */
+    ar91Path(g,[{x:p.x,y:p.y-pl},{x:q.x,y:q.y-pl},q,p]);g.fillStyle=md;g.fill();g.strokeStyle='rgba(40,28,16,.55)';g.lineWidth=0.7;g.stroke();
+    /* balusters: a vase profile (neck · belly · foot), lit from the left */
+    const bw=Math.max(2.6,TW*0.065),step=Math.max(bw*1.55,R.tile*0.13),n=Math.max(2,Math.floor(L/step));
     for(let i=0;i<n;i++){const t=(i+0.5)/n,x=p.x+(q.x-p.x)*t,y=p.y+(q.y-p.y)*t-pl,bh=h-pl-cp;
-      const gr=g.createLinearGradient(x-bw/2,0,x+bw/2,0);gr.addColorStop(0,'rgba(255,252,240,1)');gr.addColorStop(.5,stoneC);gr.addColorStop(1,'rgba(120,100,76,1)');
-      g.fillStyle=gr;g.beginPath();g.moveTo(x-bw*0.42,y);g.lineTo(x+bw*0.42,y);g.quadraticCurveTo(x+bw*0.62,y-bh*0.35,x+bw*0.22,y-bh*0.72);g.lineTo(x+bw*0.3,y-bh);g.lineTo(x-bw*0.3,y-bh);g.lineTo(x-bw*0.22,y-bh*0.72);g.quadraticCurveTo(x-bw*0.62,y-bh*0.35,x-bw*0.42,y);g.closePath();g.fill();
-      g.strokeStyle='rgba(60,44,28,.45)';g.lineWidth=0.6;g.stroke()}
-    /* the coping: front face + top face toward the sand */
-    const T0={x:p.x,y:p.y-h},T1={x:q.x,y:q.y-h};ar91Stone(g,[{x:T0.x,y:T0.y},{x:T1.x,y:T1.y},{x:T1.x,y:T1.y+cp},{x:T0.x,y:T0.y+cp}],R.left?'rgba(255,248,230,.06)':'rgba(40,28,16,.2)');
-    ar91Stone(g,[{x:T0.x+iv.x,y:T0.y+iv.y},{x:T1.x+iv.x,y:T1.y+iv.y},T1,T0],'rgba(255,250,236,.25)');
-    g.strokeStyle='rgba(40,28,16,.5)';g.lineWidth=0.8;g.beginPath();g.moveTo(T0.x,T0.y+cp);g.lineTo(T1.x,T1.y+cp);g.stroke();
-    g.strokeStyle='rgba(255,250,236,.6)';g.beginPath();g.moveTo(T0.x,T0.y+0.5);g.lineTo(T1.x,T1.y+0.5);g.stroke();
-    /* end posts (pedestals) at both ends of a run */
-    for(const E of [p,q]){const pw=bw*1.5;ar91Stone(g,[{x:E.x-pw,y:E.y-h-cp*0.4},{x:E.x+pw,y:E.y-h-cp*0.4},{x:E.x+pw,y:E.y},{x:E.x-pw,y:E.y}],'rgba(40,28,16,.12)');
-      g.strokeStyle='rgba(40,28,16,.45)';g.lineWidth=0.8;g.strokeRect(E.x-pw,E.y-h-cp*0.4,pw*2,h+cp*0.4)}}}
+      const gr=g.createLinearGradient(x-bw/2,0,x+bw/2,0);gr.addColorStop(0,lt);gr.addColorStop(.55,md);gr.addColorStop(1,dk);
+      g.fillStyle=gr;g.beginPath();g.moveTo(x-bw*0.4,y);g.lineTo(x+bw*0.4,y);g.quadraticCurveTo(x+bw*0.7,y-bh*0.38,x+bw*0.2,y-bh*0.74);g.lineTo(x+bw*0.34,y-bh);g.lineTo(x-bw*0.34,y-bh);g.lineTo(x-bw*0.2,y-bh*0.74);g.quadraticCurveTo(x-bw*0.7,y-bh*0.38,x-bw*0.4,y);g.closePath();g.fill();
+      g.strokeStyle='rgba(50,36,22,.6)';g.lineWidth=0.6;g.stroke()}
+    /* the coping (handrail): solid light stone, front face + a lit top edge */
+    const T0={x:p.x,y:p.y-h},T1={x:q.x,y:q.y-h};ar91Path(g,[{x:T0.x+iv.x*0.5,y:T0.y+iv.y*0.5},{x:T1.x+iv.x*0.5,y:T1.y+iv.y*0.5},T1,T0]);g.fillStyle=lt;g.fill();
+    ar91Path(g,[T0,T1,{x:T1.x,y:T1.y+cp},{x:T0.x,y:T0.y+cp}]);g.fillStyle=md;g.fill();g.fillStyle=R.left?'rgba(255,250,236,.12)':'rgba(40,28,16,.18)';g.fill();
+    g.strokeStyle='rgba(40,28,16,.6)';g.lineWidth=0.7;g.beginPath();g.moveTo(T0.x,T0.y+cp);g.lineTo(T1.x,T1.y+cp);g.stroke();
+    /* end pedestals */
+    for(const E of [p,q]){const pw=bw*0.9;ar91Path(g,[{x:E.x-pw,y:E.y-h-cp*0.5},{x:E.x+pw,y:E.y-h-cp*0.5},{x:E.x+pw,y:E.y},{x:E.x-pw,y:E.y}]);g.fillStyle=md;g.fill();g.strokeStyle='rgba(40,28,16,.55)';g.lineWidth=0.7;g.stroke();
+      g.fillStyle=lt;g.fillRect(E.x-pw-0.5,E.y-h-cp*0.5-1,pw*2+1,1.5)}}}
 function railParapet(g,R){const h=R.Hc*0.96,wall=h*0.62,iv=inV(R,TW*0.06);
   for(const [p,q] of segs(R)){const L=Math.hypot(q.x-p.x,q.y-p.y);
     g.fillStyle='rgba(30,18,8,.25)';ar91Path(g,[p,q,{x:q.x+TW*0.06,y:q.y+TW*0.04},{x:p.x+TW*0.06,y:p.y+TW*0.04}]);g.fill();
@@ -153,7 +154,7 @@ function railParapet(g,R){const h=R.Hc*0.96,wall=h*0.62,iv=inV(R,TW*0.06);
 const RAIL={bronze:railBronze,balus:railBalus,parapet:railParapet};
 ar91Under=function(g){const r=B.under.apply(this,arguments);if(PR.rail&&!ar91Lud()){try{for(const R of railEdges())RAIL[PR.rail](g,R)}catch(e){console.error(e)}}return r};
 /* ---------- switch + measure ---------- */
-PR.set=function(o){Object.assign(PR,o);AR91.ver++;for(const k in AR91TEX)delete AR91TEX[k];try{if(typeof Z99!=='undefined'&&Z99&&Z99.cache)Z99.cache=null}catch(e){}draw();draw()};
+PR.set=function(o){Object.assign(PR,o);for(const id of ['cardShow','bubbles','wbubs','tip']){const e=document.getElementById(id);if(e){if(id==='tip')e.style.display='none';else e.innerHTML=''}}AR91.ver++;for(const k in AR91TEX)delete AR91TEX[k];try{if(typeof Z99!=='undefined'&&Z99&&Z99.cache)Z99.cache=null}catch(e){}draw();draw()};
 /* one cached frame vs one rebuild (all static layers re-baked) */
 PR.cost=function(n=12){const cachedA=[],rebuildA=[];for(let i=0;i<n;i++){draw();let t=performance.now();draw();cachedA.push(performance.now()-t);AR91.ver++;t=performance.now();draw();rebuildA.push(performance.now()-t)}
   const med=a=>{a=a.slice().sort((x,y)=>x-y);return +a[a.length>>1].toFixed(2)};return {cached:med(cachedA),rebuild:med(rebuildA),under:+(AR91.ms[0]||0).toFixed(2),top:+(AR91.ms[1]||0).toFixed(2),texMs:+(PR.texMs||0).toFixed(1)}};

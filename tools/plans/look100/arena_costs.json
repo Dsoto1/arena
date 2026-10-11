@@ -1,0 +1,156 @@
+{
+ "roma|before": {
+  "cached": 6.1,
+  "rebuild": 53.9,
+  "under": 8.6,
+  "top": 37.9,
+  "texMs": 0
+ },
+ "rail|bronze": {
+  "cached": 4.6,
+  "rebuild": 67.3,
+  "under": 13.8,
+  "top": 21.5,
+  "texMs": 0
+ },
+ "rail|balus": {
+  "cached": 5.6,
+  "rebuild": 56.5,
+  "under": 17.9,
+  "top": 22.7,
+  "texMs": 0
+ },
+ "rail|parapet": {
+  "cached": 3.2,
+  "rebuild": 55.4,
+  "under": 21.2,
+  "top": 27.2,
+  "texMs": 0
+ },
+ "roma|trav": {
+  "cached": 3.3,
+  "rebuild": 46.3,
+  "under": 14.7,
+  "top": 23,
+  "texMs": 31.9
+ },
+ "roma|sand": {
+  "cached": 3.9,
+  "rebuild": 49.4,
+  "under": 13.2,
+  "top": 29.5,
+  "texMs": 71.7
+ },
+ "roma|marble": {
+  "cached": 4.5,
+  "rebuild": 49.8,
+  "under": 11.8,
+  "top": 24,
+  "texMs": 100.3
+ },
+ "combo|trav+bronze": {
+  "cached": 3.9,
+  "rebuild": 47.9,
+  "under": 15,
+  "top": 30.7,
+  "texMs": 100.3
+ },
+ "combo|sand+balus": {
+  "cached": 2.9,
+  "rebuild": 51.2,
+  "under": 17.6,
+  "top": 22.2,
+  "texMs": 100.3
+ },
+ "combo|marble+parapet": {
+  "cached": 4.1,
+  "rebuild": 56.9,
+  "under": 16.2,
+  "top": 41.1,
+  "texMs": 100.3
+ },
+ "capua|before": {
+  "cached": 3.1,
+  "rebuild": 47.1,
+  "under": 19.8,
+  "top": 20.8,
+  "texMs": 101.7
+ },
+ "capua|trav": {
+  "cached": 4.2,
+  "rebuild": 60.8,
+  "under": 24.2,
+  "top": 35,
+  "texMs": 103.3
+ },
+ "capua|sand": {
+  "cached": 2.3,
+  "rebuild": 53.4,
+  "under": 15.8,
+  "top": 23.1,
+  "texMs": 104.7
+ },
+ "capua|marble": {
+  "cached": 3.6,
+  "rebuild": 45.8,
+  "under": 21.4,
+  "top": 22.1,
+  "texMs": 104.7
+ },
+ "leptis|before": {
+  "cached": 2.9,
+  "rebuild": 96.5,
+  "under": 37.6,
+  "top": 50.1,
+  "texMs": 106
+ },
+ "leptis|trav": {
+  "cached": 3,
+  "rebuild": 45.1,
+  "under": 13.8,
+  "top": 20.9,
+  "texMs": 107.4
+ },
+ "leptis|sand": {
+  "cached": 2.7,
+  "rebuild": 55.9,
+  "under": 23.4,
+  "top": 20.5,
+  "texMs": 110
+ },
+ "leptis|marble": {
+  "cached": 2.1,
+  "rebuild": 43.6,
+  "under": 12.9,
+  "top": 23.7,
+  "texMs": 110
+ },
+ "phone|trav+bronze": {
+  "cached": 32.9,
+  "rebuild": 178,
+  "under": 44.7,
+  "top": 91.6,
+  "texMs": 26.8
+ },
+ "phone|sand+balus": {
+  "cached": 40.2,
+  "rebuild": 199.4,
+  "under": 53.7,
+  "top": 118.6,
+  "texMs": 64.6
+ },
+ "phone|marble+parapet": {
+  "cached": 47.8,
+  "rebuild": 202.9,
+  "under": 65,
+  "top": 100.1,
+  "texMs": 94.2
+ },
+ "phoneBefore": {
+  "cached": 30.9,
+  "rebuild": 216.2,
+  "under": 40.6,
+  "top": 91.5,
+  "texMs": 94.2
+ }
+}
