@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arena in Babylon</title>
+<!-- LOOK-ONLY mock-up (tools/plans/babylon100). Babylon.js 9.27.1 (npm babylonjs + babylonjs-loaders, Apache-2.0), installed by
+     `npm ci` in this folder (node_modules is git-ignored). Serve the REPO ROOT over http (python3 -m http.server) and open
+     /tools/plans/babylon100/arena.html — it reads ../look100/arena2_tex/6_roma.webp, ../../../assets/flavmood_calm.webp and models/*.glb. -->
+<style>
+  :root { --ink: #f3e7cf; --panel: rgba(24, 18, 12, .78); --edge: rgba(214, 171, 76, .55); }
+  html, body { margin: 0; height: 100%; background: #cdbb98; overflow: hidden; }
+  #cv { width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
+  #hud { position: fixed; left: 10px; top: 10px; background: var(--panel); color: var(--ink); border: 1px solid var(--edge); border-radius: 6px;
+    font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; padding: 6px 9px; pointer-events: none; white-space: pre; }
+  #bar { position: fixed; right: 10px; top: 10px; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100% - 20px); }
+  #bar button { font: 600 13px Georgia, serif; color: var(--ink); background: var(--panel); border: 1px solid var(--edge); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+  #bar button:focus-visible { outline: 2px solid #d6ab4c; outline-offset: 2px; }
+  #load { position: fixed; inset: 0; display: grid; place-items: center; color: #3a2c20; font: 16px Georgia, serif; }
+  body.noui #hud, body.noui #bar { display: none; }
+</style>
+</head><body>
+<canvas id="cv" tabindex="0" aria-label="3D arena mock-up: drag to orbit, wheel or pinch to zoom"></canvas>
+<div id="load">Loading the arena…</div>
+<div id="hud" aria-live="off"></div>
+<div id="bar">
+  <button id="bNight" type="button" title="Day / night (N)">☾ Night</button>
+  <button id="bCam" type="button" title="Isometric / perspective (P)">Perspective</button>
+  <button id="bReset" type="button" title="Back to the game's view (R)">Reset view</button>
+</div>
+<script src="node_modules/babylonjs/babylon.js"></script>
+<script src="node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js"></script>
+<script src="arena.js"></script>
+</body></html>
