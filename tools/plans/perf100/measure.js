@@ -89,6 +89,11 @@ const MGR=async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<
    if(WANT.includes('recruit')){await pg.evaluate(async()=>{MGR.tab='recruit';MGR_REDRAW();await new Promise(r=>setTimeout(r,1500))});all.push(await measure(b,pg,cdp,'mgr-recruit'))}
    if(WANT.includes('city')){await pg.evaluate(async()=>{MGR.tab='ludus';MGR_REDRAW();me().coin=500;openCitySquare(W_().night.loc,{prematch:true});await new Promise(r=>setTimeout(r,4000))});all.push(await measure(b,pg,cdp,'city-square'))}
    await pg.close()}
+ if(WANT.includes('onlsign')){/* perf100 after: the Online sign-in card with the main-menu intro still playing behind it */
+   const {pg,cdp}=await fresh(b,'?onl');await pg.evaluate(()=>localStorage.removeItem('flavius_onlmock'));
+   await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<30&&CUR_MODAL;i++){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(150)}menuShow();onlineOpen('play')});
+   await pg.waitForFunction(()=>!!document.querySelector('#onl input'),null,{timeout:30000}).catch(()=>{});
+   all.push(await measure(b,pg,cdp,'online-signin',{menuRaf:await pg.evaluate(()=>!!MM.raf)}));await pg.close()}
  if(WANT.includes('online')){const {pg,cdp}=await fresh(b,'?onl');await pg.evaluate(()=>localStorage.removeItem('flavius_onlmock'));
    await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<30&&CUR_MODAL;i++){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(150)}onlineOpen('play')});
    await pg.waitForFunction(()=>!!document.querySelector('#onl input'),null,{timeout:30000}).catch(()=>{});

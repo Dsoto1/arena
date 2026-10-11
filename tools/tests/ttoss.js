@@ -1,8 +1,8 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await pg.click('#mClose');
 await pg.evaluate(()=>{startEvent({ev:'juggernaut',loc:6,seats:['soldier','hero','slave','royalty'].map((c,i)=>({cls:c,cpu:true,team:i===0?'J':'T'})),opts:{spect:24}});});
 await pg.waitForTimeout(1500);await pg.evaluate(()=>{SPEED='snap';S.snap=true});
-for(let i=0;i<200;i++){if(await pg.evaluate(()=>S.over))break;await pg.waitForTimeout(250)}
+await pg.waitForFunction(()=>S.over,null,{timeout:50000,polling:100}).catch(()=>{})
 await pg.waitForTimeout(2500);
 const r=await pg.evaluate(()=>({sp:(S.spect||[]).length,seated:(S.spect||[]).filter(s=>s._x!=null).length,gone:(S.spect||[]).filter(s=>s.gone).length,special:isSpecialShow(),over:S.over,tosses:(S.tosses||[]).length,ev:S.evKey}));
 await pg.evaluate(()=>{const m=document.getElementById('modal');m.hidden=true});await pg.waitForTimeout(300);

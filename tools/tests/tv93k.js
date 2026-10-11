@@ -8,7 +8,7 @@ const {chromium}=require('playwright');(async()=>{const b=await chromium.launch(
 const pg=await b.newPage({viewport:{width:1440,height:950}});await pg.route(/fonts\.g/,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_tok93auto','1')});
 await pg.goto('file://'+process.argv[2],{timeout:120000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
-const until=async(fn,ms=150000,arg)=>{try{await pg.waitForFunction(fn,arg,{timeout:ms,polling:250});return true}catch(e){return false}};
+const until=async(fn,ms=150000,arg)=>{try{await pg.waitForFunction(fn,arg,{timeout:ms,polling:100});return true}catch(e){return false}};
 /* 1. an old character without a token → auto-converted once while the Studio is open */
 await pg.evaluate(async()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);await loadCustoms();const c=blankChar();c.id='old93';c.name='Vetus Tokenus';charFromClass(c,'venatore');c.classRef='cls:venatore';
   c.portrait.bs='full';c.portrait.hs='long';c.portrait.fem=false;c.created='2026-01-01';c.status='active';delete c.tok93;await Store.put('customChars',c.id,c);await loadCustoms();
@@ -92,7 +92,7 @@ if(SHOT)await pg.screenshot({path:SHOT+'/tv93k_playnow.png'});
 await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,500));menuHide();
   startEvent({ev:'democritus',loc:6,seats:[{cls:'cc_old93',cpu:false},{cls:'soldier',cpu:true},{cls:'slave',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}})});
 await until(()=>typeof S!=='undefined'&&S&&S.players&&S.players[0]&&S.players[0].cls==='cc_old93',30000);
-await pg.waitForTimeout(3000);
+await until(()=>{const t=tokenForP(S.players[0]);return !!(t&&t.t93&&t93Img(t.t93))},15000);
 const G=await pg.evaluate(async()=>{for(let i=0;i<12&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,300))}
   const p=S.players[0];const t=tokenForP(p);for(let i=0;i<20&&!(t.t93&&t93Img(t.t93));i++)await new Promise(r=>setTimeout(r,100));
   T93.drawn=0;draw();const n=T93.drawn;const f0=miniFace(p,'t93');const r0=p.r,c0=p.c;

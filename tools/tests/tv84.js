@@ -97,10 +97,10 @@ await A.waitForTimeout(1200);await shot(A,'dust',dclip);await A.waitForTimeout(2
 /* ── C · one tab per save ── */
 const cid=await A.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.over=true;if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;await saveWorld(true);await W8(900);return W_().id});
-out.c0=false;for(const T_=Date.now();Date.now()-T_<22500&&!out.c0;){out.c0=await A.evaluate(id=>TAB84.held.has('career:'+id),cid);if(!out.c0)await A.waitForTimeout(300)}
+out.c0=false;for(const T_=Date.now();Date.now()-T_<22500&&!out.c0;){out.c0=await A.evaluate(id=>TAB84.held.has('career:'+id),cid);if(!out.c0)await A.waitForTimeout(100)}
 const B=await open('B');
 await B.evaluate(async id=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;MGR.pendingLoad=id;openManager()},cid);
-let asked=false;for(const T_=Date.now();Date.now()-T_<30000&&!asked;){await B.waitForTimeout(300);asked=await B.evaluate(()=>!!document.querySelector('.ask76bg')&&/another tab/.test(document.querySelector('.ask76bg').textContent))}
+let asked=false;for(const T_=Date.now();Date.now()-T_<30000&&!asked;){await B.waitForTimeout(100);asked=await B.evaluate(()=>!!document.querySelector('.ask76bg')&&/another tab/.test(document.querySelector('.ask76bg').textContent))}
 await shot(B,'second_tab');
 await B.click('.ask76bg [data-ask76="1"]');await B.waitForTimeout(900);
 out.c=await A.evaluate(async()=>{const bar=document.getElementById('tab84');const r={bar:!!bar&&!bar.hidden&&/another tab/.test(bar.textContent),blocked:saveBlocked76()};
@@ -108,7 +108,7 @@ out.c=await A.evaluate(async()=>{const bar=document.getElementById('tab84');cons
 out.cb=await B.evaluate(id=>({held:TAB84.held.has('career:'+id),world:!!W_()&&W_().id===id,free:!saveBlocked76()}),cid);
 /* Cancel: a third page asks for the same career and lets go */
 const C3=await open('C');await C3.evaluate(async id=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;MGR.pendingLoad=id;openManager()},cid);
-asked=false;for(const T_=Date.now();Date.now()-T_<30000&&!asked;){await C3.waitForTimeout(300);asked=await C3.evaluate(()=>!!document.querySelector('.ask76bg'))}
+asked=false;for(const T_=Date.now();Date.now()-T_<30000&&!asked;){await C3.waitForTimeout(100);asked=await C3.evaluate(()=>!!document.querySelector('.ask76bg'))}
 await C3.click('.ask76bg [data-ask76="0"]');await C3.waitForTimeout(900);
 out.cc=await C3.evaluate(()=>({world:!!W_(),blocked:saveBlocked76()}));out.cb2=await B.evaluate(()=>({bar:!document.getElementById('tab84'),free:!saveBlocked76()}));
 ok(out.c0,'first tab holds its career');ok(asked,'second tab asks');ok(out.c.bar&&out.c.blocked&&out.c.put,'the first tab shows the notice and stops saving');
@@ -159,7 +159,7 @@ const step=async(n,fn)=>{try{await fn();return true}catch(e){errs.push('T step '
 out.e={};
 out.e.menuTr=await T.evaluate(()=>!!document.querySelector('#mainMenu font')&&/«/.test(document.querySelector('#mainMenu .mmbtns').textContent));
 out.e.play=await step('play',async()=>{await T.click('#mainMenu [data-mm="play"]');await T.waitForTimeout(1200);await T.click('[data-mi="0"]');await T.waitForTimeout(1800);await T.click('#goBtn')});
-let turn=false;for(const T_=Date.now();Date.now()-T_<75000&&!turn;){await T.waitForTimeout(500);const st=await T.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
+let turn=false;for(const T_=Date.now();Date.now()-T_<75000&&!turn;){await T.waitForTimeout(150);const st=await T.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
   if(st.m)await T.evaluate(()=>{const b=document.querySelector('#mBtns button.primary')||document.querySelector('#mBtns button');if(b)b.click()});else if(st.h==='choice')turn=true}
 out.e.turn=turn;
 if(turn){const t0=await T.evaluate(()=>({who:S.turn,ph:S.phase,n:S.turnNo}));
