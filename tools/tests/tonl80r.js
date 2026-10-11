@@ -111,11 +111,11 @@ const ranked={A:await rk(A),B:await rk(B)};
 const q0={A:await A.evaluate(()=>({hashq:window.__req['match.hashq']||0,votes:ONL80R.votes})),B:await B.evaluate(()=>({hashq:window.__req['match.hashq']||0,votes:ONL80R.votes}))};
 await run(6000,[A,B]);
 let tamp2=null;{const t0=Date.now();while(Date.now()-t0<180000&&!tamp2){await drive(B);
-  tamp2=await B.evaluate(()=>{if(!onlmOn()||onlmMine()||S.busy||CUR_MODAL||ONLM.pend||onlmActor()!==0||!['choice','action'].includes(S.phase))return null;S.players[1].coin+=5;return {next:ONLM.next}});
+  tamp2=await B.evaluate(()=>{if(!onlmOn()||onlmMine()||S.busy||CUR_MODAL||ONLM.pend||onlmActor()===ONLM.me||!['choice','action'].includes(S.phase))return null;S.players[ONLM.me].coin+=5; /* v1.0: Ranked seats are dealt at random — tamper with my own seat while the other acts */return {next:ONLM.next}});
   if(tamp2)break;await drive(A);await A.waitForTimeout(150);if(await A.evaluate(()=>!S||S.over))break}}
 await run(90000,[A,B],async()=>(await B.evaluate(()=>ONLM.resyncs))>0&&(await B.evaluate(()=>!ONLM.resyncing)));
 {const f=(tamp2&&tamp2.next||0)+1;const t2=Date.now();await run(90000,[A,B],async()=>Date.now()-t2>=8000&&(await A.evaluate(f=>ONLM.next-f,f))>=3)}await level([A,B]);
-const two={A:await A.evaluate(()=>({resyncs:ONLM.resyncs,votes:ONL80R.votes,hashq:window.__req['match.hashq']||0})),B:await B.evaluate(()=>({resyncs:ONLM.resyncs,votes:ONL80R.votes,hashq:window.__req['match.hashq']||0,coin1:S.players[1].coin}))};
+const two={A:await A.evaluate(()=>({resyncs:ONLM.resyncs,votes:ONL80R.votes,hashq:window.__req['match.hashq']||0})),B:await B.evaluate(()=>({resyncs:ONLM.resyncs,votes:ONL80R.votes,hashq:window.__req['match.hashq']||0,coin1:S.players[Math.max(0,ONLM.me)].coin}))};
 const hA=await A.evaluate(()=>ONLM.hlog),hB=await B.evaluate(()=>ONLM.hlog);let same2=0,diff2=0;const f2=(tamp2&&tamp2.next||0)+1;for(let s=f2;s<f2+400;s++){const a=hA['s'+s],c=hB['s'+s];if(!a||!c)continue;if(a===c)same2++;else diff2++}
 for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done('close');onlExit()});await A.waitForTimeout(1200);
 const rkBack={A:await A.evaluate(()=>({hints:HINTS,set:SETTINGS.hints,strat:showStrategy(),chest:CHEST_W.includes('cw_t80c'),rec:onl80Rec()})),B:await B.evaluate(()=>({hints:HINTS,set:SETTINGS.hints,strat:showStrategy()}))};

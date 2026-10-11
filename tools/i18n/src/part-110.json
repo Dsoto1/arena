@@ -1350,5 +1350,297 @@
  {
   "k": "🔓 Slot {0} is open — raise a new gladiator.",
   "w": "292-v100srvA.js:113"
+ },
+ {
+  "k": "👁 Live matches",
+  "w": "293-v100srvB.js:35"
+ },
+ {
+  "k": "Every match in progress. 👁 Watch for free, move by move — a Ranked match is shown one turn behind. 🎟 A ticket, bought before the horns, seats you in the stands.",
+  "w": "293-v100srvB.js:38"
+ },
+ {
+  "k": "👁 Live now",
+  "w": "293-v100srvB.js:39"
+ },
+ {
+  "k": "⚔ Ranked · watchers see it one turn behind",
+  "w": "293-v100srvB.js:42"
+ },
+ {
+  "k": "🏆 Season",
+  "w": "293-v100srvB.js:51"
+ },
+ {
+  "k": "The season board could not be read.",
+  "w": "293-v100srvB.js:61"
+ },
+ {
+  "k": "Reading the season…",
+  "w": "293-v100srvB.js:63"
+ },
+ {
+  "k": "Season before",
+  "w": "293-v100srvB.js:65"
+ },
+ {
+  "k": "Season after",
+  "w": "293-v100srvB.js:65"
+ },
+ {
+  "k": "A house",
+  "w": "293-v100srvB.js:69"
+ },
+ {
+  "k": "Your gladiators",
+  "w": "293-v100srvB.js:70"
+ },
+ {
+  "k": "🏆 Season leaderboard",
+  "w": "293-v100srvB.js:71"
+ },
+ {
+  "k": "Week {0} of 12 · {1} days left · Glory gained in Ranked this season.",
+  "w": "293-v100srvB.js:72"
+ },
+ {
+  "k": "Final standings · Glory gained in Ranked that season.",
+  "w": "293-v100srvB.js:72"
+ },
+ {
+  "k": "Season-end Tituli:",
+  "w": "293-v100srvB.js:73"
+ },
+ {
+  "k": "No Ranked Glory yet this season — be the first.",
+  "w": "293-v100srvB.js:74"
+ },
+ {
+  "k": "⏳ A quiet hour — the seats may take a while",
+  "w": "293-v100srvB.js:78"
+ },
+ {
+  "k": "⏳ ≈ {0} s to fill",
+  "w": "293-v100srvB.js:78"
+ },
+ {
+  "k": "⏳ ≈ {0} min to fill",
+  "w": "293-v100srvB.js:78"
+ },
+ {
+  "k": "👁 Ranked · you watch one turn behind",
+  "w": "293-v100srvB.js:102"
+ },
+ {
+  "k": "connected",
+  "w": "293-v100srvB.js:105"
+ },
+ {
+  "k": "away — reconnecting",
+  "w": "293-v100srvB.js:105"
+ },
+ {
+  "k": "a CPU holds the seat",
+  "w": "293-v100srvB.js:105"
+ },
+ {
+  "k": "⌛ timed out {0}×",
+  "w": "293-v100srvB.js:112"
+ },
+ {
+  "k": "Report a player",
+  "w": "293-v100srvB.js:114"
+ },
+ {
+  "k": "Nobody else to report here.",
+  "w": "293-v100srvB.js:118"
+ },
+ {
+  "k": "Cheating or a tampered client",
+  "w": "293-v100srvB.js:119"
+ },
+ {
+  "k": "Abuse in the quick chat",
+  "w": "293-v100srvB.js:119"
+ },
+ {
+  "k": "Away — never plays",
+  "w": "293-v100srvB.js:119"
+ },
+ {
+  "k": "Left on purpose",
+  "w": "293-v100srvB.js:119"
+ },
+ {
+  "k": "An offensive name",
+  "w": "293-v100srvB.js:119"
+ },
+ {
+  "k": "Something else",
+  "w": "293-v100srvB.js:119"
+ },
+ {
+  "k": "🚩 Report a player",
+  "w": "293-v100srvB.js:120"
+ },
+ {
+  "k": "Logged with this match for review. Nothing happens to them automatically. One report a match.",
+  "w": "293-v100srvB.js:120"
+ },
+ {
+  "k": "A short note (optional)",
+  "w": "293-v100srvB.js:123"
+ },
+ {
+  "k": "Send the report",
+  "w": "293-v100srvB.js:124"
+ },
+ {
+  "k": "🚩 Report sent — thank you.",
+  "w": "293-v100srvB.js:127"
+ },
+ {
+  "k": "⚖ Void — the lanistas did not agree. No pay, no deaths.",
+  "w": "293-v100srvB.js:154"
+ },
+ {
+  "k": "⚖ Settled",
+  "w": "293-v100srvB.js:154"
+ },
+ {
+  "k": "🛡 Survived",
+  "w": "293-v100srvB.js:154"
+ },
+ {
+  "k": "⚔ now {0}",
+  "w": "293-v100srvB.js:155"
+ },
+ {
+  "k": "After the match",
+  "w": "293-v100srvB.js:157"
+ },
+ {
+  "k": "Replay link",
+  "w": "293-v100srvB.js:160"
+ },
+ {
+  "k": "Copy the replay link — replays are coming soon",
+  "w": "293-v100srvB.js:160"
+ },
+ {
+  "k": "📼 Replays are coming soon — the link will open this match then.",
+  "w": "293-v100srvB.js:161"
+ },
+ {
+  "k": "🚩 Report",
+  "w": "293-v100srvB.js:162"
+ },
+ {
+  "k": "🔗 Link copied.",
+  "w": "293-v100srvB.js:165"
+ },
+ {
+  "k": "🔗 Link selected — copy it.",
+  "w": "293-v100srvB.js:165"
+ },
+ {
+  "k": "📼 A match replay",
+  "w": "293-v100srvB.js:173"
+ },
+ {
+  "k": "Match <b>{0}</b>.",
+  "w": "293-v100srvB.js:173"
+ },
+ {
+  "k": "Replays are coming soon — this link will open the match then. For now you can watch live matches in the Lobby Browser.",
+  "w": "293-v100srvB.js:173"
+ },
+ {
+  "k": "🌐 Live matches",
+  "w": "293-v100srvB.js:174"
+ },
+ {
+  "k": "Abandoned, handed to a CPU or timed out twice in Ranked matches this week",
+  "w": "293-v100srvB.js:182"
+ },
+ {
+  "k": "⚠ Often leaves matches · {0} this week",
+  "w": "293-v100srvB.js:182"
+ },
+ {
+  "k": "a missio is your own gladiator's road — offline only",
+  "w": "293-v100srvB.js:187"
+ },
+ {
+  "k": "Festivals",
+  "w": "293-v100srvB.js:187"
+ },
+ {
+  "k": "the five festivals and their gifts",
+  "w": "293-v100srvB.js:187"
+ },
+ {
+  "k": "Tournaments and invitationals",
+  "w": "293-v100srvB.js:187"
+ },
+ {
+  "k": "brackets run on one screen",
+  "w": "293-v100srvB.js:187"
+ },
+ {
+  "k": "several players on one screen",
+  "w": "293-v100srvB.js:187"
+ },
+ {
+  "k": "the Classic and Manager tutorials",
+  "w": "293-v100srvB.js:187"
+ },
+ {
+  "k": "your ludus, its seasons and its bouts",
+  "w": "293-v100srvB.js:187"
+ },
+ {
+  "k": "Online matches use the same rules as every digital game — the rulebook plus the digital rules noted in Rules at a Glance and the Quick Reference.",
+  "w": "293-v100srvB.js:188"
+ },
+ {
+  "k": "Only offline",
+  "w": "293-v100srvB.js:189"
+ },
+ {
+  "k": "How online differs",
+  "w": "293-v100srvB.js:190"
+ },
+ {
+  "k": "Printed gear only; your gladiator's record lives on the server.",
+  "w": "293-v100srvB.js:190"
+ },
+ {
+  "k": "No pause. Each screen keeps its own animation speed; the turn clock is the server's and starts on your own screen.",
+  "w": "293-v100srvB.js:190"
+ },
+ {
+  "k": "Reveals (the chest, a beast's card, the market) are short and the same length everywhere — they never eat your turn time.",
+  "w": "293-v100srvB.js:191"
+ },
+ {
+  "k": "Only ticket holders act in the stands, in their timed group turn; the CPU crowd just watches.",
+  "w": "293-v100srvB.js:191"
+ },
+ {
+  "k": "Ranked: watchers see the match one turn behind; seats are dealt at random; leaving often brings a short Ranked cooldown.",
+  "w": "293-v100srvB.js:192"
+ },
+ {
+  "k": "You left too many matches — Ranked opens again in {0} min.",
+  "w": "293-v100srvB.js:208"
+ },
+ {
+  "k": "Pick a player.",
+  "w": "293-v100srvB.js:238"
+ },
+ {
+  "k": "You already reported this match.",
+  "w": "293-v100srvB.js:239"
  }
 ]

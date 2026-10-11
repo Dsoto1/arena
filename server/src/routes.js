@@ -1524,6 +1524,126 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     const idOK100=v=>v==null||(typeof v==='string'&&v.length<=80)||(typeof v==='number'&&isFinite(v));
     for(const t of Object.keys(R)){const base=R[t];R[t]=async(d,ctx)=>{if(d&&typeof d==='object'&&(!idOK100(d.id)||!idOK100(d.char)))throw fail('bad_req','That request was not understood.');return base(d,ctx)}}}
   /* ══════════ end of v1.0 SERVER BATCH A ══════════ */
+  /* v1.0 SERVER BATCH B */
+  /* ══════════ v1.0 SERVER BATCH B (shared rules: the "v1.0 SERVER BATCH B" section of onlcore; docs/backend.md "v1.0 server batch B"; NO protocol bump) ══════════
+     ELO#<char> / E           {r, n, at} — the hidden skill rating (never in a reply). Written once per settled Ranked match (MATCH ELO100 lock).
+     WORLD QETA#<ev>#<rank|c> {a, n} — the playlist's fill-time EMA (seconds), folded at the horns of a Find-me-a-fight room.
+     MATCH#<id> META          + wd100 {acct: conn} — Ranked watchers (moved out of watch: toMatch never reaches them); + rel100 = the last seq they got.
+     MATCH#<id> LVT#<seat> / FX#<t>#<i> / ELO100 — once-only locks (a seat's second timeout counted, a reveal's credit, the Elo pass).
+     ACCT PROFILE             + lv100 [{k, at, m}] — abandons / CPU takeovers / two-timeout seats (Ranked); + rp100 {h: day, n} — reports a day.
+     SEASON#S<n> / G#<char>   {g} — Glory gained this season; WORLD STOP#S<n> = the top list (≤ SEASON100.TOP, versioned); WORLD STIT#S<n> = Tituli given.
+     REPORT#<match> / R#<acct> {by, seat, who, reason, note, at} (GSI1PK 'REPORTS') — for review; no automatic penalty.
+     New requests: queue.eta {id} · match.conn100 {id} · season.board {season?} · match.report100 {id, seat, reason, note?}.
+     match.clock gains kinds 'own' (the seat owner's own turn report — the clock starts there, ≤ OWN_MAX after the first report) and 'fx'
+     {t, k, i} (a cosmetic reveal on the owner's screen: + FX100.ms[k] to that turn, ≤ TURN_MAX). An older page simply never sends them. */
+  {const B=C;const MK=id=>'MATCH#'+id;C.seatRnd100=rnd;
+    /* ── 1 · the hidden rating ── */
+    const eloC=new Map();
+    async function eloGet(cid){if(!cid)return {r:B.ELO100.START,n:0};const c=eloC.get(cid);if(c&&now()-c.at<30000)return c.v;const X=await store.get('ELO#'+cid,'E').catch(()=>null);
+      const v=X?{r:+X.r||B.ELO100.START,n:X.n|0}:{r:B.ELO100.START,n:0};eloC.set(cid,{v,at:now()});if(eloC.size>3000)eloC.clear();return v}
+    const avg=xs=>xs.length?xs.reduce((a,x)=>a+x,0)/xs.length:null;
+    /* Find me a fight (Ranked): the group's rating and the waiting rooms' ratings, for groupOf's list (keyed by the asking account) */
+    const qp100=new Map();
+    {const base=groupOf;groupOf=async function(acct,o){const r=await base.apply(this,arguments);const q=qp100.get(acct);if(!q||!r||!Array.isArray(r.list))return r;
+      try{const mine=avg(await Promise.all(r.g.map(async w=>(await eloGet(w.char)).r)));const roomElo={};
+        for(const L of r.list){if(L.status!=='waiting'||!L.ranked||L.ev!==q.ev)continue;const hs=(L.players||[]).filter(p=>!/^bot/.test(p.id)&&p.char);if(!hs.length)continue;
+          roomElo[L.id]=avg(await Promise.all(hs.map(async p=>(await eloGet(p.char)).r)))}
+        const flag=r.g.some(w=>(w.strikes|0)>=C.STRIKES_OUT);r.list=B.eloPrefer100(r.list,r.g,q.ev,true,flag,now(),!!q.inf,mine,roomElo)}catch(e){}return r}}
+    /* ── 1 · the queue estimate ── */
+    const qetaKey=L=>'QETA#'+L.ev+'#'+(L.ranked?(L.rank||'tiro'):'c');
+    async function etaOf(L){if(!L||L.status!=='waiting')return null;const need=Math.max(0,(L.seats|0)-(L.players||[]).length);const h=await store.get('WORLD',qetaKey(L)).catch(()=>null);
+      const ids=new Set([...(L.members||[]),...(L.players||[])].map(m=>m.id));
+      const free=(await here()).filter(A=>!A.match&&!ids.has(A.id)&&(!L.ranked||((A.here&&A.here.rank)||'tiro')===L.rank)).length;
+      return {...B.eta100(h,need,L.seats,free),need,free}}
+    /* ── 3 · leaving: the account's list, the cooldown ── */
+    async function lvAdd(acct,kind,m){if(!acct||/^bot/.test(acct))return;try{const A=await acctOf(acct);if(!A)return;await store.set('ACCT#'+acct,'PROFILE',{lv100:B.leaveAdd100(A.lv100,kind,now(),m)})}catch(e){}}
+    async function cdCheck(acct){const A=await acctOf(acct);const until=B.leaveCooldown100(A&&A.lv100,now());
+      if(until)throw fail('ranked_cd',`You left too many matches — Ranked opens again in ${Math.max(1,Math.ceil((until-now())/60000))} min.`,{until})}
+    for(const t of ['lobby.create','lobby.quick']){const base=R[t];R[t]=async(d,ctx)=>{if(d&&d.ranked&&ctx.acct)await cdCheck(ctx.acct);return base(d,ctx)}}
+    for(const t of ['lobby.join','lobby.sit','lobby.accept']){const base=R[t];R[t]=async(d,ctx)=>{if(ctx.acct&&d&&d.id){const L=await store.get('LOBBY#'+d.id,'LOBBY').catch(()=>null);if(L&&L.ranked)await cdCheck(ctx.acct)}return base(d,ctx)}}
+    {const base=R['lobby.again'];R['lobby.again']=async(d,ctx)=>{const id=d&&(d.id||d.lobbyId);if(ctx.acct&&id){const L=await store.get('LOBBY#'+id,'LOBBY').catch(()=>null);if(L&&L.ranked)await cdCheck(ctx.acct)}return base(d,ctx)}}
+    /* Find me a fight: the rating preference + the queue estimate in the reply */
+    {const base=R['lobby.quick'];R['lobby.quick']=async(d,ctx)=>{d=d||{};if(d.ranked)qp100.set(ctx.acct,{ev:C.EVENTS_ALL.includes(d.ev)?d.ev:'democritus',inf:!!d.inf});
+      let r;try{r=await base(d,ctx)}finally{qp100.delete(ctx.acct)}try{if(r&&r.lobby&&r.lobby.status==='waiting'){const e=await etaOf(r.lobby);if(e)r.eta100=e}}catch(e){}return r}}
+    /* the horns: a Find-me-a-fight room folds its fill time into the playlist's history */
+    {const base=R['lobby.start'];R['lobby.start']=async(d,ctx)=>{const r=await base(d,ctx);try{if(r&&r.status==='live'&&r.quick&&r.started&&r.created){const k=qetaKey(r);const h=await store.get('WORLD',k);
+      await store.put('WORLD',k,{...B.etaFold100(h,r.started-r.created),ttl:ttl(60)})}}catch(e){}return r}}
+    /* ── 2 · Ranked watchers, one turn behind ── */
+    async function release(id,all){const M=await store.get(MK(id),'META');if(!M||!M.ranked)return;const W=Object.entries(M.wd100||{}).filter(([,c])=>c);const prev=M.rel100==null?-1:+M.rel100;
+      const upto=Math.max(prev,(M.n|0)-1);if(upto<=prev&&!all)return;await store.set(MK(id),'META',{rel100:upto});if(!W.length)return;
+      const ins=(await store.query(MK(id),'IN#')).map(x=>x.in).filter(x=>x&&x.seq>prev&&x.seq<=upto).sort((a,b)=>a.seq-b.seq);
+      for(const [a,c] of W)for(const inp of ins){if(pushConn){if(await pushConn(c,'match.input',{id,in:inp},a))await push(a,'match.input',{id,in:inp})}else await push(a,'match.input',{id,in:inp})}}
+    {const base=R['match.watch'];R['match.watch']=async(d,ctx)=>{const r=await base(d,ctx);try{const me=viewer(ctx);const M=await meta(d.id);
+      if(M.ranked&&me&&!inMatch(M,me)){await store.setIn(MK(d.id),'META','watch',me,null);await metaIn(d.id,M,'wd100',me,ctx.conn||null);r.delay100=1}}catch(e){}return r}}
+    {const base=R['match.unwatch'];R['match.unwatch']=async(d,ctx)=>{const r=await base(d,ctx);try{const me=viewer(ctx);const M=await store.get(MK(d.id),'META');if(M&&(M.wd100||{})[me])await store.setIn(MK(d.id),'META','wd100',me,null)}catch(e){}return r}}
+    {const base=R['match.get'];R['match.get']=async(d,ctx)=>{const r=await base(d,ctx);try{const M=await meta(d.id);const me=viewer(ctx);if(M.ranked&&M.status==='live'&&!inMatch(M,me)){const rel=M.rel100==null?-1:+M.rel100;r.inputs=(r.inputs||[]).filter(x=>x.seq<=rel);r.delay100=1}}catch(e){}return r}}
+    {const base=R['match.snapreq'];R['match.snapreq']=async(d,ctx)=>{const M=await meta(d.id);if(M.ranked&&M.status==='live'&&!inMatch(M,viewer(ctx)))throw fail('ranked_delay','Ranked: watchers follow one turn behind — no snapshots.');return base(d,ctx)}}
+    {const base=R['match.snap'];R['match.snap']=async(d,ctx)=>{const M=await meta(d.id);if(M.ranked&&M.status==='live'&&!inMatch(M,d.to))throw fail('ranked_delay','Ranked: watchers follow one turn behind — no snapshots.');return base(d,ctx)}}
+    /* ── the clocks: the owner's own start, a reveal's credit, the watchers' release, a second timeout ── */
+    const seatAcct=(M,seat)=>Object.keys(M.seats||{}).find(a=>M.seats[a]===seat)||null;
+    const stat=(M,c,t)=>{const o={on:!!c.t,t:c.t,d:c.d,now:t};const tc=M.tc100,dc=M.dc100;if(tc)o.tc={t:tc.t,seat:tc.seat,left:tc.pz?null:Math.max(0,tc.at+c.t*1000+(tc.x||0)-t),pz:!!tc.pz};
+      if(dc)o.dc={d:dc.d,seat:dc.seat,left:Math.max(0,dc.at+c.d*1000-t)};return o};
+    async function timeouts(id,M){if(!M||!M.ranked)return;const T=await store.query(MK(id),'TOC#');for(const x of T){const seat=parseInt(String(x.SK).slice(4),10);if(!Number.isInteger(seat)||(x.n|0)<C.TT100.DROP_AFTER)continue;
+      if(await store.putNew(MK(id),'LVT#'+seat,{at:now(),ttl:ttl(2)}))await lvAdd(seatAcct(M,seat),'timeout',id)}}
+    for(const t of ['match.clock','match.tick']){const base=R[t];R[t]=async(d,ctx)=>{d=d||{};const M0=await meta(d.id);
+      if(t==='match.clock'&&(d.kind==='own'||d.kind==='fx')){const tc=M0.tc100;const c=M0.tt100||C.ttOf100(null);const seat=tc?tc.seat:-1;const owner=tc?seatAcct(M0,seat):null;
+        if(tc&&!tc.end&&tc.t===(d.t|0)&&owner===ctx.acct&&M0.status==='live'){
+          if(d.kind==='own'&&!tc.own){const at=Math.min(now(),tc.at+B.FX100.OWN_MAX);if(at>tc.at){await store.setIn(MK(d.id),'META','tc100','at',at);tc.at=at}await store.setIn(MK(d.id),'META','tc100','own',1);tc.own=1;
+            await toMatch(M0,'match.clock100',{id:d.id,...stat(M0,c,now())})}
+          if(d.kind==='fx'){const ms=B.fxMs100(d.k);const used=+tc.fx||0;const add=Math.max(0,Math.min(ms,B.FX100.TURN_MAX-used));
+            if(add>0&&(await store.putNew(MK(d.id),'FX#'+tc.t+'#'+(d.i|0),{at:now(),ttl:ttl(2)}))){await store.setIn(MK(d.id),'META','tc100','x',(+tc.x||0)+add);await store.setIn(MK(d.id),'META','tc100','fx',used+add);tc.x=(+tc.x||0)+add;
+              await toMatch(M0,'match.clock100',{id:d.id,...stat(M0,c,now())})}}}
+        d={...d,kind:'none'}}
+      const r=await base(d,ctx);try{const M1=await meta(d.id);if(M1.ranked){const t0=M0.tc100?M0.tc100.t:-1;if(M1.tc100&&M1.tc100.t>t0)await release(d.id);if((M1.n|0)>(M0.n|0))await timeouts(d.id,M1)}}catch(e){}return r}}
+    /* ── 3 · leaving counted (Ranked) ── */
+    {const base=R['match.abandon'];R['match.abandon']=async(d,ctx)=>{const M0=await store.get(MK(d.id),'META');const r=await base(d,ctx);
+      try{if(M0&&M0.ranked&&M0.status==='live'&&!(M0.abandoned||{})[ctx.acct]&&(M0.players||[]).includes(ctx.acct))await lvAdd(ctx.acct,'abandon',d.id)}catch(e){}return r}}
+    {const base=R['match.drop'];R['match.drop']=async(d,ctx)=>{const M0=await store.get(MK(d.id),'META');const who=M0?seatAcct(M0,d.seat|0):null;const r=await base(d,ctx);
+      try{if(M0&&M0.ranked&&who&&!(M0.dropped||{})[who]){const M1=await meta(d.id);if((M1.dropped||{})[who])await lvAdd(who,'drop',d.id)}}catch(e){}return r}}
+    {const base=R['match.vote100'];R['match.vote100']=async(d,ctx)=>{const M0=await store.get(MK(d.id),'META');const who=M0?seatAcct(M0,d.seat|0):null;const r=await base(d,ctx);
+      try{if(M0&&M0.ranked&&who&&!(M0.dropped||{})[who]&&r&&r.dropped)await lvAdd(who,'drop',d.id)}catch(e){}return r}}
+    /* the house card: the leaver mark (no reasons, no dates) */
+    {const base=R['house.card'];R['house.card']=async(d,ctx)=>{const r=await base(d,ctx);try{const D=r&&r.domus&&r.domus.id?await domusGet(r.domus.id):null;const O=D?await acctOf(D.owner):null;
+      const lm=B.leaveMark100(O&&O.lv100,now());if(lm.mark)r.leaver={n:lm.n};const tit=(D&&D.tit100)||[];if(tit.length)r.tit100=tit.slice(-6)}catch(e){}return r}}
+    /* ── 5 · the season's Glory, 1 · the rating, 2 · the last release: once per settled match ── */
+    const seasonOf=s=>'S'+Math.max(1,s|0);
+    async function seasonAdd(key,row,delta){const X=await store.counter('SEASON#'+key,'G#'+row.c,'g',delta);const total=Math.round(((+X||0)+delta)*10)/10;
+      for(let i=0;i<6;i++){const T=(await store.get('WORLD','STOP#'+key))||{list:[]};const list=B.seasonTop100(T.list,{...row,g:total});
+        if((await store.putRev('WORLD','STOP#'+key,{...T,list,ttl:ttl(400)}))!==false)return}}
+    async function tituli(t){const S=C.seasonAt(t);if(S.season<2)return;const key=seasonOf(S.season-1);try{if(!(await store.putNew('WORLD','STIT#'+key,{at:t,ttl:ttl(400)})))return;
+      const T=await store.get('WORLD','STOP#'+key);((T&&T.list)||[]).forEach((row,i)=>{const tt=B.seasonTitulus100(i+1);if(!tt||!row.dom)return;
+        editDomus(row.dom,D=>{D.tit100=(D.tit100||[]).filter(x=>x.s!==key||x.c!==row.c).concat([{s:key,k:tt.k,n:tt.n,place:i+1,c:row.c,glad:row.n,at:t}]).slice(-20)}).catch(()=>{})})}catch(e){}}
+    {const base=settleMatch;settleMatch=async function(id,M){const r=await base.apply(this,arguments);try{const M2=await store.get(MK(id),'META');if(!M2||M2.status!=='done')return r;
+        if(!(await store.putNew(MK(id),'ELO100',{at:now(),ttl:ttl(2)})))return r;const L=await getLobby(id).catch(()=>null);const A=M2.agreed||{};
+        if(M2.ranked){await release(id,true);
+          if(!A.void&&A.table&&L){const rows=[];for(const a of M2.players||[]){const seat=(M2.seats||{})[a];const pl=L.players[seat];if(!pl||!pl.char)continue;const row=A.table.find(x=>x.seat===seat);
+              const left=(M2.abandoned||{})[a]||(M2.dropped||{})[a];const e=await eloGet(pl.char);rows.push({id:pl.char,r:e.r,n:e.n,place:left||!row?99:row.place})}
+            if(rows.length>=2){const nu=B.eloPairs100(rows);for(const x of rows){await store.put('ELO#'+x.id,'E',{r:nu[x.id],n:x.n+1,at:now()});eloC.delete(x.id)}}}}
+        const key=B.seasonKey100(now());await tituli(now());
+        for(const [a,out] of Object.entries(M2.outs||{})){const g=+((out&&out.glory)||0);if(!(g>0))continue;const seat=(M2.seats||{})[a];const pl=L&&L.players[seat];if(!pl||!pl.char)continue;
+          const ch=await charById(pl.char);if(!ch||ch.test)continue;const P=await acctOf(a);
+          await seasonAdd(key,{c:ch.id,n:String(ch.name||'').slice(0,40),cls:ch.cls||'',dn:String((P&&P.dname)||'').slice(0,40),dom:ch.domus||'',rk:C.rankFor(ch).k,alive:!!ch.alive},g)}}catch(e){}return r}}
+    Object.assign(R,{
+      /* ⏳ the queue estimate for a waiting room I am in */
+      'queue.eta':async(d,ctx)=>{const L=await getLobby(d.id);if(!C.memberOf(L,ctx.acct)&&!L.players.some(p=>p.id===ctx.acct))throw new Error('Join the room first.');return (await etaOf(L))||{s:0,slow:false,need:0}},
+      /* ● a dot per seat: connected / away / gone / CPU, and timeouts this match */
+      'match.conn100':async(d,ctx)=>{const M=await meta(d.id);const me=viewer(ctx);if(!inMatch(M,me)&&(M.watch||{})[me]===undefined&&(M.wd100||{})[me]===undefined)throw new Error('Not your match.');
+        const toc={};for(const x of await store.query(MK(d.id),'TOC#')){const s=parseInt(String(x.SK).slice(4),10);if(Number.isInteger(s))toc[s]=x.n|0}
+        return {id:d.id,seats:B.connOf100(M,now(),toc),now:now(),live:M.status==='live'}},
+      /* 🏆 the season's leaderboard by Glory gained (guests too) */
+      'season.board':async(d,ctx)=>{const t=now();await tituli(t);const S=C.seasonAt(t);const s=d&&Number.isInteger(d.season)&&d.season>=1&&d.season<=S.season?d.season:S.season;const key=seasonOf(s);
+        const T=await store.get('WORLD','STOP#'+key);const top=((T&&T.list)||[]).map((x,i)=>({...x,place:i+1}));let mine=[];
+        if(ctx.acct){const cs=await store.byIndex('OWNER#'+ctx.acct);for(const c of cs){const G=await store.get('SEASON#'+key,'G#'+c.id);if(G&&G.g>0){const i=top.findIndex(x=>x.c===c.id);mine.push({c:c.id,n:c.name,g:Math.round(G.g*10)/10,place:i>=0?i+1:null,alive:!!c.alive})}}}
+        return {key,season:s,now:S.season,wk:s===S.season?S.wk:12,weeks:12,end:s===S.season?S.start+(12-S.wk+1)*604800000:null,top,mine,tit:B.SEASON100.TITULI}},
+      /* 🚩 report a player: logged for review */
+      'match.report100':async(d,ctx)=>{d=d||{};const why=B.reportWhy100(d);if(why)throw fail('report_bad',why);const M=await meta(d.id);const me=ctx.acct;
+        if(!inMatch(M,me)&&(M.watch||{})[me]===undefined&&(M.wd100||{})[me]===undefined)throw new Error('Not your match.');
+        if(M.status!=='live'&&now()-(M.doneAt||0)>B.REPORT100.AFTER_MS)throw fail('report_late','That match is too long ago to report.');
+        const who=Object.keys(M.seats||{}).find(a=>M.seats[a]===d.seat);if(!who||who===me)throw fail('report_bad','Pick a player.');
+        if(!(await store.quota('ACCT#'+me,'PROFILE','rp100',C.dayKey(now()),B.REPORT100.DAY_MAX)))throw fail('report_day','Enough reports for today.');
+        const ok=await store.putNew('REPORT#'+d.id,'R#'+me,{by:me,seat:d.seat,who,reason:d.reason,note:String(d.note||'').replace(/[<>]/g,'').slice(0,B.REPORT100.NOTE_MAX),at:now(),ranked:!!M.ranked,GSI1PK:'REPORTS',GSI1SK:now(),ttl:ttl(90)});
+        if(!ok)throw fail('report_once','You already reported this match.');try{console.log('[report100]',d.id,me,'→',who,d.reason)}catch(e){}return {done:1}}})}
+  /* ══════════ end of v1.0 SERVER BATCH B ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);

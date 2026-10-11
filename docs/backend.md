@@ -246,6 +246,48 @@ Read: `routes.js` (every route since v0.93), `store.js`, `jwt.js`, `index.js`, `
 
 - **Rollback.** Older servers: `domus.slot` → `unknown_req` (the page shows the refusal), `slots100` is ignored (every house back to four), bets open
   again. No data shape needs undoing.
+## v1.0 server batch B
+
+Shared rules: the "v1.0 SERVER BATCH B" section at the end of `111-onlcore`; routes: the "v1.0 SERVER BATCH B" block in `routes.js` (after the turn
+timers, before the rate limiter); page + mock: `293-v100srvB`. Tests `server/test/v100b.test.js`, page `tonl100b`. **No protocol bump** (VER stays 8): every
+new request is optional, every new field is ignored by older code, and the new `match.clock` kinds are no-ops on an older server.
+
+- **Hidden rating (Elo).** `ELO#<char> / E {r, n, at}` — never in a reply. Written once per settled Ranked match (`MATCH … ELO100` lock): pairwise Elo
+  over the human seats by agreed place (an abandoned / dropped seat counts last), K = 40 for the first 10 rated bouts then 24, divided by the other
+  humans; start 1000, clamp 100–3000 (`ELO100`). **Matchmaking:** `lobby.quick` (Ranked) keys the request (`qp100`) and the `groupOf` wrapper narrows its
+  room list to waiting Ranked rooms of that event whose seated humans average within `ELO100.WIN` (150) of the group — only when such a room fits
+  (`eloPrefer100`); otherwise the old pick stands (a queue never stalls). Cost: one `ELO#` read per seated human of each candidate room (cached 30 s).
+- **Queue estimate.** `WORLD QETA#<ev>#<rank|c> {a, n}` = an EMA (0.3) of horns − creation of Find-me-a-fight rooms (folded by the `lobby.start` wrapper).
+  `eta100(h, need, seats, free)` = history (90 s default) × open seats ÷ (seats − 1), ×2 when no free lanista of that rank is online, clamp 10–600 s.
+  `lobby.quick` replies carry `eta100 {s, slow, need, free}`; `queue.eta {id}` (members only) recomputes it (the page asks every 30 s while the room shows).
+- **Random seats.** `C.startRoom` is wrapped: a Ranked room that is not a team event shuffles `L.players` with the server's `rnd` (`C.seatRnd100`; the mock:
+  `Math.random`) at the horns → seat = start corner and turn order; wagers on a seat follow their fighter (`L.bets[].seat` remapped); `L.shuf100 = 1`.
+  `C.SEAT_RND100 = false` turns it off (`routes.test.js` reads fixed seats).
+- **Ranked watchers one turn behind.** `match.watch` on a Ranked match moves a non-fighter from `META.watch` (live pushes) to `META.wd100 {acct: conn}`.
+  `rel100` = the last seq they were given. When a newer turn clock is registered (`match.clock`/`match.tick` see `tc100.t` grow) or the match settles,
+  every `IN#` with `rel100 < seq ≤ n − 1` is pushed to them as `match.input`. `match.get` gives them only `seq ≤ rel100`; `match.snapreq` from them and
+  `match.snap` to them are refused (`ranked_delay`). CPU turns report no clock, so a watcher may lag across CPU turns until the next human turn.
+- **Leavers.** `ACCT … lv100 [{k, at, m}]` (≤ 20, 7 days): a Ranked `match.abandon`, a Ranked away drop (`match.drop`) or timeout vote (`match.vote100` →
+  dropped), and a seat that reached `TT100.DROP_AFTER` timeouts (counted once a match: `LVT#<seat>`). `LEAVE100`: 3 in 7 days → `house.card.leaver {n}`
+  ("Often leaves"); 3 in 24 h → no Ranked for 15 min after the last one (`ranked_cd {until}` on lobby.create / quick / join / sit / accept / again).
+- **Connection dots.** `match.conn100 {id}` (fighters, ticket holders, watchers) → `{seats: {seat: {st, slow?}}}`: `on`, `away` (META.away < `AWAY_MS`),
+  `gone` (≥ `AWAY_MS`), `cpu` (dropped / abandoned); `slow` = timeouts this match (`TOC#<seat>`). One META read + one query. Pages ask every 15 s.
+- **Season leaderboard.** Season = `seasonAt(t).season` (the Manager's 12-week calendar from 2026-10-01). After each settlement every positive `out.glory`
+  goes to `SEASON#S<n> / G#<char> {g}` (atomic counter) and the versioned top list `WORLD STOP#S<n>` (≤ 50 rows `{c, n, cls, dn, dom, rk, alive, g}`).
+  `season.board {season?}` (guests too) → `{key, season, now, wk, end, top[place], mine, tit}`. **Tituli** (`SEASON100.TITULI`: 1 Victor, 2–3 Podium, 4–10 Ten):
+  the first `season.board` / settlement after a season ends writes `WORLD STIT#S<n>` (once) and appends `{s, k, n, place, c, glad}` to each top-10 house's
+  `D.tit100` (≤ 20; names + flags only, no art yet); `house.card` returns the last 6 as `tit100`.
+- **Reports.** `match.report100 {id, seat, reason, note?}` (fighters, ticket holders, watchers; live or ≤ 24 h after the end) → `REPORT#<match> / R#<acct>`
+  (putNew: once a match per reporter; `GSI1PK 'REPORTS'` for a later review tool; ttl 90 days; note ≤ 200 chars, no `<>`); ≤ 10 a UTC-day per account
+  (`rp100`). Also logged (`[report100]`). **No automatic penalty.** Review today: query GSI1 `REPORTS` in the console.
+- **Turn clock fairness (online sidelining).** `match.clock {kind:'own', t, seat}` — only the turn owner: the clock restarts at the owner's own report, at most
+  `FX100.OWN_MAX` (10 s) after the first report (`tc100.own`, once a turn) — another screen's Speed never shortens it. `match.clock {kind:'fx', t, k, i}` — only
+  the turn owner: a cosmetic reveal adds `FX100.ms[k]` (chest / spawn / market 900 ms) to `tc100.x`, once per `FX#<t>#<i>`, ≤ `FX100.TURN_MAX` (5 s) a turn.
+  Both push the new clock (`match.clock100`).
+- **Abuse.** The owner can claim up to 5 s of reveal credit and 10 s of late start a turn by forging reports — bounded and logged as acceptable. Reports
+  can be spammed within the daily cap; nothing acts on them automatically.
+- **Rollback.** An older server answers `unknown_req` to the four new requests (the page shows nothing new) and ignores `own`/`fx`; the new items are
+  plain records (season / Elo items have long ttls; match locks expire with the match).
 
 ## Versions, deploy, rollout, rollback
 

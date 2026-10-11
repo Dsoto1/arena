@@ -3,6 +3,7 @@
 const assert=require('assert');const path=require('path');const crypto=require('crypto');
 const {makeRoutes}=require('../src/routes.js');const store=require('../src/store.js');const catalog=require('../src/catalog.json');const C=require('../src/onlcore.js');const {verify}=require('../src/jwt.js');
 C.SLOT100.start=4; /* v1.0: these checks predate the Domus slots — houses open with the four pre-v1.0 slots here */
+C.SEAT_RND100=false; /* v1.0 batch B: Ranked seats are dealt at random at the horns — this suite reads fixed seats (v100b.test.js covers the dealing) */
 (async()=>{
   const db=store.memory();const pushed=[];let t=1700000000000;
   const route=makeRoutes({limits:false,store:db,push:async(a,ty,d)=>pushed.push([a,ty,d]),catalog,now:()=>(t+=1000),dev:true,countdown:0});

@@ -732,28 +732,52 @@
   "w": "server/src/routes.js:1525"
  },
  {
+  "k": "You left too many matches — Ranked opens again in {0} min.",
+  "w": "server/src/routes.js:1561"
+ },
+ {
+  "k": "Ranked: watchers follow one turn behind — no snapshots.",
+  "w": "server/src/routes.js:1580"
+ },
+ {
+  "k": "That match is too long ago to report.",
+  "w": "server/src/routes.js:1641"
+ },
+ {
+  "k": "Pick a player.",
+  "w": "server/src/routes.js:1642"
+ },
+ {
+  "k": "Enough reports for today.",
+  "w": "server/src/routes.js:1643"
+ },
+ {
+  "k": "You already reported this match.",
+  "w": "server/src/routes.js:1645"
+ },
+ {
   "k": "Unknown request:",
-  "w": "server/src/routes.js:1529"
+  "w": "server/src/routes.js:1649"
  },
  {
   "k": "Too many requests — wait a moment.",
-  "w": "server/src/routes.js:1530"
+  "w": "server/src/routes.js:1650"
  },
  {
   "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1532"
+  "w": "server/src/routes.js:1652"
  },
  {
   "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1533"
+  "w": "server/src/routes.js:1653"
  },
  {
   "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1536"
+  "w": "server/src/routes.js:1656"
  },
  {
   "k": "Test houses play Custom only.",
-  "w": "server/src/routes.js:1540"
+  "w": "server/src/routes.js:1660"
  },
  {
   "k": "The arena hit a snag — try again (ref {0}).",
@@ -1454,5 +1478,21 @@
  {
   "k": "Next time, bring a bigger sword!",
   "w": "src/111-onlcore.js:1441"
+ },
+ {
+  "k": "Victor of the Season",
+  "w": "src/111-onlcore.js:1499"
+ },
+ {
+  "k": "On the Season’s Podium",
+  "w": "src/111-onlcore.js:1499"
+ },
+ {
+  "k": "One of the Season’s Ten",
+  "w": "src/111-onlcore.js:1499"
+ },
+ {
+  "k": "Pick a reason.",
+  "w": "src/111-onlcore.js:1505"
  }
 ]

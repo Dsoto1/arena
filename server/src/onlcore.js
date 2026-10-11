@@ -1443,4 +1443,69 @@ const ONLC=(function(){
   /* the new paying request runs once per request id */
   if(Array.isArray(C.IDEM93)&&!C.IDEM93.includes('domus.slot'))C.IDEM93.push('domus.slot');
   Object.assign(C,{SLOT100,ISSUE_W100,WAGER_OFF100,slotsOf100,slotNext100,slotGlory100,slotWhy100,slotBuy100,issueList100,isIss100,issOf100,issuePlan100,issueElsewhere100})})(ONLC);
+/* ===== v1.0 SERVER BATCH B ===== */
+/* Ranked improvements 1–7 + the online sidelining (his picks 2026-10-11). Shared by the server (routes.js "v1.0 SERVER BATCH B") and the page
+   (293-v100srvB: the client + its mock routes). No protocol bump: every new request is optional for an older page; the server only adds fields.
+   1 ELO100   a hidden skill rating per gladiator (server item ELO#<char>, never in a reply): pairwise Elo over the human seats of a settled Ranked
+              match by place (K 40 for the first NEW_N rated bouts, then 24, divided by the other humans). Find me a fight (lobby.quick, Ranked) prefers
+              a room whose seated humans average within WIN of the group (eloPrefer100); none close → the old pick (it never stalls a queue).
+      ETA100  the queue estimate while a quick room waits: the playlist's fill-time history (an EMA of horns − creation) × open seats, slower when
+              no free lanista of that rank is online (eta100).
+      SEATS   a Ranked room that is not a team event deals its seats at the horns at random (startRoom wrapper; seat = start corner and turn order).
+   2 WATCH100 Ranked watchers see the match ONE TURN BEHIND: the server keeps their moves until the next turn's clock (match.clock 'turn') and at
+              the end; match.get gives them only what was released; no snapshot is cut for them.
+   3 LEAVE100 abandons, CPU takeovers (an away drop or a timeout vote) and seats that timed out twice in one match count against the account
+              (Ranked only); MARK in WIN → the house card says "Often leaves"; CD_N in CD_WIN → no Ranked for CD_MS.
+   4 CONN100  a dot per seat: on (connected), away (socket gone < AWAY_MS), gone (≥ AWAY_MS), cpu (dropped / abandoned); slow = timed out this match.
+   5 SEASON100 the season's leaderboard by Glory gained (season = seasonAt(t).season, the Manager calendar); TITULI = the season-end awards
+              (names + flags on the house only, no art yet) given once to the top places of the season before.
+   6 REPORT100 Report a player: one per match per reporter, REASONS, DAY_MAX a day, until AFTER_MS after the end; logged for review, no penalty.
+   7 the after-match summary's replay link = the match id (#replay=<id>; replays come later).
+   SIDELINING FX100: a cosmetic reveal inside a turn (the chest, a beast's spawn card, the market's pick) lasts FX100.ms on every screen online and
+              is added to that turn's clock (match.clock {kind:'fx'}, once per reveal, ≤ TURN_MAX a turn); the turn clock starts at the seat
+              owner's own report (≤ OWN_MAX after another screen's), so a Slow or Fast viewer never moves anyone's clock. */
+(function(C){
+  const ELO100={START:1000,K_NEW:40,K:24,NEW_N:10,WIN:150,MIN:100,MAX:3000};  /* TWEAK: start, K while new / after, rated bouts while new, matchmaking window */
+  const eloK100=n=>(n|0)<ELO100.NEW_N?ELO100.K_NEW:ELO100.K;
+  const eloExp100=(a,b)=>1/(1+Math.pow(10,(b-a)/400));
+  /* rows [{id, r (rating), n (rated bouts), place}] → {id: new rating}; ties share half a point */
+  function eloPairs100(rows){const out={};const R=(rows||[]).filter(x=>x&&x.id!=null);const m=R.length;if(m<2){for(const x of R)out[x.id]=x.r;return out}
+    for(const a of R){let s=0;for(const b of R){if(b===a)continue;const sc=a.place<b.place?1:a.place>b.place?0:0.5;s+=sc-eloExp100(a.r,b.r)}
+      out[a.id]=Math.max(ELO100.MIN,Math.min(ELO100.MAX,Math.round(a.r+eloK100(a.n)*s/(m-1))))}return out}
+  /* the list Find me a fight should pick from: rooms whose seated humans' average (roomElo[id]) is within WIN of mine, when one of them fits */
+  function eloPrefer100(list,group,ev,ranked,flag,now,inf,mine,roomElo){if(!ranked||mine==null||!roomElo)return list;
+    const near=list.filter(L=>L.status!=='waiting'||!L.ranked||L.ev!==ev||roomElo[L.id]==null||Math.abs(roomElo[L.id]-mine)<=ELO100.WIN);
+    return near.length!==list.length&&C.quickPick(near,group,ev,ranked,flag,now,inf)?near:list}
+  const ETA100={DEF:90,MIN:10,MAX:600,EMA:0.3,SLOW:2};  /* TWEAK: seconds before any history, clamp, history weight, ×slow when nobody fits online */
+  function etaFold100(h,ms){h=h&&typeof h==='object'?h:{};const s=Math.max(1,Math.min(3600,Math.round((ms||0)/1000)));const a=h.n?h.a*(1-ETA100.EMA)+s*ETA100.EMA:s;return {a:Math.round(a*10)/10,n:Math.min(999,(h.n|0)+1)}}
+  function eta100(h,need,seats,free){need=Math.max(0,need|0);if(!need)return {s:0,slow:false};const base=h&&h.n?+h.a:ETA100.DEF;const share=need/Math.max(1,(seats|0)-1);
+    const slow=!(free>0);const s=Math.round(Math.max(ETA100.MIN,Math.min(ETA100.MAX,base*share*(slow?ETA100.SLOW:1))));return {s,slow}}
+  /* SEATS: a Ranked room that is not a team event deals its seats at random at the horns (the server's rnd; the mock's Math.random) */
+  {const base=C.startRoom;C.startRoom=function(L){const out=base.apply(this,arguments);try{if(L&&L.ranked&&!L.team&&C.SEAT_RND100!==false&&(L.players||[]).length>1){const r=typeof C.seatRnd100==='function'?C.seatRnd100:Math.random;
+      const P=L.players;const was=P.map(p=>p.id);for(let i=P.length-1;i>0;i--){const j=Math.floor(r()*(i+1));const t=P[i];P[i]=P[j];P[j]=t}L.shuf100=1;
+      /* wagers placed on a seat follow their fighter to his new seat */
+      for(const b of L.bets||[]){const id=was[b.seat|0];const k=P.findIndex(p=>p.id===id);if(id!=null&&k>=0)b.seat=k}}}catch(e){}return out}}
+  const WATCH100={DELAY:'turn'};
+  const LEAVE100={WIN_MS:7*86400e3,MARK:3,CD_N:3,CD_WIN:86400e3,CD_MS:15*60e3,KEEP:20,KINDS:['abandon','drop','timeout']};  /* TWEAK: the one constant set: mark = 3 in 7 days, cooldown = 3 in 24 h → 15 min */
+  function leaveAdd100(list,kind,t,m){const L=(Array.isArray(list)?list:[]).filter(x=>x&&t-(+x.at||0)<LEAVE100.WIN_MS);L.push({k:LEAVE100.KINDS.includes(kind)?kind:'drop',at:+t||0,...(m?{m:String(m).slice(0,40)}:{})});return L.slice(-LEAVE100.KEEP)}
+  function leaveMark100(list,t){const n=(Array.isArray(list)?list:[]).filter(x=>x&&t-(+x.at||0)<LEAVE100.WIN_MS).length;return {n,mark:n>=LEAVE100.MARK}}
+  /* the cooldown's end (0 = none): CD_N leaves in CD_WIN, counted from the last of them */
+  function leaveCooldown100(list,t){const L=(Array.isArray(list)?list:[]).filter(x=>x&&t-(+x.at||0)<LEAVE100.CD_WIN).sort((a,b)=>a.at-b.at);if(L.length<LEAVE100.CD_N)return 0;const until=L[L.length-1].at+LEAVE100.CD_MS;return until>t?until:0}
+  const CONN100={POLL_MS:15000,ST:['on','away','gone','cpu']};
+  /* M = the match record; returns {seat: {st, slow?}} for its human fighter seats (toc = {seat: timeouts this match}) */
+  function connOf100(M,now,toc){const o={};if(!M)return o;for(const a of M.players||[]){const seat=(M.seats||{})[a];if(seat==null)continue;let st='on';
+      if((M.dropped||{})[a]||(M.abandoned||{})[a])st='cpu';else{const aw=+((M.away||{})[a])||0;if(aw>0)st=now-aw>=C.AWAY_MS?'gone':'away'}
+      const sl=toc?(toc[seat]|0):0;o[seat]=sl?{st,slow:sl}:{st}}return o}
+  const SEASON100={TOP:50,TITULI:[{upto:1,k:'s100v',n:'Victor of the Season'},{upto:3,k:'s100p',n:'On the Season’s Podium'},{upto:10,k:'s100x',n:'One of the Season’s Ten'}]};
+  const seasonKey100=t=>'S'+C.seasonAt(t).season;
+  /* the top list: rows {c (gladiator), n (name), cls, dn (house name), dom, g (Glory gained), rk} — one per gladiator, highest first */
+  function seasonTop100(top,row){const L=(Array.isArray(top)?top:[]).filter(x=>x&&x.c!==row.c);L.push(row);L.sort((a,b)=>(b.g-a.g)||String(a.c).localeCompare(String(b.c)));return L.slice(0,SEASON100.TOP)}
+  const seasonTitulus100=place=>(SEASON100.TITULI.find(x=>place>=1&&place<=x.upto)||null);
+  const REPORT100={REASONS:['cheat','abuse','afk','leave','name','other'],DAY_MAX:10,AFTER_MS:86400e3,NOTE_MAX:200};
+  function reportWhy100(d){d=d||{};if(!REPORT100.REASONS.includes(d.reason))return 'Pick a reason.';if(!Number.isInteger(d.seat)||d.seat<0||d.seat>15)return 'Pick a player.';return ''}
+  const FX100={ms:{chest:900,spawn:900,market:900},TURN_MAX:5000,OWN_MAX:10000};  /* TWEAK: one length per reveal online, its credit cap a turn, how late the owner's own report may start his clock */
+  const fxMs100=k=>FX100.ms[k]|0;
+  if(Array.isArray(C.GUEST_OK))for(const t of ['season.board'])if(!C.GUEST_OK.includes(t))C.GUEST_OK.push(t);
+  Object.assign(C,{ELO100,eloK100,eloExp100,eloPairs100,eloPrefer100,ETA100,etaFold100,eta100,WATCH100,LEAVE100,leaveAdd100,leaveMark100,leaveCooldown100,
+    CONN100,connOf100,SEASON100,seasonKey100,seasonTop100,seasonTitulus100,REPORT100,reportWhy100,FX100,fxMs100})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
