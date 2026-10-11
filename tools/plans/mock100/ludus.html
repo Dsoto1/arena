@@ -361,6 +361,43 @@ body.s-advisor-pop .apop,body.s-advisor-train .apop{display:block}
  .apop:before{content:"";display:block;width:40px;height:4px;border-radius:2px;background:var(--line3);margin:-4px auto 10px}
  body.s-advisor-pop .scrim,body.s-advisor-train .scrim{display:block}
 }
+
+/* ---------- round 5 ---------- */
+/* bout chips in the Fight Night button (the separate card is gone) */
+.fnbtn .days{gap:6px;margin-top:6px}
+.fnbtn .days .bc{display:flex;flex-direction:column;gap:2px;padding:3px 8px 4px;border-radius:7px;background:rgba(0,0,0,.35);border:1px solid rgba(240,207,125,.45);font-style:normal;min-width:118px}
+.fnbtn .days .bc em{font:700 9.5px var(--mono);letter-spacing:.6px;font-style:normal;color:#f6dd95;text-transform:uppercase}
+.fnbtn .days .bc span{display:flex;align-items:center;gap:5px;font:700 13px var(--body);color:#fff1cf;white-space:nowrap}
+.fnbtn .days .bc u{text-decoration:none;flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font:700 10px var(--display);color:#1a120c;border:1px solid #f0cf7d}
+.fd{display:inline-block;width:9px;height:9px;border-radius:50%;text-decoration:none;flex:none;margin:0 2px 0 3px;vertical-align:0;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.fd.fresh{background:#7ccf4f}.fd.tired{background:#e8c23a}.fd.worn{background:#e0573f}
+.fnbtn .days .bc .fd{margin-left:auto}
+body.s-week .fncard{display:none}
+/* FRIEZE variants: a (default) Pompeian red fresco · b verde antico · c bronze on dark stone */
+.frieze{background:#8e2a1c!important;box-shadow:inset 0 0 0 3px #1a0c08,inset 0 0 0 4px #d6ab4c,inset 0 0 0 7px #4a140c,inset 0 0 40px rgba(0,0,0,.45)!important}
+.frieze:before{background:
+ radial-gradient(ellipse at 15% 0%,rgba(255,200,160,.28),transparent 60%),
+ linear-gradient(90deg,transparent 0 33%,rgba(0,0,0,.18) 33% 33.3%,transparent 33.3% 66.6%,rgba(0,0,0,.18) 66.6% 66.9%,transparent 66.9%),
+ url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.02 .03' numOctaves='4' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .05 0 0 0 0 .02 0 0 0 .6 -.15'/%3E%3C/filter%3E%3Crect width='300' height='160' filter='url(%23n)'/%3E%3C/svg%3E")!important;inset:7px!important}
+.frieze .fz{inset:14px 12px 10px}
+.frieze:before{background-size:auto,auto,100% 100%!important}body.fz-b .frieze:before,body.fz-c .frieze:before{background-size:auto,100% 100%!important}
+.frieze .clip b{color:#f6dd95;text-shadow:0 1px 1px rgba(0,0,0,.6)}
+.frieze .clip small{color:#e8c9a0;text-shadow:0 1px 1px rgba(0,0,0,.5)}
+.frieze .clip .ring{box-shadow:2px 4px 7px rgba(0,0,0,.55),inset -2px -2px 3px rgba(80,60,30,.35),inset 2px 2px 3px rgba(255,255,255,.8)}
+.frieze .clip .wax{background:radial-gradient(circle at 38% 34%,#ffd36a,#a8761a 72%)}
+body.fz-b .frieze{background:#14231c!important;box-shadow:inset 0 0 0 3px #050a07,inset 0 0 0 4px #9aa58a,inset 0 0 40px rgba(0,0,0,.6)!important}
+body.fz-b .frieze:before{background:radial-gradient(ellipse at 15% 0%,rgba(220,255,230,.14),transparent 60%),
+ url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='.018 .05' numOctaves='5' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .75 0 0 0 0 .6 0 0 0 -1.3 .9'/%3E%3C/filter%3E%3Crect width='300' height='160' filter='url(%23n)'/%3E%3C/svg%3E")!important}
+body.fz-b .frieze .clip b{color:#e8efe2}body.fz-b .frieze .clip small{color:#a8bda8}
+body.fz-b .frieze .clip .wax{background:radial-gradient(circle at 38% 34%,#e2584a,#8a1a10 72%)}
+body.fz-c .frieze{background:#1c1712!important;box-shadow:inset 0 0 0 3px #000,inset 0 0 0 4px #8a6a3a,inset 0 0 40px rgba(0,0,0,.6)!important}
+body.fz-c .frieze:before{background:radial-gradient(ellipse at 15% 0%,rgba(255,220,170,.12),transparent 60%),
+ url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.05' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .25 0 0 0 .5 -.1'/%3E%3C/filter%3E%3Crect width='300' height='160' filter='url(%23n)'/%3E%3C/svg%3E")!important}
+body.fz-c .frieze .clip .ring{background:radial-gradient(circle at 32% 28%,#ffe0a0,#b07a34 50%,#4a2c10)}
+body.fz-c .frieze .clip .ring img{content:var(--bz)}
+body.fz-c .frieze .clip b{color:#e8b860;text-shadow:0 1px 0 #000}body.fz-c .frieze .clip small{color:#a88a5a}
+body.fz-c .frieze .clip .wax{background:radial-gradient(circle at 38% 34%,#e2584a,#8a1a10 72%)}
+@media (max-width:600px){.fnbtn .lg,.fnbtn .days .bc .tn{display:none}body.s-week-b .trow .ti{width:34px;height:34px;font-size:17px}body.s-week-b .trow{padding:8px 4px}.fnbtn .days{flex-wrap:nowrap;width:100%}.fnbtn .days .bc{min-width:0;flex:1;padding:3px 5px}.fnbtn .days .bc span{font-size:11.5px;gap:3px}.fnbtn .days .bc u{width:15px;height:15px;font-size:9px}.fnbtn small .fd,.fnbtn small{font-size:11.5px}}
 </style></head>
 <body>
 <div class="app">
@@ -412,7 +449,7 @@ body.s-advisor-pop .apop,body.s-advisor-train .apop{display:block}
      <div class="chips"><span><img class="coin" src="../../../assets/coin.webp" alt=""> −132 this season</span><span>🌾 0 fame</span><span>0/0 wins / bouts</span><span class="f">✝ 0 fallen</span></div>
     </div>
     <span class="sp"></span>
-    <button class="fnbtn week-only"><span class="sw">⚔</span><span><b>FIGHT NIGHT</b><small>Pompeii · 3 bouts · your fighters on all 3</small><span class="days"><i>FRI Undercard</i><i>SAT Feature</i><i>SUN Main</i></span></span></button>
+    <button class="fnbtn week-only"><span class="sw">⚔</span><span><b>FIGHT NIGHT</b><small>Pompeii · 3 bouts · your fighters on all 3<span class="lg"> · <s class="fd fresh"></s>fresh <s class="fd tired"></s>tired <s class="fd worn"></s>worn</span></small><span class="days"><i class="bc"><em>FRI<span class="tn"> · Undercard</span></em><span><u style="background:#a8754e">G</u>Grando<s class="fd tired" title="Tired"></s></span></i><i class="bc"><em>SAT<span class="tn"> · Feature</span></em><span><u style="background:#c0433a">H</u>Hostus<s class="fd fresh" title="Fresh"></s></span></i><i class="bc"><em>SUN<span class="tn"> · Main</span></em><span><u style="background:#c8b07a">F</u>The Fox<s class="fd fresh" title="Fresh"></s></span></i></span></span></button>
     <div class="fnbtn stone bye-only"><span class="sw">🌙</span><span><b>NO FIGHT NIGHT</b><small>Next: week 5 · Fight Night in Capua (home)</small></span></div>
    </div>
 
@@ -461,7 +498,7 @@ body.s-advisor-pop .apop,body.s-advisor-train .apop{display:block}
       <div class="cap"><i class="em">🏛</i><span><b>Upgrade School</b><span>The buildings · next: Barracks I · <img class="coin" src="../../../assets/coin.webp" alt="">250</span></span><i class="chev">›</i></div></div>
      <div class="tile"><div class="art"><div class="bg" data-sc="armory"></div><div class="st"><span>12 on the shelf</span><span class="w">2 to repair</span></div></div>
       <div class="cap"><i class="em">⚒</i><span><b>Armory</b><span>Better gear. Shelf, repairs, the stalls</span></span><i class="chev">›</i></div></div>
-     <div class="tile wide adv"><div class="art frieze"><div class="fz"><button class="clip" data-adv="0" type="button"><span class="ring"><img src="ludus_img/marble_0.png" alt=""><i class=wax></i></span><b>KAESO</b><small>CONSILIVM</small></button><button class="clip" data-adv="1" type="button"><span class="ring"><img src="ludus_img/marble_1.png" alt=""><i class=wax></i></span><b>GNAEVS</b><small>RECRVITER</small></button><button class="clip" data-adv="2" type="button"><span class="ring"><img src="ludus_img/marble_2.png" alt=""></span><b>QVINTVS</b><small>DOCTORE</small></button><button class="clip" data-adv="3" type="button"><span class="ring"><img src="ludus_img/marble_3.png" alt=""></span><b>SEPTIMVS</b><small>MEDICVS</small></button><button class="clip" data-adv="4" type="button"><span class="ring"><img src="ludus_img/marble_4.png" alt=""></span><b>MARCIA</b><small>CLERK</small></button><button class="clip" data-adv="5" type="button"><span class="ring"><img src="ludus_img/marble_5.png" alt=""></span><b>NONVS</b><small>BARRACKS MASTER</small></button></div></div>
+     <div class="tile wide adv"><div class="art frieze"><div class="fz"><button class="clip" data-adv="0" type="button"><span class="ring"><img src="ludus_img/marble_0.png" style="--bz:url(ludus_img/bronze_0.png)" alt=""><i class=wax></i></span><b>KAESO</b><small>CONSILIVM</small></button><button class="clip" data-adv="1" type="button"><span class="ring"><img src="ludus_img/marble_1.png" style="--bz:url(ludus_img/bronze_1.png)" alt=""><i class=wax></i></span><b>GNAEVS</b><small>RECRVITER</small></button><button class="clip" data-adv="2" type="button"><span class="ring"><img src="ludus_img/marble_2.png" style="--bz:url(ludus_img/bronze_2.png)" alt=""></span><b>QVINTVS</b><small>DOCTORE</small></button><button class="clip" data-adv="3" type="button"><span class="ring"><img src="ludus_img/marble_3.png" style="--bz:url(ludus_img/bronze_3.png)" alt=""></span><b>SEPTIMVS</b><small>MEDICVS</small></button><button class="clip" data-adv="4" type="button"><span class="ring"><img src="ludus_img/marble_4.png" style="--bz:url(ludus_img/bronze_4.png)" alt=""></span><b>MARCIA</b><small>CLERK</small></button><button class="clip" data-adv="5" type="button"><span class="ring"><img src="ludus_img/marble_5.png" style="--bz:url(ludus_img/bronze_5.png)" alt=""></span><b>NONVS</b><small>BARRACKS MASTER</small></button></div></div>
       <div class="cap"><i class="em">🏛</i><span><b>Advisors <i class="cnt">2 new</i></b><span class="week-only">Tap a face to hear him · Consilium: "Hold our fighters back in Pompeii."</span><span class="bye-only">Tap a face to hear him · Doctore: "A bye is a gift. Use the extra hours."</span></span></div></div>
     </div>
    </div>
@@ -559,11 +596,11 @@ body.s-advisor-pop .apop,body.s-advisor-train .apop{display:block}
   <span class="req">Level 2 gives <span class="gain">+4 recruiter's hours (24 h) · grades 20% sharper</span>. Levels 3–5 are earned by deeds.</span></div>
 </div>
 <div id="phoneFrame"><iframe title="phone" src="ludus.html#week"></iframe></div>
-<div class="statebar"><a href="#week">#week</a><a href="#week-b">#week-b</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#mail-open">#mail-open</a><a href="#advisor-pop">#advisor-pop</a><a href="#advisor-train">#advisor-train</a><a href="#team-a">#team-a</a><a href="#team-b">#team-b</a><a href="#rooms">#rooms</a><a href="#phone">#phone</a></div>
+<div class="statebar"><a href="#week">#week</a><a href="#week-b">#week-b</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#mail-open">#mail-open</a><a href="#frieze-a">#frieze-a</a><a href="#frieze-b">#frieze-b</a><a href="#frieze-c">#frieze-c</a><a href="#advisor-pop">#advisor-pop</a><a href="#advisor-train">#advisor-train</a><a href="#team-a">#team-a</a><a href="#team-b">#team-b</a><a href="#rooms">#rooms</a><a href="#phone">#phone</a></div>
 <script src="ludus_scenes.js"></script>
 <script>
 document.querySelectorAll('[data-sc]').forEach(e=>e.innerHTML=SCENE99(e.dataset.sc,e.dataset.mode||'tile'));
-function st(){const h=(location.hash||'#week').slice(1);document.body.className='s-'+h;document.querySelectorAll('.statebar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h));
+function st(){const h=(location.hash||'#week').slice(1);document.body.className=h.startsWith('frieze-')?'s-week-b fz-'+h.slice(7):'s-'+h;document.querySelectorAll('.statebar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h));
  document.querySelectorAll('.rail .t.a-on').forEach(t=>t.classList.toggle('on',h==='team-a'))}
 addEventListener('hashchange',st);st();
 document.querySelector('.mailbtn').onclick=()=>location.hash='#mail';

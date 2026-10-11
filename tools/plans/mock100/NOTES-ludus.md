@@ -98,3 +98,16 @@ Shots: `ludus_week-b_1440/390`, `ludus_advisors_1440/390`, `ludus_mail-open_1440
   - `#advisor-train` shows a new house's Recruiter at Lv 1: "⬆ Train to level 2 · 60 coin — +4 recruiter's hours (24 h) · grades 20% sharper. Levels 3–5 are earned by deeds."
   - **Other advisors:** in the game today only the Recruiter's level changes play. Their popovers would show the same earn-line (for example Doctore "rating band-ups 0/10 · fame 50") with "the level shows on the card; no game effect yet". Virgilante should say whether those levels should start doing something in v1.0.
 Shots: `ludus_advisor-pop_1440.png`, `ludus_advisor-pop_390.png`, `ludus_advisor-train_1440.png`, plus a re-take of `ludus_week_*`, `ludus_week-b_*` and `ludus_bye_*`.
+
+## ROUND 5 (2026-10-11)
+- **The Advisors frieze must stand out against the parchment.** Three variants, each a full `#week-b` screen: `#frieze-a`, `#frieze-b`, `#frieze-c`.
+  - **a, POMPEIAN RED fresco (the default now):** a deep red plaster panel with faint panel divisions, a thin gold frame between dark bands, white marble heads, and pale-gold carved names. On red, the "new advice" seal is GOLD wax so it stays visible.
+  - **b, VERDE ANTICO:** green-black veined marble, a pale stone frame, white marble heads, and red wax seals.
+  - **c, BRONZE:** bronze relief heads (`ludus_img/bronze_N.png`: a bronze ramp with green patina in the recesses) in bronze rings, on dark stone with a bronze frame, and red seals.
+- **The "This Fight Night" card is dropped.** Its information now sits in the banner's Fight Night button:
+  - Each bout chip reads "FRI · Undercard", then the fighter's small face disc, his name, and a fatigue dot (green Fresh / yellow Tired / red Worn).
+  - A legend for the dots follows the subtitle on desktop.
+  - On phones the chips show only the day, and the legend is hidden.
+  - `#week` now shows the same, so it differs from `#week-b` only in the parchment's stretch and the "Coming up" line.
+- **The "Coming up" line in `#week-b` is kept.** It fills the stretched parchment's empty bottom without crowding the tasks.
+Shots: `ludus_frieze-{a,b,c}_{1440,390}.png` (the 390 `_full` versions show the frieze), plus a re-take of `ludus_week(-b)_{1440,390}.png`.
