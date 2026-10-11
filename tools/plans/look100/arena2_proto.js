@@ -35,7 +35,7 @@ ar91Tex=function(){if(!P.on)return B.tex.apply(this,arguments);const k=P.arena()
 /* flat surfaces: an iso pattern (slabs lie on the floor); vertical faces: the wall pattern */
 ar91Fill=function(g,scale){if(!P.on||!AR91PAT||!P.arena())return B.fill.apply(this,arguments);
   const m=g.getTransform();const axis=Math.abs(m.b)<1e-6&&Math.abs(m.c)<1e-6;const flat=axis&&(scale===undefined||scale===1)&&!P.vert;
-  try{if(flat){const o=center(-0.5,-0.5),u0=center(-0.5,0.5),v0=center(0.5,-0.5),k=150;AR91PAT.setTransform(new DOMMatrix([(u0.x-o.x)/k,(u0.y-o.y)/k,(v0.x-o.x)/k,(v0.y-o.y)/k,o.x,o.y]))}
+  try{if(flat){const o=center(-0.5,-0.5),u0=center(-0.5,0.5),v0=center(0.5,-0.5),ku=150,kv=80; /* floor: courses stretched to near-square paving slabs (long thin blocks read as planks) */AR91PAT.setTransform(new DOMMatrix([(u0.x-o.x)/ku,(u0.y-o.y)/ku,(v0.x-o.x)/kv,(v0.y-o.y)/kv,o.x,o.y]))}
     else{const o=center((N-1)/2,(N-1)/2);AR91PAT.setTransform(new DOMMatrix().translate(o.x,o.y).scale((scale||1)*TW*0.82/170))}}catch(e){}
   g.fillStyle=AR91PAT};
 /* ---------- dado bands with a motif, on a vertical face: top edge p→q, height h (local x along, y down) ---------- */
