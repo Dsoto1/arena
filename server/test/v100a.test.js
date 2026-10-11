@@ -55,10 +55,15 @@ async function routes(){
   assert.deepStrictEqual(r1.domus.slotNext100,{n:3,glory:600,coin:500},'the next step rides on the house row');
   const a2=await ann.req('char.create',{name:'Ann Two',cls:'hero'});assert.ok(a2&&a2.alive,'the second gladiator');
   await rejects(ann.req('domus.upgrade',{k:'slot5'}),null,/four slots first/);
-  /* a house from before v1.0 (no slots100) keeps four */
-  await setD(cat,{slots100:undefined});{const X=await getD(cat);delete X.slots100;await db.put('DOMUS#'+X.id,'DOMUS',X)}
-  for(const n of ['Two','Three','Four'])await cat.req('char.create',{name:'Cat '+n,cls:'hero'});await rejects(cat.req('char.create',{name:'Cat Five',cls:'hero'}),null,/Up to 4/);
-  assert.strictEqual((await cat.req('domus.get',{})).domus.gmax,4);
+  /* a house from before v1.0 (no slots100) keeps one slot per LIVING gladiator, once, on first touch */
+  const unslot=async cl=>{const X=await getD(cl);delete X.slots100;await db.put('DOMUS#'+X.id,'DOMUS',X)};
+  await setD(cat,{slots100:4});const cc2=await cat.req('char.create',{name:'Cat Two',cls:'hero'});const cc3=await cat.req('char.create',{name:'Cat Three',cls:'hero'});await setC(cc3.id,{alive:false});await unslot(cat);
+  {const r=(await cat.req('domus.get',{})).domus;assert.ok(r.gmax===2&&r.slots100===2,'2 living + 1 fallen: 2 open slots '+JSON.stringify([r.gmax,r.slots100]));assert.deepStrictEqual(r.slotNext100,{n:3,glory:600,coin:500},'slot 3 is locked with its price');
+    assert.strictEqual((await getD(cat)).slots100,2,'stored once on the house');}
+  await rejects(cat.req('char.create',{name:'Cat Four',cls:'hero'}),'slot_full',/open slot 3 in the Domus/);
+  await setC(cc2.id,{alive:false});assert.strictEqual((await cat.req('domus.get',{})).domus.gmax,2,'never shrinks after the first touch');
+  const dan=await client('dan','hero');await setD(dan,{slots100:4});await setC(dan.ch.id,{alive:false});await unslot(dan);
+  assert.strictEqual((await dan.req('domus.get',{})).domus.gmax,1,'an old house with no living gladiator keeps one slot');
 
   /* ── 2 · THE ISSUED KIT ── */
   await setC(ann.ch.id,{gear:[],equip:[]});await setC(a2.id,{gear:[],equip:[]});

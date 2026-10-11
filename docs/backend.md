@@ -216,8 +216,8 @@ either server-side or decided by the host's opening snapshot.
   cannot become coin (audited: char.buy / market.buy / market.kit / auction / gift.open / lobby.send / loot / deadGear / domusAfter / offers / acct.delete).
 - **Online wagers closed.** `betOK` always refuses; `bet.place` answers `{code:'wager_off'}` + the text code. Old bets (placed before v1.0) still settle and
   refund through the unchanged settlement; `wager.list` still reads the history.
-- **Domus slots** (`domus.slot {}` — in `IDEM93`, so a replayed request pays once). `D.slots100` = slots opened; a house WITHOUT the field predates v1.0
-  and keeps all four. A new house (`C.newDomus`) opens with `SLOT100.start` = 1. Steps (`SLOT100.steps`, his numbers): slot 2 = 150 Glory + 200 coin,
+- **Domus slots** (`domus.slot {}` — in `IDEM93`, so a replayed request pays once). `D.slots100` = slots opened; a house WITHOUT the field predates v1.0:
+  on first touch (`domusGet` → `C.slotsMigrate100`, once, stored) it keeps one slot per LIVING gladiator (min 1); the rest are locked like a new house's. A new house (`C.newDomus`) opens with `SLOT100.start` = 1. Steps (`SLOT100.steps`, his numbers): slot 2 = 150 Glory + 200 coin,
   slot 3 = 600 + 500, slot 4 = 1500 + 1000. Glory = the house's best Domus-rank score (`D.dr98`, recomputed by `dr98Upd` before the check; it never
   drops). The coin leaves the treasury (ledger `upg`). `gladMax(D)` = slots + the coin-only 5th slot (`UPG89.slot5`, now only after the four).
   `char.create` beyond the slots → `slot_full` naming the next step. `domusRow` carries `gmax`, `slots100`, `slotNext100` (not on the public row).

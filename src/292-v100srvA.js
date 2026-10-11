@@ -33,6 +33,8 @@ if(typeof MOCK_ROUTES!=='undefined'){
   /* ---------------- 3 · wagers closed ---------------- */
   MOCK_ROUTES['bet.place']=()=>{throw onlErr82(_T(ONLC.WAGER_OFF100),'wager_off')};
   /* ---------------- 5 · slots ---------------- */
+  /* a pre-v1.0 house keeps one slot per living gladiator, once, on first touch (as the server's domusGet) */
+  {const base=mockDomus82;mockDomus82=function(w,id){const D=base.apply(this,arguments);if(D&&D.slots100==null){const own=D.owner;ONLC.slotsMigrate100(D,Object.values(w.chars||{}).filter(c=>c&&c.alive&&c.domus===D.id&&(own==null||c.owner===own)).length)}return D}}
   MOCK_ROUTES['domus.slot']=(w,d,me)=>{const D=mockHouse83(w,me);mockPurse92(w,me);if(typeof mockDr98Upd==='function')mockDr98Upd(w,D.id);const g=ONLC.slotGlory100(D);const why=ONLC.slotWhy100(D,g);
     if(why)throw onlErr82(_T(why),/treasury/.test(why)?'no_coin':'slot_locked');const s=ONLC.slotBuy100(D,g,mockNow());return {domus:mockDRow82(D),domus92:mockDRow82(D),slot:s.n,cost:s.coin}};
   {const base=MOCK_ROUTES['char.create'];MOCK_ROUTES['char.create']=(w,d,me)=>{const A=w.accounts[me];const D=A&&mockDomus82(w,A.domus);
