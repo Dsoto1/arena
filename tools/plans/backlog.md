@@ -155,3 +155,6 @@ His fixes: tokens bigger than the tile, base on the raised railing → keep insi
 ANIM: full frame set (memory measured) · 8 printed classes get 3D stand-ins · 3D crowd everywhere (benches, shading) · same 3D people walk in the city forum · modelled spider · painted rete · stepped poses + glide.
 MY LUDUS: frieze c bronze; an advisor with news lights up into his colour portrait (no seals); long task lists scroll inside the parchment.
 SPEED × ANIMATION (his pick a): Slow/Normal full animation; Fast = CPU tokens still + glide + hit flash, YOUR OWN moves still animate; To the end/sims draw nothing; Animations Off/Reduce motion = still always; online per viewer (display only). Advisor glow pulse: keep.
+ROOMS: Roster / Training Yard / Infirmary in the recruit3 style → mock rooms.html (Infirmary body = marble statue, his pick).
+WEBSITE (v1.0): update the site pages for 1.0 (play.html text + what's new + screenshots) and make sure play.html shows the CURRENT advert shot.
+  Facts: play.html <img src="play/arena_shot.webp"> (fallback siteart/arena_shot.webp); release.sh retakes tools/deploy/arena_shot.webp (last 2026-10-10), flavius.sh uploads it + invalidates /play/arena_shot.webp. He sees an old one → check: cache (browser/CloudFront), or the fallback firing, or the site's play.html is older than the v0.82 zip.
