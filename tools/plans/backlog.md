@@ -226,3 +226,7 @@ Timeouts must be SERVER-ordered inputs (lockstep: the server, not a client clock
 2a EVERYTHING in one v1.0 · 3 Fight Night rename: asked for my recommendation · 4a "enter any event": mock-up first · 5 who's-online list in v1.0 ·
 6 sharper Mandata/round token PNGs coming from him · 7 Tholo CAN be Meat-lured ("a strange beast") · 8 I draft the website What's New.
 Tame: 1a Tholo lurable · 2a Ursa/Brutum break the bond whoever owns the bear · 3a card text names Tholo again.
+FIGHT NIGHT: 3a keep "Match Week" (no rename).
+TURN TIMERS: GO (2026-10-11) — with his change: the last-seconds countdown never sits over the board (turn panel + face ring + thin red screen-edge glow).
+WHO'S ONLINE (his 1c 2b 3a): a panel beside the Orbis on the Online landing AND a Lobby Browser tab; rows = house banner, lanista, active gladiator + rank,
+status (idle / in a room / fighting), time-zone region; actions Invite · Watch · House card · ★ Follow; hidden lanistas never listed. Building.

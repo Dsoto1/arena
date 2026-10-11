@@ -1,0 +1,15 @@
+Titus Silanus|hero|78
+Titus Audax|soldier|78
+The Hawk of Aegyptus|veteranus|75
+Caeso Strabo|royalty|70
+Cinis Oak-Arm|slave|77
+R Saxum of Creta|veteranus|50|The Veronese Brotherhood
+R Numerius "Nox" Sabinus|royalty|55|House of Aurelia
+R Volumnia Silanus|amazonia|54|Schola Nemausensis
+R Caepio Thrice-Scarred|hero|53|The Istrian Pens
+R Petronia Catulus|slave|52|Ludus Punicus
+R Vipsania Lupercus|hero|62|Ludus Vulpes
+R Fulmen the Gilded|hero|53|Ludus Nervanus
+R The Wolf of Neapolis|hero|73|Ludus Severianus
+R Camilla "Procella" Glabrio|amazonia|59|Ludus Olearius
+R Manius Tenax|soldier|60|The Pompeian Pit

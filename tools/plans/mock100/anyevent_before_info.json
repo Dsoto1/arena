@@ -1,0 +1,98 @@
+{
+ "wk": 1,
+ "sched": [
+  "juggernaut@Verona",
+  "egidious@Uthina",
+  "democritus@Pompeii",
+  "familia@Arles",
+  "cassian@Thysdrus",
+  "familia@Capua",
+  "egidious@Roma",
+  "cassian@Leptis Magna",
+  "democritus@Puteoli",
+  "goldenEagle@Nemausus",
+  "cassian@Syracusae",
+  "familia@Pola"
+ ],
+ "bouts": [
+  {
+   "t": "under",
+   "ev": "Classic · Egidious",
+   "n": 4,
+   "size": 4,
+   "purse": 30,
+   "fee": 12,
+   "ents": [
+    "Nox Eagle-Eye soldier 61 Schola Nemausensis",
+    "Grando Half-Ear venatore 62 Ludus Vulpes",
+    "The Hawk of Illyria amazonia 55 Ludus Nervanus",
+    "Lars Glabrio soldier 77 Ludus Crispinus"
+   ]
+  },
+  {
+   "t": "feature",
+   "ev": "Classic · Democritus",
+   "n": 4,
+   "size": 4,
+   "purse": 70,
+   "fee": 24,
+   "ents": [
+    "Draco Salt-Tongue Knucklebone amazonia 65 Sica's Syndicate",
+    "Murena Red-Beard hero 55 The Istrian Pens",
+    "Publius Messala venatore 63 House of the Lighthouse",
+    "Manius Regulus veteranus 78 Ludus Crispinus"
+   ]
+  },
+  {
+   "t": "main",
+   "ev": "Juggernaut",
+   "n": 4,
+   "size": 4,
+   "purse": 272,
+   "fee": 40,
+   "ents": [
+    "Regulus Lion-Eater hero 79 Ludus Severianus",
+    "Invictus the Bear soldier 75 Ludus Olearius",
+    "Aper of Pompeii slave 67 The Pompeian Pit",
+    "Durmius Sabinus veteranus 85 Ludus Crispinus"
+   ]
+  }
+ ],
+ "ros": [
+  {
+   "n": "Lars Glabrio",
+   "c": "soldier",
+   "o": 77,
+   "slot": 1,
+   "inj": false
+  },
+  {
+   "n": "Draco Stone-Skin",
+   "c": "soldier",
+   "o": 70,
+   "inj": false
+  },
+  {
+   "n": "Manius Regulus",
+   "c": "veteranus",
+   "o": 78,
+   "slot": 2,
+   "inj": false
+  },
+  {
+   "n": "Durmius Sabinus",
+   "c": "veteranus",
+   "o": 85,
+   "slot": 3,
+   "inj": false
+  },
+  {
+   "n": "Fatum of Pompeii",
+   "c": "soldier",
+   "o": 72,
+   "inj": false
+  }
+ ],
+ "ludus": "Ludus Crispinus",
+ "loc": "Pola"
+}
