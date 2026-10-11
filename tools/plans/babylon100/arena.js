@@ -234,6 +234,7 @@
   window.addEventListener('resize', () => { engine.resize(); if (ortho) fitOrtho(); });
 
   /* ---------- day / night (189-v91night: torches on the rim only, moonlit blue in the middle, pieces readable) ---------- */
+  const ORBIT = flag('orbit', false);
   let night = false;
   function setNight(n) { night = n;
     scene.clearColor = n ? new BABYLON.Color4(0.05, 0.07, 0.14, 1) : new BABYLON.Color4(0.80, 0.87, 0.93, 1);
@@ -255,10 +256,11 @@
   /* ---------- the loop: idles (morph breathing / beast flipbook), torch flicker ---------- */
   scene.onBeforeRenderObservable.add(() => {
     const t = performance.now() / 1000;
+    if (ORBIT) cam.alpha += 0.004;   /* ?orbit=1: the camera circles (measure.js) */
     if (night) torchLights.forEach((l, i) => { l.intensity = 1.45 + 0.25 * Math.sin(t * 9 + i * 2.1) + 0.12 * Math.sin(t * 23 + i); });
     if (t - hudT > 0.5) { hudT = t; const s = window.MOCK.stats(); hud.textContent = `Babylon ${BABYLON.Engine.Version} · ${engine.webGLVersion === 2 ? 'WebGL2' : 'WebGL1'}\n${s.fps} fps · frame ${s.frameMs} ms\ndraw calls ${s.drawCalls} · active meshes ${s.activeMeshes}\nmeshes ${s.meshes} · materials ${s.materials} · lights ${s.lights}\ntris ${(s.tris / 1000).toFixed(0)}k · ${s.w}×${s.h}`; }
   });
   loadPieces().catch(e => { console.error(e); window.MOCK_ERR = String(e && e.stack || e); }).finally(() => {
-    document.getElementById('load').remove(); scene.executeWhenReady(() => { let n = 0; scene.onAfterRenderObservable.add(() => { if (++n === 10) window.MOCK_READY = true; }); }); });
+    document.getElementById('load').remove(); scene.executeWhenReady(() => { let n = 0; scene.onAfterRenderObservable.add(() => { if (++n === 1) window.MOCK_FIRST_T = performance.now(); if (n === 10) { window.MOCK_READY_T = performance.now(); window.MOCK_READY = true; } }); }); });
   engine.runRenderLoop(() => scene.render());
 })();

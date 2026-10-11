@@ -26,7 +26,12 @@
   <button id="bCam" type="button" title="Isometric / perspective (P)">Perspective</button>
   <button id="bReset" type="button" title="Back to the game's view (R)">Reset view</button>
 </div>
-<script src="node_modules/babylonjs/babylon.js"></script>
-<script src="node_modules/babylonjs-loaders/babylon.glTF2FileLoader.min.js"></script>
+<script>performance.mark('html');
+/* ?cdn=1 loads the same Babylon 9.27.1 from jsDelivr (the game's allowed CDN) instead of the local npm copy */
+(function () { const cdn = new URLSearchParams(location.search).has('cdn');
+  const B = cdn ? ['https://cdn.jsdelivr.net/npm/babylonjs@9.27.1/', 'https://cdn.jsdelivr.net/npm/babylonjs-loaders@9.27.1/'] : ['node_modules/babylonjs/', 'node_modules/babylonjs-loaders/'];
+  document.write(`<script src="${B[0]}babylon.js"><\/script><script src="${B[1]}babylon.glTF2FileLoader.min.js"><\/script>`); })();
+</script>
+<script>performance.mark('babylon');</script>
 <script src="arena.js"></script>
 </body></html>
