@@ -60117,8 +60117,8 @@ if(!PERF100.off&&typeof bar88Hold==='function'&&typeof ResizeObserver==='functio
   bar88Hold=function(){if(BAR100.seen&&!BAR100.clean)return;return base.apply(this,arguments)};
   const bar=document.querySelector('.bar');
   const run=()=>{BAR100.clean=true;try{base()}finally{BAR100.clean=false}};
-  if(bar)new ResizeObserver(()=>{BAR100.seen=true;run()}).observe(bar);
-  addEventListener('resize',()=>{BAR100.seen=false})}
+  if(bar)new ResizeObserver(()=>{BAR100.seen=true;requestAnimationFrame(run)}).observe(bar) /* next frame: the keeper may resize the bar, which inside the observer ends in "loop completed with undelivered notifications" */;
+  addEventListener('resize',()=>{if(bar)requestAnimationFrame(run);else BAR100.seen=false})}
 /* 292-v100srvA — v1.0 ONLINE SERVER BATCH A, the page side (shared rules: the "v1.0 SERVER BATCH A" section of 111-onlcore; the server: the
    "v1.0 SERVER BATCH A" block of server/src/routes.js; docs/backend.md "v1.0 server batch A"). His picks 2026-10-09 / 2026-10-11.
    1 · RANKED = EQUIPPED GEAR ONLY: a Ranked seat carries seat.onl.rk; giveLoadout then adds no class weapons on top of his kit (the class armor was

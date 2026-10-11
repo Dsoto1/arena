@@ -68,5 +68,5 @@ if(!PERF100.off&&typeof bar88Hold==='function'&&typeof ResizeObserver==='functio
   bar88Hold=function(){if(BAR100.seen&&!BAR100.clean)return;return base.apply(this,arguments)};
   const bar=document.querySelector('.bar');
   const run=()=>{BAR100.clean=true;try{base()}finally{BAR100.clean=false}};
-  if(bar)new ResizeObserver(()=>{BAR100.seen=true;run()}).observe(bar);
-  addEventListener('resize',()=>{BAR100.seen=false})}
+  if(bar)new ResizeObserver(()=>{BAR100.seen=true;requestAnimationFrame(run)}).observe(bar) /* next frame: the keeper may resize the bar, which inside the observer ends in "loop completed with undelivered notifications" */;
+  addEventListener('resize',()=>{if(bar)requestAnimationFrame(run);else BAR100.seen=false})}

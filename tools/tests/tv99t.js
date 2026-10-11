@@ -22,7 +22,7 @@ for(const k of ['arena','flavius','imperial','fresco','marble','deut','trit','co
 const pick=(s,k)=>JSON.parse(s)[k];const keys=['ink','panel2','gold','tileA','rim'];
 for(let a=1;a<=12;a++)for(let c=a+1;c<=12;c++){const same=keys.filter(k=>pick(on.P['loc'+a],k)===pick(on.P['loc'+c],k));ok(same.length<=1,`loc${a} vs loc${c} share ${same}`)}
 for(let k=1;k<=12;k++){const L=on.L[k];ok(['ring','hlMove','hlAtk','hlPush','hp','ap','mv','classColors','blood','gold','ink'].every(x=>!(x in L)),`loc flavour ${k} carries non-board keys`);ok(L.arena99===k,'arena99 '+k);ok(on.M[k]!==off.M[k],'stone '+k+' unchanged')}
-ok(on.mat5==='Desert amber 99'&&off.mat5===off.matDef,'theme stone '+on.mat5+' / '+off.mat5);
+ok((on.mat5==='Desert amber 99'||on.mat5==='stone100 5 African sandstone')/* v1.0: 277 gives each arena its own stone */&&off.mat5===off.matDef,'theme stone '+on.mat5+' / '+off.mat5);
 ok(on.low.length===0,'below AA: '+on.low.join(', '));
 ok(errs.length===0,'errors');console.log('ERRS',JSON.stringify(errs));await b.close();
 console.log(fails.length?'FAIL '+JSON.stringify(fails):'OK arena themes 99');process.exit(fails.length?1:0)})();

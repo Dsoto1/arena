@@ -85,7 +85,7 @@ o.k=await pm.evaluate(new Function('geo',`return (async()=>{const W8=ms=>new Pro
   await W8(700);const ban=(document.querySelector('.roomhd.b73-recruit .roomstat')||{}).textContent||'';const chip=(document.querySelector('.mtabs [data-id="recruit"] .mcount.c73')||{}).title||'';
   r.banner=!/lanista's hours/.test(ban); /* v0.87: the lanista's hours are gone */
   w.hours=0;MGR_REDRAW();await W8(300);const H=document.getElementById('mgrBody').innerHTML;r.needs=!/lanista's hours/.test(document.getElementById('mgrBody').innerText)&&!/recruiting hour/i.test(H);
-  w.hours=5;MGR.tab='ludus';MGR.run='promote';MGR_REDRAW();await W8(400);const pl=document.querySelector('.prom85');
+  w.hours=5;MGR.tab='ludus';MGR.run='promote';if(typeof LU100!=='undefined')LU100.panel='promote';MGR_REDRAW();await W8(400);const pl=document.querySelector('.prom85');
   r.promote=!pl&&!!document.querySelector('.runpanel [data-mg="criers2"]'); /* v0.87: no hours line on Promote */
   r.noOld=!/recruiting hour/i.test(document.getElementById('mgrBody').innerHTML);MGR.tab='recruit';MGR_REDRAW();await W8(300);return r})()`),geo.toString());
 const caps=[...o.k.a,...o.k.b,...o.k.c].map(x=>x.k).join('|');

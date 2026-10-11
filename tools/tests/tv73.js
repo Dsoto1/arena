@@ -8,7 +8,7 @@ await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLA
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_();const r={};MGR.tab='ludus';MGR_REDRAW();await W8(800);
-  r.banner=!!document.querySelector('.roomhd.b73-ludus .roomstat .ptbox');r.noHrs=!/Recruiting hours|Training hours/.test(document.querySelector('.mhead').textContent);
+  r.banner=!!document.querySelector('.roomhd.b73-ludus .roomstat .ptbox, .roomhd.lu100ban .lst91 .lu100n');r.noHrs=!/Recruiting hours|Training hours/.test(document.querySelector('.mhead').textContent);
   r.ovals=['ludus','recruit','practice'].every(k=>{const c=document.querySelector(`.mtabs [data-id="${k}"] .mcount.c73`);return c&&!c.hidden});
   for(const k of ['roster','night','news','league','imp','trophy','sched','me','exch']){MGR.tab=k;MGR_REDRAW();await W8(80);if(!document.querySelector('.roomhd.b73-'+k))r.missing=(r.missing||'')+k+' '}
   const fa=w.glads.find(g=>!g.contract&&g.alive!==false);fa.scout=2;MGR.tab='recruit';MGR.sel=fa.id;MGR.recFor=fa.id;MGR.recStep=1;MGR_REDRAW();await W8(300);

@@ -10,7 +10,7 @@ const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const W8=ms=>pg.waitForTimeout(ms);
 const o={};
 Object.assign(o,await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);
-  newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;MGR.tab='ludus';MGR.run='promote';const w=W_(),m=me();m.coin=Math.max(m.coin,200);w.hours=Math.max(w.hours,4);MGR_REDRAW();await W8(400);
+  newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;MGR.tab='ludus';MGR.run='promote';if(typeof LU100!=='undefined')LU100.panel='promote';const w=W_(),m=me();m.coin=Math.max(m.coin,200);w.hours=Math.max(w.hours,4);MGR_REDRAW();await W8(400);
   const q=s=>document.querySelector(s);const r={};
   const bt=q('#mgrPane [data-pg84="open"]');r.btn=!!bt&&/Paint the programmata/.test(bt.textContent);bt&&bt.click();await W8(300);
   r.setup=!!q('#mgrPane .pg84set')&&document.querySelectorAll('#mgrPane .pg84c').length===12;

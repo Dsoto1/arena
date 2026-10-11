@@ -72,7 +72,7 @@ Object.assign(o,o3);
 await shot('fa85_martyr','.fa85note');
 await pg.evaluate(()=>{const p=document.querySelector('.fa85note [data-note85]');if(p)p.click()});
 /* the martyr's record */
-await pg.evaluate(async({C})=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));MGR.tab='ludus';MGR.run='ledger';MGR_REDRAW();await W8(400);const el=[...document.querySelectorAll('#mgrBody .card2')].find(x=>/The fallen/.test(x.textContent));if(el)el.scrollIntoView()},o);
+await pg.evaluate(async({C})=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));MGR.tab='ludus';MGR.run='ledger';if(typeof LU100!=='undefined')LU100.panel='ledger';MGR_REDRAW();await W8(400);const el=[...document.querySelectorAll('#mgrBody .card2')].find(x=>/The fallen/.test(x.textContent));if(el)el.scrollIntoView()},o);
 await pg.waitForTimeout(300);
 o.fallenDom=await pg.evaluate(()=>{const el=[...document.querySelectorAll('#mgrBody .card2')].find(x=>/The fallen/.test(x.textContent));return !!el&&/Martyr/.test(el.textContent)});
 await shot('fa85_fallen');

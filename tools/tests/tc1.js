@@ -17,7 +17,7 @@ await pg.click('#mgrBody [data-wd100h]:not(.me)');await pg.waitForTimeout(400);a
 await pg.evaluate(()=>{const m=mgrById(MGR.teamId);m.relB=60;document.querySelector('#mgrBody').innerHTML=mgrHTML()});await pg.click('[data-mg="envoy"][data-id$="|trade"]');await pg.waitForTimeout(300);
 await pg.click('[data-mg="tradego"]');await pg.waitForTimeout(300);await pg.screenshot({path:'shot_trade.png'});
 out.tradeMsg=await pg.evaluate(()=>MGR.trade?MGR.trade.msg:'done');
-await pg.evaluate(()=>{MGR.tab='ludus';MGR.run='fac';$('#mgrBody').innerHTML=mgrHTML()});await pg.waitForTimeout(300);
+await pg.evaluate(()=>{MGR.tab='ludus';MGR.run='fac';if(typeof LU100!=='undefined')LU100.panel='fac';$('#mgrBody').innerHTML=mgrHTML()});await pg.waitForTimeout(300);
 await pg.evaluate(()=>document.querySelector('.faccard').scrollIntoView());await pg.waitForTimeout(200);await pg.screenshot({path:'shot_fac.png'});
 await pg.evaluate(()=>{MGR.tab='sched';$('#mgrBody').innerHTML=mgrHTML();$('#mBody').scrollTop=0});await pg.waitForTimeout(300);await pg.screenshot({path:'shot_season.png'});
 await pg.evaluate(()=>{const fa=freeAgents()[0];MGR.tab='recruit';MGR.rsel=fa.id;MGR.sel=fa.id;$('#mgrBody').innerHTML=mgrHTML()});await pg.waitForTimeout(300);await pg.screenshot({path:'shot_recruit.png'});

@@ -77,7 +77,7 @@ const run=async(mode)=>{const vp=mode==='p'?{width:390,height:844}:{width:844,he
   ok(rail&&rail.hd===0&&rail.rows===1&&rail.h<=60&&rail.scroll,mode+' studio: one swipe row of tabs '+JSON.stringify(rail));
   await check('studio',['#mClose','#studio [data-st="tab"][data-v="classes"]']);await close();
   /* 7 · Online (mock): landing, Domus, Armory & Market, a room */
-  await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Vettius'});ONL.domus=(await NET.req('domus.create',{name:'Vettii'})).domus;
+  await P.evaluate(async()=>{ONLC.SLOT100.start=4;if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Vettius'});ONL.domus=(await NET.req('domus.create',{name:'Vettii'})).domus;
     const a=await NET.req('char.create',{name:'Alpha',cls:'hero'});await NET.req('char.create',{name:'Beta',cls:'soldier'});await NET.req('char.active',{char:a.id});ONL.char=a});
   const onl=async(tab,n,sels)=>{await P.evaluate(t=>{onlineOpen(t)},tab);await P.waitForSelector('#onl .onl-rail',{timeout:15000}).catch(()=>{});await W(1800);
     const rl=await P.evaluate(()=>{const r=document.querySelector('#onl .onl-rail');return r?Math.round(r.getBoundingClientRect().height):0});ok(rl>0&&rl<=64,`${mode} online ${n}: the rail is one slim row (${rl} px)`);
