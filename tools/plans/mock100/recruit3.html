@@ -139,7 +139,8 @@ body.s-scout .pane.scout,body.s-court .pane.court,body.s-offer .pane.offer{displ
 .su{display:grid;grid-template-columns:24px minmax(0,1fr) 70px 24px;gap:6px;align-items:center;height:18px;font-size:12.5px;margin-top:1px}
 .su .rd{width:17px;height:17px;box-shadow:0 0 0 1.5px #c9a458}
 .su .bar{height:6px;border-radius:3px;background:#3a2c1e;overflow:hidden}.su .bar i{display:block;height:100%}
-.su .v{font:11.5px var(--mono);text-align:right}.su.me{color:var(--gold2)}
+.su .v{font:11.5px var(--mono);text-align:right}
+#suit2 .su{height:24px}.su.me{color:var(--gold2)}
 .need{font-size:11.5px;color:var(--muted);height:16px;margin-top:2px}.need b{color:var(--gold2)}
 .notes{background:linear-gradient(90deg,#c9b083,var(--parch) 6%,var(--parch) 94%,#c9b083);color:#3a2616;border-color:#8a6a3a}
 .notes .ph{color:#6b4a22}
@@ -167,8 +168,8 @@ body.s-scout .pane.scout,body.s-court .pane.court,body.s-offer .pane.offer{displ
 .verdict div,.verdict p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px;margin:0;height:20px}.verdict p{color:var(--muted);font-size:12.5px}
 .verdict b{color:#ffb3a6}
 .obtn{margin-top:8px;width:100%;height:42px;border-radius:7px;border:1px solid #d0574a;background:linear-gradient(#b8352a,#8f2219);color:#fff3e6;font:400 17px var(--display);letter-spacing:.06em}
-.sign{height:100%;min-height:200px}
-.sign .pic{background:url(img3/m_colos.jpg) center/cover}
+.sign{height:100%;min-height:240px}
+.sign .pic{background:url(img3/m_temple.jpg) center 40%/cover}
 .sign .rd.big{position:absolute;z-index:5;left:50%;top:14px;transform:translateX(-50%);width:110px;height:110px;background-image:url(img3/r3_rec.png)}
 .sign .rd.cl{position:absolute;z-index:5;right:14px;bottom:30px;width:56px;height:56px;background-image:url(img3/r3_c_clerk.png)}
 .sign .coins{position:absolute;z-index:5;left:18px;bottom:28px;display:flex;gap:2px}.sign .coins i{width:22px;height:22px;background:url(../../../assets/coin.webp) center/contain no-repeat;filter:drop-shadow(1px 2px 1px #000)}
@@ -278,7 +279,15 @@ body.ph .sign{min-height:170px}
      </section>
      <div class="fr sign"><div class="pic"></div><span class="rd big"></span><span class="rd cl" title="Fabia Dura, your Clerk"></span><span class="coins"><i></i><i></i><i></i><i></i></span><span class="cap">Fabia Dura draws up the tablets</span></div>
     </div>
-    <section class="panel" style="padding:6px 8px"><div class="ph">Where he stands</div><div id="suit2"></div></section>
+    <div class="offr">
+     <section class="panel" style="padding:6px 8px"><div class="ph">Where he stands</div><div id="suit2"></div></section>
+     <section class="panel lg"><div class="ph">On your ledger · if he signs</div>
+      <div class="row"><span>Wage</span><span class="one">24 a week × 8 weeks</span><span><span class="coin"></span> 192</span></div>
+      <div class="row"><span>Bonus</span><span class="one">none · counts toward the weekly wage</span><span>0</span></div>
+      <div class="row"><span>Net / wk</span><span class="one">+26 → +2 a week before fees</span><span>+2</span></div>
+      <div class="row"><span>Pledge</span><span class="one">main event within 2 weeks · break it and Honor pays</span><span>off</span></div>
+      <div class="row"><span>Rival</span><span class="one">Severianus may outbid by ×1.2 in 2 weeks</span><span>~28</span></div></section>
+    </div>
    </div>
   </div></main>
  </div>
@@ -332,7 +341,7 @@ document.getElementById('pg').innerHTML=PITCH.map(([k,n,full,tn,g,gain,tags,proj
 document.getElementById('feastPic').outerHTML=`<div class="pic">${typeof SCENE99==='function'?SCENE99('council','tile'):''}</div>`;
 const SUIT=[['Ludus Severianus','Domitia Severa','#8a5cc0',48,'riv1'],['Ludus Crispinus','Aulus Vettius Crispus','#c0433a',46,'riv0'],['Ludus Virgilanti (you)','Virgilante','#d6ab4c',45,null],['Ludus Vulpes','Titus Murena','#dc7a34',37,'riv3'],['The Pompeian Pit','Old Proculus','#9a8f84',33,'riv2']];
 const suit=()=>SUIT.map(([h,n,c,v,f])=>`<div class="su ${f?'':'me'}" title="${h} — ${n}"><span class="rd" style="${f?`background-image:url(${IM}r3_${f}.png)`:'background:linear-gradient(#c0433a,#7a1a12)'}"></span><span class="one">${h}</span><span class="bar"><i style="width:${v}%;background:${c}"></i></span><span class="v">${v}</span></div>`).join('');
-document.getElementById('suit').innerHTML=suit();document.getElementById('suit2').innerHTML=`<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px">${suit()}</div>`;
+document.getElementById('suit').innerHTML=suit();document.getElementById('suit2').innerHTML=`${suit()}`;
 document.getElementById('pips').innerHTML=Array.from({length:20},(_,i)=>`<i class="${i<3?'him':i<6?'u':''}"></i>`).join('');
 const LIST=[['The Wolf of Dacia','Royalty','~B+',42,'rec'],['Lartius Saxo','Venatore','~B',40],['Gaius Pollio','Hero','~B',37],['Fatum the Oathless','Slave','~C+',29],['Pertinax the Pale','Amazonia','~C+',36],['Statius Vitalis','Hero','~C+',31],['Decimus Scaurus','Soldier','~C',28],['Spurius Taurus','Hero','~C',26],['Aulus Messala','Slave','~C',22],['Procella of Neapolis','Royalty','~D',30],['Saxo Bone-Breaker','Veteranus','~D',49],['Vespa the Quiet Blade','Soldier','~D',35],['Procella the Butcher','Hero','~D',39]];
 document.getElementById('lrows').innerHTML=LIST.map(([n,c,g,iv,f],i)=>`<div class="lr ${i===0?'on':''}" title="${n} · ${c}"><span class="av" style="${f?`background-image:url(${IM}r3_${f}.png)`:`background-image:url(${IM}r3_crowd${(i*5)%14}.png)`}"></span><b class="one">${n}</b><span class="cl one">${c}</span><span class="gr">${g}</span><span class="iv">${iv}</span></div>`).join('');
