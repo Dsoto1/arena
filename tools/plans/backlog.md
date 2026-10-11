@@ -200,3 +200,11 @@ FREE AGENT HEALING (his pick a, 2026-10-11): BUILT — free agents' surgeon woun
 BABYLON.JS (his call 2026-10-11): KEEP the current 2D canvas + render-once 3D approach. A look-only Babylon.js arena prototype is being built in tools/plans/babylon100/ (live 3D board, tokens, day/night, speed + size measured) — not in the game.
 CITY CROWD STUTTER: FIXED (279-v100city, tv100c). Open: the city walkers ignore Reduce motion (pre-existing).
 CITY SQUARE CROWD (his change 2026-10-11): crowd = ambient life only (walk/stand), figures NOT clickable/hoverable (performance); every spectator action via the right sidebar; stalls/buildings/gate stay clickable. Added to the city Reduce-motion fix.
+
+## BEAST 3D MODELS — his note (2026-10-11), applies to every beast round and the real integration
+Each species its own skeleton + animation config. Essential joints:
+Bear / Wolf: root, spine, neck, head, 4 shoulders/hips, 4 elbows/knees, 4 paws · Lion: like the wolf + a SEPARATE mane mesh ·
+Snake: root, head, neck + a chain of spine segments · Eagle (Zora): root, neck, head, shoulders, wing joints, elbows, wrists, tail, legs, talons.
+Performance: reuse geometry + materials; share animation logic between similar quadrupeds adapted to proportions; skeletal animation (no
+per-part updates); shadows/transparency/dynamic lights limited; lower-detail models for distant/small creatures; never a new mesh or
+material per turn. (Board today = render-once sheets, so most of this governs the sheet renderer + the Babylon prototype.)
