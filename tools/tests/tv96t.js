@@ -4,7 +4,7 @@ const {chromium}=require('playwright');(async()=>{const b=await chromium.launch(
 const SH=process.env.BTSHOTS?'tools/plans/bt96':process.env.SHOTS;
 for(const W of [2000,1440,390]){
 const pg=await b.newPage({viewport:{width:W,height:900}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message));
-await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_any100off','1')});
 await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;MGR.tab='night';MGR_REDRAW();await W8(600)});
 for(const k of ['fresh','mine','won','lost','dead','noentry','bye']){

@@ -554,7 +554,7 @@ function applyBout(boutIdx,res,opt={}){
       if(pm2.rigStrikes>=2){collapseLudus(w,pm2,_T('seized by Flavius for fixing bouts — twice'));return}}
     else tnews(_T`The fixed ${TIERS[b.tier].n} pays out quietly. Nobody talks. This time.`)}
   const wn=[...wins].map(gById).filter(Boolean);
-  mnews(_T`Week ${wkOf(w.week)} · ${boutDay(b.tier)}'s ${TIERS[b.tier].n} at ${LOCATIONS[w.night.loc].n}: ${wn.length?wn.map(g=>`<b>${esc(g.name)}</b>`).join(' & ')+' wins':_T('no victor')}. ${lines.slice(1).join('; ')}`,wn.some(g=>g.contract&&g.contract.mgr===me().id)?'big':'');
+  mnews(_T`Week ${wkOf(w.week)} · ${typeof any100DayOf==='function'?any100DayOf(b):boutDay(b.tier)}'s ${TIERS[b.tier].n} at ${LOCATIONS[w.night.loc].n}: ${wn.length?wn.map(g=>`<b>${esc(g.name)}</b>`).join(' & ')+' wins':_T('no victor')}. ${lines.slice(1).join('; ')}`,wn.some(g=>g.contract&&g.contract.mgr===me().id)?'big':'');
   saveWorld();
 }
 /* endWeek — ends the week: wages, injuries, training, morale, contracts, deaths of old age and the world, interest drift, pledges, feuds, careers turning, new faces, the loan and bankruptcy, season end and the Superbus, then the next match night. Returns false until every bout and verdict is settled. Wrapped by many later modules. */
@@ -1155,7 +1155,7 @@ function lagBannerHTML(){const w=W_();const lag=calLag();if(lag<=0||w.ownCal)ret
     <div class="acts"><button class="btn primary" type="button" data-mg="catchup">${_T`⏩ Let the doctores run the ludus<small>simulate ${Math.min(lag,12)} week${Math.min(lag,12)===1?'':'s'}: bouts, verdicts (blood money for your best, the thumb for the rest, the rudis refused), wages and training</small>`}</button><button class="btn" type="button" data-mg="owncal">${_T`Keep our own calendar<small>this career lives on its own dates; the empire won't wait</small>`}</button></div></div>`}
 /* catchUpWeeks — lets the doctores simulate the weeks a career is behind the empire (up to 12). */
 async function catchUpWeeks(){const w=W_(),m=me();let n=Math.min(12,calLag());const log0=[];const coin0=m.coin,fame0=m.fame,wins0=m.wins;
-  for(let k=0;k<n;k++){if(w.special&&!w.special.done&&typeof specAutoRun==='function')await specAutoRun();for(let i=0;i<w.night.bouts.length;i++)if(!w.night.bouts[i].done)await runBoutSim(i);
+  for(let k=0;k<n;k++){if(w.special&&!w.special.done&&typeof specAutoRun==='function')await specAutoRun();for(const i of (typeof any100Seq==='function'?any100Seq(w.night):w.night.bouts.map((b,k)=>k)))if(!w.night.bouts[i].done)await runBoutSim(i);
     let guard=0;while((w.pend||[]).length&&guard++<30){const P=w.pend[0];const g=gById(P.gid);
       if(P.t==='thumb')settlePending(0,null,{d6:1+Math.floor(Math.random()*6),d12:1+Math.floor(Math.random()*12)});
       else if(P.t==='blood')settlePending(0,g&&effOvr(g)>=58&&m.coin>=P.price+20?'pay':'let');else settlePending(0,'stay')}
@@ -1290,7 +1290,7 @@ function nightResultsHTML(){const w=W_(),n=w.night,m=me();if(!n||!n.bouts.every(
 function nightHTML(){
   const w=W_(),n=w.night,m=me();const L=LOCATIONS[n.loc];
   const mine=rosterOf(m);const entered=new Set(n.bouts.flatMap(b=>b.ents));
-  const card=(b,bi)=>{/* v0.30: the card runs in order — undercard, feature, then the main event */const inOrder=n.bouts.slice(0,bi).every(x=>x.done);
+  const card=(b,bi)=>{/* v0.30: the card runs in order — undercard, feature, then the main event */const inOrder=(typeof any100Before==='function'?any100Before(n,bi):n.bouts.slice(0,bi)).every(x=>x.done);
     const T=TIERS[b.tier];const odds=boutOdds(b);const est=boutProbs(b,'mine');const bk=boutProbs(b,'book');
     const myIn=b.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===m.id});
     const avail=mine.filter(g=>!entered.has(g.id)&&!g.inj&&effOvr(g)>=T.lo-6&&effOvr(g)<=T.hi+6); /* v0.95: every fit fighter (the starters are put on the card by default, see 229-v95mgr) */ // the injured sit the week out
@@ -1948,12 +1948,12 @@ function wireManager(done){
       m.coin-=rigCost(bo);const mine2=bo.ents.map(gById).filter(g2=>g2&&g2.contract&&g2.contract.mgr===m.id).sort((x,y)=>effOvr(y)-effOvr(x))[0];
       bo.rig=mine2.id;w.rigCount=(w.rigCount||0)+1;tnews(_T`Fixed the ${TIERS[bo.tier].n}: ${coinAmt87(rigCost(bo))} under the table for ${esc(mine2.name)}'s "win".`,'bad');
       saveWorld();say(_T`Coin moves in dark corners. ${esc(mine2.name)} will win the ${TIERS[bo.tier].n} — as long as nobody talks.`);redraw();return}
-    if(a==='sim'){{const bi9=+id;if(w.night.bouts.slice(0,bi9).some(x=>!x.done)){say(_T('The card runs in order — settle the earlier bout first.'));return}}MGR.busy=true;try{await runBoutSim(+id)}finally{MGR.busy=false}redraw();if(w.night.bouts.every(b=>b.done)){const r=$('#nightRes');if(r){r.scrollIntoView({block:'start'});r.classList.add('flash')}}return}
-    if(a==='simall'){MGR.busy=true;try{for(let i=0;i<w.night.bouts.length;i++)if(!w.night.bouts[i].done)await runBoutSim(i)}finally{MGR.busy=false}redraw();{const r=$('#nightRes');if(r){r.scrollIntoView({block:'start'});r.classList.add('flash')}}return}
+    if(a==='sim'){{const bi9=+id;if((typeof any100Before==='function'?any100Before(w.night,bi9):w.night.bouts.slice(0,bi9)).some(x=>!x.done)){say(_T('The card runs in order — settle the earlier bout first.'));return}}MGR.busy=true;try{await runBoutSim(+id)}finally{MGR.busy=false}redraw();if(w.night.bouts.every(b=>b.done)){const r=$('#nightRes');if(r){r.scrollIntoView({block:'start'});r.classList.add('flash')}}return}
+    if(a==='simall'){MGR.busy=true;try{for(const i of (typeof any100Seq==='function'?any100Seq(w.night):w.night.bouts.map((b,k)=>k)))if(!w.night.bouts[i].done)await runBoutSim(i)}finally{MGR.busy=false}redraw();{const r=$('#nightRes');if(r){r.scrollIntoView({block:'start'});r.classList.add('flash')}}return}
     if((a==='spect'||a==='watch'||a==='fight')&&typeof travelBlock==='function'&&travelBlock(_T('watch from the stands')))return;
-    if(a==='spect'){{const bi9=parseInt(id);if(w.night.bouts.slice(0,bi9).some(x=>!x.done)){say(_T('The card runs in order — settle the earlier bout first.'));return}}SPECT.pending=true;done('watch:'+id);return}
-    if(a==='watch'){{const bi9=parseInt(id);if(w.night.bouts.slice(0,bi9).some(x=>!x.done)){say(_T('The card runs in order — settle the earlier bout first.'));return}}done('watch:'+id);return}
-    if(a==='fight'){{const bi9=parseInt(id);if(w.night.bouts.slice(0,bi9).some(x=>!x.done)){say(_T('The card runs in order — settle the earlier bout first.'));return}}done('fight:'+id);return}
+    if(a==='spect'){{const bi9=parseInt(id);if((typeof any100Before==='function'?any100Before(w.night,bi9):w.night.bouts.slice(0,bi9)).some(x=>!x.done)){say(_T('The card runs in order — settle the earlier bout first.'));return}}SPECT.pending=true;done('watch:'+id);return}
+    if(a==='watch'){{const bi9=parseInt(id);if((typeof any100Before==='function'?any100Before(w.night,bi9):w.night.bouts.slice(0,bi9)).some(x=>!x.done)){say(_T('The card runs in order — settle the earlier bout first.'));return}}done('watch:'+id);return}
+    if(a==='fight'){{const bi9=parseInt(id);if((typeof any100Before==='function'?any100Before(w.night,bi9):w.night.bouts.slice(0,bi9)).some(x=>!x.done)){say(_T('The card runs in order — settle the earlier bout first.'));return}}done('fight:'+id);return}
     if(a==='endweek'){MGR.busy=true;let ok2=false;try{ok2=await endWeek()}finally{MGR.busy=false}if(ok2){MGR.confirmEnd=false;MGR.tab=w.awardShow&&!w.awardShow.seen?'awards':'paper';MGR.awI=0;redraw();$('#mBody').scrollTop=0}else{const pend=(w.pend||[]).length;MGR.tab='night';say(w.special&&!w.special.done?_T('An invitational is on this week — settle it on Match Week first.'):pend?_T('Settle the verdicts awaiting you first — thumbs, blood money and rudis choices.'):_T('Finish every bout first.'));
       if(pend){const pb=$('#pendbox');if(pb){pb.scrollIntoView({behavior:'smooth',block:'start'});pb.classList.remove('flash');void pb.offsetWidth;pb.classList.add('flash')}}}return}
     if(a==='pblood'){const [pi,ch]=id.split('|');const msg=settlePending(+pi,ch);saveWorld(true);say(msg);return}

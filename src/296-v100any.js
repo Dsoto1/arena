@@ -1,8 +1,8 @@
 /* v1.0 (296-v100any) · MANAGER — ENTER ANY EVENT (his picks 1a 2b 3a 4a 5a 6b 7 8a; mock tools/plans/mock100/anyevent.html, shots tools/plans/any100/).
-   • 1a THE WEEK'S SPECIALS sit on Match Week ON TOP of Bouts I–III: extra entries in w.night.bouts with tier 'spc100' (TIERS.spc100, BOUT_DAY/BT85_DAY
-     Sunday) and b.any100 = {fee, src 'fx'|'ed', rx, side:{gid:'A'|'B'}, paid:{gid:coin}, hire:{gid:{by,c}}, ed:{gid:mgrId}}. A special fixture (Juggernaut,
+   • 1a THE WEEK'S SPECIALS sit on Match Week ON TOP of Bouts I–III: extra entries in w.night.bouts with tier 'spc100' (TIERS.spc100; its own DAY b.any100.day Fri/Sat/Sun by hash of world+week+event, spread over
+     different days; the card plays in day order — a special after the classic bout of its day: any100Seq/any100Before, 17-manager's order guards use them) and b.any100 = {fee, src 'fx'|'ed', rx, side:{gid:'A'|'B'}, paid:{gid:coin}, hire:{gid:{by,c}}, ed:{gid:mgrId}}. A special fixture (Juggernaut,
      Familia, Golden Eagle…) leaves the Main event (which turns Classic · Cassian) and becomes the first headline; the editor adds one more from ANY100.pool
-     each week (hash of world id + absolute week — never the dice RNG). Triumviratus stays the undercard (272). No specials in bye, rivalry or lesson weeks.
+     each week (hash of world id + absolute week — never the dice RNG). Triumviratus stays the undercard (272). No specials in bye, rivalry or lesson weeks. Never in the pool and never turned into a headline: Gauntlet and Commodus (ANY100.ban) — as the week's fixture they stay the Main event.
      They play through the existing bout path (boutCfg / runBoutSim / watchBout / applyBout / mgrAfterWatch), after the Main event (the card runs in order).
    • 2b ENTRY FEE per seat you fill (b.any100.fee; paid when you enter, refunded when you withdraw before the full card is set), no appearance fee,
      a bigger purse (main purse × 1.8, the fixture × 1.2 × its own multiplier, rookie bouts × 0.55). Team events split the purse between the winners.
@@ -20,13 +20,23 @@
    UI: "This week at <city>" card (.any100wk) above the bout cards (classic + headline rows, seats, purse/fee, Enter a fighter ▾ / ✕); the picker popup
    #any100pk (starters / bench, grade, fatigue, fit; partner choices); special bout cards keep Bet / Watch / Fight / Simulate, their Enter/Withdraw
    become ours. Kill switch localStorage flavius_any100off=1 (no new specials, no week's card; specials already made keep working). Test tv100ae. */
-const ANY100={pool:['familia','juggernaut','goldenEagle','ludus','naumachia','chariot','orpheus','gauntlet'],every:3,hi:70,lo:61,
+const ANY100={pool:['familia','juggernaut','goldenEagle','ludus','naumachia','chariot','orpheus'],ban:['gauntlet','commodus'],every:3,hi:70,lo:61,
   k:{fx:1.2,ed:1.8,lo:0.55},hireBase:6,pk:null};
 function any100Off(){try{return localStorage.getItem('flavius_any100off')==='1'}catch(e){return false}}
 TIERS.spc100={n:_T('Headline special'),ev:'familia',purse:0,fee:0,lo:0,hi:99,fame:6};
 try{BOUT_DAY.spc100=_T('Sunday')}catch(e){}
 try{BT85_DAY.spc100=_T('Sun')}catch(e){}
 const any100Sp=b=>!!(b&&b.tier==='spc100'&&b.any100);
+/* DAYS (his 2a): a special has its own day, Fri/Sat/Sun (b.any100.day 0-2, default Sunday); it plays after the classic bout of its day. Classics keep array slots 0-2. */
+const ANY100_RANK={under:0,feature:1,main:2};
+const any100DayI=b=>{const d=b&&b.any100&&b.any100.day;return d===0||d===1||d===2?d:2};
+const any100DayOf=b=>any100Sp(b)?[_T('Friday'),_T('Saturday'),_T('Sunday')][any100DayI(b)]:boutDay(b.tier);
+const any100DayShort=b=>any100Sp(b)?[_T('Fri'),_T('Sat'),_T('Sun')][any100DayI(b)]+' ★':(BT85_DAY[b.tier]||'');
+const any100Key=b=>any100Sp(b)?any100DayI(b)*2+1:(ANY100_RANK[b.tier]||0)*2;
+/* indices of n.bouts in play order (day, classic before the special of its day, then array order) */
+function any100Seq(n){return n.bouts.map((b,i)=>i).sort((a,c)=>any100Key(n.bouts[a])-any100Key(n.bouts[c])||a-c)}
+/* the bouts that must be settled before bout bi */
+function any100Before(n,bi){const k=any100Key(n.bouts[bi]);return n.bouts.filter((x,i)=>i!==bi&&(any100Key(x)<k||(any100Key(x)===k&&i<bi)))}
 const any100Team=b=>{const E=b&&EVENTS[b.ev];return !!(E&&E.teams===1)};
 function any100Own(gid,m){const g=gById(gid);return !!(g&&m&&g.contract&&g.contract.mgr===m.id)}
 function any100Used(w){return new Set(w.night.bouts.flatMap(b=>b.ents))}
@@ -90,16 +100,16 @@ function any100Make(w){const n=w&&w.night;if(!n||!n.bouts||w.tutorial||n.bye||n.
   if(w.closedBye&&w.closedBye.week===w.week)return;
   n.any100={from:{},full:false};const FX=n.fx||{};const main=n.bouts.find(b=>b.tier==='main');const list=[];
   const gate=main&&main.purse?main.purse/(TIERS.main.purse*(main.special&&FX.purse?FX.purse:1)):1;
-  if(main&&!main.done&&main.special&&main.ev!=='triumviratus'&&EVENTS[main.ev]){list.push({ev:main.ev,src:'fx',k:ANY100.k.fx*(FX.purse||1.5)});n.any100.fx=main.ev;
+  if(main&&!main.done&&main.special&&main.ev!=='triumviratus'&&!ANY100.ban.includes(main.ev)&&EVENTS[main.ev]){list.push({ev:main.ev,src:'fx',k:ANY100.k.fx*(FX.purse||1.5)});n.any100.fx=main.ev;
     main.ev=TIERS.main.ev;main.special=false;main.purse=Math.max(10,Math.round(TIERS.main.purse*gate));
     while(main.ents.length>boutSize(main)){const out=main.ents.map(gById).filter(g=>g&&!(g.contract&&mgrById(g.contract.mgr)&&mgrById(g.contract.mgr).isPlayer)).pop();if(!out)break;main.ents.splice(main.ents.indexOf(out.id),1)}
     fillNight()}
-  const pool=ANY100.pool.filter(k=>EVENTS[k]&&!list.some(x=>x.ev===k));const h=any100Hash(w,'ed');
+  const pool=ANY100.pool.filter(k=>EVENTS[k]&&!ANY100.ban.includes(k)&&!list.some(x=>x.ev===k));const h=any100Hash(w,'ed');
   if(pool.length)list.push({ev:pool[h%pool.length],src:'ed',k:ANY100.k.ed});
   const hr=any100Hash(w,'rx');if(list.length&&hr%ANY100.every===0){const i=(hr>>>4)%list.length;list[i].rx={k:(hr>>>9)&1?'hi':'lo'}}
-  for(const x of list){const sz=boutSize({ev:x.ev});const purse=Math.max(20,Math.round(TIERS.main.purse*gate*x.k*(x.rx&&x.rx.k==='lo'?ANY100.k.lo:1)));
+  const used=[];for(const x of list){const sz=boutSize({ev:x.ev});let day=any100Hash(w,'day:'+x.ev)%3;if(used.includes(day)&&used.length<3)while(used.includes(day))day=(day+1)%3;used.push(day);x.day=day;const purse=Math.max(20,Math.round(TIERS.main.purse*gate*x.k*(x.rx&&x.rx.k==='lo'?ANY100.k.lo:1)));
     const fee=Math.max(4,Math.round(EVENTS[x.ev].teams===1?purse/(sz*2.5):purse/10));
-    n.bouts.push({tier:'spc100',ev:x.ev,purse,special:true,fee:0,ents:[],done:false,res:null,bets:[],any100:{fee,src:x.src,rx:x.rx||null,side:{},paid:{},hire:{},ed:{}}})}
+    n.bouts.push({tier:'spc100',ev:x.ev,purse,special:true,fee:0,ents:[],done:false,res:null,bets:[],any100:{fee,src:x.src,day:x.day,rx:x.rx||null,side:{},paid:{},hire:{},ed:{}}})}
   any100Rivals(w,1)}
 /* rival houses enter unused fighters (one per house per special), leaving `leave` seats open */
 function any100Rivals(w,leave){const n=w.night;
@@ -193,7 +203,11 @@ function any100Drop(bi){const w=W_(),m=me(),n=w.night,b=n.bouts[bi];if(!any100Sp
 {const base=boutTrack85;boutTrack85=function(){const h=base.apply(this,arguments);try{const w=W_(),n=w&&w.night;if(!h||!n||!n.bouts.some(any100Sp))return h;
     const T=document.createElement('template');T.innerHTML=h;
     for(const el of T.content.querySelectorAll('[data-bt85]')){const b=n.bouts[+el.dataset.bt85];if(!any100Sp(b))continue;el.classList.add('bt100s');
-      const d=el.querySelector('.bt85d');if(d)d.textContent=_T('Sun ★');const nm=el.querySelector('b');if(nm)nm.textContent=(EVENTS[b.ev]||{}).n||'';el.title=_T`★ Headline special · ${(EVENTS[b.ev]||{}).n||''}`}
+      const d=el.querySelector('.bt85d');if(d)d.textContent=any100DayShort(b);const nm=el.querySelector('b');if(nm)nm.textContent=(EVENTS[b.ev]||{}).n||'';el.title=_T`★ Headline special · ${(EVENTS[b.ev]||{}).n||''}`}
+    {const w0=T.content.querySelector('.roomstat.bt85w');if(w0){const bs=[...w0.querySelectorAll('[data-bt85]')];const ar=w0.querySelector('.bt85a');const tail=[...w0.children].filter(c=>!c.matches('[data-bt85],.bt85a'));
+      const ord=any100Seq(n);const by=new Map(bs.map(e=>[+e.dataset.bt85,e]));for(const e of bs){if(!e.classList.contains('done')){e.classList.remove('next');e.classList.add('later')}}
+      const nx=ord.find(i=>!n.bouts[i].done);if(nx!=null&&by.get(nx)){by.get(nx).classList.remove('later');by.get(nx).classList.add('next')}
+      w0.innerHTML='';ord.forEach((i,k)=>{if(k&&ar)w0.appendChild(ar.cloneNode(true));if(by.get(i))w0.appendChild(by.get(i))});for(const t of tail)w0.appendChild(t)}}
     return T.innerHTML}catch(e){console.error(e);return h}}}
 
 /* ---------- the week's card + the special bout cards ---------- */
@@ -210,7 +224,7 @@ function any100Chips(b){const E=EVENTS[b.ev]||{};const o=[];const sp=any100Sp(b)
   return o.join('')}
 function any100Row(w,b,i,mine){const n=w.night,m=me();const E=EVENTS[b.ev]||{};const sp=any100Sp(b);const size=boutSize(b);const opn=size-b.ents.length;
   const mineIn=b.ents.filter(id=>mine.has(id)||(sp&&((b.any100.hire[id]&&b.any100.hire[id].by===m.id)||b.any100.ed[id]===m.id)));const riv=b.ents.filter(id=>{const g=gById(id);return g&&g.contract&&!mine.has(id)}).length;
-  const day=sp?_T('SUN'):[_T('FRI'),_T('SAT'),_T('SUN')][i]||'';
+  const day=(sp?[_T('FRI'),_T('SAT'),_T('SUN')][any100DayI(b)]:[_T('FRI'),_T('SAT'),_T('SUN')][ANY100_RANK[b.tier]])||'';
   const note=opn>0?_T`<b>${opn} open</b> · ${riv} rival${riv===1?'':'s'}`:_T`full · ${b.ents.length} of ${size}`;
   let act='';
   if(b.done){const wn=((b.res&&b.res.winners)||[]).map(gById).filter(Boolean);act=`<div class="a1done">${_T('✓ fought')}${wn.length?' · 🏆 '+wn.map(g=>esc(g.name)).join(' & '):''}</div>`}
@@ -223,7 +237,7 @@ function any100Row(w,b,i,mine){const n=w.night,m=me();const E=EVENTS[b.ev]||{};c
     <div class="a1st">${any100Seats(b,mine)}<div class="a1sn">${note}</div></div>
     <div class="a1mon"><div><span>${_T('Purse')}</span><b>${ICO.coin} ${b.purse}</b></div>${fee}</div><div class="a1act">${act}</div></div>`}
 function any100PanelHTML(w){const n=w.night,m=me();const mine=new Set(rosterOf(m).map(g=>g.id));const L=LOCATIONS[n.loc]||{n:''};
-  const all=n.bouts.map((b,i)=>[b,i]);const cls=all.filter(([b])=>!any100Sp(b)),spc=all.filter(([b])=>any100Sp(b));
+  const all=n.bouts.map((b,i)=>[b,i]);const cls=all.filter(([b])=>!any100Sp(b)),spc=all.filter(([b])=>any100Sp(b)).sort((a,c)=>any100Key(a[0])-any100Key(c[0])||a[1]-c[1]);
   const ent=n.bouts.filter(b=>b.ents.some(id=>mine.has(id))).length;const full=!!(n.any100&&n.any100.full);
   return `<div class="any100wk" id="any100wk"><div class="a1hd"><b class="a1h">${_T`This week at ${esc(L.n)}`}</b><span class="a1k">${_T`Entered <b>${ent}</b> of ${n.bouts.length} events · one event per fighter`}</span></div>
     <div class="a1grp">${_T('Classic bouts')}</div>${cls.map(([b,i])=>any100Row(w,b,i,mine)).join('')}
@@ -233,13 +247,17 @@ function any100PanelHTML(w){const n=w.night,m=me();const mine=new Set(rosterOf(m
   try{h=base.apply(this,arguments)}finally{if(fx0)n.fx=fx0}
   try{if(typeof h!=='string'||!n||n.bye||!n.bouts)return h;const has=n.bouts.some(any100Sp);if(!has&&any100Off())return h;
     const T=document.createElement('template');T.innerHTML=h;const cards=[...T.content.querySelectorAll('.card2.bout')];const m=me();
-    cards.forEach((c,i)=>{const b=n.bouts[i];if(!any100Sp(b))return;c.classList.add('spc100');
+    cards.forEach((c,i)=>{const b=n.bouts[i];if(!any100Sp(b))return;c.classList.add('spc100');const bd=c.querySelector('.bday');if(bd)bd.textContent=any100DayOf(b);
       for(const x of c.querySelectorAll('[data-mg="enter"],[data-mg="withdraw"],select[id^="ent"]'))x.remove();
       const pu=c.querySelector('.bstat.purse');const fe=pu&&pu.nextElementSibling;if(fe)fe.innerHTML=`<i>${_T('Entry fee')}</i><b>−${b.any100.fee}${any100Team(b)?_T(' a seat'):''}</b>`;
       const tl=c.querySelector('.bouttitle');if(tl)tl.insertAdjacentHTML('beforeend',`<div class="a1chips">${any100Chips(b)}</div>`);
       const opn=boutSize(b)-b.ents.length;const tb=c.querySelector('table.tally');if(opn>0&&tb)tb.insertAdjacentHTML('afterend',`<p class="rc-sub a1open">${_T`${opn} open seat${opn===1?'':'s'} — rivals and free agents take them when you travel.`}</p>`);
       const acts=c.querySelector('.acts');const mineIn=b.ents.some(id=>any100Own(id,m));
       if(acts&&!b.done){acts.insertAdjacentHTML('afterbegin',mineIn?`<button type="button" class="btn" data-any100="drop|${i}">${_T`Withdraw<small>${n.any100&&n.any100.full?_T('no refund after the full card is set'):_T`the entry fee comes back`}</small>`}</button>`:`<button type="button" class="btn primary" data-any100="pick|${i}">${_T('⚔ Enter a fighter ▾')}<small>${_T`${b.any100.fee} coin a seat`}</small></button>`)}});
+    /* the cards sit in play order: a special follows the classic bout of its day */
+    cards.forEach((c,i)=>{const b=n.bouts[i];if(!any100Sp(b)||!c.parentNode)return;const k=any100Key(b);let at=null;
+      let ak=-1;cards.forEach((c2,j)=>{const b2=n.bouts[j];if(c2===c||c2.parentNode!==c.parentNode)return;const k2=any100Key(b2);const before=!any100Sp(b2)?k2<k:(k2<k||(k2===k&&j<i));if(before&&k2>=ak){at=c2;ak=k2}});
+      if(at&&at.nextElementSibling!==c)at.insertAdjacentElement('afterend',c)});
     const out=T.innerHTML;if(any100Off()||!cards.length)return out;
     const p=any100PanelHTML(w);const k=out.indexOf('<div class="card2 bout');return k>=0?out.slice(0,k)+p+out.slice(k):out+p}catch(e){console.error(e);return h}}}
 
@@ -265,7 +283,7 @@ function any100PickHTML(){const P=ANY100.pk;const w=W_(),m=me();const n=w.night,
   const sum=!g?_T('Pick a fighter.'):`${cur&&cur.i!==P.bi?_T`${g.name} leaves ${any100Lbl(cur.b,cur.i)} open.`:''} ${sp?_T`Entry ${coinAmt87(any100Cost(b,P.pt))} · treasury ${coinAmt87(m.coin)}.`:''}`;
   const what=sp&&b.any100.rx?`<div class="a1what rx">🛡 <b>${esc(any100RxTxt(b.any100.rx))}</b> ${b.any100.rx.k==='hi'?_T('(rating 70+) — the editor wants a show of champions.'):_T('(rating 61 and under) — a rookie bout.')}</div>`:sp&&any100Team(b)?`<div class="a1what">${_T('👥 <b>Team event.</b> Your fighter takes one seat of a team; pick his partner below — another of yours, a free agent hired for the bout, or the editor’s pick.')}</div>`:'';
   const btn=g?(any100Team(b)&&P.pt&&P.pt.gid?_T`⚔ Enter ${g.name} + ${(gById(P.pt.gid)||{}).name||''}`:cur&&cur.i!==P.bi?_T`⚔ Move ${g.name} to ${E.n||''}`:_T`⚔ Enter ${g.name}`):_T('⚔ Enter');
-  return `<div class="any100pk" role="dialog" aria-modal="true" aria-label="${esc(_T`Enter ${E.n||''}`)}"><div class="a1pkhd">${cardHTML('e:'+b.ev,'sm')}<div><b class="a1h">${_T`Enter ${E.n||''}`}</b><div class="rc-sub">${esc(BOUT_DAY[b.tier]||'')} · ${esc(L.n)} · ${_T`purse ${coinAmt87(b.purse)}`}${sp?_T` · entry ${b.any100.fee}${any100Team(b)?_T(' a seat'):''}`:''}</div></div><button type="button" class="btn a1x" data-any100="x" aria-label="${_T('Close')}">✕</button></div>
+  return `<div class="any100pk" role="dialog" aria-modal="true" aria-label="${esc(_T`Enter ${E.n||''}`)}"><div class="a1pkhd">${cardHTML('e:'+b.ev,'sm')}<div><b class="a1h">${_T`Enter ${E.n||''}`}</b><div class="rc-sub">${esc(any100DayOf(b))} · ${esc(L.n)} · ${_T`purse ${coinAmt87(b.purse)}`}${sp?_T` · entry ${b.any100.fee}${any100Team(b)?_T(' a seat'):''}`:''}</div></div><button type="button" class="btn a1x" data-any100="x" aria-label="${_T('Close')}">✕</button></div>
     ${what}<div class="a1pkb"><div class="a1pg">${_T('Starters')}</div>${st.map(row).join('')||`<p class="rc-sub">${_T('No starters.')}</p>`}${be.length?`<div class="a1pg">${_T('Bench')}</div>${be.map(row).join('')}`:''}${part}</div>
     <div class="a1pkf"><span class="a1sum">${sum}</span><button type="button" class="btn" data-any100="x">${_T('Cancel')}</button><button type="button" class="btn primary a1ok" data-any100="ok" ${g?'':'disabled'}>${esc(btn)}</button></div></div>`}
 function any100PickDraw(){let bg=document.getElementById('any100pk');if(!ANY100.pk){if(bg)bg.remove();return}
