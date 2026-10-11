@@ -13,9 +13,11 @@
   const V3 = (x, y, z) => new BABYLON.Vector3(x, y, z), C3 = (h) => BABYLON.Color3.FromHexString(h);
   const tile = (r, c) => V3(c - 6, 0, 6 - r);
   let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;   /* cosmetic, fixed so every shot matches */
-  const MATS = [];
+  const MATS = [], MCACHE = {};
   const mat = (name, hex, o = {}) => { const m = new BABYLON.StandardMaterial(name, scene); m.diffuseColor = C3(hex); m.specularColor = new BABYLON.Color3(o.spec || 0.04, o.spec || 0.04, o.spec || 0.04);
-    if (o.tex) m.diffuseTexture = o.tex; if (o.emis) m.emissiveColor = C3(o.emis); m.maxSimultaneousLights = 12; MATS.push(m); return m; };
+    if (o.tex) m.diffuseTexture = o.tex; if (o.emis) m.emissiveColor = C3(o.emis); m.maxSimultaneousLights = 6; MATS.push(m); return m; };
+  /* SHARED materials: one per colour, never one per piece (his perf rule) */
+  const matC = (hex, o = {}) => MCACHE[hex + JSON.stringify(o)] || (MCACHE[hex + JSON.stringify(o)] = mat('c' + hex, hex, o));
 
   /* ---------- lights: warm sun upper left, sky fill; shadows ---------- */
   const hemi = new BABYLON.HemisphericLight('sky', V3(0.2, 1, -0.3), scene); hemi.intensity = 0.62; hemi.diffuse = C3('#fff1dc'); hemi.groundColor = C3('#8a7458');
@@ -130,7 +132,7 @@
   /* start corners: a coloured quarter mark in each corner tile */
   const PCOL = ['#c8322a', '#2f6fcf', '#3a9a3e', '#d6a520'];
   [[12, 12], [12, 0], [0, 0], [0, 12]].forEach(([r, c], i) => { const d = BABYLON.MeshBuilder.CreateDisc('start' + i, { radius: 0.42, tessellation: 24 }, scene); d.rotation.x = Math.PI / 2; d.position.copyFrom(tile(r, c)); d.position.y = 0.004;
-    const m = mat('startM' + i, PCOL[i]); m.alpha = 0.35; d.material = m; });
+    const pc = C3(PCOL[i]), sc = C3('#e8d8b8'); d.material = matC(BABYLON.Color3.Lerp(sc, pc, 0.45).toHexString()); });   /* opaque blend: no transparency pass */
 
   /* banners on poles on the far walls + the tower braziers' flames (torches at night) */
   const banners = [];
@@ -138,12 +140,12 @@
     const base = side === 'n' ? V3(a, 0, E + G + 0.35 + TIERS * TD + 0.2) : V3(-(E + G + 0.35 + TIERS * TD + 0.2), 0, a);
     const pole = put('wood', BABYLON.MeshBuilder.CreateCylinder('pole', { height: 2.4, diameter: 0.06, tessellation: 6 }, scene)); pole.position.set(base.x, FAR_H + TIERS * TR + 2.2, base.z);
     const b = BABYLON.MeshBuilder.CreatePlane('banner', { width: 0.7, height: 1.1, sideOrientation: BABYLON.Mesh.DOUBLESIDE }, scene); b.position.set(base.x, FAR_H + TIERS * TR + 2.6, base.z); b.rotation.y = side === 'n' ? 0 : Math.PI / 2;
-    b.material = mat('bannerM', col, { emis: '#000000' }); banners.push(b); cast(b); });
+    b.material = matC(col); banners.push(b); cast(b); });
   const fireM = mat('fire', '#ff9a2e', { emis: '#ff7a18' }); fireM.disableLighting = true;
-  const TORCHES = [...towers.map(p => V3(p.x, 2.42, p.z)), V3(-E - 0.45, 1.25, -2.5), V3(-E - 0.45, 1.25, 2.5), V3(-2.5, 1.25, E + 0.45), V3(2.5, 1.25, E + 0.45), V3(E + 0.42, 0.62, 3), V3(-3, 0.62, -E - 0.42)];
+  const TORCHES = [...towers.map(p => V3(p.x, 2.42, p.z)), V3(-E - 0.45, 1.25, 0), V3(0, 1.25, E + 0.45), V3(-E - 0.45, 1.25, -3.5), V3(-E - 0.45, 1.25, 3.5), V3(-3.5, 1.25, E + 0.45), V3(3.5, 1.25, E + 0.45), V3(E + 0.42, 0.62, 3), V3(-3, 0.62, -E - 0.42)];   /* 4 lit, the rest flame only */
   const flames = TORCHES.map((p, i) => { if (i >= 2) { const s = put('iron', BABYLON.MeshBuilder.CreateCylinder('torch', { height: p.y < 1 ? 0.45 : 0.4, diameterTop: 0.12, diameterBottom: 0.04, tessellation: 8 }, scene)); s.position.set(p.x, p.y - 0.2, p.z); }
     const f = BABYLON.MeshBuilder.CreateCylinder('flame', { height: 0.28, diameterTop: 0, diameterBottom: 0.2, tessellation: 8 }, scene); f.position.set(p.x, p.y + 0.12, p.z); f.material = fireM; return f; });
-  const torchLights = TORCHES.map((p, i) => { const l = new BABYLON.PointLight('torch' + i, V3(p.x, p.y + 0.35, p.z), scene); l.diffuse = C3('#ff9a48'); l.specular = C3('#000000'); l.range = 7.5; l.intensity = 0; l.setEnabled(false); return l; });
+  const torchLights = TORCHES.filter((_, i) => i < 4).map((p, i) => { const l = new BABYLON.PointLight('torch' + i, V3(p.x, p.y + 0.35, p.z), scene); l.diffuse = C3('#ff9a48'); l.specular = C3('#000000'); l.range = 7.5; l.intensity = 0; l.setEnabled(false); return l; });
 
   /* merge the static pieces: one mesh per material */
   const STATIC = [];
@@ -152,15 +154,15 @@
   const faceM = mat('faceM', '#ffffff', { tex: flavTex }); faceM.emissiveColor = C3('#3a3530'); face.material = faceM;
   /* a crowd: ONE mesh (body + head), thin-instanced over the stands with a colour per spectator (1 draw call) */
   const CROWD = flag('crowd', true) ? (() => {
-    const body = BABYLON.MeshBuilder.CreateCapsule('cb', { height: 0.42, radius: 0.1, tessellation: 8, subdivisions: 1 }, scene); body.position.y = 0.21;
-    const head = BABYLON.MeshBuilder.CreateSphere('ch', { diameter: 0.15, segments: 6 }, scene); head.position.y = 0.5;
+    const body = BABYLON.MeshBuilder.CreateCylinder('cb', { height: 0.4, diameterTop: 0.13, diameterBottom: 0.2, tessellation: 6, cap: BABYLON.Mesh.CAP_START }, scene); body.position.y = 0.2;
+    const head = BABYLON.MeshBuilder.CreateSphere('ch', { diameter: 0.15, segments: 3 }, scene); head.position.y = 0.5;
     const m = BABYLON.Mesh.MergeMeshes([body, head], true, true); const cm = mat('crowdM', '#ffffff'); m.material = cm;
     const mats = [], cols = []; const tunic = ['#e9e1cf', '#c7b28a', '#8e2a22', '#5a6e8a', '#6b7d3c', '#a0603a', '#d8c27a', '#7a5a9a', '#f0ece2'];
     const add = (x, y, z) => { if (rnd() < 0.42) return; const s = 0.85 + rnd() * 0.3; mats.push(...BABYLON.Matrix.Compose(V3(s, s, s), BABYLON.Quaternion.Identity(), V3(x, y, z)).toArray()); const c = C3(tunic[(rnd() * tunic.length) | 0]); cols.push(c.r, c.g, c.b, 1); };
     for (const side of ['n', 'w']) for (let t = 0; t < TIERS; t++) { const off = E + G + 0.34 + t * TD + TD * 0.32, y = FAR_H + t * TR + TR - 0.06; for (let a = -E - 0.4 - t * 0.48; a <= E + 0.4 + t * 0.48; a += 0.3) side === 'n' ? add(a, y, off) : add(-off, y, a); }
     for (const side of ['s', 'e']) for (let t = 1; t < 7; t++) { const off = E + G + 0.30 + t * TD + TD * 0.32, y = -0.26 - t * 0.3 + 0.3; for (let a = -E - 0.4 - t * 0.48; a <= E + 0.4 + t * 0.48; a += 0.3) { if (Math.abs(a) < 0.9) continue; side === 's' ? add(a, y, -off) : add(off, y, -a); } }
     m.thinInstanceSetBuffer('matrix', new Float32Array(mats), 16); m.thinInstanceSetBuffer('color', new Float32Array(cols), 4); cm.diffuseColor = new BABYLON.Color3(1, 1, 1);
-    m.receiveShadows = true; cast(m); return { mesh: m, n: mats.length / 16 }; })() : null;
+    m.receiveShadows = true; return { mesh: m, n: mats.length / 16 }; })() : null;   /* receives the sun's shadow, casts none */
 
   /* ---------- the pieces: glTF baked from the real rig92 engine (export.js) ---------- */
   const tokM = mat('tokM', '#ffffff', { spec: 0.08 });
@@ -168,26 +170,50 @@
   const BEASTS = [['leo', 5, 7], ['ursa', 7, 3]];
   const OUTLINE = flag('outline', true);
   const pieces = [];
-  function baseDisc(w, d, rim, ring) {   /* his base: sand top, coloured rim, a seat-colour ring on the sand for gladiators */
-    const b = BABYLON.MeshBuilder.CreateCylinder('base', { height: 0.1, diameterTop: 1, diameterBottom: 1.04, tessellation: 32 }, scene); b.scaling.set(w, 1, d); b.position.y = 0.05; b.material = mat('rimM', rim); cast(b); b.receiveShadows = true;
-    if (ring) { const t = BABYLON.MeshBuilder.CreateTorus('ring', { diameter: w + 0.08, thickness: 0.05, tessellation: 32 }, scene); t.position.y = 0.035; const rm = mat('ringM', ring, { emis: ring }); rm.emissiveColor.scaleInPlace(0.35); t.material = rm; return [b, t]; }
+  function baseDisc(w, d, rim, ring) {   /* his base: sand top, coloured rim, a seat-colour ring on the sand for gladiators (shared materials) */
+    const b = BABYLON.MeshBuilder.CreateCylinder('base', { height: 0.1, diameterTop: 1, diameterBottom: 1.04, tessellation: 32 }, scene); b.scaling.set(w, 1, d); b.position.y = 0.05; b.material = matC(rim); cast(b); b.receiveShadows = true;
+    if (ring) { const t = BABYLON.MeshBuilder.CreateTorus('ring', { diameter: w + 0.08, thickness: 0.05, tessellation: 32 }, scene); t.position.y = 0.035; t.material = matC(ring, { emis: '#000000' }); t.material.emissiveColor = C3(ring).scale(0.35); return [b, t]; }
     return [b];
   }
+  /* ONE idle per species (his rule: one skeleton + animation config per species, skeletal animation, nothing rebuilt per frame).
+     An idle = a few bones swinging round their rest rotation: keyframed once into an AnimationGroup, played on the GPU-skinned mesh. */
+  const IDLE = {
+    glad: { T: 3.4, bones: { sp: [2, 0, 0], ch: [-2.5, 2, 0], he: [3, 7, 0], sL: [0, 0, 3], sR: [0, 0, -3] } },
+    /* the shared quadruped idle: breathing in the spine, a head look, a tail that swings more toward its tip; amplitudes scale with the
+       species config (lion: lively tail, bear: heavy head) */
+    quad: (sp) => ({ T: sp.T, bones: Object.assign({ mid: [sp.breath, 0, 0], withers: [-sp.breath, 0, 0], neck: [sp.head * 0.4, sp.head * 0.6, 0], head: [sp.head * 0.5, sp.head, 0], jaw: [sp.jaw, 0, 0] },
+      Object.fromEntries([...Array(9)].map((_, i) => ['tail' + i, [0, sp.tail * (0.4 + i * 0.12), 0]]))) }),
+  };
+  const SPECIES = { leo: { T: 2.8, breath: 2.5, head: 6, jaw: 4, tail: 9 }, ursa: { T: 3.6, breath: 3, head: 8, jaw: 2, tail: 3 } };
+  function idleGroup(name, root, cfg, phase) {
+    const g = new BABYLON.AnimationGroup(name, scene), FPS = 30, N = Math.round(cfg.T * FPS); const nodes = root.getChildTransformNodes(false);
+    for (const [k, amp] of Object.entries(cfg.bones)) { const n = nodes.find(x => x.name === k); if (!n) continue; const rest = (n.rotationQuaternion || BABYLON.Quaternion.FromEulerVector(n.rotation)).clone();
+      const a = new BABYLON.Animation(name + k, 'rotationQuaternion', FPS, BABYLON.Animation.ANIMATIONTYPE_QUATERNION, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE); const keys = [];
+      for (let f = 0; f <= N; f += 6) { const w = Math.sin(f / N * Math.PI * 2), D = Math.PI / 180; keys.push({ frame: f, value: rest.multiply(BABYLON.Quaternion.RotationYawPitchRoll(amp[1] * w * D, amp[0] * w * D, amp[2] * w * D)) }); }
+      if (keys[keys.length - 1].frame !== N) keys.push({ frame: N, value: keys[0].value.clone() });
+      a.setKeys(keys); g.addTargetedAnimation(a, n); }
+    g.start(true, 1, 0, N); g.goToFrame(phase * N); return g;
+  }
   async function load(file) { const r = await BABYLON.SceneLoader.ImportMeshAsync('', 'models/', file, scene); return r.meshes; }
+  /* lod0 + lod1 share one skeleton; lod1 takes over when the piece covers < LOD_COVER of the screen (zoomed out, phones) */
+  const LOD_COVER = +(Q.get('lod') || 0.004), OUTLINE_W = 0.012;
+  function wire(ms, root) {
+    const l0 = ms.find(m => /_lod0$/.test(m.name)), l1 = ms.find(m => /_lod1$/.test(m.name));
+    for (const m of [l0, l1]) { m.material = tokM; m.receiveShadows = true; if (OUTLINE) { m.renderOutline = true; m.outlineWidth = OUTLINE_W; m.outlineColor = C3('#120c0a'); } }
+    l0.useLODScreenCoverage = true; l0.addLODLevel(LOD_COVER, l1); cast(l0); return l0;
+  }
   async function loadPieces() {
     for (const [k, r, c, col] of GLADS) {
-      const ms = await load(`glad_${k}.glb`); const root = new BABYLON.TransformNode('g_' + k, scene); ms[0].parent = root; const mesh = ms.find(m => m.getTotalVertices && m.getTotalVertices() > 0);
-      mesh.material = tokM; mesh.receiveShadows = true; if (OUTLINE) { mesh.renderOutline = true; mesh.outlineWidth = 0.012; mesh.outlineColor = C3('#120c0a'); } cast(mesh);
+      const ms = await load(`glad_${k}.glb`); const root = new BABYLON.TransformNode('g_' + k, scene); ms[0].parent = root; const mesh = wire(ms, root);
       const p = tile(r, c); root.position.copyFrom(p); root.position.y = 0.1; root.rotation.y = Math.atan2(-p.x, -p.z) + Math.PI;
       for (const o of baseDisc(0.8, 0.8, '#4b4636', col)) { o.position.x = p.x; o.position.z = p.z; }
-      pieces.push({ k, mesh, mt: mesh.morphTargetManager && mesh.morphTargetManager.getTarget(0), ph: rnd() * 6.28 });
+      pieces.push({ k, mesh, anim: idleGroup('idle_' + k, root, IDLE.glad, rnd()) });
     }
     for (const [k, r, c] of BEASTS) {
-      const ms = await load(`beast_${k}.glb`); const root = new BABYLON.TransformNode('b_' + k, scene); ms[0].parent = root; const frames = ms.filter(m => m.getTotalVertices && m.getTotalVertices() > 0);
-      frames.forEach((f, i) => { f.material = tokM; f.receiveShadows = true; if (OUTLINE) { f.renderOutline = true; f.outlineWidth = 0.012; f.outlineColor = C3('#120c0a'); } cast(f); f.setEnabled(i === 0); });
+      const ms = await load(`beast_${k}.glb`); const root = new BABYLON.TransformNode('b_' + k, scene); ms[0].parent = root; const mesh = wire(ms, root);
       const p = tile(r, c); root.position.copyFrom(p); root.position.y = 0.1; root.rotation.y = Math.atan2(-p.x, -p.z) + Math.PI;
       const meta = { leo: [1.1, 0.64, '#3a1a18'], ursa: [1.1, 0.69, '#7b2c17'] }[k]; const [b] = baseDisc(meta[1], meta[0], meta[2]); b.position.x = p.x; b.position.z = p.z; b.rotation.y = root.rotation.y;
-      pieces.push({ k, frames, f: 0, ph: rnd() * 2 });
+      pieces.push({ k, mesh, anim: idleGroup('idle_' + k, root, IDLE.quad(SPECIES[k]), rnd()) });
     }
   }
 
@@ -224,15 +250,13 @@
   const hud = document.getElementById('hud'); let hudT = 0;
   const tris = () => (scene.getActiveIndices() / 3) | 0;
   window.MOCK = { scene, engine, inst, stats: () => ({ fps: +engine.getFps().toFixed(1), frameMs: +inst.frameTimeCounter.lastSecAverage.toFixed(2), renderMs: +inst.renderTimeCounter.lastSecAverage.toFixed(2),
-    drawCalls: inst.drawCallsCounter.current, activeMeshes: scene.getActiveMeshes().length, tris: tris(), crowd: CROWD ? CROWD.n : 0, w: engine.getRenderWidth(), h: engine.getRenderHeight() }), setNight, setCam };
+    drawCalls: inst.drawCallsCounter.current, activeMeshes: scene.getActiveMeshes().length, meshes: scene.meshes.length, materials: scene.materials.length, textures: scene.textures.length, lights: scene.lights.filter(l => l.isEnabled()).length, skeletons: scene.skeletons.length, animGroups: scene.animationGroups.length, tris: tris(), crowd: CROWD ? CROWD.n : 0, w: engine.getRenderWidth(), h: engine.getRenderHeight() }), setNight, setCam };
 
   /* ---------- the loop: idles (morph breathing / beast flipbook), torch flicker ---------- */
   scene.onBeforeRenderObservable.add(() => {
     const t = performance.now() / 1000;
-    for (const p of pieces) { if (p.mt) p.mt.influence = 0.5 + 0.5 * Math.sin(t * 1.7 + p.ph);
-      if (p.frames) { const f = Math.floor((t + p.ph) / 0.32) % p.frames.length; if (f !== p.f) { p.frames[p.f].setEnabled(false); p.frames[f].setEnabled(true); p.f = f; } } }
     if (night) torchLights.forEach((l, i) => { l.intensity = 1.45 + 0.25 * Math.sin(t * 9 + i * 2.1) + 0.12 * Math.sin(t * 23 + i); });
-    if (t - hudT > 0.5) { hudT = t; const s = window.MOCK.stats(); hud.textContent = `Babylon ${BABYLON.Engine.Version} · ${engine.webGLVersion === 2 ? 'WebGL2' : 'WebGL1'}\n${s.fps} fps · frame ${s.frameMs} ms\ndraw calls ${s.drawCalls} · meshes ${s.activeMeshes}\ntris ${(s.tris / 1000).toFixed(0)}k · ${s.w}×${s.h}`; }
+    if (t - hudT > 0.5) { hudT = t; const s = window.MOCK.stats(); hud.textContent = `Babylon ${BABYLON.Engine.Version} · ${engine.webGLVersion === 2 ? 'WebGL2' : 'WebGL1'}\n${s.fps} fps · frame ${s.frameMs} ms\ndraw calls ${s.drawCalls} · active meshes ${s.activeMeshes}\nmeshes ${s.meshes} · materials ${s.materials} · lights ${s.lights}\ntris ${(s.tris / 1000).toFixed(0)}k · ${s.w}×${s.h}`; }
   });
   loadPieces().catch(e => { console.error(e); window.MOCK_ERR = String(e && e.stack || e); }).finally(() => {
     document.getElementById('load').remove(); scene.executeWhenReady(() => { let n = 0; scene.onAfterRenderObservable.add(() => { if (++n === 10) window.MOCK_READY = true; }); }); });

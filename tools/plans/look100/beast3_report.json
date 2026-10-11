@@ -338,6 +338,184 @@
     "decodedMB": 9.5,
     "idleWalkMB": 3.6
    }
+  },
+  "brutum": {
+   "key": "brutum",
+   "meta": [
+    118,
+    126,
+    59,
+    91.1,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 208615,
+   "sculptMs": 67824,
+   "renderMs": 140577,
+   "tris": 36864,
+   "verts": 18267,
+   "h": 0.55,
+   "kb": 316.9,
+   "decodedMB": 10.44,
+   "idleWalkMB": 4.54,
+   "frames": 23,
+   "pxmm": 1.5253333333333334,
+   "sc": 1.3,
+   "out": {
+    "single": {
+     "meta": [
+      118,
+      126,
+      59,
+      91.1,
+      23
+     ],
+     "decodedMB": 10.44,
+     "idleWalkMB": 4.54
+    },
+    "split": true,
+    "idlewalk": {
+     "meta": [
+      118,
+      100,
+      59,
+      65.1,
+      10
+     ],
+     "rows": [
+      "idle0",
+      "idle1",
+      "idle2",
+      "idle3",
+      "walk0",
+      "walk1",
+      "walk2",
+      "walk3",
+      "walk4",
+      "walk5"
+     ],
+     "kb": 105.5,
+     "decodedMB": 3.6
+    },
+    "actions": {
+     "meta": [
+      118,
+      126,
+      59,
+      91.1,
+      13
+     ],
+     "rows": [
+      "attack0",
+      "attack1",
+      "attack2",
+      "attack3",
+      "attack4",
+      "hit0",
+      "hit1",
+      "hit2",
+      "die0",
+      "die1",
+      "die2",
+      "die3",
+      "die4"
+     ],
+     "kb": 141.4,
+     "decodedMB": 5.9
+    },
+    "kb": 246.9,
+    "decodedMB": 9.5,
+    "idleWalkMB": 3.6
+   }
+  },
+  "valencia": {
+   "key": "valencia",
+   "meta": [
+    140,
+    118,
+    70,
+    86.5,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 78381,
+   "sculptMs": 18432,
+   "renderMs": 59748,
+   "tris": 18740,
+   "verts": 9349,
+   "h": 0.36,
+   "kb": 289.1,
+   "decodedMB": 11.6,
+   "idleWalkMB": 5.04,
+   "frames": 23,
+   "pxmm": 3.143,
+   "sc": 1.15,
+   "out": {
+    "single": {
+     "meta": [
+      140,
+      118,
+      70,
+      86.5,
+      23
+     ],
+     "decodedMB": 11.6,
+     "idleWalkMB": 5.04
+    },
+    "split": false,
+    "kb": 256.8,
+    "decodedMB": 11.6,
+    "idleWalkMB": 5.04,
+    "would_split_iwMB": 4.38
+   }
   }
  },
  "diag": {}

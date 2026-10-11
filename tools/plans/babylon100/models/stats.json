@@ -3,51 +3,83 @@
   "murmillo": {
    "trisFull": 383411,
    "vertsFull": 325099,
-   "tris": 23989,
-   "verts": 14675,
-   "err": 0.00067,
-   "kb": 944.7,
-   "bakeMs": 5005,
+   "lod0": {
+    "tris": 19984,
+    "verts": 12491
+   },
+   "lod1": {
+    "tris": 3974,
+    "verts": 3573
+   },
+   "bones": 17,
+   "kb": 964,
+   "bakeMs": 16365,
    "parts": 21
   },
   "thraex": {
    "trisFull": 400458,
    "vertsFull": 335590,
-   "tris": 23985,
-   "verts": 15102,
-   "err": 0.00067,
-   "kb": 968.1,
-   "bakeMs": 3415,
+   "lod0": {
+    "tris": 19975,
+    "verts": 12893
+   },
+   "lod1": {
+    "tris": 3994,
+    "verts": 3714
+   },
+   "bones": 17,
+   "kb": 991.6,
+   "bakeMs": 12543,
    "parts": 40
   },
   "royalty": {
    "trisFull": 374758,
    "vertsFull": 319829,
-   "tris": 23997,
-   "verts": 14520,
-   "err": 0.00056,
-   "kb": 936.3,
-   "bakeMs": 2527,
+   "lod0": {
+    "tris": 19997,
+    "verts": 12374
+   },
+   "lod1": {
+    "tris": 4000,
+    "verts": 3395
+   },
+   "bones": 17,
+   "kb": 949.2,
+   "bakeMs": 6377,
    "parts": 27
   },
   "venatore": {
    "trisFull": 395188,
    "vertsFull": 331509,
-   "tris": 23998,
-   "verts": 14320,
-   "err": 0.00049,
-   "kb": 925.4,
-   "bakeMs": 3757,
+   "lod0": {
+    "tris": 19998,
+    "verts": 12169
+   },
+   "lod1": {
+    "tris": 3997,
+    "verts": 3085
+   },
+   "bones": 17,
+   "kb": 923,
+   "bakeMs": 7597,
    "parts": 15
   }
  },
  "beast": {
   "leo": {
-   "frames": 4,
-   "trisFullPerFrame": 34230,
-   "trisPerFrame": 8965,
-   "kb": 769,
-   "sculptMs": 8188,
+   "trisFull": 34136,
+   "lod0": {
+    "tris": 8960,
+    "verts": 4443
+   },
+   "lod1": {
+    "tris": 1992,
+    "verts": 990
+   },
+   "bones": 31,
+   "joints": "pelvis< mid<pelvis withers<mid neck<withers head<neck jaw<head LF_top<withers LF_knee<LF_top LF_low<LF_knee LF_foot<LF_low RF_top<withers RF_knee<RF_top RF_low<RF_knee RF_foot<RF_low LH_top<pelvis LH_knee<LH_top LH_low<LH_knee LH_foot<LH_low RH_top<pelvis RH_knee<RH_top RH_low<RH_knee RH_foot<RH_low tail0<pelvis tail1<tail0 tail2<tail1 tail3<tail2 tail4<tail3 tail5<tail4 tail6<tail5 tail7<tail6 tail8<tail7",
+   "kb": 348.9,
+   "sculptMs": 3791,
    "base": [
     1.1,
     0.6416666666666667
@@ -55,11 +87,19 @@
    "rim": "#3a1a18"
   },
   "ursa": {
-   "frames": 4,
-   "trisFullPerFrame": 27648,
-   "trisPerFrame": 8999,
-   "kb": 774.2,
-   "sculptMs": 7539,
+   "trisFull": 27620,
+   "lod0": {
+    "tris": 9000,
+    "verts": 4478
+   },
+   "lod1": {
+    "tris": 1998,
+    "verts": 994
+   },
+   "bones": 31,
+   "joints": "pelvis< mid<pelvis withers<mid neck<withers head<neck jaw<head LF_top<withers LF_knee<LF_top LF_low<LF_knee LF_foot<LF_low RF_top<withers RF_knee<RF_top RF_low<RF_knee RF_foot<RF_low LH_top<pelvis LH_knee<LH_top LH_low<LH_knee LH_foot<LH_low RH_top<pelvis RH_knee<RH_top RH_low<RH_knee RH_foot<RH_low tail0<pelvis tail1<tail0 tail2<tail1 tail3<tail2 tail4<tail3 tail5<tail4 tail6<tail5 tail7<tail6 tail8<tail7",
+   "kb": 351.1,
+   "sculptMs": 4571,
    "base": [
     1.1,
     0.6893333333333334
@@ -68,11 +108,11 @@
   }
  },
  "init": {
-  "ms": 57370,
+  "ms": 185007,
   "baked": {
    "keys": 31,
    "bytes": 246038,
-   "ms": 18
+   "ms": 85
   },
   "why": "",
   "mmpm": 17.56756756756757
