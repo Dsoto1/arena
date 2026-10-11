@@ -138,6 +138,42 @@ No protocol bump — an older page still works (it cannot set a password, and a 
   Velox I/II, Laudis; Tutus and Aegis unchanged), idempotent and gender-kept. New rolls and `cleanNamed*` use it; stored records keep the old text until a
   page shows them (the page renames every reply and push). Nothing is migrated in the table.
 
+## v1.0 turn timers
+
+Shared rules: the "v1.0 TURN TIMERS" section at the end of `111-onlcore` (`TT100`, `ttOf100`, `dropNeed100`); routes: the "v1.0 TURN TIMERS" block in
+`routes.js` (after the v0.98 block); page + mock: `290-v100tt`. Test `server/test/v100tt.test.js`, page `tonl100tt`.
+**Protocol 8** (`C.VER` 7 → 8): one-button notices no longer travel as inputs and the server orders new inputs — a v0.99 page would wait for
+inputs that never come, so it must reload (426).
+
+- **The room's timer.** `L.turnT`: Custom = `0` (Off, the default), 30, 60, 90 or 120 (the host's `lobby.set {id, turnT}`; `roomSet` refuses anything else);
+  Ranked = always 60 (locked). `ttOf100(L)` → `{t, d}` seconds: decisions get `TT100.DEC` (20 s) only when a timer is on. The match keeps the config in
+  `META.tt100` (read from the room at the first clock report).
+- **Why reports + ticks.** Lambda has no timers, so the server never wakes up by itself. Pages REPORT clocks and the server stamps them with ITS time;
+  whenever a page asks (`match.clock` or `match.tick`) the server compares its own clock with the deadlines (`eval100`) and, when one has passed, orders an
+  input in the lockstep stream. Pages send `match.tick` only when their own estimate of a deadline has passed (+ half the grace), at most every 1.2 s,
+  plus one every 12 s while a clock runs; on the real server every fighter ticks (staggered 0.4 s by seat order) so a timed-out player's absence never
+  stops the clock. No EventBridge / Step Functions: a match with no page left open has nobody to play to anyway (and `prune` closes it).
+- **Requests.**
+  - `match.clock {id, kind:'turn', t, seat}` — a human turn `t` began. First report wins (`CLK#t<t>` putNew); older turns are ignored. `META.tc100 = {t, seat, at, x, pz}`.
+  - `match.clock {id, kind:'end', t}` — that turn ended (`tc100.end`): it can no longer time out.
+  - `match.clock {id, kind:'dec', d, seat, t}` — decision window number `d` opened (`CLK#d<d>`, `META.dc100`). A window of ANOTHER seat inside the turn pauses the
+    turn clock (`tc100.pz` = since when; the paused time goes to `tc100.x` when the window ends).
+  - `match.tick {id}` — check now. Both answer `{on, t, d, tc:{t, seat, left, pz}, dc:{d, seat, left}, now}`; a new clock is also pushed to the match (`match.clock100`).
+  - `match.vote100 {id, seat, yes}` — after `TT100.DROP_AFTER` (2) timeouts of that seat (`TOC#<seat>.n`), a majority of the OTHER live humans
+    (`dropNeed100`) → one `{k:'drop', seat, tt:1, until}` (`TTDROP#<seat>` once; `META.dropped`; the 139 reclaim window opens as for an away drop). `tt_early` before that.
+- **Server inputs.** `{k:'dto', seat, d}` at `dc.at + d + GRACE` (1.5 s) — lock `DEC#<d>`; `{k:'timeout', seat, t, n}` at `tc.at + t + x + GRACE`, not paused,
+  not ended — lock `TO#<t>`. A page never sends either (`match.input` voids them, "That seat is not yours.").
+- **The races.** A decision answer carries `d` and takes the same `DEC#<d>` lock: if the dto won, the answer becomes a `void` input and the reply says
+  `{seq, late:1}` (the page takes the default). With clocks on, the page applies its OWN answer only when its seq comes round (`ONLM.ownq`), so an answer
+  and a dto land in the same order on every screen. Turn moves (`tile`/`act`) carry `tn`; one of a timed-out turn of that seat → `void` + `late` (the
+  page also stops sending `TT100.LOCK` = 1 s before its own deadline; a late one that slips through resyncs that page from another lanista).
+- **On the pages** a `timeout` is a MARK applied at a wait point of that turn (S.tt100x, the seat CPU for the rest of THAT turn, its later windows take the
+  default); the CPU finishes the turn at the next settled point; the seat is human again at the next turn. A `drop` with `tt` is a mark too (`ONLM.left`
+  'tt100'): the CPU takes the seat at its next decision. Stale inputs (the turn already over) are no-ops everywhere.
+- **Abuse.** Clock reports are not verified: a lanista could report a real upcoming turn early and shorten it (first report wins). Every honest page reports
+  too, so the gain is small; the victim's page shows the server's deadline. Logged as an open question.
+- **Rollback.** A protocol-7 server refuses protocol-8 pages (426) and the reverse, so roll back server and page together; the new items expire (ttl 2 days).
+
 ## Versions, deploy, rollout, rollback
 
 - **Protocol** `ONLC.VER` (111-onlcore): `$connect` refuses another version with 426 ("reload"). Bump it only when old clients

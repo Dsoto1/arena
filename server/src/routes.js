@@ -1373,6 +1373,63 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   {const base=R['domus.get'];R['domus.get']=async(d,ctx)=>{await dr98Acct(ctx.acct);return base(d,ctx)}}
   {const base=R['match.abandon'];R['match.abandon']=async(d,ctx)=>{const r=await base(d,ctx);await dr98Acct(ctx.acct);return r}}
   /* ══════════ end of v0.98 PART E ══════════ */
+  /* ══════════ v1.0 TURN TIMERS (shared numbers: the v1.0 section of onlcore — TT100, ttOf100, dropNeed100; docs/backend.md "v1.0 turn timers"; protocol 8) ══════════
+     Lambda has no timers, so the server keeps CLOCKS and checks them whenever a page asks:
+       match.clock {id, kind:'turn', t, seat}   a human turn began (the first report wins: CLK#t<t> putNew; META.tc100 = {t, seat, at: SERVER time, x, pz})
+       match.clock {id, kind:'end', t}          that turn ended in time (META.tc100.end — no timeout for it)
+       match.clock {id, kind:'dec', d, seat, t} decision window number d opened (CLK#d<d>; META.dc100); another seat's window PAUSES the turn clock (pz)
+       match.tick  {id}                         "a deadline I know of has passed" — the server checks its own clock
+     Both answer the clocks {on, t, d, tc:{t, seat, left, pz}, dc:{d, seat, left}, now} and run eval100, which orders server inputs:
+       {k:'dto', seat, d}         at dc.at + d s + GRACE — lock DEC#<d> (the answer takes the same lock: exactly one wins)
+       {k:'timeout', seat, t, n}  at tc.at + t s + x + GRACE, not paused, not ended — lock TO#<t>; TOC#<seat>.n counts them
+     A modal answer with d after the dto took the lock → a 'void' input, reply {seq, late:1}; a tile / act with tn of a timed-out turn of that seat → void.
+     match.vote100 {id, seat, yes}: after TT100.DROP_AFTER timeouts of a seat, a majority of the other live humans → {k:'drop', seat, tt:1, until} (the
+     reclaim window opens as for an away drop). New clocks are pushed to the match (match.clock100). Pages tick only when their own estimate passed. */
+  {const TT=C.TT100;const MK=id=>'MATCH#'+id;
+    const tt100Cfg=async(id,M)=>{if(M.tt100)return M.tt100;let L=null;try{L=await getLobby(id)}catch(e){}const c=C.ttOf100(L);await store.set(MK(id),'META',{tt100:c});M.tt100=c;return c};
+    const status100=(M,c,t)=>{const o={on:!!c.t,t:c.t,d:c.d,now:t};const tc=M.tc100,dc=M.dc100;if(tc)o.tc={t:tc.t,seat:tc.seat,left:tc.pz?null:Math.max(0,tc.at+c.t*1000+(tc.x||0)-t),pz:!!tc.pz};
+      if(dc)o.dc={d:dc.d,seat:dc.seat,left:Math.max(0,dc.at+c.d*1000-t)};return o};
+    async function serverIn(id,inp){const B=await store.bump(MK(id),'META','n');if(!B)return null;const x={...inp,from:'server',seq:B.seq};await store.put(MK(id),'IN#'+String(B.seq).padStart(8,'0'),{in:x,ttl:ttl(2)});
+      await toMatch(B.item,'match.input',{id,in:x});return x}
+    /* a decision of another seat ended: the turn clock runs on (the paused time is added) */
+    async function unpause(id,M,dc,t){const tc=M.tc100;if(!tc||!tc.pz||!dc||tc.t!==dc.t)return;const x=(tc.x||0)+t-tc.pz;await store.setIn(MK(id),'META','tc100','x',x);await store.setIn(MK(id),'META','tc100','pz',null);tc.x=x;tc.pz=null}
+    async function eval100(id){const M=await meta(id);if(M.status!=='live')return M;const c=M.tt100;if(!c||!c.t)return M;const t=now();const dc=M.dc100,tc=M.tc100;
+      if(dc&&!dc.fin&&t>=dc.at+c.d*1000+TT.GRACE){if(await store.putNew(MK(id),'DEC#'+dc.d,{by:'server',at:t,ttl:ttl(2)})){await serverIn(id,{k:'dto',seat:dc.seat,d:dc.d});await unpause(id,M,dc,t)}dc.fin=1}
+      if(tc&&!tc.pz&&!tc.end&&t>=tc.at+c.t*1000+(tc.x||0)+TT.GRACE&&(await store.putNew(MK(id),'TO#'+tc.t,{seat:tc.seat,at:t,ttl:ttl(2)}))){
+        const n=(await store.counter(MK(id),'TOC#'+tc.seat,'n'))+1;await serverIn(id,{k:'timeout',seat:tc.seat,t:tc.t,n})}
+      return M}
+    const seatAcct=(M,seat)=>Object.keys(M.seats||{}).find(a=>M.seats[a]===seat)||null;
+    const fighter=(M,a)=>(M.players||[]).includes(a)&&liveHumans(M).includes(a);
+    Object.assign(R,{
+      'match.clock':async(d,ctx)=>{const id=d.id;const M=await meta(id);if(!fighter(M,ctx.acct))throw new Error('Not your match.');const c=await tt100Cfg(id,M);const t=now();
+        if(M.status!=='live'||!c.t)return {...status100(M,c,t),off:1};const seat=d.seat|0;const who=seatAcct(M,seat);const live=!!who&&fighter(M,who);
+        if(d.kind==='turn'&&live){const tn=d.t|0;if((!M.tc100||tn>M.tc100.t)&&(await store.putNew(MK(id),'CLK#t'+tn,{seat,at:t,ttl:ttl(2)}))){M.tc100={t:tn,seat,at:t,x:0,pz:null};await store.set(MK(id),'META',{tc100:M.tc100});await toMatch(M,'match.clock100',{id,...status100(M,c,t)})}}
+        else if(d.kind==='end'){if(M.tc100&&M.tc100.t===(d.t|0)&&!M.tc100.end)await store.setIn(MK(id),'META','tc100','end',1)}
+        else if(d.kind==='dec'&&live){const dn=d.d|0;if((!M.dc100||dn>M.dc100.d)&&(await store.putNew(MK(id),'CLK#d'+dn,{seat,at:t,ttl:ttl(2)}))){M.dc100={d:dn,seat,at:t,t:d.t|0};await store.set(MK(id),'META',{dc100:M.dc100});
+            const tc=M.tc100;if(tc&&tc.seat!==seat&&tc.t===(d.t|0)&&!tc.pz&&!tc.end){await store.setIn(MK(id),'META','tc100','pz',t);tc.pz=t}await toMatch(M,'match.clock100',{id,...status100(M,c,t)})}}
+        const M2=await eval100(id);return status100(M2,c,now())},
+      'match.tick':async(d,ctx)=>{const M0=await meta(d.id);if(!fighter(M0,ctx.acct))throw new Error('Not your match.');const M=await eval100(d.id);return status100(M,M.tt100||{t:0,d:0},now())},
+      'match.vote100':async(d,ctx)=>{const id=d.id;const M=await meta(id);if(!fighter(M,ctx.acct))throw new Error('Not your match.');if(M.status!=='live')return {done:1,dropped:false};const seat=d.seat|0;const who=seatAcct(M,seat);
+        if(!who||who===ctx.acct)throw new Error('No one to name.');if((M.dropped||{})[who]||(M.abandoned||{})[who])return {dropped:true,votes:0,need:0};
+        const T=await store.get(MK(id),'TOC#'+seat);if(((T&&T.n)|0)<TT.DROP_AFTER)throw fail('tt_early','Only after a second timeout.');
+        await store.put(MK(id),'VOTE#'+seat+'#'+ctx.acct,{by:ctx.acct,yes:!!d.yes,at:now(),ttl:ttl(2)});
+        const others=liveHumans(M).filter(a=>a!==who&&(M.players||[]).includes(a));const votes=(await store.query(MK(id),'VOTE#'+seat+'#')).filter(v=>v.yes&&others.includes(v.by)).length;const need=C.dropNeed100(others.length);
+        if(votes<need)return {votes,need,dropped:false};
+        if(!(await store.putNew(MK(id),'TTDROP#'+seat,{at:now(),ttl:ttl(2)})))return {votes,need,dropped:true};
+        const B=await store.bump(MK(id),'META','n');const until=now()+C.RECLAIM_MS;const inp={k:'drop',seat,tt:1,from:'server',seq:B.seq,until};await rclOpen(id,B.item,who,seat,until);
+        await store.put(MK(id),'IN#'+String(B.seq).padStart(8,'0'),{in:inp,ttl:ttl(2)});await metaIn(id,B.item,'dropped',who,true);await toMatch(B.item,'match.input',{id,in:inp});return {votes,need,dropped:true}}});
+    /* answers race the clocks: one lock a decision; a late move of a timed-out turn is voided */
+    {const base=R['match.input'];R['match.input']=async(d,ctx)=>{const raw=(d&&d.in)||{};if(raw.k==='timeout'||raw.k==='dto')return base({...d,in:{...raw,k:'drop'}},ctx);
+      const timed=(raw.k==='modal'&&raw.d!=null)||((raw.k==='tile'||raw.k==='act')&&raw.tn!=null);if(!timed)return base(d,ctx);
+      const M=await meta(d.id);const c=M.tt100;if(!c||!c.t||M.status!=='live'||!fighter(M,ctx.acct)||(raw.seat|0)!==(M.seats||{})[ctx.acct])return base(d,ctx);
+      if(raw.k==='modal'){if(!(await store.putNew(MK(d.id),'DEC#'+(raw.d|0),{by:ctx.acct,at:now(),ttl:ttl(2)}))){const v=await serverIn(d.id,{k:'void'});return {seq:v.seq,late:1}}
+        const r=await base(d,ctx);const dc=M.dc100;if(dc&&dc.d===(raw.d|0))await unpause(d.id,M,dc,now());return r}
+      const X=await store.get(MK(d.id),'TO#'+(raw.tn|0));if(X&&X.seat===(raw.seat|0)){const v=await serverIn(d.id,{k:'void'});return {seq:v.seq,late:1}}return base(d,ctx)}}
+    /* the room's Turn timer (Custom: the host's pick; Ranked: locked) */
+    {const base=R['lobby.set'];R['lobby.set']=async(d,ctx)=>{d=d||{};if(d.turnT==null)return base(d,ctx);let err='';
+      const X=await editLobby(d.id,Y=>{err=C.roomSet(Y,ctx.acct,{turnT:d.turnT},now());if(err)return false});if(err)throw new Error(err);if(!X)throw new Error('That game is gone.');
+      const rest={...d};delete rest.turnT;if(Object.keys(rest).some(k=>k!=='id'&&k!=='rid'))return base(rest,ctx);await toRoom(X,null,{except:ctx.acct});return room(X)}}}
+  /* ══════════ end of v1.0 TURN TIMERS ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);

@@ -55,6 +55,8 @@ for(const nm of ['popRule','eventBriefing']){try{const base=eval(nm);if(typeof b
   /* a CPU offering a truce or a trade to a human: declined everywhere (v1) */
   if(c&&c.cpu&&/offers a truce|proposes a trade/.test(t)){const no=(buttons||[]).find(b=>/decline|refuse|no\b|keep/i.test(b.label||''))||(buttons||[]).slice(-1)[0];return Promise.resolve(no?no.value:null)}
   const own=onlmOwner();if(!onlmHuman(own))return base.apply(this,arguments);
+  /* v1.0 (290-v100tt): decision numbers, one-button notices, the docked step panel and the decision clocks — a handler that returns a promise takes the window */
+  if(typeof onlmDec100==='function'){const r=onlmDec100(own,t,title,body,buttons,opt,base,this);if(r)return r}
   /* a seat whose lanista abandoned: every client answers that seat's windows with the default (the same value everywhere) */
   if(ONLM.left&&ONLM.left[own]!=null){const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;return Promise.resolve(def)}
   if(own===ONLM.me){const pre=onlHash();const pr=base.apply(this,arguments);if(own>=onlmFighters())onlmAutoPass(buttons,opt);return Promise.resolve(pr).then(v=>{const inp={k:'modal',v:v===undefined?null:v,t:t.slice(0,60)};inp.pre=pre;onlmSend(inp);return v})}
@@ -66,7 +68,7 @@ function onlmReady(inp){if(!S||S.over)return false;if(inp.k==='void'||inp.k==='a
   return !S.busy&&!CUR_MODAL&&!ONLM.pend&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat}
 let ONLM_PUMP=0;
 function onlmPump(){clearTimeout(ONLM_PUMP);if(!onlmOn()||ONLM.resyncing)return;
-  for(;;){while(ONLM.own.has(ONLM.next)){ONLM.own.delete(ONLM.next);ONLM.next++}if(!(ONLM.q.length&&ONLM.q[0].seq===ONLM.next))break;const inp=ONLM.q[0];if(!onlmReady(inp)){ONLM_PUMP=setTimeout(onlmPump,120);onlmWaitShow();return}
+  for(;;){while(ONLM.own.has(ONLM.next)&&!ONLM.ownHold&&!(ONLM.ownq&&ONLM.ownq.has(ONLM.next))){ONLM.own.delete(ONLM.next);ONLM.next++}if(!(ONLM.q.length&&ONLM.q[0].seq===ONLM.next))break;const inp=ONLM.q[0];if(!onlmReady(inp)){ONLM_PUMP=setTimeout(onlmPump,120);onlmWaitShow();return}
     ONLM.q.shift();ONLM.next=inp.seq+1;
     if(inp.k==='void'){continue}if(inp.k==='drop'){onlmDrop(inp);continue}if(inp.k==='abandon'){onlmAbandonMark(inp);continue}
     const mine=inp.k==='modal'?inp.pre:onlHash();if(inp.k==='modal'?inp.pre&&mine!==onlmPendHash():inp.h&&mine!==inp.h){onlmResync(inp);return}

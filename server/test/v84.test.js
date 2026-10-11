@@ -6,7 +6,7 @@ function seeded(seed){let s=seed>>>0;return ()=>{s=(s*1664525+1013904223)>>>0;re
 
 /* ── 1. the shared rules ── */
 function rules(){
-  assert.strictEqual(C.VER,7);
+  assert.ok(C.VER>=7,'protocol 7 or later (v1.0: 8)');
   /* named armor: deterministic, capped, cleaned, its own uniques */
   for(let s=1;s<80;s++)for(const r of ['common','rare','epic','legendary']){const a=C.rollNamedArmor(seeded(s),catalog,r,[]),b=C.rollNamedArmor(seeded(s),catalog,r,[]);
     assert.deepStrictEqual(a,b,'the same roll for the same randomness');assert.strictEqual(a.kind,'a');assert.ok(!catalog[a.base].stack,'never padding');assert.ok(a.ap<=6&&a.ap>=1,'AP cap');

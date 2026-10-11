@@ -1303,4 +1303,25 @@ const ONLC=(function(){
   if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('house.card'))C.GUEST_OK.push('house.card');
   Object.assign(C,{PW98,pwClean98,pwWhy98,sha256hex98,pwHash98,REGIONS98,regionOf98,regionByKey98,DRANKS98,DR_TOP98,DR_FALLEN98,drankScore98,drankOf98,drankIdx98,drankKeep98,
     EVENTS_CUSTOM98,EV_SEATS98,customOnly98,rename98,renameDeep98})})(ONLC);
+/* ══════════ v1.0 TURN TIMERS — shared by the server (routes.js "v1.0 TURN TIMERS") and the page (290-v100tt, its mock routes) ══════════
+   A room's turn timer: Custom = the host's pick Off / 30 / 60 / 90 / 120 s (L.turnT, default Off); Ranked = always 60 s (locked).
+   With a timer on, every decision window has its own clock (DEC seconds) and then takes its default answer.
+   ttOf100(L) → {t, d} seconds (0 = off). The server, not a page's clock, says when time ran out: it orders a 'timeout' / 'dto' input.
+   A seat that timed out TWICE (or more) may be handed to a CPU by a majority of the OTHER live humans (dropNeed100).
+   PROTOCOL 8 (v1.0): one-button notices no longer travel as inputs, decision answers carry their number (d), turn inputs their turn (tn),
+   new server inputs timeout / dto — an older page would wait for inputs that never come, so VER moves 7 → 8. */
+(function(C){
+  const TT100={TURNS:[0,30,60,90,120],RANKED:60,DEC:20,GRACE:1500,LOCK:1000,DROP_AFTER:2};  /* TWEAK: Custom choices, Ranked turn, decision clock, server grace, the page stops sending this long before its deadline, timeouts before a drop vote */
+  const turnT100=v=>TT100.TURNS.includes(v|0)?(v|0):0;
+  function ttOf100(L){if(!L)return {t:0,d:0};const t=L.ranked?TT100.RANKED:turnT100(L.turnT);return {t,d:t?TT100.DEC:0}}
+  /* a majority of the other live humans (1 of 1, 2 of 2, 2 of 3) */
+  const dropNeed100=n=>Math.floor(Math.max(0,n|0)/2)+1;
+  {const base=C.newLobby;C.newLobby=function(spec,host,id,now){const L=base.apply(this,arguments);if(L){L.turnT=L.ranked?TT100.RANKED:turnT100(spec&&spec.turnT)}return L}}
+  {const base=C.roomSet;C.roomSet=function(L,by,d,now){d=d||{};if(d.turnT==null)return base.apply(this,arguments);
+    if(L.host.id!==by)return 'Only the host changes the game.';if(L.status!=='waiting')return 'Already under way.';
+    if(L.ranked)return (d.turnT|0)===TT100.RANKED?'':'Ranked turns are always 60 seconds.';
+    if(!TT100.TURNS.includes(+d.turnT))return 'Turn timer: Off, 30, 60, 90 or 120 seconds.';L.turnT=+d.turnT;
+    const x={...d};delete x.turnT;if(Object.keys(x).some(k=>k!=='id'&&k!=='rid'))return base.call(this,L,by,x,now);return ''}}
+  C.VER=8;
+  Object.assign(C,{TT100,ttOf100,dropNeed100,turnT100})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
