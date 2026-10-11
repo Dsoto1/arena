@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><title>mkgear</title>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+</head><body style="background:#ddd">
+<!-- rig92/mkgear.html — the page tools/art/rig92/mkgear.js drives: builds the token body exactly as the game does (game.js createToken
+     defaults, no bake) and runs the SDF sculptor (sculpt.js) on every printed piece, handing the raw meshes back to node. -->
+<script type="module">
+import { createToken } from './game.js';
+import { HELM5, CUIR6, LIMB7, sculptHelm, sculptCuirass, sculptLimb, skinRule5 } from './sculpt.js';
+const b64 = (ta) => { const u = new Uint8Array(ta.buffer, ta.byteOffset, ta.byteLength); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+let API = null;
+window.MKG = {
+  async body() { const t0 = performance.now(); API = await createToken({ gear8: null }); return { ms: Math.round(performance.now() - t0), key: API.bodyKey };
+  },
+  bodyKey: async () => { const m = await import('./game.js'); return m.bodyKey8({ res: m.BODY8.res, body: m.BODY8.body }); },
+  keys: () => ({ helm: Object.keys(HELM5), cuir: Object.keys(CUIR6), limb: Object.keys(LIMB7).filter(k => !LIMB7[k].belt), belt: Object.keys(LIMB7).filter(k => LIMB7[k].belt) }),
+  one(key) {
+    const B = API.B; let m, t;
+    if (HELM5[key]) { m = sculptHelm(key); t = 'h'; } else if (CUIR6[key]) { m = sculptCuirass(B, key); t = 'c'; } else if (LIMB7[key].belt) { m = sculptLimb(B, key); t = 'b'; } else { m = sculptLimb(B, key, 'L'); t = 'l'; }
+    const g = m.geo; const idx = g.index.array; const I = idx instanceof Uint32Array ? idx : new Uint32Array(idx);
+    return { k: key, t, s: t === 'h' || t === 'c' ? null : skinRule5(key), tris: m.tris, trisFine: m.tris0, verts: m.verts, ms: m.ms,
+      pos: b64(g.attributes.position.array), col: b64(g.attributes.color.array), idx: b64(I) };
+  },
+};
+window.MKG_READY = true;
+</script></body></html>

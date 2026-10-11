@@ -1,0 +1,202 @@
+{
+ "t": {
+  "shipped": {
+   "build": 15688,
+   "baked": {
+    "keys": 31,
+    "bytes": 251906,
+    "ms": 13
+   },
+   "why": ""
+  },
+  "full": {
+   "build": 16369,
+   "baked": {
+    "keys": 31,
+    "bytes": 4479812,
+    "ms": 96
+   },
+   "why": ""
+  }
+ },
+ "rows": [
+  {
+   "nm": "shipped",
+   "k": "max load",
+   "wear": 475,
+   "ms": 10312,
+   "meta": [
+    130,
+    139,
+    65,
+    115.9
+   ],
+   "sc": {
+    "ok": true,
+    "ang": 1.3,
+    "along": 0.2,
+    "front": 0
+   }
+  },
+  {
+   "nm": "shipped",
+   "k": "soldier",
+   "wear": 122,
+   "ms": 9054,
+   "meta": [
+    130,
+    142,
+    65,
+    118.9
+   ],
+   "sc": null
+  },
+  {
+   "nm": "shipped",
+   "k": "royalty",
+   "wear": 100,
+   "ms": 10023,
+   "meta": [
+    84,
+    146,
+    42,
+    122.9
+   ],
+   "sc": null
+  },
+  {
+   "nm": "shipped",
+   "k": "hero",
+   "wear": 145,
+   "ms": 8981,
+   "meta": [
+    124,
+    146,
+    62,
+    122.9
+   ],
+   "sc": {
+    "ok": true,
+    "ang": 1.3,
+    "along": 0.2,
+    "front": 0
+   }
+  },
+  {
+   "nm": "shipped",
+   "k": "veteranus",
+   "wear": 57,
+   "ms": 9174,
+   "meta": [
+    130,
+    138,
+    65,
+    114.9
+   ],
+   "sc": null
+  },
+  {
+   "nm": "shipped",
+   "k": "venatore",
+   "wear": 25,
+   "ms": 9313,
+   "meta": [
+    144,
+    154,
+    72,
+    130.9
+   ],
+   "sc": null
+  },
+  {
+   "nm": "full",
+   "k": "max load",
+   "wear": 1709,
+   "ms": 16747,
+   "meta": [
+    130,
+    139,
+    65,
+    115.9
+   ],
+   "sc": {
+    "ok": true,
+    "ang": 1.3,
+    "along": 0.2,
+    "front": 0
+   }
+  },
+  {
+   "nm": "full",
+   "k": "soldier",
+   "wear": 643,
+   "ms": 13834,
+   "meta": [
+    130,
+    142,
+    65,
+    118.9
+   ],
+   "sc": null
+  },
+  {
+   "nm": "full",
+   "k": "royalty",
+   "wear": 487,
+   "ms": 11792,
+   "meta": [
+    84,
+    147,
+    42,
+    123.9
+   ],
+   "sc": null
+  },
+  {
+   "nm": "full",
+   "k": "hero",
+   "wear": 335,
+   "ms": 13251,
+   "meta": [
+    124,
+    146,
+    62,
+    122.9
+   ],
+   "sc": {
+    "ok": true,
+    "ang": 1.3,
+    "along": 0.2,
+    "front": 0
+   }
+  },
+  {
+   "nm": "full",
+   "k": "veteranus",
+   "wear": 556,
+   "ms": 12975,
+   "meta": [
+    130,
+    139,
+    65,
+    115.9
+   ],
+   "sc": null
+  },
+  {
+   "nm": "full",
+   "k": "venatore",
+   "wear": 176,
+   "ms": 12341,
+   "meta": [
+    144,
+    154,
+    72,
+    130.9
+   ],
+   "sc": null
+  }
+ ],
+ "shipB64": 301524,
+ "errs": []
+}

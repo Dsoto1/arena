@@ -246,3 +246,17 @@ export function rotateJointWorld(rig, k, axis, ang) {
   const q = jointQ(rig, k); const dq = new THREE.Quaternion().setFromAxisAngle(axis.clone().normalize(), ang);
   setWorldQ(rig, k, dq.multiply(q));
 }
+
+/* look100 round 2: a per-body skeleton table (his 2a). setBody({sh, hip, knee, ankle}) moves joints sideways (metres, + = away from the midline):
+   sh = the whole arm chain (shoulder, elbow, wrist, hand tip), hip / knee / ankle (+ toe) each. setBody(null) = the standard body.
+   Bones are made from these positions at build time, so set the table, build, pose and render, then reset it. */
+const REST100 = JOINTS.map(j => j.pos.slice()), RESTE100 = Object.fromEntries(Object.entries(ENDS).map(([k, v]) => [k, v.slice()]));
+export const FEM_BODY = { sh: -0.017, hip: 0.011, knee: 0.004, ankle: 0.0 };
+export function setBody(t) {
+  JOINTS.forEach((j, i) => { j.pos[0] = REST100[i][0]; j.pos[1] = REST100[i][1]; j.pos[2] = REST100[i][2]; });
+  for (const k in ENDS) ENDS[k].splice(0, 3, ...RESTE100[k]);
+  if (!t) return;
+  for (const j of JOINTS) { const sd = j.k.length === 2 ? j.k[1] : ''; if (!sd) continue; const sx = sd === 'L' ? 1 : -1, b = j.k[0];
+    const d = b === 's' || b === 'e' || b === 'w' ? t.sh : b === 'h' ? t.hip : b === 'k' ? t.knee : b === 'a' ? t.ankle : 0; j.pos[0] += sx * (d || 0); }
+  for (const k in ENDS) { const sx = k[1] === 'L' ? 1 : -1; ENDS[k][0] += sx * ((k[0] === 'w' ? t.sh : t.ankle) || 0); }
+}
