@@ -125,3 +125,10 @@ CHANGE: League standings + Points column, banner tooltip on how points are earne
 spectators of the week (portraits) under the Darwinius awards.
 NEW?: who's-online list (Orbis?) · Rete (net) throw animation · ONE banner system (online banners as the standard offline).
 QUESTIONS: how free agents heal after surviving an event · do Manager/online gladiators bring their equipped gear (answer from code).
+
+## v1.0 MOCKS round 2 answers (2026-10-11)
+B1 bubbles in the page, except while zoomed (then drawn on the board) · Da Your Team opens today's Roster (the mock used a stand-in, the build uses the real Roster cards/art)
+E stats = grade rows, no chart · Recruiting round 3: newly painted mural-like art from in-house painters, portrait only (no avatar), more compact → recruit3.html
+Lobby: user list stretched to the bottom (aligned with table settings) + goofy quick chats (server phrase codes → deploy + translations)
+Banners: ONE designer (flag/banner/pennant/tapestry/crest = kinds of one design), dr98 quality as the standard offline → banner.html mock
+Online gear: asked (today class weapons are added on top of the equipped kit; class armor replaced)
