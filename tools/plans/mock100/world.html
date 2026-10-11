@@ -334,7 +334,7 @@ const TABS=[['news','News','The Forum Wall',I.news,7],['league','League','The St
 const ph=(location.hash||'').match(/phone-(\w+)/);const PT=ph?ph[1]:'league';document.body.classList.add('p-'+PT);
 $('#rail').innerHTML=`<div class="g">LUDUS</div><a>Your ludus</a><a>Roster</a><a>Armory</a><a>Training Yard</a><a>Infirmary</a><a>Recruiting</a><a>Match Week</a><div class="g">WORLD</div>`+TABS.map(([k,n,,ic,c])=>`<a href="#${k}" class="${k==='news'?'on':''}"><span class="ic">${ic}</span>${n}${c?`<small>${c}</small>`:''}</a>`).join('')+`<div class="g">HOUSE</div><a>Lanista</a><a>Promote</a><a>Wagers</a>`;
 $('#pill').innerHTML=TABS.map(([k,n,,ic])=>`<a href="#phone-${k}" class="${k===PT?'on':''}">${ic}<span>${n}</span></a>`).join('');
-window.addEventListener('hashchange',()=>location.reload());
+window.addEventListener('hashchange',()=>{if(/phone-|-s\d/.test(location.hash))location.reload()});
 const ban=(k,o)=>`<div class="wban"><div class="pic"${o.bg?` style="background-image:url(${o.bg});background-position:${o.pos||'center'}"`:''}>${o.svg||''}</div>
  <div class="tt"><span class="ico">${TABS.find(t=>t[0]===k)[3].replace('currentColor','#2a1606')}</span><div><div class="kick">${o.kick}</div><h2>${o.t}</h2><div class="sub">${o.sub}</div></div></div><div class="rt">${o.rt||''}</div></div>`;
 const shell=(k,banner,body)=>`<section class="ws" id="${k}">${banner}<div class="wbody">${body}</div></section>`;
