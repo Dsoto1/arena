@@ -24,7 +24,7 @@ const ROOT = path.resolve(__dirname, '../../..');
     /* the scene: a pillar near the front, three fighters round it, one on the near edge tile */
     const n = N - 1, pl = S.pillars.slice().sort((a, b) => (b.r + b.c) - (a.r + a.c))[0];
     const free = (r, c) => r >= 0 && c >= 0 && r <= n && c <= n && !S.pillars.some(q => q.r === r && q.c === c);
-    const spots = [[pl.r, pl.c + 1], [pl.r + 1, pl.c], [pl.r + 1, pl.c + 1]].filter(([r, c]) => free(r, c));
+    const spots = [[pl.r, pl.c + 1], [pl.r + 1, pl.c], [pl.r + 1, pl.c + 1], [pl.r - 1, pl.c + 1], [pl.r + 1, pl.c - 1], [pl.r, pl.c + 2]].filter(([r, c]) => free(r, c) && r < n);
     S.players.forEach((p, i) => { const sp = i < 3 ? spots[i % spots.length] : [n, Math.min(n, pl.c + 1)]; p.r = sp[0]; p.c = sp[1]; p._fr = p.r; p._fc = p.c; p._face = [1, 0, 7, 1][i]; });
     if (S.chest) { S.chest.held = null; const cs = [[pl.r - 1, pl.c + 1], [pl.r, pl.c - 1]].find(([r, c]) => free(r, c) && !S.players.some(p => p.r === r && p.c === c)); if (cs) { S.chest.r = cs[0]; S.chest.c = cs[1]; } }
     S.zoomIn = false; for (let i = 0; i < 40; i++) { draw(); await W8(80); }
@@ -50,13 +50,14 @@ const ROOT = path.resolve(__dirname, '../../..');
       const e = S.players[3]; const m = center(e.r, e.c); const X = (v) => (v - x0) * dpr, Y = (v) => (v - y0) * dpr; g.strokeStyle = '#2a7fff'; g.lineWidth = 2 * dpr; g.setLineDash([6 * dpr, 4 * dpr]); g.beginPath();
       g.moveTo(X(m.x), Y(m.y - TH / 2)); g.lineTo(X(m.x + TW / 2), Y(m.y)); g.lineTo(X(m.x), Y(m.y + TH / 2)); g.lineTo(X(m.x - TW / 2), Y(m.y)); g.closePath(); g.stroke(); return c; };
     const A = await shot(); MODE.tok = true; const B = await shot(); MODE.obj = 1.15; const C = await shot();
-    const pad = 20, hd = 70, W = A.width * 3 + pad * 4, H = A.height + hd + 90; const out = document.createElement('canvas'); out.width = W; out.height = H; const g = out.getContext('2d');
-    g.fillStyle = '#e9e1cf'; g.fillRect(0, 0, W, H); g.fillStyle = '#3a2c20'; g.font = `600 ${16 * dpr}px Georgia, serif`;
-    g.fillText('Round 2 · on the real board (Democritus, Roma, the game\'s own draw at 1440×900 ×2): size against the tile, the railing and the pillars', pad, 30 * dpr / 1.3);
-    [[A, 'A · today: his 3D minis (MINI_BASE 0.8 TW)'], [B, 'B · 3D class tokens, base 0.8 TW, figure +15% · objects as today'], [C, 'C · B + pillars, pots and the chest ×1.15']].forEach(([c, s], i) => {
-      const x = pad + i * (A.width + pad); g.drawImage(c, x, hd); g.font = `${13 * dpr}px Georgia, serif`; g.fillText(s, x, hd - 10); });
-    g.font = `${12 * dpr}px Georgia, serif`; g.fillStyle = '#6a5038';
-    g.fillText(`Blue dashes = the near edge tile next to the raised railing: the round base sits inside it. Board TW here = ${Math.round(TW)} px (×${dpr}). Draw rule for the 3D sheet = the minis' (TW·0.8/25.4/MINI_PXMM px per sheet px), not 222's h/1.3.`, pad, H - 30);
+    const k = 1.5, pw = Math.round(A.width * k / dpr * 1.2), ph = Math.round(A.height * k / dpr * 1.2), pad = 20, hd = 64, W = pw * 3 + pad * 4, H = ph + hd + 60;
+    const out = document.createElement('canvas'); out.width = W; out.height = H; const g = out.getContext('2d'); g.imageSmoothingQuality = 'high';
+    g.fillStyle = '#e9e1cf'; g.fillRect(0, 0, W, H); g.fillStyle = '#3a2c20'; g.font = '600 18px Georgia, serif';
+    g.fillText("Round 2 · on the real board (the game's own draw, Democritus at Roma): size against the tile, the railing and the pillars", pad, 28);
+    [[A, 'A · today: his 3D minis (round base 0.8 TW)'], [B, 'B · 3D class tokens: base 0.8 TW, figure +15% · objects as today'], [C, 'C · B + pillars, Blessing pots and the chest ×1.15']].forEach(([c, s2], i) => {
+      const x = pad + i * (pw + pad); g.drawImage(c, x, hd, pw, ph); g.font = '14px Georgia, serif'; g.fillText(s2, x, hd - 10); });
+    g.font = '13px Georgia, serif'; g.fillStyle = '#6a5038';
+    g.fillText(`Blue dashes = a near edge tile beside the raised railing: the base stays inside it. TW = ${Math.round(TW)} css px. The 3D sheet is drawn with the minis' rule (TW·0.8/25.4/MINI_PXMM), not 222's (h/1.3).`, pad, H - 22);
     return out.toDataURL('image/png');
   }, stats);
   fs.writeFileSync(path.join(__dirname, 'look100_r2_board.png'), Buffer.from(url.split(',')[1], 'base64'));

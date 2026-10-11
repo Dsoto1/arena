@@ -1,0 +1,93 @@
+[
+ {
+  "name": "Malleus Thrice-Scarred",
+  "cls": "Soldier",
+  "age": 19,
+  "city": "Brundisium",
+  "st": {
+   "spd": 59,
+   "str": 64,
+   "int": 55,
+   "lck": 54,
+   "cha": 61
+  }
+ },
+ {
+  "name": "Decimus Strabo",
+  "cls": "Hero",
+  "age": 24,
+  "city": "Verona",
+  "st": {
+   "spd": 65,
+   "str": 65,
+   "int": 86,
+   "lck": 70,
+   "cha": 83
+  }
+ },
+ {
+  "name": "Vipsania Celer",
+  "cls": "Amazonia",
+  "age": 30,
+  "city": "Neapolis",
+  "st": {
+   "spd": 54,
+   "str": 53,
+   "int": 64,
+   "lck": 59,
+   "cha": 50
+  }
+ },
+ {
+  "name": "Ignis the Lucky",
+  "cls": "Veteranus",
+  "age": 36,
+  "city": "Puteoli",
+  "st": {
+   "spd": 52,
+   "str": 56,
+   "int": 64,
+   "lck": 69,
+   "cha": 65
+  }
+ },
+ {
+  "name": "Lupa Ox-Heart",
+  "cls": "Venatore",
+  "age": 32,
+  "city": "Leptis Magna",
+  "st": {
+   "spd": 62,
+   "str": 61,
+   "int": 74,
+   "lck": 54,
+   "cha": 61
+  }
+ },
+ {
+  "name": "Aper Horn-Helm",
+  "cls": "Slave",
+  "age": 21,
+  "city": "Londinium",
+  "st": {
+   "spd": 72,
+   "str": 58,
+   "int": 60,
+   "lck": 59,
+   "cha": 59
+  }
+ },
+ {
+  "name": "Caeso Verus",
+  "cls": "Royalty",
+  "age": 24,
+  "city": "Antiochia",
+  "st": {
+   "spd": 68,
+   "str": 73,
+   "int": 99,
+   "lck": 86,
+   "cha": 76
+  }
+ }
+]

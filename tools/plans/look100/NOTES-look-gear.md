@@ -30,3 +30,28 @@ Re-render: `node tools/plans/look100/make.js` (~60–75 s: 6 bodies + sheets, Sw
 - Fingers fuse at the 5 mm grid (reads as a fist at board size, mitten-like at 512 px). 3 mm would separate them (slower build).
 - Our token stands ~15% smaller than his minis on the board (rig scale 32.5 mm figure on a 25.4 mm base vs his bigger bases).
 - The thin sword reads black edge-on (the outline is wider than the blade); the ocrea renders orange-gold.
+
+## Round 2 (his answers 1a 2a 3 4b 5a 6 7a + the clip fixes)
+Re-render: `node tools/plans/look100/make2.js` (~2.5 min) then `node tools/plans/look100/board.js` (the real game page, ~1 min).
+
+| file | what |
+|---|---|
+| look100_r2_armor.png | his mini · round 1 · ROUND 2 (painted, 1.15×, strapped scutum, stance) + 512 hero + shield-side/back views |
+| look100_r2_female.png | male / female / female armed sheets, both 512 px, head close-ups (her head) |
+| look100_r2_classes.png | the 8 class loadouts in 3D, his mini beside each, 8 facings + a small hero |
+| look100_r2_board.png | the real board: A his minis today · B 3D class tokens at the mini rule · C + pillars/pots/chest ×1.15; an edge token by the railing |
+| murm2_sheet.png, fem2_sheet.png, cls2_<class>.png, murm2_hero512.png, stats2.json | raw renders + numbers |
+
+- Scale: figure ×1.15 on the same 25.4 mm base (`createToken({scale})`); drawn with the minis' rule (base 0.8 TW). 222's 3D draw uses `(h/1.3)`
+  with h from the caller — the game fix is to use the minis' TW rule so the base never outgrows the tile.
+- Objects: pillars (incl. pots) and the chest ×1.15 about their tile centre (board.js wraps drawPillar / drawChest83 in the test page only).
+- Scutum: forearm along the board's back with a leather strap, the fist on the handle behind the boss; a grip constraint (`align`) turns the
+  wrist after any pose so the board faces forward (no more edge-on / floating). Thracian shield the same way.
+- Female: her own head (face, chin, jaw, brow, eyes + dark lids, lips, nose, ears) + skeleton table `rig100.setBody(FEM_BODY)`
+  (shoulder chain −17 mm, hips +11 mm a side; torso follows). Close-up faces stay puppet-like (known rig92 item), board size reads.
+- Painted pass: 4-band ramp 40/100/176/255, ambient 0.27π, warm sun 0.86π, tanned skin. Still lighter than his minis (they carry baked
+  textures/environment light); a darker cloth palette + baked AO would be the next step.
+- Sizes (WebP q0.9): Murmillo 29.7 KB (912×138), male 27.3, female 27.7, female armed 29.3, classes 27.5–31.2 KB. Build ~3.4–4.1 s,
+  sheet 7–10.4 s, 512 hero ~1.4 s (SwiftShader).
+- Class pieces come from gear.js's generic shells/helmets (centurion, cassis, thracian, galea, Flavius, steel; ornate/musculata/amazon chests,
+  manicas, greaves, cestus, wraps): they read, but weaker than his minis — the next pass models each printed piece like the Murmillo kit.
