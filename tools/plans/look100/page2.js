@@ -11,8 +11,8 @@ const MINI8 = { hero: [106, 115, 52.8, 95.1], veteranus: [80, 124, 40.2, 104.5],
 const STANCE = { p: [0, -140, 10], j: { pe: [4, -20, 0], sp: [12, 10, 0], ch: [8, 10, 0], he: [-16, 8, 0] }, f: { L: [150, 230, 10], R: [-160, -230, -40] } };
 const ARMS = {
   shield: { h: { L: [-20, 1050, 330] }, hp: { L: [1, -0.3, 0.3] } },
-  offhand: { h: { L: [230, 1060, 300] }, hp: { L: [1, -0.6, -0.2] } },
-  sword: { h: { R: [-330, 1050, 250] }, hp: { R: [1, -1, -0.3] } },
+  offhand: { h: { L: [210, 1230, 330] }, hp: { L: [1, -0.6, -0.2] } },
+  sword: { h: { R: [-320, 1160, 280] }, hp: { R: [1, -1, -0.3] } },
   spear: { h: { R: [-250, 1150, 300] }, hp: { R: [1, -1, -0.3] } },
 };
 const poseSpec = (L, R) => ({ p: STANCE.p, j: STANCE.j, f: STANCE.f, h: Object.assign({}, ARMS[L].h, ARMS[R].h), hp: Object.assign({}, ARMS[L].hp, ARMS[R].hp) });
@@ -27,7 +27,7 @@ const CLS = [
   ['venatore', 'Venatore · Steel helm, leather belt, Hasta', { look: { hs: 'crop', bs: 'goatee' }, gear: { head: { t: 'steelhelm' }, belt: { c: '#7a4a2a' }, arm: { L: { wraps: 1 }, R: { wraps: 1 } }, leg: { L: { lower: { t: 'legwraps' } }, R: { lower: { t: 'legwraps' } } } }, kit: { R: 'hasta' } }],
   ['damnatio', 'Damnatio · wraps only, Sling', { look: { hs: 'bald', bs: 'stubble' }, gear: { arm: { L: { wraps: 1 }, R: { wraps: 1 } }, leg: { L: { lower: { t: 'legwraps' } }, R: { lower: { t: 'legwraps' } } } }, kit: { R: 'sling' } }],
 ];
-const SKIN = '#bd8664', SKIN_F = '#c99474';
+const SKIN = '#ad7a5c', SKIN_F = '#bb8a6c';
 async function token(opt) { const t0 = performance.now(); const T = await LOOK.createToken(Object.assign({ res: 0.005, scale: 1.15, paint: 1 }, opt)); T.buildMs = Math.round(performance.now() - t0); return T; }
 const sheetOf = (T) => { const r = T.sheet(); return { canvas: r.canvas, meta: r.meta, ms: r.ms, kb: webpKB(r.canvas) }; };
 const HERO = { w: 512, h: 512, span: 2.55, cy: 0.98, el: 20 };
@@ -45,14 +45,14 @@ window.LOOK_RUN2 = async function () {
   const r1 = await load('murm_sheet.png'), r1m = [90, 126, 45, 102.9];
   const mini = await load('../../../assets/minis8_soldier.webp');
   {
-    const [c, g] = cv(1500, 1060); txt(g, 'Round 2 · the Murmillo-like Soldier: painted shading pass, figure +15% on the same 25.4 mm base, the scutum strapped + held, a fighting stance', 20, 32, 18, INK, 1);
+    const [c, g] = cv(1500, 1150); txt(g, 'Round 2 · the Murmillo-like Soldier: painted shading pass, figure +15% on the same 25.4 mm base, the scutum strapped + held, a fighting stance', 20, 32, 18, INK, 1);
     const rows = [['his 3D mini (minis8_soldier)', mini, MINI8.soldier], ['round 1 (flat toon, 1.00×, shield on the hand only)', r1, r1m], ['ROUND 2 (painted, 1.15×, strapped scutum, stance)', mS.canvas, mS.meta]];
     let y = 52; for (const [lab, im, m] of rows) { txt(g, lab, 20, y + 16, 15, INK, 1); cells(im, m[0], m[1]).forEach((cc, i) => g.drawImage(cc, 20 + i * 160 + (160 - m[0]) / 2, y + 24)); y += 180; }
     txt(g, `round 2 sheet ${mS.canvas.width}×${mS.canvas.height} px · cell [${mS.meta}] · ${mS.kb} KB WebP q0.9 · ${mS.ms} ms (SwiftShader)`, 20, y, 14, DIM);
     g.drawImage(mHero, 20, y + 14); g.drawImage(mSide, 560, y + 30); g.drawImage(mBack, 880, y + 30);
     txt(g, 'from the shield side: the forearm runs along the board, a leather strap round it,', 560, y + 360, 14); txt(g, 'the fist on the handle behind the boss; the back of the hand faces forward', 560, y + 380, 14);
     txt(g, '(a grip constraint turns the wrist after the pose, so any pose keeps the shield face-on).', 560, y + 400, 14);
-    txt(g, 'Painted pass: 4-band ramp (58/120/186/255 vs 105/175/255), ambient 0.33π (was 0.46π), warm sun 0.8π, tanned skin.', 560, y + 440, 14, DIM);
+    txt(g, 'Painted pass: 4-band ramp (40/100/176/255 vs 105/175/255), ambient 0.27π (was 0.46π), warm sun 0.86π, tanned skin.', 560, y + 440, 14, DIM);
     out('look100_r2_armor', c);
   }
   /* ---------- female: her own head and her own skeleton table ---------- */
@@ -60,13 +60,13 @@ window.LOOK_RUN2 = async function () {
     LOOK.setBody(LOOK.FEM_BODY);
     const F = await token({ body: { fem: 1, grip: { L: 'bar', R: 'hilt' } } });
     F.apply({ look: { hs: 'long', fem: 1, skin: SKIN_F }, pose: F.presets.find(p => p[0] === 'ready')[2] });
-    const fS = sheetOf(F); const fHero = F.hero(Object.assign({ yaw: 20 }, HERO)), fFace = F.hero({ yaw: 15, w: 300, h: 300, span: 0.36, cy: 1.72, el: 8 });
-    const fFace3 = F.hero({ yaw: 60, w: 300, h: 300, span: 0.36, cy: 1.72, el: 8 });
+    const fS = sheetOf(F); const fHero = F.hero(Object.assign({ yaw: 20 }, HERO)), fFace = F.hero({ yaw: 15, w: 300, h: 300, span: 0.36, focus: 'he', fdy: 0.1, el: 8 });
+    const fFace3 = F.hero({ yaw: 60, w: 300, h: 300, span: 0.36, focus: 'he', fdy: 0.1, el: 8 });
     F.apply({ look: { hs: 'long', fem: 1, skin: SKIN_F, noHarness: 1 } }); LOOK.murmKit(F.B, { helm: false }); F.apply({ pose: F.specPose(poseSpec('shield', 'sword')) }); grip(F, { L: 'scutum', R: 'gladius' });
     const faS = sheetOf(F);
     LOOK.setBody(null);
     const O = await token({}); O.apply({ look: { hs: 'crop', skin: SKIN }, pose: O.presets.find(p => p[0] === 'ready')[2] });
-    const oS = sheetOf(O); const oHero = O.hero(Object.assign({ yaw: 20 }, HERO)), oFace = O.hero({ yaw: 15, w: 300, h: 300, span: 0.36, cy: 1.72, el: 8 });
+    const oS = sheetOf(O); const oHero = O.hero(Object.assign({ yaw: 20 }, HERO)), oFace = O.hero({ yaw: 15, w: 300, h: 300, span: 0.36, focus: 'he', fdy: 0.1, el: 8 });
     R.stats.fem2 = { build: F.buildMs, kb: fS.kb, armedKb: faS.kb, meta: fS.meta }; R.stats.male2 = { kb: oS.kb, meta: oS.meta }; out('fem2_sheet', fS.canvas);
     const [c, g] = cv(1500, 1290); txt(g, 'Round 2 · female body: her own head + her own skeleton table (shoulders −17 mm, hips +11 mm a side) · painted pass · 1.15×', 20, 32, 18, INK, 1);
     let y = 52; for (const [lab, s] of [['male', oS], ['female', fS], ['female + Murmillo kit (no helmet)', faS]]) { txt(g, `${lab} · ${s.kb} KB WebP`, 20, y + 16, 15, INK, 1); cells(s.canvas, s.meta[0], s.meta[1]).forEach((cc, i) => g.drawImage(cc, 20 + i * 160 + (160 - s.meta[0]) / 2, y + 24)); y += 180; }
@@ -98,7 +98,7 @@ window.LOOK_RUN2 = async function () {
       const mc = cells(minis[k], mm[0], mm[1]); g.drawImage(mc[0], 20, y + 22); g.drawImage(mc[1], 20 + 140, y + 22);
       cells(s.canvas, s.meta[0], s.meta[1]).forEach((cc, i) => g.drawImage(cc, 300 + i * 160 + (160 - s.meta[0]) / 2, y + 22));
       g.drawImage(hero, 1560, y + 6);
-      for (const m of kitMeshes) T.B.kit.kill(m);
+      for (const m of kitMeshes) { if (Array.isArray(m.material)) { m.material.forEach(x => x.dispose()); m.userData.ownMat = 0; } T.B.kit.kill(m); }
       for (const ch of T.B.rig.bones.pe.children) { ch.visible = true; if (ch.userData.ink) ch.userData.ink.visible = true; }
       if (d.fem) LOOK.setBody(null);
     }

@@ -52,8 +52,8 @@ export async function createToken(opts = {}) {
   /* look100 round 2: the figure +15% against its base (his minis' heroic scale; the base stays 25.4 mm = 0.8 tile) */
   if (o.scale) B.group.scale.setScalar(o.scale);
   /* look100 round 2: the painted pass — a 4-band ramp with deeper shade, less ambient, a stronger warm sun */
-  if (o.paint) { const d = new Uint8Array([58, 120, 186, 255]); B.mats.gm.image = { data: d, width: 4, height: 1 }; B.mats.gm.needsUpdate = true;
-    scene.children.forEach(l => { if (l.isAmbientLight) l.intensity = 0.33 * Math.PI; if (l.isDirectionalLight) { l.intensity = 0.8 * Math.PI; l.color.set(0xffe8cc); } }); }
+  if (o.paint) { const d = new Uint8Array([40, 100, 176, 255]); B.mats.gm.image = { data: d, width: 4, height: 1 }; B.mats.gm.needsUpdate = true;
+    scene.children.forEach(l => { if (l.isAmbientLight) l.intensity = 0.27 * Math.PI; if (l.isDirectionalLight) { l.intensity = 0.86 * Math.PI; l.color.set(0xffe8cc); } }); }
   const rig = B.rig, gear = makeGear(B);
   const presets = PRESET_ORDER.map(k => [k, PRESETS[k].label, poseToJSON(resolveSpec(rig, PRESETS[k].spec))]);
   const groups = PRESET_GROUPS.map(([g, l, ks]) => [g, l, ks.slice()]);
@@ -311,7 +311,7 @@ export async function createToken(opts = {}) {
     const W = h.w * h.ss, H = h.h * h.ss, ppm = H / h.span;
     turn.rotation.y = h.yaw * D2R; turn.updateMatrixWorld(true);
     const tgt = new THREE.Vector3(h.cx, h.cy, h.cz || 0);
-    if (h.focus) { rig.bones[h.focus].getWorldPosition(tgt); tgt.y -= 0.06; }   /* frame a bone (the hand close-ups) */
+    if (h.focus) { rig.bones[h.focus].getWorldPosition(tgt); tgt.y += h.fdy == null ? -0.06 : h.fdy; }   /* frame a bone (the hand close-ups) */
     const cam = orthoCam(W, H, ppm, h.el, tgt); lightFor(cam); B.setOutline(h.outlinePx * h.ss / ppm);
     const r = renderer(W, H); turn.rotation.y = h.yaw * D2R; turn.updateMatrixWorld(true); baseG.visible = h.base !== false;
     r.render(scene, cam); turn.rotation.y = 0; turn.updateMatrixWorld(true); baseG.visible = true;
