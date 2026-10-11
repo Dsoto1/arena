@@ -222,7 +222,7 @@ async function doAttack(player, source, target, {
   player.hitTargets.add(target.key);
   if (w.ammo != null && !source.thr) w.ammoLeft--;
   let usedFocus = false;
-  if (focusRoll && player.mv > 0) {
+  if (focusRoll && player.mv > 0 && !player.focusNext) { /* v1.00: a declared Focus! card already picks the location in a popup (no roll, no movement spent) */
     player.mv = 0;
     usedFocus = true;
   }
