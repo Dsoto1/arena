@@ -360,8 +360,8 @@ function eagleFrame(f) {
     P.push(cap(S0, add(S0, mul(wd, span * 0.45)), 1.5, 1.0, 0.8, BR));
     J('wS' + sx, S0, 'chest', 'chest'); J('wE' + sx, add(S0, mul(wd, span * 0.35)), 'limb', 'wS' + sx); J('wW' + sx, add(S0, mul(wd, span * 0.68)), 'limb', 'wE' + sx); J('wT' + sx, add(add(S0, mul(wd, span)), mul(back, 3)), 'foot', 'wW' + sx);
     for (let i = 0; i <= 8; i++) { const t = i / 8; const c0 = add(S0, mul(wd, span * (0.05 + t * 0.95)));
-      const prim = t > 0.6; const cd = nrm(prim ? add(mul(back, 1), mul(wd, (t - 0.5) * 1.6)) : back); const chord = prim ? 5.6 - (t - 0.6) * 3 : 4.6 + (1 - sp) * 1.5;
-      const F2 = frame(cd, n); P.push(ell(add(c0, mul(cd, chord * 0.5)), [1.55, 0.36, chord * 0.58], F2, 0.35, prim ? TIP : BR)); }
+      const prim = t > 0.6; const cd = nrm(prim ? add(mul(back, 1), mul(wd, (t - 0.5) * 1.6)) : back); const chord = prim ? 7.0 - (t - 0.6) * 3 : 6.4 + (1 - sp) * 1.5;
+      const F2 = frame(cd, n); P.push(ell(add(c0, mul(cd, chord * 0.45)), [2.1, 0.4, chord * 0.58], F2, 0.35, prim ? TIP : BR)); }
   }
   /* tail fan */
   const tb = T([0, -0.6, -4.8]); J('tail', add(tb, mv(R, [0, -0.8, -4.5])), 'tail', 'pelvis'); for (let i = -2; i <= 2; i++) { const d = mv(R, nrm([i * 0.22, -0.35 + (f.tailUp || 0), -1])); P.push(ell(add(tb, mul(d, 2.6)), [1.0, 0.3, 2.8], frame(d), 0.3, i % 2 ? TIP : BR)); }
