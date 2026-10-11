@@ -1064,6 +1064,12 @@ One global script; files are concatenated in order. Later "version modules" patc
   the bow stance turns the chest (H5.bow.j via `stanceFor`); `elbowCheck`/`bowOk` (api.elbows, 8 facings): bow arm nearly straight bending out,
   draw elbow behind shoulder + head at shoulder height; every kit × preset elbow bends the natural hinge (anat). fitTile({keep:true}) keeps the
   shaft change until restore(). Shots: + tools/plans/gear100/{armprobe,lunge}.js, lunge_sheet.png. tok93.js is 257 KB of tv100g's 260 KB cap.
+  FOLLOW-UP 3 (his Aim note: the draw arm went through his body — the torso was turned the wrong way, +60° left, so the draw hand had to cross
+  the chest into the neck): Aim = side-on (chest −100°, head +50° back to the facing, bow straight ahead, centred −100 mm), draw hand at the
+  right cheek, elbow back/out at shoulder height; the armed stand's drawR raised to the cheek (rel [0.12,0.13,0.16]); labrys' second hand gets
+  an elbow pole (two.pole). CHECKS: `armClash` (hold.js; api.clash) = arm centre lines vs chest/belly/neck/head volumes (ARMCLASH, tol 15 mm),
+  tv100g runs it on every kit × preset × 8 facings; bowOk adds draw hand ≤ 0.1 m from the cheek (R.ch) + forearm ≤ 35° off the arrow (R.fa).
+  Probe: tools/plans/gear100/aimprobe.js (strip + close-up; spec + wL search). tok93.js ≈ 259.8 KB of the 260 KB cap — trim comments before adding code.
 - **v1.0 MANAGER WORLD TABS (290-v100world, his W1–W9 all a; mock tools/plans/mock100/world.html, shots tools/plans/world100/):** ONE shell for the
   five World tabs (news, league, imp, trophy, sched): a final mgrHTML wrapper swaps 95's banner for `wd100Banner` (keeps `.roomhd.b73.b73-<k>` +
   `.roomttl`; League keeps 231's `.lp96pod` podium in it) and puts the tab's new view in #mgrPane. NO FOLDS (his 1c, 2026-10-11): the old content's useful parts moved INTO the views with their handlers/ids

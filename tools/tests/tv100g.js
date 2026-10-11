@@ -10,7 +10,9 @@
    real sheets agree pixel for pixel with the measure; every class's armed stand keeps ≥70% of its size (spears/tridents stand upright).
    v1.0 (his 2b + BUG note): EVERY printed class kit × every preset keeps ≥70% (the max load ≥60%: its scutum, not a shaft) (a long shaft is raised toward the diagonal, then shortened,
    display only); no elbow bends the wrong way in any kit × preset; the archer (armed stand + Aim): bow arm nearly straight with a slight
-   outward bend, the draw elbow back and out at shoulder height behind the head, in all 8 facings. */
+   outward bend, the draw elbow back and out at shoulder height behind the head, in all 8 facings.
+   v1.0 (his Aim note: the draw arm went through his body): the draw hand at the cheek, forearm within 35° of the arrow, and NO ARM through
+   the torso / neck / head (armClash) in every kit × preset × 8 facings. */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
 (async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const SHOT=process.env.SHOT||'';
 const ROOT=path.dirname(path.resolve(process.argv[2]));
@@ -73,23 +75,23 @@ const BW=await pg.evaluate(()=>{const api=T93.api;const g={head:{t:'galea'},wR:{
 ok(BW.ns===4&&BW.after===0&&BW.a.drawn===true&&BW.b.drawn===false,'bow string: drawn to the hand in the armed stand, straight in a salute, gone with the bow '+JSON.stringify(BW));
 /* 2b'. his BUG note: the archer's elbows — bow arm nearly straight with a slight outward bend, the draw elbow back and out at shoulder
    height behind the head; in the armed stand and the Aim preset, all 8 facings */
-const EL=await pg.evaluate(()=>{const api=T93.api;const g={head:{t:'galea'},wR:{t:'bow',k:'bow'}};api.apply({gear:g,pose:api.standFor(g)});const a=api.elbows();api.facings(64);
+const EL=await pg.evaluate(()=>{const api=T93.api;const g={head:{t:'galea'},wR:{t:'bow',k:'bow'}};api.apply({gear:g,pose:api.standFor(g)});const a=api.elbows();const ac=api.clash();api.facings(64);
   let bow=null;api.B.group.traverse(o=>{if(o.userData&&o.userData.w4&&o.userData.w4.k==='bow')bow=o});const str=Object.assign({},bow.userData.string);
-  api.apply({gear:g,pose:api.presets.find(p=>p[0]==='aim')[2]});const b=api.elbows();api.apply({gear:{head:{t:'galea'},wR:{t:'sword',k:'gladius'}}});
-  return {stand:{ok:a.bowOk,n:a.rows.length,R:a.rows[0].R,L:a.rows[0].L},aim:{ok:b.bowOk,n:b.rows.length,R:b.rows[0].R,L:b.rows[0].L},str}});
-ok(EL.stand.ok&&EL.aim.ok&&EL.stand.n===8&&EL.aim.n===8&&EL.str.drawn===true,'archer elbows bend naturally (armed stand + Aim, 8 facings), string still drawn '+JSON.stringify(EL));
+  api.apply({gear:g,pose:api.presets.find(p=>p[0]==='aim')[2]});const b=api.elbows();const bc=api.clash();api.apply({gear:{head:{t:'galea'},wR:{t:'sword',k:'gladius'}}});
+  return {stand:{ok:a.bowOk&&ac.ok,n:a.rows.length,R:a.rows[0].R,L:a.rows[0].L,cl:ac.worst},aim:{ok:b.bowOk&&bc.ok,n:b.rows.length,R:b.rows[0].R,L:b.rows[0].L,cl:bc.worst},str}});
+ok(EL.stand.ok&&EL.aim.ok&&EL.stand.n===8&&EL.aim.n===8&&EL.str.drawn===true,'archer: elbows bend naturally, draw hand at the cheek, forearm along the arrow, no arm through the body (armed stand + Aim, 8 facings), string still drawn '+JSON.stringify(EL));
 /* 2c. his 4a: BEST FIT — every printed class kit + max load × every preset × 8 facings stays inside its tile (the measure); the base is untouched */
 const FIT=await pg.evaluate(async()=>{const api=T93.api;const kits=[['max load',{head:{t:'murmillo'},chest:{t:'thorax'},belt:{t:'balteus'},arm:{R:{upper:{t:'galerus'},lower:{t:'bracers'}},L:{upper:{t:'manica'},wraps:1}},leg:{L:{upper:{t:'thighplate'},lower:{t:'cnemis'}},R:{upper:{t:'thighplate'},lower:{t:'ocrea'}}},wR:{t:'sword',k:'gladius'},wL:{t:'scutum',k:'scutum'}}]];
   for(const k of ['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio']){const c=blankChar();charFromClass(c,k);c.classRef='cls:'+k;kits.push([k,t93Parts(c).gear,t93Parts(c).look])}
-  const rows=[],anatBad=[];let worst=null,minF=1,base0=api.baseG.scale.x,shafts=0;
+  const rows=[],anatBad=[],clashBad=[];let worst=null,minF=1,base0=api.baseG.scale.x,shafts=0;
   for(const [k,g,look] of kits){api.apply({look:look||{},gear:g});const stand=api.standFor(g);
     for(const [pk,,pj] of api.presets){api.apply({pose:pk==='stand'?stand:pj});const f=api.fitTile({keep:true});const r=api.reach();f.restore();
-      const el=api.elbows();if(!el.anatOk)anatBad.push(k+'/'+pk);if(f.shaft)shafts++;
+      const el=api.elbows();if(!el.anatOk)anatBad.push(k+'/'+pk);const cl=api.clash();if(!cl.ok)clashBad.push(k+'/'+pk+' '+JSON.stringify(cl.worst));if(f.shaft)shafts++;
       const row={k,pk,f:f.f,sh:f.shaft&&[f.shaft.a,f.shaft.k],hw:+r.hw.toFixed(4),dn:+r.dn.toFixed(4),lim:+(r.tileHalf).toFixed(4)};rows.push(row);if(f.f<minF){minF=f.f;worst=row}}
     await new Promise(r=>setTimeout(r,0))}
   const bad=rows.filter(r=>r.hw>r.lim+1e-4||r.dn>r.lim/2+1e-4);const small=rows.filter(r=>r.k!=='max load'&&r.f<0.7),maxMin=Math.min(...rows.filter(r=>r.k==='max load').map(r=>r.f));
   const perPose={};for(const r of rows.filter(r=>r.k!=='max load'))perPose[r.pk]=Math.min(perPose[r.pk]==null?1:perPose[r.pk],r.f);
-  return {n:rows.length,bad:bad.slice(0,5),small:small.slice(0,6),maxMin,anatBad,shafts,perPose,minF,worst,base:api.baseG.scale.x===base0&&base0===1,
+  return {n:rows.length,bad:bad.slice(0,5),small:small.slice(0,6),maxMin,anatBad,clashBad,shafts,perPose,minF,worst,base:api.baseG.scale.x===base0&&base0===1,
     spill:rows.filter(r=>r.f<0.999).length,kits:kits.length,presets:api.presets.length,stands:Object.fromEntries(rows.filter(r=>r.pk==='stand').map(r=>[r.k,r.f]))}});
 console.log('FIT',JSON.stringify({n:FIT.n,spill:FIT.spill,shafts:FIT.shafts,minF:FIT.minF,worst:FIT.worst,stands:FIT.stands}));console.log('PERPOSE',JSON.stringify(FIT.perPose));
 ok(FIT.n===FIT.kits*FIT.presets&&FIT.kits===9&&FIT.presets>=20&&!FIT.bad.length&&FIT.base&&FIT.minF>=0.6,'best fit: every class kit + max load × every preset inside the tile, base untouched '+JSON.stringify({n:FIT.n,bad:FIT.bad,minF:FIT.minF,base:FIT.base}));
@@ -97,6 +99,8 @@ ok(FIT.n===FIT.kits*FIT.presets&&FIT.kits===9&&FIT.presets>=20&&!FIT.bad.length&
 ok(!FIT.small.length&&FIT.shafts>0&&FIT.maxMin>=0.6,'every printed class kit × every preset keeps ≥70% of its size (long shafts raised/shortened); the max load (scutum, no shaft) ≥60% '+JSON.stringify({small:FIT.small,maxMin:FIT.maxMin,shafts:FIT.shafts}));
 /* every elbow bends the natural way (the upper arm's own hinge) in every kit × preset × facing */
 ok(!FIT.anatBad.length,'no elbow bent the wrong way '+JSON.stringify(FIT.anatBad.slice(0,6)));
+/* his Aim note: no arm goes through the body — upper arm / forearm / hand of both arms vs chest, belly, neck, head (armClash), every kit × preset × 8 facings */
+ok(!FIT.clashBad.length,'no arm passes through the torso, neck or head '+JSON.stringify(FIT.clashBad.slice(0,6)));
 /* the armed stand (what a converted character wears by default) keeps at least 70% of its size in every class: long shafts stand upright */
 ok(Object.keys(FIT.stands).length===9&&Object.values(FIT.stands).every(f=>f>=0.7),'armed stands fit without shrinking much '+JSON.stringify(FIT.stands));
 /* … and real sheets agree in pixels: the max load in its worst pose and a spear held wide */
