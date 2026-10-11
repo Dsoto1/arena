@@ -162,3 +162,4 @@ WEBSITE FIX (2026-10-11): the live site was older than the v0.82 site zip (Conta
 ANIM MEMORY (his pick): load only what is needed — idle+walk always, other actions decoded when used, sheets at drawn size; no mirroring (shield hand).
 3D (his pick a): look-test round 4 — every armor piece modelled from his art (helmets, cuirasses, tassets as strips, shaped greaves, segmented plates) + every weapon from his card art with correct grip/orientation/stance per weapon type; then build.
 3D (his pick A+C, no TTS files): round 5 — straight wrists (clamped, elbow takes the angle); helmets + cuirasses sculpted ourselves as SDF meshes with baked AO + painted textures; the rest refined in code.
+3D round 5 answers (his 1a2b3c4b): full-detail sculpts, painted metal highlights, refine the six then sculpt the rest, sword 15° out of the fist → round 6 running.
