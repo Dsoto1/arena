@@ -257,5 +257,5 @@ WORLD TABS: W1–W9 all a. Calendar: more contrast between the schedule tablets 
 WORLD TABS: city card = information only (his 'a for now', 2026-10-11) — no Plan a trip; Walk the square only when reachable this week.
 PERF (his B, 2026-10-11): cheap low-risk batch building (menu paused under windows, 21 animations → opacity/transform, no forced layout in draw, t12 via sims, condition waits). LATER: Manager morph-patching, script split (external file), arena panel render rate, wrapper-drop review.
 MAP INTEGRATION (his "all 7", 2026-10-11): small map insets inside existing flows — 1 Match Week travel strip · 2 world letters · 3 recruit home city + city filter ·
-4 (pending his ok after explanation) the Annals Road box on the real map · 5 League house card · 6 programmata city picking · 7 Calendar hover. Imperium tab stays optional.
+4 the Annals Road (Play Now) box drawn on the real empire map: 12 arenas in Road order, won ones ticked, next lit, gladiator token on his city (his a) · 5 League house card · 6 programmata city picking · 7 Calendar hover. Imperium tab stays optional.
 SPECTATE → LOBBY BROWSER (his a): sub-tabs ⚔ Rooms · 👁 Live matches · 👥 Online now; the Spectate tab goes; Live = every match in progress with 👁 Watch / 🎟 Ticket.
