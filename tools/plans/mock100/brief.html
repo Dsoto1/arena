@@ -1,0 +1,263 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Event Briefing — v1.0 mock</title>
+<link rel="stylesheet" href="../mock98/mock98.css">
+<style>
+/* v1.0 mock — the Event Briefing (opens after Begin Event). States: #classic #special #phone */
+html,body{height:auto;min-height:100%}body{overflow-x:clip}
+[hidden]{display:none!important}
+/* ---------- 2a SANDSTONE BUTTON (one style everywhere) ---------- */
+.sb{--h:46px;--fs:19px;position:relative;height:var(--h);display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:0 22px;border:0;border-radius:5px;cursor:pointer;white-space:nowrap;
+  font:400 var(--fs)/1 var(--display);letter-spacing:.07em;color:#4a3017;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .1 0 0 0 .8 0'/%3E%3C/filter%3E%3Crect width='240' height='120' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='160'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .05' numOctaves='4' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .85 0 0 0 0 .62 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='600' height='160' filter='url(%23m)'/%3E%3C/svg%3E"),
+    linear-gradient(176deg,#dcc196 0%,#c9a877 38%,#b48f5c 100%);
+  background-size:240px 120px,600px 160px,100% 100%;
+  box-shadow:inset 0 2px 0 rgba(255,244,214,.75),inset 0 -3px 0 rgba(92,60,28,.55),inset 2px 0 0 rgba(255,238,204,.35),inset -2px 0 0 rgba(80,52,24,.4),0 4px 0 #6b4e2b,0 5px 0 #4b3519,0 10px 18px rgba(0,0,0,.6);
+  text-shadow:0 1px 0 rgba(255,240,206,.75),0 -1px 0 rgba(60,36,14,.6);transition:transform .12s,box-shadow .12s,filter .12s}
+.sb::before{content:"";position:absolute;inset:5px;border-radius:3px;border:1px solid rgba(96,64,30,.45);box-shadow:0 1px 0 rgba(255,238,204,.45),inset 0 1px 0 rgba(255,238,204,.35);pointer-events:none}
+.sb::after{content:"";position:absolute;inset:0;border-radius:5px;pointer-events:none;background:linear-gradient(180deg,rgba(255,246,222,.2),transparent 38%,rgba(60,36,14,.16)),radial-gradient(ellipse 120% 160% at 50% 50%,transparent 60%,rgba(70,44,18,.28))}
+.sb>*{position:relative;z-index:1}
+.sb svg{width:calc(var(--fs) + 2px);height:calc(var(--fs) + 2px);fill:#4a3017;flex:none;filter:drop-shadow(0 1px 0 rgba(255,240,206,.7))}
+.sb small{font:500 11px var(--body);letter-spacing:.04em;color:#6b4c2a;text-shadow:0 1px 0 rgba(255,240,206,.6)}
+.sb:hover,.sb.hov{transform:translateY(-2px);filter:brightness(1.06);box-shadow:inset 0 2px 0 rgba(255,244,214,.75),inset 0 -3px 0 rgba(92,60,28,.55),0 6px 0 #6b4e2b,0 7px 0 #4b3519,0 14px 24px rgba(0,0,0,.7),0 0 0 2px rgba(240,207,125,.55),0 0 20px rgba(240,190,90,.28)}
+.sb:active,.sb.prs{transform:translateY(3px);filter:brightness(.94);box-shadow:inset 0 3px 6px rgba(60,36,14,.45),inset 0 -1px 0 rgba(255,238,204,.3),0 1px 0 #6b4e2b,0 2px 0 #4b3519,0 3px 6px rgba(0,0,0,.6)}
+.sb.dis{filter:grayscale(.6) brightness(.62);cursor:not-allowed;transform:none;box-shadow:inset 0 2px 0 rgba(255,244,214,.4),0 3px 0 #4b3519}
+/* primary: porphyry inlay + gold leaf */
+.sb.pri::before{inset:6px;border:0;background:linear-gradient(180deg,#8f2a1e,#6d1c13 60%,#5a160f);box-shadow:inset 0 2px 4px rgba(0,0,0,.6),inset 0 -1px 0 rgba(255,180,150,.25),0 1px 0 rgba(255,238,204,.55)}
+.sb.pri .t,.sb.dan .t{background:linear-gradient(180deg,#fff2be 0%,#f0cf7d 30%,#b98a2a 62%,#e7c46c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
+.sb.pri svg{fill:#f0cf7d;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
+.sb.pri.prs::before{box-shadow:inset 0 4px 8px rgba(0,0,0,.75)}
+/* danger: CARBON-BLACK slab (whole button) — deep matte black, faint weave + soot, red-gold letters */
+.sb.dan{color:#e0654c;text-shadow:none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .48 0 0 0 0 .46 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='200' height='100' filter='url(%23s)'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 4px),
+    repeating-linear-gradient(-45deg,rgba(0,0,0,.35) 0 2px,transparent 2px 4px),
+    linear-gradient(178deg,#26262a 0%,#151517 45%,#0b0b0c 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -2px 0 rgba(0,0,0,.8),0 4px 0 #050505,0 5px 0 #000,0 10px 18px rgba(0,0,0,.7)}
+.sb.dan::before{inset:5px;border:1px solid rgba(224,101,76,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);background:none}
+.sb.dan::after{background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 40%,rgba(0,0,0,.25))}
+.sb.dan .t{background:linear-gradient(180deg,#ffd9c4,#e8805f 40%,#c8402e 70%,#e7c46c 100%);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 1px 0 #000)}
+.sb.dan svg{fill:#e0654c;filter:drop-shadow(0 1px 0 #000)}
+.sb.dan:hover,.sb.dan.hov{box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 0 #050505,0 7px 0 #000,0 14px 24px rgba(0,0,0,.75),0 0 0 2px rgba(224,101,76,.55),0 0 20px rgba(224,101,76,.25)}
+.sb.dan.prs{box-shadow:inset 0 3px 6px rgba(0,0,0,.9),0 1px 0 #050505,0 2px 0 #000}
+/* sizes */
+.sb.l{--h:58px;--fs:24px;padding:0 30px}
+.sb.m{--h:46px;--fs:19px}
+.sb.s{--h:34px;--fs:14.5px;padding:0 14px;gap:7px}
+.sb.s::before{inset:4px}
+
+
+/* backdrop: the arena behind, dimmed */
+.bd{position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 55%,#3a2a1a 0%,#1a120c 60%,#0b0705 100%)}
+.bd::after{content:"";position:absolute;inset:0;background:url(../../../assets/map.jpg) center/cover;opacity:.06;filter:blur(2px)}
+.win{position:relative;margin:24px auto;width:min(1240px,calc(100vw - 48px));border:1px solid #6b5236;border-radius:12px;background:linear-gradient(#21180f,#181009);box-shadow:0 30px 80px #000d,0 0 0 1px #000;overflow:hidden}
+/* header */
+.hd{position:relative;display:grid;grid-template-columns:118px minmax(0,1fr) auto;gap:18px;padding:16px 20px 14px;border-bottom:1px solid var(--line2);
+  background:radial-gradient(ellipse 70% 120% at 30% 0%,#3a2a18 0%,transparent 70%),linear-gradient(#24190f,#1b130d)}
+.card{width:118px;aspect-ratio:480/692;border-radius:6px;background-image:url(../../../assets/events.jpg);background-size:500% 300%;box-shadow:0 8px 20px #000c,0 0 0 1px #6b5236;align-self:start}
+.kick{font:500 11px var(--mono);letter-spacing:.2em;color:var(--muted);display:flex;gap:8px;align-items:center}
+.kick .k{color:var(--gold)}
+.ttl{display:flex;align-items:center;gap:14px;margin:2px 0 4px}
+.ttl h1{font:400 38px/1.05 var(--display);color:var(--gold2);letter-spacing:.04em;text-shadow:0 2px 0 #000}
+.sr{display:flex;align-items:center;gap:8px;padding:3px 10px 3px 3px;border-radius:999px;border:1px solid #6b5236;background:#160f0b}
+.sr img{width:40px;height:40px;border-radius:50%;box-shadow:0 0 0 1px var(--gold)}
+.sr span{font-size:12px;line-height:1.15;color:var(--muted)}.sr b{display:block;color:var(--gold2);font-size:13px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 8px}
+.meta span{font-size:13.5px;padding:3px 9px;border-radius:999px;border:1px solid #4a3826;background:#1a120d;color:#e2d5bb;white-space:nowrap}
+.meta span b{color:var(--gold2);font-weight:600}
+.how{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:8px;border:1px solid var(--gold);background:linear-gradient(90deg,#3a2a18,#231a12);font-size:15px;color:#efe3cc;max-width:760px}
+.how .tr{font-size:20px;line-height:1}
+.how b{color:var(--gold2)}
+.ico{width:15px;height:15px;vertical-align:-2px}
+.coin{width:15px;height:15px;vertical-align:-3px}
+/* Flavius in the corner */
+.flv{display:flex;flex-direction:column;align-items:flex-end;gap:6px;width:240px}
+.flv .face{width:132px;height:102px;border-radius:10px;background-size:cover;background-position:center;box-shadow:0 0 0 2px #6b5236,0 0 0 4px #1b130d,0 0 0 5px var(--gold),0 10px 22px #000b}
+.flv .say{position:relative;max-width:240px;padding:8px 12px;border-radius:10px;background:#efe3cc;color:#2a1a0c;font:italic 600 15px/1.25 var(--body);box-shadow:0 6px 16px #000a}
+.flv .say::after{content:"";position:absolute;right:50px;top:-7px;border:7px solid transparent;border-top:0;border-bottom-color:#efe3cc}
+.flv .who{font:500 10.5px var(--mono);letter-spacing:.14em;color:var(--dim)}
+/* body */
+.bodyg{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;padding:14px 20px 10px}
+.sh{display:flex;align-items:baseline;gap:8px;font:400 17px var(--display);color:var(--gold2);letter-spacing:.06em;margin:0 0 7px}
+.sh small{font:12.5px var(--body);color:var(--muted);letter-spacing:0}
+.sh .sp{flex:1}
+.rounds{display:grid;gap:1px;background:#00000050;border:1px solid #3a2c1e;border-radius:8px;overflow:hidden}
+.rd{display:grid;grid-template-columns:40px minmax(0,1fr) 168px;gap:4px 12px;align-items:center;padding:10px 12px;background:var(--panel2);position:relative}
+.rd .n{grid-row:1/3;font:400 25px var(--display);color:var(--gold);text-align:center}
+.rd .nm{display:flex;align-items:baseline;gap:8px;min-width:0}
+.rd .nm b{font:400 19px var(--display);color:var(--bone);letter-spacing:.02em}
+.rd .nm span{font:12px var(--mono);color:var(--muted)}
+.rd .nm em{font:600 10px var(--mono);letter-spacing:.12em;font-style:normal;color:#140f0b;background:var(--gold2);padding:1px 6px;border-radius:3px}
+.rd.now{background:linear-gradient(90deg,#3a2a18,#2a1f17 60%);box-shadow:inset 3px 0 0 var(--gold)}
+.rch{display:flex;gap:4px;justify-content:flex-end}
+.rch span{font:600 11px var(--mono);padding:2px 6px;border-radius:3px;border:1px solid}
+.rch .y{border-color:#4d7a43;color:#bfe3b0;background:#1e2d19}
+.rch .n0{border-color:#6a2a22;color:#e28a7a;text-decoration:line-through;background:#2a1512}
+.rd .end{font-size:14px;color:#ddd0b6;line-height:1.3}
+.rd .end b{color:var(--bone)}
+.rd .rw{font-size:13.5px;color:var(--gold2);text-align:right;white-space:nowrap}
+.legend{margin-top:6px;font-size:12px;color:var(--dim)}
+.legend span{font:600 10.5px var(--mono);padding:1px 5px;border-radius:3px;border:1px solid #6a2a22;color:#e28a7a;text-decoration:line-through;background:#2a1512}
+/* rule cards */
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rc{position:relative;display:flex;gap:10px;padding:9px 10px;border-radius:8px;border:1px solid #3a2c1e;background:var(--panel2);min-height:64px}
+.rc .ic{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:16px;background:#160f0b;box-shadow:0 0 0 1px #4a3826}
+.rc b{display:block;font-size:14.5px;color:var(--bone);line-height:1.2}
+.rc span{display:block;font-size:13px;color:var(--muted);line-height:1.25;margin-top:2px}
+.rc.dg{border-color:#5b3f86;background:linear-gradient(135deg,#2a1f30,#231a20 70%)}
+.rc.dg .ic{box-shadow:0 0 0 1px var(--dig)}
+.dgm{position:absolute;right:8px;top:7px;font:600 9.5px var(--mono);letter-spacing:.1em;color:var(--dig2);padding:1px 5px;border-radius:3px;border:1px solid #6a4f9a;background:#1e1626}
+.rc.dg b{padding-right:64px}
+.rc.ev{border-color:#7a5a24;background:linear-gradient(135deg,#33261a,#251b13 70%)}
+/* seats */
+.seats{padding:4px 20px 12px}
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.st{position:relative;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;border:1px solid #3a2c1e;border-left:4px solid var(--pc);background:linear-gradient(90deg,color-mix(in srgb,var(--pc) 16%,#2a1f17),#211811 70%);min-width:0}
+.st .fc{flex:none;width:48px;height:48px;border-radius:50%;background-size:243px 352px;box-shadow:0 0 0 2px var(--pc),0 0 0 3px #000;background-color:#d9cbb0}
+.st .tx{min-width:0;flex:1}
+.st .tx b{display:block;font-size:14.5px;color:var(--bone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st .tx span{display:block;font-size:12.5px;color:var(--muted)}
+.st .tx .cl{color:var(--pc);font-family:var(--display);font-size:14px;letter-spacing:.03em}
+.st .tk{flex:none;width:40px;height:50px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:drop-shadow(0 3px 4px #000a)}
+.tag{font:600 9.5px var(--mono);padding:1px 5px;border-radius:3px;color:#140f0b;background:var(--gold2);margin-left:4px;vertical-align:1px}
+.tag.cpu{background:#6b5a46;color:#efe3cc}
+.tag.ta{background:#5b9bd5}.tag.tb{background:#e8923a}
+.st.you{box-shadow:0 0 0 1px var(--gold),0 0 16px #d6ab4c30}
+.vs{font:400 13px var(--display);color:var(--dim);letter-spacing:.2em;text-align:center;margin:-2px 0 6px}
+/* footer */
+.ft{display:flex;align-items:center;gap:14px;padding:12px 20px 16px;border-top:1px solid var(--line2);background:#150f0b}
+.ft .note{flex:1;font-size:13px;color:var(--dim)}
+.ft .note b{color:var(--muted)}
+/* phone frames sheet (#phone on a wide screen) */
+.ph{display:none;gap:30px;justify-content:center;padding:26px}
+.ph .dev{width:390px;height:844px;border-radius:44px;border:10px solid #0b0705;box-shadow:0 0 0 1px #6b5236,0 30px 70px #000c;overflow:hidden;background:#000;position:relative}
+.ph iframe{width:390px;height:844px;border:0}
+.ph p{text-align:center;color:var(--muted);margin:8px 0 0;font-size:13.5px}
+.phonewide .bd,.phonewide .win{display:none}.phonewide .ph{display:flex}
+.phtitle{display:none;text-align:center;font:400 24px var(--display);color:var(--gold2);padding-top:18px}
+.phonewide .phtitle{display:block}
+.more{display:none}
+@media (max-width:600px){
+  .win{margin:0;width:100%;border-radius:0;border:0;min-height:100vh;padding-bottom:84px}
+  .hd{grid-template-columns:72px minmax(0,1fr);gap:12px;padding:12px 16px}
+  .card{width:72px}
+  .ttl{flex-wrap:wrap;gap:8px}.ttl h1{font-size:27px}
+  .sr img{width:30px;height:30px}.sr span{font-size:11px}.sr b{font-size:12px}
+  .meta span{font-size:12px;padding:2px 7px}
+  .how{grid-column:1/-1;font-size:14px}
+  .flv{grid-column:1/-1;flex-direction:row-reverse;align-items:center;width:auto;justify-content:flex-end}
+  .flv .face{width:58px;height:46px;border-radius:8px;box-shadow:0 0 0 1px var(--gold)}
+  .flv .say{font-size:13.5px;padding:6px 10px}.flv .say::after{right:-7px;top:12px;border:7px solid transparent;border-right:0;border-left-color:#efe3cc}
+  .flv .who{display:none}
+  .bodyg{grid-template-columns:1fr;padding:12px 16px 6px}
+  .rd{grid-template-columns:30px minmax(0,1fr);padding:9px 10px}
+  .rd .n{font-size:20px;grid-row:1/4}
+  .rch{justify-content:flex-start}.rd .rw{text-align:left;white-space:normal}
+  .rules{grid-template-columns:1fr}
+  .rules .rc.x{display:none}
+  .more{display:block;margin-top:6px;font-size:13.5px;color:var(--gold2)}
+  .seats{padding:4px 0 10px}
+  .seats .sh{padding:0 16px}
+  .strip{display:flex;overflow-x:auto;padding:0 16px 4px;scroll-snap-type:x mandatory}
+  .st{flex:none;width:250px;scroll-snap-align:start}
+  .ft{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -10px 24px #000b;z-index:5}
+  .ft .note{display:none}.ft .sb{flex:1}
+}
+</style></head><body>
+<div class="bd"></div>
+<div class="phtitle">Event briefing · phone (390 px)</div>
+<div class="ph"><div><div class="dev"><iframe src="brief.html#classic" title="classic"></iframe></div><p>Classic · Democritus</p></div><div><div class="dev"><iframe src="brief.html#special" title="special"></iframe></div><p>Special · Golden Eagle</p></div></div>
+<div class="win" role="dialog" aria-modal="true" aria-labelledby="bTitle">
+ <div class="hd">
+  <div class="card" id="card" role="img" aria-label="Event card"></div>
+  <div style="min-width:0">
+   <div class="kick" id="kick"></div>
+   <div class="ttl"><h1 id="bTitle"></h1><span class="sr" id="sr"><img src="../../../assets/sr_democritus.webp" alt=""><span>Summa Rudis<b>Democritus</b></span></span></div>
+   <div class="meta" id="meta"></div>
+   <div class="how" id="how"></div>
+  </div>
+  <div class="flv"><div class="face" id="fface"></div><div class="say" id="fsay"></div><div class="who">FLAVIUS · FROM HIS BOX</div></div>
+ </div>
+ <div class="bodyg">
+  <div>
+   <div class="sh">The rounds <small id="rsub"></small></div>
+   <div class="rounds" id="rounds"></div>
+   <div class="legend"><span>PvP</span> = not allowed this round · hover a chip for the full rule</div>
+  </div>
+  <div>
+   <div class="sh">Rules &amp; conditions <span class="sp"></span><small><span style="color:var(--dig2)">◆</span> digital rule</small></div>
+   <div class="rules" id="rules"></div>
+   <div class="more" id="more"></div>
+  </div>
+ </div>
+ <div class="seats">
+  <div class="sh">On the sand <small id="ssub"></small></div>
+  <div class="strip" id="seats"></div>
+ </div>
+ <div class="ft">
+  <span class="note">Reopen any time: <b>📋 Event</b> on the top bar.</span>
+  <button class="sb pri l" id="go"><svg viewBox="0 0 24 24"><path d="M3 2l9.2 9.2-1.4 1.4L1.6 3.4 3 2zm18 0l1.4 1.4-7.1 7.1 2.1 2.1 1.4-1.4 1.4 1.4-2.1 2.1 2.8 2.8-1.4 1.4-2.8-2.8-2.1 2.1-1.4-1.4 1.4-1.4-2.1-2.1-2.1 2.1 1.4 1.4-1.4 1.4-2.1-2.1-2.8 2.8L4.6 20l2.8-2.8-2.1-2.1 1.4-1.4 1.4 1.4L21 2z"/></svg><span class="t">Enter the arena</span></button>
+ </div>
+</div>
+<script>
+const C='<img class="coin" src="../../../assets/coin.webp" alt="coin">';
+const WH='<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15V4" stroke="#d9b24a" stroke-width="1.3" stroke-linecap="round"/><g fill="#e8c65a" stroke="#9a7a24" stroke-width=".5"><ellipse cx="8" cy="2.6" rx="1.3" ry="2"/><ellipse cx="6.2" cy="5" rx="1.1" ry="1.9" transform="rotate(-30 6.2 5)"/><ellipse cx="9.8" cy="5" rx="1.1" ry="1.9" transform="rotate(30 9.8 5)"/><ellipse cx="6.2" cy="8" rx="1.1" ry="1.9" transform="rotate(-30 6.2 8)"/><ellipse cx="9.8" cy="8" rx="1.1" ry="1.9" transform="rotate(30 9.8 8)"/><ellipse cx="6.2" cy="11" rx="1.1" ry="1.9" transform="rotate(-30 6.2 11)"/><ellipse cx="9.8" cy="11" rx="1.1" ry="1.9" transform="rotate(30 9.8 11)"/></g></svg>';
+const K=['PvE','PvP','CF','CA'],KT=['Beasts may be fought','Gladiators may fight each other','Crowd Favor can be earned and spent','Class abilities work'];
+const CC={hero:'#4f9a57',soldier:'#c0433a',royalty:'#4f7fc4',slave:'#d4b13c',amazonia:'#dc7a34',venatore:'#9a6fd0',veteranus:'#b9c1c9',damnatio:'#8a7f72'};
+/* head crops on the printed class cards (placeholder for the game's own portraits) */
+const FACE={hero:[430,235],soldier:[400,230],royalty:[400,230],amazonia:[400,230],damnatio:[400,240],veteranus:[400,230],venatore:[400,230],slave:[400,230]};
+const D={
+ classic:{card:[0,0],kick:'CLASSIC · <span class="k">ROUND I OF III</span>',name:'Democritus',sr:1,
+  meta:['📍 <b>Roma</b>','📅 January 1','☀ Day','⚔ 4 gladiators','🏟 13K in the stands'],
+  how:'Survive every round. The last one standing wins <b>'+WH+' 15 CF</b> — then Crowd Favor decides your Fate.',
+  face:'smug',say:'Rome is watching. Do not bore me.',
+  rsub:'· the sand shrinks each round',
+  rounds:[['I','Bestiarii','13×13',[1,0,1,1],'<b>4 beasts slain</b> or a gladiator falls','3 cards · '+C+' 2 · '+WH+' 2',1],
+          ['II','Royale','9×9',[1,1,1,0],'<b>Two</b> gladiators remain',C+' 2 · '+WH+' 2'],
+          ['III','Duel','5×5',[1,1,0,0],'<b>One</b> gladiator left standing','Winner '+WH+' 15']],
+  rules:[['🎴','The Fate','Under 17 CF at the end: condemned. 17–19: the Thumb of Flavius.','ev'],
+         ['🐾','Arena deck','Tholo, Leo, Leaena and Commodus may be drawn.',''],
+         ['📜','Mandata Flavi off','No secret objectives this event.',''],
+         ['◎','Focus needs 3 movement','Focus spends all your movement; below 3 it is refused.','dg'],
+         ['🏺','Focus on a Blessing','A focused ranged hit on a pot does +1 damage (PvP rounds).','dg'],
+         ['🗝','Lifting the chest','Picking up the Arena Chest costs 1 movement.','dg']],
+  ssub:'· every one for himself',
+  seats:[['Varinius Gracchi','royalty','Royalty','you'],['Galla "Fatum" Aquila','amazonia','Amazonia','Veteran'],['The Scourge of Arles','soldier','Soldier','Fighter'],['Nonus Messala','damnatio','Damnatio','Apprentice']]},
+ special:{card:[1,1],kick:'TEAMS · <span class="k">SPECIAL EVENT</span>',name:'Golden Eagle',sr:0,
+  meta:['📍 <b>Leptis Magna</b>','📅 January 8','☾ Night','⚔ 4 gladiators · 2 teams','🏟 15K in the stands'],
+  how:'Carry the Golden Eagle to a capture tile. After <b>three captures</b> your team may exit — the first team out wins <b>'+WH+' 15 CF</b>.',
+  face:'pleased',say:'Gold for the swift. Sand for the slow.',
+  rsub:'· one round, the whole sand',
+  rounds:[['I','Team Capture Royale','13×13',[1,1,0,0],'A team <b>exits with three captures</b>, or one team is left','Winner '+WH+' 15',1]],
+  rules:[['🦅','One Golden Eagle','It waits on the centre tile and returns there if its carrier leaves.','ev'],
+         ['🚩','Three captures','Then your team may leave through a starting tile. First team out wins.','ev'],
+         ['🎒','Start with nothing','Three items and two Arena Keys lie in the sand.','ev'],
+         ['🚫','No Crowd Favor, no abilities','CF is not earned or spent; class abilities are off.',''],
+         ['🌾','Eagle offerings still pay','Eagle and CF offerings found on the sand still count in no-CF rounds.','dg'],
+         ['◎','Focus needs 3 movement','Focus spends all your movement; below 3 it is refused.','dg']],
+  ssub:'· Team A <span class="tag ta">A</span> vs Team B <span class="tag tb">B</span>',
+  seats:[['Thraex Murmillo','hero','Hero','you','A'],['Tigris the Twice-Freed','amazonia','Amazonia','Veteran','A'],['Ferrum the Unkillable','veteranus','Veteranus','Fighter','B'],['Tertius Audax','venatore','Venatore','Apprentice','B']]}
+};
+function show(){
+ const h=(location.hash||'#classic').slice(1);
+ const wide=h==='phone'&&innerWidth>600;document.body.classList.toggle('phonewide',wide);
+ const d=D[h==='special'?'special':'classic'];
+ document.getElementById('card').style.backgroundPosition=`${d.card[0]*25}% ${d.card[1]*50}%`;
+ document.getElementById('kick').innerHTML=d.kick;document.getElementById('bTitle').textContent=d.name;
+ document.getElementById('sr').hidden=!d.sr;
+ document.getElementById('meta').innerHTML=d.meta.map(x=>`<span>${x}</span>`).join('');
+ document.getElementById('how').innerHTML=`<span class="tr">🏆</span><span><b>How to win.</b> ${d.how}</span>`;
+ document.getElementById('fface').style.backgroundImage=`url(../../../assets/flavmood_${d.face}.webp)`;
+ document.getElementById('fsay').textContent='“'+d.say+'”';
+ document.getElementById('rsub').innerHTML=d.rsub;document.getElementById('ssub').innerHTML=d.ssub;
+ document.getElementById('rounds').innerHTML=d.rounds.map(([n,nm,z,f,end,rw,now])=>`<div class="rd ${now?'now':''}"><span class="n">${n}</span><span class="nm"><b>${nm}</b><span>${z}</span>${now?'<em>FIRST</em>':''}</span><span class="rch">${f.map((v,i)=>`<span class="${v?'y':'n0'}" title="${KT[i]}${v?'':' — not this round'}">${K[i]}</span>`).join('')}</span><span class="end">⏱ ${end}</span><span class="rw">${rw}</span></div>`).join('');
+ document.getElementById('rules').innerHTML=d.rules.map(([ic,b,t,k],i)=>`<div class="rc ${k} ${i>=3?'x':''}"><span class="ic">${ic}</span><div><b>${b}</b><span>${t}</span></div>${k==='dg'?'<span class="dgm">◆ DIGITAL</span>':''}</div>`).join('');
+ document.getElementById('more').textContent=`＋ ${d.rules.length-3} more rules ▾`;
+ document.getElementById('seats').innerHTML=d.seats.map(([nm,k,cl,mind,tm])=>{const you=mind==='you';const [fx,fy]=FACE[k]||[400,230];
+  return `<div class="st ${you?'you':''}" style="--pc:${CC[k]}"><span class="fc" style="background-image:url(../../../assets/cls_${k}.webp);background-position:${-(fx*.44-24)}px ${-(fy*.44-24)}px"></span><span class="tx"><b>${nm}</b><span><span class="cl">${cl}</span>${tm?` <span class="tag t${tm.toLowerCase()}">${tm}</span>`:''}${you?' <span class="tag">YOU</span>':` <span class="tag cpu">CPU · ${mind}</span>`}</span></span><span class="tk" style="background-image:url(../../../assets/mini_${k}.webp)"></span></div>`}).join('');
+}
+addEventListener('hashchange',show);show();
+</script>
+</body></html>

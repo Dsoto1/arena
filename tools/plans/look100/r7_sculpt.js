@@ -69,7 +69,9 @@ function matAt(fd, x, y, z) { const i = Math.round((x - fd.lo[0]) / fd.h), j = M
 /* mesh the field, cluster-decimate, re-project, bake AO + wear + paint */
 export function meshField(fd, cell, opts = {}) {
   const sn = run(surfaceNets100(fd)); const n0 = sn.pos.length / 3, tris0 = sn.tri.length / 3;
-  const P = sn.pos; const proj = (p) => { for (let it = 0; it < 3; it++) { const f = sampleF100(fd, ...p), g = gradF100(fd, ...p); p = [p[0] - g[0] * f, p[1] - g[1] * f, p[2] - g[2] * f]; } return p; };
+  const P = sn.pos; /* round 7: a normalised gradient and a step no longer than one fine cell, so a jump in the field (a cut region) can't fling a vertex */
+  const proj = (p) => { const p0 = p; for (let it = 0; it < 3; it++) { const f = cl(sampleF100(fd, ...p), -fd.h, fd.h), g = gradF100(fd, ...p), gl = Math.hypot(...g) || 1; p = [p[0] - g[0] / gl * f, p[1] - g[1] / gl * f, p[2] - g[2] / gl * f]; }
+    return Math.hypot(p[0] - p0[0], p[1] - p0[1], p[2] - p0[2]) > fd.h * 2.5 ? p0 : p; };
   /* vertex clustering */
   const key = new Map(), acc = [], remap = new Int32Array(n0); const nocl = !(cell > 0);
   /* normal-aware: the two faces of a thin shell never merge (6 bins by the field gradient's dominant axis and sign) */

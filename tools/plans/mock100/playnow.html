@@ -518,9 +518,9 @@ document.getElementById('map').innerHTML='<span class="maplock">🔒 Roma · thi
 const E=[['Democritus',0,0,1],['Egidious',1,0],['Cassian',2,0],['Commodus',3,0],['Familia',4,0],['Gauntlet',0,1],['Golden Eagle',1,1],['Juggernaut',2,1],['Orpheus',3,1],['Triumviratus',4,1],['Chariot',0,2],['Lupus',1,2],['Naumachia',2,2]];
 document.getElementById('strip').innerHTML=E.map(([n,c,r,on])=>`<div class="ev ${on?'on':''}"><i style="background-position:${c*25}% ${r*50}%"></i>${n}</div>`).join('');
 const C='<img src="../../../assets/coin.webp" alt="coin">';
-const R=[['I','Bestiarii','Zone 1',[1,0,1,1],'4 beasts slain or a gladiator falls','3 cards · 2 '+C+' · 2 CF'],
-         ['II','Royale','Zone 2',[1,1,1,0],'Two left standing','2 '+C+' · 2 CF'],
-         ['III','Duel','Zone 3 · the whole sand',[1,1,0,0],'Last one standing','Winner +15 CF']];
+const R=[['I','Bestiarii','Zone 1 · 13×13',[1,0,1,1],'4 beasts slain or a gladiator falls','3 cards · 2 '+C+' · 2 CF'],
+         ['II','Royale','Zone 2 · 9×9',[1,1,1,0],'Two left standing','2 '+C+' · 2 CF'],
+         ['III','Duel','Zone 3 · 5×5',[1,1,0,0],'Last one standing','Winner +15 CF']];
 const K=['PvE','PvP','CF','CA'];
 document.getElementById('rounds').innerHTML=`<div class="rd hd"><span>#</span><span>Round</span><span>Rules</span><span>Ends when</span><span>Reward</span></div>`+
  R.map(([n,nm,z,f,end,rw])=>`<div class="rd"><span class="n">${n}</span><span class="nm"><b>${nm}</b><span>${z}</span></span><span class="rch">${f.map((v,i)=>`<span class="${v?'y':'n0'}">${K[i]}</span>`).join('')}</span><span class="end">⏱ ${end}</span><span class="rw">${rw}</span></div>`).join('');
