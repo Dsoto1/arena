@@ -167,3 +167,25 @@ neck (no feathers/mane detail); no embossed figures (his helmets' engraved crest
 lames, not his riveted scales; metals have no specular highlight/reflection, so steel and silver look matte; the gladius tip touches
 the scutum edge in the front view of the max load; sculpts not yet made for the other helmets/chests (cassis, galea, flavhelm,
 steelhelm, ornate, amazon).
+
+## Round 6 — painted highlights, refined + 10 new sculpts, sword 15°, gladius clear (r6_*)
+
+Files: r6_sculpt.png (all 16 sculpts: his art · round 4 · round 6 two views), r6_maxload.png + r6_maxload_sheet.png, r6_classes.png +
+r6_cls_<class>.png, r6_board.png (his mini beside ours, 1:1 and ×2), r6_stats.json. Code: r6_sculpt.js (fork of r5_sculpt.js, which is
+unchanged), page6.js, make6.js.
+
+- Painted highlight (bake): a crisp light band on curves facing the upper left (n·L > 0.74, L = (−0.5, 0.75, 0.45) in the piece's own
+  frame, so it turns with the figure like paint) + a soft wider band; steel/silver take near-white, gold/bronze/copper take a saturated
+  pale gold (#ffe070 / #ffd98a / #ffb880) so gold stays gold. Recesses: AO^1.35 × (1 − 0.7·cavity), cavity from the field Laplacian.
+- Refined: Thracian neck rippled into feather scales + an 11-feather mane (alternating silver/gold) + embossed palmette on the brow +
+  cheek medallions; Hoplomachus crest is a flat plate with a bronze bead + brow medallion; Centurian embossed scroll band + 8 bosses;
+  Murmillo grille wider + centre bar; Reinforced Chest shoulders = riveted overlapping scales, a rivet row on every lame; muscle relief
+  ~15% stronger.
+- New sculpts: galea (spangenhelm, bands, rivets, nasal → cheek guards), cassis (horns, gold front plate, eye slot, emblem), helm5
+  (closed blue-steel, red eye holes, ridge, spike, gorget), flavhelm (lion: mane, brow, snout, eyes, fangs, jaw blades, spike),
+  steelhelm (gothic V face, ridge, spike, slanted slits with red glint, embossed skulls); pectorale (laurel wreath), lorica (scales
+  all over), amazon (crossing feathered wings), flavchest (dark plate, copper figures, red fringed skirt), ornate (blue scaled collar
+  band, two blue rosettes).
+- Triangles 30.7k–60.3k per piece (thorax 71.0k), helmets build 0.5–1.0 s, cuirasses 3.7–9.8 s, once per body.
+- Sword 15° off the forearm line; max load searched until no gladius point is in the scutum board or the body: 0/68 with the shield
+  hand 230 mm left of round 5 and the sword hand at (−0.33, 1.20, 0.44).

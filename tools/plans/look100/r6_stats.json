@@ -1,0 +1,451 @@
+{
+ "build": 11975,
+ "sculpt": {
+  "murmillo": {
+   "wearMs": 740,
+   "tris": 55398,
+   "trisFine": 235032,
+   "verts": 27419,
+   "ms": 733
+  },
+  "thrachelm": {
+   "wearMs": 891,
+   "tris": 60318,
+   "trisFine": 257180,
+   "verts": 29786,
+   "ms": 887
+  },
+  "crista": {
+   "wearMs": 746,
+   "tris": 55150,
+   "trisFine": 224308,
+   "verts": 27429,
+   "ms": 744
+  },
+  "centurion": {
+   "wearMs": 532,
+   "tris": 34079,
+   "trisFine": 151560,
+   "verts": 16784,
+   "ms": 530
+  },
+  "galea": {
+   "wearMs": 440,
+   "tris": 34622,
+   "trisFine": 142936,
+   "verts": 16783,
+   "ms": 439
+  },
+  "cassis": {
+   "wearMs": 607,
+   "tris": 41931,
+   "trisFine": 179264,
+   "verts": 20748,
+   "ms": 605
+  },
+  "helm5": {
+   "wearMs": 611,
+   "tris": 46448,
+   "trisFine": 196348,
+   "verts": 22980,
+   "ms": 608
+  },
+  "flavhelm": {
+   "wearMs": 782,
+   "tris": 34420,
+   "trisFine": 144384,
+   "verts": 17025,
+   "ms": 779
+  },
+  "steelhelm": {
+   "wearMs": 442,
+   "tris": 30742,
+   "trisFine": 136960,
+   "verts": 15221,
+   "ms": 441
+  },
+  "musculata": {
+   "wearMs": 4391,
+   "tris": 38740,
+   "trisFine": 309488,
+   "verts": 19141,
+   "ms": 4389
+  },
+  "thorax": {
+   "wearMs": 8504,
+   "tris": 70991,
+   "trisFine": 608292,
+   "verts": 31578,
+   "ms": 8502
+  },
+  "pectorale": {
+   "wearMs": 6284,
+   "tris": 37104,
+   "trisFine": 299532,
+   "verts": 18343,
+   "ms": 6283
+  },
+  "lorica": {
+   "wearMs": 3752,
+   "tris": 50708,
+   "trisFine": 348488,
+   "verts": 24528,
+   "ms": 3751
+  },
+  "amazon": {
+   "wearMs": 4550,
+   "tris": 40036,
+   "trisFine": 308148,
+   "verts": 19674,
+   "ms": 4549
+  },
+  "flavchest": {
+   "wearMs": 3732,
+   "tris": 47058,
+   "trisFine": 357136,
+   "verts": 23108,
+   "ms": 3730
+  },
+  "ornate": {
+   "wearMs": 4467,
+   "tris": 38668,
+   "trisFine": 305004,
+   "verts": 19077,
+   "ms": 4465
+  }
+ },
+ "maxTries": [
+  {
+   "b": -0.1,
+   "at": [
+    -0.33,
+    0.44
+   ],
+   "shieldX": 230,
+   "shield": 0,
+   "body": 0
+  }
+ ],
+ "max": {
+  "kb": 33,
+  "meta": [
+   132,
+   139,
+   66,
+   115.9
+  ],
+  "ms": 9370,
+  "wrist": {
+   "R": {
+    "flex": 1.6,
+    "dev": 2.1,
+    "total": 2.6
+   },
+   "L": {
+    "flex": 0.6,
+    "dev": 1.3,
+    "total": 1.5
+   },
+   "clamped": [],
+   "miss": 2.8
+  },
+  "clear": {
+   "body": 0,
+   "shield": 0,
+   "n": 68
+  }
+ },
+ "classes": {
+  "soldier": {
+   "kb": 28.5,
+   "ms": 6031,
+   "meta": [
+    114,
+    142,
+    57,
+    118.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 1.8,
+     "dev": 2.1,
+     "total": 2.8
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 2.8
+   }
+  },
+  "royalty": {
+   "kb": 27.7,
+   "ms": 7310,
+   "meta": [
+    84,
+    147,
+    42,
+    123.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 5.3,
+     "dev": 0.6,
+     "total": 5.3
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 0.6
+   }
+  },
+  "hero": {
+   "kb": 31,
+   "ms": 6807,
+   "meta": [
+    108,
+    146,
+    54,
+    122.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 1.8,
+     "dev": 2.1,
+     "total": 2.8
+    },
+    "L": {
+     "flex": 1,
+     "dev": 1.7,
+     "total": 2
+    },
+    "clamped": [],
+    "miss": 2.8
+   }
+  },
+  "slave": {
+   "kb": 34.9,
+   "ms": 6775,
+   "meta": [
+    164,
+    154,
+    82,
+    130.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 0,
+     "dev": -0.7,
+     "total": 0.7
+    },
+    "L": {
+     "flex": 2.5,
+     "dev": -3.2,
+     "total": 4.1
+    },
+    "clamped": [],
+    "miss": 2.6
+   }
+  },
+  "veteranus": {
+   "kb": 29.7,
+   "ms": 7234,
+   "meta": [
+    114,
+    139,
+    57,
+    115.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 1.8,
+     "dev": 2.1,
+     "total": 2.8
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 2.8
+   }
+  },
+  "amazonia": {
+   "kb": 31.8,
+   "ms": 7956,
+   "meta": [
+    120,
+    154,
+    60,
+    130.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 4.3,
+     "dev": 1.8,
+     "total": 4.7
+    },
+    "L": {
+     "flex": 2.1,
+     "dev": 2.2,
+     "total": 3.1
+    },
+    "clamped": [],
+    "miss": 0.6
+   }
+  },
+  "venatore": {
+   "kb": 30.9,
+   "ms": 7057,
+   "meta": [
+    144,
+    154,
+    72,
+    130.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 5.5,
+     "dev": -0.3,
+     "total": 5.5
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 0.3
+   }
+  },
+  "damnatio": {
+   "kb": 27.7,
+   "ms": 6300,
+   "meta": [
+    84,
+    135,
+    42,
+    111.9
+   ],
+   "wrist": {
+    "R": {
+     "flex": 2.6,
+     "dev": -3.2,
+     "total": 4.1
+    },
+    "L": {
+     "flex": 0,
+     "dev": 0,
+     "total": 0
+    },
+    "clamped": [],
+    "miss": 3.4
+   }
+  }
+ },
+ "sculptAll": {
+  "murmillo": {
+   "tris": 55398,
+   "trisFine": 235032,
+   "verts": 27419,
+   "ms": 733
+  },
+  "thrachelm": {
+   "tris": 60318,
+   "trisFine": 257180,
+   "verts": 29786,
+   "ms": 887
+  },
+  "crista": {
+   "tris": 55150,
+   "trisFine": 224308,
+   "verts": 27429,
+   "ms": 744
+  },
+  "centurion": {
+   "tris": 34079,
+   "trisFine": 151560,
+   "verts": 16784,
+   "ms": 530
+  },
+  "galea": {
+   "tris": 34622,
+   "trisFine": 142936,
+   "verts": 16783,
+   "ms": 439
+  },
+  "cassis": {
+   "tris": 41931,
+   "trisFine": 179264,
+   "verts": 20748,
+   "ms": 605
+  },
+  "helm5": {
+   "tris": 46448,
+   "trisFine": 196348,
+   "verts": 22980,
+   "ms": 608
+  },
+  "flavhelm": {
+   "tris": 34420,
+   "trisFine": 144384,
+   "verts": 17025,
+   "ms": 779
+  },
+  "steelhelm": {
+   "tris": 30742,
+   "trisFine": 136960,
+   "verts": 15221,
+   "ms": 441
+  },
+  "musculata": {
+   "tris": 38740,
+   "trisFine": 309488,
+   "verts": 19141,
+   "ms": 4389
+  },
+  "thorax": {
+   "tris": 70991,
+   "trisFine": 608292,
+   "verts": 31578,
+   "ms": 8502
+  },
+  "pectorale": {
+   "tris": 37104,
+   "trisFine": 299532,
+   "verts": 18343,
+   "ms": 6283
+  },
+  "lorica": {
+   "tris": 50708,
+   "trisFine": 348488,
+   "verts": 24528,
+   "ms": 3751
+  },
+  "amazon": {
+   "tris": 38295,
+   "trisFine": 293904,
+   "verts": 18820,
+   "ms": 4137
+  },
+  "flavchest": {
+   "tris": 47058,
+   "trisFine": 357136,
+   "verts": 23108,
+   "ms": 3730
+  },
+  "ornate": {
+   "tris": 38668,
+   "trisFine": 305004,
+   "verts": 19077,
+   "ms": 4465
+  }
+ },
+ "totalMs": 152217
+}

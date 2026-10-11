@@ -24,11 +24,14 @@ const PAL = {
   steel: ['#c4cad0', '#454c55', '#f6f8fa'], iron: ['#9ba1a9', '#2a2f35', '#e0e5e9'], dsteel: ['#9aa1a8', '#30353b', '#e3e8ec'], silver: ['#d6dade', '#59606a', '#ffffff'],
   gold: ['#e9d88a', '#806b2e', '#fffbe0'], bronze: ['#dcbf7c', '#6e5a2c', '#fff0c8'], red: ['#b3302a', '#4a0f0c', '#e8786a'],
   dark: ['#1c1714', '#0a0807', '#3a302a'], leather: ['#7f4e2c', '#2e1a0e', '#c0926a'], blue: ['#3f66b0', '#18284a', '#9db8ea'], cream: ['#efe4c8', '#8a7a5a', '#ffffff'],
+  bsteel: ['#8592a0', '#232a33', '#e6eef6'], horn: ['#4a4541', '#161412', '#9a948c'], dark2: ['#615c55', '#1d1b19', '#aaa49b'], copper: ['#d08a52', '#5a3016', '#ffd2a8'], lblue: ['#3c5aa8', '#141e40', '#a8c0f0'],
 };
 const MATS = Object.keys(PAL); const MI = Object.fromEntries(MATS.map((k, i) => [k, i + 1]));
 const lin = (h) => { const c = new THREE.Color(h).convertSRGBToLinear(); return [c.r, c.g, c.b]; };
 const PALL = Object.fromEntries(Object.entries(PAL).map(([k, v]) => [k, v.map(lin)]));
 
+const HL6 = (() => { const v = [-0.5, 0.75, 0.45], l = Math.hypot(...v); return v.map(a => a / l); })();
+const METAL6 = new Set(['steel', 'iron', 'dsteel', 'silver', 'gold', 'bronze', 'bsteel', 'copper']);
 /* ---------- field → mesh → decimate → bake ---------- */
 function* fieldOf(ops, h, pad = 0.01) {
   let lo = [1e9, 1e9, 1e9], hi = [-1e9, -1e9, -1e9];
