@@ -139,3 +139,6 @@ BANNERS: 1a 2a 3a 4a 5c ("Heraldry" — Roman alternatives offered); make it ANC
 RECRUITING r3 approved so far; Offer right side → contract tablet (was decoration).
 BUBBLES: only if performance does not suffer — build gated on tv91r draw time + a zoom frame test, bubbles on vs off.
 MY LUDUS: unsure about the Fight Night card → compare variant; show Advisors room + an opened letter.
+BANNERS round 2 answers: 1a Insignia · 2a Parma chip · 3a Flavius box = locked system Flammula · 4a house picks the Signum top (eagle only Domus Aurea) · 5a bronze plaque · 6a bold Colosseum stripes on the Velarium.
+ADVISORS: no separate room — marble relief frieze of the six heads on My Ludus; click a head → popover (level, advice, train/upgrade text + cost). Mock round 4.
+ONLINE ISSUED KIT: proposed — one Issued set per house; the daily claim only refills missing pieces (no stacking, no hoarding).
