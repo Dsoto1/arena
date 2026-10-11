@@ -42,7 +42,9 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
 - **VISUAL POLISH RULE (his, 2026-10-07):** preserve gameplay clarity, responsiveness, accessibility, localization, save compatibility, network
   authority and the existing desktop + mobile experiences — never improve a beauty shot while making the game harder to read or slower to play.
   Every visual change must keep passing: draw-cost budgets (tv91r "draw time", tv92p soak/idle), clarity (tv91r nothing over the sand/pieces),
-  phones (tv66 / tv88 phone tests, 390 px checks), languages (tv86 / tv87l walks: leftover English + overflow), saves (SAVE_MIGRATIONS + the
+  FRAME TARGET (his, 2026-10-11): 60 fps on a mid-range laptop and 30+ fps on a mid-range phone in a normal match at Normal speed, zoomed
+  and not (≈16 ms a frame on a laptop; a feature that pushes a typical laptop frame over 16 ms is a bug) — checked on his devices with the Settings FPS meter;
+  headless tests keep relative budgets. phones (tv66 / tv88 phone tests, 390 px checks), languages (tv86 / tv87l walks: leftover English + overflow), saves (SAVE_MIGRATIONS + the
   tab/version guards), the dice (trng92), online lockstep (tonl*), Reduce motion / animations Off honoured; a new effect gets an Off path.
 
 ## 2. Layout & build
