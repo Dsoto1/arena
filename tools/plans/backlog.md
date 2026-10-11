@@ -175,3 +175,15 @@ ARENA (his answers): railing good — corner towers must connect the rail on bot
 ARENA THEMES (his ok): update THEMES99 palettes where needed to match the new arena stone (AA contrast, default Arena theme stays brown).
 RULE (his, 2026-10-11): NO achievement/trophy may use a basic emoji icon as its art. Found: online trophies TROPHY_IC83 (137-v83onlui) = 🏆 🦁(reads as a teddy bear) 👑 💀 🛡 👍 ☀ 🏅. Fix in v1.0 with the unified Tituli plaques: each title gets real in-house art (Tholo / Commodus = their token rounds or card art, first win = the event's Summa Rudis medallion, rank = the rank medal, Thumb = the Fate card art, Victor of the Day = laurel crown, bouts survived = scutum). Audit the Manager trophy case, Annals feats, Immortalis too.
 Round 8 answers (his): 1b tassets ~30k · 3a real integration for v1.0 (file list in NOTES-look-gear.md Round 8) · Q2 conversion cost: (c) — his pick 2026-10-11 ("C works"): printed pieces + class kits are sculpted ONCE at build time and shipped as one pre-baked file (~150–300 KB, loaded on demand); only custom extras build on the device · online trophy art fix ships with 1.0.
+
+## v1.0 HIT FEEDBACK (his picks 2026-10-11; nothing built until go)
+Problem: every point change pops its own floating number (#fx95) — noise without cause or place.
+- Q1b: numbers land ON THE FIGHTER-PANEL AVATAR over the piece/location hit (grey −N armor AP, red −N health), settle into the existing
+  cracks/dims; severed = a word. On the board: a small 6-zone body pip (head/chest/arms/legs) beside the token lights the struck zone + one total.
+  When someone else is hit, the panel shows their avatar briefly, then snaps back to yours.
+- One action = one readout (cause icon from weapon/medallion art first: "🗡 4 → chest: 2 armor, 2 health"), readouts queue, never stack on a tile.
+- Saves/blocks as words: Blocked / Absorbed N / Saved / Missed.
+- Q2b: other fighters' far-off exchanges = faded small marks (full readout only for yours + your target). Setting Full / Mine / Quiet (default Full).
+- Q3a: hits taken between your turns stay as tick marks on your avatar until your turn; hover = "Leo: −3 left leg".
+- Q4a: coin/CF never pop on the board — the icon flies to its counter and the counter ticks (like cf95Fly).
+- Fast: no pop-ups; avatar marks + log carry it. Reduce motion / Off honoured; online = display only (no S/hash).
