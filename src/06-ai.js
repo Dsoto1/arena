@@ -431,7 +431,7 @@ async function cpuDiplomacy(player) {
   if (act.length < 3) return;
   if ((S.lastOffer || -9) > S.turnNo - 4) return;
   const P = pers(player);
-  const partners = tradePartners(player).filter(other => !friendly(player, other) && !inTruce(player, other) && relOf(player, other) > -60);
+  const partners = tradePartners(player).filter(other => !friendly(player, other) && !inTruce(player, other) && relOf(player, other) > -60 && !(S.onl && !other.cpu)); /* v1.0: online, a CPU never offers a human a truce or trade (decided before any dice, same on every client) */
   const mfWant = player.items.find(i => i.kind === 'mf' && [_T('The Truce'), _T('The Trade')].includes(MANDATA[i.idx].n));
   let chance = (player.diff === 'hard' ? .3 : .15) * (0.5 + (P.survival + P.loyalty - P.aggression + 50) / 150);
   if (mfWant && player.diff !== 'easy') chance = Math.max(chance, .6);
