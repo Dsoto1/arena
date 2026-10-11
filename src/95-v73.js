@@ -64,7 +64,7 @@ function roomScene73(k){const sky=(a,b)=>`<defs><linearGradient id="b73${k}" x1=
   else s=sky('#3a2a1c','#1a120c');
   return `<svg viewBox="0 0 600 120" preserveAspectRatio="xMidYMid meet" style="overflow:hidden" aria-hidden="true">${s}</svg>`}
 /* the Wagers banner: this week's three bouts along the top (day, bout, event; ★ your fighter in it, ✓ fought, the next one lit) */
-function weekStrip73(){const w=W_(),m=me();if(!w||!w.night)return '';const mine=new Set(rosterOf(m).map(g=>g.id));const DAY={under:_T('Fri'),feature:_T('Sat'),main:_T('Sun')};const nx=w.night.bouts.findIndex(b=>!b.done);
+function weekStrip73(){const w=W_(),m=me();if(!w||!w.night)return '';const mine=new Set(rosterOf(m).map(g=>g.id));const DAY={under:_T('Fri'),feature:_T('Sat'),main:_T('Sun'),spc100:_T('Sun')};const nx=w.night.bouts.findIndex(b=>!b.done);
   return `<div class="b73wk">${w.night.bouts.map((b,i)=>`<span class="wkb ${b.done?'done':''} ${i===nx?'next':''}" title="${esc((TIERS[b.tier]||{}).n||'')} · ${esc(EVENTS[b.ev]?EVENTS[b.ev].n:'')}${b.ents.some(id=>mine.has(id))?_T(' · your fighter is on this card'):''}"><b>${DAY[b.tier]||''}</b> ${esc((TIERS[b.tier]||{}).n||'')} · ${esc(EVENTS[b.ev]?EVENTS[b.ev].n:'')}${b.ents.some(id=>mine.has(id))?' <i>★</i>':''}${b.done?' ✓':''}</span>`).join('')}</div>`}
 function banner73(k){const B=BANNERS73[k];if(!B)return '';return `<div class="roomhd b73 b73-${k}">${roomScene73(k)}${k==='exch'?weekStrip73():''}<div class="roomttl"><b>${B[0]}</b><span>${B[1]}</span></div>${bannerStat73(k)}</div>`}
 
