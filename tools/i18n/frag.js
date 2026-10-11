@@ -4,7 +4,7 @@
 const fs=require('fs'),path=require('path'),ts=require('typescript');
 const ROOT=path.resolve(__dirname,'..','..');const MODE=process.argv.includes('--write')?'write':'list';
 const build=fs.readFileSync(path.join(ROOT,'build.sh'),'utf8');
-const SKIP=new Set(['00-lang.js','00c-errlog.js','223a-v93srvtext.js','00-lang-es.js','111-onlcore.js','13-sim.js','14-names.js','148-v86lang.js','173-v89cjk.js']);
+const SKIP=new Set(['00-lang.js','00c-errlog.js','223a-v93srvtext.js','00-lang-es.js','111-onlcore.js','13-sim.js','14-names.js','148-v86lang.js','173-v89cjk.js','294a-v100scenes.js']);
 const FILES=(build.match(/src\/[\w.-]+\.js/g)||[]).map(f=>path.basename(f)).filter(f=>!SKIP.has(f));
 const OK=w=>/^[A-Za-z][A-Za-z' ]{0,24}$/.test(w)&&!/^(s|es|y|ies|ies are|y is)$/.test(w)===false||/^[a-z][a-z' ]{1,24}$/.test(w);
 const items=new Map();let n=0;

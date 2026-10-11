@@ -115,7 +115,7 @@ function wd100Pic(k){try{
   if(k==='trophy'){const show=wd100TroBest(W_()).slice(0,4);const pic=`<div class="pic" style="background-image:url('${wd100Asset('stone_wall.webp')}')"></div>`;
     if(!show.length)return pic+`<div class="wd100tro none">${[0,1,2,3].map(()=>'<div class="wd100pl"><span class="gh"></span><i></i></div>').join('')}<div class="wd100first">${_T('Your first honour awaits')}</div></div>`;
     return pic+`<div class="wd100tro">${show.map(id=>{const d=trophyDef(id);return d?`<div class="wd100pl" title="${esc(d.name)}"><span class="tr">${trophySVG(d,64)}</span><i></i></div>`:''}).join('')}</div>`}
-  if(k==='news'&&typeof SCENE99==='function')return `<div class="pic">${SCENE99('promote','banner')}</div>`;
+  if(k==='news'&&typeof SCENE99==='function')return `<div class="pic">${typeof scene100==='function'?scene100('promote','banner'):SCENE99('promote','banner')}</div>`; /* v1.0: 294a's cached picture (no live SVG grain on a redraw) */
   if(k==='sched'){const w=W_();const L=w.night&&LOCATIONS[w.night.loc];const u=L&&typeof C90T!=='undefined'?C90T[L.n]:'';if(u)return `<div class="pic" style="background-image:url(${u});background-position:center 40%"></div>`}
   return `<div class="pic">${typeof roomScene73==='function'?roomScene73(k==='league'?'night':k):''}</div>`}catch(e){console.error(e);return '<div class="pic"></div>'}}
 function wd100Banner(k){const w=W_(),pm=me();const wk=wd100Wk(w);const L=w.night&&LOCATIONS[w.night.loc];

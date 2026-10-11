@@ -24,7 +24,7 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   r.sica=!!ds&&!ds.querySelector('.adv83');
   /* the Council card */
   const cc=q('#mgrPane #council83');r.card=!!cc&&cc.querySelectorAll('.c83p').length===6&&cc.querySelectorAll('.c83p svg.sface').length===6&&C.every(a=>cc.textContent.includes(a.name))&&/Barracks master/i.test(cc.textContent);
-  r.place=!!cc&&(cc.previousElementSibling&&(cc.previousElementSibling.classList.contains('landing')||cc.previousElementSibling.id==='mailBox'||cc.previousElementSibling.id==='desk99'||cc.previousElementSibling.classList.contains('lrow91')));
+  r.place=!!cc&&(!!cc.closest('.lu100t.k-adv')||(cc.previousElementSibling&&(cc.previousElementSibling.classList.contains('landing')||cc.previousElementSibling.id==='mailBox'||cc.previousElementSibling.id==='desk99'||cc.previousElementSibling.classList.contains('lrow91')))); /* v1.0: the frieze in the Advisors tile (294) */
   /* other tabs: no card */
   MGR.tab='roster';MGR_REDRAW();await W8(300);r.onlyLudus=!q('#council83');MGR.tab='ludus';MGR_REDRAW();await W8(300);
   /* an older career: no council in the save → one on load, the same as rolled, kept, no Store write */
@@ -36,7 +36,7 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   w.council83[0].name='Kept Name';council83Ensure(w);r.fixed=w.council83[0].name==='Kept Name';
   return r});
 await pg.setViewportSize({width:390,height:900});await pg.waitForTimeout(400);
-o.phone=await pg.evaluate(()=>{const cc=document.querySelector('#council83');if(!cc)return false;const r=cc.getBoundingClientRect();return r.width<=390&&document.documentElement.scrollWidth<=392&&getComputedStyle(cc.querySelector('.c83row')).gridTemplateColumns.split(' ').length===2});
+o.phone=await pg.evaluate(()=>{const cc=document.querySelector('#council83');if(!cc)return false;const r=cc.getBoundingClientRect();return r.width<=390&&document.documentElement.scrollWidth<=392&&(cc.classList.contains('lu100fz')?[...cc.querySelectorAll('.c83p')].every(h=>{const b=h.getBoundingClientRect();return b.width>0&&b.right<=391}):getComputedStyle(cc.querySelector('.c83row')).gridTemplateColumns.split(' ').length===2)}); /* v1.0: six heads in one frieze row */
 ok(o.six&&o.uniq,'six advisors with names, roles and faces');ok(o.det&&o.noRandom,'deterministic from the career id, no RNG');
 ok(o.open&&o.consil,'opened advisor letter shows the face + name + title');ok(o.env&&o.closedSame,'envelopes untouched');ok(o.sica,'non-advisor letters have no face');
 ok(o.card&&o.place&&o.onlyLudus,'Council card in Your ludus');ok(o.old&&o.mig&&o.fixed,'old careers get one council once');ok(o.phone,'card fits phone width');
