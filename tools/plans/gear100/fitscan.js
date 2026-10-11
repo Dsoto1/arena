@@ -10,6 +10,6 @@ await pg.waitForFunction(()=>typeof T93!=='undefined'&&T93.api&&T93.api.fitTile,
 const R=await pg.evaluate(async()=>{const api=T93.api;const kits=[];
   for(const k of ['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio']){const c=blankChar();charFromClass(c,k);c.classRef='cls:'+k;kits.push([k,t93Parts(c).gear,t93Parts(c).look])}
   const rows=[];for(const [k,g,look] of kits){api.apply({look:look||{},gear:g});const stand=api.standFor(g);const row={k,w:[g.wR&&g.wR.k,g.wL&&g.wL.k].join('/')};
-    for(const [pk,,pj] of api.presets){api.apply({pose:pk==='stand'?stand:pj});const f=api.fitTile();row[pk]=f.f}rows.push(row);await new Promise(r=>setTimeout(r,0))}
+    for(const [pk,,pj] of api.presets){api.apply({pose:pk==='stand'?stand:pj});const f=api.fitTile();row[pk]=f.shaft?[f.f,f.shaft.a,f.shaft.k,f.shaft.fBody]:f.f}rows.push(row);await new Promise(r=>setTimeout(r,0))}
   return {rows,presets:api.presets.map(p=>p[0])}});
 console.log(JSON.stringify(R.presets));for(const r of R.rows)console.log(JSON.stringify(r));await b.close()})();
