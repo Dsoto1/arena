@@ -58678,7 +58678,8 @@ const st=document.createElement('style');st.textContent=`
 #mainMenu .mmbtns>.tray100p:not([hidden]){padding:7px 8px 3px;border-radius:6px;border:1px solid rgba(185,138,42,.6);
   background:linear-gradient(180deg,rgba(110,30,26,.5),rgba(60,14,16,.55));box-shadow:inset 0 0 18px rgba(20,2,2,.45),0 6px 14px rgba(0,0,0,.45)}
 body.calm #mainMenu .mmbtns .ss98.tray100::after,#mainMenu .mmbtns .ss98.tray100.still100::after{transition:none}
-@media (prefers-reduced-motion:reduce){#mainMenu .mmbtns .ss98.tray100::after{transition:none}}`;
+@media (prefers-reduced-motion:reduce){#mainMenu .mmbtns .ss98.tray100::after{transition:none}}
+@media (max-width:520px){#mainMenu .mmbtns>#mmLearn.tray100p:not([hidden]){flex-direction:column;gap:8px;height:auto}#mainMenu .mmbtns>#mmLearn>button{flex:0 0 auto;width:100%;white-space:nowrap}}`;
 document.head.appendChild(st)}
 
 /* =====================================================================
