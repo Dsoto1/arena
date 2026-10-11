@@ -1,8 +1,8 @@
 {
- "buildFace2": 10773,
- "vertsFace2": 271475,
+ "buildFace2": 11635,
+ "vertsFace2": 271002,
  "shield": {
-  "kb": 30.4,
+  "kb": 30.1,
   "meta": [
    114,
    138,
@@ -24,16 +24,16 @@
    "equip point taken by provmanica"
   ]
  ],
- "maxBuildMs": 284,
+ "maxBuildMs": 316,
  "max": {
-  "kb": 30,
+  "kb": 29.9,
   "meta": [
    114,
    138,
    57,
    114.9
   ],
-  "ms": 7978,
+  "ms": 8409,
   "px": [
    912,
    138
@@ -46,34 +46,34 @@
   "missingW": [
    "chariotCard"
   ],
-  "ms": 36672,
-  "perCellMs": 611
+  "ms": 40039,
+  "perCellMs": 667
  },
  "faces": [
   {
    "lab": "male · before",
    "verts": 109246,
-   "buildMs": 3417,
+   "buildMs": 3548,
    "kb": 27.3
   },
   {
    "lab": "male · after",
-   "verts": 271475,
-   "buildMs": 10773,
+   "verts": 271002,
+   "buildMs": 11635,
    "kb": 27.2
   },
   {
    "lab": "female · before",
    "verts": 107285,
-   "buildMs": 3412,
+   "buildMs": 3455,
    "kb": 27.9
   },
   {
    "lab": "female · after",
-   "verts": 243862,
-   "buildMs": 9360,
+   "verts": 243596,
+   "buildMs": 9812,
    "kb": 27.8
   }
  ],
- "totalMs": 127670
+ "totalMs": 137559
 }

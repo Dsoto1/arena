@@ -419,14 +419,14 @@ export function weaponKit(B, spec, sink) {
       const sub3v = (a, c) => [a[0] - c[0], a[1] - c[1], a[2] - c[2]];
       const dotv = (a, c) => a[0] * c[0] + a[1] * c[1] + a[2] * c[2], nrmv = (v) => { const l = Math.hypot(...v); return v.map(x => x / l); };
       const on = nrmv(b.o3.map((v, i) => v - fa[i] * dotv(b.o3, fa))), hd2 = nrmv([on[1] * fa[2] - on[2] * fa[1], on[2] * fa[0] - on[0] * fa[2], on[0] * fa[1] - on[1] * fa[0]]);
-      const OFF = big ? 0.085 : 0.075, ctr = [0, 1, 2].map(i => b.c[i] - fa[i] * dotv(sub3v(b.c, W0), fa) + on[i] * (OFF - dotv(sub3v(b.c, W0), on)));   /* centred on the fist (boss over the hand) */
+      const OFF = big ? 0.085 : 0.075, ctr = [0, 1, 2].map(i => b.c[i] + on[i] * (OFF - dotv(sub3v(b.c, W0), on)));   /* centred on the fist (boss over the hand) */
       let q = basisQ(fa, hd2); { const zz = new THREE.Vector3(0, 0, 1).applyQuaternion(q); if (zz.dot(new THREE.Vector3(...on)) < 0) q = basisQ(fa.map(v => -v), hd2); }
       const ach = t0 === 'achilles';
       const geo = ach ? (() => { const g = new THREE.CylinderGeometry(0.34, 0.34, 0.03, 40, 1, false); g.rotateX(Math.PI / 2); g.clearGroups(); const n = g.index.count; g.addGroup(0, n, 0); return g; })() : boardGeo(W, Hh, big ? 0.07 : 0.05, big ? 0.6 : 0.5, 0.026);
       const achTex = () => canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#b8862e'; g.fillRect(0, 0, w, h); for (let r = 120; r > 10; r -= 22) { g.strokeStyle = r % 44 ? '#f0cf6a' : '#7a4e18'; g.lineWidth = 7; g.beginPath(); g.arc(w / 2, h / 2, r, 0, 7); g.stroke(); } });
       const m = rig_(geo, ach ? toon('#ffffff', { map: achTex() }) : [toon('#ffffff', { map: big ? scutumTex() : thracianTex() }), toon('#6e4a2c')], 'w' + sd, ctr, q);
       const boss = new THREE.SphereGeometry(big ? 0.065 : 0.05, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2); boss.rotateX(Math.PI / 2);
-      const bp = [0, 1, 2].map(i => b.c[i] + on[i] * (OFF + 0.012)); const bm = rig_(boss, toon(GOLD2), 'w' + sd, bp, q);
+      const bp = [0, 1, 2].map(i => ctr[i] + on[i] * 0.012); const bm = rig_(boss, toon(GOLD2), 'w' + sd, bp, q);
       /* the handle in the fist + two brackets back to the board, the forearm strap riveted to it */
       rig_(colorize(cyl(0.011, 0.011, 0.16, 0, 10), '#6e4a2c'), vmat(), 'w' + sd, b.c, basisQ(b.u, b.f));
       for (const k of [-0.07, 0.07]) rig_(colorize(box(0.016, 0.016, OFF + 0.03), '#5a3a22'), vmat(), 'w' + sd, [0, 1, 2].map(i => b.c[i] + b.f[i] * k + on[i] * (OFF / 2 + 0.01)), basisQ(fa, hd2));
