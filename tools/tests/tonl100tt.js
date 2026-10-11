@@ -3,8 +3,8 @@
    mock's test hook shortens it to 14 s / 5 s): a test hook opens a one-button NOTICE (answered at once on both screens, no input travels) and a
    two-button DECISION for Beta, who never answers — Alpha sees "Beta the Bold is choosing… Test pick" (not the options), Beta's window is docked beside
    the board (default marked, its own clock), the server orders the default ('dto') and both screens record the same value. Beta idles: the server's
-   'timeout' → the CPU finishes Beta's turn on both screens (every input hashes the same). On Alpha's own turn: the ring, the bar and the BIG number
-   in the last 10 s sit in the turn panel beside the board, the red glow only on the screen edges — nothing covers the board's centre — and the soft
+   'timeout' → the CPU finishes Beta's turn on both screens (every input hashes the same). On Alpha's own turn: the SLIM BAR above the avatar (#ttb100, <=24 px, reserved: the avatar never moves)
+   drains and shows the seconds, bolder in the last 10 s; the full panel (ring, next, seats) is the right column's ⏳ Turn tab; timer Off = no bar and no #dk100 row; the red glow only on the screen edges — nothing covers the board's centre — and the soft
    tick is scheduled in the last 5 s (counted on a patched AudioContext). Beta's second timeout → Alpha's vote prompt → Hand to CPU → the server's
    drop (a reclaim window for Beta), the seat plays as a CPU on both screens. ERRS must be []. SHOT=<dir> saves screenshots. */
 const http=require('http'),fs=require('fs'),path=require('path');
@@ -65,12 +65,12 @@ let t0=Date.now(),coin=false;while(Date.now()-t0<120000){await drive(A);const bt
   if(coin&&await A.__ev(()=>!!(ONLM.pend&&ONLM.pend.seat===1)))break;await wait(150)}
 await wait(9000);
 const off=await A.__ev(async()=>{const ins=(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs;return {pend:!!(ONLM.pend&&ONLM.pend.seat===1),t:ONLM.pend&&ONLM.pend.t,on:tt100On(),srv:ins.filter(x=>x.from==='server').map(x=>x.k),
-  clk:(document.querySelector('#tt100 .t100')||{}).textContent||'',panel:!!document.querySelector('#tt100:not([hidden])'),notes:ins.filter(x=>x.k==='modal'&&/Test note/.test(x.t||'')).length,note:window.__tp.note}});
-const offB=await B.__ev(()=>({dock:!!document.querySelector('#modal.dock100:not([hidden]) #dk100'),clk:!!document.querySelector('#dk100 .clk100'),note:window.__tp.note,pick:!!(CUR_MODAL&&/Test pick/.test(document.getElementById('mTitle').textContent))}));
+  clk:(document.querySelector('#tt100 .t100')||{}).textContent||'',panel:!!document.querySelector('#tt100:not([hidden])'),bar:(()=>{const e=document.getElementById('ttb100');return !!(e&&!e.hidden&&e.offsetParent)})(),tab:!!document.querySelector('#sideTabs [data-sidetab="turn"]'),notes:ins.filter(x=>x.k==='modal'&&/Test note/.test(x.t||'')).length,note:window.__tp.note}});
+const offB=await B.__ev(()=>({dock:!!document.querySelector('#modal.dock100:not([hidden])'),dk:!!document.getElementById('dk100'),clk:!!document.querySelector('#dk100 .clk100'),note:window.__tp.note,pick:!!(CUR_MODAL&&/Test pick/.test(document.getElementById('mTitle').textContent))}));
 console.log('OFF',JSON.stringify(off),JSON.stringify(offB));
 ok(off.pend&&off.t==='Test pick','Off: Beta\'s decision still waits after 9 s');ok(!off.on&&!off.srv.some(k=>k==='dto'||k==='timeout')&&!off.clk,'Off: no clocks, no server timeout '+JSON.stringify(off.srv));
 ok(off.panel,'the turn panel shows online even with the timer off');ok(off.notes===0&&off.note==='ok'&&offB.note==='ok','a one-button notice answers itself on both screens, no input');
-ok(offB.pick&&offB.dock&&!offB.clk,'Off: Beta\'s window docked, without a clock');
+ok(offB.pick&&offB.dock&&!offB.dk&&!offB.clk,'Off: Beta\'s window docked, no #dk100 chrome at all');ok(!off.bar,'Off: no slim bar');ok(off.tab,'Off: the Turn tab is still there');
 for(const [p,id] of [[A,R.id],[B,R.id]])await p.__ev(async id=>{try{await NET.req('match.abandon',{id})}catch(e){}ONL.leftMatch=ONL.leftMatch||{};ONL.leftMatch[id]=1;try{if(CUR_MODAL)CUR_MODAL.done(null)}catch(e){}},id);await wait(800);for(const p of [A,B])await p.__ev(()=>{ONL84.rcl=null;onl84Bar()});
 await wait(1500);for(const p of [A,B])await p.__ev(()=>{try{if(S&&S.onl){S.over=true;ONLM.on=false}if(CUR_MODAL)CUR_MODAL.done(null)}catch(e){}});await wait(500);
 
@@ -96,33 +96,45 @@ while(Date.now()-t0<180000){const aT=await A.__ev(()=>!!(ONLM.on&&S&&!S.over&&on
   if(aT&&!late){const L=await A.__ev(()=>{const x=tt100TurnLeft();return x&&x.left});if(L!=null&&L>4500){await wait(200);continue}
     if(L!=null){late=await A.__ev(()=>{const cv=document.getElementById('cv'),rc=cv.getBoundingClientRect();const el=document.elementFromPoint(rc.left+rc.width/2,rc.top+rc.height/2);const P=document.getElementById('tt100').getBoundingClientRect();
       const over=!(P.right<=rc.left||P.left>=rc.right||P.bottom<=rc.top||P.top>=rc.bottom);const ed=[...document.querySelectorAll('#tt100edge i')].map(e=>e.getBoundingClientRect());
-      return {left:tt100TurnLeft().left,lateCls:document.getElementById('tt100').classList.contains('late'),num:document.querySelector('#tt100 .num').textContent,numFs:parseFloat(getComputedStyle(document.querySelector('#tt100 .num')).fontSize),
-        ring:+document.querySelector('#tt100 .tp100 .rg100 .fg').getAttribute('stroke-dashoffset'),bar:document.querySelector('#tt100 .bar100 i').style.width,center:el===cv,panelOver:over,
+      const SB=document.getElementById('ttb100'),BD=document.getElementById('board');const sb=SB.getBoundingClientRect();const top1=BD.getBoundingClientRect().top;const vis1=getComputedStyle(SB).visibility;SB.classList.add('idle');const top2=BD.getBoundingClientRect().top;SB.classList.remove('idle');
+      return {left:tt100TurnLeft().left,lateCls:SB.classList.contains('late'),num:parseInt(SB.querySelector('.n').textContent),numFs:parseFloat(getComputedStyle(SB.querySelector('.n')).fontSize),numFw:+getComputedStyle(SB.querySelector('.n')).fontWeight,
+        barH:sb.height,top1,top2,vis1,inSide:SB.parentElement.tagName==='ASIDE',aboveBoard:sb.bottom<=top1+1,
+        ring:+document.querySelector('#tt100 .tp100 .rg100 .fg').getAttribute('stroke-dashoffset'),bar:SB.querySelector('.trk i').style.width,center:el===cv,panelOver:!(sb.right<=rc.left||sb.left>=rc.right||sb.bottom<=rc.top||sb.top>=rc.bottom),
         edge:!document.getElementById('tt100edge').hidden&&ed.length===4&&ed.every(r=>Math.min(r.width,r.height)<=8),ticks:TT100C.ticks,osc:window.__osc}});
-      if(SHOT){await A.screenshot({path:path.join(SHOT,'turn100_late_1440.png')});}}}
+      if(SHOT){await A.screenshot({path:path.join(SHOT,'turn100_late_1440.png')});await A.screenshot({path:path.join(SHOT,'slim_late_1440.png')});}}}
   if(late&&!late.done){await wait(1200);const t2=await A.__ev(()=>({ticks:TT100C.ticks,osc:window.__osc}));late.ticks2=t2.ticks;late.osc2=t2.osc;late.done=1;await A.click('[data-act="end"]',{force:true,timeout:2000}).catch(()=>{})}
   await drive(A,late?{}:{hold:4500});
   const bt=await bTurn();if(bt&&!coin){await drive(B,{idle:1,coin:1});coin=await B.__ev(()=>S.phase!=='choice'||!!CUR_MODAL)}else await drive(B,{idle:1});
   if(coin&&!dec){const s=await A.__ev(()=>{const c=document.querySelector('#tt100 .ch100');return c?c.textContent:''});const d=await B.__ev(()=>{const m=document.getElementById('modal');const h=document.getElementById('dk100');const cv=document.getElementById('cv'),rc=cv.getBoundingClientRect();
       const el=document.elementFromPoint(rc.left+rc.width/2,rc.top+rc.height/2);return {dock:!!(m&&!m.hidden&&m.classList.contains('dock100')&&h),clk:!!(h&&h.querySelector('.clk100')),def:(document.querySelector('#modal .def100')||{}).textContent||'',center:el===cv,
         title:document.getElementById('mTitle').textContent}});
-    if(/Test pick/.test(d.title)&&s){dec={choosing:s,...d};if(SHOT&&!shotDock){shotDock=true;await B.screenshot({path:path.join(SHOT,'turn100_dock_1440.png')});await B.setViewportSize({width:390,height:844});await wait(700);await B.screenshot({path:path.join(SHOT,'turn100_dock_390.png')});await B.setViewportSize({width:1440,height:900});await A.screenshot({path:path.join(SHOT,'turn100_choosing_1440.png')})}}}
+    if(/Test pick/.test(d.title)&&s){dec={choosing:s,...d};if(SHOT&&!shotDock){shotDock=true;await B.screenshot({path:path.join(SHOT,'turn100_dock_1440.png')});await B.setViewportSize({width:390,height:844});await wait(700);await B.screenshot({path:path.join(SHOT,'turn100_dock_390.png')});await B.setViewportSize({width:1440,height:900});await A.screenshot({path:path.join(SHOT,'turn100_choosing_1440.png')});await A.screenshot({path:path.join(SHOT,'slim_theirs_1440.png')})}}}
   const n=await A.__ev(()=>TT100C.applied[1]|0);if(n>=2)break;await wait(150)}
 console.log('LATE',JSON.stringify(late));console.log('DEC',JSON.stringify(dec));
-ok(late&&late.lateCls&&+late.num>0&&+late.num<=5&&late.numFs>=20,'the big countdown in the turn panel in the last 10 s');ok(late&&late.ring>0&&parseFloat(late.bar)<40,'the ring empties, the bar runs down');
+const tabc=await A.__ev(()=>{const b=document.querySelector('#sideTabs [data-sidetab="turn"]');if(!b)return {none:1};document.getElementById('ttb100').click();const pane=document.getElementById('turnPane'),t=document.getElementById('tt100');
+  return {tab:b.textContent,pane:!pane.hidden&&!!pane.offsetParent,seats:document.querySelectorAll('#turnPane .s100').length,faces:document.querySelectorAll('#turnPane .s100 .f100').length,ring:!!document.querySelector('#turnPane .tp100 .rg100'),nx:!!document.querySelector('#turnPane .nx100'),panelIn:t.parentElement===pane,on:SIDE.tab,boardHidden:document.getElementById('board').classList.contains('sidehide')}});
+console.log('TAB',JSON.stringify(tabc));
+ok(tabc.pane&&tabc.on==='turn'&&tabc.panelIn&&tabc.boardHidden,'clicking the slim bar opens the ⏳ Turn tab '+JSON.stringify(tabc));ok(tabc.seats>=2&&tabc.faces>=2&&tabc.ring,'the Turn tab shows the seats with rings and faces '+JSON.stringify(tabc));
+if(SHOT){await A.screenshot({path:path.join(SHOT,'slim_turn_tab_1440.png')});}
+await A.__ev(()=>{if(!TT100C.vote)sideTab('fighter')});
+ok(late&&late.lateCls&&late.num>0&&late.num<=5&&late.numFs>=14&&late.numFw>=800,'the bold countdown in the slim bar in the last 10 s '+JSON.stringify(late&&[late.num,late.numFs,late.numFw]));
+ok(late&&late.barH>0&&late.barH<=24&&late.inSide&&late.aboveBoard&&late.vis1==='visible','slim bar: in the side column above the avatar, height <= 24 px ('+(late&&late.barH)+')');
+ok(late&&Math.abs(late.top1-late.top2)<=2,'the avatar top does not move when the bar shows/hides ('+(late&&[late.top1,late.top2])+')');ok(late&&late.ring>0&&parseFloat(late.bar)<40,'the ring empties, the bar runs down');
 ok(late&&late.center&&!late.panelOver,'nothing covers the board: centre hit = the canvas, the panel beside it');ok(late&&late.edge,'the red glow = four thin strips at the screen edges');
 ok(late&&late.ticks2>late.ticks&&late.osc2>late.osc,'a soft tick each second of the last 5 s '+JSON.stringify(late&&[late.ticks,late.ticks2,late.osc,late.osc2]));
 ok(dec&&/Beta the Bold is choosing/.test(dec.choosing)&&/Test pick/.test(dec.choosing)&&!/Left|Right/.test(dec.choosing),'Alpha sees who is choosing what, never the options: '+(dec&&dec.choosing));
 ok(dec&&dec.dock&&dec.clk&&/Right/.test(dec.def)&&dec.center,'Beta\'s window docked beside the board with its clock, the default marked: '+JSON.stringify(dec));
 /* the vote: Alpha hands Beta's seat to a CPU */
-const vt=await until(A,()=>!!document.querySelector('#tt100 [data-tt100v="yes"]'),null,30000);ok(vt,'Alpha is asked after Beta\'s second timeout');
+const vt=await until(A,()=>!!document.querySelector('#tt100 [data-tt100v="yes"]'),null,30000);ok(vt,'Alpha is asked after Beta\'s second timeout');if(vt)ok(await until(A,()=>SIDE.tab==='turn'&&!!document.querySelector('#turnPane:not([hidden]) [data-tt100v="yes"]'),null,5000),'the vote prompt opens the Turn tab');
 if(SHOT&&vt)await A.screenshot({path:path.join(SHOT,'turn100_vote_1440.png')});
 if(vt)for(let k=0;k<6;k++){await A.click('#tt100 [data-tt100v="yes"]',{force:true,timeout:2000}).catch(()=>{});await wait(1200);const v=await A.__ev(()=>TT100C.vote?TT100C.vote.res||'':'gone');if(v)break}
 for(const t1=Date.now();Date.now()-t1<60000;){await drive(A);await drive(B,{idle:1});if(await A.__ev(()=>!!(ONLM.owners[1]==null&&S.players[1].cpu)))break;await wait(200)}
 for(let k=0;k<20;k++){await drive(A);await drive(B,{idle:1});await wait(200)}
 /* SHOT: Alpha's late turn at phone width (after the checks — the resize takes time) */
 if(SHOT){await A.setViewportSize({width:390,height:844});for(const t1=Date.now();Date.now()-t1<90000;){const L=await A.__ev(()=>{const x=onlmOn()&&onlmActor()===ONLM.me&&S.phase==='action'&&tt100TurnLeft();return x?x.left:null});
-    if(L!=null&&L<8000){await A.screenshot({path:path.join(SHOT,'turn100_late_390.png')});break}await drive(A,{hold:8000});await drive(B,{idle:1});await wait(150)}await A.setViewportSize({width:1440,height:900});await wait(500)}
+    if(L!=null&&L<8000){await A.screenshot({path:path.join(SHOT,'turn100_late_390.png')});await A.screenshot({path:path.join(SHOT,'slim_late_390.png')});const ph=await A.__ev(()=>{const e=document.getElementById('ttb100');const r=e.getBoundingClientRect();return {h:r.height,vis:r.width>0&&!e.hidden&&getComputedStyle(e).visibility==='visible'&&getComputedStyle(e).display!=='none',inView:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,top:r.top,w:r.width,sw:document.documentElement.scrollWidth}});console.log('PH',JSON.stringify(ph));ok(ph.vis&&ph.inView&&ph.h<=24&&ph.sw<=392,'phone: slim bar <= 24 px, no horizontal scroll '+JSON.stringify(ph));await A.__ev(()=>{document.getElementById('ttb100').click()});await wait(600);await A.screenshot({path:path.join(SHOT,'slim_turn_tab_390.png')});await A.__ev(()=>{if(!TT100C.vote)sideTab('fighter')});
+      await A.setViewportSize({width:844,height:390});await wait(900);const pl=await A.__ev(()=>{const e=document.getElementById('ttb100');const r=e.getBoundingClientRect();return {h:r.height,vis:r.width>0&&!e.hidden&&getComputedStyle(e).visibility==='visible'&&getComputedStyle(e).display!=='none',inView:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,land:document.body.classList.contains('phoneL')}});
+      console.log('PL',JSON.stringify(pl));ok(!pl.land||(pl.vis&&pl.h<=24&&pl.inView),'phone landscape: slim bar visible, <= 24 px '+JSON.stringify(pl));if(SHOT)await A.screenshot({path:path.join(SHOT,'slim_late_land_844.png')});break}await drive(A,{hold:8000});await drive(B,{idle:1});await wait(150)}await A.setViewportSize({width:1440,height:900});await wait(500)}
 /* both screens applied every input */
 for(const t1=Date.now();Date.now()-t1<40000;){const ins=await inputs().catch(()=>[]);const top=ins.length?ins[ins.length-1].seq:0;const ns=await Promise.all([A,B].map(p=>p.__ev(()=>ONLM.next).catch(()=>0)));if(ns.every(x=>x>top))break;await drive(A);await wait(300)}
 const ins=await inputs();const st=p=>p.__ev(()=>({h:ONLM.hlog,r:ONLM.resyncs,acct:ONL.acct.id,log:TT100C.log.filter(x=>x.d!=null),applied:TT100C.applied,owners:ONLM.owners.map(Boolean),cpu1:S.players[1].cpu,me:ONLM.me,
