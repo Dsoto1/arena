@@ -1,0 +1,7 @@
+dam {"n":1200,"err":0,"win":7.2,"winCI":["5.8","8.8"],"fateSurv":10.8,"alive":7.2,"cf":8.8}
+dam_pelt2 {"n":1200,"err":0,"win":11.9,"winCI":["10.2","13.9"],"fateSurv":17.5,"alive":11.9,"cf":11.8}
+dam_helm {"n":1200,"err":0,"win":11.7,"winCI":["10.0","13.6"],"fateSurv":17.2,"alive":11.7,"cf":12}
+dam_both {"n":1200,"err":0,"win":16.3,"winCI":["14.3","18.4"],"fateSurv":20.3,"alive":16.3,"cf":14}
+ama {"n":1200,"err":0,"win":34.2,"winCI":["31.5","36.9"],"fateSurv":44.4,"alive":34.2,"cf":24.6}
+ama_nofirst {"n":1200,"err":0,"win":34,"winCI":["31.4","36.7"],"fateSurv":44.8,"alive":34,"cf":24.4}
+ama_nogreave {"n":1200,"err":0,"win":30.2,"winCI":["27.6","32.8"],"fateSurv":42.4,"alive":30.2,"cf":22.6}
