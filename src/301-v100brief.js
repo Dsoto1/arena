@@ -139,6 +139,8 @@ function bf100Unmark(){try{const m=document.getElementById('modal');if(m)m.class
     const btns=[{label:BF100_SWORD+`<span class="t">${opening?_T('Enter the arena'):_T('Back to the sand')}</span>`,value:1,primary:1}];
     return base.call(this,title,body,btns,o)}
   /* any other window: never inherits the briefing's look */
+  /* (only while the briefing's look is still on #modal: an extra onOpen would also stop 290's notice test — no onOpen = a NOTICE online) */
+  if(!document.getElementById('modal')||!document.getElementById('modal').classList.contains('bf100'))return base.call(this,title,body,buttons,opt);
   if(opt&&typeof opt==='object'){const ok=opt.onOpen;opt=Object.assign({},opt,{onOpen:function(){bf100Unmark();if(ok)return ok.apply(this,arguments)}})}else opt={onOpen:bf100Unmark};
   return base.call(this,title,body,buttons,opt)}}
 (()=>{const st=document.createElement('style');st.textContent=`

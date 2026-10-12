@@ -218,7 +218,10 @@ function sand100Dress(title){const m=document.getElementById('modal'),box=docume
   if(back){ft=document.createElement('div');ft.className='sand100ft';ft.appendChild(back);ft.insertAdjacentHTML('beforeend',`<span class="seal">${_T`ESC · BACK`}</span>`);bt.after(ft)}}
 {const base=modal;modal=function(title,body,buttons,opt){
   if(PN100.off||HEADLESS)return base.apply(this,arguments);
-  const o=Object.assign({},opt||{});const on0=o.onOpen;const sand=sand100Titles().includes(title);
+  const sand=sand100Titles().includes(title);
+  /* an ordinary window with nothing of the sandstone look to clear passes through untouched (an added onOpen would also stop 290's online NOTICE test) */
+  {const m0=document.getElementById('modal');if(!sand&&!(m0&&m0.classList.contains('sand100'))&&!document.body.classList.contains('sub100'))return base.apply(this,arguments)}
+  const o=Object.assign({},opt||{});const on0=o.onOpen;
   o.onOpen=function(done){try{if(sand)sand100Dress(title);else{sand100Off();const box=document.getElementById('mboxEl');if(box){const g=box.querySelector('.grab100');if(g)g.remove();const ft=box.querySelector('.sand100ft');if(ft)ft.remove()}}}catch(e){console.error(e)}
     if(on0)return on0.apply(this,arguments)};
   const p=base.call(this,title,body,buttons,o);
