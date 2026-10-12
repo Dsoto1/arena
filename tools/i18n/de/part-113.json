@@ -1,0 +1,13 @@
+{
+ "Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) every other turn.": "Fähigkeit: erhält jede Runde 1 Stein; +10 CF auf die Endwertung, wenn der Damnatio ein Event gewinnt. Schwäche: wird jede zweite Runde mit einem Stein beworfen (1 Schaden).",
+ "Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) every other turn in phase 1.": "Erhält jede Runde 1 Stein; +10 CF auf die Endwertung, wenn er ein Event gewinnt. Schwäche: wird in Phase 1 jede zweite Runde mit 1 Stein beworfen (1 Schaden).",
+ "Repair: a tenth of its value": "Reparatur: ein Zehntel des Werts",
+ "🩹 Dented — 🔨 {0} to repair; worn in Custom, not in Ranked": "🩹 Verbeult — 🔨 {0} zur Reparatur; in Custom nutzbar, nicht in Ranked",
+ "🎲 The lots are drawn: {0} drives first.": "🎲 Das Los entscheidet: {0} beginnt.",
+ "🎲 The lots are drawn for the corners: {0}.": "🎲 Das Los entscheidet über die Ecken: {0}.",
+ "🩹 His printed gear goes home to the Storeroom dented (his killer may take one first): {0} — 🔨 repair in the Domus": "🩹 Seine gedruckte Ausrüstung kommt verbeult ins Storeroom zurück (sein Bezwinger darf vorher ein Stück nehmen): {0} — 🔨 im Domus reparieren",
+ "🩹 Came home dented: {0} — 🔨 repair in the Domus before the next Ranked bout": "🩹 Verbeult heimgekehrt: {0} — 🔨 im Domus reparieren, bevor der nächste Ranked-Kampf beginnt",
+ "🎁 The house already had Flavius’s gift for that rank": "🎁 Das Haus hatte Flavius’ Geschenk für diesen Rang bereits",
+ "Digital rule: the Damnatio is pelted by the crowd only every other turn (not in the first rotation), and starts with an Iron Helm and a Belt I. The Amazonia starts without the off-hand Falcata (it stays in the market).": "Digitale Regel: Der Damnatio wird nur jede zweite Runde vom Publikum beworfen (nicht in der ersten Rotation) und startet mit einem Iron Helm und einem Belt I. Die Amazonia startet ohne die Falcata der Nebenhand (sie bleibt im Markt).",
+ "Digital rule: Chariot turn order, the Orpheus starting corners and the Golden Eagle's first team are drawn by lot at the start (from the dice seed), not by seat order.": "Digitale Regel: Die Zugreihenfolge beim Chariot, die Startecken bei Orpheus und das erste Team beim Golden Eagle werden zu Beginn ausgelost (aus dem Würfel-Seed), nicht nach Sitzreihenfolge."
+}

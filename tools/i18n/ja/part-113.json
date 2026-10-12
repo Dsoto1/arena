@@ -1,0 +1,13 @@
+{
+ "Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) every other turn.": "能力：毎ターン石を1つ得る。Damnatioがイベントに勝てば最終スコアに+10 CF。弱点：1ターンおきに石を投げつけられる（1ダメージ）。",
+ "Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) every other turn in phase 1.": "毎ターン石を1つ得る。イベントに勝てば最終スコアに+10 CF。弱点：フェーズ1で1ターンおきに石1つを投げつけられる（1ダメージ）。",
+ "Repair: a tenth of its value": "修理：価値の10分の1",
+ "🩹 Dented — 🔨 {0} to repair; worn in Custom, not in Ranked": "🩹 凹み — 🔨 {0}で修理。Customでは使用可、Rankedでは不可",
+ "🎲 The lots are drawn: {0} drives first.": "🎲 くじ引き：{0}が先攻。",
+ "🎲 The lots are drawn for the corners: {0}.": "🎲 角をくじ引きで決定：{0}。",
+ "🩹 His printed gear goes home to the Storeroom dented (his killer may take one first): {0} — 🔨 repair in the Domus": "🩹 支給の装備は凹んだ状態でStoreroomに戻る（倒した相手が先に1点持ち去れる）：{0} — 🔨 Domusで修理",
+ "🩹 Came home dented: {0} — 🔨 repair in the Domus before the next Ranked bout": "🩹 凹んで帰還：{0} — 🔨 次のRanked戦の前にDomusで修理",
+ "🎁 The house already had Flavius’s gift for that rank": "🎁 その階級のFlaviusの贈り物は、すでに館が受け取っています",
+ "Digital rule: the Damnatio is pelted by the crowd only every other turn (not in the first rotation), and starts with an Iron Helm and a Belt I. The Amazonia starts without the off-hand Falcata (it stays in the market).": "デジタルルール：Damnatioが観衆に石を投げつけられるのは1ターンおき（最初の1周は除く）で、Iron HelmとBelt Iを持って始まる。Amazoniaは副手のFalcataなしで始まる（市場に残る）。",
+ "Digital rule: Chariot turn order, the Orpheus starting corners and the Golden Eagle's first team are drawn by lot at the start (from the dice seed), not by seat order.": "デジタルルール：Chariotの手番順、Orpheusの開始の角、Golden Eagleの最初のチームは、席順ではなく開始時にくじ（ダイスのシード）で決まる。"
+}

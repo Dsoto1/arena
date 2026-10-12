@@ -1,0 +1,13 @@
+{
+ "Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) every other turn.": "能力：每回合获得1块石头；若Damnatio赢得任何赛事，最终得分+10 CF。弱点：每隔一回合被扔一块石头（1点伤害）。",
+ "Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) every other turn in phase 1.": "每回合获得1块石头；若赢得任何赛事，最终得分+10 CF。弱点：第1阶段每隔一回合被扔1块石头（1点伤害）。",
+ "Repair: a tenth of its value": "修理：其价值的十分之一",
+ "🩹 Dented — 🔨 {0} to repair; worn in Custom, not in Ranked": "🩹 凹损 — 🔨 {0}修理；Custom中可用，Ranked中不可用",
+ "🎲 The lots are drawn: {0} drives first.": "🎲 抽签决定：{0}先行。",
+ "🎲 The lots are drawn for the corners: {0}.": "🎲 抽签决定角落：{0}。",
+ "🩹 His printed gear goes home to the Storeroom dented (his killer may take one first): {0} — 🔨 repair in the Domus": "🩹 他的印刷装备带着凹损回到Storeroom（击杀者可先拿走一件）：{0} — 🔨 在Domus修理",
+ "🩹 Came home dented: {0} — 🔨 repair in the Domus before the next Ranked bout": "🩹 带着凹损回来：{0} — 🔨 下一场Ranked战斗前在Domus修理",
+ "🎁 The house already had Flavius’s gift for that rank": "🎁 该家族已经领取过Flavius为该等级准备的礼物",
+ "Digital rule: the Damnatio is pelted by the crowd only every other turn (not in the first rotation), and starts with an Iron Helm and a Belt I. The Amazonia starts without the off-hand Falcata (it stays in the market).": "数字规则：观众只在每隔一回合向Damnatio扔石头（第一轮除外），并且开局带有Iron Helm和Belt I。Amazonia开局没有副手Falcata（它留在市场里）。",
+ "Digital rule: Chariot turn order, the Orpheus starting corners and the Golden Eagle's first team are drawn by lot at the start (from the dice seed), not by seat order.": "数字规则：Chariot的回合顺序、Orpheus的起始角落和Golden Eagle的第一支队伍在开始时抽签决定（来自骰子种子），而不是按座位顺序。"
+}

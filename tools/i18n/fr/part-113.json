@@ -1,0 +1,13 @@
+{
+ "Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) every other turn.": "Capacité : gagne 1 pierre à chaque tour ; +10 CF au score final si le Damnatio remporte un événement. Faiblesse : reçoit une pierre (1 dégât) un tour sur deux.",
+ "Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) every other turn in phase 1.": "Gagne 1 pierre à chaque tour ; +10 CF au score final s'il remporte un événement. Faiblesse : reçoit 1 pierre (1 dégât) un tour sur deux en phase 1.",
+ "Repair: a tenth of its value": "Réparation : un dixième de sa valeur",
+ "🩹 Dented — 🔨 {0} to repair; worn in Custom, not in Ranked": "🩹 Cabossée — 🔨 {0} pour la réparer ; portée en Custom, pas en Ranked",
+ "🎲 The lots are drawn: {0} drives first.": "🎲 Le sort est tiré : {0} joue en premier.",
+ "🎲 The lots are drawn for the corners: {0}.": "🎲 Le sort est tiré pour les coins : {0}.",
+ "🩹 His printed gear goes home to the Storeroom dented (his killer may take one first): {0} — 🔨 repair in the Domus": "🩹 Son équipement imprimé rentre au Storeroom cabossé (son tueur peut en prendre une pièce avant) : {0} — 🔨 à réparer dans le Domus",
+ "🩹 Came home dented: {0} — 🔨 repair in the Domus before the next Ranked bout": "🩹 Rentré cabossé : {0} — 🔨 à réparer dans le Domus avant le prochain combat Ranked",
+ "🎁 The house already had Flavius’s gift for that rank": "🎁 La maison avait déjà le cadeau de Flavius pour ce rang",
+ "Digital rule: the Damnatio is pelted by the crowd only every other turn (not in the first rotation), and starts with an Iron Helm and a Belt I. The Amazonia starts without the off-hand Falcata (it stays in the market).": "Règle numérique : le public ne lance des pierres sur le Damnatio qu'un tour sur deux (pas lors de la première rotation), et il commence avec un Iron Helm et une Belt I. L'Amazonia commence sans la Falcata de la main secondaire (elle reste au marché).",
+ "Digital rule: Chariot turn order, the Orpheus starting corners and the Golden Eagle's first team are drawn by lot at the start (from the dice seed), not by seat order.": "Règle numérique : l'ordre des tours du Chariot, les coins de départ d'Orpheus et la première équipe du Golden Eagle sont tirés au sort au début (d'après la graine des dés), et non selon l'ordre des places."
+}
