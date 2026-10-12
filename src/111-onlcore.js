@@ -1440,8 +1440,11 @@ const ONLC=(function(){
   {const base=C.whoStatus100;C.whoStatus100=function(A,maps){const r=base.apply(this,arguments);if(r&&r.st==='idle'&&A&&maps&&maps.spec&&maps.spec.has(A.id))return {st:'watch',m:maps.spec.get(A.id)};return r}}
   /* ── 7 · taunts (codes only; the page translates QC_TEXT) ── */
   Object.assign(C.QC_TEXT,{lions:'🦁 The lions are hungry — for you!',senate:'🏛 Even the Senate moves faster!',garum:'🐟 You smell of cheap garum.',
-    tickle:'Was that a tickle?',granny:'My grandmother hits harder!',yawn:'😴 Flavius is yawning.',sandal:'Sand in your sandals?',bigger:'Next time, bring a bigger sword!'});
-  for(const [sc,ks] of [['room',['lions','senate','garum']],['match',['tickle','granny','yawn','sandal']],['after',['bigger']]])for(const k of ks)if(!C.QC[sc].includes(k))C.QC[sc].push(k);
+    tickle:'Was that a tickle?',granny:'My grandmother hits harder!',yawn:'😴 Flavius is yawning.',sandal:'Sand in your sandals?',bigger:'Next time, bring a bigger sword!',
+    /* v1.0 room (his revision 3 of the room mock): the room's Taunts group */
+    mlions:'Mind the lions',flwatch:'Flavius is watching',damna:'Is that a Damnatio?',helmet:'Nice helmet. Yours?',slaves:'I’ve seen stronger slaves',
+    bucket:'Bring a bucket',gate:'To the Gate of Life!',betme:'My lanista bet on me… sorry, lanista'});
+  for(const [sc,ks] of [['room',['lions','senate','garum','mlions','flwatch','damna','helmet','slaves','bucket','gate','betme']],['match',['tickle','granny','yawn','sandal']],['after',['bigger']]])for(const k of ks)if(!C.QC[sc].includes(k))C.QC[sc].push(k);
   /* the new paying request runs once per request id */
   if(Array.isArray(C.IDEM93)&&!C.IDEM93.includes('domus.slot'))C.IDEM93.push('domus.slot');
   Object.assign(C,{SLOT100,ISSUE_W100,WAGER_OFF100,slotsOf100,slotsMigrate100,slotNext100,slotGlory100,slotWhy100,slotBuy100,issueList100,isIss100,issOf100,issuePlan100,issueElsewhere100})})(ONLC);
@@ -1535,4 +1538,28 @@ const ONLC=(function(){
     if(TOPS100.includes(x.top)&&x.top!=='emb')o.top=x.top;
     return o}
   Object.assign(C,{CREST100,PATS100,TOPS100,INS_MAX100,insClean100,cleanLook100,cleanLook89:cleanLook100})})(ONLC);
+/* ===== v1.0 LOBBY ROOM ===== */
+/* The online room v1.0 (his room mock, decisions 10a/10e/10f/10i + C1a–C4a). Shared by the server (routes.js "v1.0 LOBBY ROOM") and the page
+   (302-v100lobby: the room screen, the Lobby Browser's Join box and its mock route). No protocol bump: a new optional request.
+   ROOM CODE (C2a): every room has a short code R-XXXXX made from its id (roomCode100: FNV-1a of the id over the FID letters — no look-alikes), so it
+     needs no storage and every screen shows the same code. It replaces ✉ Invite inside the room: a friend types it into the Lobby Browser.
+   lobby.code {code, pw?}: R-XXXXX → that waiting room; FID-XXXXXX → the waiting room that lanista is in now (a hidden lanista or one whose privacy
+     refuses invitations is "not in a room you can join"). It joins through lobby.join, so passwords (pw98), kicks, Ranked rank rules, the busy rule
+     and the Ranked cooldown apply as there. A bare 6-letter word starting with R may be either: the room is tried first, then the FID. Lookups count
+     against the FID quota (FIND_MAX89 a minute), so codes cannot be guessed quickly. */
+(function(C){
+  const CODE100={LEN:5,PRE:'R-'};  /* TWEAK: letters in a room code (31^5 ≈ 28 million) */
+  const ABC=C.FID_ABC89||'23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+  function roomCode100(id){let h=0x811c9dc5;const s='room:'+String(id||'');for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0}
+    let o='';for(let i=0;i<CODE100.LEN;i++){o+=ABC[h%ABC.length];h=Math.floor(h/ABC.length)^(Math.imul(h,2654435761)>>>7)>>>0;h>>>=0}return CODE100.PRE+o}
+  /* what the box holds: {room:'R-XXXXX'} and/or {fid:'XXXXXX'}; null when it can be neither */
+  function codeParse100(s){const raw=String(s||'').toUpperCase().trim();const x=raw.replace(/[\s\-_.]/g,'');const out={};
+    const ok=t=>[...t].every(c=>ABC.includes(c));
+    if(/^FID/.test(x)){const f=C.fidClean(x);if(f)out.fid=f}
+    else{if(x.length===CODE100.LEN+1&&x[0]==='R'&&ok(x.slice(1)))out.room=CODE100.PRE+x.slice(1);
+      if(!/^R-/.test(raw)&&x.length===(C.FID_LEN89||6)&&ok(x))out.fid=x}
+    return out.room||out.fid?out:null}
+  /* the waiting room behind a code (newest first) */
+  function roomByCode100(list,code){let best=null;for(const L of list||[])if(L&&L.status==='waiting'&&roomCode100(L.id)===code&&(!best||(L.created||0)>(best.created||0)))best=L;return best}
+  Object.assign(C,{CODE100,roomCode100,codeParse100,roomByCode100})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

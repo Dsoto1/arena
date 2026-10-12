@@ -756,28 +756,52 @@
   "w": "server/src/routes.js:1649"
  },
  {
-  "k": "Unknown request:",
-  "w": "server/src/routes.js:1653"
+  "k": "Type a room code (R-…) or a FID (FID-…).",
+  "w": "server/src/routes.js:1658"
  },
  {
-  "k": "Too many requests — wait a moment.",
-  "w": "server/src/routes.js:1654"
+  "k": "That room has started — watch it from the list.",
+  "w": "server/src/routes.js:1662"
  },
  {
-  "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1656"
+  "k": "No lanista with that FID is in a room.",
+  "w": "server/src/routes.js:1663"
  },
  {
-  "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1657"
+  "k": "That is your own FID.",
+  "w": "server/src/routes.js:1664"
  },
  {
-  "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1660"
+  "k": "That lanista is not in a room you can join.",
+  "w": "server/src/routes.js:1665"
+ },
+ {
+  "k": "No open room with that code.",
+  "w": "server/src/routes.js:1666"
  },
  {
   "k": "Test houses play Custom only.",
-  "w": "server/src/routes.js:1664"
+  "w": "server/src/routes.js:1668"
+ },
+ {
+  "k": "Unknown request:",
+  "w": "server/src/routes.js:1675"
+ },
+ {
+  "k": "Too many requests — wait a moment.",
+  "w": "server/src/routes.js:1676"
+ },
+ {
+  "k": "Your two hours as a guest are up — sign in to keep watching.",
+  "w": "server/src/routes.js:1678"
+ },
+ {
+  "k": "Sign in to {0}.",
+  "w": "server/src/routes.js:1679"
+ },
+ {
+  "k": "Name your house first — every lanista needs a Domus.",
+  "w": "server/src/routes.js:1682"
  },
  {
   "k": "The arena hit a snag — try again (ref {0}).",
@@ -1480,19 +1504,51 @@
   "w": "src/111-onlcore.js:1443"
  },
  {
+  "k": "Mind the lions",
+  "w": "src/111-onlcore.js:1445"
+ },
+ {
+  "k": "Flavius is watching",
+  "w": "src/111-onlcore.js:1445"
+ },
+ {
+  "k": "Is that a Damnatio?",
+  "w": "src/111-onlcore.js:1445"
+ },
+ {
+  "k": "Nice helmet. Yours?",
+  "w": "src/111-onlcore.js:1445"
+ },
+ {
+  "k": "I’ve seen stronger slaves",
+  "w": "src/111-onlcore.js:1445"
+ },
+ {
+  "k": "Bring a bucket",
+  "w": "src/111-onlcore.js:1446"
+ },
+ {
+  "k": "To the Gate of Life!",
+  "w": "src/111-onlcore.js:1446"
+ },
+ {
+  "k": "My lanista bet on me… sorry, lanista",
+  "w": "src/111-onlcore.js:1446"
+ },
+ {
   "k": "Victor of the Season",
-  "w": "src/111-onlcore.js:1501"
+  "w": "src/111-onlcore.js:1504"
  },
  {
   "k": "On the Season’s Podium",
-  "w": "src/111-onlcore.js:1501"
+  "w": "src/111-onlcore.js:1504"
  },
  {
   "k": "One of the Season’s Ten",
-  "w": "src/111-onlcore.js:1501"
+  "w": "src/111-onlcore.js:1504"
  },
  {
   "k": "Pick a reason.",
-  "w": "src/111-onlcore.js:1507"
+  "w": "src/111-onlcore.js:1510"
  }
 ]

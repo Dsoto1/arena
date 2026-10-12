@@ -1648,6 +1648,29 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
         const ok=await store.putNew('REPORT#'+d.id,'R#'+me,{by:me,seat:d.seat,who,reason:d.reason,note:String(d.note||'').replace(/[<>]/g,'').slice(0,B.REPORT100.NOTE_MAX),at:now(),ranked:!!M.ranked,GSI1PK:'REPORTS',GSI1SK:now(),ttl:ttl(90)});
         if(!ok)throw fail('report_once','You already reported this match.');try{console.log('[report100]',d.id,me,'→',who,d.reason)}catch(e){}return {done:1}}})}
   /* ══════════ end of v1.0 SERVER BATCH B ══════════ */
+  /* ══════════ v1.0 LOBBY ROOM (shared rules: the "v1.0 LOBBY ROOM" section of onlcore; docs/backend.md "v1.0 lobby room"; NO protocol bump) ══════════
+     lobby.code {code, pw?}  join by ROOM CODE (R-XXXXX = C.roomCode100(room id), nothing stored) or by FID (the waiting room that lanista is in).
+                             Goes through lobby.join (password, kicks, Ranked rank rules, busy rule, Ranked cooldown); lookups use the FID quota (look89).
+                             Refusals: code_bad · code_none · code_self · code_fid_none · code_live (+ {live:true, id}: the room started — watch it) · testHouse.
+     house.card              + now.room / now.code while the house's lanista sits in a waiting room (the page's ⚔ Join). */
+  {const B=C;NEED_DOMUS.add('lobby.code');
+    const roomOfAcct=(list,acct)=>(list||[]).find(L=>L.status==='waiting'&&inRoom(L,acct))||null;
+    R['lobby.code']=async(d,ctx)=>{d=d||{};await look89(ctx);const q=B.codeParse100(d.code);if(!q)throw fail('code_bad','Type a room code (R-…) or a FID (FID-…).');
+      const me=await acctOf(ctx.acct);const f=flagOf(me);const list=(await lobbies()).filter(L=>!!L.flag===f);let L=null;
+      if(q.room){L=B.roomByCode100(list,q.room);
+        if(!L){const live=list.filter(x=>x.status==='live'&&B.roomCode100(x.id)===q.room).sort((a,b)=>(b.created||0)-(a.created||0))[0];
+          if(live&&!q.fid)throw fail('code_live','That room has started — watch it from the list.',{live:true,id:live.id})}}
+      if(!L&&q.fid){const F=await byFid89(q.fid);if(!F){if(!q.room)throw fail('code_fid_none','No lanista with that FID is in a room.')}
+        else{if(F.A.id===ctx.acct)throw fail('code_self','That is your own FID.');const R0=roomOfAcct(list,F.A.id);
+          if(!R0||B.privOf89(F.A).hide||B.invWhy89(F.A,{domus:me&&me.domus}))throw fail('code_fid_none','That lanista is not in a room you can join.');L=R0}}
+      if(!L)throw fail('code_none','No open room with that code.');
+      L.members=L.members||[];L.players=L.players||[];if(inRoom(L,ctx.acct))return room(L);
+      if(L.ranked&&me&&me.dtest)throw fail('testHouse','Test houses play Custom only.');
+      try{return await R['lobby.join']({id:L.id,...(d.pw!=null?{pw:d.pw}:{})},ctx)}
+      catch(e){if(e&&(e.code==='pw_need'||e.code==='pw_bad'))e.extra={...(e.extra||{}),room:{id:L.id,ev:L.ev,loc:L.loc|0,host:{name:(L.host&&L.host.name)||''}}};throw e}};
+    {const base=R['house.card'];R['house.card']=async(d,ctx)=>{const r=await base(d,ctx);try{if(r&&r.now&&r.now.st==='room'&&r.domus&&r.domus.id){const D=await domusGet(r.domus.id);
+        const R0=D&&D.owner?roomOfAcct(await lobbies(),D.owner):null;if(R0)r.now={...r.now,room:R0.id,code:B.roomCode100(R0.id),ranked:!!R0.ranked,ev:R0.ev,seated:(R0.players||[]).length,seats:R0.seats|0}}}catch(e){}return r}}}
+  /* ══════════ end of v1.0 LOBBY ROOM ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);
