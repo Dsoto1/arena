@@ -597,11 +597,12 @@ cityDraw=function(){const c2=CITY.c2;if(!c2||!CITY.TW)return;const W=CITY.W||CIT
   /* you, always findable */
   {const P=CITY.player;if(P._x!=null){c2.font=`600 ${Math.max(9,Math.round(T*0.2))}px IBM Plex Mono, monospace`;c2.fillStyle='#f0cf7d';c2.strokeStyle='rgba(20,12,4,.8)';c2.lineWidth=3;const t=CITY.mgr?_T('YOU · LANISTA'):_T('YOU');const yw=c2.measureText(t).width+8;keep89.push([P._x-yw/2,P._y+T*0.3-T*0.15,yw,T*0.3]);c2.strokeText(t,P._x,P._y+T*0.3);c2.fillText(t,P._x,P._y+T*0.3)}}
   /* chatter bubbles */
-  c2.font=`600 ${Math.max(10,Math.round(T*0.22))}px Alegreya Sans, sans-serif`;for(const [s,p] of say){const wd=c2.measureText(s).width+12,bh=T*0.32;const bx=Math.max(4,Math.min(W-wd-4,p.x-wd/2));
+  if(typeof cityBub100==='function'&&cityBub100(c2,say,keep89,T,W,H)){} /* v1.0: the CROWD bubble look (303-v100bubbles) */
+  else{c2.font=`600 ${Math.max(10,Math.round(T*0.22))}px Alegreya Sans, sans-serif`;for(const [s,p] of say){const wd=c2.measureText(s).width+12,bh=T*0.32;const bx=Math.max(4,Math.min(W-wd-4,p.x-wd/2));
     /* v0.89 (his note): a bubble never covers a building label, the gate, YOU or another bubble — it steps up, then down, until clear */
     const hit=y=>keep89.some(([x,yy,w,h])=>bx<x+w+3&&bx+wd>x-3&&y<yy+h+3&&y+bh>yy-3);let by=p.y-T*1.5;
     for(const d of [0,-1,-2,-3,1,2,3,-4,4,-5,5]){const y=p.y-T*1.5+d*bh*1.1;if(y>2&&y+bh<H-2&&!hit(y)){by=y;break}}keep89.push([bx,by,wd,bh]);
-    c2.fillStyle='rgba(245,234,210,.95)';c2.beginPath();c2.roundRect(bx,by,wd,bh,4);c2.fill();c2.strokeStyle='rgba(90,60,30,.35)';c2.lineWidth=1;c2.stroke();c2.fillStyle='#241910';c2.fillText(s,bx+wd/2,by+T*0.16)}
+    c2.fillStyle='rgba(245,234,210,.95)';c2.beginPath();c2.roundRect(bx,by,wd,bh,4);c2.fill();c2.strokeStyle='rgba(90,60,30,.35)';c2.lineWidth=1;c2.stroke();c2.fillStyle='#241910';c2.fillText(s,bx+wd/2,by+T*0.16)}}
   if(CITY.hover&&CITY.hover._x!=null){const n=CITY.hover;c2.font=`600 ${Math.max(10,Math.round(T*0.22))}px Alegreya Sans,sans-serif`;const wd=c2.measureText(n.name).width+10;
     c2.fillStyle='rgba(20,14,8,.9)';c2.beginPath();c2.roundRect(n._x-wd/2,n._y+T*0.12,wd,T*0.3,4);c2.fill();c2.fillStyle='#f0cf7d';c2.fillText(n.name,n._x,n._y+T*0.27)}
   if(CITY.toast&&now<CITY.toast.until){c2.font=`600 ${Math.max(12,Math.round(T*0.26))}px Alegreya Sans,sans-serif`;const wd=c2.measureText(CITY.toast.t).width+18;

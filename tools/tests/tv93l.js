@@ -46,7 +46,7 @@ const scene=async(name,startArgs,prepSrc,dbg)=>{if(startArgs)await pg.evaluate(a
 await scene('day',['democritus',6,false],null,'pieces');
 out.report=await pg.evaluate(()=>{LAYERS93.reset();for(let i=0;i<20;i++)draw();return LAYERS93.report()});
 {const R=out.report;ok(R.on&&R.frames>=20,'report frames');const names=R.rows.filter(x=>!x.cached).map(x=>x.name);
-  ok(names.join()==='rim,stands,tiles,walls,floor,decals,highlights,pieces,overlays,crowdtop,flavius,fx,duel','layer list '+names);
+  ok(names.filter(n=>n!=='bubbles').join()==='rim,stands,tiles,walls,floor,decals,highlights,pieces,overlays,crowdtop,flavius,fx,duel'&&(!names.includes('bubbles')||names.indexOf('bubbles')===names.indexOf('pieces')+1) /* v1.0: 303's zoomed bubbles right after the pieces */,'layer list '+names);
   const sub=R.rows.filter(x=>x.cached).map(x=>x.name);ok(['stands/under','stands/deco','walls/top','walls/light','walls/sky'].every(n=>sub.includes(n)),'cached sub-layers '+sub);
   ok(R.rows.filter(x=>x.cached&&/walls\/top|stands\/under/.test(x.name)).every(x=>x.hits>=15),'cached layers reused '+JSON.stringify(R.rows.filter(x=>x.cached)));
   ok(R.rows.find(x=>x.name==='pieces').n>=20,'pieces timed')}

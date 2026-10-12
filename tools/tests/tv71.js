@@ -14,7 +14,7 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   slog('test stands line 71','');await W8(400);r.pin=!document.getElementById('slogPin'); /* v0.96: no pinned stands line; the stands log lives under Stands */log('a new log line');r.pinTop=document.getElementById('log').firstChild.textContent.includes('a new log line');
   render();sideTab('stands');await W8(400);r.pinGo=SIDE.tab==='stands'&&(document.getElementById('standsPane')||document.body).textContent.includes('test stands line 71');sideTab('fighter');
   const sp=S.spect.find(s=>!s.bet&&!s.gone)||(()=>{const x=S.spect.find(s=>!s.gone);if(x)x.bet=null;return x})();sp.bet={pid:1,amt:2,odds:2};S.players[2].selfBet={stake:3,odds:2};await W8(500);
-  r.bub=[...document.querySelectorAll('#wbubs .wbub')].map(e=>e.textContent);return r});
+  r.bub=[...document.querySelectorAll('#wbubs .wbub,#bb100 .b100.wg .bd')] /* v1.0: 303's bubble layer */.map(e=>e.textContent);return r});
 o.b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.over=true;if(CUR_MODAL)CUR_MODAL.done(null);await W8(400);
   openSetup();await W8(900);const t=document.querySelector('[data-mode="festival"],[data-st="festival"],[data-tab="festival"]');if(t){t.click();await W8(600)}
   const s=document.getElementById('festSR');if(!s)return {skip:true};await W8(1500);const had=!!document.getElementById('festSRimg');s.value='cassian';s.dispatchEvent(new Event('change',{bubbles:true}));await W8(200);
