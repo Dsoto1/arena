@@ -8,8 +8,9 @@ data={}
 RETIRED={'weapon_back1.webp','weapon_back2.webp','weapon_back3.webp','weapon_back4.webp'}
 # online-only helpers: the standalone has no Online (v0.94: the Safari WebP encoder for online token pictures)
 RETIRED|={'webpenc94.js'}
+# v1.0: the animated stand-in sheets (311-v100anim, ~6 MB) stay on the site; the standalone draws the still tokens
 for f in sorted(os.listdir(A)):
-    if f in RETIRED: continue
+    if f in RETIRED or (f.startswith('anim100_') and f.endswith('.webp')): continue
     p=os.path.join(A,f);mt=mimetypes.guess_type(f)[0] or ('image/webp' if f.endswith('.webp') else 'application/octet-stream')
     data[f]='data:%s;base64,%s'%(mt,base64.b64encode(open(p,'rb').read()).decode())
 import re

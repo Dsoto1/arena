@@ -1,0 +1,269 @@
+{
+ "soldier": {
+  "gear": {
+   "head": {
+    "t": "centurion"
+   },
+   "belt": {
+    "t": "balteus"
+   },
+   "arm": {
+    "R": {
+     "wraps": 1
+    },
+    "L": {
+     "wraps": 1
+    }
+   },
+   "leg": {
+    "L": {
+     "upper": {
+      "t": "legwrapsU"
+     }
+    },
+    "R": {
+     "upper": {
+      "t": "legwrapsU"
+     }
+    }
+   },
+   "wR": {
+    "t": "sword",
+    "k": "gladius"
+   }
+  },
+  "cloth": "#7a1c14"
+ },
+ "hero": {
+  "gear": {
+   "head": {
+    "t": "thrachelm"
+   },
+   "arm": {
+    "R": {
+     "wraps": 1
+    },
+    "L": {
+     "upper": {
+      "t": "provmanica"
+     },
+     "wraps": 1
+    }
+   },
+   "leg": {
+    "L": {
+     "lower": {
+      "t": "legwraps"
+     }
+    },
+    "R": {
+     "lower": {
+      "t": "legwraps"
+     }
+    }
+   },
+   "wR": {
+    "t": "sica",
+    "k": "sica"
+   },
+   "wL": {
+    "t": "parma",
+    "k": "thracian"
+   }
+  },
+  "cloth": "#5c6a2a"
+ },
+ "slave": {
+  "gear": {
+   "head": {
+    "t": "galea"
+   },
+   "arm": {
+    "R": {
+     "wraps": 1
+    },
+    "L": {
+     "upper": {
+      "t": "manica"
+     },
+     "wraps": 1
+    }
+   },
+   "leg": {
+    "L": {
+     "lower": {
+      "t": "legwraps"
+     }
+    },
+    "R": {
+     "lower": {
+      "t": "legwraps"
+     }
+    }
+   },
+   "wR": {
+    "t": "trident",
+    "k": "trident"
+   }
+  },
+  "cloth": "#9c7a46"
+ },
+ "royalty": {
+  "gear": {
+   "head": {
+    "t": "cassis"
+   },
+   "chest": {
+    "t": "ornate"
+   },
+   "arm": {
+    "R": {
+     "wraps": 1
+    },
+    "L": {
+     "wraps": 1
+    }
+   },
+   "wR": {
+    "t": "dagger",
+    "k": "pugio"
+   }
+  },
+  "cloth": "#2c3550"
+ },
+ "amazonia": {
+  "gear": {
+   "head": {
+    "t": "thrachelm"
+   },
+   "chest": {
+    "t": "amazon"
+   },
+   "arm": {
+    "R": {
+     "cestus": 1
+    }
+   },
+   "leg": {
+    "L": {
+     "lower": {
+      "t": "greaves"
+     }
+    },
+    "R": {
+     "lower": {
+      "t": "greaves"
+     }
+    }
+   },
+   "wR": {
+    "t": "axe",
+    "k": "axe"
+   },
+   "wL": {
+    "t": "sica",
+    "k": "falcata"
+   }
+  },
+  "cloth": "#8a4a2a"
+ },
+ "veteranus": {
+  "gear": {
+   "head": {
+    "t": "flavhelm"
+   },
+   "chest": {
+    "t": "musculata"
+   },
+   "arm": {
+    "R": {
+     "wraps": 1
+    },
+    "L": {
+     "wraps": 1
+    }
+   },
+   "leg": {
+    "L": {
+     "lower": {
+      "t": "legwraps"
+     }
+    },
+    "R": {
+     "lower": {
+      "t": "legwraps"
+     }
+    }
+   },
+   "wR": {
+    "t": "club",
+    "k": "rudis"
+   }
+  },
+  "cloth": "#b1a391"
+ },
+ "venatore": {
+  "gear": {
+   "head": {
+    "t": "steelhelm"
+   },
+   "belt": {
+    "t": "balteus"
+   },
+   "arm": {
+    "R": {
+     "wraps": 1
+    },
+    "L": {
+     "wraps": 1
+    }
+   },
+   "leg": {
+    "L": {
+     "lower": {
+      "t": "legwraps"
+     }
+    },
+    "R": {
+     "lower": {
+      "t": "legwraps"
+     }
+    }
+   },
+   "wR": {
+    "t": "spear",
+    "k": "hasta"
+   }
+  },
+  "cloth": "#5a3466"
+ },
+ "damnatio": {
+  "gear": {
+   "arm": {
+    "R": {
+     "wraps": 1
+    },
+    "L": {
+     "wraps": 1
+    }
+   },
+   "leg": {
+    "L": {
+     "lower": {
+      "t": "legwraps"
+     }
+    },
+    "R": {
+     "lower": {
+      "t": "legwraps"
+     }
+    }
+   },
+   "wR": {
+    "t": "sling",
+    "k": "sling"
+   }
+  },
+  "cloth": "#4a3a2e"
+ }
+}
