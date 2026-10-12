@@ -57479,7 +57479,7 @@ body.dk99on .mtabs [data-id="ludus"] .mcount.c73{display:none!important}
 const ON99={done:false};
 {const base=onlineOpen;onlineOpen=async function(tab){try{sessionStorage.setItem('flavius_onlopen99',tab||ONL.tab||'play')}catch(e){}
   try{return await base.apply(this,arguments)}finally{if(!ON99.keep){try{sessionStorage.removeItem('flavius_onlopen99')}catch(e){}}ON99.keep=false}}}
-{const base=onlRedraw;onlRedraw=function(){const r=base.apply(this,arguments);try{if(document.getElementById('onl')){const t=ONL.tab==='visit'?'play':(ONL.tab||'play');sessionStorage.setItem('flavius_onlopen99',t)}}catch(e){}return r}}
+{const base=onlRedraw;onlRedraw=function(){const r=base.apply(this,arguments);try{if(document.getElementById('onl')&&typeof CUR_MODAL!=='undefined'&&CUR_MODAL){const t=ONL.tab==='visit'?'play':(ONL.tab||'play');sessionStorage.setItem('flavius_onlopen99',t)}}catch(e){}return r}}
 {const base=onl96Auto;onl96Auto=async function(){try{return await base.apply(this,arguments)}finally{ON99.done=true}}}
 /* pagehide while the window is open must keep the flag (the modal promise never resolves on a refresh, so nothing clears it) */
 {const t0=Date.now();const iv=setInterval(()=>{try{if(Date.now()-t0>70000){clearInterval(iv);return}
