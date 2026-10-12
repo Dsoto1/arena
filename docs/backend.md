@@ -335,12 +335,17 @@ replays); page + mock: `316-v100balonl`. Tests `server/test/v100bal.test.js`. **
 
 - **O1 dented, not destroyed (Ranked).** A printed piece (L1–3, not named, not Issued) brought and no longer held at the end stays with the survivor
   as `pc.st 'damaged'`, `dmg 1` (in place, like the v0.91 dents: worn in Custom, stripped from Ranked kits until repaired). On a **Ranked death**
-  his brought printed pieces go to the house shelf damaged (`gx.left` → `domusAfter`); `gx.carried` keeps only named pieces, so the killer's loot
-  window and Flavius's chest only ever see named pieces, and the used market no longer gets printed pieces from the dead. Both lists ride on
-  `out.dent100 [{item,key}]` (the page toasts "came home dented"). Named pieces keep their rules (Broken, repair ⅓, lost/looted at death); Issued
-  pieces still vanish (`out.gone` / `out.vanish`).
+  (his follow-up) the human killer still takes ONE piece of his choice, printed or named (`gx.carried` = everything brought; `deadGear` / `lootMake`
+  unchanged). Every printed piece nobody takes (`lootResolve`'s leftovers, or all of them when a beast / CPU / the Fate killed him) goes HOME to the
+  dead man's house shelf dented: a `toMarket` wrapper routes a printed piece whose last history line is `fell` (`C.homeRoute100`) to the house found by
+  its name (`DNAME#`) as `C.homeDent100(P)`; named pieces still go to Flavius's chest; the killer's own pick that fits neither him nor his house
+  (`taken`) still goes to the used market. So the used market now only gets those rare picks — it stays thin. `out.dent100 [{item,key}]` = the
+  survivor's lost pieces / the dead man's printed pieces (minus whatever the killer takes); the page toasts it. Named pieces keep their rules
+  (Broken, repair ⅓, lost/looted at death); Issued pieces still vanish (`out.gone` / `out.vanish`). The mock mirrors it (`mockToMarket83` wrapper in
+  316). Today's "what he lost" showcase still counts every piece brought.
 - **Repair** of a printed piece (damaged, or an old broken one) = `ceil(value / 10)`, at least 1, however dented (`BAL100.repairK`).
-- **Awards** Tiro 24 · Novicius 30 · Gregarius 36 (×3; Veteranus+ unchanged 18/25/35/45/60). `C.AWARD` itself changed, so `awardOf`, the result
+- **Award ladder** (his pick, a rank-up never pays less): Tiro 24 · Novicius 30 · Gregarius 36 · Veteranus 42 · Primus Palus 50 · Summa Rudis 60 ·
+  Rudiarius 70 · Invictus 80 (`BAL100.award`; win +50%, streak as before). `C.AWARD` itself changed, so `awardOf`, the result
   toast and the room lines agree; **gift coin keeps the old table** (`rollGift` runs on `AWARD_GIFT100`).
 - **O2 rank Glory ×½:** Tiro 0 · Novicius 45 · Gregarius 90 · Veteranus 275 · Primus Palus 575 · Summa Rudis 1050 · Rudiarius 1750 · Invictus 2750
   (`RANKS[i].glory` changed in place). Never demoted (`ch.rankK`). Gladiators already past a new line show the higher rank at once (`rankFor`);

@@ -1435,9 +1435,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   Kill switch localStorage flavius_replay100off=1 (no wrappers, the old "coming soon"). Tests `tv100rp`, server `v100rp.test.js`. HIS ANSWERS (2026-10-12, 1a 2a 3a): local replays stay OUT of backups; Manager bouts watched only from the Saves tab; server replays 30 days, Ranked only, once a match.
 - **v1.0 ONLINE BALANCE (316-v100balonl + the "v1.0 BALANCE" section of 111-onlcore + its block in routes.js; docs/backend.md "v1.0 balance"; his O1–O3 from
   tools/plans/balance100/REPORT.md; no protocol bump):** O1 a printed piece lost in a Ranked bout comes home DENTED (pc.st 'damaged', dmg 1, stays on the
-  survivor; out.dent100) instead of used up; a Ranked death's brought printed pieces go to the house shelf dented (gx.left) — the killer's loot window /
-  chest see only named pieces, the used market gets no printed pieces from the dead; printed repair = ceil(value/10); AWARD Tiro 24 · Novicius 30 ·
-  Gregarius 36 (gift coin keeps the old table, AWARD_GIFT100). O2 RANKS Glory halved (0/45/90/275/575/1050/1750/2750; WORLD COUNTS recounted once,
+  survivor; out.dent100) instead of used up; a Ranked death: the human killer still takes ONE piece (printed or named), every printed piece nobody takes
+  goes home to the dead man's house shelf dented (toMarket / mockToMarket83 wrappers via C.homeRoute100 — last history 'fell'; house by DNAME#), named
+  → Flavius's chest as before, so the used market stays thin; printed repair = ceil(value/10); AWARD LADDER 24/30/36/42/50/60/70/80 Tiro→Invictus (gift
+  coin keeps the old table, AWARD_GIFT100). O2 RANKS Glory halved (0/45/90/275/575/1050/1750/2750; WORLD COUNTS recounted once,
   'seeded100'). O3 one rank-up gift per house per rank (D.rkg100, giftsIn + after100 → out.giftDup100). Test switches C.BAL100.dent/home. Tests server
   v100bal (+ routes/v83/v84/v85/v89a/v91/v92 updated), tonl83, tonl83u, tv91e.
 - **v1.0 ANIMATED GLADIATOR TOKENS (311-v100anim, last before 08-setup; his 3D answers 2026-10-11 + SPEED × ANIMATION a + ANIM MEMORY; look test

@@ -10,7 +10,7 @@ function rules(){
   assert.ok(C.VER>=6);
   assert.deepStrictEqual(C.RANKS.map(r=>r.k),['tiro','novicius','gregarius','veteranus','primus','summa','rudiarius','invictus']);
   assert.deepStrictEqual(C.RANKS.map(r=>r.glory),[0,45,90,275,575,1050,1750,2750],'v1.0: halved');
-  assert.deepStrictEqual(C.RANKS.map(r=>C.awardOf(r.k,false,0)),[24,30,36,18,25,35,45,60],'v1.0: Tiro–Gregarius ×3');assert.strictEqual(C.awardOf('invictus',true,10),Math.round(60*1.5*2));
+  assert.deepStrictEqual(C.RANKS.map(r=>C.awardOf(r.k,false,0)),[24,30,36,42,50,60,70,80],'v1.0: the award ladder');assert.strictEqual(C.awardOf('invictus',true,10),Math.round(80*1.5*2));
   assert.strictEqual(C.rankByGlory(44).k,'tiro');assert.strictEqual(C.rankByGlory(45).k,'novicius');assert.strictEqual(C.rankByGlory(2800).k,'invictus');
   /* the treasury's cut, gifts at rank-ups and every 5 Ranked bouts survived */
   const ch=C.newChar({name:'Rule Tester',cls:'hero'},'o','gr',0);ch.glory=40;
@@ -48,7 +48,7 @@ function rules(){
   assert.deepStrictEqual(gx.offBack,['cf2']);assert.deepStrictEqual(g.offers.sort(),['ap3','cf2'],'the used one is gone, the unused came back');assert.strictEqual(g.cfb,0);
   assert.deepStrictEqual(gx.broken,[]);assert.deepStrictEqual(gx.gone,[],'v1.0: a printed piece lost in Ranked is no longer used up');{const gi=g.gear.find(x=>C.itemBase(x)==='galea');assert.ok(gi&&C.isDamaged91(g,gi),'it comes home dented');assert.deepStrictEqual(gx.dent100.map(x=>x.key),['galea'])}
   const d=C.newChar({name:'Dead Man',cls:'hero'},'o','dm',0);d.gear=['galea','gladius','mace'];d.equip=['galea','gladius'];d.offers=['elix2'];const dk=C.kitOf(d);
-  const dx=C.gearAfter(d,dk,{survives:false},true);assert.deepStrictEqual(dx.carried.map(P=>P.item),[],'v1.0: printed pieces are not carried off');assert.deepStrictEqual(dx.left.map(P=>C.itemBase(P.item)),['mace','galea','gladius'],'v1.0: the brought printed pieces go home');assert.ok(dx.left.slice(1).every(P=>P.pc.st==='damaged'),'dented');assert.deepStrictEqual(d.gear,[]);assert.deepStrictEqual(d.offers,[]);
+  const dx=C.gearAfter(d,dk,{survives:false},true);assert.deepStrictEqual(dx.carried.map(P=>P.item),['galea','gladius'],'the killer may still pick any of them');assert.deepStrictEqual(dx.left.map(P=>P.item),['mace']);assert.deepStrictEqual(dx.dent100.map(x=>x.key),['galea','gladius'],'v1.0: what nobody takes goes home dented');assert.deepStrictEqual(d.gear,[]);assert.deepStrictEqual(d.offers,[]);
   const cx=C.gearAfter(C.newChar({name:'Custom Man',cls:'hero'},'o','cm',0),dk,{survives:true,brk:['galea']},false);assert.deepStrictEqual(cx.broken,[],'Custom breaks nothing');
   /* result rows */
   const row=C.cleanRow({seat:1,brk:['b','a','<x>'],off:['spiders','elix2','cf1','ap2'],ks:2,kb:'g',thumb:1,slew:['tholo','commodus','x','tholo']});
@@ -109,7 +109,7 @@ async function routes(){
   /* a bet from the stands-less outsider: the wagers tab sees it before the horns only — place one on a second room below */
   /* ── the result: Ann survives (galea lost on the sand, merc1 still in hand); Bob is slain by Ann and dies ── */
   const tbl=[0,1,2,3].map(i=>i===sa?{seat:i,won:true,place:1,f:40,survives:true,brk:['galea'],off:['elix4'],kb:''}:i===sb?{seat:i,won:false,place:4,f:3,survives:false,ks:sa,kb:'g'}:{seat:i,won:false,place:2,f:5});
-  C.BAL100.home=false;/* v1.0: a death's printed pieces go home dented (v100bal.test.js); switched off here so the loot window + used market keep their checks */m0=mark();await ann.req('match.result',{id:L.id,table:tbl,hash:'h'});const rb=await bob.req('match.result',{id:L.id,table:tbl,hash:'h'});assert.ok(rb.out.died);
+  C.BAL100.home=false;/* v1.0: printed pieces nobody takes go home dented instead of the used market (v100bal.test.js); switched off here so the used-market checks keep printed pieces to sell */m0=mark();await ann.req('match.result',{id:L.id,table:tbl,hash:'h'});const rb=await bob.req('match.result',{id:L.id,table:tbl,hash:'h'});assert.ok(rb.out.died);
   const A1=await getC(ann.ch.id);const ra=(await db.get('MATCH#'+L.id,'META')).outs[ann.acct];
   assert.strictEqual(ra.award,Math.round(C.awardOf('tiro',true,0)*0.5));assert.strictEqual(ra.cut,ra.award,'v0.92: the whole award');assert.strictEqual((await getD(ann.domus.id)).led89.in.cut,ra.award,'into the house treasury, booked as bout earnings');
   assert.deepStrictEqual(ra.broken,[]);assert.deepStrictEqual(ra.gone,[],'v1.0: no longer used up');assert.ok(A1.gear.some(x=>C.itemBase(x)==='galea'&&C.isDamaged91(A1,x)),'v1.0: it came home dented');assert.deepStrictEqual(ra.dent100.map(x=>x.key),['galea']);assert.deepStrictEqual(A1.offers.sort(),['elix4'],'elix4 came back, cf1 was used');

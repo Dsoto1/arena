@@ -1693,11 +1693,15 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       if(!X||(X.ttl&&X.ttl*1000<now()))throw fail('replay_none','No replay is kept for that match.');const o=strip(X);delete o.by;return o}}
   /* ══════════ end of v1.0 REPLAYS ══════════ */
   /* ══════════ v1.0 BALANCE (shared rules: the "v1.0 BALANCE" section of onlcore; docs/backend.md "v1.0 balance"; NO protocol bump) ══════════
-     O1 dented printed gear + repair ⅒ + Tiro–Gregarius awards ×3 and O2 halved rank Glory live in onlcore (gearAfter / repairCost / RANKS / AWARD);
-     a Ranked death's printed pieces now ride in gx.left, so domusAfter shelves them and deadGear (loot window / market) only sees named pieces.
-     Here: the settled result carries the dented list and loses the rank gifts the house already had (C.after100, O3), and the living-by-rank
+     O1 dented printed gear + repair ⅒ + the award ladder and O2 halved rank Glory live in onlcore (gearAfter / repairCost / RANKS / AWARD).
+     A Ranked death: the killer's loot window still offers every piece brought (deadGear / lootMake unchanged); a printed piece nobody took
+     ('fell' — lootResolve's leftovers, or every piece when no human killed him) goes HOME to the dead man's house shelf dented instead of the
+     used market (toMarket wrapper, the house found by its name: DNAME#); named pieces go to Flavius's chest as before; the killer's own pick that
+     fits neither him nor his house ('taken') still goes to the market. Here also: the settled result carries the dented list and loses the rank gifts the house already had (C.after100, O3), and the living-by-rank
      counters are counted once more from a scan (the thresholds moved: 'seeded100'). */
   {const base=domusAfter;domusAfter=async function(ch,row,out,ranked,m,gx){await base.apply(this,arguments);try{C.after100(out,gx)}catch(e){}}}
+  {const base=toMarket;toMarket=async function(P,from){try{if(C.homeRoute100(P)&&from&&from.house){const X=await store.get('DNAME#'+C.domusKey(from.house),'DNAME');
+        if(X&&X.domus&&await editDomus(X.domus,D=>{C.putPiece(D,C.homeDent100(P),false)}))return}}catch(e){}return base.apply(this,arguments)}}
   {let seeding100=null;const base=rankCounts;
     async function seed100(){try{const o={seeded:now(),seeded6:now(),seeded100:now()};for(const R of C.RANKS)o[R.k]=0;
         for(const c of await store.scan('CHAR#','CHAR'))if(c&&c.alive&&!c.test){const k=C.rankFor(c).k;o[k]=(o[k]|0)+1}

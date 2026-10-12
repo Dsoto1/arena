@@ -34,7 +34,7 @@ function rules(){C.setCatalog(catalog);try{C.setKits92(require('../src/kits92.js
   assert.deepStrictEqual(C.kitPieces92({id:'p'},['galea'],false),[{item:'galea',pc:null}],'bought pieces are plain');
   /* Issued pieces vanish: carried by the dead (no loot, no market), dented in a Ranked bout */
   const dd=C.newChar({name:'Issued Dead',cls:'hero'},'o','idd',0);for(const p of C.kitPieces92(dd,['galea'],true))C.putPiece(dd,p,true);dd.gear.push('wraps');
-  let g=C.gearAfter(dd,C.kitOf(dd),{survives:false},true);assert.deepStrictEqual(g.carried,[],'v1.0: the bought printed piece is not carried off');assert.ok(g.left.some(P=>C.itemBase(P.item)==='wraps'&&P.pc.st==='damaged'),'… it goes home dented');assert.ok(!g.left.some(P=>C.itemBase(P.item)==='galea'),'the Issued one never goes home');assert.deepStrictEqual(g.vanish,['galea']);
+  let g=C.gearAfter(dd,C.kitOf(dd),{survives:false},true);assert.deepStrictEqual(g.carried.map(P=>C.itemBase(P.item)),['wraps'],'only the bought piece is carried');assert.deepStrictEqual(g.dent100.map(x=>x.key),['wraps'],'v1.0: it goes home dented unless taken — never the Issued one');assert.deepStrictEqual(g.vanish,['galea']);
   const dt=C.newChar({name:'Issued Dent',cls:'hero'},'o','idt',0);for(const p of C.kitPieces92(dt,['galea'],true))C.putPiece(dt,p,true);
   g=C.gearAfter(dt,C.kitOf(dt),{survives:true,dmg:[['galea',0.5]]},true);assert.deepStrictEqual(g.dmg,[]);assert.deepStrictEqual(g.vanish,['galea']);assert.ok(!dt.gear.length,'gone');
   /* coin sent */

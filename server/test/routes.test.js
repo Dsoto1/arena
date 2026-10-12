@@ -436,10 +436,10 @@ async function v82(){
   /* ── 2. the award table (ONLC) ── */
   const mk=(rank,o)=>({...C.newChar({name:'Tester',cls:'hero'},'x','t',0),rank,...o});
   const pay=(rank,row,ranked,o)=>C.applyResult(mk(rank,o),{place:1,f:10,coin:99,survives:true,...row},ranked).award; /* v0.83: award = the gladiator's pay + the treasury's cut */
-  assert.deepStrictEqual(['tiro','gregarius','veteranus','primus','summa'].map(r=>C.awardOf(r,false,0)),[24,36,18,25,35],'v1.0: Tiro–Gregarius ×3');
+  assert.deepStrictEqual(['tiro','gregarius','veteranus','primus','summa'].map(r=>C.awardOf(r,false,0)),[24,36,42,50,60],'v1.0: the award ladder');
   assert.strictEqual(pay('tiro',{won:false},true),24);assert.strictEqual(pay('tiro',{won:true},true),36,'+50% for a win');
   assert.strictEqual(pay('gregarius',{won:true},true,{survived:6,lifeCF:90,streak:3}),Math.round(36*1.5*1.3),'the streak is kept');
-  assert.strictEqual(pay('summa',{won:true},true,{survived:60,lifeCF:1200,streak:15}),Math.round(35*1.5*2),'the streak caps at +100%');
+  assert.strictEqual(pay('summa',{won:true},true,{survived:60,lifeCF:1200,streak:15}),Math.round(60*1.5*2),'the streak caps at +100%');
   assert.strictEqual(pay('primus',{won:true},false,{survived:35,lifeCF:650}),0,'Custom pays nothing');assert.strictEqual(pay('tiro',{won:false,survives:false},true),0,'the dead are not paid');
   assert.ok(!('PURSE' in C),'the old purse table is gone');
   /* ── 2b. GLORY, no demotion, the table-size factor, living counts by rank ── */
