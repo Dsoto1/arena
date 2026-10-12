@@ -18,7 +18,7 @@ o.m=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ope
   const left=thLeft(w);const sxp0=JSON.stringify((h.sxp||{}));const st0=gStats(h).str;
   const exh=needTHrs(w,EXHIB_HOURS)[0];
   MGR.tab='recruit';MGR_REDRAW();await new Promise(r=>setTimeout(r,1000));const rt=document.getElementById('recTable');const g2=rt.closest('.mgrid');const col=[...g2.children].find(c=>!c.contains(rt));
-  const fa=rt.clientHeight>=Math.round(innerHeight*0.62)&&Math.abs(rt.getBoundingClientRect().bottom-col.getBoundingClientRect().bottom)<4;MGR.tab='practice';MGR_REDRAW();
+  const fa=rt.clientHeight>=Math.round(innerHeight*0.62)&&(Math.abs(rt.getBoundingClientRect().bottom-col.getBoundingClientRect().bottom)<4||rt.getBoundingClientRect().bottom>=innerHeight-12 /* v1.0 (299-v100recruit): the list is a viewport-high scroller beside the board — it runs to the bottom of the window */);MGR.tab='practice';MGR_REDRAW();
   const wk=w.week;for(const b2 of w.night.bouts)b2.done=true;w.pend=[];await endWeek();
   return {rail,nightCss,layout,head,left,exh,fa,rehab:g.inj?g.inj.until:null,until0,grew:JSON.stringify(h.sxp||{})!==sxp0||gStats(h).str>st0,newWeek:W_().week===wk+1,fresh:thLeft(W_())===thMax(),yard:(me().fac||{}).yard||0,
     cities:LANISTA_CITIES().length,citiesOk:LANISTA_CITIES().every(c=>LOCATIONS.slice(1).some(L=>L.n===c))}});
