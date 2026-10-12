@@ -305,6 +305,28 @@ rate limiter); page + mock: `302-v100lobby`. Tests `server/test/v100lobby.test.j
 - **`house.card`** gains `now.room`, `now.code`, `now.ev`, `now.seated`, `now.seats`, `now.ranked` while the house's lanista waits in a room (the page's ⚔ Join).
 - **Taunts:** eight more room phrase codes in the batch A §7 list (`mlions` … `betme`); the page groups the room's phrases Room / Taunts.
 
+## v1.0 replays
+
+Shared rules: the "v1.0 REPLAYS" section at the end of `111-onlcore`; routes: the "v1.0 REPLAYS" block in `routes.js` (after the lobby room, before the
+rate limiter); page + mock: `309-v100replay`. Tests `server/test/v100rp.test.js`, page `tv100rp`. **No protocol bump** (two new optional requests).
+
+- **What a replay is.** The opening snapshot (`MATCH#<id> OPEN`, the host's `matchSnapshot` at the first turn) + the match's inputs in server order
+  (`IN#…`) + the end hash (`onlHash` at gameOver) + the game version. The page replays it exactly as a late watcher does (`onlmLoad` + `onlmWatchOn`),
+  so every die, CPU turn and beast re-derives from the seeded stream.
+- **`replay.put {id, h, v}`** — a human fighter (`M.players`) of a **Ranked** match, once it is settled (`M.status` not `live`). The server builds the
+  replay from **its own** opening + inputs; anything else the client sends is ignored, so a replay cannot be forged — it is the record a future Ranked
+  check will replay. Stored once as `REPLAY#<match> R` (`putNew`; a second put answers `{done, dup}`) with `GSI1PK 'REPLAYS'`, `GSI1SK` = when (the
+  most recent first) and `ttl` = `REPLAY100.DAYS` (30). Inputs are anonymised (`replayAnon100`: `from` → `server` or `p`, `acct` → `p`).
+  Refusals: `replay_bad` (bad id / not your match), `replay_custom` (Custom is never kept server-side), `replay_wait` (not settled yet — the page
+  retries after 6, 15, 40, 90 s), `replay_gone` (the opening expired: matches live 2 days), `replay_big` (over `REPLAY100.MAX` 380 000 bytes, under
+  DynamoDB's 400 KB item).
+- **`replay.get {id}`** — anyone, guests too (`GUEST_OK`): `{id, v, h, at, ranked, ev, loc, open, inputs}` without keys or the uploader; `replay_none`.
+- Cost: a put = one META get, one REPLAY get, one OPEN get, one IN# query, one LOBBY get, one put; a get = one read. No new table permission.
+- **The page.** Every finished match is kept locally (last 10 + ★ pinned, gzip in localStorage `flavius_rp100i` / `flavius_rp100.<id>`); online
+  fighters fetch `match.get` at gameOver for their own copy. 293's 🔗 `#replay=<id>` opens the local copy first, else `replay.get`. Kill switch
+  localStorage `flavius_replay100off=1`.
+- **Rollback:** an older server answers `unknown_req`; the page then says "the server keeps no replays yet" (local replays still work).
+
 ## Versions, deploy, rollout, rollback
 
 - **Protocol** `ONLC.VER` (111-onlcore): `$connect` refuses another version with 426 ("reload"). Bump it only when old clients

@@ -1562,4 +1562,25 @@ const ONLC=(function(){
   /* the waiting room behind a code (newest first) */
   function roomByCode100(list,code){let best=null;for(const L of list||[])if(L&&L.status==='waiting'&&roomCode100(L.id)===code&&(!best||(L.created||0)>(best.created||0)))best=L;return best}
   Object.assign(C,{CODE100,roomCode100,codeParse100,roomByCode100})})(ONLC);
+/* ===== v1.0 REPLAYS ===== */
+/* Ranked replays kept by the server (the page: 309-v100replay; the server: routes.js "v1.0 REPLAYS"; docs/backend.md "v1.0 replays"). No protocol bump.
+   replay.put {id, h, v}  a HUMAN FIGHTER of a finished, settled RANKED match asks the server to keep it. The server builds the replay from ITS OWN
+                          stored opening (MATCH#<id> OPEN) and inputs (IN#…, server order) — the client sends only its end hash (h) and game version
+                          (v), so a replay cannot be forged; once a match (REPLAY#<id> R, putNew — a second put answers {done, dup}), ≤ REPLAY100.MAX
+                          bytes, kept REPLAY100.DAYS days (ttl), indexed GSI1PK 'REPLAYS' / GSI1SK = when (the most recent first, for a future
+                          Ranked check). Refusals: replay_bad (no id / not your match) · replay_custom (only Ranked) · replay_wait (still live —
+                          ask again after the settlement) · replay_gone (the opening expired) · replay_big.
+   replay.get {id}        anyone, guests too → {id, v, h, at, ranked, ev, loc, open, inputs}; replay_none when nothing is kept.
+   The stored inputs never carry account ids: from → 'server' or 'p', acct → 'p' (replayAnon100). */
+(function(C){
+  const REPLAY100={DAYS:30,MAX:380000,ID:/^[A-Za-z0-9_-]{1,40}$/}; /* TWEAK: days kept; the byte cap stays under DynamoDB's 400 KB item */
+  const replayIdOK100=id=>typeof id==='string'&&REPLAY100.ID.test(id);
+  function replayPutWhy100(d){if(!d||!replayIdOK100(d.id))return 'Which match?';if(d.h!=null&&(typeof d.h!=='string'||d.h.length>24))return 'Which match?';
+    if(d.v!=null&&(typeof d.v!=='string'||d.v.length>12))return 'Which match?';return null}
+  const replayAnon100=x=>{const y={...(x||{})};if(y.from!=='server')y.from='p';if(y.acct!=null)y.acct='p';return y};
+  function replayPack100(o){return {id:o.id,v:String(o.v||'').slice(0,12),h:String(o.h||'').slice(0,24),at:o.at,ranked:true,ev:o.ev==null?null:o.ev,loc:o.loc==null?null:o.loc,
+    open:o.open,inputs:(o.inputs||[]).slice().sort((a,b)=>(a.seq|0)-(b.seq|0)).map(replayAnon100)}}
+  const replaySize100=rp=>{try{return JSON.stringify(rp).length}catch(e){return Infinity}};
+  if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('replay.get'))C.GUEST_OK.push('replay.get');
+  Object.assign(C,{REPLAY100,replayIdOK100,replayPutWhy100,replayAnon100,replayPack100,replaySize100})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

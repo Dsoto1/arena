@@ -1674,6 +1674,24 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   /* ══════════ v1.0 TITULI ══════════ the house's season Tituli on its own Domus (same shape house.card uses) */
   {const base=R['domus.get'];R['domus.get']=async(d,ctx)=>{const o=await base(d,ctx);try{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);const tit=(D&&D.tit100)||[];if(tit.length)o.tit100=tit.slice(-6)}catch(e){}return o}}
   /* ══════════ end of v1.0 TITULI ══════════ */
+  /* ══════════ v1.0 REPLAYS (shared rules: the "v1.0 REPLAYS" section of onlcore; docs/backend.md "v1.0 replays"; NO protocol bump) ══════════
+     REPLAY#<match> R  {id, v, h, at, ranked, ev, loc, open, inputs, by, GSI1PK 'REPLAYS', GSI1SK at, ttl REPLAY100.DAYS}
+     replay.put {id, h, v}  a human fighter of a settled Ranked match: built from the server's own MATCH# opening + inputs (never the client's), once.
+     replay.get {id}        anyone (GUEST_OK) → the replay without its keys / ttl. */
+  {const B=C;
+    R['replay.put']=async(d,ctx)=>{d=d||{};const why=B.replayPutWhy100(d);if(why)throw fail('replay_bad',why);const M=await meta(d.id);
+      if(!(M.players||[]).includes(ctx.acct))throw fail('replay_bad','Not your match.');if(!M.ranked)throw fail('replay_custom','Only Ranked matches are kept on the server.');
+      if(M.status==='live')throw fail('replay_wait','The match is still being settled — try again in a moment.');
+      if(await store.get('REPLAY#'+d.id,'R'))return {done:1,id:d.id,dup:1};
+      const O=await store.get('MATCH#'+d.id,'OPEN');if(!O||!O.snap)throw fail('replay_gone','That match can no longer be kept.');
+      const ins=(await store.query('MATCH#'+d.id,'IN#')).map(x=>x.in).filter(Boolean);let L=null;try{L=await store.get('LOBBY#'+d.id,'LOBBY')}catch(e){}
+      const rp=B.replayPack100({id:d.id,v:d.v,h:d.h,at:now(),ev:L&&L.ev,loc:L&&L.loc,open:O.snap,inputs:ins});
+      if(B.replaySize100(rp)>B.REPLAY100.MAX)throw fail('replay_big','That match is too long to keep.');
+      const ok=await store.putNew('REPLAY#'+d.id,'R',{...rp,by:ctx.acct,GSI1PK:'REPLAYS',GSI1SK:rp.at,ttl:ttl(B.REPLAY100.DAYS)});
+      return ok?{done:1,id:d.id}:{done:1,id:d.id,dup:1}};
+    R['replay.get']=async(d)=>{d=d||{};if(!B.replayIdOK100(d.id))throw fail('replay_none','No replay is kept for that match.');const X=await store.get('REPLAY#'+d.id,'R');
+      if(!X||(X.ttl&&X.ttl*1000<now()))throw fail('replay_none','No replay is kept for that match.');const o=strip(X);delete o.by;return o}}
+  /* ══════════ end of v1.0 REPLAYS ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);
