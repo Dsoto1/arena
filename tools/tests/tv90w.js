@@ -45,7 +45,8 @@ const o=await pg.evaluate(async()=>{let sd=90;Math.random=()=>{sd=(sd*1664525+10
   const G=A;G.fat=10;const bo=w.night.bouts[bi];for(const k of w.night.bouts)k.ents=k.ents.filter(id=>id!==G.id);const o4=bo.ents.find(id=>!mine.has(id));bo.ents[bo.ents.indexOf(o4)]=G.id;
   r.seat=(boutCfg(bo,false).seats.find(s=>s.mgrGid===G.id)||{}).fat90==='fresh';
   const MV=mvMax;const rec=[];mvMax=function(p){const v=MV.apply(this,arguments);try{if(p&&p.mgrGid===G.id&&S){const f=p.fat90;p.fat90=null;const v0=MV.apply(this,arguments);p.fat90=f;rec.push([S.ri,f,v-v0,v0])}}catch(e){}return v};
-  try{await simEvent(boutCfg(bo,false))}catch(e){r.simErr=String(e)}
+  /* the sim's dice vary: a fighter who falls in round 1 leaves no later round to compare — fight again (≤4) */
+  for(let k=0;k<4;k++){rec.length=0;try{await simEvent(boutCfg(bo,false))}catch(e){r.simErr=String(e)}if(rec.some(x=>x[1]==='fresh'&&x[0]>0))break}
   const fr=rec.filter(x=>x[1]==='fresh');r.fresh=fr.some(x=>x[0]===0&&x[2]===1)&&fr.filter(x=>x[0]>0).every(x=>x[2]===0)&&fr.some(x=>x[0]>0);
   rec.length=0;G.fat=80;r.seatW=(boutCfg(bo,false).seats.find(s=>s.mgrGid===G.id)||{}).fat90==='worn';
   try{await simEvent(boutCfg(bo,false))}catch(e){r.simErr2=String(e)}

@@ -67396,7 +67396,7 @@ function bst100Pose(n,k,A,mode,now){const M=BEAST100_META[k];
   if(A.act){const st=BST100.step*bst100K(),i=Math.floor((now-A.t0)/st),cnt=(M.ar||[]).filter(x=>x.indexOf(A.act)===0).length;
     if(i<cnt&&bst100Img(k,1))return {act:true,name:A.act+i};if(i>=cnt||!M.ar)A.act=null}
   if(A.g||bst100Walks(n)){const st=BST100.step*bst100K();return {act:false,name:'walk'+(Math.floor(now/st)+A.ofs)%6}}
-  const idleOn=!(typeof PERF92!=='undefined'&&PERF92.idle);return {act:false,name:'idle'+(idleOn?(Math.floor(now/BST100.idleStep)+A.ofs)%4:0)}}
+  const idleOn=!(typeof PERF92!=='undefined'&&PERF92.idle);return {act:false,name:'idle'+(idleOn?(Math.floor(now/((typeof AN100!=='undefined'&&AN100.idleMs)||BST100.idleStep))+A.ofs)%4:0)}}
 /* bst100Cell — draws one cell of beast k at the base point (x, y = the base's bottom like the minis); returns the idle cell's top y */
 /* bst100CellCanvas — one cell pre-scaled once (LRU BST100.cc ≤ CC_MAX): a software canvas rasterises a small 1:1 copy far cheaper than a
    down-scaled cut of the big sheet every frame. The scale is quantised to 3% steps (a zooming camera reuses the nearest copy). */
@@ -67520,10 +67520,12 @@ function bst100Live(){try{if(!BST100.on||HEADLESS||!S||S.sim||S.ed94||document.h
   if(BST100.ghosts.length||BST100.nets.length||BST100.tosses.length||BST100.puffs.length)return true;return S.npcs.some(n=>n.alive&&!n.out&&BST100.last.has(n.id))}catch(e){return false}}
 function bst100Kick(){if(!BST100.on||HEADLESS)return;if(BST100.timer){clearTimeout(BST100.timer);BST100.timer=0}if(BST100.raf)return;BST100.raf=requestAnimationFrame(bst100Tick)}
 function bst100Tick(){BST100.raf=0;if(!bst100Live())return;const busy=(typeof fxRAF!=='undefined'&&fxRAF)||(typeof PUSH100!=='undefined'&&PUSH100.raf);
-  if(!busy){try{draw()}catch(e){console.error(e)}}else bst100Sched()}
+  /* one board draw serves 311's gladiators and the beasts: a draw in the last 10 ms (311's breath on the same clock) already shows the new pose */
+  const fresh=typeof AN100!=='undefined'&&AN100.lastDraw&&performance.now()-AN100.lastDraw<10;
+  if(fresh)bst100Sched();else if(!busy){try{draw()}catch(e){console.error(e)}}else bst100Sched()}
 function bst100Sched(){if(BST100.timer||BST100.raf||!bst100Live())return;const now=performance.now(),mode=bst100Mode();
   if(bst100Frame(now)){BST100.raf=requestAnimationFrame(bst100Tick);return}
-  if(mode!=='full')return;let step=BST100.idleStep,any=false;
+  if(mode!=='full')return;let step=(typeof AN100!=='undefined'&&AN100.idleMs)||BST100.idleStep,any=false;   /* breathe on 311's clock: one redraw for both */
   try{for(const n of S.npcs){if(!n.alive||n.out||!BST100.last.has(n.id))continue;const A=BST100.anim.get(n);if(A&&(A.act||bst100Walks(n))){step=Math.min(step,BST100.step*bst100K());any=true}}}catch(e){}
   if(!any&&typeof PERF92!=='undefined'&&PERF92.idle)return;   /* idle92: the breathing waits for the next input */
   const next=(Math.floor(now/step)+1)*step;BST100.timer=setTimeout(()=>{BST100.timer=0;BST100.raf=requestAnimationFrame(bst100Tick)},Math.max(4,next-now+2))}
