@@ -784,24 +784,44 @@
   "w": "server/src/routes.js:1668"
  },
  {
+  "k": "Only Ranked matches are kept on the server.",
+  "w": "server/src/routes.js:1683"
+ },
+ {
+  "k": "The match is still being settled — try again in a moment.",
+  "w": "server/src/routes.js:1684"
+ },
+ {
+  "k": "That match can no longer be kept.",
+  "w": "server/src/routes.js:1686"
+ },
+ {
+  "k": "That match is too long to keep.",
+  "w": "server/src/routes.js:1689"
+ },
+ {
+  "k": "No replay is kept for that match.",
+  "w": "server/src/routes.js:1692"
+ },
+ {
   "k": "Unknown request:",
-  "w": "server/src/routes.js:1675"
+  "w": "server/src/routes.js:1697"
  },
  {
   "k": "Too many requests — wait a moment.",
-  "w": "server/src/routes.js:1676"
+  "w": "server/src/routes.js:1698"
  },
  {
   "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1678"
+  "w": "server/src/routes.js:1700"
  },
  {
   "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1679"
+  "w": "server/src/routes.js:1701"
  },
  {
   "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1682"
+  "w": "server/src/routes.js:1704"
  },
  {
   "k": "The arena hit a snag — try again (ref {0}).",
@@ -1550,5 +1570,9 @@
  {
   "k": "Pick a reason.",
   "w": "src/111-onlcore.js:1510"
+ },
+ {
+  "k": "Which match?",
+  "w": "src/111-onlcore.js:1578"
  }
 ]
