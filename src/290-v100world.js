@@ -511,7 +511,7 @@ try{const st=MTUT_STEPS.find(x=>x&&x.k==='rival');if(st&&typeof st.spot==='funct
 .wd100hc .sq{padding:6px 10px 10px}.wd100hc .sqh{font:500 9.5px var(--mono);letter-spacing:.14em;color:#b9a888;text-transform:uppercase;margin:4px 0}
 .wd100hc .gr{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center;height:32px;border-top:1px solid #ffffff14;font-size:13.5px;white-space:nowrap}.wd100hc .gr>span:nth-child(2){overflow:hidden;text-overflow:ellipsis}
 .wd100hc .btns{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 10px 10px}.wd100hc .btns .wide{grid-column:1/-1}
-.wd100hc .btns button{min-height:38px;border-radius:6px;font:400 15px var(--display);letter-spacing:.04em;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wd100hc .btns button{min-height:38px;border-radius:6px;font:400 15px var(--display);letter-spacing:.04em;cursor:pointer;white-space:normal;line-height:1.15;padding:3px 6px;overflow:visible}
 .wd100hc .b1{border:1px solid #c9a458;background:linear-gradient(#5a4520,#3a2c14);color:#f3e3bd}.wd100hc .b1.on{box-shadow:inset 0 0 0 2px #f0cf7d}
 .wd100hc .b2{border:1px solid #e2b04e;background:linear-gradient(#7a2318,#4a140d);color:#fff1cf}.wd100hc .b2:disabled{opacity:.6;cursor:not-allowed}
 .wd100hc .cst{display:block;font:11px var(--mono);color:#cdbf9f;letter-spacing:0;overflow:hidden;text-overflow:ellipsis}

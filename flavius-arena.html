@@ -24344,7 +24344,7 @@ const MTUT_STEPS=[
   {k:'tabs',spot:'.mtabs',say:_T`The <b>rail</b> on the left runs your ludus — your house, the arena, the wider world, and you. Work it top to bottom each week; the coach will walk you through it.`,next:1},
   // the roster and a fighter's card
   {k:'roster',spot:'[data-mg="tab"][data-id="roster"]',say:_T`Open <b>🛡 Roster</b> — the fighters under contract to your house.`,tab:'roster'},
-  {k:'lsel',spot:()=>document.querySelector(`#mgrPane tr[data-mg="lsel"][data-id="${MTUT.B}"]`),say:()=>_T`You have two fighters. Click <b>${mtNm('B')}</b> in the list to open <b>their card</b> beside it.`,until:()=>MGR.lsel===MTUT.B},
+  {k:'lsel',spot:()=>document.querySelector(`#mgrPane [data-mg="lsel"][data-id="${MTUT.B}"]`),say:()=>_T`You have two fighters. Click <b>${mtNm('B')}</b> in the list to open <b>their card</b> beside it.`,until:()=>MGR.lsel===MTUT.B},
   {k:'meal',spot:()=>document.querySelector(`#mgrPane [data-mg="meal"][data-id="${MTUT.B}"]`),say:()=>_T`The card: rating, morale, loyalty, contract. Under <b>Keeping them</b> you spend hours and coin to keep a fighter happy and loyal. Click <b>🍷 Share a meal</b> with ${mtNm('B')}.`,until:()=>{const g=mtG('B');return g&&g.mealWk===mtW().week}},
   {k:'morale',spot:'#mgrPane',spotOnly:1,say:()=>_T`Morale and loyalty rise. <b>Morale</b> walks onto the sand with them (80+ adds AP and CF); <b>loyalty</b> is what a rival must beat to poach them.`,next:1},
   // recruiting: courting a free agent
@@ -59503,7 +59503,7 @@ try{const st=MTUT_STEPS.find(x=>x&&x.k==='rival');if(st&&typeof st.spot==='funct
 .wd100hc .sq{padding:6px 10px 10px}.wd100hc .sqh{font:500 9.5px var(--mono);letter-spacing:.14em;color:#b9a888;text-transform:uppercase;margin:4px 0}
 .wd100hc .gr{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center;height:32px;border-top:1px solid #ffffff14;font-size:13.5px;white-space:nowrap}.wd100hc .gr>span:nth-child(2){overflow:hidden;text-overflow:ellipsis}
 .wd100hc .btns{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 10px 10px}.wd100hc .btns .wide{grid-column:1/-1}
-.wd100hc .btns button{min-height:38px;border-radius:6px;font:400 15px var(--display);letter-spacing:.04em;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wd100hc .btns button{min-height:38px;border-radius:6px;font:400 15px var(--display);letter-spacing:.04em;cursor:pointer;white-space:normal;line-height:1.15;padding:3px 6px;overflow:visible}
 .wd100hc .b1{border:1px solid #c9a458;background:linear-gradient(#5a4520,#3a2c14);color:#f3e3bd}.wd100hc .b1.on{box-shadow:inset 0 0 0 2px #f0cf7d}
 .wd100hc .b2{border:1px solid #e2b04e;background:linear-gradient(#7a2318,#4a140d);color:#fff1cf}.wd100hc .b2:disabled{opacity:.6;cursor:not-allowed}
 .wd100hc .cst{display:block;font:11px var(--mono);color:#cdbf9f;letter-spacing:0;overflow:hidden;text-overflow:ellipsis}
@@ -63484,7 +63484,7 @@ function rc100Suit(g,m,n){const s=suitors(g).slice(0,n||5);if(!s.some(x=>x.m===m
     return `<div class="suit rc1su ${mine?'me':''}" title="${esc(x.m.ludus)}${x.m.name?' — '+esc(x.m.name):''}"><span class="rc1sh">${sh}</span><span class="rc1o">${esc(x.m.ludus)}${mine?' '+_T('(you)'):''}</span><span class="rc1bar"><i style="width:${Math.min(100,x.v)}%;background:${esc(x.m.color||'#9a8f84')}"></i></span><span class="n">${x.v}</span></div>`}).join('')}
 function rc100Need(g,m,w){const need=starsOf(effOvr(g))<=2?40:52;const rank=suitors(g).findIndex(x=>x.m===m)+1;const L=g.court88?court88Left(g,w):null;
   const ord=n=>n===1?_T('1st'):n===2?_T('2nd'):n===3?_T('3rd'):_T`${n}th`;
-  return `<div class="rc1need rc1o" title="${esc(_T('The interest he needs before he signs, your place among the suitors, the rival bid'))}">${_T`Signs at ~<b>${need}</b>`} · ${_T`you are <b>${ord(rank)}</b>`}${L!=null?' · '+(L<=0?_T('a rival bid is on the table'):L===1?_T('rival bid in 1 wk'):_T`rival bid in ${L} wk`):''}</div>`}
+  return `<div class="rc1need rc1o" title="${esc(sx(g,_T('The interest he needs before he signs, your place among the suitors, the rival bid'),_T('The interest she needs before she signs, your place among the suitors, the rival bid')))}">${_T`Signs at ~<b>${need}</b>`} · ${_T`you are <b>${ord(rank)}</b>`}${L!=null?' · '+(L<=0?_T('a rival bid is on the table'):L===1?_T('rival bid in 1 wk'):_T`rival bid in ${L} wk`):''}</div>`}
 function rc100Note(btn,g){const t=String(btn.getAttribute('data-rec74')||'').split(':')[1];const T74=typeof TONES74!=='undefined'?TONES74[t]:null;if(!T74)return;
   const sm=btn.querySelector('small');const txt=sm?sm.textContent:'';const fit=/lands well/.test(txt)?'good':/· fair/.test(txt)?'fair':/· weak/.test(txt)?'weak':'';
   const desc=txt.replace(/\s*·\s*(lands well|fair|weak)\s*$/,'');const mots=T74[1].map(k=>MOTIVES[k]?MOTIVES[k][0]:k).join(' · ');
@@ -63964,7 +63964,7 @@ function rm100RosterList(w,pm,ros,sel){const out=w.glads.filter(g=>g.alive&&g.lo
   const row=(g,lent)=>{const s=lent?'L':g.slot95?RM100_RN[g.slot95-1]:g.loanFrom?'L':'B';const sc=g.slot95?'s':s==='L'?'l':'';const r=rm100Rec(g);
     const wd=(g.inj&&!g.inj.war?'⚕':'')+((g.severed||[]).length?'✂':'');const wk=g.contract?Math.max(0,g.contract.weeks):'';
     const at=lent?`aria-disabled="true" title="${esc(_T`${g.name} — on loan`)}"`:`data-mg="lsel" data-id="${g.id}" role="button" tabindex="0" title="${esc(g.name)}"`;
-    return `<div class="rm100lr ros${!lent&&g.id===sel?' on':''}${lent?' lent':''}" ${at}><span class="rm100slot ${sc}">${s}</span><span class="rm100av">${rm100Face(g)}</span><b class="rm100one">${esc(g.name)}</b><span class="rm100num">${effOvr(g)}</span><span class="rm100iv">${r.w}–${r.l}</span>${rm100Fd(g)}<span class="rm100wm">${wd}</span><span class="rm100iv">${wk}</span></div>`};
+    return `<div class="rm100lr ros${!lent&&g.id===sel?' on':''}${lent?' lent':''}" ${at}><span class="rm100slot ${sc}">${s}</span><span class="rm100av">${rm100Face(g)}</span><b class="rm100one">${esc(g.name)}${typeof chip85==='function'?chip85(g):''}</b><span class="rm100num">${effOvr(g)}</span><span class="rm100iv">${r.w}–${r.l}</span>${rm100Fd(g)}<span class="rm100wm">${wd}</span><span class="rm100iv">${wk}</span></div>`};
   return `<div class="rm100lhd"><span>${_T`Your fighters`} · ${ros.length}</span></div><div class="rm100rows"><div class="rm100lh ros"><span>${_T`Slot`}</span><span></span><span>${_T`Name`}</span><span>${_T`Ovr`}</span><span>${_T`W–L`}</span><span>●</span><span>⚕</span><span>${_T`Wk`}</span></div>${L.map(g=>row(g,false)).join('')}${out.map(g=>row(g,true)).join('')}</div>`}
 function rm100Roster(R,w,pm){const pane=R.querySelector('#mgrPane');const wrap=pane&&pane.querySelector('.st95wrap');if(!wrap)return false;
   const ros=rosterOf(pm);const g=gById(MGR.lsel)&&ros.some(x=>x.id===MGR.lsel)?gById(MGR.lsel):ros[0];if(!g)return false;
@@ -63993,7 +63993,7 @@ function rm100Roster(R,w,pm){const pane=R.querySelector('#mgrPane');const wrap=p
   const slotN=g.slot95||0;const st=gStats(g)||{};const ov=effOvr(g);const gr=typeof trait96Grade==='function'?trait96Grade(ov):'';const f=gFat(g);const loy=typeof loyaltyOf==='function'?loyaltyOf(g):0;const r=rm100Rec(g);
   const phd=slotN?_T`${ST95_BOUT[slotN-1][1]} · ${ST95_BOUT[slotN-1][2]} starter`:g.inj?_T`In the ward`:g.loanFrom?_T`On loan to you`:_T`On the bench`;
   const pblk=`<section class="rm100p rm100pp"><div class="rm100ph">${phd}</div><div class="rm100pblk"><span class="rm100fr rm100por">${gArt(g,'md')}</span><div class="rm100pi">
-    <div class="rm100pn">${slotN===3?'★ ':''}${esc(g.name)}</div><div class="rm100pl rm100sub"></div>
+    <div class="rm100pn">${slotN===3?'★ ':''}${esc(g.name)}${typeof chip85==='function'?chip85(g):''}</div><div class="rm100pl rm100sub"></div>
     <div class="rm100pl">${_T`Overall`} <b class="rm100g">${ov}</b>${gr?' · '+gr:''} · ${rm100Fd(g)} ${FB90_TXT()[fatBand90(f)][0]} ${f}</div>
     <div class="rm100pl">${_T`Morale ${g.morale||0} · Loyalty ${loy}`}</div>
     <div class="rm100chips"><button type="button" class="rm100ch" data-mg="tab" data-id="armory" data-rm100ar="${g.id}">🛡 ${_T`Armory`}</button>${g.inj?`<button type="button" class="rm100ch" data-mg="tab" data-id="infirm" data-inf90go="${g.id}">⚕ ${_T`Ward`}</button>`:''}</div></div></div></section>`;
@@ -64339,7 +64339,7 @@ body.rm100on .rm100ban .iv90why{position:relative;z-index:2}
 /* the wax tabula */
 .rm100tab{display:flex;flex-direction:column;border-radius:8px;padding:7px;background:linear-gradient(135deg,#7a4e26,#5a3618 40%,#6e4420 70%,#4a2c12);box-shadow:inset 0 0 0 1px #a2703a,inset 0 0 12px #2a1606,0 4px 12px #0008;min-width:0}
 .rm100tstrip{height:36px;flex:none;border-radius:4px 4px 0 0}
-.rm100tt{position:absolute;z-index:5;left:12px;top:8px;font:400 15px var(--display);letter-spacing:.06em;color:#fff3d6;text-shadow:0 1px 3px #000,0 0 8px #000}
+.rm100tt{position:absolute;z-index:5;left:12px;top:8px;background:#2a1c0f;padding:1px 9px;border-radius:4px;font:400 15px var(--display);letter-spacing:.06em;color:#fff3d6;text-shadow:0 1px 3px #000,0 0 8px #000}
 .rm100wax{flex:1;margin-top:5px;border-radius:3px;padding:7px 11px 9px;background:radial-gradient(ellipse at 30% 20%,#4a3a24,#2e2414 70%);box-shadow:inset 0 2px 8px #000c,inset 0 0 0 1px #1a1008;color:#e8d6ae;display:flex;flex-direction:column;min-width:0}
 .rm100tr{display:grid;grid-template-columns:minmax(52px,86px) minmax(0,1fr) auto;gap:8px;align-items:center;min-height:26px;font-size:12.5px;font-family:Georgia,serif}
 .rm100tr>*{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -64360,7 +64360,7 @@ body.rm100on .rm100ban .iv90why{position:relative;z-index:2}
 .rm100tb .rm100tbtn.lock[disabled]{opacity:.55;box-shadow:none}
 .rm100tb.y3{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
 .rm100lend{position:relative}.rm100lend select{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
-.rm100keep .acts{display:flex;flex-wrap:wrap;gap:6px}.rm100keep .acts .btn{font-size:12.5px;padding:4px 10px}.rm100keep .acts .btn small{display:block;font-size:10.5px}
+.rm100keep .acts{display:flex;flex-wrap:wrap;gap:6px}.rm100keep .acts .btn{font-size:12.5px;padding:4px 10px;white-space:normal;overflow:visible;max-width:100%}.rm100keep .acts .btn small{display:block;font-size:10.5px}
 .rm100more{border:1px solid #4a3826;border-radius:8px;background:#1c140e;padding:4px 10px}.rm100more>summary{cursor:pointer;font-size:12.5px;color:var(--muted);padding:4px 0}
 .rm100more>.card2{border:0;background:none;padding:4px 0;margin:0}
 /* plates */

@@ -38,7 +38,7 @@ const MTUT_STEPS=[
   {k:'tabs',spot:'.mtabs',say:_T`The <b>rail</b> on the left runs your ludus — your house, the arena, the wider world, and you. Work it top to bottom each week; the coach will walk you through it.`,next:1},
   // the roster and a fighter's card
   {k:'roster',spot:'[data-mg="tab"][data-id="roster"]',say:_T`Open <b>🛡 Roster</b> — the fighters under contract to your house.`,tab:'roster'},
-  {k:'lsel',spot:()=>document.querySelector(`#mgrPane tr[data-mg="lsel"][data-id="${MTUT.B}"]`),say:()=>_T`You have two fighters. Click <b>${mtNm('B')}</b> in the list to open <b>their card</b> beside it.`,until:()=>MGR.lsel===MTUT.B},
+  {k:'lsel',spot:()=>document.querySelector(`#mgrPane [data-mg="lsel"][data-id="${MTUT.B}"]`),say:()=>_T`You have two fighters. Click <b>${mtNm('B')}</b> in the list to open <b>their card</b> beside it.`,until:()=>MGR.lsel===MTUT.B},
   {k:'meal',spot:()=>document.querySelector(`#mgrPane [data-mg="meal"][data-id="${MTUT.B}"]`),say:()=>_T`The card: rating, morale, loyalty, contract. Under <b>Keeping them</b> you spend hours and coin to keep a fighter happy and loyal. Click <b>🍷 Share a meal</b> with ${mtNm('B')}.`,until:()=>{const g=mtG('B');return g&&g.mealWk===mtW().week}},
   {k:'morale',spot:'#mgrPane',spotOnly:1,say:()=>_T`Morale and loyalty rise. <b>Morale</b> walks onto the sand with them (80+ adds AP and CF); <b>loyalty</b> is what a rival must beat to poach them.`,next:1},
   // recruiting: courting a free agent
