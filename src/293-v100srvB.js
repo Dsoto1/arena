@@ -167,6 +167,8 @@ function b100Summary(id,res){if(B100_OFF||!id)return;const o=(res&&res.out)||nul
     if(a==='again'){b.disabled=true;try{const r=await NET.req('lobby.again',{id});if(typeof onlUpsert80==='function')onlUpsert80(r.lobby);el.remove();ONL.tab='play';if(typeof onlExit==='function')onlExit()}catch(err){b.disabled=false;onlToast80('⚠ '+esc2(errText92(err)))}}});
   document.body.appendChild(el)}
 if(!B100_OFF&&typeof onlSettled==='function'){const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const id=B100.lastMid||(ONL.live&&ONL.live.id);if(id)setTimeout(()=>b100Summary(id,res),2600)}catch(e){console.error(e)}return r}}
+/* a new match starts: the old match's summary card (fixed, z 70) must not sit over its briefing / board */
+{const base=onlEnter;onlEnter=function(L){try{const e=document.getElementById('as100');if(e)e.remove()}catch(x){}return base.apply(this,arguments)}}
 NET.on('match.settled',d=>{try{if(B100_OFF||!d||!d.id||!ONL.acct||(d.to&&d.to!==ONL.acct.id))return;if(document.getElementById('as100'))return;if(B100.lastMid===d.id||(S&&S.onl&&S.onl.lobby===d.id&&!S.onl.watch))setTimeout(()=>{if(!document.getElementById('as100'))b100Summary(d.id,d)},2600)}catch(e){}});
 /* the deep link: #replay=<id> */
 function b100Deep(){try{const m=/^#replay=([A-Za-z0-9_-]{1,40})$/.exec(location.hash||'');if(!m||B100_OFF)return;const id=decodeURIComponent(m[1]);
