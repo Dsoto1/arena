@@ -10,7 +10,8 @@ const start=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,m
 const A=await open(),B=await open();await start(A);await start(B);
 const put=(pg,tag)=>pg.evaluate(t=>matchSlotPut('auto',{tag:t}),tag);
 const r1=await put(A,'A1');await A.waitForTimeout(300);const r2=await put(B,'B1');await A.waitForTimeout(400);
-const r3=await put(A,'A2');const slot=await A.evaluate(()=>JSON.parse(localStorage.getItem(MSAVE_KEY('auto'))||'{}').tag);
+const r3=await put(A,'A2');/* localStorage reaches another tab of the same browser a moment later (slower under load): let both tabs agree before reading */
+await A.waitForFunction(()=>JSON.parse(localStorage.getItem(MSAVE_KEY('auto'))||'{}').tag==='B1',null,{timeout:5000,polling:100}).catch(()=>{});const slot=await A.evaluate(()=>JSON.parse(localStorage.getItem(MSAVE_KEY('auto'))||'{}').tag);
 const note=await A.evaluate(()=>{const n=document.getElementById('auto92');return n&&!n.hidden?n.textContent:null});
 ok(r1===true&&r2===true,'both tabs may write first '+[r1,r2]);ok(r3===false,'the first tab stops after the second took the autosave '+r3);ok(slot==='B1','the slot keeps the second tab’s autosave '+slot);ok(/Autosave moved/.test(note||''),'the first tab says so '+note);
 await start(A);const r4=await put(A,'A3');await A.waitForTimeout(400);const r5=await put(B,'B2');
