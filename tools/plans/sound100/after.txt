@@ -1,0 +1,46 @@
+AFTER (dBFS at the master, default sliders: music 32%, effects 55%)
+kind               peak   rms100ms
+hit                   -16    -24.7
+bighit                -15      -23
+block               -19.2    -28.6
+whoosh              -14.1    -29.8
+coin                -24.2    -28.3
+cf                  -22.6    -28.2
+card                -15.5    -31.4
+death               -18.7    -25.7
+cheer               -18.8    -29.2
+fanfare             -18.6    -26.1
+click               -20.6      -33
+horn                -15.1    -23.9
+step                -21.1    -32.8
+growl               -15.6    -24.1
+bark                -16.2    -24.6
+net                 -19.3    -30.9
+netwrap             -20.9    -31.7
+scrape              -20.8    -31.6
+crash               -18.7    -23.5
+rise                -20.2      -31
+titulus             -17.9    -26.4
+gem                   -18    -27.7
+fair                -24.6    -31.3
+dud                   -21    -25.1
+medal               -18.4    -26.9
+rp                  -12.7    -32.4
+heal                -20.1    -26.9
+spear               -20.3    -28.9
+chest               -21.4    -30.2
+growl:bear          -16.9    -22.9
+bark:bear           -17.5    -23.7
+growl:wolf          -17.5    -23.4
+bark:wolf           -20.3    -29.3
+growl:snake         -13.5    -24.8
+bark:snake          -13.9    -25.6
+growl:zora          -17.5    -26.3
+bark:zora           -17.6    -26.6
+growl:tholo         -17.5    -23.1
+bark:tholo          -17.6    -23.3
+growl:commodus      -17.6    -23.1
+bark:commodus       -17.6    -23.3
+tt100Tick             -18    -32.7
+music Roma          -10.9    -17.8
+music Finale        -10.5    -16.7
