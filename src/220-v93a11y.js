@@ -116,7 +116,10 @@ function a11ySync93(){A93.syncT=0;if(HEADLESS)return;
   /* the window redrew under a keyboard user: the same control again */
   if(top&&A93.kbd&&A93.lastEl&&!A93.lastEl.isConnected){const e=a11yFind93(top,A93.sig)||a11yFirst93(top);A93.lastEl=null;if(e)a11yFoc93(e)}}
 function a11ySyncSoon93(){if(!A93.syncT)A93.syncT=setTimeout(a11ySync93,40)}
-document.addEventListener('focusin',e=>{const t=e.target;if(!t||t===document.body)return;A93.lastEl=t;A93.sig=a11ySig93(t);if(!t.closest('[role="dialog"][aria-modal="true"],[role="alertdialog"]'))A93.last=t},true);
+document.addEventListener('focusin',e=>{const t=e.target;if(!t||t===document.body)return;A93.lastEl=t;A93.sig=a11ySig93(t);const dlg=t.closest('[role="dialog"][aria-modal="true"],[role="alertdialog"]');
+  /* a window that takes focus itself, closed by a quick Escape inside a11ySync93's 40 ms debounce, never reached the stack: file its opener NOW so focus still goes back */
+  if(dlg&&a11yVis93(dlg)&&!A93.stack.some(x=>x.el===dlg)){const o=A93.last&&!dlg.contains(A93.last)?A93.last:null;A93.stack.push({el:dlg,opener:o})}
+  if(!dlg)A93.last=t},true);
 document.addEventListener('keydown',e=>{if(e.key==='Tab'||/^Arrow/.test(e.key))A93.kbd=true;if(e.key!=='Tab'||e.ctrlKey||e.metaKey||e.altKey)return;
   const top=a11yTop93();if(!top)return;const list=[...a11yFocusables93(top),...a11yExtras93().flatMap(a11yFocusables93)];if(!list.length){e.preventDefault();return}
   const i=list.indexOf(document.activeElement);e.preventDefault();const L=list.length,dir=e.shiftKey?-1:1;let n=i<0?(e.shiftKey?L-1:0):(i+dir+L)%L;
