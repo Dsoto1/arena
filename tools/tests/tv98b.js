@@ -48,7 +48,8 @@ ok(rolled,'🎲 still rolls a random event');
 /* ---- 2 · Your Play Now Gladiators in the Play Now submenu ---- */
 await pg.evaluate(async()=>{for(let i=0;i<5&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,250))}playNowMenu()});
 await until(()=>[...document.querySelectorAll('#mBtns button')].some(x=>/Your Play Now Gladiators/.test(x.textContent)));
-const D=await pg.evaluate(()=>[...document.querySelectorAll('#mBtns button')].map(x=>x.textContent.trim().split('\n')[0]));
+/* v1.0 (300-v100pn): the sandstone tablet keeps Back in its own foot under the well */
+const D=await pg.evaluate(()=>[...document.querySelectorAll('#mBtns button,#mboxEl .sand100ft button')].map(x=>x.textContent.trim().split('\n')[0]));
 ok(D.some(x=>/New event/.test(x))&&D.some(x=>/Your Play Now Gladiators/.test(x))&&/Back/.test(D[D.length-1]),'submenu button '+JSON.stringify(D));
 await pg.evaluate(()=>[...document.querySelectorAll('#mBtns button')].find(x=>/Your Play Now Gladiators/.test(x.textContent)).click());
 ok(await until(()=>!!document.getElementById('ludusBody')&&/Play Now Gladiators/.test(document.getElementById('mTitle').textContent),8000),'it opens Your Play Now Gladiators');
