@@ -12,7 +12,7 @@ const open=async(W,H,ls)=>{const pg=await b.newPage({viewport:{width:W,height:H}
   await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:30000});
   await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
     newWorld({type:'custom',mgr:{name:'T',ludus:'Ludus Testi',city:'Roma',color:'#c0433a',p:{...MGR_PRESETS.balanced[1]},portrait:{},diff:'normal'}});MGR.view=null;
-    const w=W_(),m=me();w.welc99=1;m.fame=Math.max(m.fame,60);m.coin=900;window.MARK=ERR92.n;
+    const w=W_(),m=me();w.welc99=1;m.fame=Math.max(m.fame,60);m.coin=900;window.MARK=ERR92.n;window.FALEN=freeAgents().length;
     window.FA=freeAgents().filter(x=>m.fame>=reqFame(x)&&!x.inj).sort((a,b)=>effOvr(b)-effOvr(a));FA.slice(0,3).forEach(g=>g.favd=true);
     window.SEL=async(g,step)=>{MGR.tab='recruit';MGR.sel=g.id;MGR.recFor=g.id;MGR.recStep=step;MGR_REDRAW();await W8(400)}});return pg};
 const ev=(pg,f,a)=>pg.evaluate(f,a);
@@ -77,24 +77,41 @@ ok(O.live&&O.live2,'the tablet follows the slider and the weeks live');
 ok(O.signed&&O.sg&&O.match&&O.pre&&O.realN,'the offer signs him; Signing Day shows the truth (real grades + numbers) and the verdict by the truth '+JSON.stringify(O));
 ok(O.still&&O.esc,'a click skips to the last frame, Esc closes');
 /* ---------- gem / fair / dud by the truth, animated + static ---------- */
-const V=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const m=me();m.coin=999;const ORD=['F','D','C','C+','B','B+','A','A+'];const out={};
-  for(const [k,d] of [['gem',-2],['fair',0],['dud',2]]){const g=FA[8+Object.keys(out).length];rec98Act(g,'watch');rec98Act(g,'cup');g.interest[m.id]=110;signGlad(g,askWage(g),8,0,false);
-    const st=gStats(g);const sh=v=>ORD[Math.max(0,Math.min(7,ORD.indexOf(trait96Grade(v))+d))];const s={};for(const [x] of STATS)s[x]=sh(st[x]);s.ovr=sh(effOvr(g));g.truth98.s=s;await W8(700);
-    const sc=document.getElementById('signCard');out[k]={cls:sc&&(sc.className.match(/s-(gem|fair|dud)/)||[])[1],big:sc&&sc.querySelector('.sg1verdict .big').textContent,
+const V=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const m=me();m.coin=999;const ORD=['F','D','C','C+','B','B+','A','A+'];const out={};const used=new Set();
+  for(const [k,d] of [['gem',-2],['fair',0],['dud',2],['up1',-1],['dn1',1]]){const need={gem:[2,7],dud:[0,5],fair:[0,7],up1:[1,7],dn1:[0,6]}[k];const rsv=new Set([0,1,2,3,4,5,6,14,16].map(i=>FA[i].id));const g=freeAgents().find(x=>!x.contract&&!x.inj&&m.fame>=reqFame(x)&&!rsv.has(x.id)&&!used.has(x.id)&&ORD.indexOf(trait96Grade(effOvr(x)))>=need[0]&&ORD.indexOf(trait96Grade(effOvr(x)))<=need[1]);used.add(g.id);rec98Act(g,'watch');rec98Act(g,'cup');g.interest[m.id]=110;signGlad(g,askWage(g),8,0,false);
+    const st=gStats(g);const sh=v=>ORD[Math.max(0,Math.min(7,ORD.indexOf(trait96Grade(v))+d))];const s={};for(const [x] of STATS)s[x]=sh(st[x]);s.ovr=sh(effOvr(g));g.truth98.s=s;const dd=ORD.indexOf(trait96Grade(effOvr(g)))-ORD.indexOf(s.ovr);await W8(700);
+    const sc=document.getElementById('signCard');out[k]={dd,cls:sc&&(sc.className.match(/s-(gem|fair|dud)/)||[])[1],big:sc&&sc.querySelector('.sg1verdict .big').textContent,
       lau:!!(sc&&sc.querySelector('.sg1lau')),crack:!!(sc&&sc.querySelector('.sg1crack')),seal:!!(sc&&sc.querySelector('[data-sg100="seal"]'))};
     await W8(1500);out[k].go=!!sc&&sc.classList.contains('go');out[k].lit=k!=='gem'||getComputedStyle(sc.querySelector('.sg1verdict')).opacity!=='0';
     if(sc)sc.querySelector('[data-sgclose].primary').click();await W8(60);out[k].closed=!document.getElementById('signCard')}
   return out});
 ok(V.gem.cls==='gem'&&/gem/i.test(V.gem.big)&&V.fair.cls==='fair'&&V.dud.cls==='dud'&&/dud/i.test(V.dud.big),'gem / as scouted / dud follow the truth '+JSON.stringify(V));
-ok(['gem','fair','dud'].every(k=>V[k].go&&V[k].closed&&V[k].seal),'the seal breaks by itself, Welcome closes');
+ok(V.gem.dd>=2&&V.dud.dd<=-2&&V.up1.dd===1&&V.dn1.dd===-1&&V.up1.cls==='fair'&&V.dn1.cls==='fair','C3b: a +1 / −1 ladder step is fair, only a whole grade (two steps) is gem / dud '+JSON.stringify([V.up1,V.dn1]));
+ok(['gem','fair','dud','up1','dn1'].every(k=>V[k].go&&V[k].closed&&V[k].seal),'the seal breaks by itself, Welcome closes');
 /* ---------- Reduce motion: the static card ---------- */
-const R=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const m=me();SETTINGS.calm=true;const g=FA[12];rec98Act(g,'watch');g.interest[m.id]=110;signGlad(g,askWage(g),8,0,false);await W8(300);
+const R=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const m=me();SETTINGS.calm=true;const g=FA[14];rec98Act(g,'watch');g.interest[m.id]=110;signGlad(g,askWage(g),8,0,false);await W8(300);
   const sc=document.getElementById('signCard');const r={rm:!!sc&&sc.classList.contains('rm')&&sc.classList.contains('go')&&!sc.classList.contains('pre')};
   const inn=sc&&sc.querySelector('.sg1t.real .in');r.flat=!!inn&&getComputedStyle(inn).transform==='none';const f=sc&&sc.querySelector('.sg1t.real .f');r.noSeal=!!f&&getComputedStyle(f).display==='none';
   r.verdict=!!sc&&getComputedStyle(sc.querySelector('.sg1verdict')).opacity==='1';r.anim=sc?[...sc.querySelectorAll('*')].every(e=>{const c=getComputedStyle(e);return c.animationName==='none'||c.animationPlayState==='paused'}):false;
   if(sc)sc.querySelector('[data-sgclose].primary').click();SETTINGS.calm=false;r.errs=errNew92(MARK);return r});
 ok(R.rm&&R.flat&&R.noSeal&&R.verdict&&R.anim,'Reduce motion: the static card (no flips, no burst), the verdict at once '+JSON.stringify(R));
 ok(!R.errs.length,'no new 00c errors '+JSON.stringify(R.errs));
+/* ---------- C2b: the steps are tabs, one section at a time, fits 900 px tall ---------- */
+const TB=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const m=me();const g=FA[16];rec98Act(g,'watch');rec98Act(g,'cup');rec98Act(g,'study');g.interest[m.id]=110;m.coin=900;
+  const r={sec:[],h:[],tabs:[]};const sel='#mgrBody .card2.rc100';const sections=c=>({scout:!!c.querySelector('.rc1acts'),court:!!c.querySelector('.rc1pg'),offer:!!c.querySelector('#ofWage')});
+  MGR.tab='recruit';MGR.sel=g.id;MGR.recFor=g.id;delete MGR.recStep;MGR_REDRAW();await W8(400);let c=document.querySelector(sel);
+  r.def=c.querySelector('.rc1st.cur').dataset.recstep+'/'+recStepNow(g,m);r.tl=c.querySelector('.rsteps').getAttribute('role')==='tablist'&&c.querySelectorAll('.rc1st[role=tab]').length===3;
+  for(const s of [1,2,3]){c.querySelector('.rc1st[data-recstep="'+s+'"]').click();await W8(350);c=document.querySelector(sel);const S=sections(c);r.sec.push(Object.keys(S).filter(k=>S[k]).join('+'));
+    r.tabs.push(c.querySelector('.rc1st.cur').dataset.recstep+'/'+MGR.recStep);
+    c.scrollIntoView({block:'start'});await W8(100);const q=c.getBoundingClientRect();r.h.push(Math.round(q.height));r.fit=(r.fit!==false)&&q.height<=innerHeight-10&&q.top>=-1&&q.bottom<=innerHeight;
+    MGR_REDRAW();await W8(350);c=document.querySelector(sel);r.keep=(r.keep!==false)&&+c.querySelector('.rc1st.cur').dataset.recstep===s}
+  /* offer inputs still live after switching */
+  c.querySelector('.rc1st[data-recstep="3"]').click();await W8(350);c=document.querySelector(sel);const sl=document.getElementById('ofWage');const v=Math.min(+sl.max,Math.ceil(askWage(g)*1.2));sl.value=v;sl.dispatchEvent(new Event('input',{bubbles:true}));await W8(100);
+  r.live=new RegExp('(^|\\D)'+v+' coin a week').test(c.querySelector('[data-rc100tab]').textContent)&&!!document.getElementById('ofWeeks')&&!!document.getElementById('ofPledge');return r});
+ok(TB.def&&TB.def.split('/')[0]===TB.def.split('/')[1]&&TB.tl,'tabs: default = the recruit\'s current step, tablist roles '+JSON.stringify(TB));
+ok(JSON.stringify(TB.sec)==='["scout","court","offer"]'&&TB.tabs.every(x=>x.split('/')[0]===x.split('/')[1]),'only the chosen step\'s section shows '+JSON.stringify(TB));
+ok(TB.keep&&TB.live,'the tab survives MGR_REDRAW; offer inputs + tablet still live after switching');
+ok(TB.fit,'each tab fits one 1440x900 screen (card scrolled to the top, no inner scroll) '+JSON.stringify(TB.h));
 await pg.close();
 /* ---------- 390 px ---------- */
 const pp=await open(390,844);
