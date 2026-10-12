@@ -60424,6 +60424,8 @@ function b100Summary(id,res){if(B100_OFF||!id)return;const o=(res&&res.out)||nul
     if(a==='again'){b.disabled=true;try{const r=await NET.req('lobby.again',{id});if(typeof onlUpsert80==='function')onlUpsert80(r.lobby);el.remove();ONL.tab='play';if(typeof onlExit==='function')onlExit()}catch(err){b.disabled=false;onlToast80('⚠ '+esc2(errText92(err)))}}});
   document.body.appendChild(el)}
 if(!B100_OFF&&typeof onlSettled==='function'){const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const id=B100.lastMid||(ONL.live&&ONL.live.id);if(id)setTimeout(()=>b100Summary(id,res),2600)}catch(e){console.error(e)}return r}}
+/* a new match starts: the old match's summary card (fixed, z 70) must not sit over its briefing / board */
+{const base=onlEnter;onlEnter=function(L){try{const e=document.getElementById('as100');if(e)e.remove()}catch(x){}return base.apply(this,arguments)}}
 NET.on('match.settled',d=>{try{if(B100_OFF||!d||!d.id||!ONL.acct||(d.to&&d.to!==ONL.acct.id))return;if(document.getElementById('as100'))return;if(B100.lastMid===d.id||(S&&S.onl&&S.onl.lobby===d.id&&!S.onl.watch))setTimeout(()=>{if(!document.getElementById('as100'))b100Summary(d.id,d)},2600)}catch(e){}});
 /* the deep link: #replay=<id> */
 function b100Deep(){try{const m=/^#replay=([A-Za-z0-9_-]{1,40})$/.exec(location.hash||'');if(!m||B100_OFF)return;const id=decodeURIComponent(m[1]);
@@ -62900,7 +62902,10 @@ function sand100Dress(title){const m=document.getElementById('modal'),box=docume
   if(back){ft=document.createElement('div');ft.className='sand100ft';ft.appendChild(back);ft.insertAdjacentHTML('beforeend',`<span class="seal">${_T`ESC · BACK`}</span>`);bt.after(ft)}}
 {const base=modal;modal=function(title,body,buttons,opt){
   if(PN100.off||HEADLESS)return base.apply(this,arguments);
-  const o=Object.assign({},opt||{});const on0=o.onOpen;const sand=sand100Titles().includes(title);
+  const sand=sand100Titles().includes(title);
+  /* an ordinary window with nothing of the sandstone look to clear passes through untouched (an added onOpen would also stop 290's online NOTICE test) */
+  {const m0=document.getElementById('modal');if(!sand&&!(m0&&m0.classList.contains('sand100'))&&!document.body.classList.contains('sub100'))return base.apply(this,arguments)}
+  const o=Object.assign({},opt||{});const on0=o.onOpen;
   o.onOpen=function(done){try{if(sand)sand100Dress(title);else{sand100Off();const box=document.getElementById('mboxEl');if(box){const g=box.querySelector('.grab100');if(g)g.remove();const ft=box.querySelector('.sand100ft');if(ft)ft.remove()}}}catch(e){console.error(e)}
     if(on0)return on0.apply(this,arguments)};
   const p=base.call(this,title,body,buttons,o);
@@ -63235,6 +63240,8 @@ function bf100Unmark(){try{const m=document.getElementById('modal');if(m)m.class
     const btns=[{label:BF100_SWORD+`<span class="t">${opening?_T('Enter the arena'):_T('Back to the sand')}</span>`,value:1,primary:1}];
     return base.call(this,title,body,btns,o)}
   /* any other window: never inherits the briefing's look */
+  /* (only while the briefing's look is still on #modal: an extra onOpen would also stop 290's notice test — no onOpen = a NOTICE online) */
+  if(!document.getElementById('modal')||!document.getElementById('modal').classList.contains('bf100'))return base.call(this,title,body,buttons,opt);
   if(opt&&typeof opt==='object'){const ok=opt.onOpen;opt=Object.assign({},opt,{onOpen:function(){bf100Unmark();if(ok)return ok.apply(this,arguments)}})}else opt={onOpen:bf100Unmark};
   return base.call(this,title,body,buttons,opt)}}
 (()=>{const st=document.createElement('style');st.textContent=`
