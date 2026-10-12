@@ -288,3 +288,4 @@ PN/BRIEF/RECRUIT ANSWERS (his 2026-10-12): A1b event picker = plain sideways-scr
 GO (his 2026-10-12): Wave 7 (Tituli · first hour · replays · daily/weekly challenges) starts once the tv93a fix is merged and a full GitHub run is green.
 TITULI ANSWERS (his 2026-10-12): 1a Latin titles kept · 2a Democritus medallion (first win) + Leo token (Beast Whisperer) kept · 3a season tituli shown earned on his own Domus (domus.get returns tit100 — server, release deploy).
 FIRST HOUR ANSWERS (his 2026-10-12): 1a Choice tip as built (2 coin or an arena card) · 2a full three-round Democritus · 3a fixed Soldier vs Slave/Amazonia/Veteranus.
+REPO PUBLIC (his call 2026-10-12): Actions minutes free → budget.json public:true (no skips). WAVE 8 STARTED (2026-10-12): 311-v100anim gladiators · 312-v100beasts beasts + spiders/rete/Bounty · 313-v100crowd 3D crowd + forum (three agents, worktrees).
