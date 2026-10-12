@@ -22,7 +22,7 @@ const settle=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,
   const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await pg.goto(URL0);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:20000});
   /* the option in the setup, then Begin Event */
   const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}
-    openSetup(true);for(let i=0;i<40&&!document.getElementById('oNight91');i++)await W8(100);const sel=document.getElementById('oNight91');const r={sel:!!sel,inOpts:!!(sel&&sel.closest('.optfold'))};
+    openSetup(true);for(let i=0;i<40&&!document.getElementById('oNight91');i++)await W8(100);const sel=document.getElementById('oNight91');const r={sel:!!sel,inOpts:!!(sel&&sel.closest('.optfold,.pn100opt'))};
     if(!sel)return r;sel.value='night';sel.dispatchEvent(new Event('change',{bubbles:true}));r.cfg=!!CFG.opts.night;
     CFG.seats.slice(0,4).forEach((s,i)=>{s.cpu=i!==0});CFG.seats[0].cls='soldier'; /* Play Now deals the seats' classes at random (165-v89seats): the contrast check below measures THIS piece's pixels vs the sand, which depends on the class colour (Slave / Veteranus read ~1 at night) — pinned so the run is the same every time */document.getElementById('goBtn').click();
     for(let i=0;i<80;i++){await W8(150);if(CUR_MODAL){const t=(document.getElementById('mTitle')||{}).textContent||'';const lit=document.querySelector('#mBody [data-mi]:not(.dim):not([disabled])');

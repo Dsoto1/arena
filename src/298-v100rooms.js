@@ -70,7 +70,7 @@ function rm100RosterList(w,pm,ros,sel){const out=w.glads.filter(g=>g.alive&&g.lo
   const row=(g,lent)=>{const s=lent?'L':g.slot95?RM100_RN[g.slot95-1]:g.loanFrom?'L':'B';const sc=g.slot95?'s':s==='L'?'l':'';const r=rm100Rec(g);
     const wd=(g.inj&&!g.inj.war?'⚕':'')+((g.severed||[]).length?'✂':'');const wk=g.contract?Math.max(0,g.contract.weeks):'';
     const at=lent?`aria-disabled="true" title="${esc(_T`${g.name} — on loan`)}"`:`data-mg="lsel" data-id="${g.id}" role="button" tabindex="0" title="${esc(g.name)}"`;
-    return `<div class="rm100lr ros${!lent&&g.id===sel?' on':''}${lent?' lent':''}" ${at}><span class="rm100slot ${sc}">${s}</span><span class="rm100av">${rm100Face(g)}</span><b class="rm100one">${esc(g.name)}</b><span class="rm100num">${effOvr(g)}</span><span class="rm100iv">${r.w}–${r.l}</span>${rm100Fd(g)}<span class="rm100wm">${wd}</span><span class="rm100iv">${wk}</span></div>`};
+    return `<div class="rm100lr ros${!lent&&g.id===sel?' on':''}${lent?' lent':''}" ${at}><span class="rm100slot ${sc}">${s}</span><span class="rm100av">${rm100Face(g)}</span><b class="rm100one">${esc(g.name)}${typeof chip85==='function'?chip85(g):''}</b><span class="rm100num">${effOvr(g)}</span><span class="rm100iv">${r.w}–${r.l}</span>${rm100Fd(g)}<span class="rm100wm">${wd}</span><span class="rm100iv">${wk}</span></div>`};
   return `<div class="rm100lhd"><span>${_T`Your fighters`} · ${ros.length}</span></div><div class="rm100rows"><div class="rm100lh ros"><span>${_T`Slot`}</span><span></span><span>${_T`Name`}</span><span>${_T`Ovr`}</span><span>${_T`W–L`}</span><span>●</span><span>⚕</span><span>${_T`Wk`}</span></div>${L.map(g=>row(g,false)).join('')}${out.map(g=>row(g,true)).join('')}</div>`}
 function rm100Roster(R,w,pm){const pane=R.querySelector('#mgrPane');const wrap=pane&&pane.querySelector('.st95wrap');if(!wrap)return false;
   const ros=rosterOf(pm);const g=gById(MGR.lsel)&&ros.some(x=>x.id===MGR.lsel)?gById(MGR.lsel):ros[0];if(!g)return false;
@@ -99,7 +99,7 @@ function rm100Roster(R,w,pm){const pane=R.querySelector('#mgrPane');const wrap=p
   const slotN=g.slot95||0;const st=gStats(g)||{};const ov=effOvr(g);const gr=typeof trait96Grade==='function'?trait96Grade(ov):'';const f=gFat(g);const loy=typeof loyaltyOf==='function'?loyaltyOf(g):0;const r=rm100Rec(g);
   const phd=slotN?_T`${ST95_BOUT[slotN-1][1]} · ${ST95_BOUT[slotN-1][2]} starter`:g.inj?_T`In the ward`:g.loanFrom?_T`On loan to you`:_T`On the bench`;
   const pblk=`<section class="rm100p rm100pp"><div class="rm100ph">${phd}</div><div class="rm100pblk"><span class="rm100fr rm100por">${gArt(g,'md')}</span><div class="rm100pi">
-    <div class="rm100pn">${slotN===3?'★ ':''}${esc(g.name)}</div><div class="rm100pl rm100sub"></div>
+    <div class="rm100pn">${slotN===3?'★ ':''}${esc(g.name)}${typeof chip85==='function'?chip85(g):''}</div><div class="rm100pl rm100sub"></div>
     <div class="rm100pl">${_T`Overall`} <b class="rm100g">${ov}</b>${gr?' · '+gr:''} · ${rm100Fd(g)} ${FB90_TXT()[fatBand90(f)][0]} ${f}</div>
     <div class="rm100pl">${_T`Morale ${g.morale||0} · Loyalty ${loy}`}</div>
     <div class="rm100chips"><button type="button" class="rm100ch" data-mg="tab" data-id="armory" data-rm100ar="${g.id}">🛡 ${_T`Armory`}</button>${g.inj?`<button type="button" class="rm100ch" data-mg="tab" data-id="infirm" data-inf90go="${g.id}">⚕ ${_T`Ward`}</button>`:''}</div></div></div></section>`;
@@ -445,7 +445,7 @@ body.rm100on .rm100ban .iv90why{position:relative;z-index:2}
 /* the wax tabula */
 .rm100tab{display:flex;flex-direction:column;border-radius:8px;padding:7px;background:linear-gradient(135deg,#7a4e26,#5a3618 40%,#6e4420 70%,#4a2c12);box-shadow:inset 0 0 0 1px #a2703a,inset 0 0 12px #2a1606,0 4px 12px #0008;min-width:0}
 .rm100tstrip{height:36px;flex:none;border-radius:4px 4px 0 0}
-.rm100tt{position:absolute;z-index:5;left:12px;top:8px;font:400 15px var(--display);letter-spacing:.06em;color:#fff3d6;text-shadow:0 1px 3px #000,0 0 8px #000}
+.rm100tt{position:absolute;z-index:5;left:12px;top:8px;background:#2a1c0f;padding:1px 9px;border-radius:4px;font:400 15px var(--display);letter-spacing:.06em;color:#fff3d6;text-shadow:0 1px 3px #000,0 0 8px #000}
 .rm100wax{flex:1;margin-top:5px;border-radius:3px;padding:7px 11px 9px;background:radial-gradient(ellipse at 30% 20%,#4a3a24,#2e2414 70%);box-shadow:inset 0 2px 8px #000c,inset 0 0 0 1px #1a1008;color:#e8d6ae;display:flex;flex-direction:column;min-width:0}
 .rm100tr{display:grid;grid-template-columns:minmax(52px,86px) minmax(0,1fr) auto;gap:8px;align-items:center;min-height:26px;font-size:12.5px;font-family:Georgia,serif}
 .rm100tr>*{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -466,7 +466,7 @@ body.rm100on .rm100ban .iv90why{position:relative;z-index:2}
 .rm100tb .rm100tbtn.lock[disabled]{opacity:.55;box-shadow:none}
 .rm100tb.y3{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
 .rm100lend{position:relative}.rm100lend select{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
-.rm100keep .acts{display:flex;flex-wrap:wrap;gap:6px}.rm100keep .acts .btn{font-size:12.5px;padding:4px 10px}.rm100keep .acts .btn small{display:block;font-size:10.5px}
+.rm100keep .acts{display:flex;flex-wrap:wrap;gap:6px}.rm100keep .acts .btn{font-size:12.5px;padding:4px 10px;white-space:normal;overflow:visible;max-width:100%}.rm100keep .acts .btn small{display:block;font-size:10.5px}
 .rm100more{border:1px solid #4a3826;border-radius:8px;background:#1c140e;padding:4px 10px}.rm100more>summary{cursor:pointer;font-size:12.5px;color:var(--muted);padding:4px 0}
 .rm100more>.card2{border:0;background:none;padding:4px 0;margin:0}
 /* plates */

@@ -18,7 +18,7 @@ const walk=async lang=>{
   /* 1 · Play Now setup: the Options fold (52-v50) */
   await closeAll();
   await q(async()=>{menuHide();openSetup(true);for(let i=0;i<40&&!document.querySelector('details.optfold');i++)await new Promise(r=>setTimeout(r,100))});await W(400);
-  R.pnOptions=await q(()=>!!document.querySelector('details.optfold')&&!!document.querySelector('.pn-optw90 details.optfold'));
+  R.pnOptions=await q(()=>!!document.querySelector('.pn100opt .pn100optg')||(!!document.querySelector('details.optfold')&&!!document.querySelector('.pn-optw90 details.optfold'))); /* v1.0: 300-v100pn turned the folded Options into the .pn100opt card */
   await closeAll();
   /* 2 · helpers and label matchers */
   R.helpers=await q(()=>{const sp=_T('Thumb of Flavius · spared');const td=_T`Thumbs down · ${'x'}`;

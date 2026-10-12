@@ -24,7 +24,7 @@ await pg.evaluate(()=>{const i=document.getElementById('nam0');if(i){i.value='Sp
 o.clsName=await pg.evaluate(()=>typeof clsSavedName==='function'?clsSavedName(CFG.seats[0].cls)||'':'');
 await pg.click('#goBtn');
 for(let k=0;k<30;k++){await W(700);const t=await pg.evaluate(()=>{if(S&&S.hotseat&&!CUR_MODAL&&cur()&&!cur().cpu&&(S.phase==='action'||S.phase==='choice'))return 'ok';
-  const bt=[...document.querySelectorAll('#mBtns button')].find(x=>/sand|Continue|OK|Start|Begin/i.test(x.textContent));if(bt)bt.click();return ''});if(t==='ok')break}
+  const bt=[...document.querySelectorAll('#mBtns button')].find(x=>/sand|Continue|OK|Start|Begin|Enter the arena/i.test(x.textContent));if(bt)bt.click();return ''});if(t==='ok')break}
 o.live=await pg.evaluate(()=>({prof:HS_PROFILES.map(p=>p.name).sort(),pl:S.players.map(p=>p.name+'|'+(p.pid?hsProf(p.pid).name:'')+'|'+(p.cpu?1:0)),hints:HINTS,strat:showStrategy()}));
 /* the pill, the board header and the Field label name the player */
 o.pill=await pg.evaluate(()=>{const p=cur();const el=document.getElementById('hsPill88');return {txt:el&&!el.hidden?el.textContent:'',who:hsProf(p.pid).name,glad:p.name}});
@@ -80,10 +80,10 @@ await W(3000);o.own1=await owner();
 /* profile delete asks first, in the centred popup naming the profile */
 await pg.evaluate(()=>{HS_PROFILES.push({id:'hpzz',name:'Zed',color:'#888',events:0,wins:0,cfTotal:0,cfBest:0,ludus:0,freed:0,deaths:0,coin:50,won:0,lost:0,bets:0,history:[],honors:{},classWins:[],locs:[],road:0});hsPersist();for(let i=0;i<4&&CUR_MODAL;i++)CUR_MODAL.done('close');});
 await W(600);await pg.evaluate(()=>{hotSeatOpen()});await W(2500);
-await pg.click('[data-hsdel="hpzz"]');await W(400);
+await pg.evaluate(()=>{const d=document.querySelector('details.pn100prof');if(d)d.open=true}); /* v1.0 (300-v100pn): the profiles fold under 🪑 Players on this device */await pg.click('[data-hsdel="hpzz"]');await W(400);
 o.del1=await pg.evaluate(()=>{const a=document.querySelector('.ask76bg');return {ask:!!a,txt:a?a.textContent:'',still:HS_PROFILES.some(p=>p.id==='hpzz')}});
 await pg.click('.ask76bg [data-ask76="0"]');await W(300);o.keep=await pg.evaluate(()=>HS_PROFILES.some(p=>p.id==='hpzz'));
-await pg.click('[data-hsdel="hpzz"]');await W(400);await pg.click('.ask76bg [data-ask76="1"]');await W(400);o.gone=await pg.evaluate(()=>!HS_PROFILES.some(p=>p.id==='hpzz')&&!JSON.parse(localStorage.getItem('flavius_hs')).some(p=>p.id==='hpzz'));
+await pg.evaluate(()=>{const d=document.querySelector('details.pn100prof');if(d)d.open=true});await pg.click('[data-hsdel="hpzz"]');await W(400);await pg.click('.ask76bg [data-ask76="1"]');await W(400);o.gone=await pg.evaluate(()=>!HS_PROFILES.some(p=>p.id==='hpzz')&&!JSON.parse(localStorage.getItem('flavius_hs')).some(p=>p.id==='hpzz'));
 o.resumeBtn=await pg.evaluate(()=>!!document.querySelector('[data-hsresume]'));
 console.log(JSON.stringify(o));
 const chk={

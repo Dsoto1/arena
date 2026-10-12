@@ -13,7 +13,7 @@ for(let iter=0;iter<140;iter++){const s=await step();if(s<0)break;
   switch(s){
    case 0:case 1:case 5:case 10:case 18:case 20:case 21:await next();break;
    case 2:{guard=await pg.evaluate(()=>{document.querySelector('[data-mg="tab"][data-id="recruit"]').click();return MGR.tab});await pg.waitForTimeout(300);await clk('[data-mg="tab"][data-id="roster"]');break}
-   case 3:await pg.evaluate(()=>document.querySelector(`tr[data-mg="lsel"][data-id="${MTUT.B}"]`).click());await pg.waitForTimeout(600);break;
+   case 3:await pg.evaluate(()=>document.querySelector(`[data-mg="lsel"][data-id="${MTUT.B}"]`).click());await pg.waitForTimeout(600);break;
    case 4:await pg.evaluate(()=>document.querySelector(`[data-mg="meal"][data-id="${MTUT.B}"]`).click());await pg.waitForTimeout(600);break;
    case 6:await clk('[data-mg="tab"][data-id="recruit"]');break;
    case 7:await pg.evaluate(()=>document.querySelectorAll('#mgrPane tr[data-mg="sel"]')[2].click());await pg.waitForTimeout(600);break;
