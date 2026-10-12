@@ -21,6 +21,10 @@
    • TWICE: after a seat's second applied timeout the other live humans get "Hand to CPU / Wait"; a majority (ONLC.dropNeed100) → the server
      orders {k:'drop', tt:1, until} — here a MARK (ONLM.left 'tt100'): at that seat's next decision a CPU takes it and plays that turn; the
      lanista may reclaim within the 139 window (p._cpu84 / ONL84.rcl).
+     FIX (desync, 2026-10-12): 113's pump sent every 'drop' to onlmDrop, which ends the CURRENT turn at once, and this drop was ready at
+     any moment — so each screen ended whatever it was doing when the input arrived (a CPU's turn half-way on one, Alpha's choice on the other,
+     or after Alpha's own just-sent coin): different states, a hash mismatch, a resync. Now onlmDrop hands tt drops to tt100DropMark (a mark
+     only; the owner's open window takes the default too) and the drop waits for a shared wait point (tt100DropReady).
    8c THE TURN PANEL #tt100 (now the right column's ⏳ Turn tab #turnPane; the SLIM BAR #ttb100 above the avatar / above #actions on phones carries the clock): the active face in a ring that empties, a thin bar,
       next up, the seats with their rings, the bold number in the slim bar in the last 10 s, a thin red glow at the screen EDGES on my own turn
       (four 6 px strips — never over the board), a soft "marble" tick each second of my last 5 s (tt100Tick, SFX volume / mute respected).
@@ -89,10 +93,13 @@ function tt100Log(x){TT100C.log.push({...x,tn:S&&S.turnNo});if(TT100C.log.length
 
 /* ---------------- the inputs: dto, timeout, late moves, the vote's drop ---------------- */
 function tt100WaitPoint(){return !!(ONLM.pend||TT100C.open||(!S.busy&&!tt100F98()&&['choice','action','command'].includes(S.phase)))}
+/* the vote's drop lands where every client stands still the same way: a decision open, or a human's turn waiting for a click — never inside a
+   CPU turn, an endTurn/settle or a timed-out turn the CPU is about to finish (tt100Kick fires on a local timer, so that gap is not shared) */
+function tt100DropReady(){const X=S.tt100x;if(X&&X.t===S.turnNo&&cur()===S.players[X.seat]&&!ONLM.pend&&!TT100C.open)return false;return tt100WaitPoint()}
 {const base=onlmReady;onlmReady=function(inp){if(!inp)return base.apply(this,arguments);
   if(inp.k==='dto'){if(!S||S.over)return true;const n=S.dn100|0;if(n>inp.d)return true;if(n<inp.d)return false;const O=TT100C.open;return !(O&&O.d===inp.d&&O.answering&&!(ONLM.pend&&ONLM.pend.d===inp.d))}
   if(inp.k==='timeout'){if(!S||S.over||S.turnNo>inp.t)return true;if(S.turnNo<inp.t)return false;if(cur()!==S.players[inp.seat])return true;return tt100WaitPoint()}
-  if(inp.k==='drop'&&inp.tt)return !!S&&!S.over;
+  if(inp.k==='drop'&&inp.tt)return !S||S.over||tt100DropReady();
   /* a move of a seat whose turn already ran out: the server voids it; here too (never a hash check) */
   if((inp.k==='tile'||inp.k==='act')&&inp.tn!=null&&TT100C.to[inp.tn]===inp.seat){inp.k='void';inp.late100=1;return true}
   return base.apply(this,arguments)}}
@@ -119,7 +126,12 @@ function tt100DropMark(inp){ONLM.left=ONLM.left||{};const p=S.players[inp.seat];
   try{if(inp.until&&was){p._cpu84={acct:was,until:inp.until,res:null};if(ONL.acct&&was===ONL.acct.id&&typeof ONL84!=='undefined')ONL84.rcl={id:S.onl.lobby,seat:inp.seat,until:inp.until}}}catch(e){}
   if(inp.seat===ONLM.me){ONLM.me=-1;if(typeof mToast==='function')mToast(_T('🔌 You ran out of time twice — a CPU takes your seat. Your gladiator still faces the Fate.'))}
   if(p.cpu&&p._tt100){delete p._tt100;ONLM.owners[inp.seat]=null;(ONLM.leftDone=ONLM.leftDone||{})[inp.seat]=1}
-  if(ONLM.pend&&ONLM.pend.seat===inp.seat){const P=ONLM.pend;ONLM.pend=null;P.res(P.def)}setTimeout(onlmLeftCheck,60)}
+  if(ONLM.pend&&ONLM.pend.seat===inp.seat){const P=ONLM.pend;ONLM.pend=null;P.res(P.def)}
+  /* the seat's own screen: its open (unanswered) window takes the same default the others just took */
+  else{const O=TT100C.open;if(O&&O.seat===inp.seat&&!O.answering){O.byTimeout=1;TT100C.open=null;try{if(O.done)O.done(O.def)}catch(e){}O.res(O.def)}}
+  setTimeout(onlmLeftCheck,60)}
+/* 113's pump hands every 'drop' to onlmDrop (which ends the CURRENT turn at once): the vote's drop is only this mark */
+{const base=onlmDrop;onlmDrop=function(inp){if(inp&&inp.tt&&S&&S.onl){try{tt100DropMark(inp)}catch(e){console.error(e)}setTimeout(tt100Kick,60);return}return base.apply(this,arguments)}}
 {const base=onlmLeftCheck;onlmLeftCheck=function(){try{if(onlmOn()&&ONLM.left&&!S.busy&&!CUR_MODAL&&!ONLM.pend&&!TT100C.running&&['choice','action','command'].includes(S.phase)){const c=cur();const i=onlmSeatOf(c);
       if(ONLM.left[i]==='tt100'&&c&&!c.cpu&&c.alive&&!(ONLM.leftDone&&ONLM.leftDone[i])){(ONLM.leftDone=ONLM.leftDone||{})[i]=1;c.cpu=true;ONLM.owners[i]=null;tt100Run(c);onlmWaitShow();return}}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}

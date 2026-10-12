@@ -1108,7 +1108,9 @@ One global script; files are concatenated in order. Later "version modules" patc
   beginTurn. Another seat's window pauses the turn clock (server `tc100.pz/x`, page mirrors). Two applied timeouts → the others get "Hand to CPU / Wait"
   (`match.vote100`, majority `dropNeed100`) → server `{k:'drop',tt:1,until}` = a mark (`ONLM.left` 'tt100', the CPU plays from that seat's next decision;
   139 reclaim window). Mock: one clock keeper (lowest live human) reports/ticks; test hook localStorage flavius_onltest100='{"t":14,"d":5}'.
-  Tests `tonl100tt` (2 windows), server `v100tt.test.js`.
+  Tests `tonl100tt` (2 windows), server `v100tt.test.js`. The vote's drop (`tt:1`) is a MARK only: 113's pump calls onlmDrop for every
+  'drop', so 290 wraps onlmDrop → tt100DropMark, and the drop applies only at a shared wait point (`tt100DropReady`) — it used to end the
+  current turn wherever each screen was (the tonl100tt 1-in-8 desync).
 - **v1.0 FREE AGENTS HEAL (17-manager endWeek, his pick a 2026-10-11):** a free agent's surgeon wound never festers — the city physician closes it on its due week (history line); contracted fighters unchanged. Test tv100f.
 - **v1.0 CITY SQUARE WARM-UP (279-v100city):** the square opens under a black cover (`#cityFade.hold100`): paint → bake89 → one cityDraw (figure images requested) → wait for decodes (≤ `WARM100.cap` 1.8 s) → priming draw → reveal; walkers get random start phases (Math.random), animals/chatter/beast timers fresh starts; Reduce motion = cover cuts (`cut100`). Root cause: the 600 ms bake ran in the first loop frame and no walker had t0, so all stepped together. Kill switch flavius_city100off=1. Test tv100c.
 - **v1.0 FIXES FROM HIS v0.99 TEST NOTES (284-v100fix + small edits; header lists F1-F4, C1-C3; test `tv100x`, shots tools/plans/fix100/):** F1 196 srv91Chip needs #onl on screen and
