@@ -11,6 +11,8 @@ RETIRED|={'webpenc94.js'}
 # v1.0: the animated stand-in sheets (311-v100anim, ~6 MB) stay on the site; the standalone draws the still tokens
 # v1.0 animated 3D beasts (312-v100beasts): the standalone keeps today's minis (the download stays under 30 MiB)
 RETIRED|={f for f in os.listdir(A) if f.startswith('beast100_')}
+# v1.0: the 3D crowd sheets stay on the site only (the standalone keeps today's painted crowd — 313-v100crowd falls back)
+RETIRED|={f for f in os.listdir(A) if f.startswith('crowd100_')}
 for f in sorted(os.listdir(A)):
     if f in RETIRED or (f.startswith('anim100_') and f.endswith('.webp')): continue
     p=os.path.join(A,f);mt=mimetypes.guess_type(f)[0] or ('image/webp' if f.endswith('.webp') else 'application/octet-stream')

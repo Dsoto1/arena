@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Crowd renders</title>
+<script type="importmap">{"imports":{"three":"../rig92/vendor/three.module.min.js","three/addons/":"../rig92/vendor/"}}</script>
+</head><body style="background:#2a2520;color:#eee;font:13px sans-serif">
+<p>v1.0 3D crowd — sprite renders, driven by make.js</p>
+<script src="../../../assets/gear100.js"></script>
+<script src="../../../assets/body100.js"></script>
+<script type="module">
+window.addEventListener('error', e => { window.__err = String(e.message); });
+import('./crowd100.js').catch(e => { window.__err = String(e && e.stack || e); });
+</script>
+</body></html>

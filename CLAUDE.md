@@ -1015,6 +1015,20 @@ One global script; files are concatenated in order. Later "version modules" patc
   rendered with tools/plans/fix99b/zshot.js on the v0.72 render page). Test `tv99q`; shots tools/plans/fix99b/.
 - **v1.0 TAME BONDS (04-rules lureOK100/breakBond100, 02-data card texts; test tv100t):** a bond (n.tamedBy) breaks when the Meat Lure is played on the beast (any live beast except Zora, Commodus, custom humanoids via hum95ally; Tholo still lurable, open question) or an Ursa/Brutum card is drawn (only that bear; any owner's bond; the bear goes aggro on the drawer, CF fallback only when the bear is gone). One log line "🐾 <beast> breaks free of <owner>!"; the CPU lure (06-ai) uses the same helpers.
 - **v1.0 CROWD STANDS UP (283-v100stand, last before 08-setup; display only):** on elim / beast + boss / topple / spear / Flavius cheer-laugh-shock / a duel round / waves, spectators rise from the bench (happiest first, 18 ms stagger rank, 1.1-1.9 s) then sit; 12% of delighted 209 bursts stand. Standing = one more 193 sprite91 variant (`o.st` in the key, canvas +16 units head room, body lifted 20 units, legs drawn by a paint91 wrapper; `o.nosh` skips the seat shadow); gated by cheer92OK (hidden, idle92, Reduce motion, anim off, sims, Fast), own 700 ms tick, one redraw only when a pose changed. Kill switch localStorage flavius_stand100off=1. Test `tv100s`; shots tools/plans/stand100/.
+- **v1.0 THE 3D CROWD (313-v100crowd, last before 08-setup; his 3D answers: crowd everywhere + the same people in the forum; display only):** sheets
+  pre-rendered by `node tools/art/crowd100/make.js [spec|cls|probe]` (production rig92 token, CPU WebGL ~40 s a look; meta between the CROWD100_META
+  markers in 313): assets/crowd100_s0..s5.webp = 6 looks × rows sit/sitcheer/sitfist/stand/standcheer/standfist/walk0-3 × 4 facings (cells cropped,
+  [x,y,w,h,ax,ay,hx,hy,maskN]; anchor = seat for sitting rows, feet for upright), tunic in a KEY grey + its mask in the sheet's right half (`mx`) →
+  tinted by canvas multiply (no pixel reads → works on file://); crowd100_c_<class>.webp = printed-class forum stand-ins (stand + walk0-3). ~85 KB a
+  look, ~35 KB a class, 793 KB total; mkshare skips crowd100_* (standalone = today's crowd). STANDS: draw91 replaced while the sheets are decoded
+  (`cr100Draw`: same seats/walk-in/rings/cushions/hover/CR91.seen); pose from 193's look91 as 209/283 wrap it (o.up / o.st); facing: near stands
+  backs, far stands front, walkers by their step; look by fem/beard/skin (`cr100Look`), tunic = 193's mantle (fan: allegCol, else robeOf) mixed 40%
+  with the city wool (`cr100Of`, cached per spectator); size ×1.2 (`CR100.size`), seated on the tier edge; sprites cached per look·row·facing·tint·
+  device bucket (`CR100_CV`, counts into CR91.hits/miss). CLARITY: a near-stand stand-up whose crown would reach the sand cheers seated (`CR100.sat`),
+  leftovers clipped at the sand's edge (`cr100Clip`). FORUM: `cityImg` wrapped for 'fg' figures → a cached canvas of 172's figure box (townsfolk =
+  crowd looks tinted by robe, guards = soldier, gladiators = their printed class), walk rows while gliding, facing their step; placeholders in
+  CITY.imgs stop 172 building svgs; 279's warm-up counts the sheets. Kill switch localStorage flavius_crowd100off=1 (193 + 172 exactly). Test `tv100cr`
+  (incl. pixels inside the board identical with/without the crowd, RNG.s untouched by crowd draws, ON/OFF perf); shots tools/plans/crowd100/shots.js.
 - **v1.0 MAIN MENU SHOW IN 3D (282-v100menu, before 288-v100tray so 288's cover pause wraps it; display only):** 08's show (mmPlan times/picks,
   positions, painter's order) redrawn by `mm100Loop` with RENDERED frames: assets/mm100_g_<class>.webp (walk/idle/flex/hit), mm100_d_<class> (duel atk/kneel,
   only the challenger's strip loads), mm100_lion/wolf/snake/bear/tholo (walk/attack, then walk off dragging), mm100_commodus (walk/idle/raise/atk/hit/die);
