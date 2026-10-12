@@ -24,3 +24,4 @@ city_sealed.png
 # test screenshots written to the repo root
 /*.png
 .perf100-boot.html
+tools/art/anim100/out/sev/

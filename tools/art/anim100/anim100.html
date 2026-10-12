@@ -19,9 +19,9 @@ window.addEventListener('error', e => { window.__err = String(e.message); });
       api: null,
       async init() { if (!this.api) this.api = await window.TOK93LIB(window.THREE93).createToken({}); return { baked: !!this.api.baked, bodyBaked: !!this.api.bodyBaked }; },
       /* one class + set → {url (WebP), meta, w, h, ms} */
-      async sheet(look, gear, set, pxmm, q) { const api = this.api; const t0 = performance.now(); api.apply({ look, gear, pose: api.presets[0][2] });
-        const r = await AN100L.render(api, set, { pxmm, ss: 2 }); const url = r.canvas.toDataURL('image/webp', q);
-        return { url, png: set === 'move' ? r.canvas.toDataURL('image/png') : '', meta: r.meta, w: r.canvas.width, h: r.canvas.height, ms: Math.round(performance.now() - t0) }; },
+      async sheet(look, gear, set, pxmm, q, limb) { const api = this.api; const t0 = performance.now(); api.apply({ look, gear, pose: api.presets[0][2] });
+        const r = await AN100L.render(api, set, { pxmm, ss: 2, limb }); const url = r.canvas.toDataURL('image/webp', q);
+        return { url, png: set === 'move' || limb ? r.canvas.toDataURL('image/png') : '', meta: r.meta, w: r.canvas.width, h: r.canvas.height, ms: Math.round(performance.now() - t0) }; },
     };
     window.AN100R_READY = true;
   } catch (e) { window.__err = String(e && e.stack || e); }

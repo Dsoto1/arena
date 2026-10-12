@@ -133,9 +133,6 @@
  },
  "amazonia": {
   "gear": {
-   "head": {
-    "t": "thrachelm"
-   },
    "chest": {
     "t": "amazon"
    },
@@ -239,6 +236,7 @@
  },
  "damnatio": {
   "gear": {
+   "helm": "circlet",
    "arm": {
     "R": {
      "wraps": 1
