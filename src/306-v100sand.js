@@ -55,7 +55,7 @@ if(typeof applySettings==='function'){const base=applySettings;applySettings=fun
 /* ---------- the CSS: one generator, applied to selector groups ---------- */
 function sd100CSS(G,wrap){const P='html.sd100on:is(#sd100i,html) ';const L=(list,suf)=>list.map(s=>P+s+(suf||'')).join(',');
   const ALL=[...G.pri,...G.sec,...G.dan];
-  const NOISE=`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .1 0 0 0 .8 0'/%3E%3C/filter%3E%3Crect width='240' height='120' filter='url(%23n)'/%3E%3C/svg%3E")`;
+  const NOISE=`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .1 0 0 0 .8 0'/%3E%3C/filter%3E%3Crect width='240' height='120' filter='url(%23n)'/%3E%3C/svg%3E")`; // i18n:skip
   const hov=(l,suf)=>l.map(s=>P+s+':hover:not(:disabled)'+(suf||'')+','+P+s+':focus-visible'+(suf||'')).join(',');
   const css=`
 ${L(ALL)}{--sdh:40px;--sdf:15px;position:relative;isolation:isolate;display:inline-flex;flex-flow:row wrap;align-items:center;align-content:center;justify-content:center;gap:1px .3em;
