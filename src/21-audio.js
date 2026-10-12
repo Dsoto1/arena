@@ -9,7 +9,7 @@
    ===================================================================== */
 /* AUD — the audio engine state: context, gain nodes (master, music, sfx, fade), reverb, the step clock and the playing theme. */
 const AUD={ctx:null,master:null,music:null,sfx:null,verb:null,timer:null,step:0,next:0,loc:null,theme:null,playing:false};
-const AUD_DEF={on:true,music:true,sfx:true,mvol:0.32,svol:0.55,menu:true}; // v0.29: music between events is on by default
+const AUD_DEF={on:true,music:true,sfx:true,mvol:0.20,svol:0.55,menu:true}; // v0.29: music between events is on by default
 // v0.29: music between events turns on once for everyone (older saves stored it off); switch it off again in Settings → Audio
 /* one-time switch: music between events turns on for older saves (v0.29). */
 setTimeout(()=>{try{if(typeof SETTINGS!=='undefined'&&SETTINGS.audio&&!SETTINGS.audio.m29){SETTINGS.audio={...SETTINGS.audio,menu:true,m29:1};if(typeof applySettings==='function')applySettings()}}catch(e){}},400);

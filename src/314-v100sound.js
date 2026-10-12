@@ -173,3 +173,7 @@ if(SND100.on){
   BUS.on('market.buy',e=>{try{if(!S||S.sim||!e||!e.kind)return;sfx(e.free?'card':'coin',{own:snd100Own(e.player&&snd100Pl(e.player.id))})}catch(x){}});
   BUS.on('challenge.done',e=>{try{if(!e||!e.medal)return;setTimeout(()=>{try{sfx('medal',{m:e.medal})}catch(x){}},SND100.medalMs)}catch(x){}});
 }
+
+/* v1.0 (his yes 2026-10-12): the default music volume drops 0.32 → 0.20 (−4 dB) so the board sounds sit forward; a player still on the
+   old default (0.32 exactly) moves once (localStorage flavius_mvol100); a value anyone chose stays. Outside the kill switch. */
+try{if(!localStorage.getItem('flavius_mvol100')){const a=SETTINGS&&SETTINGS.audio;if(a&&a.mvol===0.32){a.mvol=0.20;lsSet('settings',SETTINGS);try{audApplyVol()}catch(e){}}localStorage.setItem('flavius_mvol100','1')}}catch(e){}
