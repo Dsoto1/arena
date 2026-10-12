@@ -192,7 +192,9 @@ if(typeof BUS!=='undefined')BUS.on('turn.begin',d=>{try{if(PN100.off||!d||d.cpu|
 /* ---- 3 · the sandstone submenus (1c / 1d) ---- */
 const SAND100=[];
 function sand100Titles(){if(!SAND100.length)SAND100.push(_T('⚔️ Play now'),_T('💼 Manager mode'));return SAND100}
-function sand100Off(){const m=document.getElementById('modal');if(m)m.classList.remove('sand100');document.body.classList.remove('sub100','sub100calm')}
+function sand100Off(){const m=document.getElementById('modal');if(m)m.classList.remove('sand100');document.body.classList.remove('sub100','sub100calm');
+  /* v1.0 fix (310): the tablet's foot (Back) and grab handle left with it — they lingered under the next window (Play Now page, Your Play Now Gladiators) */
+  const box=document.getElementById('mboxEl');if(box)box.querySelectorAll(':scope > .sand100ft, :scope > .grab100').forEach(x=>x.remove())}
 function sand100Icon(txt){if(/^⚔/.test(txt))return PN100_IC.swords;if(/^📂/.test(txt))return PN100_IC.chest;if(/^🗂/.test(txt))return PN100_IC.scroll;if(/^🛡/.test(txt))return PN100_IC.shield;if(/^▶/.test(txt))return PN100_IC.play;if(/^✚/.test(txt))return PN100_IC.plus;return ''}
 function sand100Dress(title){const m=document.getElementById('modal'),box=document.getElementById('mboxEl'),bt=document.getElementById('mBtns');if(!m||!box||!bt)return;
   m.classList.add('sand100');document.body.classList.add('sub100');document.body.classList.toggle('sub100calm',pn100Calm());
