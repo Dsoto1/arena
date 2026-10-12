@@ -32,6 +32,7 @@ function smartPlan(){let out='';try{out=execSync('node tools/smartreg.js --dry',
   let n=mode==='full'?B.shards_full:Math.max(1,Math.min(B.shards_full,Math.ceil(tests.reduce((a,t)=>a+tm(t),0)/B.jobs/B.shard_target_s)));
   const sh=shard(tests,n);const cost=sh.reduce((a,s)=>a+Math.ceil(s.est/60)+B.setup_min,0);
   if(!tests.length){mode='skip';why='nothing this change reaches'}
+  else if(B.public){/* public repo: minutes are free */}
   else if(cost>left-(mode==='full'&&release?0:B.reserve)){mode='skip';why=`over the cycle budget (left ${left} min, needs ~${cost})`}
   else if(mode==='smart'&&U.today+cost>allow&&!exclusive){mode='skip';why=`over today's allowance (${U.today}+${cost} > ${allow} min/day) — run it locally`}
   const sum=`mode ${mode} · ${why} · ${tests.length} tests in ${sh.length} shards · est ${cost} min · used this cycle ${U.used}/${B.month_cap} (today ${U.today}) · allowance ${allow}/day for ${daysLeft} days${U.err?' · usage unknown: '+U.err:''}`;

@@ -1,5 +1,5 @@
 {
-  "_doc": "GitHub Actions budget for the regression (tools/ci/plan.js). month_cap = free minutes per billing cycle (private repo, Linux 1x); cycle starts on billing_day; until exclusive_until (inclusive, UTC date) every push runs the FULL sharded suite; after it 'spread' mode: a push runs only the tests its change reaches (smartreg plan), a FULL run only for releases ([full] in the commit message, version.json changed, or a manual run with mode=full), always within the daily allowance = (cap - used - reserve) / days left in the cycle; over the allowance → skipped (run locally).",
+  "_doc": "GitHub Actions budget for the regression (tools/ci/plan.js). month_cap = free minutes per billing cycle (private repo, Linux 1x); cycle starts on billing_day; until exclusive_until (inclusive, UTC date) every push runs the FULL sharded suite; after it 'spread' mode: a push runs only the tests its change reaches (smartreg plan), a FULL run only for releases ([full] in the commit message, version.json changed, or a manual run with mode=full), always within the daily allowance = (cap - used - reserve) / days left in the cycle; over the allowance \u2192 skipped (run locally). PUBLIC (his call 2026-10-12): the repo is public, standard Linux runners are free and unlimited \u2192 public:true turns the minute checks off (no skips); pushes still run smart, releases/manual full.",
   "month_cap": 5000,
   "billing_day": 1,
   "reserve": 300,
@@ -7,5 +7,6 @@
   "shards_full": 8,
   "shard_target_s": 600,
   "setup_min": 3,
-  "jobs": 2
+  "jobs": 2,
+  "public": true
 }
