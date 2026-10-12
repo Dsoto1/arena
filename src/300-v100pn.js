@@ -3,9 +3,7 @@
    1 · PLAY NOW (Single event, 106 pnLayout75 → 187 pnTidy90 → 205 stands92 → 247 pn98 → this last setupBody wrapper pn100):
        (a) top bar: "Play Now" · the mode tabs · the date chip (Follow leaves it) · the upper-right group (summary · 🎲 · Begin Event as the
            SANDSTONE primary slab .sb100.pri = porphyry inlay + gold-leaf letters) · ✕;
-       (b) "THE EVENT" panel replaces Where + What: the event CAROUSEL (cards [data-pnev] = 106's own click → #evSel change; ‹ › step to the
-           neighbour; keyboard: arrows/Home/End move the focus, Enter/Space picks; the picked card slides to the centre, Reduce motion = a
-           jump), then event card | the map (#mapbox, the city select #locSel, 🎲 #roll6/#roll12, class modifiers) | name, blurb and the
+       (b) "THE EVENT" panel replaces Where + What: the event ROW (a plain sideways-scrolling row, all cards one size, the picked one outlined in gold and scrolled into view; cards [data-pnev] = 106's own click → #evSel change; ‹ › scroll the row; keyboard: arrows/Home/End move the roving focus, Enter/Space picks), then event card | the map (#mapbox, the city select #locSel, 🎲 #roll6/#roll12, class modifiers) | name, blurb and the
            ROUNDS TABLE (always open — A1a: Ⅰ/Ⅱ/Ⅲ, name + zone, PvE/PvP/CF/CA chips, struck when off, Ends when, reward), the record;
        (c) OPTIONS = one 3-column grid; its first row is FOLLOW THE SCHEDULE (A2a: a switch, CFG.follow100 — ON sets this week's event +
            city and LOCKS them: dashed 🔒 bar with Unlock, other cards greyed, map dimmed "🔒 <city> · this week", city select + dice off;
@@ -52,11 +50,10 @@ function pn100Rounds(ev){if(!ev||!Array.isArray(ev.rounds)||!ev.rounds.length)re
 
 /* ---- the event carousel (his 2b) ---- */
 function pn100Carousel(keys,lock){
-  /* a ring: the picked card sits in the middle with its neighbours on both sides (no empty ends) */
-  const n=keys.length,si=Math.max(0,keys.indexOf(CFG.ev)),m=Math.floor(n/2);const ring=keys.map((_,i)=>keys[(si-m+i+n*2)%n]);
-  const cards=ring.map(k=>{const E=EVENTS[k];const on=k===CFG.ev;const has=!E.custom&&typeof cardRef==='function'&&cardRef('e:'+k);const nm=(E.n||k).replace(/^Classic · /,'');
+  /* a plain row in the list's own order: all cards one size, the picked one outlined in gold */
+  const cards=keys.map(k=>{const E=EVENTS[k];const on=k===CFG.ev;const has=!E.custom&&typeof cardRef==='function'&&cardRef('e:'+k);const nm=(E.n||k).replace(/^Classic · /,'');
     return `<button type="button" class="pn-ev pn100c ${on?'on':''}${lock&&!on?' lk':''}" data-pnev="${k}" role="option" aria-selected="${on}" tabindex="${on?0:-1}" title="${esc(E.n)}"${lock&&!on?' aria-disabled="true"':''}>${has?`<span class="pn-evc pn100art" style="${cardStyle('e:'+k)}"></span>`:`<span class="pn-evc pn100art pn-cust">✦</span>`}<span class="pn-evn">${esc(nm)}</span></button>`}).join('');
-  return `<div class="pn100car${lock?' lk':''}"><button type="button" class="pn100arr" data-pn100step="-1" aria-label="${_T`Previous event`}" ${lock?'disabled':''}>‹</button><div class="pn100trk" role="listbox" aria-label="${_T`Event`}" aria-orientation="horizontal">${cards}</div><button type="button" class="pn100arr" data-pn100step="1" aria-label="${_T`Next event`}" ${lock?'disabled':''}>›</button></div>`}
+  return `<div class="pn100car${lock?' lk':''}"><button type="button" class="pn100arr" data-pn100step="-1" aria-label="${_T`Previous event`}">‹</button><div class="pn100trk" role="listbox" aria-label="${_T`Event`}" aria-orientation="horizontal">${cards}</div><button type="button" class="pn100arr" data-pn100step="1" aria-label="${_T`Next event`}">›</button></div>`}
 
 /* ---- the switch look (a real button, role=switch) ---- */
 const pn100Sw=(on,attr,label)=>`<button type="button" class="pn100sw${on?' on':''}" role="switch" aria-checked="${on}" ${attr} aria-label="${esc(label)}"><i></i></button>`;
@@ -150,23 +147,19 @@ function pn100Hot(h){let x=h;if(typeof pnLayout75==='function')x=pnLayout75(x);i
 /* ---- after the setup lands: centre the picked card (a slide from where the strip was), restore keyboard focus ---- */
 function pn100Ctr(trk,el){const a=trk.getBoundingClientRect(),b=el.getBoundingClientRect();return Math.max(0,trk.scrollLeft+(b.left-a.left)+b.width/2-trk.clientWidth/2)}
 function pn100Mount(){const trk=document.querySelector('#mBody .pn100 .pn100trk');if(!trk)return;const sel=trk.querySelector('.pn100c.on');if(!sel)return;
-  const target=pn100Ctr(trk,sel);const calm=pn100Calm();
-  /* the slide: start where the old ring stood (the picked card d steps away), then glide to the centre */
-  const L=[...trk.querySelectorAll('.pn100c')].map(b=>b.dataset.pnev);const n=L.length;const a=L.indexOf(PN100.ev),b=L.indexOf(CFG.ev);
-  let d=a<0||b<0?0:b-a;if(d>n/2)d-=n;if(d<-n/2)d+=n;const step=(sel.nextElementSibling||sel.previousElementSibling||sel).offsetWidth+10;
-  trk.scrollLeft=target;if(d&&!calm){trk.scrollLeft=Math.max(0,target-d*step);trk.scrollTo({left:target,behavior:'smooth'})}
-    PN100.ev=CFG.ev;if(PN100.focus){PN100.focus=false;try{sel.focus({preventScroll:true})}catch(e){}}}
+  /* the picked card is scrolled into view (a jump, no slide) */
+  trk.scrollLeft=pn100Ctr(trk,sel);
+  PN100.ev=CFG.ev;if(PN100.focus){PN100.focus=false;try{sel.focus({preventScroll:true})}catch(e){}}}
 {const mb=document.getElementById('mBody');if(mb)new MutationObserver(()=>{if(!PN100.off&&mb.querySelector(':scope>.pn100'))pn100Mount()}).observe(mb,{childList:true})}
 function pn100Toast(){if(typeof mToast==='function')mToast(_T('🔒 Following the schedule — switch it off to pick any event or city.'))}
 function pn100Pick(k){const s=document.getElementById('evSel');if(!s||!EVENTS[k])return;s.value=k;s.dispatchEvent(new Event('change',{bubbles:true}))}
 function pn100Redraw(){if(typeof pnRedraw75==='function')pnRedraw75()}
 /* clicks: the lock first (window capture — before 106's document-capture [data-pnev] and 08's map), then the new controls */
 window.addEventListener('click',e=>{const t=e.target;if(!t||!t.closest||PN100.off)return;const root=t.closest('#mBody .pn100');if(!root)return;
-  const inCar=t.closest('.pn100trk');if(inCar||t.closest('[data-pn100step]'))PN100.focus=!!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('.pn100car'));
-  if(CFG.follow100){const blocked=t.closest('.pn100c:not(.on)')||t.closest('[data-pn100step]')||t.closest('#roll6,#roll12')||(t.closest('#mapbox')&&!t.closest('.pn100maplock'));
+  const inCar=t.closest('.pn100trk');if(inCar)PN100.focus=!!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('.pn100car'));
+  if(CFG.follow100){const blocked=t.closest('.pn100c:not(.on)')||t.closest('#roll6,#roll12')||(t.closest('#mapbox')&&!t.closest('.pn100maplock'));
     if(blocked){e.preventDefault();e.stopPropagation();pn100Toast();return}}
-  const st=t.closest('[data-pn100step]');if(st){e.preventDefault();e.stopPropagation();const L=[...root.querySelectorAll('.pn100c[data-pnev]')].map(b=>b.dataset.pnev);const i=L.indexOf(CFG.ev);if(i<0||!L.length)return;
-    pn100Pick(L[(i+(+st.dataset.pn100step)+L.length)%L.length]);return}
+  const st=t.closest('[data-pn100step]');if(st){e.preventDefault();e.stopPropagation();const trk=root.querySelector('.pn100trk');if(trk)trk.scrollBy({left:(+st.dataset.pn100step)*Math.max(120,trk.clientWidth*.8),behavior:'smooth'});return}
   const fo=t.closest('[data-pn100follow]');if(fo){e.preventDefault();e.stopPropagation();
     if(fo.dataset.pn100follow==='on'){const c=pn100Fix();if(!c||!c.fx||!EVENTS[c.fx.ev])return;CFG.follow100=true;CFG.loc=c.fx.loc;CFG.ev=c.fx.ev;const E=EVENTS[CFG.ev];CFG.n=clamp(CFG.n,E.min,E.max);if(typeof SEATS89!=='undefined')SEATS89.off=true}
     else CFG.follow100=false;
@@ -185,7 +178,7 @@ document.addEventListener('keydown',e=>{const t=e.target;if(PN100.off||!t||!t.cl
   const L=[...trk.querySelectorAll('.pn100c')];const i=L.indexOf(t.closest('.pn100c'));if(i<0)return;let j=-1;
   if(e.key==='ArrowRight'||e.key==='ArrowDown')j=Math.min(L.length-1,i+1);else if(e.key==='ArrowLeft'||e.key==='ArrowUp')j=Math.max(0,i-1);else if(e.key==='Home')j=0;else if(e.key==='End')j=L.length-1;else return;
   e.preventDefault();e.stopPropagation();const n=L[j];L.forEach(x=>x.tabIndex=x===n?0:-1);try{n.focus({preventScroll:true})}catch(err){}
-  const target=pn100Ctr(trk,n);trk.scrollTo({left:target,behavior:pn100Calm()?'auto':'smooth'})},true);
+  const target=pn100Ctr(trk,n);trk.scrollTo({left:target,behavior:'auto'})},true);
 
 /* ---- 2 · the hot-seat "your turn" ribbon (A3) ---- */
 function hs100Rib(p){if(HEADLESS||PN100.off||!p||typeof document==='undefined')return;const bar=document.querySelector('header.bar');if(!bar)return;
@@ -281,19 +274,15 @@ body.calm .sb100,body.calm .sb100:hover{transition:none}
 .pn100arr{height:64px;border:1px solid #4a3826;border-radius:6px;background:var(--panel2,#1a130e);color:var(--gold2);font:400 26px/1 var(--display);cursor:pointer;padding:0}
 .pn100arr:hover:not(:disabled),.pn100arr:focus-visible{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
 .pn100arr:disabled{opacity:.35;cursor:not-allowed}
-.pn100trk{display:flex;gap:10px;align-items:center;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;scrollbar-width:none;padding:8px 70px;min-height:172px;
-  -webkit-mask:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
-.pn100trk::-webkit-scrollbar{display:none}
-.pn100trk .pn100c{flex:none;width:86px;scroll-snap-align:center;display:grid;gap:3px;padding:3px;border:1px solid #3a2c1e;border-radius:6px;background:var(--panel2,#1a130e);color:var(--muted);font-size:11.5px;text-align:center;cursor:pointer;transition:width .2s,transform .2s,box-shadow .2s}
+.pn100trk{display:flex;gap:10px;align-items:center;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;padding:8px 4px 10px;min-height:150px}
+.pn100trk .pn100c{flex:none;width:96px;display:grid;gap:3px;padding:3px;border:1px solid #3a2c1e;border-radius:6px;background:var(--panel2,#1a130e);color:var(--muted);font-size:11.5px;text-align:center;cursor:pointer}
 .pn100trk .pn100c .pn100art{display:block;width:100%;aspect-ratio:480/692;height:auto;border-radius:3px;background-repeat:no-repeat}
 .pn100trk .pn100c .pn-cust{display:grid;place-items:center;font-size:30px;color:#cdb8ff;background:#2a2040}
 .pn100trk .pn100c .pn-evn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pn100trk .pn100c.on{width:118px;border-color:var(--gold);color:var(--gold2);box-shadow:0 0 0 1px var(--gold) inset,0 8px 20px rgba(0,0,0,.6),0 0 18px rgba(214,171,76,.25)}
+.pn100trk .pn100c.on{border-color:var(--gold);color:var(--gold2);box-shadow:0 0 0 1px var(--gold) inset,0 8px 20px rgba(0,0,0,.6),0 0 18px rgba(214,171,76,.25)}
 .pn100trk .pn100c:hover:not(.on):not(.lk),.pn100trk .pn100c:focus-visible{border-color:var(--gold);color:var(--bone)}
 .pn100trk .pn100c:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
 .pn100trk .pn100c.lk{opacity:.32;filter:grayscale(.8);cursor:not-allowed}
-body.calm .pn100trk .pn100c{transition:none}
-@media (prefers-reduced-motion:reduce){.pn100trk .pn100c{transition:none}}
 /* card | map | details */
 .pn100what{display:grid;grid-template-columns:180px 290px minmax(0,1fr);gap:16px;align-items:start}
 .pn100what>*{min-width:0}
@@ -404,7 +393,7 @@ body.sub100calm #modal.sand100 #mboxEl,body.calm #modal.sand100 #mboxEl{animatio
   .pn100rd{grid-template-columns:26px minmax(0,1fr)}.pn100rd .rch,.pn100rd .end,.pn100rd .rw{grid-column:2}
   .pn100optg{grid-template-columns:minmax(0,1fr)}
   .pn100car{grid-template-columns:28px minmax(0,1fr) 28px;gap:4px}.pn100arr{height:54px;font-size:22px}
-  .pn100trk{min-height:150px}.pn100trk .pn100c{width:72px}.pn100trk .pn100c.on{width:98px}
+  .pn100trk{min-height:132px}.pn100trk .pn100c{width:80px}
   .pn100roll{padding:5px 6px}
   #hs100rib{font-size:16px;gap:8px}#hs100rib small{display:none}
   #modal.sand100{align-items:flex-end;padding:0}

@@ -11,26 +11,26 @@ const until=async(pg,fn,ms=15000,arg)=>{try{await pg.waitForFunction(fn,arg,{tim
 const closeAll=pg=>pg.evaluate(async()=>{for(let i=0;i<6&&CUR_MODAL;i++){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await new Promise(r=>setTimeout(r,250))}});
 const newErr=async pg=>pg.evaluate(()=>errNew92(window.__e0).map(e=>e.msg||e.m||JSON.stringify(e).slice(0,160)));
 let pg=await open(1440,900);
-/* ---- 1 · the setup and the carousel ---- */
+/* ---- 1 · the setup and the event row ---- */
 await pg.evaluate(()=>{openSetup(true)});
-ok(await until(pg,()=>document.querySelector('#mBody .pn100 .pn100car .pn100c.on')),'the Play Now page with the carousel');
+ok(await until(pg,()=>document.querySelector('#mBody .pn100 .pn100car .pn100c.on')),'the Play Now page with the event row');
 await pg.waitForTimeout(500);
 const A=await pg.evaluate(()=>{const q=s=>document.querySelector('#mBody '+s);const trk=q('.pn100trk');const sel=q('.pn100c.on');const a=trk.getBoundingClientRect(),r=sel.getBoundingClientRect();
   const keys=[...document.getElementById('evSel').options].map(o=>o.value);
-  return {n:document.querySelectorAll('#mBody .pn100c').length,keys:keys.length,on:sel.dataset.pnev,ev:CFG.ev,off:Math.abs((r.left+r.width/2)-(a.left+a.width/2)),
+  return {n:document.querySelectorAll('#mBody .pn100c').length,keys:keys.length,on:sel.dataset.pnev,ev:CFG.ev,vis:r.left>=a.left-1&&r.right<=a.right+1,w:new Set([...document.querySelectorAll('#mBody .pn100c')].map(x=>Math.round(x.getBoundingClientRect().width))).size,
     rows:document.querySelectorAll('#mBody .pn100rounds .pn100rd:not(.hd)').length,want:EVENTS[CFG.ev].rounds.length,go:/Begin Event/.test(q('.pn-top #goBtn').textContent)&&q('#goBtn').classList.contains('sb100'),
     map:!!q('.pn100map #mapbox')&&!!q('.pn100map #locSel'),opt:!!q('.pn100opt .pn100optg #oMandata')&&!!q('.pn100opt #oSeed')&&!!q('.pn100opt .pn100follow [data-pn100follow]'),
     who:!!q('.pn-who .pn98cnt')&&!!q('.pn-who .stands92'),title:(q('.pn98h')||{}).textContent,cal:!q('.pn-cal [data-calgo]'),sel:!!document.getElementById('evSel')}});
-ok(A.n===A.keys&&A.on===A.ev&&A.off<30,'carousel: every event, the picked one centred '+JSON.stringify(A));
+ok(A.n===A.keys&&A.on===A.ev&&A.vis&&A.w===1,'event row: every event, one card size, the picked one in view '+JSON.stringify(A));
 ok(A.rows===A.want&&A.rows>0,'rounds table, one row a round');
 ok(A.go&&A.map&&A.opt&&A.who&&A.title==='Play Now'&&A.cal&&A.sel,'layout: Begin Event slab, map, options + follow, who, no Follow in the date chip '+JSON.stringify(A));
 /* click a card */
 const k1=await pg.evaluate(()=>{const c=[...document.querySelectorAll('#mBody .pn100c:not(.on)')].find(x=>x.dataset.pnev==='egidious')||document.querySelector('#mBody .pn100c:not(.on)');const k=c.dataset.pnev;c.click();return k});
 ok(await until(pg,k=>CFG.ev===k&&document.getElementById('evSel').value===k&&document.querySelector('#mBody .pn100c.on').dataset.pnev===k,5000,k1),'a card click picks the event '+k1);
-/* ‹ › */
-const st=await pg.evaluate(async()=>{const e0=CFG.ev;document.querySelector('#mBody [data-pn100step="1"]').click();await new Promise(r=>setTimeout(r,300));const e1=CFG.ev;
-  document.querySelector('#mBody [data-pn100step="-1"]').click();await new Promise(r=>setTimeout(r,300));return {e0,e1,e2:CFG.ev}});
-ok(st.e1!==st.e0&&st.e2===st.e0,'‹ › step to the neighbour and back '+JSON.stringify(st));
+/* ‹ › scroll the row, they do not pick */
+const st=await pg.evaluate(async()=>{const e0=CFG.ev,trk=document.querySelector('#mBody .pn100trk');trk.scrollLeft=0;const s0=trk.scrollLeft;document.querySelector('#mBody [data-pn100step="1"]').click();await new Promise(r=>setTimeout(r,700));const s1=trk.scrollLeft;
+  document.querySelector('#mBody [data-pn100step="-1"]').click();await new Promise(r=>setTimeout(r,700));return {e0,e1:CFG.ev,s0,s1,s2:trk.scrollLeft,over:trk.scrollWidth>trk.clientWidth}});
+ok(st.e1===st.e0&&(!st.over||(st.s1>st.s0&&st.s2<st.s1)),'‹ › scroll the row without picking '+JSON.stringify(st));
 /* keyboard: arrows walk, Enter picks, the focus comes back to the picked card */
 await pg.focus('#mBody .pn100c.on');await pg.keyboard.press('ArrowRight');await pg.keyboard.press('ArrowRight');
 const kb=await pg.evaluate(()=>{const a=document.activeElement;return {k:a&&a.dataset&&a.dataset.pnev,ev:CFG.ev,tab:a&&a.tabIndex}});
@@ -52,8 +52,8 @@ await pg.click('#mBody .pn100follow [data-pn100follow="on"]');
 const F=await pg.evaluate(()=>{const c=calNow();const q=s=>document.querySelector('#mBody '+s);return {on:CFG.follow100,ev:CFG.ev===c.fx.ev,loc:CFG.loc===c.fx.loc,bar:!!q('.pn100lockbar'),lk:document.querySelectorAll('#mBody .pn100c.lk').length,
   dis:q('#locSel').disabled,ml:!!q('.pn100maplock'),sw:q('.pn100follow [role=switch]').getAttribute('aria-checked')}});
 ok(F.on&&F.ev&&F.loc&&F.bar&&F.lk>0&&F.dis&&F.ml&&F.sw==='true','Follow locks this week\'s event + city '+JSON.stringify(F));
-const lockClick=await pg.evaluate(async()=>{const e0=CFG.ev;document.querySelector('#mBody .pn100c.lk').click();document.querySelector('#mBody [data-pn100step="1"]').click();await new Promise(r=>setTimeout(r,300));return CFG.ev===e0});
-ok(lockClick,'a locked card / step does nothing');
+const lockClick=await pg.evaluate(async()=>{const e0=CFG.ev;document.querySelector('#mBody .pn100c.lk').click();await new Promise(r=>setTimeout(r,300));return CFG.ev===e0});
+ok(lockClick,'a locked card does nothing');
 await pg.click('#mBody .pn100lockbar [data-pn100follow="off"]');
 ok(await until(pg,()=>!CFG.follow100&&!document.querySelector('#mBody .pn100lockbar')&&!document.querySelector('#mBody .pn100c.lk')),'Unlock switches it off');
 await pg.click('#mBody [data-pn100sched]');ok(await pg.evaluate(()=>{const p=document.querySelector('#mBody .pn100schedp');return !!p&&!p.hidden&&p.textContent.length>40}),'📅 Season schedule opens in place');
