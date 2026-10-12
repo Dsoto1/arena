@@ -103,7 +103,7 @@ function commodusKit(B) {
   const fur = (p) => { const f = 0.8 + 0.3 * Math.abs(Math.sin(p[0] * 300 + p[1] * 520) * Math.sin(p[2] * 410 - p[1] * 260)); return [f, f, f]; };
   /* the hood: over the crown, the back and the sides of the head down the nape; the face stays bare */
   out.push(K.shellFrom('hood4', (p, g) => { if (g !== GI.H && !(g === GI.T && p[1] > 1.45 && p[2] < 0.0)) return -1; const lp = hl(p);
-    const thr = lp[2] > 0.035 ? 0.07 : lp[2] > -0.01 ? 0.0 : -0.14; return Math.min(lp[1] - thr, 0.03); }, fur, 0.015, { mat: mat('#b88a48') }));
+    const thr = lp[2] > 0.035 ? 0.16 : lp[2] > -0.01 ? 0.05 : -0.14; return Math.min(lp[1] - thr, 0.03); }, fur, 0.015, { mat: mat('#b88a48') }));
   /* armour: banded torso (lorica segmentata) + shoulder bands; seams dark, a front closure line */
   out.push(K.shellFrom('seg4', (p, g) => { if (g === GI.T) return Math.min(p[1] - 1.06, 1.475 - p[1], 0.03); if ((g === GI.AL || g === GI.AR) && Math.abs(p[0]) < 0.3) return Math.min(p[1] - 1.31, 0.03); return -1; },
     (p) => { const f = (((1.48 - p[1]) / 0.043) % 1 + 1) % 1; let v = f < 0.13 ? 0.42 : 0.86 + 0.14 * (1 - f); if (Math.abs(p[0]) < 0.007 && p[2] > 0 && p[1] < 1.3) v *= 0.55; return [v, v, v]; }, 0.013, { mat: mat('#d6d9de') }));
@@ -113,7 +113,7 @@ function commodusKit(B) {
   /* the lion's upper face over his brow (sculpted bits riding the head bone) */
   const PEL = K.makeToon('#b88a48'), MANE = K.makeToon('#7a4e26'), DK = K.makeToon('#2a1a12'), TOOTH = K.makeToon('#efe6cc');
   /* round 5 (3a): the whole lion head sits higher and a little further back on his crown (FY/FZ), so the board camera sees his face under the jaw */
-  const FY = 0.045, FZ = -0.03; const at = (x, y, z) => [HO[0] + x * hs, HO[1] + (y + FY) * hs, HO[2] + (z + FZ) * hs];
+  const FY = 0.17, FZ = -0.05; const at = (x, y, z) => [HO[0] + x * hs, HO[1] + (y + FY) * hs, HO[2] + (z + FZ) * hs];
   const blob = (r, a, b, c, m, p, look) => { const g = new THREE.SphereGeometry(1, 18, 12); g.scale(a, b, c); const q = K.rigid(g, m, 'he', p, look || null); out.push(q); return q; };
   /* round 4 (his 3a): a BIGGER lion face that reads at board size — sitting HIGH on his head like a pelt hood (his own face stays bare below
      its upper jaw): a long nose bridge to a broad dark nose (a lion, not a bear), heavy brow, pale muzzle + whisker pads, dark eye sockets, small

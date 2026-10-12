@@ -416,3 +416,5 @@ The comparison side comes from the committed round-4 sheets. Tholo and Commodus 
 1. **Clasps from behind:** a) as is · b) tilt them back so they also read from behind
 2. **The cape in the swing frames:** a) as is (7 cm, never shows red) · b) 4 cm there too, accepting a possible fleck (none seen at 4 cm in idle/walk)
 3. **Commodus:** a) as is · b) lift the lion higher still, so his eyes show (it then sits more like a hat)
+
+final: lion head lifted like a hat — his 3a (FY 0.17, FZ -0.05, hood thresholds 0.16/0.05).

@@ -34,9 +34,9 @@
     "die3",
     "die4"
    ],
-   "ms": 82501,
-   "sculptMs": 22938,
-   "renderMs": 59347,
+   "ms": 40348,
+   "sculptMs": 7924,
+   "renderMs": 32308,
    "tris": 36796,
    "verts": 18313,
    "h": 0.32,
@@ -82,8 +82,8 @@
     "die3",
     "die4"
    ],
-   "ms": 723945,
-   "clothMs": 69,
+   "ms": 409330,
+   "clothMs": 64,
    "kb": 529.6,
    "parts": [
     {
@@ -146,9 +146,9 @@
   "commodus": {
    "key": "commodus",
    "meta": [
-    182,
+    188,
     203,
-    91,
+    94,
     129.6,
     23
    ],
@@ -177,17 +177,17 @@
     "die3",
     "die4"
    ],
-   "ms": 483196,
-   "clothMs": 32,
-   "kb": 562.9,
+   "ms": 531521,
+   "clothMs": 72,
+   "kb": 555.3,
    "parts": [
     {
      "name": "commodus",
      "meta": [
       112,
-      150,
+      156,
       56,
-      118.6,
+      124.6,
       10
      ],
      "rows": [
@@ -202,15 +202,15 @@
       "walk4",
       "walk5"
      ],
-     "kb": 234.3,
-     "decodedMB": 5.13
+     "kb": 259.7,
+     "decodedMB": 5.33
     },
     {
      "name": "commodus_act",
      "meta": [
-      182,
+      188,
       203,
-      91,
+      94,
       129.6,
       13
      ],
@@ -229,12 +229,12 @@
       "die3",
       "die4"
      ],
-     "kb": 314.9,
-     "decodedMB": 14.66
+     "kb": 308.4,
+     "decodedMB": 15.14
     }
    ],
-   "decodedMB": 25.93,
-   "idleWalkMB": 11.28,
+   "decodedMB": 26.79,
+   "idleWalkMB": 11.65,
    "frames": 23,
    "pxmm": 3.143
   }
