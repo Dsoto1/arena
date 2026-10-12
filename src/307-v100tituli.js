@@ -118,7 +118,7 @@ function tit100State(e,mode,D){const none={won:'',prog:null,hint:''};try{
     return none}
   if(mode==='online'){const O=D.onl;if(!O)return {...none,hint:_T('open Online to see your Domus')};
     if(e.kind==='imm'){const g=O.glads.find(c=>typeof onlImmortalis88==='function'&&onlImmortalis88(c));if(g)return {won:g.name||'',prog:null,hint:''};const best=O.glads.reduce((m,c)=>Math.max(m,c.survived|0),0);return {won:'',prog:[best,25],hint:''}}
-    if(e.kind==='season')return {...none,hint:_T('shown on your house card')};
+    if(e.kind==='season'){const hs=(O.dg.tit100||[]).filter(x=>x&&x.k===e.onl);if(hs.length)return {won:`${hs[hs.length-1].glad||''} · ${String(hs[hs.length-1].s||'').replace(/^S/,_T('Season '))}${hs.length>1?' · ×'+hs.length:''}`,prog:null,hint:''};return {...none,hint:_T('shown on your house card')}}
     const t=O.got[e.onl];if(t)return {won:`${t.glad||''}${(t.x|0)>1?' · ×'+t.x:''}`,prog:null,hint:''};
     if(e.rank){const g=O.glads.reduce((m,c)=>Math.max(m,typeof ONLC!=='undefined'&&ONLC.gloryOf?ONLC.gloryOf(c):0),0);return {won:'',prog:[Math.min(Math.round(g),e.rank.glory),e.rank.glory],hint:''}}
     if(e.need){const best=O.glads.reduce((m,c)=>Math.max(m,c.survived|0),0);return {won:'',prog:[best,e.need],hint:''}}
@@ -163,7 +163,7 @@ async function tit100AnnalsHTML(h){const i=h.indexOf('<div class="achgrid">');if
   const grid=`<div class="wd100tit t100ann">${T.map(x=>tit100Plaque(x.e,x.st)).join('')}</div>`;
   return (hi>=0&&hi<i&&h.slice(hi,i).indexOf('</h4>')>=0?h.slice(0,hi)+head:h.slice(0,i))+grid+h.slice(j)}
 /* (3) the online Domus trophy shelf: plaque art instead of emoji */
-function tit100OnlShelf(list,empty){const T=(list||[]).slice().sort((a,b)=>(b.at||0)-(a.at||0));const nm=t=>t.n||(typeof ONLC!=='undefined'?ONLC.trophyName(t.k):t.k);
+function tit100OnlShelf(list,empty){const seas=((typeof ONL82!=='undefined'&&ONL82.dg&&ONL82.dg.tit100)||[]).map(x=>({k:x.k,n:x.n,at:x.at,glad:x.glad,x:1,s:x.s}));list=(list||[]).concat(seas);const T=list.slice().sort((a,b)=>(b.at||0)-(a.at||0));const nm=t=>t.n||(typeof ONLC!=='undefined'?ONLC.trophyName(t.k):t.k);
   const art=t=>{const e=tit100ForOnl(t.k);return e?e.art(48):tit100Laurel({},48)};
   return `<div class="tr83 t100sh"><div class="tr83-h">${_T`Tituli <small class="rc-sub">${T.length}</small>`}</div>${T.length?`<div class="tr83-shelf">${T.map(t=>`<div class="tr83-t" data-t100k="${tit100E(t.k)}" title="${tit100E(_T(nm(t)))}${t.glad?' · '+tit100E(t.glad):''}"><span class="tr83-ic t100ic">${art(t)}${(t.x|0)>1?`<i>×${t.x}</i>`:''}</span><b>${tit100E(_T(nm(t)))}</b><small>${tit100E(typeof date83==='function'?date83(t.at):'')}${t.glad?' · '+tit100E(t.glad):''}</small></div>`).join('')}</div>`:`<p class="rc-sub tr83-none">${empty||_T('No Tituli yet — first Ranked wins, ranks reached, Commodus or Tholo slain.')}</p>`}</div>`}
 /* new online trophy keys since the Domus was first read this session → the reveal */
@@ -191,6 +191,7 @@ if(tit100On()){
   if(typeof imm88Stamp==='function'){const base=imm88Stamp;imm88Stamp=function(g){const had=!!(g&&g.imm88);const r=base.apply(this,arguments);try{const w=W_();const pm=me();
     if(!had&&g&&g.imm88&&pm&&g.contract&&g.contract.mgr===pm.id&&!w.tutorial)tit100Reveal(tit100ById('immortalis'),g.name)}catch(x){}return r}}
   const st=document.createElement('style');st.textContent=`
+.wd100tp:not(.lock) b,.wd100tp:not(.lock) .sb{background:#f3e0b0;color:#1e0e02;text-shadow:none;border-radius:3px;padding:0 6px;box-sizing:border-box}.wd100tp:not(.lock) .sb{color:#3a2208}
 .wd100tp .art img.t100a{max-height:100px;max-width:90%;filter:drop-shadow(0 3px 4px #000)}.wd100tp .art svg.t100a{max-width:90%}
 .wd100tp.lock .art img.t100a,.wd100tp.lock .art svg.t100a,.wd100tp.lock .art svg.medal100{filter:grayscale(1) brightness(.32) drop-shadow(0 0 1px #8a7a62);opacity:.75}
 .wd100tp .art .medal100{width:96px;height:96px}.wd100tp .art img.t100sr{border-radius:50%}

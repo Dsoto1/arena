@@ -1671,6 +1671,9 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     {const base=R['house.card'];R['house.card']=async(d,ctx)=>{const r=await base(d,ctx);try{if(r&&r.now&&r.now.st==='room'&&r.domus&&r.domus.id){const D=await domusGet(r.domus.id);
         const R0=D&&D.owner?roomOfAcct(await lobbies(),D.owner):null;if(R0)r.now={...r.now,room:R0.id,code:B.roomCode100(R0.id),ranked:!!R0.ranked,ev:R0.ev,seated:(R0.players||[]).length,seats:R0.seats|0}}}catch(e){}return r}}}
   /* ══════════ end of v1.0 LOBBY ROOM ══════════ */
+  /* ══════════ v1.0 TITULI ══════════ the house's season Tituli on its own Domus (same shape house.card uses) */
+  {const base=R['domus.get'];R['domus.get']=async(d,ctx)=>{const o=await base(d,ctx);try{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);const tit=(D&&D.tit100)||[];if(tit.length)o.tit100=tit.slice(-6)}catch(e){}return o}}
+  /* ══════════ end of v1.0 TITULI ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);

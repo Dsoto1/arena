@@ -92,6 +92,25 @@ out.ph2=await pp.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   o.sw=document.documentElement.scrollWidth<=innerWidth+1&&[...document.querySelectorAll('#mBody .t100p')].every(p=>p.getBoundingClientRect().right<=innerWidth+1);return o});
 ok(out.ph2.n>=13&&out.ph2.sw,'7 phone 390: the Annals Tituli fit '+JSON.stringify(out.ph2));
 if(SHOT){await pp.evaluate(()=>{const p=document.querySelector('#mBody .t100p');if(p)p.scrollIntoView()});await pp.screenshot({path:path.join(SHOT,'ti_annals_390.png')})}
+/* 8 · v1.0 follow-ups: the season titulus is EARNED on my own Domus (domus.get carries tit100, mock) · plaque names pass WCAG AA */
+const pf=await boot({width:1440,height:900});await pf.evaluate(ARTCHK);
+out.fu=await pf.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};
+  const w={accounts:{me:{domus:'d1'}},domus82:{d1:{id:'d1',n:'Domus Test',name:'Domus Test',tit100:[{s:'S1',k:'s100v',n:'Victor of the Season',place:1,c:'c1',glad:'Brutus',at:Date.now()}]}},chars:{},lobbies:{}};
+  let r=null;try{r=MOCK_ROUTES['domus.get'](w,{},'me')}catch(e){o.err=e.message}
+  o.mock=!!r&&(r.tit100||[]).length===1&&r.tit100[0].k==='s100v';
+  ONL82.dg=r||{};const box=document.createElement('div');box.innerHTML=onl83Trophies([]);document.body.appendChild(box);
+  const t=box.querySelector('[data-t100k="s100v"]');o.shelf=!!t&&!!t.querySelector('svg')&&/Brutus/.test(t.textContent);box.remove();
+  const e=tit100ForOnl('s100v');const st=e&&tit100State(e,'online',{onl:tit100OnlD()});o.state=!!st&&/Brutus/.test(st.won||'');
+  const lin=c=>{c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4)},L=h=>{const n=parseInt(h.slice(1),16);return .2126*lin(n>>16)+.7152*lin((n>>8)&255)+.0722*lin(n&255)},cr=(a,b)=>{const x=L(a),y=L(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+  const hex=c=>{const m=c.match(/\d+/g).map(Number);return '#'+m.slice(0,3).map(v=>v.toString(16).padStart(2,'0')).join('')};
+  const host=document.createElement('div');host.innerHTML=tituli100Plaque({art:'<svg></svg>',name:'Prima Palma',sub:'Won it',won:'Brutus'})+tituli100Plaque({art:'<svg></svg>',name:'Prima Palma',sub:'Won it',won:''});document.body.appendChild(host);
+  const [pe,pl]=host.querySelectorAll('.wd100tp');o.cr={};
+  for(const [k,p] of [['earned',pe],['lock',pl]])for(const sel of ['b','.sb']){const el=p.querySelector(sel),cs=getComputedStyle(el);
+    const bg=k==='lock'?['#5a4a3a','#3a3028','#2e261e']:[hex(cs.backgroundColor)];
+    o.cr[k+sel]=Math.min(...bg.map(x=>cr(hex(cs.color),x)))}
+  host.remove();return o});
+ok(out.fu.mock&&out.fu.shelf&&out.fu.state,'8 season titulus earned on my own Domus (mock domus.get → shelf + online tab) '+JSON.stringify(out.fu));
+ok(Object.values(out.fu.cr).every(v=>v>=4.5),'8 plaque name + subtitle >= 4.5:1 earned and locked '+JSON.stringify(out.fu.cr));
 await b.close();
 console.log(JSON.stringify(out));console.log('ERRS',JSON.stringify(errs));if(miss.length){console.log('MISSING:\n'+miss.join('\n'));process.exit(1)}if(errs.length)process.exit(1);console.log('ALL OK')})();
 function TITN(cat,m){return cat.modes[['manager','playnow','online'].indexOf(m)]}
