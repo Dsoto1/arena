@@ -97,7 +97,7 @@ function omenStart(){
 let CROWD_CACHE=[];
 /* loadCrowd — loads the regulars into CROWD_CACHE (older ones get a home city). */
 async function loadCrowd(){CROWD_CACHE=await Store.list('crowd').catch(()=>[]);
-  for(const r of CROWD_CACHE)if(!r.city){r.city=pickOne(LOCATIONS.filter(Boolean)).n} // older regulars get a home city
+  for(const r of CROWD_CACHE)if(!r.city){{const Ls=LOCATIONS.filter(Boolean);r.city=Ls[Math.floor(Math.random()*Ls.length)].n}} // older regulars get a home city
   return CROWD_CACHE}
 /* ---- the crowd's personality, tuned by the player and saved in this browser ----
    act: how much the stands interact at all (stones, offerings, moves, chants, emotes).

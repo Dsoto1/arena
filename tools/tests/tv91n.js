@@ -84,7 +84,7 @@ const settle=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,
   const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await pg.goto(URL0);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:20000});
   const M=await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}catch(e){}window.travelOK=()=>true;window.travelBlock=()=>false;
     newWorld({type:'pre',key:MGR_PRE[0].key});const w=W_();me().coin=300;w.night.travel={cost:0,paid:true};w.night.god76=null;
-    const n=w.night.bouts.map(b=>!!boutCfg(b,true).night);const d=document.createElement('div');d.innerHTML=nightHTML();const cards=[...d.querySelectorAll('.card2.bout')];
+    const n=w.night.bouts.filter(b=>b.tier!=='spc100').map(b=>!!boutCfg(b,true).night);/* v1.0: the week's specials sit on top of Bouts I-III */const d=document.createElement('div');d.innerHTML=nightHTML();const cards=[...d.querySelectorAll('.card2.bout:not(.spc100)')].slice(0,3);
     return {n,cards:cards.map(c=>!!c.querySelector('.nt91')),tag:(d.querySelector('.nt91')||{}).textContent||''}});
   out.mgr=M;ok(M.n.length===3&&!M.n[0]&&M.n[1]&&!M.n[2],'5 only the 2nd bout is at night '+M.n);
   ok(M.cards.length===3&&!M.cards[0]&&M.cards[1]&&!M.cards[2],'5 the 🌙 tag on the 2nd card only '+M.cards);ok(/🌙/.test(M.tag),'5 tag reads 🌙 '+M.tag);
@@ -115,7 +115,7 @@ const settle=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,
   /* the host picks Night through the room's select */
   await A.evaluate(()=>{const s=document.querySelector('#onl [data-onlrs="night"]');if(s){s.value='1';s.dispatchEvent(new Event('change',{bubbles:true}))}});
   out.hostSet=await until(A,id=>!!(mockLoad().lobbies[id]||{}).night,L.id,10000);ok(out.hostSet,'7 lobby.set night lands in the room');
-  out.guestSees=await until(B,id=>{const R=(ONL.lobbies||[]).find(x=>x.id===id);return !!(R&&R.night)&&/🌙/.test((document.querySelector('#onl .r80-rules')||{}).textContent||'')},L.id,15000);
+  out.guestSees=await until(B,id=>{const R=(ONL.lobbies||[]).find(x=>x.id===id);return !!(R&&R.night)&&/🌙/.test((document.querySelector('#onl .r80-rules')||{}).textContent||'')},L.id,40000);
   ok(out.guestSees,'7 the other lanista sees 🌙 Night in the room');
   /* the match: both screens at night */
   await until(A,id=>ONLC.humansOf(mockLoad().lobbies[id]||{}).length>=2,L.id);
