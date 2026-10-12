@@ -2538,7 +2538,7 @@ function avatarSVG(player) {
       cy: 238
     }
   };
-  let s = `<svg viewBox="0 0 150 332" role="img" aria-label="${_T`${player.name}'s body: health and armor by location`}">`;
+  let s = `<svg viewBox="0 0 150 332" role="img" aria-label="${_T`${esc(player.name)}'s body: health and armor by location`}">`;
   s += `<defs><linearGradient id="met${player.id}" x1="0" x2="1"><stop offset="0" stop-color="#7d868f"/><stop offset=".45" stop-color="#e6ebef"/><stop offset="1" stop-color="#8a939c"/></linearGradient></defs>`;
   s += `<image href="${typeof assetURL === 'function' ? assetURL('avatar.png') : ASSET + 'avatar.png'}" x="7" y="6" width="136" height="301" opacity="0.96"/>`;
   // v0.39: custom armor fitted on the avatar in the Armor forge is WORN there (mirrored on the left side)

@@ -38,7 +38,7 @@ function morph95Same(a,b){if(a.nodeType!==b.nodeType)return false;if(a.nodeType!
 /* morph95Attrs — the panel itself: exactly the attributes the render left on its twin */
 function morph95Attrs(o,n){
   for(const a of Array.from(o.attributes)){if(!n.hasAttributeNS(a.namespaceURI,a.localName))o.removeAttributeNS(a.namespaceURI,a.localName)}
-  for(const a of Array.from(n.attributes)){if(o.getAttributeNS(a.namespaceURI,a.localName)!==a.value){if(a.namespaceURI)o.setAttributeNS(a.namespaceURI,a.name,a.value);else o.setAttribute(a.name,a.value)}}}
+  for(const a of Array.from(n.attributes)){if(o.getAttributeNS(a.namespaceURI,a.localName)!==a.value){try{if(a.namespaceURI)o.setAttributeNS(a.namespaceURI,a.name,a.value);else o.setAttribute(a.name,a.value)}catch(e){}}}}
 /* inside a panel each node remembers the attributes its template gave it (_p95). A patch changes only what the TEMPLATE changed, so what
    the page's observers add later stays on kept nodes: 220's contrast lift (style + data-lift93) and aria names, 138's data-en84… */
 function p95Tpl(n){const m={};for(const a of n.attributes)m[a.name]=a.value;return m}
@@ -46,7 +46,7 @@ function p95Rec(n){if(n.nodeType!==1)return;n._p95=p95Tpl(n);const all=n.getElem
 function morph95TplAttrs(o,n){const prev=o._p95,cur=p95Tpl(n);
   if(!prev)morph95Attrs(o,n);
   else{for(const k in prev)if(!(k in cur)&&o.hasAttribute(k))o.removeAttribute(k);
-    for(const a of n.attributes)if(prev[a.name]!==a.value||!o.hasAttribute(a.name)&&!(a.name in prev)){if(a.namespaceURI)o.setAttributeNS(a.namespaceURI,a.name,a.value);else o.setAttribute(a.name,a.value)}}
+    for(const a of n.attributes)if(prev[a.name]!==a.value||!o.hasAttribute(a.name)&&!(a.name in prev)){try{if(a.namespaceURI)o.setAttributeNS(a.namespaceURI,a.name,a.value);else o.setAttribute(a.name,a.value)}catch(e){/* a bogus name from an unescaped template: skipped, never thrown */}}}
   o._p95=cur}
 function morph95Node(o,n){if(o.nodeType!==1){if(o.nodeValue!==n.nodeValue)o.nodeValue=n.nodeValue;return}
   if(o.isEqualNode(n)){P95.n.kept++;return}
