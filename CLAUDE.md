@@ -1245,11 +1245,11 @@ One global script; files are concatenated in order. Later "version modules" patc
   `ok`, `x`), special bout cards `.spc100` (Bet/Watch/Fight/Simulate kept, our Enter/Withdraw), tracker chips `.bt85.bt100s` (day ★). mgrsim: `ANY100=off|play`
   (play = the scripted lanista books every special). 1 season × 8 runs base: off 1104 coin / 6.1 wins · rivals only 1031 / 6.3 · player books all 1045 / 7.5 (no exploit).
   No save migration (new fields only on the current night). Kill switch localStorage flavius_any100off=1 (no new specials, no week card). Test `tv100ae`.
-- **v1.0 PLAY NOW IN SANDSTONE (300-v100pn, last before 08-setup; his mock tools/plans/mock100/playnow.html + NOTES-playnow.md A1–A5 + the event CAROUSEL (V99 2b); shots tools/plans/pn100/ via shots.js):**
+- **v1.0 PLAY NOW IN SANDSTONE (300-v100pn, last before 08-setup; his mock tools/plans/mock100/playnow.html + NOTES-playnow.md A1–A5 + the event ROW (V99 2b, A1b: a plain sideways row, not a ring); shots tools/plans/pn100/ via shots.js):**
   a last setupBody wrapper `pn100` over 247's pn98 page RE-HOMES controls (ids/data-*/handlers/CFG untouched): top bar "Play Now" · tabs · date chip (Follow removed) ·
   summary · 🎲 · #goBtn as the SANDSTONE primary `.sb100.pri` (porphyry + gold leaf; `.sb100` = secondary, `.dan` carbon black, sizes l/m/s — shared CSS); "THE EVENT"
-  panel `.pn100ev`: CAROUSEL `.pn100car` (a RING — the picked card in the middle, `[data-pnev]` = 106's own click → #evSel change, ‹ › `[data-pn100step]`, arrows/Home/End
-  move a roving focus, Enter picks, focus restored after the redraw; `pn100Mount` (MutationObserver on #mBody) slides from the old position, Reduce motion = jump;
+  panel `.pn100ev`: EVENT ROW `.pn100car` > `.pn100trk` (all cards one size in the list's order, picked one gold-outlined, scrolls sideways by wheel/touch/trackpad; `[data-pnev]` = 106's own click → #evSel change, ‹ › `[data-pn100step]` SCROLL the row (don't pick), arrows/Home/End
+  move a roving focus, Enter picks, focus restored after the redraw; `pn100Mount` (MutationObserver on #mBody) scrolls the picked card into view, no slide;
   #evSel kept hidden in `.pn100sel`), then card | map (#mapbox, #locSel, #roll6/#roll12, class modifiers) | name, blurb, ROUNDS TABLE `pn100Rounds` (END_TXT, RULE_INFO,
   ZONES), record. OPTIONS `.pn100opt`: FOLLOW THE SCHEDULE switch `[data-pn100follow]` = `CFG.follow100` (on: this week's ev + loc, LOCKED — lockbar + Unlock, cards `.lk`,
   map dimmed + pill, #locSel/rolls disabled; clicks blocked on a WINDOW capture listener because 106's [data-pnev] handler is a document capture; `pn100Follow()` drops it
