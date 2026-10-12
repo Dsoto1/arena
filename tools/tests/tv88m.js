@@ -18,7 +18,7 @@ o.i=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   w.specialLog.pop();g.ovr=40;r.permanent=mgrImmortalis88(g);g.ovr=95;
   /* the frame: roster plaque + row + card */
   MGR.tab='roster';MGR.lsel=g.id;MGR_REDRAW();await W8(500);
-  const pl=document.querySelector(`.st95chip[data-id="${g.id}"]`);r.plaque=!!(pl&&pl.classList.contains('imm88')&&pl.classList.contains('imm88m')&&pl.querySelector('.imm88lf'));
+  const pl=document.querySelector(`.st95chip[data-id="${g.id}"], .rm100st .rm100rd[data-id="${g.id}"], .rm100bench [data-id="${g.id}"]`); /* v1.0: 298 starter tablet face */r.plaque=!!(pl&&pl.classList.contains('imm88')&&pl.classList.contains('imm88m')&&pl.querySelector('.imm88lf'));
   const row=document.querySelector(`tr[data-mg="lsel"][data-id="${g.id}"]`);r.row=!row||row.classList.contains('imm88m');
   r.card=!!document.querySelector('#mgrBody .card2.imm88.imm88m .imm88chip');
   const other=rosterOf(m).find(x=>x.id!==g.id);r.otherPlain=!other||!document.querySelector(`.st95chip[data-id="${other.id}"].imm88m`);

@@ -29,7 +29,7 @@ for(let iter=0;iter<200;iter++){
   switch(k){
    case 'welcome':case 'tabs':case 'morale':case 'armory':case 'interest':case 'bouts':case 'city':case 'results':case 'impinfo':case 'schedinfo':case 'ycard':case 'ydoc':case 'ytrials':await next();break;
    case 'roster':guard=await pg.evaluate(()=>{document.querySelector('[data-mg="tab"][data-id="recruit"]').click();return MGR.tab});await clk('[data-mg="tab"][data-id="roster"]');break;
-   case 'lsel':await pg.evaluate(()=>document.querySelector(`tr[data-mg="lsel"][data-id="${MTUT.B}"]`).click());break;
+   case 'lsel':await pg.evaluate(()=>document.querySelector(`tr[data-mg="lsel"][data-id="${MTUT.B}"], .rm100list [data-mg="lsel"][data-id="${MTUT.B}"]`).click() /* v1.0: 298's list row */);break;
    case 'meal':await pg.evaluate(()=>document.querySelector(`[data-mg="meal"][data-id="${MTUT.B}"]`).click());break;
    case 'recruit':await clk('[data-mg="tab"][data-id="recruit"]');break;
    case 'fa':await pg.evaluate(()=>{const r=[...document.querySelectorAll('#mgrPane tr[data-mg="sel"]')];(r[2]||r[0]).click()});break;
@@ -46,7 +46,7 @@ for(let iter=0;iter<200;iter++){
    case 'yplus':{const r=await pg.evaluate(()=>{const b=document.querySelector(`#mgrPane [data-y92c="${MTUT.B}"] [data-y92s$="|1"]:not([disabled])`);if(!b)return null;b.click();return b.dataset.y92s});
      yard={plus:r};break}
    case 'ylock':case 'ydlock':await pg.evaluate(()=>{const b=document.querySelector(`#mgrPane [data-y92lock="${MTUT.B}"]`);b&&b.click()});break;
-   case 'ydrill':{await pg.evaluate(()=>{const b=document.querySelector(`#mgrPane [data-y92c="${MTUT.B}"] .y92pb:not([disabled])`);b&&b.click()});
+   case 'ydrill':{await pg.evaluate(()=>{const b=document.querySelector(`#mgrPane [data-y92c="${MTUT.B}"] .y92pb:not([disabled]), #mgrPane .rm100drills [data-y92pre^="${MTUT.B}|"]:not([disabled])`) /* v1.0: 298's drill plates */;b&&b.click()});
      yard.after=await pg.evaluate(()=>{const P=thPlan(mtW());const y=P.y92&&P.y92[MTUT.B];return y?{L:y92Sum(y.L),Q:y92Sum(y.Q),pre:!!y.pre}:null});break}
    case 'night':await clk('[data-mg="tab"][data-id="night"]');break;
    case 'enter0':await pg.evaluate(()=>{const s=document.getElementById('ent0');if(s){s.value=MTUT.A;document.querySelector('[data-mg="enter"][data-id="0"]').click()}});break;

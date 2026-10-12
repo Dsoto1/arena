@@ -82,7 +82,11 @@ await pm.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if(CUR
   MGR.tab='practice';MGR.tr92=null;MGR_REDRAW();for(let i=0;i<40&&!document.querySelector('.y92c');i++)await W8(100);return true});
 /* C2 */
 await pm.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));MGR.tab='practice';MGR_REDRAW();for(let i=0;i<40&&!document.querySelector('.y92trials');i++)await W8(100);await W8(300)});
-out.c2=await pm.evaluate(()=>{const T=document.querySelector('.y92trials');const tiles=[...T.querySelectorAll('.y92t')];const side=document.querySelector('.y99side').getBoundingClientRect();const grid=document.querySelector('.y92grid').getBoundingClientRect();
+out.c2=await pm.evaluate(()=>{const T=document.querySelector('.y92trials');const tiles=[...T.querySelectorAll('.y92t')];const rm=!!T.closest('.rm100');
+  /* v1.0 298 (his approved rooms mock): Trials = a full-width strip of three big plates with art — no side column */
+  if(rm){const tops=new Set(tiles.map(t=>Math.round(t.getBoundingClientRect().top)));const D=document.querySelector('.rm100dos').getBoundingClientRect();
+    return {rm,n:tiles.length,art:tiles.every(t=>{const f=t.querySelector('.y92ta .rm100fr');return !!f&&f.getBoundingClientRect().height>60}),cost:tiles.every(t=>/⏳/.test(t.textContent)&&t.querySelectorAll('.y92tl').length>=3),right:tops.size===1&&T.getBoundingClientRect().width>=D.width*.9,th:[]}}
+  const side=document.querySelector('.y99side').getBoundingClientRect();const grid=document.querySelector('.y92grid').getBoundingClientRect();
   return {n:tiles.length,art:tiles.every(t=>getComputedStyle(t.querySelector('.y92ta')).display==='none'),cost:tiles.every(t=>/⏳/.test(t.textContent)&&t.querySelectorAll('.y92tl').length>=3),right:side.left>=grid.left+grid.width*.5,h:Math.round(T.getBoundingClientRect().height),th:tiles.map(t=>Math.round(t.getBoundingClientRect().height))}});
 ok(out.c2.n===3&&out.c2.art&&out.c2.cost,'C2a three tidy tiles with cost + effect '+JSON.stringify(out.c2));ok(out.c2.right,'C2b in the right column');ok(out.c2.th.every(h=>h<=135),'C2c tiles compact '+out.c2.th);
 if(SHOT){await pm.screenshot({path:path.join(SHOT,'c2_yard.png')});const el=await pm.$('.y92trials');if(el)await el.screenshot({path:path.join(SHOT,'c2_trials.png')})}

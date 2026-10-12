@@ -1192,6 +1192,27 @@ One global script; files are concatenated in order. Later "version modules" patc
   + Ledger panel) prints "wages N (−R Clerk)". Roster + Armory banners = `scene100('team'|'armory','banner')` (`roomScene73` wrapper, img.lu2ban).
   COUNSEL: the Consilium's head lights ONLY for a warning/decision this week (`lu2Counsel`: treasury in debt, wages cover <3 weeks, a loan payment due, a rival challenge letter waiting; plus 66's own 'consil-' advice letter via the mail path) — quiet week = dark; `w.lu2c` = week read (key 'lu2:consil' → counsel panel); the counsel stays readable from his popover any time; "The Consilium's counsel" button in his popover,
   "📜 Ledger" in the Clerk's; the links row keeps only 🎓 Schooling. Kill switch localStorage flavius_ludus2100off=1 (tv100l runs with it). Test `tv100l2`.
+- **v1.0 THE MANAGER ROOMS (298-v100rooms, last before 08-setup; his mock tools/plans/mock100/rooms.html + NOTES-rooms.md round 4, shots
+  tools/plans/rooms100/ via shots.js):** Roster · Training Yard · Infirmary in the recruit3 look. A final mgrHTML wrapper RE-HOMES the finished
+  page (live nodes move, every data-* handler / MGR state stays): compact fresco banner `.rm100ban` (the room's advisor as a round head
+  `.rm100adv` — Barracks master / Doctore / Medicus — + the count box = the old `.roomstat`), a LIST column `.rm100list` and a DOSSIER
+  `.rm100dos` (container rm100d; ≤760 two columns, ≤560 one; ≤980 px viewport the list goes on top). ROSTER (`.rm100.st95list`): rows
+  `[data-mg="lsel"]` (slot I/II/III/B/L · face · Ovr · W–L · fatigue dot · ⚕/✂ · weeks); `.depth.rm100stt` = the three `.st95slot` nodes as
+  starter tablets (their Change… + 🪑 Bench kept in a foot); portrait block (17's header line), ratings (17's `.ratgrid` + Overall),
+  personality · record · scars (g.hist wound lines) · last (g.recent); Bench & loans (⭐ Promote / Lend… moved from the old rows, ⚕ Ward =
+  data-inf90go, 70's ⇠ Recall); the contract TABULA `.rm100con` (Clerk's line, wage, weeks, `.cl76` clauses, askWage, ✍ = data-mg extend,
+  ⇢ Lend, ✕ release); Keeping him (the card's `.acts`) + a fold with the rest of the card. ST95.tab is forced to 'chart' while rendering.
+  YARD: MGR.tr92 = the dossier fighter (rows = 269's `[data-y99sel]`; the lesson forces MTUT.B); his `.y92c` beside a portrait, the other
+  cards in a hidden `.rm100hold` (buttons still answer); `.y92doc.rm100doc` (bronze head = CSS filter, intensity as a segmented row);
+  the week's plan tabula `.rm100plan` (moved [data-y92same] / [data-y92care] / [data-y92all]); DRILL PLATES `.rm100drills` = buttons
+  `[data-y92pre="id|k"]` only when allowed (else `data-rm100pre` + disabled with the reason; the dossier card's own `.y92pb` are removed);
+  `.y92trials.rm100tri` = three big plates (art replaced). INFIRMARY (`.rm100.rm100-ward.iv90`): 183's `.iv90list` rows; `.rm100w3.iv90mid`
+  = patient (the HP/fatigue bars moved in) · MARBLE STATUE (`rm100Statue`: avatar image greyed to marble, a lost limb MASKED off the image +
+  211's severed path as a pale ghost, the wound = a radial spot `.rm100spot`; 183's `.glow90` kept but hidden) · the road back tabula (fit
+  weeks read from the tiles); `.iv90care.rm100care` = plates (its `.iv90s` sections display:contents, every button gets art). Art = 294a's
+  scene100 + mini_<cls>.webp + council faces (no new assets). 36-mtutor spots patched: 'lsel' → the list row, 'ydrill' → `.rm100drills`.
+  Old layout tests run behind the kill switch (tv84r, tv99y); tv93t/tv95c read the new rows. Kill switch localStorage
+  flavius_rooms100off=1. Test `tv100rm`.
 - **v1.0 MAP INSETS (295-v100maps, last before 08-setup; his "all 7", backlog "MAP INTEGRATION"; display only):** ONE helper `mapInset100(o)` → cached
   HTML (`MI100.html` ≤240): an svg whose viewBox crops assets/map.jpg around the places it marks (city x,y = LOCATIONS 0..1, same frame as MAP_PX/290's pins;
   birthplaces beyond the 12 arenas = `MI100_XTRA`, off-map → an edge arrow); pins by kind (host/next lit gold + opacity glow, home blue, sel red, won green,

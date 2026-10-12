@@ -17,7 +17,7 @@ const r8=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   o.n=R.length;o.starters=R.filter(g=>g.slot95).length;o.slots=R.filter(g=>g.slot95).map(g=>g.slot95).sort().join('');o.flag=R.every(g=>!!g.bench===!g.slot95);
   o.filled=R.filter(g=>g.slot95).every(g=>w.night.bouts[g.slot95-1].ents.includes(g.id));o.sbye=sbyeOK76(w)[0]===true&&(w.night.auto95||[]).length===3;
   MGR.tab='roster';MGR_REDRAW();await W8(500);o.chart=document.querySelectorAll('.depth .st95slot').length===3&&!document.querySelector('.depth .dcol84');
-  o.rows=document.querySelectorAll('.st95list tr[data-mg="lsel"]').length===R.length;o.promo=document.querySelectorAll('.st95list [data-st95="promo"]').length;
+  o.rows=document.querySelectorAll('.st95list tr[data-mg="lsel"], .rm100list .rm100lr[data-mg="lsel"]').length===R.length; /* v1.0: 298's list rows */o.promo=document.querySelectorAll('.st95list [data-st95="promo"]').length;
   /* four more fit fighters: a fourth cannot start */
   for(let i=0;i<3;i++){const g=genGlad({ovr:60+i});g.contract={mgr:m.id,wage:5,weeks:8,since:1};w.glads.push(g)}MGR_REDRAW();await W8(400);
   const nb=document.querySelector('.st95list [data-st95="promo"]:not([aria-disabled="true"])');o.fourthDisabled=!nb&&document.querySelectorAll('.st95list [data-st95="promo"][aria-disabled="true"]').length>=1;
