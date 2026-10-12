@@ -243,6 +243,7 @@ if(typeof MOCK_ROUTES!=='undefined'){
   /* leaving (Ranked) */
   {const base=MOCK_ROUTES['match.abandon'];MOCK_ROUTES['match.abandon']=(w,d,me)=>{const L=mL(w,d.id),M=mM(w,d.id);const was=!!(M&&(M.abandoned||{})[me]);const live=M&&M.status!=='done';const r=base(w,d,me);if(L&&L.ranked&&live&&!was)mLv(w,me,'abandon',d.id);return r}}
   {const base=MOCK_ROUTES['match.drop'];MOCK_ROUTES['match.drop']=(w,d,me)=>{const L=mL(w,d.id),M=mM(w,d.id);const who=L&&mSeatAcct(L,d.seat|0);const was=!!(M&&who&&(M.dropped||{})[who]);const r=base(w,d,me);if(L&&L.ranked&&who&&!was&&(M.dropped||{})[who])mLv(w,who,'drop',d.id);return r}}
+  {const base=MOCK_ROUTES['domus.get'];if(base)MOCK_ROUTES['domus.get']=(w,d,me)=>{const o=base(w,d,me);try{const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);const tit=(D&&D.tit100)||[];if(tit.length)o.tit100=tit.slice(-6)}catch(e){}return o}}
   {const base=MOCK_ROUTES['house.card'];if(base)MOCK_ROUTES['house.card']=(w,d,me)=>{const r=base(w,d,me);try{const dom=r&&r.domus&&r.domus.id;const A=Object.values(w.accounts).find(a=>a.domus===dom);const lm=ONLC.leaveMark100(A&&A.lv100,Date.now());if(lm.mark)r.leaver={n:lm.n}}catch(e){}return r}}
   if(Array.isArray(ONLC.GUEST_OK)&&!ONLC.GUEST_OK.includes('season.board'))ONLC.GUEST_OK.push('season.board')}
 
