@@ -105,7 +105,7 @@ ok(out.lay.fv&&out.lay.view==='roster'&&out.lay.file===1&&!out.lay.oldMap2&&out.
 
 /* 5 · the Tituli: trophy art (svg/img), never emoji; season-award progress hidden before week 12 (his 4c); earning one lights it */
 out.tit=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const EMO=/\p{Extended_Pictographic}/u;MGR.tab='trophy';WD100.tf='mgr';MGR_REDRAW();await W8(250);const o={};const w=W_();const q=s=>document.querySelectorAll('#mgrBody '+s);
-  const P=[...q('.wd100tp')];o.n=P.length;o.lib=TROPHY_LIB.length;o.art=P.every(p=>p.querySelector('.art svg,.art img'));o.emoji=P.filter(p=>EMO.test(p.querySelector('.art').textContent)||EMO.test(p.querySelector('b').textContent)).length;
+  const P=[...q('.wd100tp')];o.n=P.length;o.lib=typeof tit100Cat==='function'&&!TIT100.off?tit100Cat().filter(e=>e.modes.includes('manager')).length:TROPHY_LIB.length; /* v1.0 307: the unified Tituli add Immortalis */o.art=P.every(p=>p.querySelector('.art svg,.art img'));o.emoji=P.filter(p=>EMO.test(p.querySelector('.art').textContent)||EMO.test(p.querySelector('b').textContent)).length;
   o.lock=P.filter(p=>p.classList.contains('lock')).length;o.week=w.week;
   /* before week 12: no tally on any season-award plaque, the plaque says it comes at season's end */
   const sea=P.filter(p=>{const d=TROPHY_LIB.find(x=>x.id===p.dataset.wd100tp);return d&&(d.cat==='season'||d.cat==='fun')&&d.id!=='palm_roma'});
