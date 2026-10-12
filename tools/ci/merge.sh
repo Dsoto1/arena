@@ -5,7 +5,10 @@
 # Any other conflict stops the script for a hand merge. Then rebuilds (SYNTAX_OK) and commits.
 set -e; B="$1"; [ -n "$B" ] || { echo "usage: sh tools/ci/merge.sh <branch>"; exit 2; }
 cd "$(dirname "$0")/../.."
+git diff --quiet HEAD -- flavius-arena.html 2>/dev/null || git checkout -q -- flavius-arena.html
 git merge --no-edit "$B" >/dev/null 2>&1 || true
+# a refused merge (dirty files) left nothing to resolve: stop instead of committing an empty merge
+git merge-base --is-ancestor "$B" HEAD 2>/dev/null || [ -f .git/MERGE_HEAD ] || [ -n "$(git rev-parse -q --verify MERGE_HEAD)" ] || { echo "MERGE REFUSED: $B is not merged (dirty working tree?) — git status"; exit 1; }
 C=$(git diff --name-only --diff-filter=U)
 [ -z "$C" ] && { sh build.sh | tail -1; git add -A flavius-arena.html 2>/dev/null; git commit -qm "Merge $B [skip ci]" --allow-empty >/dev/null 2>&1 || true; echo "merged $B (no conflicts)"; exit 0; }
 python3 - "$B" <<'PY'
