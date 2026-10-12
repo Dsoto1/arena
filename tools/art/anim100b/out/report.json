@@ -1,0 +1,65 @@
+{
+ "rig": "/tools/plans/look100/beast5_rig.js",
+ "hum": "/tools/plans/look100/beast5_hum.js",
+ "spider": {
+  "kb": 34.8,
+  "decodedMB": 1.07,
+  "ms": 5641
+ },
+ "totalKB": 3958,
+ "leo": {
+  "kb": 468.6,
+  "decodedMB": 22.89,
+  "ms": 36281
+ },
+ "leaena": {
+  "kb": 366.2,
+  "decodedMB": 12.12,
+  "ms": 20934
+ },
+ "ursa": {
+  "kb": 342.6,
+  "decodedMB": 9.55,
+  "ms": 30688
+ },
+ "brutum": {
+  "kb": 319.1,
+  "decodedMB": 9.55,
+  "ms": 25756
+ },
+ "valencia": {
+  "kb": 298.9,
+  "decodedMB": 11.04,
+  "ms": 15818
+ },
+ "moechus": {
+  "kb": 221.7,
+  "decodedMB": 11.04,
+  "ms": 16702
+ },
+ "glykon": {
+  "kb": 234.6,
+  "decodedMB": 5.05,
+  "ms": 11476
+ },
+ "arenosus": {
+  "kb": 230.3,
+  "decodedMB": 5.05,
+  "ms": 12819
+ },
+ "zora": {
+  "kb": 312.7,
+  "decodedMB": 9.9,
+  "ms": 37959
+ },
+ "tholo": {
+  "kb": 560.7,
+  "decodedMB": 25.02,
+  "ms": 708680
+ },
+ "commodus": {
+  "kb": 568.1,
+  "decodedMB": 20.47,
+  "ms": 1206183
+ }
+}
