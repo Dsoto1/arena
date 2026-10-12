@@ -1510,4 +1510,29 @@ const ONLC=(function(){
   if(Array.isArray(C.GUEST_OK))for(const t of ['season.board'])if(!C.GUEST_OK.includes(t))C.GUEST_OK.push(t);
   Object.assign(C,{ELO100,eloK100,eloExp100,eloPairs100,eloPrefer100,ETA100,etaFold100,eta100,WATCH100,LEAVE100,leaveAdd100,leaveMark100,leaveCooldown100,
     CONN100,connOf100,SEASON100,seasonKey100,seasonTop100,seasonTitulus100,REPORT100,reportWhy100,FX100,fxMs100})})(ONLC);
+/* ===== v1.0 INSIGNIA ===== (his answers 2026-10-12, spec tools/plans/mock100/NOTES-banner.md; the page: 304-v100insig / 304a-v100insigui)
+   The online Domus wears the FULL house design minus sculpt layers (his 4a): domus.look keeps, beside {c1 field, c2 emblem colour, crest},
+   the optional c3 (second dye), pat (pattern), ins (inscription: Roman square capitals ≤ 12, word-filtered — a bad one is dropped silently),
+   trim {gilt,tassels,fringe,bar,topbar,fc}, wear (0..1) and top (the signum topper); crest may be any Insignia emblem (CREST100). Never
+   layers/baked. An old page ignores the new fields (it draws c1/c2/crest as before). No new server texts: the old messages are reused. */
+(function(C){
+  const HEX=/^#[0-9a-fA-F]{6}$/;
+  const PATS100=['plain','clavi','meander','wave','clipeus','laurel','halved'];
+  const CREST100=[...C.CREST89,'bull','capricorn','scorpion','medusa','gladii','rete','palma','murmillo','thraex','manus','spqr','num','sym:hut','sym:amphora','sym:rudis','sym:blades','sym:helm','sym:shield','sym:laurel','sym:eagle'];
+  const TOPS100=['emb','manus','sym:eagle','sym:laurel','palma'];const FC100=['gold','creta','rubia','purpura','c2'];const TRIM_KEYS100=['gilt','tassels','fringe','bar','topbar'];
+  const INS_MAX100=12;
+  /* the inscription as the Romans cut it: upper case, U→V, J→I, letters / digits / · . - space; '' when the word filter objects */
+  function insClean100(s){let v=String(s==null?'':s).toUpperCase().replace(/U/g,'V').replace(/J/g,'I').replace(/[^A-Z0-9·.\- ]/g,'').replace(/\s+/g,' ').trim().slice(0,INS_MAX100);
+    try{if(v&&typeof C.nameBad==='function'&&(C.nameBad(v)||C.nameBad(String(s))||C.nameBad(v.replace(/V/g,'U'))))v=''}catch(e){}return v}
+  function cleanLook100(x){if(!x||typeof x!=='object')throw new Error('Pick the colours and the crest.');if(!HEX.test(String(x.c1||''))||!HEX.test(String(x.c2||'')))throw new Error('Pick two colours.');
+    if(!CREST100.includes(x.crest))throw new Error('Pick one of the printed crests.');
+    const o={c1:String(x.c1).toLowerCase(),c2:String(x.c2).toLowerCase(),crest:x.crest};
+    if(x.c3!=null&&HEX.test(String(x.c3)))o.c3=String(x.c3).toLowerCase();
+    if(PATS100.includes(x.pat)&&x.pat!=='plain')o.pat=x.pat;
+    if(x.ins!=null){const v=insClean100(x.ins);if(v)o.ins=v}
+    if(x.trim&&typeof x.trim==='object'&&!Array.isArray(x.trim)){const t={};for(const k of TRIM_KEYS100)if(typeof x.trim[k]==='boolean')t[k]=x.trim[k];if(FC100.includes(x.trim.fc))t.fc=x.trim.fc;if(Object.keys(t).length)o.trim=t}
+    if(x.wear!=null){const w=Math.round(Math.max(0,Math.min(1,+x.wear||0))*100)/100;if(w>0)o.wear=w}
+    if(TOPS100.includes(x.top)&&x.top!=='emb')o.top=x.top;
+    return o}
+  Object.assign(C,{CREST100,PATS100,TOPS100,INS_MAX100,insClean100,cleanLook100,cleanLook89:cleanLook100})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
