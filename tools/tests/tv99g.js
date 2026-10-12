@@ -63,7 +63,7 @@ for(const [w,h,mob,min] of [[1440,900,0,.42],[1280,800,0,.40],[390,844,1,0]]){co
   const row=document.querySelector('#recTable tr[data-mg="sel"]');const nm=row&&row.querySelector('b');
   return {list:Math.round(wd('#recTable')),card:card?Math.round(card.getBoundingClientRect().width):0,sx:document.documentElement.scrollWidth-innerWidth,rowH:row?Math.round(row.getBoundingClientRect().height):0}});
  out['rec'+w]=r;
- if(w>600)ok(r.card/(r.card+r.list)>=min&&r.list>=480&&r.card>=400&&r.sx<=1&&r.rowH<=48,'5 '+w+' the card has the wider share, list rows stay one line '+JSON.stringify(r));
+ if(w>600)ok(r.card/(r.card+r.list)>=min&&r.list>=240&&r.card>=400&&r.sx<=1&&r.rowH<=48, /* v1.0 (299): the list is a narrow column beside the dossier */'5 '+w+' the card has the wider share, list rows stay one line '+JSON.stringify(r));
  else ok(r.sx<=1&&r.list>=300,'5 390 stacked, no sideways scroll '+JSON.stringify(r));
  if(SHOT)await pg.screenshot({path:path.join(SHOT,'tv99g_recruit'+w+'.png')});await pg.context().close()}
 /* ---- 3 + 4 · Online (mock, one window) ---- */

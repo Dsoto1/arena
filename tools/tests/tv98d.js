@@ -87,7 +87,7 @@ o.p=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   const keep=m.p[D.t];m.p[D.t]=D.k==='greed'||D.k==='risk'?95:20;r.hit=!!rec98DealHit(d,m);r.vLow=offerVerdict(d,ask,8,0,false);r.vHigh=offerVerdict(d,Math.ceil(ask*1.3),8,0,false).ok;
   m.p[D.t]=D.k==='greed'||D.k==='risk'?20:95;r.vOff=offerVerdict(d,ask,8,0,false).ok;m.p[D.t]=keep;
   let has=0;for(const x of freeAgents())if(rec98Deal(x))has++;r.share=has/freeAgents().length;return r});
-ok(o.p.lock&&o.p.wk0===0,'personality locked before all five are graded');ok(o.p.sc>=2&&o.p.open&&o.p.rows===4&&o.p.wk,'all five graded: temper, wants, cares, dealbreaker '+JSON.stringify(o.p));
+ok(o.p.lock&&o.p.wk0===0,'personality locked before all five are graded');ok(o.p.sc>=2&&o.p.open&&o.p.rows>=4&&o.p.wk /* v1.0 (299): + an Asks row */,'all five graded: temper, wants, cares, dealbreaker '+JSON.stringify(o.p));
 ok(o.p.hit&&o.p.vLow&&!o.p.vLow.ok&&o.p.vHigh&&o.p.vOff,'a broken dealbreaker asks more; a fine house signs at the ask '+JSON.stringify(o.p.vLow));ok(o.p.share>0.3&&o.p.share<0.9,'about 6 in 10 have a dealbreaker');
 /* ---------- 7 · house grades + pitches ---------- */
 o.c=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const w=W_(),m=me();const r={};
