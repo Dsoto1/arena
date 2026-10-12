@@ -9,7 +9,7 @@ const assert=require('assert');const store=require('../src/store.js');const cata
 function rules(){C.setCatalog(catalog);try{C.setKits92(require('../src/kits92.json'))}catch(e){}
   /* the award: whole to the house */
   const ch=C.newChar({name:'Purse Less',cls:'hero'},'o','pl',0);const o=C.applyResult(ch,{won:true,f:10,survives:true},true,{humans:4,now:5});
-  assert.strictEqual(o.award,12);assert.strictEqual(o.cut,12);assert.strictEqual(o.pay,0);assert.strictEqual(o.earn92,12);assert.strictEqual(ch.wallet,0,'no purse');
+  assert.strictEqual(o.award,36,'v1.0: Tiro ×3');assert.strictEqual(o.cut,36);assert.strictEqual(o.pay,0);assert.strictEqual(o.earn92,36);assert.strictEqual(ch.wallet,0,'no purse');
   /* the class kits: a pair piece listed on both sides counts once */
   assert.deepStrictEqual(C.kitFromArmor92([['galea','head'],['wraps','rarm'],['wraps','larm'],['manica','larm'],['nope','head']],catalog),['galea','wraps','manica']);
   assert.deepStrictEqual(C.classKits92().hero,['thrachelm','provmanica','wraps','legwraps']);assert.deepStrictEqual(Object.keys(C.classKits92()).sort(),C.CLASSES8.slice().sort());
@@ -34,7 +34,7 @@ function rules(){C.setCatalog(catalog);try{C.setKits92(require('../src/kits92.js
   assert.deepStrictEqual(C.kitPieces92({id:'p'},['galea'],false),[{item:'galea',pc:null}],'bought pieces are plain');
   /* Issued pieces vanish: carried by the dead (no loot, no market), dented in a Ranked bout */
   const dd=C.newChar({name:'Issued Dead',cls:'hero'},'o','idd',0);for(const p of C.kitPieces92(dd,['galea'],true))C.putPiece(dd,p,true);dd.gear.push('wraps');
-  let g=C.gearAfter(dd,C.kitOf(dd),{survives:false},true);assert.deepStrictEqual(g.carried.map(P=>C.itemBase(P.item)),['wraps'],'only the bought piece is carried');assert.deepStrictEqual(g.vanish,['galea']);
+  let g=C.gearAfter(dd,C.kitOf(dd),{survives:false},true);assert.deepStrictEqual(g.carried,[],'v1.0: the bought printed piece is not carried off');assert.ok(g.left.some(P=>C.itemBase(P.item)==='wraps'&&P.pc.st==='damaged'),'… it goes home dented');assert.ok(!g.left.some(P=>C.itemBase(P.item)==='galea'),'the Issued one never goes home');assert.deepStrictEqual(g.vanish,['galea']);
   const dt=C.newChar({name:'Issued Dent',cls:'hero'},'o','idt',0);for(const p of C.kitPieces92(dt,['galea'],true))C.putPiece(dt,p,true);
   g=C.gearAfter(dt,C.kitOf(dt),{survives:true,dmg:[['galea',0.5]]},true);assert.deepStrictEqual(g.dmg,[]);assert.deepStrictEqual(g.vanish,['galea']);assert.ok(!dt.gear.length,'gone');
   /* coin sent */
@@ -86,8 +86,8 @@ async function routes(){
   /* Ann survives with 12 coin (7 home), Bob dies with 20 (lost) */
   const sa=C.seatOf(L,ann.acct),sb=C.seatOf(L,bob.acct);const tb=[0,1,2,3].map(i=>i===sa?{seat:i,won:true,f:9,coin:12}:i===sb?{seat:i,survives:false,kb:'b',f:2,coin:20}:{seat:i,f:1,coin:3});
   for(const x of [ann,bob])await x.req('match.result',{id:L.id,table:tb,hash:'s'});
-  const M=await db.get('MATCH#'+L.id,'META');assert.deepStrictEqual([M.outs[ann.acct].sent92,M.outs[ann.acct].back92],[7,7]);assert.strictEqual(M.outs[ann.acct].pay,0);assert.strictEqual(M.outs[ann.acct].cut,6);
-  assert.strictEqual(await tre(ann),33+6+7,'the award + the coin home');assert.strictEqual((await getD(ann)).led89.in.back,7);assert.strictEqual((await getD(ann)).led89.in.cut,6);
+  const M=await db.get('MATCH#'+L.id,'META');assert.deepStrictEqual([M.outs[ann.acct].sent92,M.outs[ann.acct].back92],[7,7]);assert.strictEqual(M.outs[ann.acct].pay,0);assert.strictEqual(M.outs[ann.acct].cut,18);
+  assert.strictEqual(await tre(ann),33+18+7,'the award (v1.0: 36 ×0.5) + the coin home');assert.strictEqual((await getD(ann)).led89.in.back,7);assert.strictEqual((await getD(ann)).led89.in.cut,18);
   assert.strictEqual(await tre(bob),0,'the dead lose the coin sent');assert.ok(!(await getC(bob.ch.id)).alive);
   /* a survivor who spent most of it brings home only what is left */
   const bob2=await bob.req('char.create',{name:'Bob Secundus',cls:'slave'});

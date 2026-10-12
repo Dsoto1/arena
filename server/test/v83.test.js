@@ -9,15 +9,15 @@ function seeded(seed){let s=seed>>>0;return ()=>{s=(s*1664525+1013904223)>>>0;re
 function rules(){
   assert.ok(C.VER>=6);
   assert.deepStrictEqual(C.RANKS.map(r=>r.k),['tiro','novicius','gregarius','veteranus','primus','summa','rudiarius','invictus']);
-  assert.deepStrictEqual(C.RANKS.map(r=>r.glory),[0,90,180,550,1150,2100,3500,5500]);
-  assert.deepStrictEqual(C.RANKS.map(r=>C.awardOf(r.k,false,0)),[8,10,12,18,25,35,45,60]);assert.strictEqual(C.awardOf('invictus',true,10),Math.round(60*1.5*2));
-  assert.strictEqual(C.rankByGlory(89).k,'tiro');assert.strictEqual(C.rankByGlory(90).k,'novicius');assert.strictEqual(C.rankByGlory(5600).k,'invictus');
+  assert.deepStrictEqual(C.RANKS.map(r=>r.glory),[0,45,90,275,575,1050,1750,2750],'v1.0: halved');
+  assert.deepStrictEqual(C.RANKS.map(r=>C.awardOf(r.k,false,0)),[24,30,36,18,25,35,45,60],'v1.0: Tiro–Gregarius ×3');assert.strictEqual(C.awardOf('invictus',true,10),Math.round(60*1.5*2));
+  assert.strictEqual(C.rankByGlory(44).k,'tiro');assert.strictEqual(C.rankByGlory(45).k,'novicius');assert.strictEqual(C.rankByGlory(2800).k,'invictus');
   /* the treasury's cut, gifts at rank-ups and every 5 Ranked bouts survived */
-  const ch=C.newChar({name:'Rule Tester',cls:'hero'},'o','gr',0);ch.glory=85;
-  const o=C.applyResult(ch,{won:true,f:10,survives:true},true,{humans:4,now:5});assert.strictEqual(o.award,12);assert.strictEqual(o.cut,12,'v0.92: the whole award goes to the house');assert.strictEqual(o.pay,0);assert.strictEqual(ch.wallet,0,'no purse');
+  const ch=C.newChar({name:'Rule Tester',cls:'hero'},'o','gr',0);ch.glory=40;
+  const o=C.applyResult(ch,{won:true,f:10,survives:true},true,{humans:4,now:5});assert.strictEqual(o.award,36);assert.strictEqual(o.cut,36,'v0.92: the whole award goes to the house');assert.strictEqual(o.pay,0);assert.strictEqual(ch.wallet,0,'no purse');
   assert.deepStrictEqual(o.ranks,['novicius']);assert.deepStrictEqual(o.gifts.map(g=>g.why),['rank:novicius']);
   ch.survived=4;const o5=C.applyResult(ch,{won:false,f:0,survives:true},true,{humans:4});assert.ok(o5.gifts.some(g=>g.why==='surv:5'),'a gift every 5 Ranked bouts survived');
-  ch.glory=170;const o6=C.applyResult(ch,{won:false,f:400,survives:true},false,{});assert.deepStrictEqual(o6.ranks,['gregarius','veteranus'],'one gift for every rank crossed');assert.strictEqual(ch.gifts.length,4);
+  ch.glory=85;const o6=C.applyResult(ch,{won:false,f:400,survives:true},false,{});assert.deepStrictEqual(o6.ranks,['gregarius','veteranus'],'one gift for every rank crossed');assert.strictEqual(ch.gifts.length,4);
   assert.strictEqual(C.giftAdd(ch,'rank:veteranus',1),null,'never twice');C.giftTake(ch,ch.gifts[0].id);assert.strictEqual(ch.gifts.length,3);assert.strictEqual(C.giftAdd(ch,'rank:novicius',1),null,'an opened gift does not come back');
   /* buying has no rank gate; wearing named pieces needs Veteranus */
   const t=C.newChar({name:'Tiro Buyer',cls:'slave'},'o','tb',0);t.wallet=800;C.buy(t,'charun',catalog);assert.ok(t.gear.includes('charun'),'a Tiro buys level 3');
@@ -46,9 +46,9 @@ function rules(){
   const g=C.newChar({name:'After Math',cls:'hero'},'o','am',0);g.gear=['galea','gladius','wraps'];g.offers=['elix2','cf2','ap3'];g.cfb=5;const gk=C.kitOf(g);
   const gx=C.gearAfter(g,gk,C.cleanRow({survives:true,brk:['galea','nonsense'],off:['cf2']}),true);
   assert.deepStrictEqual(gx.offBack,['cf2']);assert.deepStrictEqual(g.offers.sort(),['ap3','cf2'],'the used one is gone, the unused came back');assert.strictEqual(g.cfb,0);
-  assert.deepStrictEqual(gx.broken,[]);assert.deepStrictEqual(gx.gone,['galea'],'v0.91: a printed piece lost in Ranked is used up');assert.ok(!g.gear.some(x=>C.itemBase(x)==='galea'),'gone from the gladiator');
+  assert.deepStrictEqual(gx.broken,[]);assert.deepStrictEqual(gx.gone,[],'v1.0: a printed piece lost in Ranked is no longer used up');{const gi=g.gear.find(x=>C.itemBase(x)==='galea');assert.ok(gi&&C.isDamaged91(g,gi),'it comes home dented');assert.deepStrictEqual(gx.dent100.map(x=>x.key),['galea'])}
   const d=C.newChar({name:'Dead Man',cls:'hero'},'o','dm',0);d.gear=['galea','gladius','mace'];d.equip=['galea','gladius'];d.offers=['elix2'];const dk=C.kitOf(d);
-  const dx=C.gearAfter(d,dk,{survives:false},true);assert.deepStrictEqual(dx.carried.map(P=>P.item),['galea','gladius']);assert.deepStrictEqual(dx.left.map(P=>P.item),['mace']);assert.deepStrictEqual(d.gear,[]);assert.deepStrictEqual(d.offers,[]);
+  const dx=C.gearAfter(d,dk,{survives:false},true);assert.deepStrictEqual(dx.carried.map(P=>P.item),[],'v1.0: printed pieces are not carried off');assert.deepStrictEqual(dx.left.map(P=>C.itemBase(P.item)),['mace','galea','gladius'],'v1.0: the brought printed pieces go home');assert.ok(dx.left.slice(1).every(P=>P.pc.st==='damaged'),'dented');assert.deepStrictEqual(d.gear,[]);assert.deepStrictEqual(d.offers,[]);
   const cx=C.gearAfter(C.newChar({name:'Custom Man',cls:'hero'},'o','cm',0),dk,{survives:true,brk:['galea']},false);assert.deepStrictEqual(cx.broken,[],'Custom breaks nothing');
   /* result rows */
   const row=C.cleanRow({seat:1,brk:['b','a','<x>'],off:['spiders','elix2','cf1','ap2'],ks:2,kb:'g',thumb:1,slew:['tholo','commodus','x','tholo']});
@@ -109,10 +109,10 @@ async function routes(){
   /* a bet from the stands-less outsider: the wagers tab sees it before the horns only — place one on a second room below */
   /* ── the result: Ann survives (galea lost on the sand, merc1 still in hand); Bob is slain by Ann and dies ── */
   const tbl=[0,1,2,3].map(i=>i===sa?{seat:i,won:true,place:1,f:40,survives:true,brk:['galea'],off:['elix4'],kb:''}:i===sb?{seat:i,won:false,place:4,f:3,survives:false,ks:sa,kb:'g'}:{seat:i,won:false,place:2,f:5});
-  m0=mark();await ann.req('match.result',{id:L.id,table:tbl,hash:'h'});const rb=await bob.req('match.result',{id:L.id,table:tbl,hash:'h'});assert.ok(rb.out.died);
+  C.BAL100.home=false;/* v1.0: a death's printed pieces go home dented (v100bal.test.js); switched off here so the loot window + used market keep their checks */m0=mark();await ann.req('match.result',{id:L.id,table:tbl,hash:'h'});const rb=await bob.req('match.result',{id:L.id,table:tbl,hash:'h'});assert.ok(rb.out.died);
   const A1=await getC(ann.ch.id);const ra=(await db.get('MATCH#'+L.id,'META')).outs[ann.acct];
-  assert.strictEqual(ra.award,Math.round(8*1.5*0.5));assert.strictEqual(ra.cut,ra.award,'v0.92: the whole award');assert.strictEqual((await getD(ann.domus.id)).led89.in.cut,ra.award,'into the house treasury, booked as bout earnings');
-  assert.deepStrictEqual(ra.broken,[]);assert.deepStrictEqual(ra.gone,['galea'],'v0.91: used up');assert.ok(!A1.gear.some(x=>C.itemBase(x)==='galea'));assert.deepStrictEqual(A1.offers.sort(),['elix4'],'elix4 came back, cf1 was used');
+  assert.strictEqual(ra.award,Math.round(C.awardOf('tiro',true,0)*0.5));assert.strictEqual(ra.cut,ra.award,'v0.92: the whole award');assert.strictEqual((await getD(ann.domus.id)).led89.in.cut,ra.award,'into the house treasury, booked as bout earnings');
+  assert.deepStrictEqual(ra.broken,[]);assert.deepStrictEqual(ra.gone,[],'v1.0: no longer used up');assert.ok(A1.gear.some(x=>C.itemBase(x)==='galea'&&C.isDamaged91(A1,x)),'v1.0: it came home dented');assert.deepStrictEqual(ra.dent100.map(x=>x.key),['galea']);assert.deepStrictEqual(A1.offers.sort(),['elix4'],'elix4 came back, cf1 was used');
   const BD=await getD(bob.domus.id);assert.deepStrictEqual(BD.gear,['wraps'],'the dead one’s un-brought piece waits on his house’s shelf');assert.deepStrictEqual((await getC(bob.ch.id)).gear,[]);
   const lo=ann.got('loot.offer',m0);assert.strictEqual(lo.length,1,'the killer’s window');assert.deepStrictEqual(lo[0].pieces.map(p=>C.itemBase(p.item)).sort(),['cassis','flail'],'what he brought');
   assert.strictEqual(lo[0].dead.name,'Bob Gladius');assert.ok(lo[0].until>T);assert.strictEqual((await ann.req('hello',{all:1})).loot.length,1,'hello lists the open window');
@@ -125,7 +125,7 @@ async function routes(){
   await setD(cid.domus.id,{treasury:749});await rejects(cid.req('market.buy',{char:cid.ch.id,id:mk[0].id}),'no_coin');await setD(cid.domus.id,{treasury:800});
   const cb=await cid.req('market.buy',{char:cid.ch.id,id:mk[0].id});assert.ok(cb.char.gear.includes(mk[0].item));assert.strictEqual((await getD(cid.domus.id)).treasury,50,'v0.92: the treasury pays');await rejects(ann.req('market.buy',{char:ann.ch.id,id:mk[0].id}),'sold');
   /* repairs: ⅓ of the value, from the treasury or a wallet */
-  let br;{const c0=await getC(ann.ch.id);C.putPiece(c0,{item:'galea',pc:null},false);br=C.breakItem(c0,'galea');await db.put('CHAR#'+c0.id,'CHAR',c0)}/* a broken piece to mend (v0.91: printed ones are used up in Ranked; repairs still exist) */const cost=Math.ceil(C.priceOf(catalog.galea)/3);await ann.req('domus.get',{});await setD(ann.domus.id,{treasury:0});await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:br,pay:'treasury'}),'no_coin');
+  let br;{const c0=await getC(ann.ch.id);C.putPiece(c0,{item:'galea',pc:null},false);br=C.breakItem(c0,'galea');await db.put('CHAR#'+c0.id,'CHAR',c0)}/* a broken piece to mend (v0.91: printed ones are used up in Ranked; repairs still exist) */const cost=Math.max(1,Math.ceil(C.priceOf(catalog.galea)/10));/* v1.0: a printed piece costs a tenth */await ann.req('domus.get',{});await setD(ann.domus.id,{treasury:0});await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:br,pay:'treasury'}),'no_coin');
   await setD(ann.domus.id,{treasury:100});const rp=await ann.req('gear.repair',{holder:ann.ch.id,item:br,pay:'treasury'});assert.strictEqual(rp.cost,cost);assert.strictEqual(rp.domus.treasury,100-cost);assert.ok(!C.isBroken(rp.holder,br));
   await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:br}),null,/whole/);await ann.req('domus.equip',{char:ann.ch.id,item:br,on:true});
   /* the treasury buys for the shelf */
@@ -143,14 +143,14 @@ async function routes(){
   const fay=await client('fay'),gus=await client('gus');await setC(gus.ch.id,{wallet:100});await gus.req('char.buy',{char:gus.ch.id,item:'gladius'});
   let L3=await fay.req('lobby.create',{ev:'egidious',ranked:true,cry:false});await gus.req('lobby.join',{id:L3.id});L3=await fay.req('lobby.start',{id:L3.id});T=L3.startAt+1;L3=await fay.req('lobby.start',{id:L3.id,go:1});
   m0=mark();const t3=[0,1,2,3].map(i=>i===C.seatOf(L3,gus.acct)?{seat:i,survives:false,kb:'b',f:1}:{seat:i,f:6,won:i===C.seatOf(L3,fay.acct)});for(const x of [fay,gus])await x.req('match.result',{id:L3.id,table:t3,hash:'b'});
-  assert.strictEqual(fay.got('loot.offer',m0).length,0,'no window when a beast killed');assert.ok((await cid.req('market.list',{})).used.some(x=>/^gladius#/.test(x.item)&&x.from.glad==='Gus Gladius'));
+  assert.strictEqual(fay.got('loot.offer',m0).length,0,'no window when a beast killed');assert.ok((await cid.req('market.list',{})).used.some(x=>/^gladius#/.test(x.item)&&x.from.glad==='Gus Gladius'));C.BAL100.home=true;
 
   /* ── FLAVIUS'S GIFTS: named weapons, one unique each, the Storeroom below Veteranus ── */
   const A3=await getC(ann.ch.id);assert.ok((A3.gifts||[]).length===0||true);await setC(ann.ch.id,{gifts:[{id:'g1',why:'rank:novicius',at:T},{id:'g2',why:'surv:5',at:T},{id:'g3',why:'surv:10',at:T}]});
   RND=0.995;const go1=await ann.req('gift.open',{char:ann.ch.id,gift:'g1'});RND=null;assert.strictEqual(go1.reward.k,'named');assert.strictEqual(go1.reward.rar,'legendary');assert.strictEqual(go1.to,'house','a Tiro’s named piece waits in the Storeroom');
   const it1=go1.gear.find(g=>/^nw#/.test(g));const w1=go1.pcs[C.itemUid(it1)].w;assert.ok(w1.uq&&w1.named83&&w1.key==='nw_'+C.itemUid(it1));assert.ok(await db.get('WORLD','UNIQ#'+w1.uq),'the unique is claimed');
   await rejects(ann.req('domus.move',{item:it1,from:'house',to:ann.ch.id}),null,/until Veteranus/);
-  await setC(ann.ch.id,{glory:600});RND=0.995;const go2=await ann.req('gift.open',{char:ann.ch.id,gift:'g2'});RND=null;assert.strictEqual(go2.to,'glad');const it2=go2.char.gear.find(g=>/^nw#/.test(g));
+  await setC(ann.ch.id,{glory:300});RND=0.995;const go2=await ann.req('gift.open',{char:ann.ch.id,gift:'g2'});RND=null;assert.strictEqual(go2.to,'glad');const it2=go2.char.gear.find(g=>/^nw#/.test(g));
   assert.notStrictEqual(go2.char.pcs[C.itemUid(it2)].w.uq,w1.uq,'each unique exists once');assert.ok(C.equipOf(go2.char).includes(it2),'a Veteranus brings it');
   const mv=await ann.req('domus.move',{item:it1,from:'house',to:ann.ch.id});assert.ok(mv.to.pcs[C.itemUid(it1)].w.named83,'the def moves with the piece');
   RND=0.2;const go3=await ann.req('gift.open',{char:ann.ch.id,gift:'g3'});RND=null;assert.strictEqual(go3.reward.k,'coin');await rejects(ann.req('gift.open',{char:ann.ch.id,gift:'g3'}),null,/No such gift/);
@@ -187,7 +187,7 @@ async function routes(){
   const best=(await ann.req('hello',{all:1})).today.wins[0];assert.ok(best.dom,'Today entries carry the house id');T+=86400e3;await hal.req('hello',{all:1});
   const vd=(await getD(best.dom)).trophies.find(t=>t.k==='vday');assert.ok(vd&&vd.x===1,'Victor of the Day');await cid.req('world.news',{});assert.strictEqual((await getD(best.dom)).trophies.find(t=>t.k==='vday').x,1,'once a day');
   /* ── HIS CALL: gifts belong to the HOUSE (they survive a death); a Ranked death puts the un-brought satchel on the shelf ── */
-  const ida=await client('ida');await setC(ida.ch.id,{wallet:300,glory:85});await ida.req('offer.buy',{char:ida.ch.id,key:'elix2'});await ida.req('offer.buy',{char:ida.ch.id,key:'ap2'});
+  const ida=await client('ida');await setC(ida.ch.id,{wallet:300,glory:40});await ida.req('offer.buy',{char:ida.ch.id,key:'elix2'});await ida.req('offer.buy',{char:ida.ch.id,key:'ap2'});
   await ida.req('offer.bring',{char:ida.ch.id,keys:['elix2']});const jon=await client('jon');
   let LG=await ida.req('lobby.create',{ev:'democritus',ranked:true,cry:false});await jon.req('lobby.join',{id:LG.id});LG=await ida.req('lobby.start',{id:LG.id});T=LG.startAt+1;LG=await ida.req('lobby.start',{id:LG.id,go:1});
   const si=C.seatOf(LG,ida.acct),sj=C.seatOf(LG,jon.acct);const tg=[0,1,2,3].map(i=>i===si?{seat:i,f:20,won:true,survives:true}:{seat:i,f:2});for(const x of [ida,jon])await x.req('match.result',{id:LG.id,table:tg,hash:'g'});
@@ -211,7 +211,7 @@ async function routes(){
   await rejects(jon.req('admin.grant',{coin:50}),'notTester');assert.ok(!(await jon.req('hello',{all:1})).tester,'no tester flag for others');
   const tess=await client('tess',{email:'tess@example.COM'});assert.strictEqual((await tess.req('hello',{all:1})).tester,true,'a tester by e-mail (case-insensitive)');
   const rc0=(await tess.req('hello',{all:1})).rankCounts.tiro;
-  const gr=await tess.req('admin.grant',{coin:500,gift:2,gear:['galea','nope'],offering:['elix4','curse'],glory:100});
+  const gr=await tess.req('admin.grant',{coin:500,gift:2,gear:['galea','nope'],offering:['elix4','curse'],glory:50});
   /* v0.89 (his fix): coin → the house treasury, gear → the shelf (unequipped), offerings → the shelf; Glory still → the active gladiator */
   assert.strictEqual(gr.char.wallet,0);assert.strictEqual(gr.domus.treasury,500);assert.ok(!gr.char.gear.includes('galea')&&gr.gear.includes('galea'));assert.deepStrictEqual(gr.char.offers||[],[]);assert.deepStrictEqual(gr.offers,['elix4']);
   assert.strictEqual(C.rankFor(gr.char).k,'novicius');assert.strictEqual(gr.gifts.length,2);

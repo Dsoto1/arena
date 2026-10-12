@@ -15,8 +15,8 @@ function rules(){C.setCatalog(catalog);
   let ch=mk();let kit=C.kitOf(ch);const g=C.gearAfter(ch,kit,{survives:true,dmg:[['galea',0.5]]},true);
   assert.strictEqual(g.dmg.length,1);const it=g.dmg[0].item;assert.match(it,/^galea#/);assert.ok(ch.equip.includes(it)&&ch.gear.includes(it),'still worn, same place');
   assert.strictEqual(ch.gear.indexOf(it),0,'in place');const I=C.pieceOf(ch,it,catalog);assert.strictEqual(I.st,'damaged');assert.strictEqual(I.dmg,0.5);
-  assert.strictEqual(C.repairCost(I),Math.ceil(C.priceOf(catalog.galea)*0.5),'repair = ceil(price × dmg)');
-  assert.strictEqual(C.repairCost({...I,dmg:0.07,val:100}),7,'no float creep');assert.strictEqual(C.repairCost({...I,dmg:0.01,val:15}),1,'at least 1');
+  assert.strictEqual(C.repairCost(I),Math.ceil(C.priceOf(catalog.galea)/10),'v1.0: repair = a tenth of the price (was ceil(price × dmg))');
+  assert.strictEqual(C.repairCost({...I,dmg:0.07,val:100}),10,'no float creep');assert.strictEqual(C.repairCost({...I,dmg:0.01,val:5}),1,'at least 1');
   assert.strictEqual(C.wearWhy(ch,it),'','worn in Custom');assert.ok(C.equipOf(ch).includes(it));
   kit=C.kitOf(ch);assert.deepStrictEqual(kit.dmgd,[it]);
   const who=k=>[{id:'a',name:'A',char:'db',rank:'tiro',kit:{...k}}];
@@ -27,7 +27,7 @@ function rules(){C.setCatalog(catalog);
   ch=mk();C.gearAfter(ch,C.kitOf(ch),{survives:true,dmg:[['galea',0.5]]},false);assert.deepStrictEqual(ch.gear,['galea','gladius','ocrea'],'Custom: no damage');
   ch=mk();const gd=C.gearAfter(ch,C.kitOf(ch),{survives:false,dmg:[['galea',0.5]]},true);assert.ok(!gd.dmg.length,'the dead: no damage');
   /* a lost piece is gone, a held one damaged, in the same bout */
-  ch=mk();const gb=C.gearAfter(ch,C.kitOf(ch),{survives:true,brk:['ocrea'],dmg:[['galea',0.25]]},true);assert.deepStrictEqual(gb.gone,['ocrea']);assert.strictEqual(gb.dmg[0].dmg,0.25);
+  ch=mk();const gb=C.gearAfter(ch,C.kitOf(ch),{survives:true,brk:['ocrea'],dmg:[['galea',0.25]]},true);assert.deepStrictEqual(gb.gone,[],'v1.0: no longer used up');assert.deepStrictEqual(gb.dent100.map(x=>x.key),['ocrea'],'v1.0: it comes home dented');assert.strictEqual(gb.dmg[0].dmg,0.25);
   /* named pieces keep their own rule: damage is ignored */
   ch=mk();ch.glory=600;const NA=C.namedPiece(C.rollNamedArmor(()=>0.4,catalog,'rare',[]),ch);C.putPiece(ch,NA,true);const k2=C.kitOf(ch);const nk=k2.gear[k2.items.indexOf(NA.item)];
   const gn=C.gearAfter(ch,k2,{survives:true,dmg:[[nk,0.5]]},true);assert.ok(!gn.dmg.length&&C.pcOf(ch,NA.item).st==='whole');
@@ -76,7 +76,7 @@ async function routes(){
   R=await ann.req('lobby.create',{ev:'cassian',cry:false});assert.ok(R.players[0].kit.items.includes(it),'fine in Custom');await ann.req('lobby.leave',{id:R.id});
   /* repair: ceil(value × dmg) — v0.92: the treasury pays (the purse moved in) */
   const trA=async()=>((await db.get('DOMUS#'+ann.domus.id,'DOMUS'))||{}).treasury|0;
-  const cost=Math.ceil(C.priceOf(catalog.galea)*0.5);await ann.req('domus.get',{});const w0=await trA();
+  const cost=Math.ceil(C.priceOf(catalog.galea)/10);/* v1.0: a tenth of the price */await ann.req('domus.get',{});const w0=await trA();
   const rp=await ann.req('gear.repair',{holder:ann.ch.id,item:it});assert.strictEqual(rp.cost,cost);c=await getC(ann.ch.id);assert.strictEqual(await trA(),w0-cost);assert.strictEqual(C.pcOf(c,it).st,'whole');
   await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:it}),null,/whole/);
   /* an empty treasury cannot (ledger: repair) */
@@ -88,6 +88,6 @@ async function routes(){
   /* the auction: six lots with the guarantees, the same on another instance */
   const al=await ann.req('auction.list',{});assert.strictEqual(al.lots.length,6);
   assert.ok(al.lots.filter(l=>l.kind==='a').length>=2&&al.lots.filter(l=>l.kind==='w').length>=2&&al.lots.some(l=>l.rar==='legendary'||l.rar==='epic'));
-  console.log('server v0.91 (a Ranked dent comes home damaged, out of Ranked kits, Custom keeps it, purse / treasury repair at ceil(value × dmg), printed keep-home refused, six lots with the guarantees): all checks passed')}
+  console.log('server v0.91 (a Ranked dent comes home damaged, out of Ranked kits, Custom keeps it, purse / treasury repair (v1.0: a tenth of the value), printed keep-home refused, six lots with the guarantees): all checks passed')}
 
 (async()=>{rules();await routes()})().catch(e=>{console.error(e);process.exit(1)});

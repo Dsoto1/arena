@@ -83,7 +83,7 @@ async function routes(){
   assert.ok(await db.get('WORLD','DAY#2026-07-16'),'kept under the online day (= the July UTC date)');
   let td=(await ann.req('hello',{all:1})).today;assert.strictEqual(td.day,'today');
   const B=C.dayBest(td);assert.strictEqual(B.winner.name,'Ann Gladius');assert.strictEqual(B.winner.coin,award,'coin earned');assert.strictEqual(B.winner.cf,25);
-  assert.strictEqual(B.loser.name,'Bob Gladius');assert.deepStrictEqual([B.loser.purse,B.loser.gear,B.loser.kb,B.loser.kn],[77,kitVal,'g','Ann Gladius'],'what he lost, who killed him');assert.ok(kitVal>0,'the brought gear has a value');
+  assert.strictEqual(B.loser.name,'Bob Gladius');assert.deepStrictEqual([B.loser.purse,B.loser.gear,B.loser.kb,B.loser.kn],[77,0,'g','Ann Gladius'],'what he lost (v1.0: his printed gear went home dented — none lost), who killed him');assert.ok(kitVal>0,'the brought gear has a value');
   /* the turn at 20:00 EDT: today is empty → yesterday's record (dayPrevKey), and the Victor of the Day is crowned once */
   T=U('2026-07-17T00:30:00Z');td=(await ann.req('hello',{all:1})).today;assert.strictEqual(td.day,'yesterday');assert.strictEqual(C.dayBest(td).winner.name,'Ann Gladius');
   assert.ok(await db.get('WORLD','VDAY#2026-07-16'),'the Victor of the Day of the day that just ended');

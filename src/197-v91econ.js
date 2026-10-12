@@ -34,7 +34,7 @@ d89Tile=function(ch,x,i,busy){const I=x.I;const named=I.named;const col=named?ON
     <div class="pt89-art">${d89Art(I)}${brk?'<i class="crk89"></i>':''}</div>
     <b class="pt89-n">${esc2(I.n)}</b><small class="pt89-s">${named?`${esc2(ONLC.rarOf(I.rar).n)} · `:''}L${I.lv}${I.kind==='a'?_T` · ${I.ap|0} AP`:''}${x.from!=='house'?_T` · with ${esc2(x.h.name||'')}`:''}</small>
     ${d91Badge(I)}<small class="cm89 ${C.no?'why':''}">${C.no?esc2(C.no):C.ok}</small>
-    <span class="pt89-b">${brk||dmg?`<button type="button" class="rp89" data-d89rep="${i}" title="${dmg?_T`Repair: its value × the AP it lost`:_T`Repair: a third of its value`}">${_T`🔨 ${rc}`}</button>`:''}${named?d91Lock(home,`data-d89home="${i}"`):''}</span></div>`};
+    <span class="pt89-b">${brk||dmg?`<button type="button" class="rp89" data-d89rep="${i}" title="${named?_T`Repair: a third of its value`:_T`Repair: a tenth of its value`}">${_T`🔨 ${rc}`}</button>`:''}${named?d91Lock(home,`data-d89home="${i}"`):''}</span></div>`};
 d89Worn=function(ch){const out=[];for(const it of ONLC.equipOf(ch)){const I=ONL83.piece(ch,it);if(I&&I.kind==='a')out.push({it,I})}
   return out.map(({it,I})=>{const home=I.named&&ONLC.isHome(ch,it);const dmg=I.st==='damaged';
     return `<span class="wr89 ${I.named?'nm89':''} ${dmg?'dmg91':''}" ${rc89(I.named&&ONL83.rarCol[I.rar])}><span class="wr89-p" data-d89off="${esc2(it)}" role="button" tabindex="0" title="${_T`${esc2(I.n)} · ${I.ap|0} AP — take it off`}">${d89Art(I,'sm')}<b>${esc2(I.n)}</b></span>${dmg?`<button type="button" class="rp89 rp91" data-d91rep="${esc2(it)}" title="${_T`🩹 Damaged — never brought into Ranked until repaired`}">${_T`🩹 🔨 ${ONLC.repairCost(I)}`}</button>`:''}${I.named?d91Lock(home,`data-d89homew="${esc2(it)}"`):''}</span>`}).join('')};
@@ -42,7 +42,7 @@ document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.targ
   if(I)return d89Repair({I,it,from:ch.id,h:ch})},true);
 /* the hover card names the damage */
 document.addEventListener('mouseover',e=>{const t=e.target.closest&&e.target.closest('#onl .dom89 [data-p89]');if(!t)return;const x=(V89D.bar||[])[+t.dataset.p89];if(!x||!x.I||x.I.st!=='damaged')return;
-  setTimeout(()=>{const f=document.getElementById('cmp89');if(!f||f.hidden||f.querySelector('.dm91'))return;const b=f.querySelector('.cmp89-b');if(b)b.insertAdjacentHTML('beforeend',`<small class="dm91">${_T`🩹 Damaged (−${Math.round((x.I.dmg||0)*100)}% AP) — 🔨 ${ONLC.repairCost(x.I)} to repair; worn in Custom, not in Ranked`}</small>`)},0)});
+  setTimeout(()=>{const f=document.getElementById('cmp89');if(!f||f.hidden||f.querySelector('.dm91'))return;const b=f.querySelector('.cmp89-b');if(b)b.insertAdjacentHTML('beforeend',`<small class="dm91">${x.I.kind==='a'?_T`🩹 Damaged (−${Math.round((x.I.dmg||0)*100)}% AP) — 🔨 ${ONLC.repairCost(x.I)} to repair; worn in Custom, not in Ranked`:_T`🩹 Dented — 🔨 ${ONLC.repairCost(x.I)} to repair; worn in Custom, not in Ranked`}</small>`)},0)});
 
 /* ---------------- 4 · the mock mirrors the server ---------------- */
 MOCK_ROUTES['gear.repair']=(w,d,me)=>{const D=mockHouse83(w,me);const item=String(d.item||'');let H=D,hc=null;

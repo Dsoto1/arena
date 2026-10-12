@@ -38,7 +38,7 @@ function rules(){
   assert.strictEqual(C.rollGift(()=>0.995,catalog,'tiro').kind,'w');
   /* CPU-won rewards */
   assert.ok(C.cpuRow({h:2,c:3})&&!C.cpuRow({h:3,c:3})&&!C.cpuRow(null),'more than half');assert.strictEqual(C.cleanRow({cpu:1}).cpu,true);
-  const c1=C.newChar({name:'Human One',cls:'hero'},'o','h1',0),c2=C.newChar({name:'Cpu Two',cls:'hero'},'o','h2',0);c1.glory=c2.glory=85;
+  const c1=C.newChar({name:'Human One',cls:'hero'},'o','h1',0),c2=C.newChar({name:'Cpu Two',cls:'hero'},'o','h2',0);c1.glory=c2.glory=40;
   const o1=C.applyResult(c1,{won:true,f:20,survives:true},true,{humans:4}),o2=C.applyResult(c2,{won:true,f:20,survives:true,cpu:true},true,{humans:4});
   assert.strictEqual(o2.award,Math.round(o1.award*0.25));assert.ok(o2.cpu);assert.strictEqual(o2.glory,Math.round(o1.glory*0.25*10)/10);assert.deepStrictEqual(o2.gifts,[],'no gifts');assert.ok(o1.gifts.length>=1);
   assert.deepStrictEqual(C.trophiesFrom(c2,{won:true,cpu:true},o2,true,'cassian'),[],'no trophies');
@@ -95,7 +95,7 @@ async function routes(){
   const bw=(await bob.req('hello',{all:1})).week84;assert.strictEqual(bw.bouts,4);assert.strictEqual(bw.gift,0,'Bob never won');
 
   /* ── CPU-won rewards: the agreed row's cpu flag cuts coin + Glory to a quarter, no gifts ── */
-  await setC(ann.ch.id,{glory:85});await setC(bob.ch.id,{glory:85});
+  await setC(ann.ch.id,{glory:40});await setC(bob.ch.id,{glory:40});
   const r1=await bout(ann,bob,{ev:'cassian',loc:5,ranked:true,a:{won:true,survives:true,f:20,cpu:true},b:{won:false,survives:true,f:20}});
   const oa=r1.M.outs[ann.acct],ob=r1.M.outs[bob.acct];assert.ok(oa.cpu&&!ob.cpu);assert.strictEqual(oa.award,Math.round(C.awardOf('tiro',true,0)*0.5*0.25),'a quarter of the award (2 humans: ×0.5)');
   assert.deepStrictEqual(oa.gifts,[],'no gifts for a CPU-played bout');assert.ok(ob.gifts.some(g=>g.why==='rank:novicius'),'the human-played one gets his');
