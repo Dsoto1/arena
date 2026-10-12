@@ -20,6 +20,7 @@ const setup=async(pg,step,scouted)=>pg.evaluate(async([step,scouted])=>{const W8
 const shots=[['scout',1,1],['court',2,2],['offer',3,2]];
 for(const vp of [[1440,900],[390,844]])for(const [n,step,sc] of shots){if(ONLY&&!ONLY.split(',').includes(n))continue;const pg=await boot({width:vp[0],height:vp[1]});await setup(pg,step,sc);
  await pg.screenshot({path:path.join(OUT,`rc100_${n}_${vp[0]}.png`)});
+ if(vp[0]===1440)await pg.screenshot({path:path.join(OUT,`tabs_${n}_1440.png`)}); /* C2b: the card scrolled to the top of the screen */
  if(vp[0]<600){await pg.evaluate(()=>{const b=document.getElementById('mBody')||document.scrollingElement;const c=document.querySelector('#mgrBody .card2.rc100');if(c){const r=c.getBoundingClientRect();(document.getElementById('mBody')||window).scrollBy(0,r.top+560)}});await pg.waitForTimeout(300);await pg.screenshot({path:path.join(OUT,`rc100_${n}_${vp[0]}_2.png`)})}
  await pg.context().close()}
 /* signing */

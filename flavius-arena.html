@@ -63438,10 +63438,12 @@ function bf100Unmark(){try{const m=document.getElementById('modal');if(m)m.class
        Anything of the old card not placed above lands in .rc100x at the end of the pane, so no feature is lost.
        Murals = the mock's plates (painted by the game's own city/arena canvases) as assets/rec100_<k>.webp (tools/art/recruit100/
        make.py), the council's faces (face83), the recruit's portrait (gArt), his minis (assets/mini_<cls>.webp), 294a's scenes.
+   C2b (his answer): the step bar is a TABLIST — only the chosen step's section is in the card (the base card is rebuilt per MGR.recStep by 145's
+       [data-recstep] handler, so the choice survives MGR_REDRAW; default = recStepNow); desktop CSS compaction keeps each tab inside one 900 px screen.
    3 · SIGNING DAY (signCard73 wrapper, when 249 left g.truth98): the seal → each scouted grade flips to the real grade + number
        (staggered), ▲/▼ grades up/down, then the verdict with the Recruiter's face and line: ✦ A GEM! (laurel, gold burst + sparks, ≤4 s
-       then still) · AS SCOUTED · A DUD. (cracked overall, dust, a greyed portrait). gem = overall 2+ grades up (or 1 up with the
-       ratings up on average), dud = the mirror, else fair. Terms (wage, weeks, signing bonus), clause line. Skippable: a click on the
+       then still) · AS SCOUTED · A DUD. (cracked overall, dust, a greyed portrait). gem = the real overall's letter grade at least ONE WHOLE grade (two ladder
+       steps, B→A / B+→A+) above the scouted estimate's, dud = the mirror, else fair (his C3b). Terms (wage, weeks, signing bonus), clause line. Skippable: a click on the
        card or any key ends the show at its last frame; Esc / the backdrop / either button closes; nothing waits on it. Reduce motion /
        Animations Off = the static card (both grades side by side, no flips, no burst/dust). Keeps #signCard .sgbox .sgface .tr98
        [data-sgclose] (249's truth block sees .tr98 and stays out). No signing bonus is stored by the game, so the wrapper on signGlad
@@ -63450,8 +63452,8 @@ function bf100Unmark(){try{const m=document.getElementById('modal');if(m)m.class
    shots tools/plans/recruit100/ (shot.js).
    ===================================================================== */
 const RC100={sig:null,pre:{},ORD:['F','D','C','C+','B','B+','A','A+'],
-  /* TWEAK: the verdict — overall grades up for a gem (or 1 up + the ratings' mean ≥ avg) */
-  gem:2,avg:1,showMs:4200};
+  /* TWEAK: the verdict (his C3b) — gem = the real overall's letter grade at least ONE WHOLE grade above the scouted estimate's (two ladder steps: B→A, B+→A+; a plus-step alone is fair), dud = the mirror */
+  gem:2,showMs:4200};
 function rc100On(){try{return localStorage.getItem('flavius_recruit100off')!=='1'}catch(e){return true}}
 const rc100Calm=()=>{try{return (typeof reduceMotion==='function'&&reduceMotion())||(typeof SETTINGS!=='undefined'&&SETTINGS.anim88==='off')}catch(e){return false}};
 const rc100Img=k=>typeof assetURL==='function'?assetURL(k):'assets/'+k;
@@ -63617,9 +63619,9 @@ function rc100Offer(T,g,w,m){const old=[...T.content.querySelectorAll('.rpane')]
   const off=pane.querySelector('.rc1off');[...old.childNodes].forEach(n=>off.appendChild(n));old.replaceWith(pane);return pane}
 
 /* ---------- the dossier: re-home the finished card ---------- */
-function rc100Steps(T,g,w,m){const st=T.content.querySelector('.rsteps');if(!st)return;st.classList.add('rc1steps');const K=rec98K(g);const n=STATS.filter(([k])=>K.p[k]>=1).length;
+function rc100Steps(T,g,w,m){const st=T.content.querySelector('.rsteps');if(!st)return;st.classList.add('rc1steps');st.setAttribute('role','tablist');const K=rec98K(g);const n=STATS.filter(([k])=>K.p[k]>=1).length;
   const sub={1:(g.scout||0)>=2?_T('✓ graded'):_T`${n}/5 graded`,2:_T`${pitchesLeft()} pitches left`,3:_T`ask ${askWage(g)}/wk`};const nm={1:_T('Scout'),2:_T('Court'),3:_T('Offer')};const cls={1:'scout',2:'court',3:'offer'};
-  for(const b of st.querySelectorAll('[data-recstep]')){const s=+b.dataset.recstep;b.classList.add('rc1st',cls[s]);b.innerHTML=`<span class="n">${s}</span>${esc(nm[s])} <small class="rc1o">${esc(sub[s])}</small>`;b.setAttribute('aria-pressed',b.classList.contains('cur')?'true':'false')}}
+  for(const b of st.querySelectorAll('[data-recstep]')){const s=+b.dataset.recstep;b.classList.add('rc1st',cls[s]);b.innerHTML=`<span class="n">${s}</span>${esc(nm[s])} <small class="rc1o">${esc(sub[s])}</small>`;b.setAttribute('role','tab');b.setAttribute('aria-selected',b.classList.contains('cur')?'true':'false');b.setAttribute('aria-pressed',b.classList.contains('cur')?'true':'false')}}
 function rc100Card(h,g){const w=W_(),m=me();if(!w||!m)return h;const T=document.createElement('template');T.innerHTML=h;const card=T.content.querySelector('.card2');if(!card||!card.querySelector('.rsteps'))return h;
   const step=MGR.recStep||recStepNow(g,m);
   const top=card.firstElementChild;const info=top&&top.querySelector(':scope > div[style*="flex:1"]');const map=card.querySelector('.mi100rcard');const cmp=card.querySelector('[data-reccmp]');const wr=card.querySelector('.want88row');const bid=card.querySelector('.bid88');
@@ -63662,7 +63664,7 @@ function rc100List(T){const grid=[...T.content.querySelectorAll('.mgrid')].find(
 const rc100Ord=s=>RC100.ORD.indexOf(String(s||'').replace('~',''));
 function sg100Verdict(g){const T=g.truth98;if(!T)return null;const st=gStats(g);const dOv=rc100Ord(rec98G(effOvr(g)))-rc100Ord(T.s.ovr);
   const ds=STATS.filter(([k])=>T.s[k]&&T.s[k]!=='?').map(([k])=>rc100Ord(rec98G(st[k]))-rc100Ord(T.s[k]));const avg=ds.length?ds.reduce((a,b)=>a+b,0)/ds.length:0;
-  const k=dOv>=RC100.gem||(dOv>=1&&avg>=RC100.avg)?'gem':dOv<=-RC100.gem||(dOv<=-1&&avg<=-RC100.avg)?'dud':'fair';return {k,dOv,avg}}
+  const k=dOv>=RC100.gem?'gem':dOv<=-RC100.gem?'dud':'fair';return {k,dOv,avg}}
 const SG100_LINES=g=>({gem:[sx(g,_T('“I had him two grades low. The forum will be talking about this one by Friday.”'),_T('“I had her two grades low. The forum will be talking about this one by Friday.”')),_T('“The street sold us a cart horse. We bought a charger.”'),sx(g,_T('“Better than I told you — and I told you he was good.”'),_T('“Better than I told you — and I told you she was good.”'))],
   fair:[_T('“What I told you is what you bought. A solid hand for the card.”'),_T('“No surprises. That is the job done right.”'),sx(g,_T('“He is what I said he was. Train him and he will hold.”'),_T('“She is what I said she was. Train her and she will hold.”'))],
   dud:[sx(g,_T('“He looked better in the forum light. We paid for a statue and got the plinth.”'),_T('“She looked better in the forum light. We paid for a statue and got the plinth.”')),_T('“I will hear about this one at every table in town.”'),sx(g,_T('“The Doctore will have work to do with him.”'),_T('“The Doctore will have work to do with her.”'))]});
@@ -63860,6 +63862,17 @@ function sg100Show(g){const old=document.getElementById('signCard');if(old)old.r
 .rc1seal span{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:400 15px var(--display)}
 .rc1seal.mine span{background:radial-gradient(circle at 38% 32%,#d84a3a,#8a1a12 70%);color:#ffd8c8;box-shadow:0 2px 4px #000a,inset 0 0 0 3px #a3281f,inset 0 0 0 5px #6a120c;opacity:.7}
 .rc1seal.his span{border:2px dashed #8a6a3a;color:#c4ae8c}.rc1seal small{font-size:11.5px;color:#c4ae8c}
+/* C2b: one step at a time (the steps are tabs; only the chosen step's section is in the card) — desktop compaction so each tab fits one 900 px screen */
+@media (min-width:1251px){
+ .rc1prof{grid-template-columns:76px minmax(0,1fr);padding:6px 8px}.rc1por{width:76px;height:96px}.rc1map .mi100{--mw:76px;--mh:36px;width:76px}.rc1map small{display:none}
+ .rc1left{gap:4px}.rc1grades,.rc1pers{padding:5px 8px}.rc1phd{margin-bottom:3px}.pe98.rc1lock{height:96px}.gs98.rc1gs{gap:2px}.gb98.rc1g{height:20px}
+ .rc1pe .pe98r{height:22px}
+ .btn.rc1act{grid-template-rows:84px 20px 18px 16px}.btn.rc1act .rc1fr{height:84px}.rc1lg{padding:5px 10px}
+ .btn.rc1pit{grid-template-rows:54px 20px 20px 16px}.btn.rc1pit .rc1fr{height:54px}.rc1low>.rc1pnl{min-height:0}
+ .btn.rc1wo{height:42px}.btn.rc1wo .rc1fr{height:38px}.btn.rc1nr{height:28px}
+ .rc1strip{height:30px}.rc1wax{padding:6px 12px 8px}.rc1tr{height:23px}.rc1seal{min-height:44px}.rc1seal span{width:36px;height:36px}.rc1off{padding:8px 12px}
+ .rc1pane,.rc1ocol,.rc1offr,.rc1learn,.rc1low{gap:5px}
+}
 /* tablets / phones */
 @media (max-width:1250px){.ra98.rc1acts{grid-template-columns:repeat(3,minmax(0,1fr))}.rc1head{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.rc1prof{grid-column:1/-1}.rc1low{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.rc1notes{grid-column:1/-1}.hg98.rc1hgg{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:900px){.rc1offr{grid-template-columns:minmax(0,1fr)}.pg98.rc1pg{grid-template-columns:repeat(2,minmax(0,1fr))}}
