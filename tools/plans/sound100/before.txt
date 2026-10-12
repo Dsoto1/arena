@@ -1,0 +1,17 @@
+BEFORE (dBFS at the master, default sliders: music 32%, effects 55%)
+kind               peak   rms100ms
+hit                   -16    -24.7
+bighit              -13.7    -22.6
+block               -22.2    -31.6
+whoosh              -18.4    -34.2
+coin                -23.2    -27.3
+cf                  -22.7      -28
+card                -21.6    -38.8
+death               -18.2    -25.7
+cheer               -22.1    -32.9
+fanfare             -22.3    -29.8
+click               -29.6      -42
+horn                -15.8    -24.7
+tt100Tick           -31.2    -45.6
+music Roma          -11.5    -17.9
+music Finale        -10.3      -17
