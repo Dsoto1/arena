@@ -67128,13 +67128,21 @@ function an100Pose(p,src){const s=an100St(p),now=an100Now(),mo=an100Motion();
 
 /* ---------------- drawing ---------------- */
 /* an100Cell — draws one cell with its base centred on (x, y); returns the top y, or null when nothing is decoded yet */
+/* an100CellCanvas — one cell pre-scaled to its drawn size (screen scale incl. the device ratio, 3% steps), LRU 400: a down-scaled cut from a big
+   ImageBitmap cost 19–34 ms a draw while the zoomed camera pans (tv100z 2b); 312's bst100CellCanvas does the same for the beasts */
+const AN100CC=new Map(),AN100CCID=new WeakMap();let an100ccN=0;
+function an100CellCanvas(im,key0,fx,sy,w,h,s){try{let id=AN100CCID.get(im);if(!id){id=++an100ccN;AN100CCID.set(im,id)}
+  const t=ctx.getTransform(),ds=Math.max(0.25,Math.hypot(t.a,t.b)||1),q=Math.round(Math.log(s*ds)*33),sq=Math.exp(q/33),key=id+'|'+key0+'|'+fx+'|'+sy+'|'+q;
+  let c=AN100CC.get(key);if(c){AN100CC.delete(key);AN100CC.set(key,c);return c}
+  c=document.createElement('canvas');c.width=Math.max(1,Math.round(w*sq));c.height=Math.max(1,Math.round(h*sq));const g=c.getContext('2d');g.imageSmoothingQuality='high';
+  g.drawImage(im,fx,sy,w,h,0,0,c.width,c.height);AN100CC.set(key,c);while(AN100CC.size>400)AN100CC.delete(AN100CC.keys().next().value);return c}catch(e){return null}}
 function an100Cell(src,P,face,x,y,opt){let o=an100Bm(src,P.set,P.name),row=src[P.set].meta.rows[P.name][P.i];
   if(!o&&P.set==='act'){o=an100Bm(src,'move','idle');P={set:'move',name:'idle',i:0};row=src.move.meta.rows.idle[0]}   /* the action decodes: idle meanwhile */
   if(!o||!row)return null;const [ry,w,h,ax,ay]=row;const im=o.bm||o.whole,sy=ry-o.y0;
   const s=TW*MINI_BASE/25.4/src[P.set].meta.pxmm;ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=TW*MINI_BASE*0.55;ell(x+2,y+3,rw,rw*0.5);ctx.fill();
   if(opt&&opt.dim)ctx.globalAlpha=opt.dim;if(opt&&opt.filter)ctx.filter=opt.filter;
-  const dx=x-ax*s,dy=y-ay*s;ctx.drawImage(im,(face||0)*w,sy,w,h,dx,dy,w*s,h*s);
-  if(opt&&opt.flash){ctx.globalCompositeOperation='lighter';ctx.globalAlpha=opt.flash;ctx.drawImage(im,(face||0)*w,sy,w,h,dx,dy,w*s,h*s);ctx.globalCompositeOperation='source-over'}
+  const dx=x-ax*s,dy=y-ay*s,cc=an100CellCanvas(im,P.set+P.name+P.i,(face||0)*w,sy,w,h,s),cell=()=>cc?ctx.drawImage(cc,dx,dy,w*s,h*s):ctx.drawImage(im,(face||0)*w,sy,w,h,dx,dy,w*s,h*s);cell();
+  if(opt&&opt.flash){ctx.globalCompositeOperation='lighter';ctx.globalAlpha=opt.flash;cell();ctx.globalCompositeOperation='source-over'}
   /* the seat's colour on the base rim, like 222's 3D tokens */
   const pc=AN100.cur&&AN100.cur.color&&!(opt&&opt.filter);if(pc){const k=TW*MINI_BASE/25.4,rx=12.75*k;ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=Math.max(1.5,2.3*k);ctx.beginPath();ctx.ellipse(x,y-1.35*k,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}
   ctx.restore();AN100.stats.cells++;return dy+h*s*0.05}
