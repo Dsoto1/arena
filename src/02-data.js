@@ -1223,7 +1223,7 @@ const CLASSES = {
     keys: 0,
     items: ['c:lure'],
     abil: 'stone',
-    ab: _T('Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) each turn.')
+    ab: _T('Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) every other turn.')
   }
 };
 

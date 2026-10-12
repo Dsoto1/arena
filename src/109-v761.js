@@ -65,7 +65,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 /* the system class rows quote his printed cards (ability + weakness); where the digital game pays it through a rating, say which */
 const CLS_CARD_TXT76={soldier:_T('+1 damage on every successful round 1 attack.'),royalty:_T('1 coin each turn — here, from Luck.'),hero:_T('1 CF each turn — here, from Charisma.'),slave:_T('1 extra movement each turn — here, from Speed.'),
   veteranus:_T('1 coin or 1 CF each turn — here, from Luck and Charisma. Weakness: weapons, armor and CF purchases cost 1 more.'),amazonia:_T('None. Weakness: never receives CF from Blessings.'),
-  venatore:_T('Declare Zora and place her mini into play. Weakness: can never use tunnels.'),damnatio:_T('Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) each turn in phase 1.')};
+  venatore:_T('Declare Zora and place her mini into play. Weakness: can never use tunnels.'),damnatio:_T('Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) every other turn in phase 1.')};
 {const base=classStudioHTML;classStudioHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(data-card="k:(\w+)">[\s\S]*?<div class="t">[\s\S]*?<\/span>)<small>[^<]*<\/small>/g,(m0,a,k)=>CLS_CARD_TXT76[k]?a+`<small>${esc(CLS_CARD_TXT76[k])}</small>`:m0)}catch(e){console.error(e)}return h}}
 
 /* ---- Level 4 custom weapons: the Arena Chest ----

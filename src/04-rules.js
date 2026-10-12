@@ -677,7 +677,7 @@ function npcTrigger(npc, player) {
 async function resolvePhase(player) {
   const G = S;
   // weaknesses, active cards, spectators
-  if (weak(player, 'pelted') && !player.drafted) {
+  if (weak(player, 'pelted') && !player.drafted && pelt100Turn(player)) {
     await hurt(player, rollLoc(player), 1, {
       type: 'env'
     }, _T`The crowd pelts ${player.name} with a stone`);

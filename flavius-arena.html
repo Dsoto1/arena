@@ -2605,7 +2605,7 @@ const CLASSES = {
     keys: 0,
     items: ['c:lure'],
     abil: 'stone',
-    ab: _T('Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) each turn.')
+    ab: _T('Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) every other turn.')
   }
 };
 
@@ -6491,7 +6491,7 @@ function npcTrigger(npc, player) {
 async function resolvePhase(player) {
   const G = S;
   // weaknesses, active cards, spectators
-  if (weak(player, 'pelted') && !player.drafted) {
+  if (weak(player, 'pelted') && !player.drafted && pelt100Turn(player)) {
     await hurt(player, rollLoc(player), 1, {
       type: 'env'
     }, _T`The crowd pelts ${player.name} with a stone`);
@@ -32297,7 +32297,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 /* the system class rows quote his printed cards (ability + weakness); where the digital game pays it through a rating, say which */
 const CLS_CARD_TXT76={soldier:_T('+1 damage on every successful round 1 attack.'),royalty:_T('1 coin each turn — here, from Luck.'),hero:_T('1 CF each turn — here, from Charisma.'),slave:_T('1 extra movement each turn — here, from Speed.'),
   veteranus:_T('1 coin or 1 CF each turn — here, from Luck and Charisma. Weakness: weapons, armor and CF purchases cost 1 more.'),amazonia:_T('None. Weakness: never receives CF from Blessings.'),
-  venatore:_T('Declare Zora and place her mini into play. Weakness: can never use tunnels.'),damnatio:_T('Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) each turn in phase 1.')};
+  venatore:_T('Declare Zora and place her mini into play. Weakness: can never use tunnels.'),damnatio:_T('Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) every other turn in phase 1.')};
 {const base=classStudioHTML;classStudioHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(data-card="k:(\w+)">[\s\S]*?<div class="t">[\s\S]*?<\/span>)<small>[^<]*<\/small>/g,(m0,a,k)=>CLS_CARD_TXT76[k]?a+`<small>${esc(CLS_CARD_TXT76[k])}</small>`:m0)}catch(e){console.error(e)}return h}}
 
 /* ---- Level 4 custom weapons: the Arena Chest ----
@@ -67914,6 +67914,40 @@ if(SND100.on){
 /* v1.0 (his yes 2026-10-12): the default music volume drops 0.32 → 0.20 (−4 dB) so the board sounds sit forward; a player still on the
    old default (0.32 exactly) moves once (localStorage flavius_mvol100); a value anyone chose stays. Outside the kill switch. */
 try{if(!localStorage.getItem('flavius_mvol100')){const a=SETTINGS&&SETTINGS.audio;if(a&&a.mvol===0.32){a.mvol=0.20;lsSet('settings',SETTINGS);try{audApplyVol()}catch(e){}}localStorage.setItem('flavius_mvol100','1')}}catch(e){}
+/* =====================================================================
+   315-v100bal — v1.0 PLAY NOW BALANCE (his three picks from tools/plans/balance100/REPORT.md; digital house rules)
+   P1  DAMNATIO: (a) the printed Damnatio (and a custom copy of it, `pelt10_95`) is pelted only every OTHER Resolve — skipped on odd
+       rotations (the measured variant); the gate is `pelt100Turn`, called by resolvePhase in 04-rules. Other "Hated by the crowd"
+       custom classes are pelted every Resolve as before. (b) loadout gains Iron Helm (galea, head) + Belt I (balteus1, chest).
+       Card text edited in place: 02-data CLASSES.damnatio.ab, 109 CLS_CARD_TXT76.damnatio. Drafted events unchanged (drafted players are never pelted).
+   P2  AMAZONIA: no off-hand Falcata in the printed starting loadout (still in the market). Her printed card art still shows it.
+   P3  SEATS BY LOT: Chariot turn order, Orpheus starting corners and Golden Eagle's first team are SEEDED lots drawn in a seedOpening
+       wrapper (shuffle = the event's seeded RNG: same seed = same lot, identical on every online client); one log line each.
+   ONLINE UNCHANGED: 111-onlcore / server kits are not touched; the page-side kit builder (onlKits92) and online loadouts (giveLoadout
+   while S.onl) see the OLD Damnatio armor and Amazonia's Falcata, so the page stays in step with the server.
+   ===================================================================== */
+const BAL100={dam0:CLASSES.damnatio.armor.map(a=>[...a]),amaL0:CLASSES.amazonia.L};
+CLASSES.damnatio.armor=[['galea','head'],['balteus1','chest'],...CLASSES.damnatio.armor];
+delete CLASSES.amazonia.L;
+/* pelt100Turn — false on the rotations a printed Damnatio is spared (odd ones: the first pelt comes in rotation 2). */
+function pelt100Turn(p){return !(pelt10_95(p)&&((S.rotation|0)%2===1))}
+/* online keeps the old class data for kits and loadouts */
+function bal100Old(fn){const D=CLASSES.damnatio,A=CLASSES.amazonia,da=D.armor,al=A.L;D.armor=BAL100.dam0;if(BAL100.amaL0)A.L=BAL100.amaL0;try{return fn()}finally{D.armor=da;if(BAL100.amaL0){if(al===undefined)delete A.L;else A.L=al}}}
+if(typeof onlKits92==='function'){const base=onlKits92;onlKits92=function(){const a=arguments,t=this;return bal100Old(()=>base.apply(t,a))}}
+{const base=giveLoadout;giveLoadout=function(player){const a=arguments,t=this;if(typeof S!=='undefined'&&S&&S.onl)return bal100Old(()=>base.apply(t,a));return base.apply(t,a)}}
+/* P3 — the lots */
+{const base=seedOpening;seedOpening=function(config){
+  try{if(S&&!config.order){
+    if(EV().kind==='chariot'&&S.order.length>1){S.order=shuffle([...S.order]);S.cur=S.order[0];
+      log(_T`🎲 The lots are drawn: ${nm(S.players[S.cur])} drives first.`)}
+    else if(EV().kind==='orpheus'&&S.players.length>1&&!(config.seats||[]).some(s=>s&&s.start)){
+      const ps=S.players,st=shuffle(ps.map(p=>[...p.start]));ps.forEach((p,i)=>{p.start=st[i];p.r=st[i][0];p.c=st[i][1]});
+      log(_T`🎲 The lots are drawn for the corners: ${ps.map(p=>nm(p)+' '+tl(p.start[0],p.start[1])).join(', ')}.`)}
+    else if(EV().kind==='eagle'&&EV().teams){
+      const teams=shuffle([...new Set(S.players.map(p=>p.team))].sort());const k=Math.max(0,S.order.findIndex(id=>S.players[id].team===teams[0]));
+      S.order=[...S.order.slice(k),...S.order.slice(0,k)];S.cur=S.order[0];
+      log(_T`🎲 The lots are drawn: Team ${esc(String(teams[0]))} takes the first turn.`)}}}catch(e){if(window.ERR92&&console.error)console.error(e)}
+  return base.apply(this,arguments)}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
@@ -68172,6 +68206,8 @@ function showRules(tab='build'){
   <li><span style="color:#c9a8ff">${_T`Digital rule: a Focus roll needs at least 3 movement and spends all you have left — you may walk first (with 5 movement: walk 2, then Focus with the last 3). Only gladiators Focus; beasts never do.`}</span></li>
   <li><span style="color:#c9a8ff">${_T`Digital rule: with Focus, a ranged or thrown weapon may also hit a pillar's Blessings pot in range and line of sight, and a focused hit on a pot deals +1 damage (so a power-1 weapon can snap the chains). The pot still falls one tile toward the attacker; a throw is spent like any other.`}</span></li>
   <li><span style="color:#c9a8ff">${_T`Digital rule: picking up the Arena Chest costs 1 movement, so with none left you cannot take it that turn. Carrying it still costs 1 movement on the turns after.`}</span></li>
+  <li><span style="color:#c9a8ff">${_T`Digital rule: the Damnatio is pelted by the crowd only every other turn (not in the first rotation), and starts with an Iron Helm and a Belt I. The Amazonia starts without the off-hand Falcata (it stays in the market).`}</span></li>
+  <li><span style="color:#c9a8ff">${_T`Digital rule: Chariot turn order, the Orpheus starting corners and the Golden Eagle's first team are drawn by lot at the start (from the dice seed), not by seat order.`}</span></li>
   <li>${_T`Commodus' entrance damage goes to the location every gladiator can best afford. Lure and Rete use range 4 from the thrower. Herculean Vigor applies to your next attack. "A generous applause" is flavor.`}</li>
   <li>${_T`The Naumachia water tokens now use the printed set (water tiles, crocodiles, sunken Level 1–3 weapons and armor, and +2/+3 AP Armor Upgrades; 16 drawn face-down), and the chariot horses (Palmatus, Ocianus, Saxo, Vindex), wheels (Wagon, Laurel, Gilded) and chariot names use the printed token stats. The 36 Blessings tokens remain an estimated mix.`}</li></ul>
   <h4>${_T`Simplifications`}</h4><ul>
