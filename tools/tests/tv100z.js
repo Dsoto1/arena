@@ -107,8 +107,11 @@ const run=async(speed,zoom)=>{const q=await open();await start(q,11);
     const o={L,R,turn:S.turnNo,zoomed:z99Zoomed()};
     for(let i=0;i<100&&(S.busy||CAM.raf||(typeof PACE96!=='undefined'&&PACE96.depth));i++)await W8(100);
     await W8(3000);const st0={...Z99.stats},t0=TILES96.builds,ar0=AR92.n;
-    let draws=0;const b0=draw;draw=function(){draws++;return b0.apply(this,arguments)};await W8(2000);draw=b0;
-    o.idleDraws=draws;o.builds=Z99.stats.builds-st0.builds;o.t96=TILES96.builds-t0;o.ar=AR92.n-ar0;
+    let draws=0,breath=0;const b0=draw;draw=function(){draws++;
+      /* v1.0 wave 8: the 3D stand-ins (311) and beasts (312) breathe on their own pose clocks (a draw at each pose boundary, a few a second,
+         none in idle92) — those are the animation, not the camera; the zoom machinery itself must ask for nothing */
+      const st=String(new Error().stack||'');if(/an100Tick|bst100Tick/.test(st))breath++;return b0.apply(this,arguments)};await W8(2000);draw=b0;
+    o.idleDraws=draws-breath;o.breathDraws=breath;o.builds=Z99.stats.builds-st0.builds;o.t96=TILES96.builds-t0;o.ar=AR92.n-ar0;
     o.flags={z99raf:Z99F.raf,tick:Z99F.tick,inFrame:Z99F.inFrame,pace:PACE96.raf,depth:PACE96.depth,dirty:PACE96.dirty,settle:Z100.st,fold:Z100.fr};o.folded=Z100.stats.folded||0;
     return o},[speed,zoom]).finally(()=>q.context().close())};
 for(const sp of ['normal','fast']){
@@ -116,6 +119,7 @@ for(const sp of ['normal','fast']){
   ok(A.turn>=4&&B.turn>=4,sp+' 4a both runs played '+JSON.stringify([A.turn,B.turn]));
   ok(B.zoomed,sp+' 4b the zoomed run ends zoomed');
   ok(B.idleDraws<=2&&A.idleDraws<=2,sp+' 4c a paused board asks for no draws '+JSON.stringify([A.idleDraws,B.idleDraws]));
+  ok(A.breathDraws<=16&&B.breathDraws<=16,sp+' 4c … and the stand-ins\' / beasts\' breathing is a few draws a second, not a frame loop '+JSON.stringify([A.breathDraws,B.breathDraws]));
   ok(!B.flags.z99raf&&!B.flags.tick&&!B.flags.inFrame&&!B.flags.pace&&!B.flags.depth&&!B.flags.dirty&&!B.flags.settle&&!B.flags.fold,sp+' 4d nothing left pending after the zooms '+JSON.stringify(B.flags));
   if(sp==='normal')ok(B.folded>0,sp+' 4h zoomed while CPUs act: a second draw in one frame waits for the next frame '+B.folded);
   ok(B.builds===0&&B.t96===0&&B.ar===0,sp+' 4e a settled zoomed board rebuilds nothing '+JSON.stringify({builds:B.builds,t96:B.t96,ar:B.ar}));

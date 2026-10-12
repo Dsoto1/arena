@@ -363,6 +363,7 @@ body.rm100on .rm100ban .iv90why{position:relative;z-index:2}
 .rm100ph,.rm100lhd,.rm100tsub,.rm100k{font:500 10px var(--mono);letter-spacing:.14em;color:#b39d80;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rm100ph{margin-bottom:5px}.rm100lhd{height:20px;display:flex;align-items:center}
 .rm100one{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.rm100 .rm100rest table.tally,.rm100 .rm100dos table.tally{display:block;max-width:100%;overflow-x:auto}
 .rm100mut{color:var(--muted);font-size:12px}
 .rm100hide,.rm100 .rm100hide{display:none!important}
 /* the list */

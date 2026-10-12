@@ -49,11 +49,15 @@ const settle=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,
     const lum=(d,i)=>0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];let pc=0,pn=0,bd=0,bn=0,nb=0;
     for(let i=0;i<D.raw.length;i+=4){if(D.raw[i]===Nn.raw[i]&&D.raw[i+1]===Nn.raw[i+1]&&D.raw[i+2]===Nn.raw[i+2]){same++;pc+=lum(D.raw,i);pn++}else{bd+=lum(D.raw,i);bn+=lum(Nn.raw,i);nb++}}
     const pm=pc/Math.max(1,pn),cDay=Math.abs(pm-bd/Math.max(1,nb)),cNight=Math.abs(pm-bn/Math.max(1,nb));
-    return {pcls:p.cls,pr:p.r,pc:p.c,tiles:mids.length,day:D.mid,night:Nn.mid,pieceDay:{lum:D.piece.lum,sd:D.piece.sd,c:cDay},pieceNight:{lum:Nn.piece.lum,sd:Nn.piece.sd,c:cNight},same:same/(D.raw.length/4)}});
+    /* v1.0: 311's stand-ins are many-coloured (a dark belt, bright skin, a steel helm): their MEAN brightness can sit near the night sand's
+       while every part stands well off it — so also measure how far the piece's pixels stand from the ground on average (RMS) */
+    const bgD=bd/Math.max(1,nb),bgN=bn/Math.max(1,nb);let qd=0,qn=0;for(let i=0;i<D.raw.length;i+=4)if(D.raw[i]===Nn.raw[i]&&D.raw[i+1]===Nn.raw[i+1]&&D.raw[i+2]===Nn.raw[i+2]){const v=lum(D.raw,i);qd+=(v-bgD)*(v-bgD);qn+=(v-bgN)*(v-bgN)}
+    const rDay=Math.sqrt(qd/Math.max(1,pn)),rNight=Math.sqrt(qn/Math.max(1,pn));
+    return {pcls:p.cls,pr:p.r,pc:p.c,tiles:mids.length,day:D.mid,night:Nn.mid,pieceDay:{lum:D.piece.lum,sd:D.piece.sd,c:cDay,rms:rDay},pieceNight:{lum:Nn.piece.lum,sd:Nn.piece.sd,c:cNight,rms:rNight},same:same/(D.raw.length/4)}});
   out.look=L;ok(L.tiles>=2,'2 empty middle tiles to sample');
   ok(L.night.lum<L.day.lum*0.85,`2 the middle is darker at night (${L.night.lum.toFixed(1)} vs ${L.day.lum.toFixed(1)})`);
   ok(L.night.b/Math.max(1,L.night.r)>L.day.b/Math.max(1,L.day.r)+0.05,'2 the middle is bluer at night');
-  ok(L.pieceNight.c>=20,`2 the piece stands out from the sand (contrast ${L.pieceNight.c.toFixed(1)} vs ${L.pieceDay.c.toFixed(1)} by day; ${L.pcls} at ${L.pr},${L.pc})`);
+  ok((L.pieceNight.c>=20||L.pieceNight.rms>=40)&&L.pieceNight.rms>=L.pieceDay.rms*0.8,`2 the piece stands out from the sand (contrast ${L.pieceNight.c.toFixed(1)} vs ${L.pieceDay.c.toFixed(1)} by day, RMS ${L.pieceNight.rms.toFixed(1)} vs ${L.pieceDay.rms.toFixed(1)}; ${L.pcls} at ${L.pr},${L.pc})`);
   ok(L.same>=0.2,'2 the piece keeps its own pixels '+L.same.toFixed(2));
   /* the lights: 12, every one outside the sand diamond (all four turns of the view) */
   const T=await pg.evaluate(()=>{const inside=(P,x,y)=>{let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const a=P[i],b=P[j];if((a.y>y)!==(b.y>y)&&x<(b.x-a.x)*(y-a.y)/(b.y-a.y)+a.x)c=!c}return c};

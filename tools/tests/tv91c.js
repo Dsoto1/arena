@@ -57,7 +57,11 @@ ok(L.hov.includes(L.name),'4 the hover line names the spectator: '+L.hov);
 ok(L.crowdMs<25,'per-frame crowd cost '+L.crowdMs.toFixed(2)+' ms');
 /* sculpted tokens: mirrored right of the middle only */
 const M=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const live=S.players.filter(p=>p.alive);
+  /* v1.0: printed classes wear 311's 3D stand-ins (8 rendered facings, never mirrored); the mirror is for sculpted figures (custom/online
+     tokens, and every printed class with the stand-ins off) — measured with the stand-ins off */
+  const an0=typeof AN100!=='undefined'?AN100.on:null;if(an0!=null)AN100.on=false;
   live[0].r=6;live[0].c=11;live[1].r=6;live[1].c=1;for(let i=0;i<30;i++){MIR91.log.length=0;draw();if(MIR91.log.length)break;await W8(150)}
+  if(an0!=null)AN100.on=an0;
   const mid=midX91();return {n:MIR91.log.length,wrong:MIR91.log.filter(x=>x.x<=mid).length,right:MIR91.log.some(x=>x.x>mid+TW*2)}});
 out.mirror=M;ok(M.n>0&&M.right,'7 a sculpted token right of the middle is mirrored');ok(M.wrong===0,'7 none left of the middle is mirrored');
 if(SHOT){await pg.evaluate(()=>draw());await pg.screenshot({path:path.join(SHOT,'tv91c_look.png')})}

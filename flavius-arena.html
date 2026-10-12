@@ -64357,6 +64357,7 @@ body.rm100on .rm100ban .iv90why{position:relative;z-index:2}
 .rm100ph,.rm100lhd,.rm100tsub,.rm100k{font:500 10px var(--mono);letter-spacing:.14em;color:#b39d80;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rm100ph{margin-bottom:5px}.rm100lhd{height:20px;display:flex;align-items:center}
 .rm100one{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.rm100 .rm100rest table.tally,.rm100 .rm100dos table.tally{display:block;max-width:100%;overflow-x:auto}
 .rm100mut{color:var(--muted);font-size:12px}
 .rm100hide,.rm100 .rm100hide{display:none!important}
 /* the list */
@@ -67288,12 +67289,15 @@ function bst100Off(n,A,now){if(!A||!A.g)return null;const u=Math.min(1,(now-A.g.
 /* bst100Act — start a pose run ('attack' | 'hit') on a beast; asks for the action sheet */
 function bst100Act(n,act){try{if(!n||!n.alive)return;const k=bst100Key(n);if(!k)return;const m=bst100Mode();if(m!=='full')return;bst100Img(k,1);
   const A=bst100St(n);if(act==='hit'&&A.act==='attack'&&performance.now()-A.t0<BST100.step*3)return;A.act=act;A.t0=performance.now();bst100Kick()}catch(e){}}
+/* bst100Walks — a beast inside npcWalk shows the walk cycle; while the game is PAUSED mid-walk (npcWalk waits in sleep) it stands
+   still in its idle pose — a paused board never runs the 120 ms walk clock (found by tv100z/tv100bs: 8 draws a second on a paused board) */
+function bst100Walks(n){try{return BST100.walking.has(n)&&SPEED!=='pause'&&SPEED!=='step'}catch(e){return false}}
 /* the pose now: {act:bool, name} */
 function bst100Pose(n,k,A,mode,now){const M=BEAST100_META[k];
   if(mode!=='full')return {act:false,name:'idle0'};
   if(A.act){const st=BST100.step*bst100K(),i=Math.floor((now-A.t0)/st),cnt=(M.ar||[]).filter(x=>x.indexOf(A.act)===0).length;
     if(i<cnt&&bst100Img(k,1))return {act:true,name:A.act+i};if(i>=cnt||!M.ar)A.act=null}
-  if(A.g||BST100.walking.has(n)){const st=BST100.step*bst100K();return {act:false,name:'walk'+(Math.floor(now/st)+A.ofs)%6}}
+  if(A.g||bst100Walks(n)){const st=BST100.step*bst100K();return {act:false,name:'walk'+(Math.floor(now/st)+A.ofs)%6}}
   const idleOn=!(typeof PERF92!=='undefined'&&PERF92.idle);return {act:false,name:'idle'+(idleOn?(Math.floor(now/BST100.idleStep)+A.ofs)%4:0)}}
 /* bst100Cell — draws one cell of beast k at the base point (x, y = the base's bottom like the minis); returns the idle cell's top y */
 /* bst100CellCanvas — one cell pre-scaled once (LRU BST100.cc ≤ CC_MAX): a software canvas rasterises a small 1:1 copy far cheaper than a
@@ -67422,7 +67426,7 @@ function bst100Tick(){BST100.raf=0;if(!bst100Live())return;const busy=(typeof fx
 function bst100Sched(){if(BST100.timer||BST100.raf||!bst100Live())return;const now=performance.now(),mode=bst100Mode();
   if(bst100Frame(now)){BST100.raf=requestAnimationFrame(bst100Tick);return}
   if(mode!=='full')return;let step=BST100.idleStep,any=false;
-  try{for(const n of S.npcs){if(!n.alive||n.out||!BST100.last.has(n.id))continue;const A=BST100.anim.get(n);if(A&&(A.act||BST100.walking.has(n))){step=Math.min(step,BST100.step*bst100K());any=true}}}catch(e){}
+  try{for(const n of S.npcs){if(!n.alive||n.out||!BST100.last.has(n.id))continue;const A=BST100.anim.get(n);if(A&&(A.act||bst100Walks(n))){step=Math.min(step,BST100.step*bst100K());any=true}}}catch(e){}
   if(!any&&typeof PERF92!=='undefined'&&PERF92.idle)return;   /* idle92: the breathing waits for the next input */
   const next=(Math.floor(now/step)+1)*step;BST100.timer=setTimeout(()=>{BST100.timer=0;BST100.raf=requestAnimationFrame(bst100Tick)},Math.max(4,next-now+2))}
 
