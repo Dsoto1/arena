@@ -67348,7 +67348,7 @@ const BEAST100_META={
 /* BEAST100_META:END */
 const BST100={on:true,step:120,idleStep:320,glideMs:150,dieHold:900,dieFade:450,net:{wind:280,fly:420,drop:260},toss:{dur:950,gap:240,afterMs:750},
   img:{},cc:new Map(),ccMax:480,anim:new WeakMap(),walking:new Set(),ghosts:[],nets:[],netSeen:new WeakSet(),netS:null,tosses:[],hideF:new Set(),puffs:[],fortune:0,
-  timer:0,raf:0,stats:{draws:0,cells:0,poses:{},glides:0,ghosts:0,nets:0,tosses:0,swarms:0,ms:0},last:new Map(),trace:null};
+  timer:0,raf:0,stats:{draws:0,ticks:0,cells:0,poses:{},glides:0,ghosts:0,nets:0,tosses:0,swarms:0,ms:0},last:new Map(),trace:null};
 try{if(localStorage.getItem('flavius_beasts100off')==='1')BST100.on=false}catch(e){}
 try{if(typeof HEADLESS!=='undefined'&&HEADLESS)BST100.on=false}catch(e){}
 /* the standalone file carries no beast sheets (mkshare skips them, ≤30 MiB) → today's minis */
@@ -67522,7 +67522,7 @@ function bst100Kick(){if(!BST100.on||HEADLESS)return;if(BST100.timer){clearTimeo
 function bst100Tick(){BST100.raf=0;if(!bst100Live())return;const busy=(typeof fxRAF!=='undefined'&&fxRAF)||(typeof PUSH100!=='undefined'&&PUSH100.raf);
   /* one board draw serves 311's gladiators and the beasts: a draw in the last 10 ms (311's breath on the same clock) already shows the new pose */
   const fresh=typeof AN100!=='undefined'&&AN100.lastDraw&&performance.now()-AN100.lastDraw<10;
-  if(fresh)bst100Sched();else if(!busy){try{draw()}catch(e){console.error(e)}}else bst100Sched()}
+  if(fresh)bst100Sched();else if(!busy){BST100.stats.ticks++;try{draw()}catch(e){console.error(e)}}else bst100Sched()}
 function bst100Sched(){if(BST100.timer||BST100.raf||!bst100Live())return;const now=performance.now(),mode=bst100Mode();
   if(bst100Frame(now)){BST100.raf=requestAnimationFrame(bst100Tick);return}
   if(mode!=='full')return;let step=(typeof AN100!=='undefined'&&AN100.idleMs)||BST100.idleStep,any=false;   /* breathe on 311's clock: one redraw for both */
