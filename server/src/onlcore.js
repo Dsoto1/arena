@@ -1584,7 +1584,7 @@ const ONLC=(function(){
   if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('replay.get'))C.GUEST_OK.push('replay.get');
   Object.assign(C,{REPLAY100,replayIdOK100,replayPutWhy100,replayAnon100,replayPack100,replaySize100})})(ONLC);
 /* ══════════ v1.0 BALANCE (his picks O1 O2 O3 from tools/plans/balance100/REPORT.md; the server block "v1.0 BALANCE" at the end of routes.js;
-   the page side is 315-v100bal; docs/backend.md "v1.0 balance"; NO protocol bump) ══════════
+   the page side is 316-v100balonl; docs/backend.md "v1.0 balance"; NO protocol bump) ══════════
    • O1 PRINTED GEAR COMES HOME DENTED (Ranked): a printed piece (L1–3, not named, not Issued) brought into a Ranked bout and no longer held at the
      end is no longer destroyed (v0.91 out.gone) — it stays with the survivor DAMAGED (pc.st 'damaged', dmg 1, in place like the v0.91 dents:
      worn in Custom, stripped from Ranked kits until repaired). A RANKED DEATH sends his brought printed pieces to the house shelf (out.left)
