@@ -84,7 +84,7 @@ const backA=await A.evaluate(()=>({grey:!!document.querySelector('#onl .onl-room
 for(let i=0;i<120&&!(await B.evaluate(()=>{const b=document.getElementById('btnOnlSay80');return !!(b&&b.offsetParent&&S&&S.onl&&ONLM.on)}).catch(()=>false));i++){await drive(B);await drive(C);await wait(250)}
 /* a DOM click: the bar is redrawn on every render, so Playwright's 'stable' wait can starve under load */
 await B.evaluate(()=>{ONLM.uiAt=Date.now();document.getElementById('btnOnlSay80').click()});await wait(250);
-await C.evaluate(()=>{window.__bub=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('qbub80'))window.__bub.push(n.textContent+'@'+n.dataset.seat)}).observe(document.body,{childList:true,subtree:true})});
+await C.evaluate(()=>{window.__bub=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if((n.classList&&n.classList.contains('qbub80')||n.parentNode&&n.parentNode.id==='bb100'&&n.querySelector&&n.querySelector('.q')))window.__bub.push(n.textContent+'@'+n.dataset.seat)}).observe(document.body,{childList:true,subtree:true})});
 await B.click('#onlSay80 [data-msay="struck"]');await until(()=>C.evaluate(()=>window.__bub.length>0));const bub=await C.evaluate(()=>window.__bub);
 /* the match ends on both screens (the same winner, at the same input) → the result settles → a 'res' line in the Forum */
 for(let i=0;i<40;i++){const s=await Promise.all([B,C].map(p=>p.evaluate(()=>({n:ONLM.next,ok:typeof onlmSettled==='function'&&onlmSettled()||!S.busy&&!CUR_MODAL}))));if(s[0].n===s[1].n&&s[0].ok&&s[1].ok)break;await drive(B);await drive(C);await wait(250)}
