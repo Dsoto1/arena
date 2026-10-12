@@ -7,7 +7,7 @@
    5 · the owner's own turn clock report ('own'), reveal credit ('fx') on the mock clock.
    6 · Beta abandons (Ranked → counted), two more leaves → Ranked cooldown (ranked_cd) + the house card's "Often leaves" mark.
    7 · Alpha's result → the season board (🏆 Season tab lists him), the after-match summary card with the replay link (#replay=<id>) + ⚔ Again + 🚩 Report.
-   8 · the #replay= deep link says replays are coming soon; Tactics has the 🌐 Online page; phone 390: the Lobby Browser fits.
+   8 · the #replay= deep link of an unknown match says nothing is kept (309-v100replay; was "coming soon"); Tactics has the 🌐 Online page; phone 390: the Lobby Browser fits.
    SHOT=<dir> saves the screenshots (tools/plans/online100b/). ERRS must be []. */
 const http=require('http'),fs=require('fs'),path=require('path');
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);const SHOT=process.env.SHOT||'';
@@ -111,7 +111,7 @@ ok(out.sb&&out.sb.rows>=1&&out.sb.alpha&&out.sb.tit===3,'🏆 Season: the board 
 
 /* ── 8 · the deep link, Tactics Online, phone ── */
 await C.__ev(()=>{if(CUR_MODAL)CUR_MODAL.done('close')});await wait(300);
-await C.__ev(()=>{location.hash='#replay=Ltest42'});out.dl=await until(C,()=>{const e=document.querySelector('.rp100pop');return e&&/coming soon/i.test(e.textContent)});ok(out.dl,'#replay= says replays are coming soon');
+await C.__ev(()=>{location.hash='#replay=Ltest42'});out.dl=await until(C,()=>{const e=document.querySelector('.rp100pop');return e&&/match replay/i.test(e.textContent)&&!/coming soon/i.test(e.textContent)});ok(out.dl,'#replay= of an unknown match: the v1.0 replay card (309) says nothing is kept');
 await C.__ev(()=>{for(const x of document.querySelectorAll('.rp100pop'))x.remove()});
 await until(C,()=>{if(CUR_MODAL)CUR_MODAL.done('close');return document.getElementById('modal').hidden&&!CUR_MODAL},null,15000);await wait(600);
 C.__ev(()=>{showRules('onl')}).catch(()=>{});out.tac=await until(C,()=>{const p=document.querySelector('#tac98 [data-pane="onl"]');return p&&!p.hidden&&/Hot seat/.test(p.textContent)&&!!document.querySelector('#tac98 [data-tac98="onl"].on')});
