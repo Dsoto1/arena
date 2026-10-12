@@ -65718,12 +65718,18 @@ function bfo305Show(L){
   if(ONLM.me<0||ONLM.me>=onlmFighters()||ONLM.q.length||ONLM.pend)return;
   if(typeof SETTINGS!=='undefined'&&!(SETTINGS.briefing===true||SETTINGS.briefing!==false&&!navigator.webdriver))return;
   if(typeof modalBusy==='function'&&modalBusy())return;
-  const G=S,prev=BF100.cur;BF100.cur=1;BFO305.open=true;ONLM.info++;let p;
+  const G=S,prev=BF100.cur;BF100.cur=1;BFO305.open=true;BFO305.noPause=true;ONLM.info++;let p;
   try{p=modal(_T('📋 The briefing'),briefingHTML(),[{label:_T('⚔ To the sand'),value:1,primary:1}],{wide:true,close:1})}catch(e){BFO305.open=false;p=null}
   finally{ONLM.info--;BF100.cur=prev}
-  if(p&&p.then)p.then(()=>{if(G===S)BFO305.open=false}).catch(()=>{BFO305.open=false});else BFO305.open=false;
+  if(p&&p.then)p.then(()=>{if(G===S)BFO305.open=false;BFO305.noPause=false}).catch(()=>{BFO305.open=false;BFO305.noPause=false});else{BFO305.open=false;BFO305.noPause=false}
   try{if(typeof sfx==='function')sfx('cheer')}catch(e){}}
 {const base=onlJoinMatch;onlJoinMatch=async function(L){const r=await base.apply(this,arguments);try{bfo305Show(L)}catch(e){console.error(e)}return r}}
+/* NEVER PAUSE (the tonl83 desync, v1.0): every window modal() shows pauses a live event (07-ui modalPause → SPEED 'pause', and 119
+   keeps it paused while a window is up). The host's briefing opens before the first turn, so nothing waits on it; the joiner's opens while
+   the CPUs' first turns are already running, so it froze this screen (sleep() holds on 'pause') — the joiner fell behind every other
+   screen, never reached its own turn.begin (which is what closes it) and its hash stayed behind until someone clicked. The briefing's own
+   opening (the first modalPause after the call above, run from modal()'s queue) leaves the pace alone. */
+{const base=modalPause;modalPause=function(){if(BFO305.noPause){BFO305.noPause=false;if(BFO305.open)return}return base.apply(this,arguments)}}
 /* any other window: a rule pop-up (info) waits its turn behind the briefing; every decision / remote window closes it first */
 {const base=modal;modal=function(){if(BFO305.open&&bfo305Is()&&!(typeof ONLM!=='undefined'&&ONLM.info>0)&&!(BF100.cur&&typeof arguments[1]==='string'&&arguments[1].indexOf('bf100w')>=0))bfo305Close();return base.apply(this,arguments)}}
 BUS.on('turn.begin',d=>{if(BFO305.open&&d&&(d.seat===ONLM.me||!ONLM.on))bfo305Close()});
