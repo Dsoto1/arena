@@ -45,7 +45,7 @@ ok(OFF.r.n.patched===0&&OFF.r.cut.made===0,'the kill switch did not turn the pas
 const same=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));SPEED='pause';await W8(800);for(let i=0;i<40&&(S.busy||typeof fxRAF!=='undefined'&&fxRAF);i++)await W8(100);
   const ids=['status','rosterHd','roster','board','npcPanel','turnInd'];
   const canon=x=>{if(x.nodeType===3)return x.nodeValue;if(x.nodeType!==1)return '';if(x.tagName==='SPAN'&&x.classList.contains('gt84'))return x.textContent;
-    const at=Array.from(x.attributes).filter(a=>a.name!=='data-en84'&&a.name!=='data-lift93').map(a=>a.name+'='+a.value.replace(/s3h[0-9a-z]+/g,'').replace(/(^|;\s*)color:\s*(rgb\([^)]*\)|var\(--[\w-]+\)|#[0-9a-f]{3,8})/gi,'$1color:*').replace(/\s+/g,'').replace(/;$/,'')).sort();
+    const at=Array.from(x.attributes).filter(a=>a.name!=='data-en84'&&a.name!=='data-lift93'&&a.name!=='translate'/* 138's translate=no marks land on an observer's schedule: late on a slow runner */).map(a=>a.name+'='+a.value.replace(/s3h[0-9a-z]+/g,'').replace(/(^|;\s*)color:\s*(rgb\([^)]*\)|var\(--[\w-]+\)|#[0-9a-f]{3,8})/gi,'$1color:*').replace(/\s+/g,'').replace(/;$/,'')).sort();
     let s='<'+x.tagName+' '+at.join(' ')+'>';for(const c of x.childNodes)s+=canon(c);return s+'</>'};
   const snap=()=>ids.map(id=>{const e=document.getElementById(id);return e?canon(e):''});
   render();render();await W8(500);const a=snap();P95.noPatch=true;render();await W8(500);const b2=snap();P95.noPatch=false;render();await W8(500);const c=snap();
