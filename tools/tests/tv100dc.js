@@ -44,6 +44,8 @@ ok(R1.r&&R1.r.counted&&R1.r.att===1&&R1.r.won&&R1.r.s>=100,'first attempt counts
 ok(R1.bt.some(t=>/Challenges/.test(t))&&!R1.bt.some(t=>/Replay/.test(t)),'📅 Challenges in the results buttons, no Replay '+JSON.stringify(R1.bt));
 ok(R1.dc.length===1&&R1.dc[0].kind==='d'&&R1.dc[0].day==='2026-10-12'&&R1.dc[0].score===R1.r.s&&R1.dc[0].counted===true,'BUS challenge.done '+JSON.stringify(R1.dc));
 ok(R1.ls&&R1.ls.d['2026-10-12']&&R1.ls.d['2026-10-12'].a[1].s===R1.r.s,'filed in localStorage flavius_daily100');
+{const NR=await pA.evaluate(async()=>{const before=await Store.get('hall','main').catch(()=>null);const g=await achGrant('first_blood');const put=await Store.put('hall','main',{x:1});return {nr:dc100NoRec(),g,put,cfg:matchSaveOK()}});
+ok(NR.nr&&NR.g===false&&NR.put===false&&NR.cfg===false,'medals only: no Annals/achievements/Hall writes or autosave after a challenge '+JSON.stringify(NR))}
 if(SHOT)await pA.screenshot({path:SHOT+'/results_1440.png'});
 /* the second attempt the same day = practice; the first stays */
 await closeAll(pA);

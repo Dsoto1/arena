@@ -66257,6 +66257,8 @@ function fh100MenuCard(){let el=document.getElementById('fh100mm');const mm=docu
    UI: Play Now submenu "📅 Challenges" (modal wrapper like 247's), a slim strip on the Play Now page (setupBody wrapper, before the event
      panel), the window dc100Open (in SCREEN_OPENERS terms: it registers its own screenIntent), the results window gets a
      "Your challenge" card + "📅 Challenges" (no Replay). BUS 'challenge.done' {kind,day,score,medal,counted,att} for the Tituli.
+   MEDALS ONLY (his 2a): a challenge writes no Annals, achievements, Hall, trophies, crowd memory, Ludus, wagers, autosave, missio or
+     editor unlocks — the record functions 119 guards online + its offline collections, while it plays and 2 min after (dc100NoRec).
    Kill switch localStorage flavius_daily100off=1 (no button, no strip, no window). Test tv100dc; shots tools/plans/daily100/. */
 const DC100={off:false,t:null,starting:null,K:'flavius_daily100',open:false};
 try{DC100.off=localStorage.getItem('flavius_daily100off')==='1'}catch(e){}
@@ -66468,6 +66470,25 @@ document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.targ
 @media (max-width:760px){.dc100cards{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:600px){.dc100art{width:70px;height:101px}.dc100i .nm{font-size:18px}.dc100days{gap:2px}.dc100d{min-height:36px}.dc100d b{font-size:13px}.dc100pn .tx{flex:1 1 200px}.dc100f .sb100{width:100%}}
 `;document.head.appendChild(st)}
+
+/* ---- medals only: a challenge leaves no other record (his 2a) ---- */
+const DC100R={overAt:0,inOver:false};
+function dc100NoRec(){try{if(!S||!S.daily100)return false;if(!S.over)return true;return DC100R.inOver||Date.now()-DC100R.overAt<120000}catch(e){return false}}
+{const base=gameOver;gameOver=async function(){const on=!!(S&&S.daily100);if(on){DC100R.overAt=Date.now();DC100R.inOver=true}try{return await base.apply(this,arguments)}finally{if(on){DC100R.inOver=false;DC100R.overAt=Date.now()}}}}
+/* a=1: the original is async (later wrappers hide that, and gameOver calls .catch on some of them) */
+for(const [nm,val,a] of [['recordEvent',undefined,1],['achievementsAfterEvent',undefined,1],['logCustomChars',undefined,1],['updateCrowdAfterEvent',undefined,1],
+  ['bestiaryTally',undefined,0],['saveGladiator',null,1],['markFallen',undefined,1],['claimFreedom',undefined,1],['hallTrophy',undefined,1],['rivalTrophy',undefined,1],
+  ['sponsorAfterEvent',undefined,1],['roadAfterEvent',undefined,1],['infirmaryTick',undefined,1],['achGrant',false,1],['betRec',null,0],['betSettle',undefined,0],
+  ['matchAutosave',undefined,0],['advanceMissio',null,1]]){
+  try{const base=eval(nm);if(typeof base!=='function')continue;
+    const w=function(){if(dc100NoRec())return a?Promise.resolve(val):val;return base.apply(this,arguments)};eval(`${nm}=w`)}catch(e){}}
+{const base=matchSaveOK;matchSaveOK=function(){return dc100NoRec()?false:base.apply(this,arguments)}}
+{const base=resultCard;resultCard=function(){const h=base.apply(this,arguments);if(!dc100NoRec()||typeof h!=='string')return h;
+  return h.replace(/<button class="btn" type="button" data-(save|free)="[^"]*"[^>]*>[\s\S]*?<\/button>/g,'')}}
+{const DC100_BLOCK=new Set(['hall','infamis','hallTrophies','gladiators','missios','wallet','crowd','arena','customChars']);
+  const put=Store.put,del=Store.del;
+  Store.put=function(col){if(DC100_BLOCK.has(col)&&dc100NoRec())return Promise.resolve(false);return put.apply(this,arguments)};
+  Store.del=function(col){if(DC100_BLOCK.has(col)&&dc100NoRec())return Promise.resolve();return del.apply(this,arguments)}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
