@@ -72,7 +72,7 @@ seats=await Promise.all([A,B].map(p=>p.evaluate(()=>S&&S.onl?{me:ONLM.me,lobby:S
 /* play until enough inputs are on the server (not a fixed 30 s: under load the same play takes longer) */
 await run(180000,async el=>el>=10000&&(await A.evaluate(()=>ONLM.next).catch(()=>0))>14);
 /* a 💬 match phrase from A → a bubble over A's gladiator on B's screen */
-await B.evaluate(()=>{window.__bub=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('qbub80'))window.__bub.push(n.textContent+'@'+n.dataset.seat)}).observe(document.body,{childList:true,subtree:true})});
+await B.evaluate(()=>{window.__bub=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if((n.classList&&n.classList.contains('qbub80')||n.parentNode&&n.parentNode.id==='bb100'&&n.querySelector&&n.querySelector('.q')))window.__bub.push(n.textContent+'@'+n.dataset.seat)}).observe(document.body,{childList:true,subtree:true})});
 const sayBtn=await until(A,()=>!!document.getElementById('btnOnlSay80'),null,20000);
 await A.evaluate(()=>{ONLM.uiAt=Date.now();const b=document.getElementById('btnOnlSay80');if(b)b.click()});await A.waitForSelector('#onlSay80 [data-msay="struck"]',{timeout:20000}).catch(()=>{});await A.click('#onlSay80 [data-msay="struck"]',{force:true}).catch(()=>{});
 const bub=await until(B,()=>window.__bub.length?window.__bub:null,null,20000);
@@ -93,7 +93,7 @@ const resC=await C.evaluate(()=>ONLF.lines.filter(l=>l.k==='res').map(l=>(l.win|
    and the ⚔ Again invitation still reach them */
 await wait(10000);
 const sockets=await Promise.all([A,B].map(p=>p.evaluate(()=>!!(NETWS.ws&&NETWS.ws.readyState===1))));
-await A.evaluate(()=>{window.__bub2=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('qbub80'))window.__bub2.push(n.textContent)}).observe(document.body,{childList:true,subtree:true})});
+await A.evaluate(()=>{window.__bub2=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if((n.classList&&n.classList.contains('qbub80')||n.parentNode&&n.parentNode.id==='bb100'&&n.querySelector&&n.querySelector('.q')))window.__bub2.push(n.textContent)}).observe(document.body,{childList:true,subtree:true})});
 await B.evaluate(()=>{ONLM.uiAt=Date.now();const b=document.getElementById('btnOnlSay80');if(b)b.click()});await B.waitForSelector('#onlSay80 [data-msay="well"]',{timeout:20000}).catch(()=>{});await B.click('#onlSay80 [data-msay="well"]',{force:true}).catch(()=>{});
 const bubAfter=await until(A,()=>window.__bub2.length?window.__bub2:null,null,20000);
 /* ⚔ Again (B, a fighter): a new room like the last, A invited — A sees the invitation once back in Online */

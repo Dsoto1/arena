@@ -37,7 +37,7 @@ await pg.screenshot({path:'sc_a.png'});
 // trophy
 await tab('trophies');res.tBlank=await pg.evaluate(()=>ST.trd.shape);res.t=await addDrag('t','#trPrev svg',[0.1,0.1]);await pg.screenshot({path:'sc_t.png'});
 // banner
-await tab('flags');res.fBlank=await pg.evaluate(()=>ST.fd.shape);res.f=await addDrag('f','#fdPrev',[0.2,0.05]);
+await tab('flags');await pg.evaluate(()=>{const b=document.querySelector('#in100 [data-in100t="sculpt"]');b&&b.click()});await pg.waitForTimeout(300);res.fBlank=await pg.evaluate(()=>ST.fd.shape);res.f=await addDrag('f','#fdPrev',[0.2,0.05]);
 res.fSrcHas=await pg.evaluate(()=>decodeURIComponent(document.getElementById('fdPrev').src).includes("scale(6)"));await pg.screenshot({path:'sc_f.png'});
 // token
 await tab('tokens');await pg.waitForTimeout(300);res.tok=await addDrag('tok','#tokPrev svg',[0.05,0.05]);
