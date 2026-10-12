@@ -1443,8 +1443,9 @@ One global script; files are concatenated in order. Later "version modules" patc
   make.js evaluates — the same code renders Studio (222 tok93) and online (226 t94, parts via t94Char) tokens ON THE DEVICE (`an100Dev` → queue `an100Pump`: idle
   callbacks, never while T93.busy/conv, never HEADLESS / sims / headless browsers unless localStorage flavius_anim100dev=1), cached in IndexedDB
   'flavius_anim100' keyed by look+gear+pose set+scale (≤ `AN100.dbMax` 24); until ready they draw today's token. Worn in the figure AND standee token styles
-  (drawFigureTok / drawStandee wrappers while `AN100.cur` = the gladiator drawPlayer is drawing); a gladiator with a SEVERED limb keeps today's token (it shows
-  the loss). Poses step every 120 ms; the position GLIDES (drawPlayer wrapper, screen offset like 294; ROT89/zoom follow; far jumps snap; no second glide after
+  (drawFigureTok / drawStandee wrappers while `AN100.cur` = the gladiator drawPlayer is drawing). SEVERED SETS: one lost limb → assets/anim100_<cls>_<limb>_move|act.webp
+  (`make.js sev` + sevenc.py; idle 1 + walk/hobble 4 · attack, hit, fall 2; 3.3 MB for 32; meta `.sev[limb]`), loaded only then, after the sever pose; 2+ limbs = today's token.
+  GEAR-TRUE: loadout noted at the first turn (`AN100.gear`); not the class kit → rendered on the device keyed by look + loadout (+ limb; moves first, yours first). Poses step every 120 ms; the position GLIDES (drawPlayer wrapper, screen offset like 294; ROT89/zoom follow; far jumps snap; no second glide after
   doPush). Started by BUS hit (hit / block when armour took all / sever + flash) and elim (fall row drawn after the 'pieces' layer, lies 1.3 s, fades), doAttack
   (attack), doTopple (topple), breakPot (knock), 294's push100Pose hook (push row by progress; push100Tilt returns 0 for a stand-in); limp = a leg ≤2 HP; scared =
   a wild beast hunting him within 2 tiles. SPEED: Slow/Normal full · Fast = CPU / other online seats on the still cell + glide + flash, YOUR OWN animate · snap /

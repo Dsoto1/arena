@@ -21,6 +21,11 @@ const OUT = path.join(HERE, 'out'); fs.mkdirSync(OUT, { recursive: true });
 const ASSETS = path.join(ROOT, 'assets'), SRC = path.join(ROOT, 'src/311-v100anim.js');
 const CLS = ['soldier', 'hero', 'slave', 'royalty', 'amazonia', 'veteranus', 'venatore', 'damnatio'];
 const want = process.argv.slice(2).filter(a => CLS.includes(a)); const list = want.length ? want : CLS;
+/* `sev` = the SEVERED sets (one lost limb each): assets/anim100_<cls>_<limb>_<move|act>.webp, meta under ANIM100_META[cls].sev[limb];
+   ~12 s a sheet (~11 min for all 64), then re-encoded by sevenc.py (PIL, method 6, AN100_SQ 0.6). node make.js sev [cls…] [rarm|larm|rleg|lleg…] */
+const LIMBS = ['rarm', 'larm', 'rleg', 'lleg']; const SEV = process.argv.includes('sev');
+const wantL = process.argv.slice(2).filter(a => LIMBS.includes(a)); const limbs = wantL.length ? wantL : LIMBS;
+const SEVQ = +(process.env.AN100_SQ || 0.6);
 const PX = +(process.env.AN100_PX || 2.6), Q = +(process.env.AN100_Q || 0.8);
 /* a look per printed class (after his minis; same table as tools/art/mm100/make.js) — the cloth is the game's CLOTH100 (276) */
 const LOOK = {
@@ -54,6 +59,21 @@ async function partsFromGame(browser) {
     const e0 = await pg.evaluate(() => window.__err); if (e0) throw new Error(e0);
     const ini = await pg.evaluate(() => AN100R.init()); console.log('token', JSON.stringify(ini)); if (!ini.baked) console.log('  ! no pre-baked gear — run node tools/art/rig92/mkgear.js');
     const M = readMeta().m;
+    if (SEV) { const PRV = path.join(OUT, 'sev'); fs.mkdirSync(PRV, { recursive: true });
+      for (const k of list) { const look = Object.assign({}, LOOK[k], { cloth: parts[k].cloth }); M[k] = M[k] || {}; M[k].sev = M[k].sev || {};
+        for (const limb of limbs) { M[k].sev[limb] = M[k].sev[limb] || {};
+          for (const set of ['move', 'act']) { const t0 = Date.now();
+            const r = await pg.evaluate(([l, g, s, px, q, lb]) => AN100R.sheet(l, g, s, px, q, lb), [look, parts[k].gear, set, PX, SEVQ, limb]);
+            const f = `anim100_${k}_${limb}_${set}.webp`; const kb = save(path.join(ASSETS, f), r.url) / 1024; save(path.join(PRV, `${k}_${limb}_${set}.png`), r.png || r.url);
+            M[k].sev[limb][set] = r.meta; writeMeta(M);
+            const cells = Object.values(r.meta.rows).reduce((s, a) => s + a.length * 8, 0);
+            rep['sev_' + k + '_' + limb + '_' + set] = { kb: +kb.toFixed(1), w: r.w, h: r.h, cells, ms: Date.now() - t0 }; fs.writeFileSync(RP, JSON.stringify(rep, null, 1));
+            console.log((k + ' ' + limb + ' ' + set).padEnd(22), (kb.toFixed(1) + ' KB').padStart(9), `${r.w}x${r.h}`, cells + ' cells', Math.round((Date.now() - t0) / 1000) + ' s');
+            if (errs.length) { console.log('  errors', errs.slice(0, 3)); errs.length = 0; } } } }
+      let st = 0; for (const k of CLS) for (const limb of LIMBS) for (const set of ['move', 'act']) { const f = path.join(ASSETS, `anim100_${k}_${limb}_${set}.webp`); if (fs.existsSync(f)) st += fs.statSync(f).size; }
+      try { console.log(require('child_process').execFileSync('python3', [path.join(HERE, 'sevenc.py'), String(Math.round(+(process.env.AN100_SQ || 0.6) * 100))]).toString().trim()); st = 0;
+        for (const k of CLS) for (const limb of LIMBS) for (const set of ['move', 'act']) { const f = path.join(ASSETS, `anim100_${k}_${limb}_${set}.webp`); if (fs.existsSync(f)) st += fs.statSync(f).size; } } catch (e) { console.log('  ! sevenc.py failed: canvas WebP kept', String(e.message || e).slice(0, 200)); }
+      rep.sevTotalKB = Math.round(st / 1024); rep.sevQ = SEVQ; fs.writeFileSync(RP, JSON.stringify(rep, null, 1)); console.log('severed total', rep.sevTotalKB, 'KB'); return; }
     for (const k of list) { const look = Object.assign({}, LOOK[k], { cloth: parts[k].cloth }); M[k] = M[k] || {};
       for (const set of ['move', 'act']) { const t0 = Date.now();
         const r = await pg.evaluate(([l, g, s, px, q]) => AN100R.sheet(l, g, s, px, q), [look, parts[k].gear, set, PX, Q]);

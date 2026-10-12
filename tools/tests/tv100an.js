@@ -3,7 +3,8 @@
    row, a blow steps hit/block on the target; 4 an elimination plays the fall row where he fell; 5 FAST: a CPU stays on its still cell
    (flash only), your own gladiator still animates; 6 Reduce motion: still cell, no glide, no flash; 7 perf: a board draw with the
    stand-ins vs today's tokens in one page; 8 the kill switch = today's drawing, no sheet requested; 9 the same seeded dice + log with the
-   module on vs off (fresh browsers, Normal speed); 10 the on-device cache (IndexedDB) round-trips; no new errors. SHOT=dir → shots. */
+   module on vs off (fresh browsers, Normal speed); 10 the on-device cache (IndexedDB) round-trips; 11 severed sets (arm / leg swap, loaded only then, two limbs → today's token);
+   12 gear-true figures: a non-kit seat renders on the device keyed by its loadout, kit seats don't, severed with real gear; no new errors. SHOT=dir → shots. */
 const {chromium}=require('playwright');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');
 (async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};pg.on('pageerror',e=>errs.push(e.message));
 await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
@@ -92,6 +93,27 @@ ok(s7.on<=s7.off*1.35+3,'7 a board draw with the stand-ins costs about today\'s 
 const s10=await pg.evaluate(async()=>{const blob=new Blob([new Uint8Array([1,2,3])],{type:'image/webp'});await an100DBPut({key:'tv100an',v:AN100L.VER,at:Date.now(),move:{b:blob,m:{rows:{}}},act:{b:blob,m:{rows:{}}}});
   const r=await an100DBGet('tv100an');return {got:!!(r&&r.move&&r.move.b&&r.move.b.size===3),devOK:an100DevOK()}});
 ok(s10.got&&!s10.devOK,'10 IndexedDB cache round-trips; no on-device 3D in a headless browser '+JSON.stringify(s10));
+/* ---- 11 SEVERED sets (kit seats = the prebuilt per-class severed sheets): a lost arm / leg swaps to its own set, loaded only then; two limbs → today's token ---- */
+const s11=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));SPEED='normal';const P=S.players[0],Q=S.players[1];
+  const req=re=>performance.getEntriesByType('resource').map(e=>e.name).filter(n=>re.test(n)).length;
+  const kit=S.players.map(p=>{const g=AN100.gear.get(p);return !!(g&&g.kit)});const dev0=AN100.dev.size;
+  const sevKeys=()=>[...AN100.src.keys()].filter(k=>/:(rarm|larm|rleg|lleg)$/.test(k));const before=sevKeys().length;
+  const cut=async(p,loc)=>{const b=p.hp[loc];p.hp[loc]=0;BUS.emit('hit',{target:{id:p.id,name:p.name},loc,amount:b,before:{hp:b},after:{hp:0}});};
+  AN100.trace=[];await cut(Q,'larm');await __samp(300);const early=AN100.trace.filter(x=>x.id===Q.id&&x.src).map(x=>x.src);
+  for(let i=0;i<60&&!(AN100.src.get('p:hero:larm')&&AN100.src.get('p:hero:larm').move.bm.idle&&AN100.src.get('p:hero:larm').move.bm.idle!==1);i++)await __samp(150);
+  await __samp(500);const qs=[...new Set(AN100.trace.filter(x=>x.id===Q.id&&x.src).map(x=>x.src))];
+  await cut(P,'rleg');for(let i=0;i<60&&!(AN100.src.get('p:soldier:rleg')&&AN100.src.get('p:soldier:rleg').move.bm.idle&&AN100.src.get('p:soldier:rleg').move.bm.idle!==1);i++)await __samp(150);
+  AN100.trace=[];P.mv=6;const free=[[5,2],[7,2],[5,1],[7,1]].find(([r,c])=>!S.players.some(x=>x.alive&&x.r===r&&x.c===c)&&!S.npcs.some(n=>n.alive&&n.r===r&&n.c===c)&&!S.pillars.some(x=>x.r===r&&x.c===c));
+  if(free){const mv=movePlayer(P,[free[0]*N+free[1]]);let dn=false;mv.then(()=>dn=true);while(!dn){draw();await W8(20)}}await __samp(600);
+  const ps=AN100.trace.filter(x=>x.id===P.id&&x.src);const pSrc=[...new Set(ps.map(x=>x.src))],pWalk=[...new Set(ps.filter(x=>/^walk/.test(x.pose)).map(x=>x.pose))];
+  AN100.trace=[];await cut(Q,'rleg');await __samp(900);const two=AN100.trace.filter(x=>x.id===Q.id&&x.pose).length;AN100.trace=null;
+  const files=sevKeys();
+  return {kit,dev0,devNow:AN100.dev.size,before,early:[...new Set(early)],qs,pSrc,pWalk,two,files,metaSev:Object.keys(ANIM100_META).every(k=>ANIM100_META[k].sev&&['rarm','larm','rleg','lleg'].every(l=>ANIM100_META[k].sev[l]&&ANIM100_META[k].sev[l].move&&ANIM100_META[k].sev[l].act))}});
+ok(s11.metaSev&&s11.kit.every(x=>x)&&s11.dev0===0&&s11.devNow===0,'11a every class has 4 severed sets; class-kit seats need no device render '+JSON.stringify(s11));
+ok(s11.before===0&&s11.qs.includes('p:hero:larm'),'11b a lost arm swaps to its severed set, requested only then '+JSON.stringify(s11));
+ok(s11.pSrc.length===1&&s11.pSrc[0]==='p:soldier:rleg'&&s11.pWalk.length>=2,'11c a lost leg: its severed set, the hobble steps '+JSON.stringify(s11));
+ok(s11.two===0,'11d two lost limbs → today\'s token '+JSON.stringify(s11));
+ok(s11.files.sort().join()==='p:hero:larm,p:soldier:rleg','11e only the lost limbs\' severed sets were asked for '+JSON.stringify(s11.files));
 if(process.env.SHOT){const fs=require('fs');fs.mkdirSync(process.env.SHOT,{recursive:true});
   await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));SPEED='pause';const P=S.players[0];P.r=6;P.c=5;S.players[1].r=6;S.players[1].c=6;render();draw();await W8(400)});
   await pg.screenshot({path:path.join(process.env.SHOT,'board_fit.png')});
@@ -135,5 +157,31 @@ const fl=x=>x.L.filter(l=>!/seed \d|seed <b>/.test(l));
 ok(A.R.length>=4&&A.on&&!B.on&&A.draws>0&&A.frames>0&&B.draws===0,'9a both seeded runs played, animated vs not '+JSON.stringify({a:A.R.length,b:B.R.length,ta:A.turn,tb:B.turn,A:[A.on,A.draws,A.frames],B:[B.on,B.draws]}));
 ok(JSON.stringify(A.R)===JSON.stringify(B.R),'9b same dice at every turn ON vs OFF '+JSON.stringify({A:A.R.slice(0,4),B:B.R.slice(0,4)}));
 {const a=fl(A),b2=fl(B);let k=0;while(k<a.length&&a[k]===b2[k])k++;ok(a.length===b2.length&&k===a.length,'9c same log ON vs OFF (first difference at '+k+'/'+a.length+': '+JSON.stringify([a[k],b2[k]])+')')}
-console.log(JSON.stringify({s1,s2,s3,s4,s5,s6,s7,s10}));
+/* ---- 12 GEAR-TRUE figures on the device (flavius_anim100dev=1): a seat in other gear than its class kit gets its own render keyed by
+   its loadout (the stand-in meanwhile); kit seats none; a lost limb with real gear = a device-rendered severed set ---- */
+let s12={};{const cx=await b.newContext({viewport:{width:1440,height:900}});const q=await cx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+  await q.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_anim100dev','1')});
+  await q.goto('file://'+page,{timeout:180000});await q.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:180000});
+  s12=await q.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}try{menuHide()}catch(e){}
+    /* seat 0 (a soldier) walks in with a trident instead of his gladius — like a Manager fighter in owned gear */
+    const gl=giveLoadout;giveLoadout=function(p){const r=gl.apply(this,arguments);try{if(p&&p.id===0)p.wR=mkW('trident')}catch(e){}return r};
+    SETTINGS.briefing=false;SPEED='pause';startEvent({ev:'democritus',loc:6,seed:99,seats:[{cls:'soldier',cpu:true},{cls:'hero',cpu:true},{cls:'royalty',cpu:true},{cls:'venatore',cpu:true}],opts:{spect:0}});
+    for(let i=0;i<40&&!(S&&S.turnNo>=1);i++){await W8(150);if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null)}
+    giveLoadout=gl;SPEED='pause';const P=S.players[0];const g=AN100.gear.get(P)||{};const kits=S.players.slice(1).map(p=>!!(AN100.gear.get(p)||{}).kit);
+    const keys0=[...AN100.dev.keys()];const t0=performance.now();
+    for(let i=0;i<1200;i++){const d=[...AN100.dev.values()].find(s=>!s.limb&&s.ready);if(d||AN100.devFail)break;draw();await W8(250)}
+    const tMove=Math.round(performance.now()-t0);AN100.trace=[];for(let i=0;i<6;i++){draw();await W8(60)}
+    const pSrc=[...new Set(AN100.trace.filter(x=>x.id===P.id&&x.src).map(x=>x.src))];AN100.trace=null;
+    /* lose the right arm (real gear): the severed set renders on the device, ahead of the act sheet */
+    const b0=P.hp.rarm;P.hp.rarm=0;BUS.emit('hit',{target:{id:P.id,name:P.name},loc:'rarm',amount:b0,before:{hp:b0},after:{hp:0}});const t1=performance.now();
+    for(let i=0;i<1200;i++){const d=[...AN100.dev.values()].find(s=>s.limb==='rarm'&&s.ready);if(d||AN100.devFail)break;draw();await W8(250)}
+    const tSev=Math.round(performance.now()-t1);AN100.trace=[];for(let i=0;i<6;i++){draw();await W8(60)}
+    const sSrc=[...new Set(AN100.trace.filter(x=>x.id===P.id&&x.src).map(x=>x.src))];AN100.trace=null;
+    const rec=await an100DBGet([...AN100.dev.keys()].find(k=>/:rarm$/.test(k)));
+    return {kit:g.kit,wR:g.gear&&g.gear.wR,kits,keys0,devKeys:[...AN100.dev.keys()],tMove,pSrc,tSev,sSrc,cached:!!(rec&&rec.move&&rec.move.b),log:AN100.stats.renderLog,aborts:AN100.stats.aborts||0,fail:AN100.devFail}});
+  await cx.close()}
+ok(s12.kit===false&&s12.wR&&s12.kits.every(x=>x)&&s12.keys0.length===1,'12a a non-kit loadout is noted and queued for a device render; kit seats are not '+JSON.stringify(s12).slice(0,600));
+ok(!s12.fail&&s12.pSrc.length===1&&/^d:/.test(s12.pSrc[0]),'12b the non-kit seat wears its device-rendered sheet (keyed by its loadout) '+JSON.stringify(s12).slice(0,600));
+ok(s12.sSrc.length===1&&/^d:.*:rarm$/.test(s12.sSrc[0])&&s12.cached,'12c a lost limb with real gear: a device-rendered severed set, cached '+JSON.stringify(s12).slice(0,800));
+console.log(JSON.stringify({s1,s2,s3,s4,s5,s6,s7,s10,s11,s12}));
 console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
