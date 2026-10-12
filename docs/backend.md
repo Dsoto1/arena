@@ -330,7 +330,7 @@ rate limiter); page + mock: `309-v100replay`. Tests `server/test/v100rp.test.js`
 ## v1.0 balance
 
 Shared rules: the "v1.0 BALANCE" section at the end of `111-onlcore` (`BAL100`); routes: the "v1.0 BALANCE" block in `routes.js` (after the
-replays); page + mock: `315-v100bal`. Tests `server/test/v100bal.test.js`. **No protocol bump.** Virgilante's picks O1–O3 from
+replays); page + mock: `316-v100balonl`. Tests `server/test/v100bal.test.js`. **No protocol bump.** Virgilante's picks O1–O3 from
 `tools/plans/balance100/REPORT.md` (models: `tools/balance100/onlcoin.js`, `onlvariants.sh`).
 
 - **O1 dented, not destroyed (Ranked).** A printed piece (L1–3, not named, not Issued) brought and no longer held at the end stays with the survivor

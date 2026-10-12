@@ -34086,7 +34086,7 @@ const ONLC=(function(){
   if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('replay.get'))C.GUEST_OK.push('replay.get');
   Object.assign(C,{REPLAY100,replayIdOK100,replayPutWhy100,replayAnon100,replayPack100,replaySize100})})(ONLC);
 /* ══════════ v1.0 BALANCE (his picks O1 O2 O3 from tools/plans/balance100/REPORT.md; the server block "v1.0 BALANCE" at the end of routes.js;
-   the page side is 315-v100bal; docs/backend.md "v1.0 balance"; NO protocol bump) ══════════
+   the page side is 316-v100balonl; docs/backend.md "v1.0 balance"; NO protocol bump) ══════════
    • O1 PRINTED GEAR COMES HOME DENTED (Ranked): a printed piece (L1–3, not named, not Issued) brought into a Ranked bout and no longer held at the
      end is no longer destroyed (v0.91 out.gone) — it stays with the survivor DAMAGED (pc.st 'damaged', dmg 1, in place like the v0.91 dents:
      worn in Custom, stripped from Ranked kits until repaired). A RANKED DEATH sends his brought printed pieces to the house shelf (out.left)
@@ -67967,7 +67967,7 @@ if(SND100.on){
 /* v1.0 (his yes 2026-10-12): the default music volume drops 0.32 → 0.20 (−4 dB) so the board sounds sit forward; a player still on the
    old default (0.32 exactly) moves once (localStorage flavius_mvol100); a value anyone chose stays. Outside the kill switch. */
 try{if(!localStorage.getItem('flavius_mvol100')){const a=SETTINGS&&SETTINGS.audio;if(a&&a.mvol===0.32){a.mvol=0.20;lsSet('settings',SETTINGS);try{audApplyVol()}catch(e){}}localStorage.setItem('flavius_mvol100','1')}}catch(e){}
-/* 315-v100bal.js — v1.0 BALANCE, the page side (his picks O1 O2 O3 from tools/plans/balance100/REPORT.md; the rules are the
+/* 316-v100balonl.js — v1.0 BALANCE, the page side (his picks O1 O2 O3 from tools/plans/balance100/REPORT.md; the rules are the
    "v1.0 BALANCE" section of 111-onlcore, the server block "v1.0 BALANCE" at the end of server/src/routes.js; docs/backend.md "v1.0 balance").
    • THE MOCK mirrors settleMatch: after the house took the gladiator's gifts, ONLC.after100 puts the dented list on the result and drops the
      rank gifts the house already had (O3).

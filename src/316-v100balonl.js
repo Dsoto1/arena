@@ -1,4 +1,4 @@
-/* 315-v100bal.js — v1.0 BALANCE, the page side (his picks O1 O2 O3 from tools/plans/balance100/REPORT.md; the rules are the
+/* 316-v100balonl.js — v1.0 BALANCE, the page side (his picks O1 O2 O3 from tools/plans/balance100/REPORT.md; the rules are the
    "v1.0 BALANCE" section of 111-onlcore, the server block "v1.0 BALANCE" at the end of server/src/routes.js; docs/backend.md "v1.0 balance").
    • THE MOCK mirrors settleMatch: after the house took the gladiator's gifts, ONLC.after100 puts the dented list on the result and drops the
      rank gifts the house already had (O3).

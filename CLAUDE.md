@@ -1433,7 +1433,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   HINTS, CFG.hotseat/mode, LAST_CFG; startEvent/menuShow also exit). No records while playing: 224's record list + setPurse + Store.put/del +
   careerHoldsClock + matchSaveOK; gameOver is NOT run (end card: ✓ the same ending / ⚠ drifted; "made with vX — may not replay exactly" when GAME_VER differs).
   Kill switch localStorage flavius_replay100off=1 (no wrappers, the old "coming soon"). Tests `tv100rp`, server `v100rp.test.js`. HIS ANSWERS (2026-10-12, 1a 2a 3a): local replays stay OUT of backups; Manager bouts watched only from the Saves tab; server replays 30 days, Ranked only, once a match.
-- **v1.0 ONLINE BALANCE (315-v100bal + the "v1.0 BALANCE" section of 111-onlcore + its block in routes.js; docs/backend.md "v1.0 balance"; his O1–O3 from
+- **v1.0 ONLINE BALANCE (316-v100balonl + the "v1.0 BALANCE" section of 111-onlcore + its block in routes.js; docs/backend.md "v1.0 balance"; his O1–O3 from
   tools/plans/balance100/REPORT.md; no protocol bump):** O1 a printed piece lost in a Ranked bout comes home DENTED (pc.st 'damaged', dmg 1, stays on the
   survivor; out.dent100) instead of used up; a Ranked death's brought printed pieces go to the house shelf dented (gx.left) — the killer's loot window /
   chest see only named pieces, the used market gets no printed pieces from the dead; printed repair = ceil(value/10); AWARD Tiro 24 · Novicius 30 ·
