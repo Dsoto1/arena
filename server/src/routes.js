@@ -1692,6 +1692,18 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     R['replay.get']=async(d)=>{d=d||{};if(!B.replayIdOK100(d.id))throw fail('replay_none','No replay is kept for that match.');const X=await store.get('REPLAY#'+d.id,'R');
       if(!X||(X.ttl&&X.ttl*1000<now()))throw fail('replay_none','No replay is kept for that match.');const o=strip(X);delete o.by;return o}}
   /* ══════════ end of v1.0 REPLAYS ══════════ */
+  /* ══════════ v1.0 BALANCE (shared rules: the "v1.0 BALANCE" section of onlcore; docs/backend.md "v1.0 balance"; NO protocol bump) ══════════
+     O1 dented printed gear + repair ⅒ + Tiro–Gregarius awards ×3 and O2 halved rank Glory live in onlcore (gearAfter / repairCost / RANKS / AWARD);
+     a Ranked death's printed pieces now ride in gx.left, so domusAfter shelves them and deadGear (loot window / market) only sees named pieces.
+     Here: the settled result carries the dented list and loses the rank gifts the house already had (C.after100, O3), and the living-by-rank
+     counters are counted once more from a scan (the thresholds moved: 'seeded100'). */
+  {const base=domusAfter;domusAfter=async function(ch,row,out,ranked,m,gx){await base.apply(this,arguments);try{C.after100(out,gx)}catch(e){}}}
+  {let seeding100=null;const base=rankCounts;
+    async function seed100(){try{const o={seeded:now(),seeded6:now(),seeded100:now()};for(const R of C.RANKS)o[R.k]=0;
+        for(const c of await store.scan('CHAR#','CHAR'))if(c&&c.alive&&!c.test){const k=C.rankFor(c).k;o[k]=(o[k]|0)+1}
+        if(await store.putUnless('WORLD','COUNTS',o,'seeded100'))return o}catch(e){}return null}
+    rankCounts=async function(){const X=await store.get('WORLD','COUNTS');if(!X||X.seeded100==null)await (seeding100||(seeding100=seed100().finally(()=>{seeding100=null})));return base()}}
+  /* ══════════ end of v1.0 BALANCE ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);

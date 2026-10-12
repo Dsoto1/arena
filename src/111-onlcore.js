@@ -1583,4 +1583,57 @@ const ONLC=(function(){
   const replaySize100=rp=>{try{return JSON.stringify(rp).length}catch(e){return Infinity}};
   if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('replay.get'))C.GUEST_OK.push('replay.get');
   Object.assign(C,{REPLAY100,replayIdOK100,replayPutWhy100,replayAnon100,replayPack100,replaySize100})})(ONLC);
+/* ══════════ v1.0 BALANCE (his picks O1 O2 O3 from tools/plans/balance100/REPORT.md; the server block "v1.0 BALANCE" at the end of routes.js;
+   the page side is 316-v100balonl; docs/backend.md "v1.0 balance"; NO protocol bump) ══════════
+   • O1 PRINTED GEAR COMES HOME DENTED (Ranked): a printed piece (L1–3, not named, not Issued) brought into a Ranked bout and no longer held at the
+     end is no longer destroyed (v0.91 out.gone) — it stays with the survivor DAMAGED (pc.st 'damaged', dmg 1, in place like the v0.91 dents:
+     worn in Custom, stripped from Ranked kits until repaired). A RANKED DEATH sends his brought printed pieces to the house shelf (out.left)
+     damaged instead of the loot window / used market; the killer's loot window (and Flavius's chest) now only see his NAMED pieces. Both lists
+     ride on out.dent100 [{item,key}] (survivor: lost pieces; death: pieces sent home). REPAIR of a printed piece (damaged, or an old broken one)
+     = a tenth of its value (at least 1) — named pieces keep a third, Issued pieces stay worth 0 and vanish as before.
+     Tiro / Novicius / Gregarius survival awards x3 (AWARD 8/10/12 → 24/30/36); Flavius's gift coin keeps the old table (rollGift reads AWARD_GIFT100).
+   • O2 RANK GLORY x½: Tiro 0 · Novicius 45 · Gregarius 90 · Veteranus 275 · Primus Palus 575 · Summa Rudis 1050 · Rudiarius 1750 · Invictus 2750.
+     Never demoted (ch.rankK). Everything gated by rank reads RANKS (market levels, named gear at Veteranus+, Ludi Infames, the auction,
+     Ranked rooms of one rank, Immortalis = Invictus). Gladiators already past a new threshold rise at once (rankFor) with no back-dated gifts.
+   • O3 A RANK-UP GIFT ONCE PER HOUSE PER RANK: the Domus keeps D.rkg100 = ranks it was given a gift for (seeded on first touch from the
+     'rank:<k>' gifts it already holds or opened); giftsIn drops a second 'rank:<k>' gift (the dropped ids ride on gs.drop100, and
+     after100(out,gx) takes them out of the result the player sees: out.gifts, out.giftDup100). Gifts every GIFT_EVERY Ranked bouts survived are unchanged. */
+(function(C){
+  const BAL100={awardK:{tiro:3,novicius:3,gregarius:3},gloryK:0.5,repairK:0.1,dent:true,home:true}; /* TWEAK: his picks 2026-10-12 (dent: a survivor's lost printed pieces come home dented; home: a death's printed pieces go to the house — tests may switch them off) */
+  /* ── O2 the thresholds (in place: rankByGlory, rankFor and every reader share these objects) ── */
+  for(const R of C.RANKS)R.glory=Math.round(R.glory*BAL100.gloryK);
+  /* ── O1 awards: the table itself (awardOf, the result toast and the room's lines read it); gifts keep the old coin ── */
+  const AWARD_GIFT100={...C.AWARD};
+  for(const k of Object.keys(BAL100.awardK))if(C.AWARD[k]!=null)C.AWARD[k]=Math.round(C.AWARD[k]*BAL100.awardK[k]);
+  {const base=C.rollGift;C.rollGift=function(){const cur=C.AWARD;C.AWARD=AWARD_GIFT100;try{return base.apply(this,arguments)}finally{C.AWARD=cur}}}
+  /* ── O1 repairs: a printed piece costs a tenth of its value ── */
+  const printed100=I=>!!I&&!I.named&&!I.iss;
+  {const base=C.repairCost;C.repairCost=function(I){if(printed100(I)&&(I.st==='damaged'||I.st==='broken'))return Math.max(1,Math.ceil((I.val|0)*BAL100.repairK-1e-9));return base.apply(this,arguments)}}
+  /* ── O1 after a bout: lost printed pieces come home dented ── */
+  const iss100=(h,it)=>{const p=C.pcOf(h,it);return !!(p&&p.iss)};
+  {const base=C.gearAfter;C.gearAfter=function(ch,kit,row,ranked){const lost=[];
+    try{if(BAL100.dent&&ranked&&ch&&kit&&row&&row.survives!==false&&Array.isArray(row.brk)&&row.brk.length){const items=kit.items||[],gear=kit.gear||[];const used=new Set();const brk=[];
+        for(const k of row.brk){const j=gear.findIndex((g,i)=>g===k&&!used.has(i));if(j<0){brk.push(k);continue}used.add(j);const it=items[j];
+          if(it&&!C.isNamed(it)&&(ch.gear||[]).includes(it))lost.push({it,key:k});else brk.push(k)}
+        if(lost.length)row={...row,brk}}}catch(e){lost.length=0}
+    const out=base.call(this,ch,kit,row,ranked);out.dent100=[];
+    try{for(const x of lost){if(!(ch.gear||[]).includes(x.it))continue;
+        if(iss100(ch,x.it)){C.takePiece(ch,x.it);(out.vanish=out.vanish||[]).push(C.itemBase(x.it));(out.gone=out.gone||[]).push(C.itemBase(x.it));continue}
+        const nid=C.damageItem91(ch,x.it,1);if(nid)out.dent100.push({item:nid,key:x.key})}
+      if(BAL100.home&&ranked&&row&&row.survives===false&&Array.isArray(out.carried)&&out.carried.length){const keep=[];
+        for(const P of out.carried){if(!P||!P.item||C.isNamed(P.item)||(P.pc&&P.pc.iss)){keep.push(P);continue}
+          const T=C.tagPiece(P,ch);T.pc={...(T.pc||{}),st:'damaged',dmg:1};(out.left=out.left||[]).push(T);out.dent100.push({item:T.item,key:C.itemBase(T.item)})}
+        out.carried=keep}}catch(e){}
+    return out}}
+  /* ── O3 one rank-up gift a house ── */
+  function rkg100(D){if(Array.isArray(D.rkg100))return D.rkg100;const s=new Set();
+    for(const id of [...(D.giftsOpened||[]),...(D.gifts||[]).map(g=>g&&g.id)]){const m=/:rank:([a-z]+)$/.exec(String(id||''));if(m)s.add(m[1])}
+    D.rkg100=[...s];return D.rkg100}
+  {const base=C.giftsIn;C.giftsIn=function(D,gs){if(!D)return base.apply(this,arguments);const have=rkg100(D).slice();const pass=[],drop=[];
+    for(const g of gs||[]){const m=g&&/^rank:([a-z]+)$/.exec(String(g.why||''));if(!m){pass.push(g);continue}if(have.includes(m[1])){drop.push(g.id);continue}have.push(m[1]);pass.push(g)}
+    D.rkg100=have;try{if(gs)gs.drop100=drop}catch(e){}return base.call(this,D,pass)}}
+  /* the result the player sees (call after the house took gx.gifts): the dented list, the gifts the house already had for that rank removed */
+  function after100(out,gx){if(!out||!gx)return out;if(Array.isArray(gx.dent100)&&gx.dent100.length)out.dent100=gx.dent100.slice();
+    const drop=gx.gifts&&gx.gifts.drop100;if(Array.isArray(drop)&&drop.length&&Array.isArray(out.gifts)){out.gifts=out.gifts.filter(g=>!(g&&drop.includes(g.id)));out.giftDup100=drop.length}return out}
+  Object.assign(C,{BAL100,AWARD_GIFT100,rkg100,after100})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

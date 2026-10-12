@@ -45,7 +45,7 @@ const dm=await P.evaluate(it=>{const o=document.getElementById('onl');const w=[.
   return {rep:dw?dw.querySelector('[data-d91rep]').textContent:'',cls:!!(dw&&dw.classList.contains('dmg91')),locks:[...o.querySelectorAll('.sc89 [data-d89homew]')].map(x=>x.dataset.d89homew),
     tip:((o.querySelector('.sc89 [data-d89homew]')||{}).title||''),barLocks:o.querySelectorAll('.eb89 [data-d89home]').length,cost:ONLC.repairCost(ONL83.piece(ONL.char,it))}},st.it);
 ok(dm.cls&&/🔨\s*\d+/.test(dm.rep)&&+dm.rep.replace(/\D/g,'')===dm.cost,'the worn helm shows 🩹 + 🔨 '+JSON.stringify(dm));
-ok(dm.cost===await P.evaluate(()=>Math.ceil(ONLC.priceOf(onlCatalog().galea)*0.5)),'repair = ceil(price × dmg)');
+ok(dm.cost===await P.evaluate(()=>Math.ceil(ONLC.priceOf(onlCatalog().galea)/10)),'v1.0: repair = a tenth of the price');
 ok(dm.locks.length===1&&dm.locks[0]===named,'the 🔒 only on the named piece '+JSON.stringify(dm.locks));ok(/safe from loss and loot, still worn in Custom/.test(dm.tip),'its one-line tip');
 ok(dm.barLocks===0,'no 🔒 on the printed shelf piece');
 const pr=await P.evaluate(async()=>{try{await NET.req('gear.home',{holder:ONL.char.id,item:'gladius',on:true});return 'ok'}catch(e){return e.code||e.message}});ok(pr==='home_named','a printed piece is refused: '+pr);

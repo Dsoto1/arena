@@ -59,7 +59,7 @@ out.onl=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   const box=document.createElement('div');box.innerHTML=onl83Trophies(list);document.body.appendChild(box);o.shelf=__art(box);o.keys=box.querySelectorAll('[data-t100k]').length;o.emo=/\p{Extended_Pictographic}/u.test([...box.querySelectorAll('.tr83-ic')].map(x=>x.textContent).join(''));box.remove();
   let hc='';try{hc=hc98HTML({domus:{id:'d1',n:'Domus Test',name:'Domus Test'},glads:[],tit100:[{k:'s100v',n:'Victor of the Season',s:'S3',glad:'Brutus'}]})}catch(e){hc='ERR '+e.message}
   const T=document.createElement('template');T.innerHTML=hc;const s=T.content.querySelector('.tit100');o.hc=!!s&&!!s.querySelector('svg')&&!/🏅/.test(s.textContent);
-  ONL82.dg={trophies:list.slice(0,4),glads:[{id:'c1',name:'Brutus',alive:true,survived:12,glory:700}]};TIT100.onlSeen=null;tit100OnlCheck();TIT100.q=[];TIT100.cur=null;
+  ONL82.dg={trophies:list.slice(0,4),glads:[{id:'c1',name:'Brutus',alive:true,survived:12,glory:350}]};TIT100.onlSeen=null;tit100OnlCheck();TIT100.q=[];TIT100.cur=null;
   ONL82.dg.trophies=list;tit100OnlCheck();o.rv=(TIT100.cur&&TIT100.cur.e.id)||'';o.rvq=TIT100.q.map(x=>x.e.id);
   WD100.tf='onl';MGR_REDRAW();await W8(300);const q=s=>document.querySelector('#mgrBody .t100p[data-t100="'+s+'"]');o.tholo=!!q('pn:tholo')&&!q('pn:tholo').classList.contains('lock');
   o.rank=!!q('o:rank:veteranus')&&!q('o:rank:veteranus').classList.contains('lock');const pr=q('o:rank:primus');o.prog=!!pr&&!!pr.querySelector('.prog i');o.tabArt=__art(document.getElementById('mgrBody'));return o});

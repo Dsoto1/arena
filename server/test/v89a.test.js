@@ -49,10 +49,10 @@ function armed(flag,id){const ch=C.newChar({name:'Iron Will',cls:'hero'},'o',id,
   const P=C.namedPiece(def,ch);C.putPiece(ch,P,true);C.putPiece(ch,{item:'gladius',pc:null},true);return {ch,P,key:P.pc.w.key}}
 {const {ch,P,key}=armed('integ','ig');const kit=C.kitOf(ch);assert.ok(kit.gear.includes(key));assert.ok(kit.named.find(d=>d.key===key).integ,'the kit carries the flag');
   const gx=C.gearAfter(ch,kit,C.cleanRow({survives:true,brk:[key,'gladius']}),true);
-  assert.ok(!gx.broken.some(it=>it===P.item),'Integer never breaks');assert.strictEqual(C.isBroken(ch,P.item),false);assert.strictEqual(gx.broken.length,0);assert.deepStrictEqual(gx.gone,['gladius'],'v0.91: the printed gladius is used up')}
+  assert.ok(!gx.broken.some(it=>it===P.item),'Integer never breaks');assert.strictEqual(C.isBroken(ch,P.item),false);assert.strictEqual(gx.broken.length,0);assert.deepStrictEqual(gx.gone,[],'v1.0: the printed gladius is no longer used up');assert.deepStrictEqual(gx.dent100.map(x=>x.key),['gladius'],'… it comes home dented')}
 {const {ch,P,key}=armed('lapid','pl');const kit=C.kitOf(ch);const gx=C.gearAfter(ch,kit,{survives:true,brk:[key]},true);assert.ok(gx.broken.length===1&&C.isBroken(ch,gx.broken[0]),'a plain named piece breaks as before')}
 {const {ch,P}=armed('fid','fd');const kit=C.kitOf(ch);const gx=C.gearAfter(ch,kit,{survives:false},true);
-  assert.ok(!gx.carried.some(x=>x.item===P.item),'the killer never sees Fidelis');assert.ok(gx.carried.some(x=>x.item==='gladius'),'the rest is still loot');
+  assert.ok(!gx.carried.some(x=>x.item===P.item),'the killer never sees Fidelis');assert.ok(gx.left.some(x=>C.itemBase(x.item)==='gladius'&&x.pc.st==='damaged'),'v1.0: the printed rest goes home dented (no longer loot)');
   const home=gx.left.find(x=>x.item===P.item);assert.ok(home,'Fidelis goes to the house Storeroom (out.left)');assert.strictEqual(home.pc.hist.slice(-1)[0].how,'home');
   const D={id:'d1',gear:[],pcs:{}};for(const Q of gx.left)C.putPiece(D,Q,false);assert.ok(D.gear.includes(P.item)&&D.pcs[C.itemUid(P.item)].w.fid,'on the house shelf with its def')}
 {const {ch,P}=armed('lapid','nf');const gx=C.gearAfter(ch,C.kitOf(ch),{survives:false},true);assert.ok(gx.carried.some(x=>x.item===P.item),'without Fidelis it is loot')}

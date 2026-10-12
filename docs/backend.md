@@ -327,6 +327,32 @@ rate limiter); page + mock: `309-v100replay`. Tests `server/test/v100rp.test.js`
   localStorage `flavius_replay100off=1`.
 - **Rollback:** an older server answers `unknown_req`; the page then says "the server keeps no replays yet" (local replays still work).
 
+## v1.0 balance
+
+Shared rules: the "v1.0 BALANCE" section at the end of `111-onlcore` (`BAL100`); routes: the "v1.0 BALANCE" block in `routes.js` (after the
+replays); page + mock: `316-v100balonl`. Tests `server/test/v100bal.test.js`. **No protocol bump.** Virgilante's picks O1–O3 from
+`tools/plans/balance100/REPORT.md` (models: `tools/balance100/onlcoin.js`, `onlvariants.sh`).
+
+- **O1 dented, not destroyed (Ranked).** A printed piece (L1–3, not named, not Issued) brought and no longer held at the end stays with the survivor
+  as `pc.st 'damaged'`, `dmg 1` (in place, like the v0.91 dents: worn in Custom, stripped from Ranked kits until repaired). On a **Ranked death**
+  his brought printed pieces go to the house shelf damaged (`gx.left` → `domusAfter`); `gx.carried` keeps only named pieces, so the killer's loot
+  window and Flavius's chest only ever see named pieces, and the used market no longer gets printed pieces from the dead. Both lists ride on
+  `out.dent100 [{item,key}]` (the page toasts "came home dented"). Named pieces keep their rules (Broken, repair ⅓, lost/looted at death); Issued
+  pieces still vanish (`out.gone` / `out.vanish`).
+- **Repair** of a printed piece (damaged, or an old broken one) = `ceil(value / 10)`, at least 1, however dented (`BAL100.repairK`).
+- **Awards** Tiro 24 · Novicius 30 · Gregarius 36 (×3; Veteranus+ unchanged 18/25/35/45/60). `C.AWARD` itself changed, so `awardOf`, the result
+  toast and the room lines agree; **gift coin keeps the old table** (`rollGift` runs on `AWARD_GIFT100`).
+- **O2 rank Glory ×½:** Tiro 0 · Novicius 45 · Gregarius 90 · Veteranus 275 · Primus Palus 575 · Summa Rudis 1050 · Rudiarius 1750 · Invictus 2750
+  (`RANKS[i].glory` changed in place). Never demoted (`ch.rankK`). Gladiators already past a new line show the higher rank at once (`rankFor`);
+  no back-dated gifts (the next `applyResult` starts from the new rank). Everything gated by rank follows: market levels (`mkt`), named gear and Ludi
+  Infames at Veteranus, the auction (Veteranus+), Ranked rooms of one rank, online Immortalis (Invictus + 25). The living-by-rank counters
+  (`WORLD COUNTS`) are counted once more from a scan (`seeded100`).
+- **O3 one rank-up gift a house a rank:** `D.rkg100` = the ranks the house got a gift for (seeded on first touch from the `…:rank:<k>` ids in
+  `D.gifts` / `D.giftsOpened`). `giftsIn` drops a second `rank:<k>` gift; `C.after100(out,gx)` (in a `domusAfter` wrapper, and the mock's
+  `mockAfter83`) takes it out of the result (`out.gifts`, `out.giftDup100`). Gifts every 5 Ranked bouts survived are unchanged.
+- Switches for tests: `C.BAL100.dent` / `C.BAL100.home` (default on). **Rollback:** redeploy the previous server; dented pieces keep `st 'damaged'`
+  and repair at the old `ceil(value × dmg)`; `D.rkg100` is simply ignored.
+
 ## Versions, deploy, rollout, rollback
 
 - **Protocol** `ONLC.VER` (111-onlcore): `$connect` refuses another version with 426 ("reload"). Bump it only when old clients
