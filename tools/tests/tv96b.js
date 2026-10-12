@@ -52,7 +52,7 @@ const two=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,m
   /* 10 */
   const sc=mkW('scutum');o.c0=weaponChips(sc);sc.usesLeft--;o.c1=weaponChips(sc);o.cDef=weaponChips(W.scutum);
   const sl=Object.keys(W).find(k=>W[k].ammo!=null&&!W[k].custom);if(sl){const w=mkW(sl);w.ammoLeft--;o.cAmmo=weaponChips(w);o.ammoWant=`${w.ammoLeft}/${w.ammo}`}
-  p.wL=mkW('scutum');p.wL.usesLeft=2;render();await W8(300);const bd=document.getElementById('board');o.badge=[...bd.querySelectorAll('.wart .wctr96')].map(x=>x.textContent);
+  p.wL=mkW('scutum');p.wL.usesLeft=2;if(typeof H100!=='undefined')H100.peek=null;/* v1.0 hit feedback: the panel peeks at the victim for 1.7 s */render();await W8(300);const bd=document.getElementById('board');o.badge=[...bd.querySelectorAll('.wart .wctr96')].map(x=>x.textContent);
   /* 11 */
   const fake=()=>{const f={hp:{},ap:{},pieces:{}};for(const l of LOCS){f.hp[l]=5;f.ap[l]=0;f.pieces[l]=[]}return f};
   let f=fake();equipPiece(f,'thighplate','rleg');o.tassOnPlate=equipPiece(f,'legwrapsU','rleg');
