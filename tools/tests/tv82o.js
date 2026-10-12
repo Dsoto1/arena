@@ -76,7 +76,7 @@ ok(await A.evaluate(id=>(ONL82.dg.gear||[]).some(g=>/^galea/.test(g))&&!mockLoad
 await A.evaluate(async id=>{await NET.req('char.active',{char:id});await onlRefresh();onlRedraw()},ids['Aulus']);await A.waitForTimeout(300);
 await A.evaluate(()=>{const i=(V89D.bar||[]).findIndex(x=>/^galea/.test(x.it));const t=document.querySelector(`#onl [data-p89="${i}"]`);if(t)t.click()});await A.waitForFunction(id=>ONLC.equipOf(mockLoad().chars[id]).some(g=>/^galea/.test(g)),ids['Aulus'],{timeout:20000}).catch(()=>{});
 ok(await A.evaluate(id=>ONLC.equipOf(mockLoad().chars[id]).some(g=>/^galea/.test(g)),ids['Aulus']),'move between gladiators (worn by Aulus)');
-await A.evaluate(()=>{const it=ONLC.equipOf(ONL.char).find(g=>/^galea/.test(g));const b=document.querySelector(`#onl .sc89 [data-d89off="${it}"]`);if(b)b.click()});await A.waitForFunction(id=>!ONLC.equipOf(mockLoad().chars[id]).some(g=>/^galea/.test(g)),ids['Aulus'],{timeout:20000}).catch(()=>{});await A.waitForTimeout(400);
+await A.waitForFunction(()=>{if(ONL.busy)return false;const it=ONLC.equipOf(ONL.char).find(g=>/^galea/.test(g));const b=it&&document.querySelector(`#onl .sc89 [data-d89off="${it}"]`);if(b){b.click();return true}return false},null,{timeout:20000,polling:200}).catch(()=>{});await A.waitForFunction(id=>!ONLC.equipOf(mockLoad().chars[id]).some(g=>/^galea/.test(g)),ids['Aulus'],{timeout:20000}).catch(()=>{});await A.waitForTimeout(400);
 ok(await A.evaluate(id=>!ONLC.equipOf(mockLoad().chars[id]).some(g=>/^galea/.test(g)),ids['Aulus']),'taken off: left at home');
 await A.evaluate(async id=>{await NET.req('char.active',{char:id});await onlRefresh();onlRedraw()},ids['Alpha the Bold']);await A.waitForTimeout(300);
 /* ── 4. a Ranked bout with two lanistas: half the award; the room note ── */

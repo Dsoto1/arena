@@ -75,7 +75,7 @@ const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   o.star2=document.querySelectorAll('.roomstat.bt85w .bt85.bt100s').length;
   /* 6 · play the card in order; the solo special is won by our fighter (a fixed bout nobody catches) */
   w.rigCount=-20;n.bouts[si].rig=g1.id;let cBefore=null;
-  for(let i=0;i<n.bouts.length;i++){if(i===si)cBefore=m.coin;await runBoutSim(i);if(i===si)o.play={done:n.bouts[si].done,won:(n.bouts[si].res.winners||[]).includes(g1.id),gain:m.coin-cBefore,min:(()=>{const nw=Math.max(1,(n.bouts[si].res.winners||[]).length),P=Math.max(1,Math.round(240/nw));return Math.round(P*0.5)-Math.max(1,Math.round(P*0.1))})()}}
+  for(let i=0;i<n.bouts.length;i++){if(i===si)cBefore=m.coin;await runBoutSim(i);if(i===si)o.play={done:n.bouts[si].done,won:(n.bouts[si].res.winners||[]).includes(g1.id),gain:m.coin-cBefore,purse:n.bouts[si].purse,min:(()=>{const nw=Math.max(1,(n.bouts[si].res.winners||[]).length),P=Math.max(1,Math.round(n.bouts[si].purse/nw));return Math.round(P*0.5)-Math.max(1,Math.round(P*0.1))})()}}
   o.team={done:n.bouts[ti].done,rows:(n.bouts[ti].res&&n.bouts[ti].res.rows||[]).length};
   o.news=(w.news||[]).some(x=>/Headline special/.test(x.text));
   /* 7 · kill switch: no specials, no week's card */
