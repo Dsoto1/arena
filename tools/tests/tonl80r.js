@@ -111,7 +111,7 @@ const ranked={A:await rk(A),B:await rk(B)};
 const q0={A:await A.evaluate(()=>({hashq:window.__req['match.hashq']||0,votes:ONL80R.votes})),B:await B.evaluate(()=>({hashq:window.__req['match.hashq']||0,votes:ONL80R.votes}))};
 await run(6000,[A,B]);
 let tamp2=null;{const t0=Date.now();while(Date.now()-t0<180000&&!tamp2){await drive(B);
-  tamp2=await B.evaluate(()=>{if(!onlmOn()||onlmMine()||S.busy||CUR_MODAL||ONLM.pend||onlmActor()===ONLM.me||!['choice','action'].includes(S.phase))return null;S.players[ONLM.me].coin+=5; /* v1.0: Ranked seats are dealt at random — tamper with my own seat while the other acts */return {next:ONLM.next}});
+  tamp2=await B.evaluate(()=>{if(!onlmOn()||onlmMine()||S.busy||CUR_MODAL||ONLM.pend||onlmActor()===ONLM.me||S.phase!=='choice')return null;S.players[ONLM.me].coin+=5; /* at the start of the other's turn: their next input carries the honest hash, so I am the one resynced (2 humans = no majority) */ /* v1.0: Ranked seats are dealt at random — tamper with my own seat while the other acts */return {next:ONLM.next}});
   if(tamp2)break;await drive(A);await A.waitForTimeout(150);if(await A.evaluate(()=>!S||S.over))break}}
 await run(90000,[A,B],async()=>(await B.evaluate(()=>ONLM.resyncs))>0&&(await B.evaluate(()=>!ONLM.resyncing)));
 {const f=(tamp2&&tamp2.next||0)+1;const t2=Date.now();await run(90000,[A,B],async()=>Date.now()-t2>=8000&&(await A.evaluate(f=>ONLM.next-f,f))>=3)}await level([A,B]);
