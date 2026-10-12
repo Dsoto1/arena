@@ -1,0 +1,23 @@
+strategy   wins  rank/12  myOvr  rivOvr  myGain  rivGain  coin  roster  injuries  lost  coin@6  coin@12  coin@24  lowest  collapsed  rivCoin  deaths
+base       12.0     3.2   53.2    63.5    -8.4      1.5 2003.0     2.6       4.0   2.8   629.9   1143.8   2003.0   371.0 0/16    224.5     7.6
+gear base 0 {"owned":274,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":85,"spent":1515,"fix":0,"rivSpent":1465,"fl":{"r":{"buy":1465,"buyN":84},"p":{"buy":50,"buyN":1}}}
+gear base 1 {"owned":264,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":78,"spent":1205,"fix":0,"rivSpent":1205,"fl":{"r":{"buy":1205,"buyN":78}}}
+gear base 2 {"owned":263,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":82,"spent":1216,"fix":0,"rivSpent":1216,"fl":{"r":{"buy":1216,"buyN":82}}}
+gear base 3 {"owned":283,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":71,"spent":1405,"fix":0,"rivSpent":1405,"fl":{"r":{"buy":1405,"buyN":71}}}
+gear base 4 {"owned":290,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":104,"spent":1560,"fix":0,"rivSpent":1533,"fl":{"r":{"buy":1533,"buyN":102},"p":{"buy":27,"buyN":2}}}
+gear base 5 {"owned":257,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":75,"spent":1114,"fix":0,"rivSpent":1114,"fl":{"r":{"buy":1114,"buyN":75}}}
+gear base 6 {"owned":300,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":102,"spent":1615,"fix":0,"rivSpent":1615,"fl":{"r":{"buy":1615,"buyN":102}}}
+gear base 7 {"owned":271,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":74,"spent":1071,"fix":0,"rivSpent":963,"fl":{"r":{"buy":963,"buyN":67},"p":{"buy":108,"buyN":7}}}
+gear base 8 {"owned":265,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":78,"spent":1250,"fix":0,"rivSpent":1232,"fl":{"r":{"buy":1232,"buyN":77},"p":{"buy":18,"buyN":1}}}
+gear base 9 {"owned":265,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":89,"spent":1269,"fix":0,"rivSpent":1254,"fl":{"r":{"buy":1254,"buyN":87},"p":{"buy":15,"buyN":2}}}
+gear base 10 {"owned":272,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":84,"spent":1356,"fix":0,"rivSpent":1302,"fl":{"r":{"buy":1302,"buyN":80},"p":{"buy":54,"buyN":4}}}
+gear base 11 {"owned":289,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":95,"spent":1392,"fix":0,"rivSpent":1338,"fl":{"r":{"buy":1338,"buyN":90},"p":{"buy":54,"buyN":5}}}
+gear base 12 {"owned":266,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":86,"spent":1341,"fix":0,"rivSpent":1219,"fl":{"r":{"buy":1219,"buyN":78},"p":{"buy":122,"buyN":8}}}
+gear base 13 {"owned":264,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":96,"spent":1378,"fix":0,"rivSpent":1369,"fl":{"r":{"buy":1369,"buyN":95},"p":{"buy":9,"buyN":1}}}
+gear base 14 {"owned":305,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":116,"spent":1808,"fix":0,"rivSpent":1736,"fl":{"r":{"buy":1736,"buyN":109},"p":{"buy":72,"buyN":7}}}
+gear base 15 {"owned":297,"damaged":0,"lost":0,"dmg":0,"loot":0,"buy":87,"spent":1285,"fix":0,"rivSpent":1225,"fl":{"r":{"buy":1225,"buyN":82},"p":{"buy":60,"buyN":5}}}
+audit (avg per run): fighters on card 0.0 · bare-handed 0.0 · armor pieces missing 0.0 · severed limbs at end 2.8
+flows (avg per run; r = all rivals together)   side rep repN buy buyN loot lootN skip skipN sell sellN lost lostN  wins deaths treasury rivMin rivBroke shelf
+base      p 0 0 37 3 0 0 0 0 0 0 0 0  12.0 7.6 2003.0 62.2 0.1 3.8
+base      r 0 0 1324 85 0 0 0 0 0 0 0 0  12.0 7.6 2003.0 62.2 0.1 3.8
+base rival avg Recruiter level 3.9
