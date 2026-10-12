@@ -104,7 +104,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-m48]');if(
 /* ---------------- the people of the empire ---------------- */
 async function seedEmpireCrowd(){try{if(typeof CROWD_CACHE==='undefined')return;if(CROWD_CACHE.length>=60){for(const r of CROWD_CACHE)if(r.purse==null)r.purse=5+Math.floor(Math.random()*40);return}
   const taken=new Set(CROWD_CACHE.map(r=>r.name));const cities=LOCATIONS.filter(Boolean).map(L=>L.n);const add=[];
-  for(let i=CROWD_CACHE.length;i<140;i++){const r=specIdentity(taken);r.city=cities[i%cities.length];r.purse=5+Math.floor(Math.random()*40);delete r.isNew;add.push(r)}
+  {const keep=RNG;RNG=null;/* cosmetic crowd names must never draw from a live event's seeded dice (this runs 3.5 s after load, maybe mid-event) */try{for(let i=CROWD_CACHE.length;i<140;i++){const r=specIdentity(taken);r.city=cities[i%cities.length];r.purse=5+Math.floor(Math.random()*40);delete r.isNew;add.push(r)}}finally{RNG=keep}}
   CROWD_CACHE.push(...add);for(const r of add)await Store.put('crowd',r.id,r).catch(()=>{})}catch(e){console.error(e)}}
 setTimeout(()=>{if(!HEADLESS)Promise.resolve(typeof loadCrowd==='function'&&!CROWD_CACHE.length?loadCrowd():null).then(seedEmpireCrowd)},3500);
 

@@ -17353,7 +17353,7 @@ function omenStart(){
 let CROWD_CACHE=[];
 /* loadCrowd — loads the regulars into CROWD_CACHE (older ones get a home city). */
 async function loadCrowd(){CROWD_CACHE=await Store.list('crowd').catch(()=>[]);
-  for(const r of CROWD_CACHE)if(!r.city){r.city=pickOne(LOCATIONS.filter(Boolean)).n} // older regulars get a home city
+  for(const r of CROWD_CACHE)if(!r.city){{const Ls=LOCATIONS.filter(Boolean);r.city=Ls[Math.floor(Math.random()*Ls.length)].n}} // older regulars get a home city
   return CROWD_CACHE}
 /* ---- the crowd's personality, tuned by the player and saved in this browser ----
    act: how much the stands interact at all (stones, offerings, moves, chants, emotes).
@@ -26119,7 +26119,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-m48]');if(
 /* ---------------- the people of the empire ---------------- */
 async function seedEmpireCrowd(){try{if(typeof CROWD_CACHE==='undefined')return;if(CROWD_CACHE.length>=60){for(const r of CROWD_CACHE)if(r.purse==null)r.purse=5+Math.floor(Math.random()*40);return}
   const taken=new Set(CROWD_CACHE.map(r=>r.name));const cities=LOCATIONS.filter(Boolean).map(L=>L.n);const add=[];
-  for(let i=CROWD_CACHE.length;i<140;i++){const r=specIdentity(taken);r.city=cities[i%cities.length];r.purse=5+Math.floor(Math.random()*40);delete r.isNew;add.push(r)}
+  {const keep=RNG;RNG=null;/* cosmetic crowd names must never draw from a live event's seeded dice (this runs 3.5 s after load, maybe mid-event) */try{for(let i=CROWD_CACHE.length;i<140;i++){const r=specIdentity(taken);r.city=cities[i%cities.length];r.purse=5+Math.floor(Math.random()*40);delete r.isNew;add.push(r)}}finally{RNG=keep}}
   CROWD_CACHE.push(...add);for(const r of add)await Store.put('crowd',r.id,r).catch(()=>{})}catch(e){console.error(e)}}
 setTimeout(()=>{if(!HEADLESS)Promise.resolve(typeof loadCrowd==='function'&&!CROWD_CACHE.length?loadCrowd():null).then(seedEmpireCrowd)},3500);
 
