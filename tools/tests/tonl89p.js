@@ -2,12 +2,12 @@
    word filter + length, unique), the rail shows the lanista name (never the sign-in name), the 👤 Profile & Settings tab (FID, rename once
    — refused inside 30 days, "formerly"), privacy (hidden from Here now + the Orbis zones, still counted; who may invite me enforced), invite by
    FID, find by FID + the read-only visit (their gladiators + gear, no treasury / purses / shelf / edit buttons), the lookup limit, delete my
-   account (asks twice, the house name, the house gone). Phones 390 px. SHOT=<dir> saves v89L_*.png. */
+   account (asks twice, the house name, the house gone). Phones 390 px. SHOT=<dir> saves v89L_*.png.    (Runs with flavius_lobby100off=1: the v0.96 room this test was written for; the v1.0 room = tonl100lb.) */
 const http=require('http'),fs=require('fs'),path=require('path');const SHOT=process.env.SHOT||'';
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1400,height:900}});await ctx.route(/fonts\./,r=>r.abort());
-await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
+await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_lobby100off','1');localStorage.setItem('flavius_onlcd83','0')});
 const errs=[];const P=await ctx.newPage();P.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await P.goto(URL0,{timeout:90000});
 await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|acct)/.test(k))localStorage.removeItem(k);try{sessionStorage.clear()}catch(e){}});await P.reload({timeout:90000});await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const W=ms=>P.waitForTimeout(ms);

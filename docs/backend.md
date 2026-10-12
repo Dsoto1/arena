@@ -289,6 +289,22 @@ new request is optional, every new field is ignored by older code, and the new `
 - **Rollback.** An older server answers `unknown_req` to the four new requests (the page shows nothing new) and ignores `own`/`fx`; the new items are
   plain records (season / Elo items have long ttls; match locks expire with the match).
 
+## v1.0 lobby room
+
+Shared rules: the "v1.0 LOBBY ROOM" section at the end of `111-onlcore`; route: the "v1.0 LOBBY ROOM" block in `routes.js` (after batch B, before the
+rate limiter); page + mock: `302-v100lobby`. Tests `server/test/v100lobby.test.js`, page `tonl100lb`. **No protocol bump.**
+
+- **Room code.** `C.roomCode100(id)` = `R-` + 5 letters (FNV-1a of `room:<id>` over the FID alphabet, no look-alikes). Derived from the id, so nothing is
+  stored and every screen shows the same code. `codeParse100` reads `R-xxxxx` / `FID-xxxxxx` / a bare word (a 6-letter word starting with R may be either:
+  the room is tried first, then the FID).
+- **`lobby.code {code, pw?}`** — finds the newest waiting room with that code, or the waiting room the FID's lanista is in (refused when that lanista is
+  hidden or takes no invitations from you), then runs **`lobby.join`** with it — so passwords (`pw_need` / `pw_bad`, the reply carries `room {id, ev, loc, host}`
+  for the password window), kicks, Ranked rank rules, the busy rule and the Ranked cooldown are the old ones. Refusals: `code_bad`, `code_none`, `code_self`,
+  `code_fid_none`, `code_live` (+ `{live, id}`: watch it instead), `testHouse` (a test house and a Ranked room). Every lookup counts against the FID quota
+  (`look89`, `FIND_MAX89` a minute), so codes cannot be swept quickly. Cost: one `LOBBIES` index read (as `lobby.list`) + one `FID#` get for a FID.
+- **`house.card`** gains `now.room`, `now.code`, `now.ev`, `now.seated`, `now.seats`, `now.ranked` while the house's lanista waits in a room (the page's ⚔ Join).
+- **Taunts:** eight more room phrase codes in the batch A §7 list (`mlions` … `betme`); the page groups the room's phrases Room / Taunts.
+
 ## Versions, deploy, rollout, rollback
 
 - **Protocol** `ONLC.VER` (111-onlcore): `$connect` refuses another version with 426 ("reload"). Bump it only when old clients
