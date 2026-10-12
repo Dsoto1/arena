@@ -6,7 +6,7 @@ await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLA
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.y=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await new Promise(r=>setTimeout(r,700));newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
   const w=W_();const ros=rosterOf(me());const g=ros[1],hurt=ros[0];hurt.inj={until:w.week+3,label:'a torn shoulder',pen:3};MGR.tab='practice';MGR.yd87='all';MGR_REDRAW();await new Promise(r=>setTimeout(r,900));
-  const body=document.getElementById('mgrBody').innerHTML;const order=body.indexOf('y92rgs')>0&&body.indexOf('y92rgs')<body.indexOf('y92grid'); /* v0.92: the regime (intensity) sits in the Doctore panel above the fighter cards (213) */
+  const body=document.getElementById('mgrBody').innerHTML;const order=document.querySelector('.rm100-yard')?!!document.querySelector('.rm100y1 .y92doc .y92rgs'):body.indexOf('y92rgs')>0&&body.indexOf('y92rgs')<body.indexOf('y92grid'); /* v1.0 298: the Doctore (with the intensity) sits beside the fighter's card in the dossier */ /* v0.92: the regime (intensity) sits in the Doctore panel above the fighter cards (213) */
   document.querySelector(`[data-y92s="${g.id}|spd|1"]`).click();await new Promise(r=>setTimeout(r,200));document.querySelector(`[data-y92s="${g.id}|spd|1"]`).click();await new Promise(r=>setTimeout(r,200));
   const two=((thPlan(w).y92||{})[g.id]||{Q:{}}).Q.spd===2;const prev=/→ \d/.test(document.querySelector(`[data-y92c="${g.id}"] [data-y92k="spd"] .y92v`).textContent);
   document.querySelector(`[data-y92s="${g.id}|spd|-1"]`).click();await new Promise(r=>setTimeout(r,200));const one=thPlan(w).y92[g.id].Q.spd===1;
