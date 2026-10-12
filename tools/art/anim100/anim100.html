@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Anim sheets</title></head>
+<body style="background:#2a2520;color:#eee;font:13px sans-serif">
+<p>v1.0 animated gladiator sheets — renders driven by make.js (the game's own plain scripts: three93.js, gear100.js, body100.js, tok93.js)</p>
+<script src="../../../assets/three93.js"></script>
+<script src="../../../assets/gear100.js"></script>
+<script src="../../../assets/body100.js"></script>
+<script src="../../../assets/tok93.js"></script>
+<script>
+window.addEventListener('error', e => { window.__err = String(e.message); });
+/* the pose list + renderer = the ANIM100_LIB block of src/311-v100anim.js (the game renders Studio / online tokens with the same code) */
+(async () => {
+  try {
+    const src = await (await fetch('../../../src/311-v100anim.js')).text();
+    const a = src.indexOf('/* ANIM100_LIB:BEGIN'), b = src.indexOf('/* ANIM100_LIB:END */');
+    if (a < 0 || b < 0) throw new Error('ANIM100_LIB markers missing in src/311-v100anim.js');
+    window.AN100L = new Function(src.slice(a, b) + ';return AN100L')();
+    window.AN100R = {
+      api: null,
+      async init() { if (!this.api) this.api = await window.TOK93LIB(window.THREE93).createToken({}); return { baked: !!this.api.baked, bodyBaked: !!this.api.bodyBaked }; },
+      /* one class + set → {url (WebP), meta, w, h, ms} */
+      async sheet(look, gear, set, pxmm, q) { const api = this.api; const t0 = performance.now(); api.apply({ look, gear, pose: api.presets[0][2] });
+        const r = await AN100L.render(api, set, { pxmm, ss: 2 }); const url = r.canvas.toDataURL('image/webp', q);
+        return { url, png: set === 'move' ? r.canvas.toDataURL('image/png') : '', meta: r.meta, w: r.canvas.width, h: r.canvas.height, ms: Math.round(performance.now() - t0) }; },
+    };
+    window.AN100R_READY = true;
+  } catch (e) { window.__err = String(e && e.stack || e); }
+})();
+</script>
+</body></html>
