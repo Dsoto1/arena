@@ -35,14 +35,21 @@ ok(sh.rows.every(r=>r[0]===10&&r[1]===13),'1b idle 4 + walk 6 | attack 5 + hit 3
 const bd=await pg.evaluate(async(BE)=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));SPEED='normal';SETTINGS.calm=false;SETTINGS.fx=true;S.npcs=[];
   for(const p of S.players){p.r=12;p.c=S.players.indexOf(p)*3+1}
   for(const [t,k,r,c] of eval(BE))S.npcs.push(mkNPC(t,k,r,c));BST100.last.clear();BST100.stats.poses={};render();draw();await W8(1300);draw();
+  /* SETTLED first: SPEED normal lets any CPU seats ahead of the human play their turns (moves, attacks = draws every frame), and a loaded box
+     takes seconds — the idle rate is measured on the human's own turn with nothing resolving */
+  const cpuT=S.players.filter(p=>p.cpu).length;for(let i=0;i<200&&(S.busy||!cur()||cur().cpu||(typeof fxRAF!=='undefined'&&fxRAF)||(typeof CAM!=='undefined'&&CAM.raf));i++)await W8(100);
+  /* …and the crowd's walk-in (193, drawn by 313: a 30 fps loop for ~7 s from the first shown frame, paused by stalls — on a loaded box it was
+     still walking when the rate was taken: 25.5/s in CI run 39) */
+  const walkOn=()=>{try{const W=walkState91();return !!(W&&!W.done)}catch(e){return false}};let wk=0;for(;wk<250&&walkOn();wk++)await W8(100);
+  await W8(600);const who={cur:cur()&&cur().cpu?'cpu':'human',busy:!!S.busy,cpuT,walkWait:wk*100,walking:walkOn()};
   const keys=new Set([...BST100.last.values()].map(x=>x.k));const poses=new Set([...BST100.last.values()].map(x=>x.pose));
   const d0=BST100.stats.draws;await W8(2000);const rate=(BST100.stats.draws-d0)/2;
   /* the heartbeat recomputes PERF92.idle every beat: hold it on while measuring */
   const hold=setInterval(()=>{PERF92.idle=true},20);PERF92.idle=true;await W8(400);const d1=BST100.stats.draws;await W8(1500);const rateIdle=(BST100.stats.draws-d1)/1.5;clearInterval(hold);PERF92.idle=false;
-  return {keys:[...keys],poses:[...poses],rate,rateIdle,mode:bst100Mode()}},BEASTS);
+  return {keys:[...keys],poses:[...poses],rate,rateIdle,mode:bst100Mode(),who}},BEASTS);
 ok(bd.keys.length>=11&&bd.mode==='full','2a every beast drew its sheet cell '+JSON.stringify(bd.keys));
 ok(bd.poses.some(p=>/^idle[1-3]$/.test(p))&&bd.poses.every(p=>/^idle\d$/.test(p)),'2b standing beasts breathe (idle poses, staggered) '+JSON.stringify(bd.poses));
-ok(bd.rate>=1.5&&bd.rate<=8,'2c idle scheduler: a few draws a second, not a frame loop ('+bd.rate+'/s)');
+ok(bd.rate>=1.5&&bd.rate<=8,'2c idle scheduler: a few draws a second, not a frame loop ('+bd.rate+'/s '+JSON.stringify(bd.who)+')');
 ok(bd.rateIdle<=1,'2d idle92: the breathing waits ('+bd.rateIdle+'/s)');
 /* 3 poses */
 const po=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};const P=S.players;SPEED='normal';

@@ -22,7 +22,9 @@ const o=await pg.evaluate(async()=>{const r={};const L=(t,x,y,w,h,c,rr=0)=>({t,x
   await new Promise(res=>setTimeout(res,1500));for(let i=0;i<8;i++){if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(res=>setTimeout(res,120))}
   S.players[0]._onlSc={...spec,layers:[]};SPEED='pause';
   let calls=0;const bF=drawFigureTok;drawFigureTok=function(){calls++;return bF.apply(this,arguments)};
-  for(let i=0;i<40&&!SC3D.miss;i++){draw();await new Promise(res=>setTimeout(res,100))}
+  /* v1.0: the printed seats wear 311's stand-ins (no sculpted canvas), so wait for THIS figure's own canvas, not any miss */
+  const myKey=JSON.stringify(S.players[0]._onlSc)+'|';const mine=()=>[...SC3D_CV.keys()].some(k=>k.startsWith(myKey));
+  for(let i=0;i<40&&!mine();i++){draw();await new Promise(res=>setTimeout(res,100))}
   r.miss=SC3D.miss;const h0=SC3D.hits;draw();draw();r.hits=SC3D.hits-h0;r.cv=SC3D_CV.size;r.calls=calls;
   const c=[...SC3D_CV.values()][0];r.shadow=!!c&&c.width>c._w;
   /* tokenImg (cards, corpses, menus) unchanged: its image is the plain figure */
