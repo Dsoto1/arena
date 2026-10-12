@@ -148,10 +148,10 @@ const MOCK_SEEN80='flavius_onlmock_seen80';
 function mockSeen80(me){let s={};try{s=JSON.parse(localStorage.getItem(MOCK_SEEN80)||'{}')||{}}catch(e){}if(me){s[me]=mockNow();try{localStorage.setItem(MOCK_SEEN80,JSON.stringify(s))}catch(e){}}return s}
 /* a request that changed nothing never writes the shared world back (another window may have written since it was read) */
 mockReq=async function(t,d){const R=MOCK_ROUTES[t];if(!R)throw new Error(_T('Unknown request: ')+t);await new Promise(r=>setTimeout(r,30+Math.random()*60));d=d||{};
-  const w=mockLoad();const me=mockMe();const sn=mockSeen80(me);for(const a of Object.values(w.accounts||{}))if(sn[a.id]&&!(a.seen>=sn[a.id]))a.seen=sn[a.id];
+  return mockLocked(()=>{const w=mockLoad();const me=mockMe();const sn=mockSeen80(me);for(const a of Object.values(w.accounts||{}))if(sn[a.id]&&!(a.seen>=sn[a.id]))a.seen=sn[a.id];
   const s0=JSON.stringify(w);mockSeedWorld(w);mock80Fix(w);
   MOCK_OUT=[];let out;try{out=R(w,d,me)}catch(e){MOCK_OUT=[];throw e}if(JSON.stringify(w)!==s0)mockSave(w);const q=MOCK_OUT;MOCK_OUT=[];mockFlush80(q);
-  return JSON.parse(JSON.stringify(out===undefined?{}:out))};
+  return JSON.parse(JSON.stringify(out===undefined?{}:out))})};
 function mockLive80(w,me){for(const L of Object.values(w.lobbies||{})){if(L.status!=='live'||!L.players.some(p=>p.id===me))continue;const M=w.matches[L.id];if(!M||M.status==='done')continue;
     if((M.abandoned||{})[me]||(M.reports||{})[me])continue;return {id:L.id,ev:L.ev,loc:L.loc,ranked:!!L.ranked,dropped:!!(M.dropped||{})[me]}}return null}
 {const base=mockGroup;mockGroup=function(w,me){const g=base.apply(this,arguments);
