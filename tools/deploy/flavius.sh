@@ -159,7 +159,7 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
     [ "$cc" = "0" ] && R "arena open?" "CLOSED by the budget switch — reopen: see the stack's ReopenCommand output" || G "arena open?" "open"
   else R "server updated" "the arena function was not found"; fi
   # page and server speak the same protocol? (the server answers 401 = 'sign in' when the version is right, 426 when it is not)
-  local pv code; pv=$(printf '%s' "$page" | grep -o 'const VER=[0-9]*' | head -1 | cut -d= -f2)
+  local pv code; pv=$(printf '%s' "$page" | grep -oE 'C\.VER=[0-9]+' | tail -1 | cut -d= -f2); [ -n "$pv" ] || pv=$(printf '%s' "$page" | grep -o 'const VER=[0-9]*' | head -1 | cut -d= -f2)  # 111-onlcore raises its protocol with C.VER (v1.0: 8); older pages only have the first const VER
   if [ -n "$ws" ] && [ -n "$pv" ]; then code=$(curl -s -m 10 -o /dev/null -w '%{http_code}' -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Version: 13' -H 'Sec-WebSocket-Key: Zmxhdml1c3J1bGVfX3Rlc3Q=' "https://${ws#wss://}?ver=$pv" || true)
     case "$code" in 401|403|101) G "versions match" "page protocol $pv is accepted by the server";; 426) R "versions match" "the server refuses the page's protocol $pv — deploy the matching server zip";; *) Y "versions match" "could not tell (answer $code)";; esac; fi
   # Google sign-in settings inside Cognito
