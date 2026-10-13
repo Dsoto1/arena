@@ -30,10 +30,10 @@ o.started=await pg.waitForFunction(()=>typeof S!=='undefined'&&S&&S.players&&S.p
 /* Version history: tabs of ten, newest first */
 o.h=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}S.over=true;
   showRules('hist');await W8(1000);const r={};const box=document.querySelector('#rulTab-hist .h90');const tabs=box?[...box.querySelectorAll('[data-h90]')]:[];
-  r.n=tabs.length;r.labels=tabs.map(t=>t.textContent);const top=Math.ceil(+MILESTONES[0].v.split('.')[1]/10);r.want=top;r.newest=r.labels[0]===`${(top-1)*10+1}–${top*10}`&&tabs[0].classList.contains('on')&&r.labels[top-1]==='1–10';
-  const vis=()=>[...box.querySelectorAll('[data-h90p]')].filter(p=>!p.hidden);r.firstOnly=vis().length===1&&[...vis()[0].querySelectorAll('.msv')].every(x=>{const m=+x.textContent.match(/^v0\.(\d+)/)[1];const top=Math.ceil(+MILESTONES[0].v.split('.')[1]/10);return m>=(top-1)*10+1&&m<=top*10});
+  r.n=tabs.length;r.labels=tabs.map(t=>t.textContent);const NUM=(v=>{const q=String(v).match(/(\d+)\.(\d+)/);return (+q[1])*100+(+q[2])});const top=Math.ceil(NUM(MILESTONES[0].v)/10);r.want=top;r.newest=r.labels[0]===`${(top-1)*10+1}–${top*10>=100?'1.0':top*10}`&&tabs[0].classList.contains('on')&&r.labels[top-1]==='1–10';
+  const vis=()=>[...box.querySelectorAll('[data-h90p]')].filter(p=>!p.hidden);r.firstOnly=vis().length===1&&[...vis()[0].querySelectorAll('.msv')].every(x=>{const m=NUM(x.textContent);return m>=(top-1)*10+1&&m<=top*10});
   r.firstHas=vis()[0]&&vis()[0].querySelector('.msv').textContent==='v'+MILESTONES[0].v;
-  let each=true;for(const t of tabs){t.click();await W8(80);const v=vis();const k=+t.dataset.h90;if(v.length!==1)each=false;else[...v[0].querySelectorAll('.msv')].forEach(x=>{const m=+x.textContent.match(/^v0\.(\d+)/)[1];if(m<k*10+1||m>k*10+10)each=false});if(!v[0]||!v[0].querySelector('.h90c'))each=false}
+  let each=true;for(const t of tabs){t.click();await W8(80);const v=vis();const k=+t.dataset.h90;if(v.length!==1)each=false;else[...v[0].querySelectorAll('.msv')].forEach(x=>{const m=NUM(x.textContent);if(m<k*10+1||m>k*10+10)each=false});if(!v[0]||!v[0].querySelector('.h90c'))each=false}
   r.each=each;const all=[...box.querySelectorAll('.msv')].length;r.all=all===MILESTONES.length;
   const rng=box.querySelector('[data-hv90="0.6–0.11"]');r.ranged=!!rng&&rng.closest('[data-h90p]').dataset.h90p==='0'&&!!box.querySelector('[data-h90p="2"] [data-hv90="0.30–0.32"]');
   r.short=MILESTONES.filter(m=>/^0\.\d+$/.test(m.v)&&+m.v.split('.')[1]>=52).every(m=>m.hi.length<=4&&(m.fx||[]).length<=1);

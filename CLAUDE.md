@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.99**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v1.0**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -1770,6 +1770,14 @@ share copy — the site download play/flavius-rule-arena.zip.)
   seats all starts, pick your fighter in a live Manager bout, fixes from his V99 notes (271) and fix4 (272: issued kits, damaged armor shelved, Armory
   selling, compact Match Week, welcome scroll, city classes, tamed beasts move+attack, eagle CF in no-CF rounds, new Zora figure).
   GitHub full run #20: green (first run #19 caught 9 tests still expecting pre-v0.99 screens — tests updated, no game change).
+
+- **v1.0** the arena in 3D (animated gladiators in their real gear 311, beasts 312, crowd 313, menu show 282, gear 276, arena stone 277),
+  hit feedback 277h, one bubble family 303, briefing 301/305, sound pass 314; Manager: My Ludus + advisors 294/297, rooms 298, recruiting dossier +
+  signing day 299, world tabs 290, map insets 295, enter any event 296; Online: turn timers (protocol 8) 290tt, who's online 287, room 302, server
+  batches A/B 292/293, replays 309, Insignia 304; daily/weekly challenges 310, Tituli 307, first hour 308, Play Now in sandstone 300, sandstone buttons
+  306; balance (tools/plans/balance100/REPORT.md, his picks): Damnatio pelted every other turn + Iron Helm + Belt I, Amazonia without the Falcata,
+  seats by lot in Chariot/Orpheus/Golden Eagle (315); online dented printed gear (repair ⅒), award ladder 24–80, halved rank Glory, one rank gift a
+  house (316, server). Version history tab "91–1.0" (187 hist90Num = major×100 + minor). Server changed — flavius.sh release deploys it.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the

@@ -64,12 +64,12 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest||!t.closest
 .h90c ul{font-size:13px;gap:2px;line-height:1.35}.h90fx{margin:5px 0 0;font-size:12px;color:var(--muted);line-height:1.35}`;document.head.appendChild(st)})();
 
 /* ---------- 2 · Version history in tabs of ten ---------- */
-function hist90Num(v){const m=String(v).match(/^\d+\.(\d+)/);return m?+m[1]:0}
+function hist90Num(v){const m=String(v).match(/^(\d+)\.(\d+)/);return m?(+m[1])*100+(+m[2]):0} /* v1.0 → 100: the 91–100 tab */
 function hist90Tab(v){return Math.max(0,Math.floor((hist90Num(v)-1)/10))}
 function hist90Card(m){const fx=(m.fx||[]).filter(Boolean);return `<div class="mstone h90c" data-hv90="${esc(m.v)}"><div class="mshd"><span class="msic">${m.ic}</span><div><div class="msv">v${esc(m.v)}</div><b>${esc(m.t)}</b></div></div><ul>${m.hi.map(h=>`<li>${esc(h)}</li>`).join('')}</ul>${fx.length?`<p class="h90fx">🔧 ${fx.map(esc).join(' · ')}</p>`:''}</div>`}
 historyHTML=function(){const by={};MILESTONES.forEach(m=>{const k=hist90Tab(m.v);(by[k]=by[k]||[]).push(m)});
   const tabs=Object.keys(by).map(Number).sort((a,b)=>b-a);const first=tabs[0];
-  return `<div class="h90"><div class="seg h90tabs" role="tablist">${tabs.map(k=>`<button type="button" role="tab" data-h90="${k}" class="${k===first?'on':''}" aria-selected="${k===first}">${k*10+1}–${k*10+10}</button>`).join('')}</div>
+  return `<div class="h90"><div class="seg h90tabs" role="tablist">${tabs.map(k=>`<button type="button" role="tab" data-h90="${k}" class="${k===first?'on':''}" aria-selected="${k===first}">${k*10+1}–${k*10+10>=100?'1.0':k*10+10}</button>`).join('')}</div>
     ${tabs.map(k=>`<div class="h90grid" data-h90p="${k}" ${k===first?'':'hidden'}>${by[k].map(hist90Card).join('')}</div>`).join('')}</div>`};
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-h90]');if(!b)return;const box=b.closest('.h90');if(!box)return;
   box.querySelectorAll('[data-h90]').forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-selected',String(on))});
