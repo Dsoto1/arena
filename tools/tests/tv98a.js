@@ -96,7 +96,7 @@ ok(t1.open==='build'&&t1.cards===10&&t1.dg>=7&&t1.oneScreen,'Rules at a Glance: 
 ok(t1.beasts==='15,20,12,10,6,3','the beasts table reads the real NPCT HP '+t1.beasts);
 ok(Object.entries(t1.panes).every(([k,v])=>k===v),'each tab shows its own pane '+JSON.stringify(t1.panes));
 ok(t1.lessons==='classic,manager'&&t1.pops>=9&&t1.popOpen,'Tutorials: both lessons + every rule popup opens '+JSON.stringify([t1.lessons,t1.pops,t1.popOpen]));
-ok(/^v0\.\d+/.test(t1.newV||'')&&t1.hist>=20&&t1.histOpen,"What's New: the newest card + version history rows "+JSON.stringify([t1.newV,t1.hist,t1.histOpen]));
+ok(/^v\d+\.\d+/.test(t1.newV||'')&&t1.hist>=20&&t1.histOpen,"What's New: the newest card + version history rows "+JSON.stringify([t1.newV,t1.hist,t1.histOpen]));
 ok(t1.guides,'Strategy: Play Now + Manager guides');
 ok(/quickref98/.test(t1.qrBg)&&t1.qrVis&&t1.qrLoad&&t1.notes===4,'Quick Reference: rulebook p.72 + four digital notes '+JSON.stringify([t1.qrBg.slice(0,60),t1.qrVis,t1.qrLoad,t1.notes]));
 ok(t1.gloss>=20&&t1.best>=11&&t1.det,'Glossary + Bestiary cards with a detail '+JSON.stringify([t1.gloss,t1.best,t1.det]));
