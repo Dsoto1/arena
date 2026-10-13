@@ -69,7 +69,7 @@ await B.selectOption('#onl select[data-lb96="reg"]','eu');out.fEu=await until(B,
 await B.evaluate(()=>{const t=document.querySelector('#onl .lb96f');if(t)t.scrollIntoView({block:'start'})});await shot(B,'list98.png');
 /* ── 3 · the house card from the host's name ── */
 await click(B,`#onl tr[data-row="${rid}"] [data-hc98]`);out.card=await until(B,()=>{const c=document.querySelector('.hc98pop .hc98:not(.load)');return c?{name:(c.querySelector('h3')||{}).textContent,glads:c.querySelectorAll('.hc98-gl li').length,
-  last:c.querySelectorAll('.hc98-last .hc98e').length,w:c.querySelectorAll('.hc98e.w').length,dr:/Ludus Minor/.test(c.textContent),best:!!c.querySelector('.hc98-best .onl-rk-veteranus'),fallen:/Fallen/.test(c.textContent),visit:!!c.querySelector('[data-hc98v]'),follow:!!c.querySelector('[data-hc98f]')}:null});
+  last:c.querySelectorAll('.hc98-last .hc98e').length,w:c.querySelectorAll('.hc98e.w').length,dr:/Ludus Minor/.test(c.textContent),best:!!c.querySelector('.hc98-best .onl-rk-veteranus,.hc98-best .onl-rk-primus') /* glory 700 / 1000: Veteranus before v1.0, Primus Palus on the halved v1.0 thresholds */,fallen:/Fallen/.test(c.textContent),visit:!!c.querySelector('[data-hc98v]'),follow:!!c.querySelector('[data-hc98f]')}:null});
 ok(out.card&&/Alpha/.test(out.card.name)&&out.card.glads===1&&out.card.last===2&&out.card.w===1&&out.card.dr&&out.card.best&&out.card.visit&&out.card.follow,'the house card '+JSON.stringify(out.card));
 await shot(B,'card98.png');await click(B,'.hc98pop [data-hc98v]');out.visit=await until(B,()=>ONL.tab==='visit'&&V89L.visit&&/Alpha/.test(V89L.visit.domus.name)?'visit':null);ok(out.visit==='visit','🏛 Visit house opens their Domus');
 await B.evaluate(()=>{V89L.visit=null;ONL.tab='lobby';onlRedraw()});
