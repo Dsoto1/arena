@@ -1680,4 +1680,21 @@ const ONLC=(function(){
     if(!o.team&&won.length>1)f.push('multi_win');if(rows.length>1&&won.length===rows.length)f.push('all_won');
     if(rows.some(r=>r&&(r.f|0)>=F_HIGH101))f.push('f_high');return f}
   Object.assign(C,{SNAP_BAD101,F_HIGH101,snapBad101,inBad101,deepBad101,tableFix101,tableFlags101})})(ONLC);
+/* ===== v1.01 DOMUS RECORDS =====
+   Two records a house: RANKED = the existing top-level D.bouts/wins/lifeCF/survived/fallen (Ranked seats only from v1.01 on); UNRANKED = D.cu
+   {bouts,wins,lifeCF,survived,fallen} (Custom or any other non-ranked online event; survived counts survivors of non-ranked bouts too).
+   Earlier history cannot be split: the top-level totals keep it (Custom matches before v1.01 included). D.split101 = the time of the first write by this
+   code, D.pre101 = the bouts the house already had then (> 0 -> the page shows the "includes earlier Custom matches" note).
+   domusRow carries cu (zeros when none yet), split101, pre101. Glory, Domus rank, ranks, coin and trophies are untouched. */
+(function(C){
+  const baseNote=C.domusNote;
+  function cuOf101(D){if(!D.cu||typeof D.cu!=='object')D.cu={bouts:0,wins:0,lifeCF:0,survived:0,fallen:0};return D.cu}
+  function domusNote101(D,row,out,ranked){
+    if(!D.split101){D.split101=Date.now();D.pre101=D.bouts|0;cuOf101(D)}
+    if(ranked)return baseNote.apply(this,arguments);
+    const X=cuOf101(D);X.bouts=(X.bouts|0)+1;if(row&&row.won)X.wins=(X.wins|0)+1;X.lifeCF=(X.lifeCF|0)+((out&&out.cf)|0);
+    if(out&&out.died)X.fallen=(X.fallen|0)+1;else X.survived=(X.survived|0)+1;return D}
+  {const base=C.domusRow;C.domusRow=function(D){const r=base.apply(this,arguments);if(r&&D){const X=D.cu||{};
+    r.cu={bouts:X.bouts|0,wins:X.wins|0,lifeCF:X.lifeCF|0,survived:X.survived|0,fallen:X.fallen|0};if(D.split101){r.split101=+D.split101||0;r.pre101=D.pre101|0}}return r}}
+  Object.assign(C,{domusNote:domusNote101})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

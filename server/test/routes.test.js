@@ -431,7 +431,7 @@ async function v82(){
   /* Custom pays no coin */
   let CR=await lan.req('lobby.create',{ev:'egidious',cry:false});await nan.req('lobby.join',{id:CR.id});CR=await lan.req('lobby.start',{id:CR.id});const w1=await treOf(nan.acct);
   const ct=CR.players.map((p,i)=>({seat:i,won:p.id===nan.acct,place:1,f:20,coin:50,survives:true}));for(const x of [lan,nan])await x.req('match.result',{id:CR.id,table:ct,hash:'c'});
-  assert.strictEqual(await treOf(nan.acct),w1,'Custom: no coin, even for the winner');assert.strictEqual((await nan.req('domus.get',{})).domus.bouts,2,'but the house counts the bout');
+  assert.strictEqual(await treOf(nan.acct),w1,'Custom: no coin, even for the winner');{const dd=(await nan.req('domus.get',{})).domus;assert.strictEqual(dd.bouts+dd.cu.bouts,2,'but the house counts the bout');assert.strictEqual(dd.cu.bouts,1,'v1.01: in the Unranked record')}
 
   /* ── 2. the award table (ONLC) ── */
   const mk=(rank,o)=>({...C.newChar({name:'Tester',cls:'hero'},'x','t',0),rank,...o});
