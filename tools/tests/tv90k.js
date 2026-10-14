@@ -25,14 +25,13 @@ await pg.evaluate(()=>{MGR.tab='league';MGR_REDRAW()});await W(400);
 const b1=await pg.evaluate(()=>{const w=W_();const t=document.querySelector('#mgrBody .wd100lgt');const rows=t?t.querySelectorAll('.wd100r').length:0;
   return {rows,n:w.mgrs.length,first:(document.querySelector('#mgrBody .lp96p.p1')||{}).title||'',next:!!document.querySelector('#mgrBody .wd100next'),me:!!(t&&t.querySelector('.wd100r.me'))}});
 ok(b1.rows===b1.n&&/120/.test(b1.first)&&b1.me&&b1.next,'B standings: podium prizes in the hover + table '+JSON.stringify(b1));
-await pg.click('#mgrBody [data-wd100h]:not(.me)');await W(400);await pg.click('#mgrBody [data-wd100sc]');await W(400); /* v1.0: a row opens its house card; 🔍 Scout opens the scouting card */
-const b2=await pg.evaluate(()=>{const box=document.querySelector('#mgrBody .lg90row .lg90');if(!box)return {box:false};const R=mgrById(box.dataset.lg90box);
-  return {box:true,tab:MGR.tab,rows:box.querySelectorAll('.lg90r tr').length-1,ros:rosterOf(R).length,team:!!box.querySelector('[data-mg="team"]'),ch:!!box.querySelector('[data-lg90ch]'),week:!!box.querySelector('.lg90week')}});
-ok(b2.box&&b2.tab==='league'&&b2.rows===b2.ros&&b2.team&&b2.ch&&b2.week,'B a rival row opens its scouting card '+JSON.stringify(b2));
+await pg.click('#mgrBody [data-wd100h]:not(.me)');await W(400); /* v1.0: a row opens its house card; v1.01 (317 M10): no Scout / Challenge buttons — Team Details only */
+const b2=await pg.evaluate(()=>{const c=document.querySelector('#mgrBody .wd100hc[data-lg90box]');return {box:!!c,tab:MGR.tab,noScout:!!c&&!c.querySelector('[data-wd100sc]')&&!c.querySelector('[data-lg90ch]'),team:!!c&&!!c.querySelector('[data-mg="team"]'),ros:c?c.querySelectorAll('.gr').length:0}});
+ok(b2.box&&b2.tab==='league'&&b2.noScout&&b2.team&&b2.ros>=1,'B a rival row opens its house card, Team Details only '+JSON.stringify(b2));
 if(SHOT)await pg.screenshot({path:SHOT+'/tv90k_league.png'});
 const b3=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_();const R=mgrById(MGR.lg90);const n=w.night;
   if(!n.bouts[0].ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===R.id})){const g=rosterOf(R).find(x=>!x.inj);if(g)n.bouts[0].ents[0]=g.id}
-  MGR_REDRAW();await W8(200);const bt=document.querySelector('#mgrBody [data-lg90ch]');if(bt&&!bt.disabled)bt.click();await W8(300);
+  MGR_REDRAW();await W8(200);const bt=document.createElement('button');bt.dataset.lg90ch=R.id;bt.style.display='none';document.getElementById('mgrBody').appendChild(bt);bt.click();await W8(300); /* the handler lives on the document; the card no longer carries the button */
   const set=!!(w.chal76&&w.chal76.mgr===R.id&&w.chal76.wk===w.week);
   /* the prize at the season's close */
   const pm=me();const L=leagueSort(w.mgrs,w.season);const pos=L.indexOf(pm)+1;const c0=pm.coin;w.lp90=null;qsClose(w,pm);const paid=pm.coin-c0;const c1=pm.coin;qsClose(w,pm);

@@ -120,7 +120,7 @@ function earnTrophy(world,tid,opts={}){
     season:world.season,week:world.week,why:opts.why||d.desc,who:opts.who||null,cat:d.cat||'custom',count:1,hist:[hEntry]};
   world.trophies.push(e);const free=world.case.indexOf(null);if(free>=0)world.case[free]=e.id}
   // the rewards: coin and fame to the house, CF banked on the fighter for their next bout
-  const m=me(),r=d.rewards||{};if(m){if(r.coin)m.coin+=r.coin;if(r.fame)m.fame=clamp((m.fame||0)+r.fame,0,100)}
+  const m=me(),r=Object.assign({},d.rewards||{},{cf:0}) /* v1.01: Manager trophies pay coin + fame, no CF */;if(m){if(r.coin)m.coin+=r.coin;if(r.fame)m.fame=clamp((m.fame||0)+r.fame,0,100)}
   if(r.cf&&opts.gid){const g=gById(opts.gid);if(g)g.cfBank=(g.cfBank||0)+r.cf}
   if(opts.gid){const g=gById(opts.gid);if(g){(g.trophies2=g.trophies2||[]).push(d.name);ghist(g,_T`won ${d.name}`)}}
   tnews(_T`🏆 <b>${esc(d.name)}</b> comes home to the trophy room${opts.who?` — ${esc(opts.who)}`:''}. ${rewardText(r)}.`,'big');
@@ -195,7 +195,7 @@ function awardShowHTML(){
   const card=(a,i)=>{const d=trophyDef(a.tid)||{};const open=i<I;const g=a.gid?gById(a.gid):null;const m=a.mid?mgrById(a.mid):null;
     return `<div class="awcard${open?' open':''}${a.mine?' mine':''}${a.cat==='fun'?' fun':''}">${open?`<div class="awtr">${trophySVG(d,76)}</div><div class="awtxt"><span class="awcat">${a.cat==='fun'?_T('😄 For the laughs'):_T('🏛 The honours')}</span><b>${esc(a.name)}</b>
       <div class="awwin">${g?gArt(g,'xs'):m&&typeof mgrPortrait==='function'?mgrPortrait(m,'xs'):''}<span><b>${esc(a.gname||a.mname||'—')}</b><br><span class="rc-sub">${esc(a.ludus||'')} · ${esc(a.stat||'')}</span></span></div>
-      <span class="rc-sub">${esc(a.desc||'')}</span>${a.mine?`<span class="badge gold" style="margin-top:4px">${_T`Yours! → the trophy room · ${rewardText(d.rewards)}`}</span>`:''}</div>`
+      <span class="rc-sub">${esc(a.desc||'')}</span>${a.mine?`<span class="badge gold" style="margin-top:4px">${_T`Yours! → the trophy room · ${rewardText({...d.rewards,cf:0})}`}</span>`:''}</div>`
       :`<div class="awenv">${_T`✉<span>${esc(a.cat==='fun'?_T('For the laughs'):_T('The honours'))} · the envelope, please…</span>`}</div>`}</div>`};
   const given=new Set(A.awards.map(a=>a.tid));const AW_ALL=['flavian_cup','palm_roma','aureus','tiro','iron_thumb','horn','darling','vulcan','aegis','rising','vox','sponge','sandal','giggle','purse','iron_sandal'];
   const empty=I>=n?AW_ALL.filter(t=>!given.has(t)).map(t=>{const d=trophyDef(t)||{};return `<div class="awcard open unclaimed${d.cat==='fun'?' fun':''}"><div class="awtr">${trophySVG(d,76)}</div><div class="awtxt"><span class="awcat">${d.cat==='fun'?_T('😄 For the laughs'):_T('🏛 The honours')}</span><b>${esc(d.name||'')}</b><span class="rc-sub">${_T`Not awarded this season — nobody qualified.`}</span><span class="rc-sub">${esc(d.desc||'')}</span></div></div>`}).join(''):'';
