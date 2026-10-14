@@ -300,7 +300,7 @@ function r101Fix(){try{if(r101Off())return;for(const b of document.querySelector
 .fx101r{display:flex;gap:8px;align-items:baseline;font-size:13px;padding:1px 0}.fx101r.dn b{color:#f2a497}.fx101r.up b{color:#9fd18b}
 #desk99 .dk101g>.dk101lines{grid-column:1 / -1;margin:4px 0 6px 18px;display:grid;gap:3px;border-left:2px solid #6a5130;padding-left:8px}
 #desk99 .dk101g>.dk101lines[hidden]{display:none}
-#desk99 .dk101g .tl .q{opacity:.75;font-weight:400;display:inline-block;max-width:60ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+#desk99 .dk101g .tl .q{opacity:.75;font-weight:400;display:inline-block;max-width:min(60ch,100%);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
 .ar94stage.loan{pointer-events:auto;opacity:1}
 `;document.head.appendChild(st)})();
 try{if(typeof PERF92_SWEEPS!=='undefined')PERF92_SWEEPS.push(['rec101','rec101Tips()'])}catch(e){}

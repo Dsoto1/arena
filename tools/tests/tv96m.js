@@ -43,9 +43,9 @@ const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   const b0=w.night.bouts[0];const mine=rosterOf(m)[0];b0.ents[0]=mine.id;b0.res={att:1,winners:[mine.id],rows:[{gid:mine.id,place:1,won:true,f:5,fname:'',alive:true}],turns:3,lines:[],reason:'x'};
   const wk=w.week;const ok2=await endWeek();o.ok=ok2;o.stored=!!(w.acta96&&w.acta96[wk]);o.rows=o.stored?w.acta96[wk].rows.length:0;o.row=o.stored?w.acta96[wk].rows[0]:null;
   MGR.tab='sched';MGR_REDRAW();await W8(500);const B=document.getElementById('mgrBody');const ths=[...B.querySelectorAll('.wd100plq b')].map(x=>x.textContent.trim());o.ths=ths;
-  const cell=B.querySelector('.wd100sea .wd100sr .sact96');o.cell=cell?cell.textContent.trim():null;o.past=B.querySelectorAll('.wd100sea .wd100sr .sact96').length;
+  /* v1.01 (317 M43): the finished week's results are rows of My Acta */const cell=B.querySelector('.wd100sea .wd100sr.act101 .c-bs');o.cell=cell?cell.textContent.trim():null;o.past=B.querySelectorAll('.wd100sea .wd100sr.act101').length;
   o.colsOk=!!B.querySelector('.wd100bill .wd100sr.bill')&&!B.querySelector('table.stable2');return o});
-ok(r4.ok!==false&&r4.stored&&r4.rows>=1&&r4.row&&r4.row.w===true,'4 the week\'s results card is stored in w.acta96 '+JSON.stringify(r4));ok(r4.ths.some(x=>/Billing/i.test(x))&&r4.ths.some(x=>/Your Acta/i.test(x)),'4 the Calendar has Your Acta and Billing sections '+JSON.stringify(r4.ths));
+ok(r4.ok!==false&&r4.stored&&r4.rows>=1&&r4.row&&r4.row.w===true,'4 the week\'s results card is stored in w.acta96 '+JSON.stringify(r4));ok(r4.ths.some(x=>/Billing/i.test(x))&&r4.ths.some(x=>/(Your|My) Acta/i.test(x)),'4 the Calendar has Your Acta and Billing sections '+JSON.stringify(r4.ths));
 ok(r4.past>=1&&r4.cell&&/🏆|1st/.test(r4.cell),'4 the finished week shows its bouts '+r4.cell);ok(r4.colsOk,'4 billing rows in the Calendar, the old table is gone');
 if(SHOT){await W(300);await pg.screenshot({path:SHOT+'/tv96m_season.png'})}
 /* ---- 5 · Match Week road box + next-prize letter ---- */

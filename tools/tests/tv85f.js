@@ -44,7 +44,7 @@ const o2=await pg.evaluate(async({eid,A,B,C,D})=>{const W8=ms=>new Promise(r=>se
   const hb=document.querySelector(`#mgrBody [data-fa85="hide|${eid}|${A}"]`);r.hb=!!hb&&!hb.disabled;if(hb)hb.click();for(let i=0;i<20&&E.cases.find(c=>c.gid===A).st!=='hid';i++)await W8(250);
   r.hidSt=E.cases.find(c=>c.gid===A).st;r.inBout=w.night.bouts.filter(b=>b.ents.includes(A)).map(b=>b.tier+':'+b.done);r.sameW=w===W_();
   r.hid=r.hidSt==='hid'&&!r.inBout.length;
-  r.noEnter=!document.querySelector(`#mgrBody option[value="${A}"]:not([disabled])`);
+  r.noEnter=!document.querySelector(`#mgrBody option[value="${A}"]:not([disabled])`);if(!r.noEnter)r.dbgNE=[...document.querySelectorAll(`#mgrBody option[value="${A}"]:not([disabled])`)].map(o=>o.parentNode.id+'|'+o.textContent+'|'+(o.closest('.bout,.nightcard,tr')||{}).className).join(' ;; ');
   /* Face → ad bestias, simulated to the end, with the other condemned */
   const rv=w.mgrs.find(x=>!x.isPlayer&&!x.dead);const rg=rosterOf(rv)[0];rg.faith='christian';E.cases.push({gid:rg.id,n:rg.name,mgr:rv.id,st:'face'});
   for(const c of E.cases)if(c.mgr!==m.id&&c.gid!==rg.id&&c.st==='open')c.st='hid';
@@ -72,9 +72,9 @@ Object.assign(o,o3);
 await shot('fa85_martyr','.fa85note');
 await pg.evaluate(()=>{const p=document.querySelector('.fa85note [data-note85]');if(p)p.click()});
 /* the martyr's record */
-await pg.evaluate(async({C})=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));MGR.tab='ludus';MGR.run='ledger';if(typeof LU100!=='undefined')LU100.panel='ledger';MGR_REDRAW();await W8(400);const el=[...document.querySelectorAll('#mgrBody .card2')].find(x=>/The fallen/.test(x.textContent));if(el)el.scrollIntoView()},o);
+await pg.evaluate(async({C})=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));MGR.tab='ludus';MGR.run=null;if(typeof LU100!=='undefined'){LU100.panel=null;LU100.pop='clerk'}MGR_REDRAW();await W8(400);const el=document.querySelector('#mgrBody details.led101f');if(el)el.scrollIntoView() /* v1.01: the Ledger lives in the Clerk's popover */},o);
 await pg.waitForTimeout(300);
-o.fallenDom=await pg.evaluate(()=>{const el=[...document.querySelectorAll('#mgrBody .card2')].find(x=>/The fallen/.test(x.textContent));return !!el&&/Martyr/.test(el.textContent)});
+o.fallenDom=await pg.evaluate(()=>{/* v1.01 (317): the ledger's fallen list is a fold, details.led101f */const el=document.querySelector('#lu100pop details.led101f');return !!el&&/Martyr/.test(el.textContent)});
 await shot('fa85_fallen');
 /* the week's end: D is taken (undecided → face) and meets the beasts; then a denunciation */
 const o4=await pg.evaluate(async({D})=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};

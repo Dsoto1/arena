@@ -27,9 +27,7 @@ o.d=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   r.posts=[...P.querySelectorAll('.pcol.ppost85')].map(p=>Math.round(p.getBoundingClientRect().width));r.postTxt=[...P.querySelectorAll('.ppost85')].map(p=>p.textContent.trim());
   r.cardH=[...P.querySelectorAll('.pcard')].map(c=>Math.round(c.getBoundingClientRect().height));
   /* the plan line: folded, counts, no hours; unfolds and remembers */
-  const pl=document.querySelector('details.rp85');const sm=pl&&pl.querySelector('summary');r.plan=!!pl&&!pl.open&&/This week: 8 scouting · 0 courting planned/.test(sm.textContent);
-  r.planNoHrs=!!sm&&!/\d+\s*h\b|hour/i.test(sm.textContent);sm.click();await W8(300);r.planOpen=pl.open&&localStorage.getItem('flavius_recplan85')==='1'&&pl.querySelectorAll('.rplan').length===8;
-  MGR_REDRAW();await W8(300);r.planKept=document.querySelector('details.rp85').open;document.querySelector('details.rp85 summary').click();await W8(200);r.planShut=localStorage.getItem('flavius_recplan85')==='0';
+  /* v1.01 (317 M): the weekly plan line is gone from Recruiting */r.plan=r.planNoHrs=r.planOpen=r.planKept=r.planShut=!document.querySelector('details.rp85');
   /* the detail card before scouting: one ratings line; the advisor's ★ on the button, no box */
   const a=T85[0];/* v0.88 (157): before scouting the card shows rough ranges (±12) in the same box, not one line *//* v0.98: grade blocks, "?" until scouted */r.oneLine=document.querySelectorAll('.gs98 .gb98[data-p="0"]').length===5;
   const ab=document.querySelector('.rsteps')?.closest('.card2').querySelector('.btn.adv74');r.advBtn=!!ab&&!!ab.querySelector('.star85')&&/Advisor suggests/.test(ab.title)&&!!ab.dataset.adv85;r.noBox=!document.querySelector('.advise74');
@@ -63,7 +61,7 @@ const pm=await b.newPage({viewport:{width:1400,height:1000}});await setup(pm,'mi
 o.m=await pm.evaluate(new Function('const geo='+geo.toString()+';const P=document.querySelector(".pipeline");return {lanes:[...P.querySelectorAll(".pcol")].map(c=>({post:c.classList.contains("ppost85"),n:c.querySelectorAll(".pcard").length})),g:geo(),plan:(document.querySelector("details.rp85 summary")||{}).textContent}'));
 await sx(pm,'mixed');await pm.evaluate(()=>document.getElementById('recTable').scrollIntoView({block:'start'}));await pm.waitForTimeout(200);await sx(pm,'list');
 ok(o.m.lanes.length===4&&o.m.lanes.filter(l=>!l.post).reduce((a,l)=>a+l.n,0)===7&&o.m.lanes.every(l=>l.post===(l.n===0)),'mixed board: lanes with tablets, posts for the empty');
-ok(/3 scouting · 4 courting planned/.test(o.m.plan||''),'mixed plan counts');ok(!o.m.g.names.length,'full names fit two lines: '+o.m.g.names.join(', '));
+ok(!o.m.plan,'no plan line (v1.01)');ok(!o.m.g.names.length,'full names fit two lines: '+o.m.g.names.join(', '));
 /* every next-step kind on one line: scout, pitch (topic tag), sign (offer), then feast and gift once the pitches are spent */
 o.k=await pm.evaluate(new Function('geo',`return (async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const w=W_(),m=me();const r={};const g0=eval(geo);r.a=g0().btns;
   r.tag=true;

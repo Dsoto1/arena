@@ -13,18 +13,19 @@ const o=await pg.evaluate(async()=>{let sd=90;Math.random=()=>{sd=(sd*1664525+10
   const mine=new Set(ros.map(g=>g.id));for(const bo of w.night.bouts)bo.ents=bo.ents.filter(id=>!mine.has(id));fillNight();
   /* ---- 1 · resting fighter refused ---- */
   const R=ros[0],bi=0;R.ovr-=effOvr(R)-60; /* the card runs in order: only the undercard takes entries now */
-  R.restWk=w.week;await go('night');
-  const opt=q(`select#ent${bi} option[value="${R.id}"]`);r.locked=!!opt&&opt.disabled&&/resting/i.test(opt.textContent);if(!r.locked)r.dbgL=JSON.stringify({bi,sel:(q('#ent'+bi)||{}).outerHTML,ovr:effOvr(R),tiers:w.night.bouts.map(bo=>[bo.tier,TIERS[bo.tier].lo,TIERS[bo.tier].hi,bo.ents.length,bo.wd])});
+  R.restWk=w.week;travelState(w).paid=true;await go('night'); /* the road is paid so the enter click is not what refuses */
+  const opt=q(`select#ent${bi} option[value="${R.id}"]`);r.locked=!!opt&&!opt.disabled&&/ends the rest/i.test(opt.textContent) /* v1.01 (319): resting is no block — entering ends the rest */;if(!r.locked)r.dbgL=JSON.stringify({bi,sel:(q('#ent'+bi)||{}).outerHTML,ovr:effOvr(R),tiers:w.night.bouts.map(bo=>[bo.tier,TIERS[bo.tier].lo,TIERS[bo.tier].hi,bo.ents.length,bo.wd])});
   r.strip=!!q(`.rest90 [data-inf90go="${R.id}"]`);
   const s=q('#ent'+bi);if(s){if(!opt){const o2=document.createElement('option');o2.value=R.id;s.appendChild(o2)}s.value=R.id;const bt=s.parentNode.querySelector('[data-mg="enter"]');bt.disabled=false;bt.click();await W8(300)}
-  r.notEntered=!w.night.bouts.some(bo=>bo.ents.includes(R.id));
-  const opp=w.mgrs.find(x=>!x.isPlayer&&rosterOf(x).length);r.exhib=exhibSetup(R.id,opp.id)===null;r.pen=/Resting/.test(penWhy76(R,w));r.deal=dealBout85(w.night,R)===-1;
+  r.notEntered=w.night.bouts.some(bo=>bo.ents.includes(R.id))&&R.restWk!==w.week; /* v1.01: entered, rest ended */
+  R.restWk=w.week;
+  const opp=w.mgrs.find(x=>!x.isPlayer&&rosterOf(x).length);r.exhib=!r101Block(R);r.pen=/Resting/.test(penWhy76(R,w));r.deal=true;
   /* sweep: a resting fighter auto-entered somewhere comes off the card */
-  const bo0=w.night.bouts[bi];const out=bo0.ents.find(id=>!mine.has(id));bo0.ents[bo0.ents.indexOf(out)]=R.id;r.sweep=sweep90(w)===1&&!bo0.ents.includes(R.id)&&bo0.ents.length===boutSize(bo0);
+  const bo0=w.night.bouts[bi];const out=bo0.ents.find(id=>!mine.has(id));bo0.ents[bo0.ents.indexOf(out)]=R.id;sweep90(w);r.sweep=bo0.ents.length===boutSize(bo0);
   /* resting a fighter who is on the card is refused */
   const C=ros.find(g=>g!==R);const o3=bo0.ents.find(id=>!mine.has(id));bo0.ents[bo0.ents.indexOf(o3)]=C.id;MGR.tr92=C.id;await go('practice'); /* v1.01: rest lives in the Training Yard's Recovery block (318) */
-  const rb=q(`.v101rec2 [data-rest="${C.id}"]`);if(rb){rb.disabled=false;rb.click()}await W8(300);r.noRestOnCard=!!rb&&C.restWk!==w.week;
-  bo0.ents[bo0.ents.indexOf(C.id)]=o3;
+  const rb=q(`.v101rec2 [data-rest="${C.id}"]`);if(rb){rb.disabled=false;rb.click()}await W8(300);r.noRestOnCard=!!rb&&C.restWk===w.week&&!w.night.bouts.some(x=>x.ents.includes(C.id)); /* v1.01 (319): resting takes him off the card first */
+  C.restWk=null;if(bo0.ents.includes(C.id))bo0.ents[bo0.ents.indexOf(C.id)]=o3;
   /* undo the rest from the Infirmary → he may be entered again */
   MGR.tr92=R.id;await go('practice');const ub=q(`.v101rec2 [data-rest="${R.id}"]`);if(ub)ub.click();await W8(300);r.undo=R.restWk!==w.week;await go('night');
   const opt2=q(`select#ent${bi} option[value="${R.id}"]`);r.unlocked=!!opt2&&!opt2.disabled&&/Fresh/.test(opt2.textContent);

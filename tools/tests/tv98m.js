@@ -35,7 +35,7 @@ const shotLeague=async(w,h,name)=>{await pg.setViewportSize({width:w,height:h});
   const B=document.getElementById('mgrBody');const bn=B.querySelector('.b73-league');const o={};o.banner=!!bn;o.inBanner=!!(bn&&bn.querySelector('.lp96pod .lp96p.p1 .lp96cup svg'));o.n=B.querySelectorAll('.lp96pod').length;
   o.pod=bn?[...bn.querySelectorAll('.lp96p')].map(x=>x.className.replace(/\s*me/,'').replace('lp96p ','')).join():'';o.below=!!B.querySelector('.lp96 .lp96pod');o.table=!!B.querySelector('.wd100lgt .wd100r');
   o.tip=(bn&&bn.querySelector('.lp96p.p1')||{}).title||'';
-  if(bn){const pr=bn.querySelector('.lp96pod').getBoundingClientRect(),tr=bn.querySelector('.roomttl').getBoundingClientRect(),br=bn.getBoundingClientRect();const sr=bn.querySelector('.roomstat');const rr=sr?sr.getBoundingClientRect():null;
+  if(bn){const pr=bn.querySelector('.lp96pod').getBoundingClientRect(),tr=(()=>{const h=bn.querySelector('.roomttl h2');if(!h)return bn.querySelector('.roomttl').getBoundingClientRect();const rg=document.createRange();rg.selectNodeContents(h);return rg.getBoundingClientRect()})() /* v1.01: the title box spans the banner (Season button in the kicker row) — compare the heading text */,br=bn.getBoundingClientRect();const sr=bn.querySelector('.roomstat');const rr=sr?sr.getBoundingClientRect():null;
     const hit=(a,c)=>c&&a.left<c.right&&a.right>c.left&&a.top<c.bottom&&a.bottom>c.top;o.overTitle=hit(pr,tr);o.overStat=hit(pr,rr);o.inside=pr.left>=br.left-1&&pr.right<=br.right+1&&pr.top>=br.top-1&&pr.bottom<=br.bottom+1;
     o.hscroll=document.documentElement.scrollWidth>innerWidth+1;o.bh=Math.round(br.height)}return o})};
 const r3=await shotLeague(1440,900);await pg.screenshot({path:SHOT+'/league_banner_1440.png'});
