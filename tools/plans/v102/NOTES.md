@@ -136,3 +136,17 @@ was healed and out of bed the same week.
 - 2a lead story = YOUR house's biggest moment when anything happened to it (win, death, upset, big signing), else the biggest league/empire story.
 - 3a browse the last 12 editions (◀ ▶) — keep past papers (small, trimmed) in the world.
 - 4a papyrus with ink rules, drop caps, Roman serif headlines, sepia-engraved portraits; no emoji in headlines; stats strip only the non-zero numbers.
+
+## His answers 2026-10-14 (later)
+- Lions stay at 0.8 of a gladiator ("a").
+- H follow-up · ARMORY FUND → just a bigger STARTING TREASURY for new careers ("just enough to get started"); future gear is paid by wins and
+  podiums (existing purses). Tune the smallest boost that keeps mgrsim collapses near the pre-v1.02 rate; it is plain treasury coin, no
+  separate fund wording.
+- L · LOANS: at most 4 of your fighters lent out at once (rivals too). Loan fees follow a weekly MARKET (demand per house/week, hashed, never
+  the dice RNG: short-handed or injured rosters pay more, a glut pays less) so lending is sometimes profitable, never a money machine (a
+  lent fighter's fee must not beat what he would earn fighting for a typical starter). The Clerk advises: a letter / desk row "N is
+  market-worthy this week — a house offers X" for bench fighters worth lending. Test tv102l; mgrsim check that lending can't beat fighting.
+- K · Acta: 1c (names open the dossier, Scout ▸ the list) · 2c ("<ludus> did not fight this week" + yard line) · 3a (old editions = same page
+  read-only, "As printed then", back to this week) · 4a (the fighter's own face99 portrait through the sepia/hatch filter) · 5a (opens after End
+  the week as today). The ▶ Start next week button GOES: the week has already turned when the paper prints; it only led to Your ludus (the
+  rail does that). Keep the Next week ribbon as information.
