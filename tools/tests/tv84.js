@@ -195,7 +195,7 @@ for(const [w,h] of [[390,844],[844,390]]){await P.setViewportSize({width:w,heigh
   await P.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));menuHide();MM.fromMenu=true;openManager();await W8(800);if(!W_()){newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null}MGR.tab='ludus';MGR_REDRAW();await W8(400)});out.f2['ludus'+w]=await wide();
   await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,400))})}
 /* the Online market board and the Domus (mock server) */
-await P.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);localStorage.setItem('flavius_online77','1');menuHide();
+await P.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');menuHide();
   ONL.acct=await NET.req('auth.signin',{name:'Vettii'});ONL.domus=(await NET.req('domus.create',{name:'Vettii'})).domus;ONL.char=await NET.req('char.create',{name:'Vettii the Bold',cls:'hero'});onlineOpen('armory');await W8(1000)});
 for(const [w,h] of [[390,844],[844,390]]){await P.setViewportSize({width:w,height:h});await P.waitForTimeout(300);
   await P.evaluate(async()=>{ONL.tab='armory';ONL83U.mkt='board';await onlRefresh();onlRedraw()});await P.waitForTimeout(500);out.f2['market'+w]=await wide();if(w===390)await shot(P,'phone_market');

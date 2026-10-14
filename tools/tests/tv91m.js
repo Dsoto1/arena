@@ -2,7 +2,7 @@
    an opened <details> stays open, a focused input keeps what was typed, extra/missing nodes are added/removed; onlRedraw uses it. */
 const {chromium}=require('playwright');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');
 (async()=>{const b=await chromium.launch();const pg=await b.newPage();const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};pg.on('pageerror',e=>errs.push(e.message));
-await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1')});
+await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1')});
 await pg.goto('file://'+page);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:90000});
 const r=await pg.evaluate(async()=>{const o={};const root=document.createElement('div');document.body.appendChild(root);
   const H=(t,n)=>`<div class="a"><img id="im" src="assets/coin.webp"><b>${t}</b><details id="d"><summary>x</summary>y</details><input id="in" value="v0">${'<i>k</i>'.repeat(n)}</div>`;

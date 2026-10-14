@@ -9,7 +9,7 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();
 const errs=[];const miss=[];const out={};
 const mkCtx=async(test)=>{const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
-  await ctx.addInitScript(t=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0');
+  await ctx.addInitScript(t=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');localStorage.setItem('flavius_onlcd83','0');
     if(t)localStorage.setItem('flavius_onltest89',JSON.stringify(t));else localStorage.removeItem('flavius_onltest89');
     window.__req={};window.addEventListener('DOMContentLoaded',()=>{const i=setInterval(()=>{if(typeof NET==='undefined')return;clearInterval(i);const base=NET.req;NET.req=function(k){window.__req[k]=(window.__req[k]||0)+1;return base.apply(this,arguments)}},20)})},test||null);return ctx};
 const open=async(ctx,n,first)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});if(first)await p.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});return p};

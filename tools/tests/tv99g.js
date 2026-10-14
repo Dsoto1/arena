@@ -9,7 +9,7 @@
 const {chromium}=require('playwright');const path=require('path'),fs=require('fs'),http=require('http');const page=path.resolve(process.argv[2]||'flavius-arena.html');const SHOT=process.env.SHOT||'';
 (async()=>{const b=await chromium.launch();const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
 const boot=async(vp,mob,url)=>{const ctx=await b.newContext(mob?{viewport:vp,screen:vp,isMobile:true,hasTouch:true,deviceScaleFactor:2}:{viewport:vp});await ctx.route(/fonts\./,r=>r.abort());
-  await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1')});
+  await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1')});
   const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message));await pg.goto(url||('file://'+page));await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:90000});return pg};
 /* ---- 1 · greaves + cestus, and 2 · the attack button ---- */
 {const pg=await boot({width:1440,height:900});

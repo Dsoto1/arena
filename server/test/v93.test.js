@@ -83,7 +83,7 @@ async function routes(){
   {const U='U#'+String(T).padStart(13,'0')+'#a';await db.put('MARKET',U,{item:'gladius',pc:null,price:33,from:{glad:'Old Owner'},sold:0,ttl:0});
     x=await once(ann,'market.buy',{char:ann.ch.id,id:U},'market.buy');assert.strictEqual(x.cost,33)}
   x=await once(ann,'domus.upgrade',{k:'shelf'},'domus.upgrade');assert.strictEqual(x.cost,C.UPG89.shelf.cost);
-  x=await once(ann,'char.class',{char:ann.ch.id,cls:'soldier'},'char.class');assert.strictEqual(x.cost,C.CLASS_FEE89);
+  /* v1.02: char.class always refuses (class_fixed) — nothing to charge twice */
   await setD(ann,{gifts:[{id:'gft93',why:'test',at:T}]});x=await once(ann,'gift.open',{gift:'gft93'},'gift.open',async()=>{assert.strictEqual(((await getD(ann)).gifts||[]).length,0,'opened once')});
   let L2=await bob.req('lobby.create',{ev:'egidious',loc:3,cry:false});await bob.req('lobby.set',{id:L2.id,ticket:7});await setD(cat,{treasury:500});
   x=await once(cat,'lobby.ticket',{id:L2.id},'lobby.ticket',async()=>{const Z=await db.get('LOBBY#'+L2.id,'LOBBY');assert.strictEqual((Z.stands||[]).length,1,'one seat');assert.strictEqual(Z.pot|0,7,'one ticket in the pot')});

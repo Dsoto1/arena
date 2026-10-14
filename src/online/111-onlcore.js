@@ -1702,4 +1702,101 @@ const ONLC=(function(){
    them, a question is owned by the human fighter it is asked of, and every question of the rules is recorded even right after a bar
    click. A v1.0 page would wait for or skip different windows in the same match, so VER moves 8 → 9 (the server only compares it). */
 (function(C){C.VER=9})(ONLC);
+/* ===== v1.02 PROGRESSION ===== (workstream I, his answers 2026-10-14 in tools/plans/v102/NOTES.md "I answers" + question 1 = A; mock
+   tools/plans/mock102/progress.html; the server: the "v1.02 PROGRESSION" block at the end of routes.js; the page: 340-v102prog; docs/backend.md
+   "v1.02 progression"; NO protocol bump — new routes and new optional fields only)
+   1 · ONE GROWTH SYSTEM: the silent per-bout grow() (+1 lowest, +1 more for a win) is gone (applyResult keeps the ratings it was given);
+       a gladiator grows by XP LEVELS instead. XP is computed HERE, at settlement, on the server (never sent by a page):
+       xpGain102 = round(f × K × (min(CF, 40) + 20 if he survived + 15 if he won)), f = applyResult's factor (table size × CPU cut),
+       K = 1 Ranked · 0.5 Custom · 0 when he fell (a Ranked death, an abandon, or "fallen" in a Custom bout). Custom XP ≤ 300 a UTC day a gladiator (ch.xpd102).
+   2 · LEVELS 1–100: level n → n+1 costs xpNeed102(n) = round(42 + 0.6·(n−1)) XP (42 … 101; 7069 XP in all). A typical survived Ranked bout
+       (24 CF, 4 humans) = 44 XP → level 10 after ~10 bouts, ~41 after 50, ~95 after 150 (~99 after 160). Each level: +1 automatically to his WEAKEST
+       rating (the old tie rule: STAT_KEYS order) + 1 unspent point (ch.pts) the lanista places on the level-up screen (char.lvup). Ratings stay 50–99;
+       a 99 takes no point; a point is only granted while some rating can still take it. No respec. At 100 the XP keeps counting (a laurel on the bar).
+       Gladiators from before v1.02 start at level 1 with xp 0 and keep their ratings (lv102 reads a missing lv as 1).
+   3 · THE TALLY: applyResult leaves ch.last102 = what the page counts up on the next Online menu (CF, coin to the treasury, Glory, XP, levels, points);
+       char.seen102 clears it (once, any device). The route adds m/ev/loc after settling.
+   4 · CLASS ONLY AT CREATION: classWhy refuses every change (code class_fixed on the server); editChar refuses a cls.
+   5 · RELEASE: char.release {id, name, rudis} — the typed name must match; refused while he sits in a room or a live match (no Fate to dodge).
+       His gear goes to the house shelf (Issued pieces vanish), offerings to the offerings shelf, gifts to the house. Released → the Hall only if hallWorthy
+       ("Released", with his level picks), else erased. 🗡 Grant the rudis (RUDIS102 coin from the treasury) → freed as if he took the Rudis: ALWAYS an honoured
+       Hall plaque ("Rudiarius — freed"). Either way he counts in the Domus rank like the fallen only if he was Hall-worthy (drankScore98).
+   6 · LEVEL EVERYWHERE: the kit carries lv (room seats / members / lists via liteRow), the presence entry carries lv (Who's online), the house card's
+       gladiators carry lv (the server's route). */
+(function(C){
+  const PROG102={MAX:100,A:42,B:0.6,CF_CAP:40,SURV:20,WIN:15,K_RANKED:1,K_CUSTOM:0.5,CUSTOM_DAY:300,LOG_MAX:120}; /* TWEAK: the XP curve + match XP */
+  const RUDIS102=100; /* TWEAK: coin from the treasury to grant the rudis */
+  const CLASS_FIXED102='The class is set when a gladiator is raised — it never changes.';
+  const xpNeed102=n=>n>=PROG102.MAX?0:Math.round(PROG102.A+PROG102.B*(Math.max(1,n|0)-1));
+  const XPT102=[0,0];for(let n=1;n<PROG102.MAX;n++)XPT102[n+1]=XPT102[n]+xpNeed102(n);
+  const xpTotal102=n=>XPT102[Math.max(1,Math.min(PROG102.MAX,n|0))];
+  /* the level an XP total reaches (for previews; the gladiator stores his own lv) */
+  function lvOf102(xp){xp=Math.max(0,+xp||0);let l=1;while(l<PROG102.MAX&&xp>=XPT102[l+1])l++;return {lv:l,into:xp-XPT102[l],need:xpNeed102(l)}}
+  const lv102=ch=>Math.max(1,Math.min(PROG102.MAX,(ch&&ch.lv)|0||1));
+  /* where he stands on the bar: {lv, xp, into, need, frac, max} */
+  function xpBar102(ch){const lv=lv102(ch);const xp=Math.max(0,+(ch&&ch.xp)||0);const need=xpNeed102(lv);const into=Math.max(0,xp-XPT102[lv]);
+    return {lv,xp,into:lv>=PROG102.MAX?into:Math.min(into,need),need,frac:lv>=PROG102.MAX?1:need?Math.max(0,Math.min(1,into/need)):1,max:lv>=PROG102.MAX}}
+  const roomLeft102=ch=>C.STAT_KEYS.reduce((a,k)=>a+Math.max(0,C.STAT_MAX-((ch.stats&&ch.stats[k])|0)),0);
+  const dayKey102=t=>new Date(t||Date.now()).toISOString().slice(0,10);
+  /* the XP one settled seat earns before the Custom cap (f = applyResult's out.factor) */
+  function xpGain102(row,ranked,f){if(!row||row.survives===false)return 0;const K=ranked?PROG102.K_RANKED:PROG102.K_CUSTOM;
+    return Math.max(0,Math.round((+f||0)*K*(Math.min(PROG102.CF_CAP,Math.max(0,row.f|0))+PROG102.SURV+(row.won?PROG102.WIN:0))))}
+  /* XP into the gladiator: levels, the automatic +1 to the weakest, the unspent points → {lv0, lv1, auto:[keys], pts} */
+  function xpAdd102(ch,gain){const lv0=lv102(ch);ch.lv=lv0;ch.xp=Math.max(0,+ch.xp||0)+Math.max(0,gain|0);ch.pts=Math.max(0,ch.pts|0);const auto=[];let pts=0;
+    while(ch.lv<PROG102.MAX&&ch.xp>=XPT102[ch.lv+1]){ch.lv++;const s0={...ch.stats};C.grow(ch,1);const k=C.STAT_KEYS.find(x=>(ch.stats[x]|0)!==(s0[x]|0));if(k)auto.push(k);
+      if(roomLeft102(ch)>ch.pts){ch.pts++;pts++}}
+    return {lv0,lv1:ch.lv,auto,pts}}
+  /* the one place XP is decided (the server's settlement and the mock): ch after applyResult's base, out = its answer, x = {now} */
+  function xpSettle102(ch,row,ranked,out,x){const t=(x&&x.now)||Date.now();let gain=xpGain102(row,ranked,out&&out.factor);let cap=false;
+    if(!ranked&&gain>0){const d=dayKey102(t);const X=ch.xpd102&&ch.xpd102.d===d?{...ch.xpd102}:{d,n:0};const left=Math.max(0,PROG102.CUSTOM_DAY-(X.n|0));if(gain>left){gain=left;cap=true}X.n=(X.n|0)+gain;ch.xpd102=X}
+    const xp0=Math.max(0,+ch.xp||0);const L=ch.alive?xpAdd102(ch,gain):{lv0:lv102(ch),lv1:lv102(ch),auto:[],pts:0};
+    return {gain:ch.alive?gain:0,cap,xp0,xp1:Math.max(0,+ch.xp||0),...L}}
+  {const base=C.applyResult;C.applyResult=function(ch,row,ranked,x){const st0=ch&&ch.stats?{...ch.stats}:null;const g0=ch?C.gloryOf(ch):0;const rk0=ch?C.rankFor(ch).k:'tiro';
+    const out=base.apply(this,arguments);if(!ch||!out)return out;if(st0)ch.stats=st0; /* the old grow() is gone */
+    let X=null;try{X=xpSettle102(ch,row||{},!!ranked,out,x)}catch(e){X=null}
+    if(X){out.xp102={gain:X.gain,lv0:X.lv0,lv1:X.lv1,pts:X.pts,auto:X.auto,...(X.cap?{cap:1}:{})};
+      ch.last102={at:(x&&x.now)||Date.now(),ranked:!!ranked,won:!!(row&&row.won),died:!!out.died,cf:out.cf|0,coin:(out.earn92!=null?out.earn92:out.award)|0,
+        g0:Math.round(g0*10)/10,g1:Math.round(C.gloryOf(ch)*10)/10,rk0,rk1:C.rankFor(ch).k,xp0:X.xp0,xp1:X.xp1,gain:X.gain,lv0:X.lv0,lv1:X.lv1,pts:X.pts,auto:X.auto,
+        f:Math.round((+out.factor||0)*100)/100,...(X.cap?{cap:1}:{})}}
+    return out}}
+  /* ── the level-up point ── */
+  function lvupWhy102(ch,k){if(!ch||!ch.alive)return 'The dead stay as they fell.';if(!C.STAT_KEYS.includes(k))return 'Pick one of the five ratings.';
+    if((ch.pts|0)<1)return 'No point to spend — he earns one each level.';if(((ch.stats&&ch.stats[k])|0)>=C.STAT_MAX)return `That rating is at ${C.STAT_MAX} — pick another.`;return ''}
+  function lvup102(ch,k,t){const why=lvupWhy102(ch,k);if(why)throw new Error(why);ch.stats={...ch.stats,[k]:(ch.stats[k]|0)+1};ch.pts=(ch.pts|0)-1;
+    ch.lvlog=[...(ch.lvlog||[]),[lv102(ch),k,t||Date.now()]].slice(-PROG102.LOG_MAX);return ch}
+  /* his picks as counts {spd:n,…} (the Hall plaque of a released gladiator) */
+  function picks102(ch){const o={};for(const e of (ch&&ch.lvlog)||[]){const k=e&&e[1];if(C.STAT_KEYS.includes(k))o[k]=(o[k]|0)+1}return o}
+  const PICK_N102={spd:'Speed',str:'Strength',int:'Intelligence',lck:'Luck',cha:'Charisma'};
+  const picksLine102=ch=>{const p=picks102(ch);return C.STAT_KEYS.filter(k=>p[k]).sort((a,b)=>p[b]-p[a]).map(k=>`+${p[k]} ${PICK_N102[k]}`).join(', ')};
+  /* ── release / the rudis ── */
+  const nameKey102=s=>String(s||'').normalize('NFKC').replace(/\s+/g,' ').trim().toLowerCase();
+  function releaseWhy102(ch,name,rudis,T){if(!ch||!ch.alive)return 'The dead stay as they fell.';
+    if(nameKey102(name)!==nameKey102(ch.name))return `Type ${ch.name} to confirm.`;if(rudis&&(T|0)<RUDIS102)return `The treasury needs ${RUDIS102} coin to grant the rudis.`;return ''}
+  /* the pieces he carries → {shelf:[pieces for the house shelf], vanish:[bases], offers:[keys], gifts:[…]}; empties him */
+  function releaseGear102(ch){const shelf=[],vanish=[];for(const it of (ch.gear||[]).slice()){const P=C.takePiece(ch,it);if(!P)continue;if(P.pc&&P.pc.iss){vanish.push(C.itemBase(it));continue}
+      if(P.pc){const pc={...P.pc};delete pc.home;P.pc=pc}shelf.push(P)}
+    const offers=(ch.offers||[]).slice();ch.offers=[];const gifts=(ch.gifts||[]).slice();ch.gifts=[];ch.gear=[];ch.equip=[];return {shelf,vanish,offers,gifts}}
+  /* mark him gone (the caller already took his gear) → {hall, kind, plaque} */
+  function releaseMark102(ch,rudis,t){t=t||Date.now();const hall=C.hallWorthy(ch);const rk=C.rankFor(ch).k;ch.alive=false;ch.died={at:t,cf:0,rank:rk,rel:rudis?'rudis':'released'};
+    ch.rel102={at:t,k:rudis?'rudis':'released',lv:lv102(ch),hall:!!hall};delete ch.last102;return {hall:!!hall,kind:rudis?'rudis':'released',plaque:!!(rudis||hall)}}
+  function hallEntry102(ch,kind,t){const picks=picksLine102(ch);const lv=lv102(ch);const hw=kind==='rudis'?'':C.hallWhy(ch);
+    const why=kind==='rudis'?`Rudiarius — freed · Lv ${lv}${picks?' · '+picks:''}`:`Released · Lv ${lv}${hw?' · '+hw:''}${picks?' · '+picks:''}`;
+    return {name:ch.name,cls:ch.cls,rank:(ch.died&&ch.died.rank)||C.rankFor(ch).k,lifeCF:ch.lifeCF|0,survived:ch.survived|0,diedAt:t||Date.now(),why,rel:kind,lv,picks:picks102(ch)}}
+  /* ── class only at creation ── */
+  C.classWhy=function(ch){if(!ch||!ch.alive)return 'The dead stay as they fell.';return CLASS_FIXED102};
+  {const base=C.editChar;C.editChar=function(ch,d){if(d&&d.cls!=null&&ch&&d.cls!==ch.cls)throw Object.assign(new Error(CLASS_FIXED102),{code:'class_fixed'});return base.apply(this,arguments)}}
+  /* ── new gladiators start at level 1 ── */
+  {const base=C.newChar;C.newChar=function(){const ch=base.apply(this,arguments);if(ch){ch.lv=1;ch.xp=0;ch.pts=0}return ch}}
+  /* ── the level wherever a name shows ── */
+  {const base=C.kitOf;C.kitOf=function(ch){const k=base.apply(this,arguments);if(k&&ch)k.lv=lv102(ch);return k}}
+  {const base=C.liteRow;C.liteRow=function(L){const y=base.apply(this,arguments);try{const lvOf=id=>{const p=(L.players||[]).find(x=>x&&x.id===id)||(L.members||[]).find(x=>x&&x.id===id);const v=p&&p.kit&&p.kit.lv;return v>0?v|0:0};
+      for(const p of y.players||[]){const v=lvOf(p.id);if(v)p.lv=v}for(const m of y.members||[]){const v=lvOf(m.id);if(v)m.lv=v}}catch(e){}return y}}
+  {const base=C.whoRow100;if(base)C.whoRow100=function(A){const r=base.apply(this,arguments);const v=A&&A.here&&A.here.lv;if(r&&v>0)r.lv=Math.min(PROG102.MAX,v|0);return r}}
+  /* ── a released gladiator counts like the fallen in the Domus rank only if he was Hall-worthy ── */
+  {const base=C.drankScore98;if(base)C.drankScore98=function(chars){return base.call(this,(chars||[]).filter(c=>!(c&&c.rel102&&!c.rel102.hall)))}}
+  if(Array.isArray(C.LED_OUT89)&&!C.LED_OUT89.includes('rudis'))C.LED_OUT89.push('rudis'); /* the ledger line of a rudis granted */
+  /* the one-shot requests run once per request id */
+  if(Array.isArray(C.IDEM93))for(const t of ['char.lvup','char.release'])if(!C.IDEM93.includes(t))C.IDEM93.push(t);
+  Object.assign(C,{PROG102,RUDIS102,CLASS_FIXED102,xpNeed102,xpTotal102,lvOf102,lv102,xpBar102,roomLeft102,dayKey102,xpGain102,xpAdd102,xpSettle102,
+    lvupWhy102,lvup102,picks102,picksLine102,nameKey102,releaseWhy102,releaseGear102,releaseMark102,hallEntry102})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

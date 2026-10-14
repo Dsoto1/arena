@@ -13,7 +13,7 @@ const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.r
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1440,height:900},timezoneId:'Europe/Rome'});await ctx.route(/fonts\./,r=>r.abort());
-await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0');localStorage.removeItem('flavius_onlquiet80');localStorage.removeItem('flavius_onllb96')});
+await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');localStorage.setItem('flavius_onlcd83','0');localStorage.removeItem('flavius_onlquiet80');localStorage.removeItem('flavius_onllb96')});
 const errs=[];const P={};for(const n of ['A','B','C','D']){P[n]=await ctx.newPage();P[n].on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]))}
 await P.A.goto(URL0,{timeout:90000});await P.A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|match|report|over|rid)/.test(k))localStorage.removeItem(k)});
 for(const n of ['B','C','D'])await P[n].goto(URL0,{timeout:90000});for(const n of ['A','B','C','D'])await P[n].waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
@@ -99,9 +99,9 @@ ok(out.dom&&/Ludus Minor/.test(out.dom.txt)&&out.dom.img,'the Domus rank banner 
 out.keep=await A.evaluate(async()=>{const w=mockLoad();w.chars[ONL.char.id].glory=10;mockSave(w);return (await NET.req('domus.get',{})).domus.dr98});ok(out.keep&&out.keep.s===900,'never drops '+JSON.stringify(out.keep));
 await A.evaluate(()=>{const t=document.querySelector('#onl .rb82');if(t)t.scrollIntoView({block:'start'})});await wait(400);await shot(A,'domus98.png');
 /* ── 7 · Damnatio greyed in the class picker ── */
-out.dm=await A.evaluate(async()=>{const w=mockLoad();const D=mockDomus82(w,w.chars[ONL.char.id].domus);D.treasury=500;mockSave(w);ONL.domus=(await NET.req('domus.get',{})).domus;d89ClassPop();const b=document.querySelector('.cls89pop [data-cls89="damnatio"]');const o={dis:!!(b&&b.disabled),why:b?b.title:''};
+out.dm=await A.evaluate(async()=>{const w=mockLoad();const D=mockDomus82(w,w.chars[ONL.char.id].domus);D.treasury=500;mockSave(w);ONL.domus=(await NET.req('domus.get',{})).domus;const o={dis:!document.querySelector('#onl [data-d89="cls"]'),why:''};
   try{await NET.req('char.class',{char:ONL.char.id,cls:'damnatio'});o.srv='ok'}catch(e){o.srv=e.message}for(const p of document.querySelectorAll('.cls89pop'))p.remove();return o});
-ok(out.dm.dis&&/Damnatio/.test(out.dm.why)&&/Damnatio/.test(out.dm.srv),'Damnatio only at creation '+JSON.stringify(out.dm));
+ok(out.dm.dis&&/never changes/.test(out.dm.srv),'v1.02: every class (Damnatio too) only at creation '+JSON.stringify(out.dm));
 
 /* ── 9 · 👤 Profile & Settings ── */
 await A.evaluate(()=>{ONL.tab='prof';onlRedraw()});out.pr=await until(A,()=>{const R=document.querySelector('#onl .pr98');if(!R)return null;const cols=[...R.querySelectorAll('.pr98-g > .pr98-col')].map(c=>Math.round(c.getBoundingClientRect().left));

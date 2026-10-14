@@ -10,7 +10,7 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;
 const b=await chromium.launch();const errs=[];const miss=[];const o={};const ok=(c,n)=>{if(!c)miss.push(n)};
 const ctx=await b.newContext({viewport:{width:1400,height:1000}});await ctx.route(/fonts\./,r=>r.abort());
-await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
+await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');localStorage.setItem('flavius_onlcd83','0')});
 const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,'i87_'+n+'.png')})};
 /* no helper markup shown as text, none inside plain-text attributes */
 const leak=p=>p.evaluate(()=>{const t=document.body.innerText;const bad=[];if(/amt87|ic87[cw]|wi87|sr87/.test(t))bad.push('text:'+t.slice(Math.max(0,t.search(/amt87|ic87|wi87|sr87/)-60),t.search(/amt87|ic87|wi87|sr87/)+40));

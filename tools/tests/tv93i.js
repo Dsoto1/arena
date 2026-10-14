@@ -30,7 +30,7 @@ ok(pseudo('Pay {0} coin <b>now</b> {1|is|are} &amp; go')==='[!! Páý {0} çóí
 
 const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1300,height:900},locale:'en-US'});await ctx.route(/fonts\./,r=>r.abort());
-await ctx.addInitScript(P=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');
+await ctx.addInitScript(P=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');
   localStorage.setItem('flavius_lang','es');localStorage.setItem('flavius_langask86','1');
   /* the pseudo pack wins over the real lang_es.js the loader writes */
   try{Object.defineProperty(window,'LANG_PACK',{get:()=>P,set:()=>{},configurable:false})}catch(e){}},PACK);

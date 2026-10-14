@@ -8,7 +8,7 @@ const http=require('http'),fs=require('fs'),path=require('path');const SHOT=proc
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1400,height:900}});await ctx.route(/fonts\./,r=>r.abort());
-await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
+await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');localStorage.setItem('flavius_onlcd83','0')});
 const errs=[];const P=await ctx.newPage();P.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await P.goto(URL0,{timeout:90000});
 await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester)|^flavius_dombar89/.test(k))localStorage.removeItem(k)});await P.reload({timeout:90000});await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const W=ms=>P.waitForTimeout(ms);
@@ -75,11 +75,10 @@ await P.click('#onl [data-d89of="0"]');await idle();A=await peek((w,a)=>({off:w.
 ok(await drag('#onl .sat89 [data-d89so="0"]','#onl .eb89'),'satchel drag');await idle();A=await peek((w,a)=>({off:w.chars[a].offers,shelf:Object.values(w.domus82)[0].offers}),ids.a);ok(!A.off.includes('elix2')&&A.shelf.includes('elix2'),'satchel → shelf by drag '+JSON.stringify(A));
 await P.click('#onl [data-eb89="gear"]');await W(150);
 
-/* ── 5 · the class: 100 coin from the treasury; refused in a room ── */
-await P.click('#onl [data-d89="cls"]');await W(250);ok(await P.evaluate(()=>document.querySelectorAll('.cls89pop [data-cls89]').length>=8),'the class popup');await shot('class_pop');
-await P.click('.cls89pop [data-cls89="soldier"]');await idle();
-A=await peek((w,[a,dom])=>({cls:w.chars[a].cls,t:w.domus82[dom].treasury,led:ONLC.ledgerOf(w.domus82[dom])}),[ids.a,ids.dom]);ok(A.cls==='soldier'&&A.t===2487&&A.led.out.class===100,'class changed for 100 from the treasury '+JSON.stringify([A.cls,A.t]));
-const inRoom=await P.evaluate(async id=>{const L=await NET.req('lobby.create',{ev:'cassian',cry:false});let r='';try{await NET.req('char.class',{char:id,cls:'hero'})}catch(e){r=e.code||e.message}await NET.req('lobby.leave',{id:(L.lobby||L).id});return r},ids.a);ok(inRoom==='in_match','refused while in a room ('+inRoom+')');
+/* ── 5 · the class (v1.02: set at creation): no Change class button, the Domus says so, char.class refused (class_fixed), nothing paid ── */
+ok(await P.evaluate(()=>!document.querySelector('#onl [data-d89="cls"]')&&!!document.querySelector('#onl .cls102')),'no class button — class set at creation');
+const cfx=await P.evaluate(async id=>{try{await NET.req('char.class',{char:id,cls:'soldier'});return 'ok'}catch(e){return e.code||e.message}},ids.a);ok(cfx==='class_fixed','char.class refused ('+cfx+')');
+A=await peek((w,[a,dom])=>({cls:w.chars[a].cls,t:w.domus82[dom].treasury}),[ids.a,ids.dom]);ok(A.cls!=='soldier'&&A.t===2587,'nothing changed, nothing paid '+JSON.stringify([A.cls,A.t]));
 /* the look is locked */
 const lk=await P.evaluate(async id=>{try{await NET.req('char.edit',{char:id,look:{color:'#010203',token:{sc:1,c1:'#00ff00'}}});return 'ok'}catch(e){return e.message}},ids.a);
 const lk2=await P.evaluate(async id=>{try{await NET.req('char.edit',{char:id,look:{color:'#040506',token:{sc:1,c1:'#ff00ff'}}});return 'ok'}catch(e){return e.message}},ids.a);
@@ -100,7 +99,7 @@ await world((w,[a,g0])=>{w.chars[a].glory=g0},[ids.a,nh.g0]);await open();
 /* ── 6 · tester grants into the house; the ledger ⓘ ── */
 await P.evaluate(()=>localStorage.setItem('flavius_onltester83','1'));
 const g=await P.evaluate(async()=>{const r=await NET.req('admin.grant',{coin:300,gear:['manica'],offering:['ap2']});return {w:(r.char||{}).wallet,t:r.domus.treasury,gear:r.gear,offs:r.offers,cg:(r.char||{}).gear}});
-ok(!g.w&&g.t===2787&&g.gear.includes('manica')&&!(g.cg||[]).includes('manica')&&g.offs.includes('ap2'),'grant: coin → treasury, gear + offering → the shelf '+JSON.stringify(g));
+ok(!g.w&&g.t===2887&&g.gear.includes('manica')&&!(g.cg||[]).includes('manica')&&g.offs.includes('ap2'),'grant: coin → treasury, gear + offering → the shelf '+JSON.stringify(g));
 /* a settled Ranked bout (the mock's settlement step) and a death: the cut by gladiator, the memorial */
 await world((w,[a,b])=>{const L={id:'Lx',ev:'cassian',loc:3,ranked:true,players:[{id:'me',char:a,name:'Alpha'},{id:'k',char:'zz',name:'Spiculus'},{id:'me2',char:b,name:'Beta'}]};
   mockAfter83(w,L,{},'me',0,{won:true,survives:true},{cut:7,pay:28,award:35},{left:[]});
@@ -108,7 +107,7 @@ await world((w,[a,b])=>{const L={id:'Lx',ev:'cassian',loc:3,ranked:true,players:
 await open();
 await P.hover('#onl [data-d89="led"]');await W(250);
 const led=await P.evaluate(()=>{const f=document.getElementById('led89');return f&&!f.hidden?f.textContent:''});
-ok(/Tester grants/.test(led)&&/300/.test(led)&&/Class changes/.test(led)&&/Bout earnings|Purses moved/.test(led)&&/Alpha/.test(led)&&/since v0\.89/.test(led),'the ledger ⓘ: by source + by gladiator '+led.slice(0,200));
+ok(/Tester grants/.test(led)&&/300/.test(led)&&/Bout earnings|Purses moved/.test(led)&&/Alpha/.test(led)&&/since v0\.89/.test(led),'the ledger ⓘ: by source + by gladiator '+led.slice(0,200));
 await shot('ledger');await P.mouse.move(5,5);await P.click('#onl .sc89-n');await W(100);
 const mw=await P.evaluate(()=>(document.querySelector('#onl .mw89')||{}).textContent||'');ok(/Beta/.test(mw)&&/Spiculus/.test(mw)&&/D·M/.test(mw),'the memorial wall: '+mw.slice(0,160));
 
