@@ -64,7 +64,7 @@ function arm94RepairAll(){const pm=me();if(!pm)return {no:'?'};const list=arm94A
     try{if(typeof CITY!=='undefined'&&CITY.open)cbar89Rec({k:'fix94',gid:x.g?x.g.id:null,key:x.P.k,t:x.P.t,price:c})}catch(e){}}
   try{log2city(_T`${list.length} pieces mended.`)}catch(e){}saveWorld();return {ok:1,n:list.length,coin:tot}}
 function arm94Name(P){if(!P)return '';if(P.t==='w')return (W[P.k]||{}).n||P.k;if(P.t==='a')return (ARM[P.k]||{}).n||P.k;const O=OFFER[P.k]||{};return O.n?`${O.n} (${O.s})`:P.k}
-function arm94Meta(P){if(P.t==='w'){const d=W[P.k]||{};return _T`L${d.lv||1} · power ${d.p!=null?d.p:'—'} · range ${d.r!=null?d.r:1}${d.both?_T(' · two hands'):''}${d.shield?_T(' · shield'):''}`}
+function arm94Meta(P){if(P.t==='w'){const d=W[P.k]||{};return _T`L${d.lv||1} · power ${d.p!=null?d.p:'—'} · range ${d.r!=null?d.r:1}${d.both?_T(' · both attacks'):''}${d.shield?_T(' · shield'):''}`}
   if(P.t==='a'){const A=ARM[P.k]||{};const where=A.slot==='head'?LOCN.head:A.slot==='chest'||A.slot==='belt'?LOCN.chest:A.pair?(A.slot==='arm'?_T('both arms'):_T('both legs')):P.loc&&LOCN[P.loc]?LOCN[P.loc]:A.slot==='arm'?_T('one arm'):_T('one leg');
     return _T`L${A.lv||1} · ${A.ap||0} AP · ${where}${armPad(A)?_T(' · padding'):''}`}
   return esc((OFFER[P.k]||{}).s||'')}
@@ -116,13 +116,11 @@ function arm94Fit(g,P,want){const E=g&&g.eq94;if(!E)return {no:_T('Not of your h
     if(E.o.length>=ARM94.carry)return {no:_T`${nm} carries two offerings at most.`};return {z:'off',rep:[]}}
   if(P.t==='w'){const d=W[P.k];if(!d)return {no:_T('Unknown weapon.')};if(want==='off')return {no:_T('Weapons go in the hands.')};
     let h=want==='R'||want==='L'?want:null;
-    if(d.both)h='R';
-    if(!h){const R=E.R&&E.R!==P?E.R:null;const L=E.L&&E.L!==P?E.L:null;const rBoth=R&&(W[R.k]||{}).both;
-      h=arm94HandGone(g,'R')?'L':!R?'R':(!L&&!rBoth&&!arm94HandGone(g,'L'))?'L':'R'}
+    if(!h){const R=E.R&&E.R!==P?E.R:null;const L=E.L&&E.L!==P?E.L:null;
+      h=arm94HandGone(g,'R')?'L':!R?'R':(!L&&!arm94HandGone(g,'L'))?'L':'R'}
     if(arm94HandGone(g,h))return {no:h==='R'?_T`${nm} has no right arm.`:_T`${nm} has no left arm.`};
-    if(d.both&&arm94HandGone(g,'L'))return {no:_T`Two hands needed — ${nm} has one arm.`};
-    const o=h==='R'?'L':'R';const rep=[];if(E[h]&&E[h]!==P)rep.push(E[h]);
-    if(E[o]&&E[o]!==P&&(d.both||(W[E[o].k]||{}).both))rep.push(E[o]);return {z:h,rep}}
+    const rep=[];if(E[h]&&E[h]!==P)rep.push(E[h]);
+    return {z:h,rep}}
   if(P.t==='a'){const A=ARM[P.k];if(!A)return {no:_T('Unknown armor.')};if(want==='R'||want==='L'||want==='off')return {no:_T('Armor goes on the body.')};
     if(P.dmg&&!E.a.includes(P))return {no:_T('Damaged — repair it at the armorer first.')};
     let loc=null;if(!A.pair&&(A.slot==='arm'||A.slot==='leg')){loc=LOCS.includes(want)&&arm94Slot(want)===A.slot?want:(P.loc&&P.loc!=='pair'?P.loc:arm94DefLoc(A));
@@ -152,7 +150,7 @@ function arm94Seat(g){const E=g.eq94;const okW=P=>P&&W[P.k];const sev=g.severed|
   const keep={armor:C.armor,R:C.R,L:C.L};C.armor=[];C.R=null;C.L=null;let r;try{r=base.apply(this,arguments)}finally{C.armor=keep.armor;C.R=keep.R;C.L=keep.L}
   const got={R:null,L:null,a:[]};
   try{for(const [k,l] of G.a){if(ARM[k]&&p.pieces[l]&&equipPiece(p,k,l)){got.a.push([k,l]);try{if(typeof isUniqueArmor==='function'&&isUniqueArmor(k)&&typeof marketPullArmor==='function')marketPullArmor(k)}catch(e){}}}
-    for(const h of ['R','L']){const k=G[h];if(!k||!W[k])continue;if(h==='L'&&p.wR&&p.wR.both)continue;p['w'+h]=mkW(k);got[h]=k;try{marketPull(k)}catch(e){}}}catch(e){console.error(e)}
+    for(const h of ['R','L']){const k=G[h];if(!k||!W[k])continue;p['w'+h]=mkW(k);got[h]=k;try{marketPull(k)}catch(e){}}}catch(e){console.error(e)}
   p._g94got=got;return r}}
 
 /* in-bout arena market buys never come home: pick89 (market levels, Choose card, free rolls) and chooseMarket / drafts note the key on the player (p._g94mk) */
@@ -183,7 +181,7 @@ function arm94Settle(w,b,res){const st=arm94St(w);const mine=[];
     for(const h of ['R','L']){const P=E[h];if(!P||X.got[h]!==P.k)continue;const o=h==='R'?'L':'R';
       if(held[h]===P.k&&!used.has(h))used.add(h);else if(held[o]===P.k&&!used.has(o)&&!(E[o]&&E[o].k===P.k&&X.got[o]===P.k))used.add(o);else{E[h]=null;lost.push(P);st.lost++;if(m)arm94Fl(w,m,'lost',arm94Price('w',P.k))}}
     for(const h of ['R','L']){const k=held[h];if(!k||used.has(h))continue;const d=W[k];if(!d||!(d.lv>=1))continue;if(bought(k))continue;const P=arm94New(w,'w',k);loot.push(P);st.loot++;if(m)arm94Fl(w,m,'loot',arm94Price('w',k));
-      const rBoth=E.R&&(W[E.R.k]||{}).both;if(!E[h]&&!arm94HandGone(g,h)&&!(h==='L'&&rBoth)&&!(d.both&&(E.L||h==='L')))E[h]=P;else sh.push(P)}
+      if(!E[h]&&!arm94HandGone(g,h))E[h]=P;else sh.push(P)}
     /* armor: a brought piece missing from any of its locations was stripped at 0 AP → damaged */
     const pc={};for(const l of LOCS)pc[l]=((X.pc||{})[l]||[]).slice();const got=(X.got.a||[]).map(x=>x.slice());
     for(const P of E.a){const want=arm94Locs(P);const br=[];for(const l of want){const i=got.findIndex(x=>x[0]===P.k&&x[1]===l);if(i>=0){got.splice(i,1);br.push(l)}}if(!br.length)continue;
@@ -223,7 +221,7 @@ function arm94AutoShop(w,m,o={}){if(!w||!m||m.dead)return 0;const H=arm94H(m);co
   const fromShelf=(g,pred,z)=>{const P=H.sh.find(x=>pred(x)&&!arm94Fit(g,x,z).no&&!(arm94Fit(g,x,z).rep||[]).length);if(!P)return false;return !!arm94Put(m,P.id,{g:g.id,z}).ok};
   const buy=(g,t,k,z)=>{const pr=arm94Price(t,k);if(!pr||!pay(pr))return false;const P=arm94New(w,t,k);H.sh.push(P);st.buy++;arm94Fl(w,m,'buy',pr);const r=arm94Put(m,P.id,{g:g.id,z});return !!r.ok};
   for(const g of ros){const E=g.eq94;if(!E)continue;const K=arm94Kit(g.cls);
-    for(const h of ['R','L']){if(E[h]||arm94HandGone(g,h))continue;if(h==='L'&&E.R&&(W[E.R.k]||{}).both)continue;const want=K[h];if(h==='L'&&!want)continue;
+    for(const h of ['R','L']){if(E[h]||arm94HandGone(g,h))continue;const want=K[h];if(h==='L'&&!want)continue;
       if(fromShelf(g,x=>x.t==='w'&&(x.k===want||(!want&&!(W[x.k]||{}).shield)||(want&&!!(W[x.k]||{}).shield===!!(W[want]||{}).shield)),h))continue;
       const k=want||(MARKET_W[1]||['gladius'])[Math.floor(R.next()*(MARKET_W[1]||['gladius']).length)];if(W[k]&&!(W[k].lv>3))buy(g,'w',k,h)}
     for(const x of K.a){const P0={t:'a',k:x.k,loc:x.loc==='pair'?undefined:x.loc};const F=arm94Fit(g,P0,x.loc==='pair'?'body':x.loc);if(F.no||F.rep.length)continue;
@@ -300,7 +298,7 @@ cbar89StallsSync=function(){return false};
 
 /* ---------------- 4 · the Roster's Armory ---------------- */
 function arm94Issues(g){const E=g.eq94;if(!E)return {empty:[],dmg:0};const K=arm94Kit(g.cls);const empty=[];
-  for(const h of ['R','L']){if(E[h]||arm94HandGone(g,h))continue;if(h==='L'&&E.R&&(W[E.R.k]||{}).both)continue;if(K[h]||(h==='R'&&!E.L))empty.push(h)}
+  for(const h of ['R','L']){if(E[h]||arm94HandGone(g,h))continue;if(K[h]||(h==='R'&&!E.L))empty.push(h)}
   return {empty,dmg:E.a.filter(P=>P.dmg).length}}
 function arm94Sel(pm){const ros=rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a));let g=ros.find(x=>x.id===MGR.ar94);if(!g){g=ros[0]||null;MGR.ar94=g?g.id:null}return g}
 function arm94Tile(g,P,where){const sel=AR94.sel===P.id;let fit='';if(g&&where==='sh'){const F=arm94Fit(g,P,'auto');fit=F.no?`<i class="no">⛔ ${F.no}</i>`:`<i class="ok">${F.rep.length?_T`✓ replaces ${esc(F.rep.map(arm94Name).join(', '))}`:_T`✓ fits ${esc(g.name.split(' ')[0])}`}</i>`}

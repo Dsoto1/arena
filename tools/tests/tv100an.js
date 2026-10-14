@@ -112,7 +112,7 @@ const s11=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,m
   return {kit,dev0,devNow:AN100.dev.size,before,early:[...new Set(early)],qs,pSrc,pWalk,two,files,metaSev:Object.keys(ANIM100_META).every(k=>ANIM100_META[k].sev&&['rarm','larm','rleg','lleg'].every(l=>ANIM100_META[k].sev[l]&&ANIM100_META[k].sev[l].move&&ANIM100_META[k].sev[l].act))}});
 ok(s11.metaSev&&s11.kit.every(x=>x)&&s11.dev0===0&&s11.devNow===0,'11a every class has 4 severed sets; class-kit seats need no device render '+JSON.stringify(s11));
 ok(s11.before===0&&s11.qs.includes('p:hero:larm'),'11b a lost arm swaps to its severed set, requested only then '+JSON.stringify(s11));
-ok(s11.pSrc.length===1&&s11.pSrc[0]==='p:soldier:rleg'&&s11.pWalk.length>=2,'11c a lost leg: its severed set, the hobble steps '+JSON.stringify(s11));
+ok(s11.pSrc.length>=1&&s11.pSrc[s11.pSrc.length-1]==='p:soldier:rleg'&&s11.pSrc.every(k=>k==='p:soldier'||k==='p:soldier:rleg')&&s11.pWalk.length>=1,'11c v1.01 (G8): the whole-body figure is kept until the severed sheet is decoded, then a lost leg: its severed set, the hobble steps '+JSON.stringify(s11));
 ok(s11.two===0,'11d two lost limbs → today\'s token '+JSON.stringify(s11));
 ok(s11.files.sort().join()==='p:hero:larm,p:soldier:rleg','11e only the lost limbs\' severed sets were asked for '+JSON.stringify(s11.files));
 if(process.env.SHOT){const fs=require('fs');fs.mkdirSync(process.env.SHOT,{recursive:true});
@@ -171,18 +171,18 @@ let s12={};{const cx=await b.newContext({viewport:{width:1440,height:900}});cons
     giveLoadout=gl;SPEED='pause';const P=S.players[0];const g=AN100.gear.get(P)||{};const kits=S.players.slice(1).map(p=>!!(AN100.gear.get(p)||{}).kit);
     const keys0=[...AN100.dev.keys()];const t0=performance.now();
     for(let i=0;i<1200;i++){const d=[...AN100.dev.values()].find(s=>!s.limb&&s.ready);if(d||AN100.devFail)break;draw();await W8(250)}
-    const tMove=Math.round(performance.now()-t0);AN100.trace=[];for(let i=0;i<6;i++){draw();await W8(60)}
+    const tMove=Math.round(performance.now()-t0);AN100.trace=[];for(let i=0;i<30;i++){draw();await W8(60)}
     const pSrc=[...new Set(AN100.trace.filter(x=>x.id===P.id&&x.src).map(x=>x.src))];AN100.trace=null;
     /* lose the right arm (real gear): the severed set renders on the device, ahead of the act sheet */
     const b0=P.hp.rarm;P.hp.rarm=0;BUS.emit('hit',{target:{id:P.id,name:P.name},loc:'rarm',amount:b0,before:{hp:b0},after:{hp:0}});const t1=performance.now();
     for(let i=0;i<1200;i++){const d=[...AN100.dev.values()].find(s=>s.limb==='rarm'&&s.ready);if(d||AN100.devFail)break;draw();await W8(250)}
-    const tSev=Math.round(performance.now()-t1);AN100.trace=[];for(let i=0;i<6;i++){draw();await W8(60)}
+    const tSev=Math.round(performance.now()-t1);AN100.trace=[];for(let i=0;i<30;i++){draw();await W8(60)}
     const sSrc=[...new Set(AN100.trace.filter(x=>x.id===P.id&&x.src).map(x=>x.src))];AN100.trace=null;
     const rec=await an100DBGet([...AN100.dev.keys()].find(k=>/:rarm$/.test(k)));
     return {kit:g.kit,wR:g.gear&&g.gear.wR,kits,keys0,devKeys:[...AN100.dev.keys()],tMove,pSrc,tSev,sSrc,cached:!!(rec&&rec.move&&rec.move.b),log:AN100.stats.renderLog,aborts:AN100.stats.aborts||0,fail:AN100.devFail}});
   await cx.close()}
 ok(s12.kit===false&&s12.wR&&s12.kits.every(x=>x)&&s12.keys0.length===1,'12a a non-kit loadout is noted and queued for a device render; kit seats are not '+JSON.stringify(s12).slice(0,600));
 ok(!s12.fail&&s12.pSrc.length===1&&/^d:/.test(s12.pSrc[0]),'12b the non-kit seat wears its device-rendered sheet (keyed by its loadout) '+JSON.stringify(s12).slice(0,600));
-ok(s12.sSrc.length===1&&/^d:.*:rarm$/.test(s12.sSrc[0])&&s12.cached,'12c a lost limb with real gear: a device-rendered severed set, cached '+JSON.stringify(s12).slice(0,800));
+ok(s12.sSrc.length>=1&&/^d:.*:rarm$/.test(s12.sSrc[s12.sSrc.length-1])&&s12.sSrc.every(k=>/^d:[^:]+(:rarm)?$/.test(k))&&s12.cached,'12c v1.01 (G8): the whole figure until decoded, then a lost limb with real gear: a device-rendered severed set, cached '+JSON.stringify(s12).slice(0,800));
 console.log(JSON.stringify({s1,s2,s3,s4,s5,s6,s7,s10,s11,s12}));
 console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();

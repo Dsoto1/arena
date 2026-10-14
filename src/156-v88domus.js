@@ -37,7 +37,7 @@ function dom88Armor(ch){const list=[];for(const k of ONLC.equipOf(ch)){let I=nul
   return list}
 function dom88Hands(ch){const CK=CLASSES[ch.cls]||{};let R=CK.R&&W[CK.R]?{k:CK.R,kit:true}:null,L=CK.L&&W[CK.L]?{k:CK.L,kit:true}:null;
   for(const k of ONLC.equipOf(ch)){let I=null;try{I=ONL83.piece(ch,k)}catch(e){}if(!I||I.kind!=='w')continue;const b=dom88Base(I);if(!W[b])continue;const x={k:b,I};
-    if(!R)R=x;else if(!L&&!(W[R.k]||{}).both)L=x;else R=x}
+    if(!R)R=x;else if(!L)L=x;else R=x}
   return [R,L]}
 function dom88Weapon(x,side){const lbl=side==='R'?_T('Right hand')+' - '+_T('Primary'):_T('Left hand')+' - '+_T('Secondary'); /* arena cards: right = primary, left = secondary */
   if(!x)return `<div class="wp88 empty"><div class="wp88-card"><span>${_T`Empty hand`}</span></div><small>${lbl}</small></div>`;
