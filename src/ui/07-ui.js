@@ -1522,7 +1522,7 @@ let DRAW_EMPTY = false; // v0.42: the seat map's snapshot — the sand without a
    then pillars/beasts/gladiators sorted back to front, aggro lines, attack rings, fan flags, Flavius and effects.
    TWEAK: the tile-size divisors (16.4 / 13.8 tiles wide, 14.2 / 12.4 on phones; 10.9 / 9.5 tall), minimum TW 20, the 230 px kept for the action dock, highlight colors. */
 function draw() {
-  if (HEADLESS) return;
+  if (HEADLESS || window.FLAVIUS_NODE) return; /* v1.01 D1: the rules running in Node (tools/node) paint nothing — undefined in every browser */
   if (S && S.snap && !S.over) return; /* v0.42: nothing to watch while the event snaps to its end */
   const wrap = cv.parentElement;
   const Wd = wrap.clientWidth;

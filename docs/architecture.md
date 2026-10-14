@@ -82,3 +82,27 @@ Manager worlds; a newer save blocks an older page (109-v761); one tab per save (
 
 UI pollers run on one heartbeat (`00b-perf` + `204-v92perf`, `PERF92_SWEEPS`); after 2 minutes without input the page
 goes idle (animations paused). A new UI poller adds its signature to `PERF92_SWEEPS`.
+
+## The rules in Node (tools/node, v1.01 D1)
+
+The built page also runs WITHOUT a browser: `tools/node/page.js` loads its `<script>` into a Node `vm` context behind a small fake DOM
+(`tools/node/dom.js`: a real element tree, innerHTML parsed only when queried, an index by id/class/attribute/tag, events with capture +
+bubble, a canvas whose 2D context accepts every call) on a VIRTUAL CLOCK (timers, rAF, Date and performance.now are the page's own; the
+clock jumps to the next timer once every microtask has run, and moves 1 µs per read so a loop polling the clock still ends).
+Math.random is a seeded stream (cosmetic only). Nothing in src/ knows about Node except one guard: 07-ui `draw()` returns at once when
+`window.FLAVIUS_NODE` is set (the board is never painted in Node; undefined in every browser).
+
+- **Array.prototype.sort is Chromium's.** The rules sort with random comparators (`(a,b)=>…+rand()`), so the comparison ORDER draws the
+  dice. Chromium (V8 13+) sorts arrays shorter than 8 with a plain binary insertion sort; Node 22's V8 12 runs TimSort's run detection
+  first. page.js gives the page realm Chromium's order (8 and longer: the same TimSort). Other engines (Firefox, Safari) differ again — a
+  known risk for cross-browser online lockstep in code paths that sort with `rand()` comparators.
+- **Two modes.** Rules mode = `HEADLESS` on (no log, windows auto-answered or answered by the replay, no panels) — what Phase E's verifier
+  runs. Screen mode = `HEADLESS` off: render(), windows and the log run against the stub too (slower; used to prove the log).
+- **Replays** go through the game's own players: 309's `rp100Play` (offline: the opening snapshot + every recorded input at the same
+  settled points via `command()` and the recorded window answers) and, for an online stream, 113's pump in watcher mode
+  (`onlmLoad` + `onlmWatchOn`: each input applied at a settled point, its pre-hash checked).
+- **The rules of one build:** `node tools/node/mkbundle.js` → `server/verify/rules.js` (stub + markup without styles + the script, byte for
+  byte; ~9 MB, not committed) and `rules.json` {v, build}. build = first 12 hex of sha256(script) (`--hash` prints it for any page). The
+  online server zip (`server/src`) never includes it. `require('./server/verify/rules.js').open({ls, t0})` → the page; `.page` for the
+  replay tools.
+

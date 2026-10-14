@@ -51,6 +51,23 @@ Changing what the probe or `onlHash` reads also needs `--update`.
 The online golden also needs `--update` when the lockstep input format changes (v1.01 question port: window answers carry
 `kd`/`ds` and their hashes include them); it was recorded with `ONL_N=70` so the stream holds window answers (defend, shield, card).
 
+## The rules in Node: no browser (tools/node, v1.01 D1)
+
+```sh
+node tools/node/replay.js [page] [--mode rules|screen|both] [names…]   # every golden (or some) replayed in Node, both modes by default
+node tools/node/sim.js <event|all> [seed] [--reps N] [--json]           # headless simEvent(s), t12's CPU seats; prints hash + ms
+node tools/node/mkbundle.js [page] [--out dir] [--hash]                 # server/verify/rules.js = the rules of this build
+node tools/tests/tnode101.js flavius-arena.html                         # the suite test (plain node, ~1 min)
+```
+
+`tnode101` replays all 15 goldens in Node and must meet what Chromium recorded: rules mode (HEADLESS — end hash, RNG.s, results,
+per-turn hashes, every online input's pre-hash) and screen mode (+ every log line, the log hash); runs a headless sim of every printed
+event; builds the bundle into a temp dir and replays + sims from it. Under smartreg it writes the script's function coverage itself
+(`REGCOV`, the same {len, offs} as tools/regcov.js). A Node-only failure with a browser pass means the stub differs from a browser
+somewhere the rules can see — find the first differing dice call (wrap `RNG.next` and compare stacks in both, as done for the sort
+order) and fix the stub, not the rules. Debug: `NODE_VERBOSE=1` prints page errors as they happen; `NODE_TRACE=file` logs every timer
+callback the virtual clock runs.
+
 ## The server
 
 ```sh
