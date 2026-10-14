@@ -85,8 +85,10 @@ out.rep=await until(C,id=>{const w=mockLoad();const R=(w.reports100||{})[id];ret
 out.rep2=await C.__ev(async id=>{try{await NET.req('match.report100',{id,seat:0,reason:'afk'});return 'taken'}catch(e){return e.code||e.message}},mid);ok(out.rep2==='report_once','once a match: '+out.rep2);
 
 /* ── 5 · the owner's own clock + a reveal's credit (mock clock) ── */
-out.own=await A.__ev(async id=>{const M=mockLoad().matches[id];const tc=M.tc100;if(!tc)return {no:1};const me=ONLM.me;const L=mockLoad().lobbies[id];const owner=L.players[tc.seat].id===ONL.acct.id;
-  const at0=tc.at;const r=await NET.req('match.clock',{id,kind:'fx',t:tc.t,k:'chest',i:77});const M2=mockLoad().matches[id];return {owner,x0:tc.x||0,x1:M2.tc100.x||0,t:tc.t,own:M2.tc100.own||0}},mid);
+/* the turn may change between reading the clock and the request (the credit is then rightly refused): retry on a moved turn */
+out.own=await A.__ev(async id=>{let o=null;for(let k=0;k<12;k++){const M=mockLoad().matches[id];const tc=M.tc100;if(!tc)return {no:1};if(tc.end||M.status&&M.status!=='live'){await new Promise(z=>setTimeout(z,300));continue}const L=mockLoad().lobbies[id];const owner=L.players[tc.seat].id===ONL.acct.id;
+  const r=await NET.req('match.clock',{id,kind:'fx',t:tc.t,k:'chest',i:77+k}).catch(()=>null);const M2=mockLoad().matches[id];o={owner,x0:tc.x||0,x1:M2.tc100.x||0,t:tc.t,t2:M2.tc100.t,own:M2.tc100.own||0,k};
+  if(M2.tc100.t===tc.t&&M2.tc100.seat===tc.seat&&!M2.tc100.end)return o;await new Promise(z=>setTimeout(z,300))}return o},mid);
 ok(out.own.no||(out.own.owner?out.own.x1-out.own.x0===900:out.own.x1===out.own.x0),'a reveal credits only the turn owner '+JSON.stringify(out.own));
 
 /* ── 6 · Beta abandons (Ranked) → counted; the cooldown; the house card mark ── */
