@@ -1,5 +1,5 @@
 /* onlcoin.js — v1.0 balance pass, the ONLINE COIN model (pure node, no browser). Rules read from the shared module (server/src/onlcore.js =
-   src/111-onlcore.js): AWARD by rank, WIN_BONUS, streak (+10% a survived Ranked bout, ≤ +100%), tableFactor, GLORY (CF + 12 survived + 8 win),
+   src/online/111-onlcore.js): AWARD by rank, WIN_BONUS, streak (+10% a survived Ranked bout, ≤ +100%), tableFactor, GLORY (CF + 12 survived + 8 win),
    RANKS by Glory, Flavius's gifts (every rank reached + every GIFT_EVERY survived; coin share of GIFT_W, coin = AWARD×GIFT_COIN89), the weekly
    challenge gift (≤1 a week), PRICE / PRICE_AP, KIT_DISC92, kits92.json, repairCost (damaged = ceil(value × AP lost)), SLOT100, CLASS_FEE89 100.
    Bout outcomes are drawn from tools/balance100/onlgear.js sims of the same class (survives the Fate, won, CF, which brought pieces came back and how dented).

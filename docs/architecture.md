@@ -8,16 +8,20 @@ this page explains the shape so a newcomer can find their way. When the two disa
 The game is a single HTML file, `flavius-arena.html`, built from `src/` by `build.sh`:
 
 ```
-src/01-head.html            markup, CSS, the language loader (<script data-lang87>)
+src/core/01-head.html             markup, CSS, the language loader (<script data-lang87>)
 <script>
-  src/00b-perf.js           the UI heartbeat (runs first)
-  src/00c-errlog.js         the error log + errText92 / errRef92 (runs second: it must see every error)
-  src/00-lang.js            _T / TX / LANG_DICT (before anything that shows text)
-  src/02-data.js … 07-ui.js the engine: data, rules, flow, AI, drawing
-  src/09 … 223-*.js         features and "version modules", in the order build.sh lists them
-  src/08-setup.js           boot (always last)
+  src/core/00b-perf.js            the UI heartbeat (runs first)
+  src/core/00c-errlog.js          the error log + errText92 / errRef92 (runs second: it must see every error)
+  src/lang/00-lang.js             _T / TX / LANG_DICT (before anything that shows text)
+  src/core/02-data.js … 07-ui.js  the engine: data, rules, flow, AI, drawing (07-ui lives in src/ui/)
+  src/<topic>/NN-*.js             features and "version modules", in the order build.sh lists them
+  src/core/08-setup.js            boot (always last)
 </script>
 ```
+
+src/ is grouped by topic (v1.01): core · lang · ui · board · match · stands · gear · studio · playnow · manager · online ·
+audio · city · lessons · meta · batches (multi-topic version batches). The folders only help a reader: the build order is the
+one list in build.sh, and module names stay unique across folders (tools/srcpath.js finds a module by name).
 
 `sh build.sh` concatenates the files in the fixed order in `build.sh`, then runs `node --check` on the script and prints
 `SYNTAX_OK`. It also trips a guard when code follows a `//` comment on the same line (use `/* */`).
@@ -35,7 +39,7 @@ Everything lives in one global scope. Later modules change earlier behaviour by 
 
 - Works for `function` declarations and `let` functions; a `const` arrow cannot be wrapped (edit it in place).
 - Order matters: a wrapper only sees the wrappers installed before it (build order, not file number).
-- New batch work goes into a new `NN-vXX.js` module inserted in `build.sh` before `src/08-setup.js`, with a header comment
+- New batch work goes into a new `NN-vXX.js` module inserted in `build.sh` before `src/core/08-setup.js`, with a header comment
   listing what it does. Prefer wrapping over editing old modules; small direct edits are fine where wrapping is impossible.
 - Generated files: `195-v91srvexp.js` (tools/srvstamp.js), `223a-v93srvtext.js` (tools/i18n/srvtext93.js),
   `assets/lang_<l>.js` (tools/i18n/mkdict.js). Never edit them by hand.
@@ -51,7 +55,7 @@ Everything lives in one global scope. Later modules change earlier behaviour by 
 | `rand()` / `pickOne()` / `rnd()` | the **seeded** dice — never from UI code (use `Math.random()` there) |
 | `Store` | the save store (artifact DB with a localStorage fallback); new collections go in `SAVE_COLS` |
 | `SETTINGS` | the player's settings (`flavius_settings`) |
-| `ONLC` | the shared online rules (`src/111-onlcore.js`, also the server's `onlcore.js`) |
+| `ONLC` | the shared online rules (`src/online/111-onlcore.js`, also the server's `onlcore.js`) |
 | `NET` | the online transport: `NET.req(t, d)` → Promise, `NET.on(t, fn)` pushes; mock or AWS (`NETWS`) |
 | `ERR92`, `errText92(e)` | the error log; the player-facing form of any error |
 | `_T`, `TX`, `LANG`, `LANG_DICT` | translation (see [i18n.md](i18n.md)) |

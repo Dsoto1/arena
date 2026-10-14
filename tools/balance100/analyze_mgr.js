@@ -5,7 +5,7 @@
    for the player (p) and per rival house (r ÷ 12). LABELS maps the tags we know to plain words. */
 const fs=require('fs');const path=require('path');
 const html=fs.readFileSync(process.argv[2],'utf8').split('\n');const files=process.argv.slice(3);
-const SRC=path.join(path.dirname(path.resolve(process.argv[2])),'src');const srcs=fs.readdirSync(SRC).filter(f=>/\.(js|html)$/.test(f)).map(f=>[f,fs.readFileSync(path.join(SRC,f),'utf8')]);
+const SRC=path.join(path.dirname(path.resolve(process.argv[2])),'src');const srcs=fs.readdirSync(SRC,{recursive:true}).filter(f=>/\.(js|html)$/.test(f)).map(f=>[path.basename(f),fs.readFileSync(path.join(SRC,f),'utf8')]);
 const modOf=n=>{const t=(html[n-1]||'').trim().slice(0,70);if(t.length<12)return '?';const hit=srcs.find(([,s])=>s.includes(t));return hit?hit[0].replace(/\.js$/,''):'?'};
 const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;const r1=x=>Math.round(x*10)/10;
 const out={};let md='';const LEDALL={};

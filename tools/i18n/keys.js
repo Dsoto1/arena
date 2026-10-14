@@ -3,9 +3,9 @@
 const fs=require('fs'),path=require('path'),ts=require('typescript');
 const ROOT=path.resolve(__dirname,'..','..');
 const build=fs.readFileSync(path.join(ROOT,'build.sh'),'utf8');
-const FILES=(build.match(/src\/[\w.-]+\.js/g)||[]).map(f=>path.basename(f));
+const SP=require('../srcpath');const FILES=(build.match(/src\/[\w.\/-]+\.js/g)||[]).map(f=>path.basename(f));
 const out=[];
-for(const f of FILES){const src=fs.readFileSync(path.join(ROOT,'src',f),'utf8');
+for(const f of FILES){const src=fs.readFileSync(SP.abs(f),'utf8');
   const sf=ts.createSourceFile(f,src,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
   const line=n=>src.slice(0,n.getStart()).split('\n').length;
   (function v(n){

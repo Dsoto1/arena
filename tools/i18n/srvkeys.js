@@ -2,7 +2,7 @@
    The client translates them on arrival (148-v86lang: NET.req errors via TXP, QC_TEXT at load). Writes tools/i18n/src/part-25.json */
 const fs=require('fs'),path=require('path'),ts=require('typescript');
 const ROOT=path.resolve(__dirname,'..','..');
-const files=['server/src/routes.js','server/src/harden93.js','src/111-onlcore.js'];
+const files=['server/src/routes.js','server/src/harden93.js','src/online/111-onlcore.js'];
 const seen=new Map();
 for(const f of files){const src=fs.readFileSync(path.join(ROOT,f),'utf8');const sf=ts.createSourceFile(f,src,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
   (function v(n){

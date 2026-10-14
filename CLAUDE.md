@@ -57,7 +57,7 @@ flavius/   (repo root; build.sh and tools/*.py resolve paths from their own loca
   flavius-arena.html    the built game (references assets/ relatively)
   assets/               ~35 image assets (armor2/chtok are .webp since v0.57; cr_* credits art since v0.59) (arena.jpg card sheet, classes.jpg, weapons.jpg, armor2.png, avatar.png,
                         blessing.png, tunnel_open.jpg / tunnel_door.jpg, rtok.webp, logo.png, map.jpg, …)
-  src/                  ~69 source files (see order in build.sh)
+  src/<topic>/          ~330 modules in topic folders (see "src/ layout" below; the build order is build.sh's one list)
   share/                self-contained share builds (assets inlined as data URIs), flavius-rule-arena-vX.YY.html
   tools/
     release.sh          ONE COMMAND per release: sh tools/release.sh X.YY (version check → build → hygiene → full regression → share + smoke → zip)
@@ -72,7 +72,25 @@ flavius/   (repo root; build.sh and tools/*.py resolve paths from their own loca
 
 - **docs/** explains (this file stays the hand-off): [architecture](docs/architecture.md) · [backend](docs/backend.md) (run/test/extend the server, data, deploy + rollback) · [i18n](docs/i18n.md) · [testing](docs/testing.md).
 - Build: `sh build.sh` (must end with `SYNTAX_OK`; it also trips a guard if code follows a `//` comment on one line).
-- **When adding a module**, insert it in build.sh *before* `src/08-setup.js` (08-setup must stay last).
+- **When adding a module**, put it in its topic folder (`src/<topic>/NN-name.js`) and insert it in build.sh *before*
+  `src/core/08-setup.js` (08-setup must stay last). The folders never change the build order; module NAMES stay unique across
+  folders, so notes keep naming modules by name. Tools find a module by name with `tools/srcpath.js` (`rel/abs/order/all`).
+- **src/ layout** (regrouped in v1.01, pure `git mv`, the built page byte-identical; `tools/srcmap.json` = old flat name → new
+  path, for branches made before; tools/ci/merge.sh matches modules by name and flags a new flat one):
+  - `core/` (17) boot + engine: 00b-perf, 00c-errlog, 00d-bus, 01-head.html, 02-data … 06-ai, 08-setup, sim, names, ratings, AI tiers, ready, perf heartbeat, bus emitters
+  - `lang/` (5) _T + language packs' glue, CJK, flags, server texts (00-lang, 148, 173, 190, 223a)
+  - `ui/` (27) 07-ui, panels, settings, rail, screens, access, phones, action bars, faces (263/268), main menu, frame meter, sandstone buttons
+  - `board/` (35) what is drawn on the sand: arena look, tokens/minis, 3D anim + beasts, layers, zoom/camera, FX, hit feedback, bubbles
+  - `match/` (27) rules + flow added on the sand: special events, market/draft/loot, deals, items, beasts' cards, briefing, replays, balance
+  - `stands/` (11) the crowd: spectators, tickets, Flavius + sponsors, cheering, 3D crowd
+  - `gear/` (14) armor/weapons/classes art + fits: avatar armor, armor designer, class cards, severed outlines, pick on the body
+  - `studio/` (22) the Creator Studio + designers: tokens, flags + Insignia, sculpt, classes, looks, Event Designer, token modeller
+  - `playnow/` (10) Play Now setup, tourneys, guide data, hot seat, daily challenges
+  - `manager/` (62) Manager mode: world, calendar, ludus, recruiting, yard, infirmary, armory, council, rooms, any event
+  - `online/` (49) Online client + the shared rules `111-onlcore.js` (tools/mkserver.js copies it to server/src/onlcore.js)
+  - `audio/` (6) Web Audio, music, sound pass · `city/` (5) the City Square · `lessons/` (3) guide, Manager lesson, first hour
+  - `meta/` (5) annals/hall (10-meta), trophies, notes (34-notes = MILESTONES), credits, Tituli
+  - `batches/` (30) multi-topic version batches and fix rounds (52-v50 … 284-v100fix) — read the header comment
 - Playwright + Chromium are preinstalled (`PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers`; do not `playwright install`).
 
 ## 3. Architecture
@@ -87,7 +105,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
   `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster`, `141-v85faith`, `144-v85rec`, `145-v85fix`, `146-v85land`, `147-v85music`, `148-v86lang`, `149-v87fix`, `150-v87mgr`, `151-v87ward`, `152-v87npc`, `153-v87card`, … `164-ready`, `165-v89seats` … `182-v89vault`, `168-v89rotate`, `183-v90ward` … `187-v90pn`, `188-v91sponsor` … `202-v91ludus`, `203-v91editor`, `206-v92econ`, `208-v92zoom`, `207-v92extras`, `205-v92pn`, `204-v92perf`, `209-v92cheer`, `210-v92fix` … `216-v92errui` (last before 08-setup); `00b-perf` and `00c-errlog` run FIRST (build order as listed; `00-lang` runs FIRST, before 02-data; the language file assets/lang_<l>.js is loaded by 01-head before the script).
-  Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
+  Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module in its topic folder (src/<topic>/, see §2).
 
 ### Core globals (engine)
 - `S` live event state; `cur()` active player; `EV()` event def; `RD()` current round def (`pve,pvp,cf,ca,end,zone`).
@@ -1612,8 +1630,8 @@ zip carries the new flavius.sh); zips stay the fallback (if any are uploaded, re
 
 (tools/release.sh also takes the play.html advert shot → share/arena_shot.webp → the game zip's play/arena_shot.webp, and always builds the
 share copy — the site download play/flavius-rule-arena.zip.)
-1. Bump the badge in `src/01-head.html` (`arena · vX.YY`) — this sets `GAME_VER`.
-2. Add a `MILESTONES` entry at the top of `src/34-notes.js` (`hi` = new features, `fx` = fixes/changes; keep it short).
+1. Bump the badge in `src/core/01-head.html` (`arena · vX.YY`) — this sets `GAME_VER`.
+2. Add a `MILESTONES` entry at the top of `src/meta/34-notes.js` (`hi` = new features, `fx` = fixes/changes; keep it short).
 3. Add a `SAVE_MIGRATIONS` entry if world data changed shape.
 4. `sh tools/release.sh X.YY` — build, page hygiene (cheat words, e-mail), FULL regression, share build + smoke test, zip.
    (By hand: `sh build.sh` → full regression → `python3 tools/mkshare.py X.YY` → smoke-test the share build.)

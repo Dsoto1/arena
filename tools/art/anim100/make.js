@@ -5,9 +5,9 @@
      node tools/art/anim100/make.js soldier hero …     some classes (the meta block keeps the others)
    Env: AN100_PX (sheet px per mm, default 2.6 — the board's drawn size, like the clean-up crew's 2.6), AN100_Q (WebP quality, 0.8).
    Writes assets/anim100_<cls>_move.webp (idle + walk, always loaded) and assets/anim100_<cls>_act.webp (attack, block, hit, limp,
-   cower, push, topple, knock, fall, sever — decoded when first needed), the ANIM100_META block in src/311-v100anim.js (between its
+   cower, push, topple, knock, fall, sever — decoded when first needed), the ANIM100_META block in src/board/311-v100anim.js (between its
    markers) and tools/art/anim100/out/report.json (sizes, decoded bytes, render times) + out/<cls>_move.png previews.
-   How: the pose list and the renderer are the ANIM100_LIB block of src/311-v100anim.js — the SAME code the game uses to render a Studio
+   How: the pose list and the renderer are the ANIM100_LIB block of src/board/311-v100anim.js — the SAME code the game uses to render a Studio
    or online token on the device; the token is the production one (assets/three93.js + tok93.js + gear100.js + body100.js) wearing
    each printed class's real loadout (t93Parts of a character built on the class, read from the built flavius-arena.html) and a look per
    class (tools/art/mm100/make.js LOOK). Headless Chromium + SwiftShader WebGL, python3 -m http.server on the repo root.
@@ -18,7 +18,7 @@ const { spawn } = require('child_process');
 const fs = require('fs'), path = require('path');
 const HERE = __dirname, ROOT = path.resolve(HERE, '../../..'), PORT = 20000 + Math.floor(Math.random() * 20000); /* a random port: other renders may hold the usual ones */
 const OUT = path.join(HERE, 'out'); fs.mkdirSync(OUT, { recursive: true });
-const ASSETS = path.join(ROOT, 'assets'), SRC = path.join(ROOT, 'src/311-v100anim.js');
+const ASSETS = path.join(ROOT, 'assets'), SRC = path.join(ROOT, 'src/board/311-v100anim.js');
 const CLS = ['soldier', 'hero', 'slave', 'royalty', 'amazonia', 'veteranus', 'venatore', 'damnatio'];
 const want = process.argv.slice(2).filter(a => CLS.includes(a)); const list = want.length ? want : CLS;
 /* `sev` = the SEVERED sets (one lost limb each): assets/anim100_<cls>_<limb>_<move|act>.webp, meta under ANIM100_META[cls].sev[limb];

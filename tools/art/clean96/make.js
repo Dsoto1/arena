@@ -1,7 +1,7 @@
-/* clean96/make.js — renders the arena crew sheets for src/238-v96clean.js:
+/* clean96/make.js — renders the arena crew sheets for src/board/238-v96clean.js:
      node tools/art/clean96/make.js [slave charun guard] [--pxmm 2.6] [--q 0.8] [--res 0.005] [--port 8796]
    → assets/crew96_<fig>.webp (one row per pose, 8 MINI_YAW cells) + tools/art/clean96/out/<fig>.png (lossless preview, not committed)
-   + tools/art/clean96/out/meta.json (paste the metas into CREW96_META in src/238-v96clean.js). Needs Playwright + python3. */
+   + tools/art/clean96/out/meta.json (paste the metas into CREW96_META in src/board/238-v96clean.js). Needs Playwright + python3. */
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const fs = require('fs'), path = require('path');

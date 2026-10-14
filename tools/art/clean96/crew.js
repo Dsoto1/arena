@@ -1,5 +1,5 @@
 /* =====================================================================
-   clean96/crew.js — the arena crew for the post-event clean-up show (v0.96, src/238-v96clean.js)
+   clean96/crew.js — the arena crew for the post-event clean-up show (v0.96, src/board/238-v96clean.js)
    =====================================================================
    Built on the token modeller (tools/art/rig92: body.js sculpt + rig.js poses + game.js createToken), rendered ONCE
    to flat sheets the game draws with drawImage (no three.js in the game for this):

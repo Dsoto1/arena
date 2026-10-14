@@ -1,7 +1,7 @@
 """Builds assets/round.webp (the round marker plate) from Virgilante's left end tools/art/round100/in_242.png.
 Left end + lettering kept; the middle border is tiled by its 73 px bead period, the field is flat;
 the right end is the left cap mirrored. Run from the repo root: python3 tools/art/round100/make.py
-Prints the digit's centre as a % of the plate width (src/93-v71.js .roundmk b left)."""
+Prints the digit's centre as a % of the plate width (src/board/93-v71.js .roundmk b left)."""
 from PIL import Image
 import numpy as np
 L=Image.open('tools/art/round100/in_242.png').convert('RGBA'); a=np.array(L)

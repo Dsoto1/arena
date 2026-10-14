@@ -18,7 +18,7 @@ Play it at **[flaviusrule.com/play](https://flaviusrule.com/play/)**, or open `f
 ## Layout
 
 ```
-src/              the game, one file per module; build.sh joins them in a fixed order
+src/              the game, one file per module in topic folders (src/core, src/manager, src/online, …); build.sh joins them in a fixed order
 assets/           images, language packs (lang_<l>.js), minis, card art
 flavius-arena.html  the built game (generated — do not edit by hand)
 server/           the Online backend: AWS CloudFormation template, Lambda (WebSockets + DynamoDB), tests
@@ -36,13 +36,13 @@ node tools/smartreg.js --full    # the whole suite (~30 min)
 cd server && npm test            # the Online server's tests
 ```
 
-New code goes into a new module in `src/` that wraps earlier functions. Insert it in `build.sh` before `src/08-setup.js`.
+New code goes into a new module in its topic folder under `src/` that wraps earlier functions. Insert it in `build.sh` before `src/core/08-setup.js`.
 See CLAUDE.md §3–§5.
 
 ## Releases
 
-`sh tools/release.sh X.YY` does not change the version for you. First set the version badge in `src/01-head.html` and add the notes in
-`src/34-notes.js`. Then the script builds, runs the full regression, makes the standalone share build and writes the deploy
+`sh tools/release.sh X.YY` does not change the version for you. First set the version badge in `src/core/01-head.html` and add the notes in
+`src/meta/34-notes.js`. Then the script builds, runs the full regression, makes the standalone share build and writes the deploy
 zips to `share/deploy/`. Deploying to the site and server is one command in AWS CloudShell: `bash flavius.sh release`
 (CLAUDE.md §6).
 

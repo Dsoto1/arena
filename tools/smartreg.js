@@ -39,7 +39,7 @@ const ROOT = path.resolve(__dirname, '..'), TD = path.join(__dirname, 'tests'), 
 const BUILT = path.join(ROOT, 'flavius-arena.html'), PAGE = path.join(ROOT, '.regpage.html');
 if (!process.argv.includes('--dry')) fs.copyFileSync(BUILT, PAGE);
 const PAGE0 = PAGE, STATE = path.join(__dirname, 'regstate.json'), MAP = path.join(__dirname, 'regmap.json');
-const GLOBAL = ['build.sh', 'src/01-head.html', 'tools/smartreg.js', 'tools/regcov.js'];
+const GLOBAL = ['build.sh', 'src/core/01-head.html', 'tools/smartreg.js', 'tools/regcov.js'];
 const arg = process.argv.slice(2);
 const opt = (k, d) => { const i = arg.indexOf(k); if (i < 0) return d; const v = arg[i + 1]; arg.splice(i, 2); return v; };
 const flag = k => { const i = arg.indexOf(k); if (i < 0) return false; arg.splice(i, 1); return true; };
@@ -53,7 +53,7 @@ const hash = f => { try { return crypto.createHash('sha1').update(fs.readFileSyn
 /* the test list and the src order both come from their one source of truth: runreg.sh's DEFAULT and build.sh */
 const runreg = fs.readFileSync(path.join(__dirname, 'runreg.sh'), 'utf8');
 const ALL = [...new Set(runreg.match(/DEFAULT="([^"]+)"/)[1].trim().split(/\s+/))];
-const ORDER = fs.readFileSync(path.join(ROOT, 'build.sh'), 'utf8').match(/cat (src\/00[-b][^ ]*\.js[^;]+);/)[1].trim().split(/\s+/);
+const ORDER = fs.readFileSync(path.join(ROOT, 'build.sh'), 'utf8').match(/\bcat (src\/[\w\/.-]+\.js [^;]+);/)[1].trim().split(/\s+/);
 /* the built script, parsed: every function's text hash by start offset, and each src file's top-level "shape" (its text with
    every function cut out) — the script is "\n" followed by the src files in build order, so offsets map back to files */
 const ts = require('typescript');

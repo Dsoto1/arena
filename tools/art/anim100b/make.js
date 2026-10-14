@@ -1,5 +1,5 @@
 /* =====================================================================
-   tools/art/anim100b/make.js — v1.0 ANIMATED 3D BEASTS IN MATCHES (src/312-v100beasts.js), ONE script.
+   tools/art/anim100b/make.js — v1.0 ANIMATED 3D BEASTS IN MATCHES (src/board/312-v100beasts.js), ONE script.
    Promotes the FINAL look-test beast rigs (his round-5 word: "the beasts are then FINAL") to production sheets:
      node tools/art/anim100b/make.js                 every beast (quadrupeds/snakes/Zora/spider first, then Tholo + Commodus)
      node tools/art/anim100b/make.js leo zora tholo  only those (the meta block keeps the others)
@@ -9,7 +9,7 @@
      assets/beast100_<key>.webp      idle 4 + walk 6 (always loaded while the beast is on the sand)
      assets/beast100_<key>_act.webp  attack 5 + hit 3 + die 5 (decoded on first use)
    (the spider swarm = one sheet assets/beast100_spider.webp, 14 frames, no base) and the BEAST100_META block in
-   src/312-v100beasts.js between its markers: key → {px (sheet px per mm), base [long, short] mm, iw/aw = [cellW, cellH, anchorX,
+   src/board/312-v100beasts.js between its markers: key → {px (sheet px per mm), base [long, short] mm, iw/aw = [cellW, cellH, anchorX,
    anchorY, rows] (anchor = the base's TOP centre), ir/ar = row names}. Report: tools/art/anim100b/out/report.json.
    Rendered AT DRAWN SIZE (his 3a): long bases at 1.1 tile of a 104 px tile (zoom ×2), round bases + the humanoids at the minis'
    3.143 px/mm; figure +30% on long bases / +15% round, Tholo +13% with tunic AND cape, Commodus's lion head like a hat (round 5) —
@@ -23,7 +23,7 @@ const { spawn } = require('child_process');
 const fs = require('fs'), path = require('path');
 const HERE = __dirname, ROOT = path.resolve(HERE, '../../..'), PORT = 8841;
 const OUT = path.join(HERE, 'out'); fs.mkdirSync(OUT, { recursive: true });
-const ASSETS = path.join(ROOT, 'assets'), SRC = path.join(ROOT, 'src/312-v100beasts.js');
+const ASSETS = path.join(ROOT, 'assets'), SRC = path.join(ROOT, 'src/board/312-v100beasts.js');
 const Q = +(process.env.ANIM100B_Q || 0.8);
 const QUAD = ['leo', 'leaena', 'ursa', 'brutum', 'valencia', 'moechus', 'glykon', 'arenosus', 'zora', 'spider'];
 const HUM = ['tholo', 'commodus'];

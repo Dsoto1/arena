@@ -3,7 +3,7 @@
 The procedural body + rig behind the standard token of every Studio custom character (printed classes keep their 3D minis;
 online keeps the sculpted tokens until v0.94). **In the game since v0.93:** `node tools/art/rig92/mkgame.js` bundles rig.js +
 body.js + presets.js + gear.js + game.js into `assets/tok93.js` and three.js into `assets/three93.js` (both plain scripts, loaded
-on demand by src/222-v93token.js — re-run it after editing any of these files and commit the two assets).
+on demand by src/studio/222-v93token.js — re-run it after editing any of these files and commit the two assets).
 
 ## Run
 
@@ -61,7 +61,7 @@ limbs hanging down: +X swings back, −X forward, +Z toward +x; spine/neck/head:
 ## Sprite sheet format (same as `assets/minis8_<key>.webp`)
 
 One row of 8 cells in `MINI_YAW` order `[0,45,90,135,180,-135,-90,-45]` (cell 0 faces the camera; yaw +45 faces screen
-right-down, i.e. a step along +c, matching `miniFace` in src/102-minis73.js). Orthographic camera at **30°** elevation (the
+right-down, i.e. a step along +c, matching `miniFace` in src/board/102-minis73.js). Orthographic camera at **30°** elevation (the
 elevation the printed `minis8` were rendered at), transparent background, rendered ×4 and halved down.
 `renderSheet` returns `meta = [cellW, cellH, anchorX, anchorY]` exactly like `MINI8` — the anchor is the base centre on the
 board plane (bottom of the base). Typical: `[86,124,43.5,101.4]`.

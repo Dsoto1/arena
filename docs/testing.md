@@ -30,7 +30,7 @@ The safety net for refactors that must not change the rules (regrouping src/, la
 `tools/replay/golden/*.json.gz` holds 15 recordings: every printed event all-CPU, three with a scripted human in seat 0
 (Democritus, Cassian, Gauntlet), and one 2-seat online mock lockstep match. Each recording = the seed + seats/config, 309's replay
 record (opening snapshot at the first beginTurn + every human input), and what the match ended with, read by the test-only probe
-`src/325-v101replay0.js` (on only with `localStorage flavius_replay0=1`): `onlHash` at the start of EVERY turn, the final
+`src/match/325-v101replay0.js` (on only with `localStorage flavius_replay0=1`): `onlHash` at the start of EVERY turn, the final
 `onlHash`, `RNG.s`, turns/round/rotation, winners + reason, each seat's result, the beasts, every log line since the opening.
 The online recording keeps the server's input stream and both windows' pre-hash at every input.
 

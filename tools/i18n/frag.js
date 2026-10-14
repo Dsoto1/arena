@@ -5,10 +5,10 @@ const fs=require('fs'),path=require('path'),ts=require('typescript');
 const ROOT=path.resolve(__dirname,'..','..');const MODE=process.argv.includes('--write')?'write':'list';
 const build=fs.readFileSync(path.join(ROOT,'build.sh'),'utf8');
 const SKIP=new Set(['00-lang.js','00c-errlog.js','223a-v93srvtext.js','00-lang-es.js','111-onlcore.js','13-sim.js','14-names.js','148-v86lang.js','173-v89cjk.js','294a-v100scenes.js']);
-const FILES=(build.match(/src\/[\w.-]+\.js/g)||[]).map(f=>path.basename(f)).filter(f=>!SKIP.has(f));
+const SP=require('../srcpath');const FILES=(build.match(/src\/[\w.\/-]+\.js/g)||[]).map(f=>path.basename(f)).filter(f=>!SKIP.has(f));
 const OK=w=>/^[A-Za-z][A-Za-z' ]{0,24}$/.test(w)&&!/^(s|es|y|ies|ies are|y is)$/.test(w)===false||/^[a-z][a-z' ]{1,24}$/.test(w);
 const items=new Map();let n=0;
-for(const f of FILES){const fp=path.join(ROOT,'src',f);const src=fs.readFileSync(fp,'utf8');
+for(const f of FILES){const fp=SP.abs(f);const src=fs.readFileSync(fp,'utf8');
   const sf=ts.createSourceFile(f,src,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);const edits=[];
   const inTagged=node=>{let p=node.parent;while(p){if(ts.isTemplateSpan(p)){const tt=p.parent&&p.parent.parent;return tt&&ts.isTaggedTemplateExpression(tt)&&ts.isIdentifier(tt.tag)&&tt.tag.text==='_T'?tt:null}
       if(ts.isParenthesizedExpression(p)||ts.isConditionalExpression(p)||ts.isBinaryExpression(p)&&[ts.SyntaxKind.BarBarToken,ts.SyntaxKind.AmpersandAmpersandToken,ts.SyntaxKind.QuestionQuestionToken].includes(p.operatorToken.kind)){p=p.parent;continue}

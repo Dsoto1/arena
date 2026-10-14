@@ -51,8 +51,8 @@ import { buildBody } from './body.js';
 import { JOINTS, JK, ENDS, HANDLE_COL, applyPose, poseToJSON, poseFromJSON, readPose, emptyPose, jointPos, endPos, solveArm, rotateJointWorld, footNow, solveTwoBone, resolveSpec, BASE_R, BASE_H, MM_PER_M, ANKLE_H } from './rig.js';
 import { PRESETS, PRESET_ORDER } from './presets.js';
 
-const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45];   /* src/102-minis73.js: cell 0 toward the camera, then every 45° */
-const MINI_PXMM = 3.143;                                     /* src/94-v72.js: sprite px per mm */
+const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45];   /* src/board/102-minis73.js: cell 0 toward the camera, then every 45° */
+const MINI_PXMM = 3.143;                                     /* src/studio/94-v72.js: sprite px per mm */
 const D2R = Math.PI / 180;
 const qs = new URLSearchParams(location.search);
 const HEADLESS = qs.has('headless');

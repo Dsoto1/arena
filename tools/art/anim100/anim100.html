@@ -8,12 +8,12 @@
 <script src="../../../assets/tok93.js"></script>
 <script>
 window.addEventListener('error', e => { window.__err = String(e.message); });
-/* the pose list + renderer = the ANIM100_LIB block of src/311-v100anim.js (the game renders Studio / online tokens with the same code) */
+/* the pose list + renderer = the ANIM100_LIB block of src/board/311-v100anim.js (the game renders Studio / online tokens with the same code) */
 (async () => {
   try {
-    const src = await (await fetch('../../../src/311-v100anim.js')).text();
+    const src = await (await fetch('../../../src/board/311-v100anim.js')).text();
     const a = src.indexOf('/* ANIM100_LIB:BEGIN'), b = src.indexOf('/* ANIM100_LIB:END */');
-    if (a < 0 || b < 0) throw new Error('ANIM100_LIB markers missing in src/311-v100anim.js');
+    if (a < 0 || b < 0) throw new Error('ANIM100_LIB markers missing in src/board/311-v100anim.js');
     window.AN100L = new Function(src.slice(a, b) + ';return AN100L')();
     window.AN100R = {
       api: null,

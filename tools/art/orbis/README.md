@@ -6,7 +6,7 @@ blue screen in the shallows, a bold hand-inked coastline, a few major rivers in 
 (*Oceanus*, *Mare Indicum*) and a black frame. It wraps east–west without a seam.
 
 Projection: equirectangular, lat 76 … −52 (Antarctica cut). For a point: `x = (lon+180)/360`, `y = (76-lat)/128`
-(fractions of the image). `src/117-onltz.js` maps a browser time zone to that point (`onlTzLL`, `onlTzXY`).
+(fractions of the image). `src/online/117-onltz.js` maps a browser time zone to that point (`onlTzLL`, `onlTzXY`).
 
 Data: Natural Earth (public domain) via the npm packages `world-atlas` (ISC; land 50m) and `sane-topojson` (MIT; lakes 50m,
 rivers 110m). The packages stay in a scratch dir — never in the repo.
@@ -30,7 +30,7 @@ keeps the wobble identical between renders.
 ## The time-zone table
 
 ```sh
-python3 tools/art/orbis/mktz.py            # from the repo root; rewrites src/117-onltz.js from /usr/share/zoneinfo
+python3 tools/art/orbis/mktz.py            # from the repo root; rewrites src/online/117-onltz.js from /usr/share/zoneinfo
 ```
 
 zone1970.tab + zone.tab coordinates, plus the old link names browsers still report (Asia/Calcutta, Europe/Kiev,

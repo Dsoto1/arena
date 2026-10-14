@@ -1,11 +1,11 @@
 /* =====================================================================
    tools/art/crowd100/make.js — v1.0 THE 3D CROWD sprites, ONE script (re-run when rig92 / the gear bake / the poses change).
-     node tools/art/crowd100/make.js            everything: 6 spectator looks + 8 class stand-ins → assets + meta into src/313-v100crowd.js
+     node tools/art/crowd100/make.js            everything: 6 spectator looks + 8 class stand-ins → assets + meta into src/stands/313-v100crowd.js
      node tools/art/crowd100/make.js spec|cls   one group (the meta block is merged, the other kept)
      node tools/art/crowd100/make.js probe      one look → tools/art/crowd100/out/probe.png (quick look, nothing written to assets)
    Env: CROWD100_PXMM (spectators, default 3.5), CROWD100_CPXMM (class stand-ins, default 2.6), CROWD100_Q (WebP quality, default 0.8).
    Writes assets/crowd100_s<i>.webp (one shelf sheet per look: rows = poses, 4 facings each) and assets/crowd100_c_<class>.webp, the
-   CROWD100_META block in src/313-v100crowd.js (between the markers), tools/art/crowd100/out/report.json (sizes, decoded bytes, times).
+   CROWD100_META block in src/stands/313-v100crowd.js (between the markers), tools/art/crowd100/out/report.json (sizes, decoded bytes, times).
    How: headless Chromium + SwiftShader WebGL (like mm100/clean96), python3 -m http.server on the repo root, crowd100.html.
    Class stand-ins wear each printed class's real loadout read from the BUILT flavius-arena.html (t93Parts — run sh build.sh first).
    Render time here (CPU WebGL): ~1–2 min a look; run it in the background and poll out/report.json.
@@ -15,7 +15,7 @@ const { spawn } = require('child_process');
 const fs = require('fs'), path = require('path');
 const HERE = __dirname, ROOT = path.resolve(HERE, '../../..'), PORT = 8843;
 const OUT = path.join(HERE, 'out'); fs.mkdirSync(OUT, { recursive: true });
-const ASSETS = path.join(ROOT, 'assets'), SRC = path.join(ROOT, 'src/313-v100crowd.js');
+const ASSETS = path.join(ROOT, 'assets'), SRC = path.join(ROOT, 'src/stands/313-v100crowd.js');
 const want = process.argv.slice(2); const all = !want.length; const doIt = (k) => all || want.includes(k);
 const PX = +(process.env.CROWD100_PXMM || 3.5), CPX = +(process.env.CROWD100_CPXMM || 2.6), Q = +(process.env.CROWD100_Q || 0.8);
 const CLS = ['soldier', 'hero', 'slave', 'royalty', 'amazonia', 'veteranus', 'venatore', 'damnatio'];

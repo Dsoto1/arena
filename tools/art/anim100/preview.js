@@ -1,6 +1,6 @@
 /* tools/art/anim100/preview.js — a quick look at some rows of the pose list (no sheet, no meta written):
      node tools/art/anim100/preview.js <cls> <out.png> row[,row…] [pxmm]
-   Renders those rows of the ANIM100_LIB pose list (src/311-v100anim.js) for one printed class (gear from out/parts.json, written by make.js)
+   Renders those rows of the ANIM100_LIB pose list (src/board/311-v100anim.js) for one printed class (gear from out/parts.json, written by make.js)
    and saves the packed canvas (8 facings a row) as a PNG. */
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');

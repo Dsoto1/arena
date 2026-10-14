@@ -1,11 +1,11 @@
 /* =====================================================================
    tools/art/mm100/make.js — v1.0 MAIN MENU SHOW sprites, ONE script (re-run it when the beasts or the gear change).
-     node tools/art/mm100/make.js                 everything: parts → gladiators → humanoids → beasts → meta into src/282-v100menu.js
+     node tools/art/mm100/make.js                 everything: parts → gladiators → humanoids → beasts → meta into src/ui/282-v100menu.js
      node tools/art/mm100/make.js glad|hum|beast  one group (the meta block is merged, other actors kept)
      node tools/art/mm100/make.js clip            frames + strip + a short WebP clip of the show from the BUILT page → tools/plans/menu100/
    Env: MM100_BEAST=<path to beastN_rig.js> (default: the newest tools/plans/look100/beastN_rig.js with a beastN_hum.js beside it),
         MM100_H (front-row figure height in canvas px, default 186), MM100_Q (WebP quality, default 0.8).
-   Writes assets/mm100_<actor>.webp (one horizontal strip of cells per actor) and the MM100_META block in src/282-v100menu.js
+   Writes assets/mm100_<actor>.webp (one horizontal strip of cells per actor) and the MM100_META block in src/ui/282-v100menu.js
    (between the markers), tools/art/mm100/out/report.json (sizes, decoded bytes, render times).
    How: headless Chromium + SwiftShader WebGL (like rig92/make.js), python3 -m http.server on the repo root, tools/art/mm100/mm100.html.
    Gladiators = the PRODUCTION token (rig92 game.js + assets/gear100.js) wearing each printed class's real loadout, read from the built
@@ -17,7 +17,7 @@ const { spawn, execFileSync } = require('child_process');
 const fs = require('fs'), path = require('path');
 const HERE = __dirname, ROOT = path.resolve(HERE, '../../..'), PORT = 8831;
 const OUT = path.join(HERE, 'out'); fs.mkdirSync(OUT, { recursive: true });
-const ASSETS = path.join(ROOT, 'assets'), SRC = path.join(ROOT, 'src/282-v100menu.js'), PLANS = path.join(ROOT, 'tools/plans/menu100');
+const ASSETS = path.join(ROOT, 'assets'), SRC = path.join(ROOT, 'src/ui/282-v100menu.js'), PLANS = path.join(ROOT, 'tools/plans/menu100');
 const want = process.argv.slice(2); const all = !want.length; const doIt = (k) => all || want.includes(k);
 const TH = +(process.env.MM100_H || 186), Q = +(process.env.MM100_Q || 0.8);
 const CLS = ['soldier', 'hero', 'slave', 'royalty', 'amazonia', 'veteranus', 'venatore', 'damnatio'];

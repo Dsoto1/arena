@@ -4,4 +4,4 @@
   Vindex 3/8, 3/12 ×2) + the chariot discs (the chariot tokens' backs, coloured dots).
 - `make.py` — rebuilds the 9 horse cells of `assets/chtok.webp` (cells 0–7 + 17 = saxoC, Saxo 1/10) from the PDF's
   375 px face images and their smask alpha (pdfimages into a temp folder; nothing extracted is kept here).
-- The game's tokens (two different horses each) are `HORSE_SET98` in src/258-v98horses.js; tools/horsesim.js re-runs the balance sims.
+- The game's tokens (two different horses each) are `HORSE_SET98` in src/match/258-v98horses.js; tools/horsesim.js re-runs the balance sims.

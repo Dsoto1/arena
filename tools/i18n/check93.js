@@ -16,7 +16,7 @@ const args=new Set(process.argv.slice(2));
 /* the keys the page uses */
 const used=new Map();
 const K=JSON.parse(execSync('node '+JSON.stringify(path.join(__dirname,'keys.js')),{maxBuffer:1<<28}).toString());for(const o of K.keys)if(!used.has(o.k))used.set(o.k,o.file+':'+o.line);
-const head=fs.readFileSync(path.join(ROOT,'src','01-head.html'),'utf8').replace(/<style[\s\S]*?<\/style>/g,'').replace(/<script[\s\S]*?<\/script>/g,'');
+const head=fs.readFileSync(require('../srcpath').abs('01-head.html'),'utf8').replace(/<style[\s\S]*?<\/style>/g,'').replace(/<script[\s\S]*?<\/script>/g,'');
 const addS=(t,w)=>{t=t.replace(/\s+/g,' ').trim();if(t.length<2||!/[A-Za-z]{2}/.test(t)||used.has(t))return;if(/^[\w-]+$/.test(t)&&!/^[A-Z][a-z]+$/.test(t))return;used.set(t,w)};
 head.replace(/>([^<>]+)</g,(m,t)=>{if(t.trim())addS(t,'01-head.html');return m});head.replace(/\b(title|placeholder|aria-label)="([^"]+)"/g,(m,a,t)=>{addS(t,'01-head.html ['+a+']');return m});
 let srv={};try{srv=JSON.parse(fs.readFileSync(path.join(ROOT,'server/src/texts93.json'),'utf8'))}catch(e){}for(const k of Object.values(srv))if(!used.has(k))used.set(k,'server');

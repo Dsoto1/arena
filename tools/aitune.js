@@ -3,7 +3,7 @@
    games as one Master-tier seat against three Master seats on the incumbent weights (seat rotated). The best candidate must
    then beat the incumbent again on fresh seeds before it is accepted — so a lucky streak never sticks.
    Usage: node tools/aitune.js flavius-arena.html [generations=8] [lambda=6] [games=180] [pages=3]
-   Writes tools/aitune.out.json: {tuned, base, log}. Paste `tuned` into AIW_TUNED in src/80-aitiers.js (only keys that moved). */
+   Writes tools/aitune.out.json: {tuned, base, log}. Paste `tuned` into AIW_TUNED in src/core/80-aitiers.js (only keys that moved). */
 const {chromium}=require('playwright');const fs=require('fs');const path=require('path');
 (async()=>{const page=path.resolve(process.argv[2]);const GEN=+(process.argv[3]||8),LAM=+(process.argv[4]||6),G=+(process.argv[5]||180),NP=+(process.argv[6]||3);
 const b=await chromium.launch();const pages=[];for(let i=0;i<NP;i++){const pg=await b.newPage();await pg.route(/fonts\./,r=>r.abort());await pg.goto('file://'+page);await pg.waitForTimeout(1500);

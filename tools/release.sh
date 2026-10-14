@@ -1,7 +1,7 @@
 #!/bin/sh
 # release.sh — one command from source to a shippable build (CLAUDE.md §6, steps 1-4 + the zip).
 # Usage: sh tools/release.sh 0.63        (from anywhere; stops at the first failure)
-#   1. the badge in src/01-head.html must read "arena · v<ver>" and the first MILESTONES entry must be v:'<ver>'
+#   1. the badge in src/core/01-head.html must read "arena · v<ver>" and the first MILESTONES entry must be v:'<ver>'
 #   2. node tools/srvstamp.js (server version stamp), sh build.sh → SYNTAX_OK, swallowed-statement guard quiet
 #   3. page hygiene: no cheat word (from CLAUDE.md "Current words") and no e-mail address in plain text
 #   4. FULL regression (tools/smartreg.js --full — releases never skip a test)
@@ -14,13 +14,13 @@ V="$1"; [ -n "$V" ] || { echo "usage: sh tools/release.sh X.YY"; exit 2; }
 cd "$(dirname "$0")/.."
 step(){ printf '\n== %s ==\n' "$1"; }
 step "1 version"
-grep -q "arena · v$V<" src/01-head.html || grep -q "arena · v$V\b" src/01-head.html || { echo "badge is not v$V (src/01-head.html)"; exit 1; }
-head -20 src/34-notes.js | grep -m1 "{v:'" | grep -q "{v:'$V'" || { echo "first MILESTONES entry is not v:'$V' (src/34-notes.js)"; exit 1; }
+grep -q "arena · v$V<" src/core/01-head.html || grep -q "arena · v$V\b" src/core/01-head.html || { echo "badge is not v$V (src/core/01-head.html)"; exit 1; }
+head -20 src/meta/34-notes.js | grep -m1 "{v:'" | grep -q "{v:'$V'" || { echo "first MILESTONES entry is not v:'$V' (src/meta/34-notes.js)"; exit 1; }
 echo "badge + milestone v$V"
 step "2 build"
-node tools/i18n/srvtext93.js   # v0.93 server texts → stable codes (server/src/texts93.json + src/223a-v93srvtext.js)
+node tools/i18n/srvtext93.js   # v0.93 server texts → stable codes (server/src/texts93.json + src/lang/223a-v93srvtext.js)
 node tools/i18n/check93.js || echo "⚠ i18n check over its ceilings (see above)"
-node tools/srvstamp.js   # the online server's version (server/src/build.json + src/195-v91srvexp.js) — only changes when the server code did
+node tools/srvstamp.js   # the online server's version (server/src/build.json + src/online/195-v91srvexp.js) — only changes when the server code did
 OUT=$(sh build.sh); echo "$OUT" | tail -1
 echo "$OUT" | grep -q SYNTAX_OK || { echo "build failed"; exit 1; }
 echo "$OUT" | grep -q "GUARD TRIPPED" && { echo "swallowed-statement guard tripped"; exit 1; }

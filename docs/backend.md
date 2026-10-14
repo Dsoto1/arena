@@ -15,7 +15,7 @@ server/
   src/harden93.js      v0.93: idempotency (rid), server texts → codes, internal errors → a ref
   src/store.js         two stores with one interface: memory (tests) and dynamo
   src/jwt.js           Cognito ID-token check
-  src/onlcore.js       GENERATED copy of src/111-onlcore.js (the shared rules) — never edit the copy
+  src/onlcore.js       GENERATED copy of src/online/111-onlcore.js (the shared rules) — never edit the copy
   src/catalog.json     the printed gear by level (tools/mkserver.js, from the built game)
   src/kits92.json      class kits (tools/mkserver.js)
   src/texts93.json     every player-facing server text with its stable code (tools/i18n/srvtext93.js)
@@ -31,7 +31,7 @@ node test/v93.test.js                 # one suite
 cd server && npm i && node test/localws.js   # the real handler on ws://127.0.0.1 (needs the ws package)
 ```
 
-The page talks to the **mock** (`MOCK_ROUTES` in `src/112-online.js` and later modules, saved in localStorage) unless
+The page talks to the **mock** (`MOCK_ROUTES` in `src/online/112-online.js` and later modules, saved in localStorage) unless
 `play/online.json` (or the sign-in card's "Online server" box) names a server. Playwright tests `tonl*` use the mock;
 `tonlws*` run the real handler through `server/test/localws.js`.
 
@@ -383,7 +383,7 @@ Shared rules: the "v1.01" section at the end of `111-onlcore`; routes: the "v1.0
 - **Protocol** `ONLC.VER` (111-onlcore): `$connect` refuses another version with 426 ("reload"). Bump it only when old clients
   cannot work with the new server; most releases do not (v0.85–v0.93 kept 7).
 - **Server stamp**: `node tools/srvstamp.js` writes `server/src/build.json` (game version + code hash) and the page's expected
-  server (`src/195-v91srvexp.js`); the Online screens show a chip when they differ.
+  server (`src/online/195-v91srvexp.js`); the Online screens show a chip when they differ.
 - **Release** (`sh tools/release.sh X.YY`, then commit + push): Virgilante runs `bash flavius.sh release` in CloudShell. It clones the
   newest release branch from GitHub, deploys the **server first** (only when its code hash changed), then the page, assets, the
   standalone download, and prints the live status.
@@ -397,4 +397,4 @@ Shared rules: the "v1.01" section at the end of `111-onlcore`; routes: the "v1.0
 
 ## v1.01 domus records
 
-A house keeps TWO records. RANKED = the existing top-level fields (`D.bouts/wins/lifeCF/survived/fallen`), written only for Ranked seats from v1.01 on. UNRANKED = `D.cu` `{bouts,wins,lifeCF,survived,fallen}` (Custom or any other non-ranked online event; `survived` counts survivors of non-ranked bouts too). Rules: the "v1.01 DOMUS RECORDS" section at the end of `src/111-onlcore.js` (`domusNote` override; routes.js `domusAfter` and the mock both call `C.domusNote`). History cannot be split: earlier totals (Custom matches included) stay in the top-level record. `D.split101` = time of the first write by the new code, `D.pre101` = bouts the house already had then. `domusRow` returns `cu` (zeros when none), `split101`, `pre101` (so `domusPub89`, `house.card`, `domus.get`, `domus.visit` carry them). Glory, Domus rank, ranks, coin and trophies do not read it. No protocol bump, no migration (old houses start with no `cu`). Page: `src/324-v101domrec.js`. Test: `server/test/v101rec.test.js`.
+A house keeps TWO records. RANKED = the existing top-level fields (`D.bouts/wins/lifeCF/survived/fallen`), written only for Ranked seats from v1.01 on. UNRANKED = `D.cu` `{bouts,wins,lifeCF,survived,fallen}` (Custom or any other non-ranked online event; `survived` counts survivors of non-ranked bouts too). Rules: the "v1.01 DOMUS RECORDS" section at the end of `src/online/111-onlcore.js` (`domusNote` override; routes.js `domusAfter` and the mock both call `C.domusNote`). History cannot be split: earlier totals (Custom matches included) stay in the top-level record. `D.split101` = time of the first write by the new code, `D.pre101` = bouts the house already had then. `domusRow` returns `cu` (zeros when none), `split101`, `pre101` (so `domusPub89`, `house.card`, `domus.get`, `domus.visit` carry them). Glory, Domus rank, ranks, coin and trophies do not read it. No protocol bump, no migration (old houses start with no `cu`). Page: `src/online/324-v101domrec.js`. Test: `server/test/v101rec.test.js`.

@@ -1,6 +1,6 @@
 /* =====================================================================
    tools/art/mm100/mm100.js — v1.0 MAIN MENU SHOW sprites (build time only, driven by make.js through mm100.html).
-   Renders exactly the poses the menu show (src/282-v100menu.js) draws, at the show's drawn size, one strip per actor:
+   Renders exactly the poses the menu show (src/ui/282-v100menu.js) draws, at the show's drawn size, one strip per actor:
      • gladiators: the PRODUCTION rig92 token (tools/art/rig92/game.js createToken + the pre-baked printed pieces assets/gear100.js),
        each printed class's real loadout (the game's own t93Parts, read by make.js from the built page) + a look per class;
      • beasts, Tholo, Commodus: the NEWEST look-test beast rigs (tools/plans/look100/beastN_rig.js + beastN_hum.js), loaded as

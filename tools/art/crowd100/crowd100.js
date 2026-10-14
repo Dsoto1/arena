@@ -2,7 +2,7 @@
    tools/art/crowd100/crowd100.js — v1.0 THE 3D CROWD sprites (build time only, driven by make.js through crowd100.html).
    Renders, with the PRODUCTION rig92 token (tools/art/rig92/game.js createToken + assets/gear100.js / body100.js):
      • 6 spectator LOOKS (his look test round 2, tools/plans/look100/anim_rig.js SPEC2_LOOKS): the tunic in a KEY grey (recoloured
-       in the game at draw time, src/313-v100crowd.js), two of them with a cream toga + coloured border; no base, no bench (the tier is
+       in the game at draw time, src/stands/313-v100crowd.js), two of them with a cream toga + coloured border; no base, no bench (the tier is
        the bench). Poses (rows): sit · sitcheer · sitfist · stand · standcheer · standfist · walk0..3, 4 facings (the board's diagonals).
        The darker painted tone (brightness .8, contrast 1.14, saturation .88) is baked in.
      • the 8 printed classes as forum stand-ins (guards = the soldier, gladiators by class): stand + walk0..3, 4 facings, no base.

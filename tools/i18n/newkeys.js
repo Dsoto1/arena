@@ -7,7 +7,7 @@ const out=new Map();
 const K=JSON.parse(execSync('node '+path.join(__dirname,'keys.js'),{maxBuffer:1<<28}).toString());
 for(const o of K.keys)if(!have.has(o.k)&&!out.has(o.k))out.set(o.k,o.file+':'+o.line);
 /* 01-head static markup */
-const head=fs.readFileSync(path.join(ROOT,'src','01-head.html'),'utf8').replace(/<style[\s\S]*?<\/style>/g,'').replace(/<script[\s\S]*?<\/script>/g,'');
+const head=fs.readFileSync(require('../srcpath').abs('01-head.html'),'utf8').replace(/<style[\s\S]*?<\/style>/g,'').replace(/<script[\s\S]*?<\/script>/g,'');
 const add=(t,w)=>{t=t.replace(/\s+/g,' ').trim();if(t.length<2||!/[A-Za-z]{2}/.test(t)||have.has(t)||out.has(t))return;if(/^[\w-]+$/.test(t)&&!/^[A-Z][a-z]+$/.test(t))return;out.set(t,w)};
 head.replace(/>([^<>]+)</g,(m,t)=>{if(t.trim())add(t,'01-head.html');return m});
 head.replace(/\b(title|placeholder|aria-label)="([^"]+)"/g,(m,a,t)=>{add(t,'01-head.html ['+a+']');return m});

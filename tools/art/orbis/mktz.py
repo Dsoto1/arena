@@ -1,4 +1,4 @@
-"""Write src/117-onltz.js: ONL_TZ {IANA zone: [lat, lon]} from the public-domain tz database.
+"""Write src/online/117-onltz.js: ONL_TZ {IANA zone: [lat, lon]} from the public-domain tz database.
 Usage (from the repo root):  python3 tools/art/orbis/mktz.py [zoneinfo dir=/usr/share/zoneinfo]
 Sources: zone1970.tab (every zone, with its principal city's coordinates), zone.tab (per-country zones it adds),
 and the links in tzdata.zi (old names browsers still report, e.g. Asia/Calcutta, Europe/Kiev, US/Eastern) -> their target's place.
@@ -6,7 +6,7 @@ Coordinates are ±DDMM[SS]±DDDMM[SS]; written rounded to 0.1 degree, ~10 zones 
 import os, re, sys
 
 ZI = sys.argv[1] if len(sys.argv) > 1 else '/usr/share/zoneinfo'
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'src', '117-onltz.js')
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'src', 'online', '117-onltz.js')
 
 def dms(s, deg):
     sign = -1 if s[0] == '-' else 1

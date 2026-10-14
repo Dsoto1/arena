@@ -16,7 +16,7 @@ const MODE=process.argv.includes('--write')?'write':'list';
 const ONLY=process.argv.filter(a=>/\.js$/.test(a)&&!/wrap\.js$/.test(a));
 const SKIP_FILES=new Set(['00-lang.js','00c-errlog.js','223a-v93srvtext.js','00-lang-es.js','111-onlcore.js','13-sim.js','14-names.js','148-v86lang.js','173-v89cjk.js','wip-armlevels.js','294a-v100scenes.js']);
 const build=fs.readFileSync(path.join(ROOT,'build.sh'),'utf8');
-const FILES=(build.match(/src\/[\w.-]+\.js/g)||[]).map(f=>path.basename(f)).filter(f=>!SKIP_FILES.has(f)).filter(f=>!ONLY.length||ONLY.some(o=>o.endsWith(f)));
+const SP=require('../srcpath');const FILES=(build.match(/src\/[\w.\/-]+\.js/g)||[]).map(f=>path.basename(f)).filter(f=>!SKIP_FILES.has(f)).filter(f=>!ONLY.length||ONLY.some(o=>o.endsWith(f)));
 
 const KEYSKIP=new Set(['id','k','key','cls','type','kind','img','src','ico','icon','col','color','colour','css','sel','slot','pt','eq','at','mode','tone','seal',
   'font','bg','music','theme','n','name','nm','short','city','loc','ev','cell','file','url','href','tag','code','cls2','clsRef','classRef','pal','fill','stroke',
@@ -204,7 +204,7 @@ function doString(node,src,file){
 
 let total=0;const perFile={};
 for(const f of FILES){
-  const fp=path.join(ROOT,'src',f);const src=fs.readFileSync(fp,'utf8');src_global=src;
+  const fp=SP.abs(f);const src=fs.readFileSync(fp,'utf8');src_global=src;
   const sf=ts.createSourceFile(f,src,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
   edits.length=0;const k0=keys.length;
   (function visit(n){

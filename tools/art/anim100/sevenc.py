@@ -3,7 +3,7 @@
 best method (Chrome's canvas encoder uses a fast one: ~15% bigger at the same quality).
   python3 tools/art/anim100/sevenc.py [quality=65]
 Reads tools/art/anim100/out/sev/<cls>_<limb>_<set>.png, writes assets/anim100_<cls>_<limb>_<set>.webp (same pixels → the meta in
-src/311-v100anim.js stays valid). make.js sev runs it at the end."""
+src/board/311-v100anim.js stays valid). make.js sev runs it at the end."""
 import glob, os, sys
 from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.abspath(os.path.join(HERE, '../../..'))

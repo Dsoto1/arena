@@ -1,6 +1,6 @@
 #!/bin/sh
 # tools/ci/merge.sh <branch> — merge a builder agent's worktree branch and resolve the files every agent touches:
-#   build.sh: the agent's new module(s) are added just before src/08-setup.js; tools/runreg.sh: DEFAULT test lists united;
+#   build.sh: the agent's new module(s) are added just before src/core/08-setup.js; tools/runreg.sh: DEFAULT test lists united;
 #   CLAUDE.md: both sides kept; tools/regstate.json, tools/regmap.json, flavius-arena.html: ours (rebuilt / re-recorded).
 # Any other conflict stops the script for a hand merge. Then rebuilds (SYNTAX_OK) and commits.
 set -e; B="$1"; [ -n "$B" ] || { echo "usage: sh tools/ci/merge.sh <branch>"; exit 2; }
@@ -23,9 +23,14 @@ for f in files:
   t=open(f).read()
   if f=='build.sh':
     o,th=side(f,2),side(f,3)
-    mods=lambda x:re.findall(r'src/[0-9a-z-]+\.js',x)
-    new=[m for m in mods(th) if m not in mods(o)]
-    for m in new: o=o.replace('src/08-setup.js',m+' src/08-setup.js')
+    # modules are matched by NAME (src/<topic>/NN-name.js since v1.01; a branch made before the regroup lists flat src/NN-name.js —
+    # git carries its edits over the renames, and only its truly new modules are added; tools/srcmap.json = the old -> new list)
+    mods=lambda x:re.findall(r'src/[\w./-]+\.js',x)
+    have={m.rsplit('/',1)[-1] for m in mods(o)}
+    new=[m for m in mods(th) if m.rsplit('/',1)[-1] not in have]
+    for m in new:
+      o=o.replace('src/core/08-setup.js',m+' src/core/08-setup.js')
+      if m.count('/')==1: print('NOTE: '+m+' is not in a topic folder: move it to src/<topic>/ and fix build.sh')
     open(f,'w').write(o);continue
   if f=='tools/runreg.sh':
     def fix(m):
