@@ -106,3 +106,15 @@ if(V102A.on){const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,argumen
     return sl>=1&&sl<=3?`class="ar94g${on?' on':''} st102" data-ar94g="${id}" data-st102="${['I','II','III'][sl-1]}"`:m})};
  const st=document.createElement('style');st.textContent=`.ar94g.st102{border-color:#d4a73c!important;box-shadow:0 0 0 1px #d4a73c,0 0 10px rgba(212,167,60,.45);position:relative}
 .ar94g.st102::after{content:attr(data-st102);position:absolute;top:2px;right:5px;font:700 10px var(--serif,Georgia),serif;color:#f2d27a}`;document.head.appendChild(st)}
+
+/* M22 · Armory: loaned fighters in their own small list above Damaged */
+function ln102HTML(){const pm=typeof me==='function'?me():null;if(!pm)return '';const L=rosterOf(pm).filter(g=>g.loanFrom);if(!L.length)return '';
+  const row=g=>{const out=g.loanFrom.mid===pm.id;const o=out?null:(typeof mgrById==='function'?mgrById(g.loanFrom.mid):null);const wk=g.loanFrom.weeks|0;
+    return `<div class="ln102r">${gArt(g,'xs')}<span><b>${esc(g.name)}</b><small>${out?_T`lent out`:_T`borrowed from ${esc((o&&o.ludus)||'')}`}${wk?' · '+_T`${wk} wk`:''}</small></span></div>`};
+  return `<div class="card2 ln102" id="ln102"><div class="sect" style="margin-top:0">${_T`🤝 On loan`} <span class="rc-sub">${L.length}</span></div>${L.map(row).join('')}</div>`}
+if(V102A.on&&typeof armoryTab95==='function'){const base=armoryTab95;armoryTab95=function(){let h=base.apply(this,arguments);try{if(!h)return h;
+    const pm=me();const ids=new Set(rosterOf(pm).filter(g=>g.loanFrom).map(g=>g.id));
+    if(ids.size){h=h.replace(/<button type="button" class="ar94g[^"]*" data-ar94g="([^"]+)"[\s\S]*?<\/button>/g,(m,id)=>ids.has(id)?'':m);
+      h=h.replace('<aside class="ar96side">','<aside class="ar96side">'+ln102HTML())}}catch(e){console.error(e)}return h}}
+if(V102A.on){const st=document.createElement('style');st.textContent=`.ln102{margin-bottom:10px}.ln102r{display:flex;gap:8px;align-items:center;padding:4px 0;border-top:1px solid #3a2c20}.ln102r:first-of-type{border-top:0}
+.ln102r span{display:grid;line-height:1.2}.ln102r small{color:var(--dim);font-size:11.5px}.ln102r img,.ln102r svg{width:30px;height:30px;border-radius:50%}`;document.head.appendChild(st)}

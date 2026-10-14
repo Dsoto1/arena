@@ -97,6 +97,14 @@ out.m21=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   const glow=gold.length?getComputedStyle(document.querySelector('.ar94g.st102')).boxShadow:'';return {n:tiles.length,starters:st.size,gold:gold.length,bad,glow:/rgb/.test(glow)}});
 ok(out.m21.n>0&&out.m21.starters>0&&out.m21.gold===Math.min(out.m21.starters,out.m21.n)&&!out.m21.bad&&out.m21.glow,'M21 armory starters in gold '+JSON.stringify(out.m21));
 
+/* M22 · Armory: loaned fighters in their own list */
+out.m22=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const pm=me();const ros=rosterOf(pm);const g=ros[ros.length-1];const keep=g.loanFrom;
+  const rv=W_().mgrs.find(m=>m.id!==pm.id);g.loanFrom={mid:rv.id,fee:5,weeks:3};MGR.tab='armory';MGR_REDRAW();await W8(600);
+  const tile=!!document.querySelector(`#mgrBody .ar94g[data-ar94g="${g.id}"]`);const card=document.querySelector('#mgrBody #ln102');const inCard=!!card&&card.textContent.includes(g.name);
+  const order=card&&document.getElementById('ar96dmg')?!!(card.compareDocumentPosition(document.getElementById('ar96dmg'))&Node.DOCUMENT_POSITION_FOLLOWING):null;
+  const others=document.querySelectorAll('#mgrBody .ar94g[data-ar94g]').length;g.loanFrom=keep;MGR_REDRAW();await W8(300);return {tile,inCard,order,others}});
+ok(!out.m22.tile&&out.m22.inCard&&out.m22.order!==false&&out.m22.others>0,'M22 loaned fighter off the dress list, in the On loan card above Damaged '+JSON.stringify(out.m22));
+
 for(const p of [pg,pg2])out.errs=(out.errs||[]).concat(await p.evaluate(()=>typeof errNew92==='function'?errNew92(window.RM_MARK).map(e=>e.kind+':'+e.msg):[]));
 ok(!out.errs.length,'00c errors '+JSON.stringify(out.errs));
 console.log(JSON.stringify(out,null,1).slice(0,3500));console.log('PAGEERRS',JSON.stringify(errs));console.log('MISS',JSON.stringify(miss));
