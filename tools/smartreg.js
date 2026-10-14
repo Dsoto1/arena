@@ -121,9 +121,9 @@ function plan(full) {
 }
 
 /* per-test kill limit: 400 s, or 1.6x the test's recorded time + 60 s when it is slower. The whole t12 (asked by name only;
-   the suite runs its shards t12a/b/c, ~1/3 each) at least 1500 s — it needs ~900 s alone, more under load */
+   the suite runs its shards t12a/b/c, ~1/3 each) at least 1500 s — it needs ~900 s alone, more under load; treplay101 (every golden replay, ~5 min) too */
 /* (times are recorded at the run's own -j; above -j 3 each test runs slower, so the 1.6x margin grows with J/3) */
-function limitFor(t) { const k = (st.tests[t] || {}).time || 0; return Math.max(t === 't12' ? 1500 : 400, Math.round(k * 1.6 * Math.max(1, J / 3) + 60)); }
+function limitFor(t) { const k = (st.tests[t] || {}).time || 0; return Math.max((t === 't12' || t === 'treplay101') ? 1500 : 400, Math.round(k * 1.6 * Math.max(1, J / 3) + 60)); }
 
 /* SHARED BROWSERS: one Chromium per worker slot (chromium.launchServer), handed to each test via REGWS — regcov.js turns the
    test's chromium.launch() into a connect, so a test no longer pays for its own browser start. A slot's browser is replaced

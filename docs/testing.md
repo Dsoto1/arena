@@ -24,6 +24,31 @@ sh tools/runreg.sh                         # the plain full runner (the lead, at
   (the account id is in sessionStorage). `tonlws*` need `cd server && npm i` (the ws package).
 - `ERR92` / `errNew92(mark)` (00c) let a test assert that nothing new was logged.
 
+## Replays: same inputs → same game (tools/replay, v1.01)
+
+The safety net for refactors that must not change the rules (regrouping src/, layers, effects as data, rules in Node).
+`tools/replay/golden/*.json.gz` holds 15 recordings: every printed event all-CPU, three with a scripted human in seat 0
+(Democritus, Cassian, Gauntlet), and one 2-seat online mock lockstep match. Each recording = the seed + seats/config, 309's replay
+record (opening snapshot at the first beginTurn + every human input), and what the match ended with, read by the test-only probe
+`src/325-v101replay0.js` (on only with `localStorage flavius_replay0=1`): `onlHash` at the start of EVERY turn, the final
+`onlHash`, `RNG.s`, turns/round/rotation, winners + reason, each seat's result, the beasts, every log line since the opening.
+The online recording keeps the server's input stream and both windows' pre-hash at every input.
+
+```sh
+node tools/replay/check.js flavius-arena.html [names…]     # replay all (or some), first divergence per recording
+node tools/tests/treplay101.js flavius-arena.html          # the suite test (same thing, ERRS [] on pass)
+node tools/replay/record.js flavius-arena.html [names…]    # record MISSING goldens only
+node tools/replay/record.js --update flavius-arena.html …  # re-record (overwrites)
+```
+
+`REPLAYJ=N` = matches at once (default 3), `ONLINE=0` skips the online one. A failure prints the first turn whose opening hash
+differs, the first differing log line (the event), and how far 309's player got. Playback is 309's own `rp100Play`, one fresh
+browser context per recording, so state read from outside S (localStorage, Math.random, wall clock) shows up as a divergence.
+
+**When to re-record:** only after a DELIBERATE rule or AI change (new card text, balance, a fixed rule bug) — say so in the
+commit. A refactor, a visual change or a perf change must replay unchanged; if it doesn't, the change is wrong, not the golden.
+Changing what the probe or `onlHash` reads also needs `--update`.
+
 ## The server
 
 ```sh
