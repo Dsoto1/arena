@@ -54,12 +54,13 @@ ok(D.some(x=>/New event/.test(x))&&D.some(x=>/Your Play Now Gladiators/.test(x))
 await pg.evaluate(()=>[...document.querySelectorAll('#mBtns button')].find(x=>/Your Play Now Gladiators/.test(x.textContent)).click());
 ok(await until(()=>!!document.getElementById('ludusBody')&&/Play Now Gladiators/.test(document.getElementById('mTitle').textContent),8000),'it opens Your Play Now Gladiators');
 /* ---- 3 · Studio designer tabs + 4 · class card weapons ---- */
-await pg.evaluate(async()=>{for(let i=0;i<5&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,250))}try{localStorage.removeItem('flavius_st98tab')}catch(e){}ST98.mem=null;openStudio('classes')});
-await until(()=>document.querySelector('#studio .st98bar [data-st98t]'));await W8(300);
-const tabs=()=>pg.evaluate(()=>[...document.querySelectorAll('#studio .st98bar [data-st98t]')].map(x=>x.textContent+(x.classList.contains('on')?'*':'')));
-const click=async re=>{await pg.evaluate(src=>{const re=new RegExp(src);const b=[...document.querySelectorAll('#studio .st98bar [data-st98t]')].find(x=>re.test(x.textContent));b.click()},re.source);await W8(250)};
+await pg.evaluate(async()=>{for(let i=0;i<5&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,250))}try{localStorage.removeItem('flavius_df99tab')}catch(e){}DF99.mem=null;openStudio('classes')});
+/* v1.02 (335-v102studio): the class designer lives in the DF99 frame — numbered tabs + the "📜 Your classes" tab (system classes inside it) */
+await until(()=>document.querySelector('#studio .df99 .df99tabs [data-df99t]'));await W8(300);
+const tabs=()=>pg.evaluate(()=>[...document.querySelectorAll('#studio .df99 .df99tabs [data-df99t]')].map(x=>(x.querySelector('span')||x).textContent.trim()+(x.classList.contains('on')?'*':'')));
+const click=async re=>{await pg.evaluate(src=>{const re=new RegExp(src);const b=[...document.querySelectorAll('#studio .df99 .df99tabs [data-df99t]')].find(x=>re.test((x.querySelector('span')||x).textContent.trim()));b.click()},re.source);await W8(250)};
 const vis=sel=>pg.evaluate(s=>{const e=document.querySelector(s);return !!e&&!!e.offsetParent},sel);
-const T0=await tabs();ok(T0[0]==='Basics*'&&T0.some(x=>/^Weapons/.test(x))&&T0.some(x=>/^Lore/.test(x))&&T0.some(x=>/Your classes/.test(x))&&T0.some(x=>/System classes/.test(x)),'class designer tabs '+JSON.stringify(T0));
+const T0=await tabs();ok(T0[0]==='Basics*'&&T0.some(x=>/^Weapons/.test(x))&&T0.some(x=>/^Lore/.test(x))&&T0.some(x=>/Your classes/.test(x)),'class designer tabs '+JSON.stringify(T0));
 ok(await vis('#studio input[data-f="name"]')&&!(await vis('#studio textarea[data-f="lore"]'))&&!(await vis('#studio .stlist .list2')),'Basics shows the name, hides Lore and the lists');
 await pg.fill('#studio input[data-f="name"]','Tabulus');await pg.evaluate(()=>{const i=document.querySelector('#studio input[data-f="name"]');i.dispatchEvent(new Event('change',{bubbles:true}))});
 await click(/^Lore/);const LV={lore:await vis('#studio textarea[data-f="lore"]'),name:await vis('#studio input[data-f="name"]'),save:await vis('#studio [data-clsa="save"]'),tabs:await tabs()};
@@ -75,8 +76,8 @@ await click(/^Lore/);
 await pg.evaluate(()=>document.querySelector('#studio [data-clsa="save"]').click());
 const saved=await until(()=>(CUSTOM.classes||[]).some(c=>c.name==='Tabulus'&&c.lore==='Fights by the tab.'),10000);ok(saved,'Save from the Lore tab saves the class with both values');
 await W8(500);
-const mem=await pg.evaluate(()=>{let m={};try{m=JSON.parse(localStorage.getItem('flavius_st98tab')||'{}')}catch(e){}return m.classes});ok(/Lore/.test(mem||'')||/Basics/.test(mem||''),'tab remembered '+mem);
-await pg.evaluate(()=>{studioRedraw()});await W8(200);const T1=await tabs();ok(T1.some(x=>x.endsWith('*'))&&T1.find(x=>x.endsWith('*')).replace('*','').replace(/[\d·…]+/g,'').trim()===mem,'the remembered tab after a redraw '+JSON.stringify(T1));
+const mem=await pg.evaluate(()=>{let m={};try{m=JSON.parse(localStorage.getItem('flavius_df99tab')||'{}')}catch(e){}return m.d102classes});ok(mem==='lore'||mem==='id','tab remembered '+mem);
+await pg.evaluate(()=>{studioRedraw()});await W8(200);const T1=await pg.evaluate(()=>document.querySelector('#studio .df99').dataset.tab);ok(T1===mem,'the remembered tab after a redraw '+T1);
 await click(/Your classes/);const sm=await pg.evaluate(()=>{const c=[...document.querySelectorAll('#studio .stlist .cc98.short')].find(x=>x.offsetParent);return c?{w:c.querySelectorAll('.cc98wc').length}:null});
 ok(sm&&sm.w>=1,'the saved class in the list: weapons on hover '+JSON.stringify(sm));
 if(sm){await pg.hover('#studio .stlist .cc98.short');await W8(150);ok(await pg.evaluate(()=>{const w=document.querySelector('#studio .stlist .cc98.short .cc98w');return getComputedStyle(w).display!=='none'&&w.getBoundingClientRect().width>100}),'hover shows the weapon cards')}
@@ -86,7 +87,7 @@ const T2=await tabs();ok(T2[0]==='Basics*','Edit jumps back to the first tab '+J
 /* the beast designer: its framed parts are tabs */
 await pg.evaluate(()=>document.querySelector('#studio [data-st="tab"][data-v="npcs"]').click());await W8(600);
 await pg.evaluate(()=>{const b=[...document.querySelectorAll('#studio button')].find(x=>/New beast/.test(x.textContent));b&&b.click()});await W8(800);
-const T3=await tabs();ok(T3.length>=6&&T3.some(x=>/zone/.test(x))&&T3.some(x=>/face/.test(x))&&T3.some(x=>/round token/.test(x)),'beast designer tabs '+JSON.stringify(T3));
+const T3=await tabs();ok(T3.length>=5&&T3.some(x=>/Behaviour/.test(x))&&T3.some(x=>/Look/.test(x))&&T3.some(x=>/Arena card/.test(x)),'beast designer tabs '+JSON.stringify(T3));
 /* ---- 5 · character designer: 3D card upper right, short sliders, the poser's lit joint ---- */
 await pg.evaluate(()=>document.querySelector('#studio [data-st="tab"][data-v="chars"]').click());await W8(600);
 await pg.evaluate(()=>{const b=[...document.querySelectorAll('#studio button')].find(x=>/New character/.test(x.textContent));b&&b.click()});await until(()=>document.querySelector('#studio .df99 [data-t93card]'));await W8(300);

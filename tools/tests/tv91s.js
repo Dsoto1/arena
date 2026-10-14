@@ -3,7 +3,7 @@
    every voice; the Studio designer shows the 11-mood row, the new parts, skin swatches and box colours; a sponsor's frame + curtain colours
    show in the box in a live event. SHOT=<png> saves the designer. */
 const {chromium}=require('playwright');const path=require('path');(async()=>{const b=await chromium.launch();
-const p=await b.newPage({viewport:{width:1400,height:900}});await p.route(/fonts\.g/,r=>r.abort());const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
+const p=require("./_st98").auto(await b.newPage({viewport:{width:1400,height:900}}));await p.route(/fonts\.g/,r=>r.abort());const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 p.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await p.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_devEditor','1')});
 await p.goto('file://'+path.resolve(process.argv[2]));await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
