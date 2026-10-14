@@ -54,7 +54,7 @@ const AR94={sel:null,drag:null,tab:'w',who:'',noClick:0};
 function arm94Price(t,k){if(t==='w'){const d=W[k];return d?(ARM94.wpn[d.lv]||ARM94.wpn[1]):0}
   if(t==='a'){const d=ARM[k];if(!d)return 0;return Math.max(4,Math.ceil((d.ap||1)*(ARM94.apC[d.lv]||ARM94.apC[1])*(d.pair?ARM94.pairK:1)))}
   return ARM94.off[k]||8}
-const arm94Fix=P=>Math.max(2,Math.ceil(arm94Price(P.t,P.k)*ARM94.repK));
+const arm94Fix=P=>ARM94.fixFn?ARM94.fixFn(P):Math.max(2,Math.ceil(arm94Price(P.t,P.k)*ARM94.repK)); /* v1.02 339-v102gear sets fixFn (a tenth of the value, at least 1) */
 /* one click mends every damaged piece of the house (the armorer's price; a quarter off at home) — City Square or the checklist */
 const arm94FixPr=c=>(typeof CITY!=='undefined'&&CITY.open&&CITY.mgr)?cityPr(c):c;
 const arm94FixTotal=pm=>arm94All(pm).filter(x=>x.P.dmg).reduce((a,x)=>a+arm94FixPr(arm94Fix(x.P)),0);
@@ -186,7 +186,8 @@ function arm94Settle(w,b,res){const st=arm94St(w);const mine=[];
     const pc={};for(const l of LOCS)pc[l]=((X.pc||{})[l]||[]).slice();const got=(X.got.a||[]).map(x=>x.slice());
     for(const P of E.a){const want=arm94Locs(P);const br=[];for(const l of want){const i=got.findIndex(x=>x[0]===P.k&&x[1]===l);if(i>=0){got.splice(i,1);br.push(l)}}if(!br.length)continue;
       let whole=true;for(const l of br){const i=pc[l].indexOf(P.k);if(i>=0)pc[l].splice(i,1);else whole=false}
-      if(!whole&&!P.dmg){P.dmg=1;dmg.push(P);st.dmg++}}
+      if(!whole&&!P.dmg){if(P.iss&&ARM94.issVanish){P._iss102=1;lost.push(P);st.lost++}else{P.dmg=1;dmg.push(P);st.dmg++}}}
+    if(E.a.some(P=>P._iss102))E.a=E.a.filter(P=>!P._iss102); /* v1.02: Issued armor stripped to 0 AP vanishes (online's rule) */
     for(const l of LOCS)for(const k of pc[l].slice()){const A=ARM[k];if(!A||!(A.lv>=1))continue;const i0=pc[l].indexOf(k);if(i0<0)continue;pc[l].splice(i0,1);if(bought(k)){if(A.pair){const o=({rarm:'larm',larm:'rarm',rleg:'lleg',lleg:'rleg'})[l];const j=o?pc[o].indexOf(k):-1;if(j>=0)pc[o].splice(j,1)}continue}const P=arm94New(w,'a',k);
       if(A.pair){const o={rarm:'larm',larm:'rarm',rleg:'lleg',lleg:'rleg'}[l];const j=o?pc[o].indexOf(k):-1;if(j>=0)pc[o].splice(j,1)}else if(A.slot==='arm'||A.slot==='leg')P.loc=l;
       sh.push(P);loot.push(P);st.loot++;if(m)arm94Fl(w,m,'loot',arm94Price('a',k))}
@@ -282,7 +283,7 @@ function arm94ShopHTML(floating){const w=CITY.w||W_(),pm=me();const li=CITY.li;c
       <small>${_T`Everything goes to your house Armory — dress your fighters here or in the Roster. Stock changes every week.`}</small></div>
     <label class="cbar89who">${_T`For`} <select id="arm94Who" class="tin"><option value="">${_T`🏛 The Armory shelf`}</option>${ros.map(g=>`<option value="${g.id}" ${who&&who.id===g.id?'selected':''}>${esc(g.name)} · ${arm94Hands(g)}</option>`).join('')}</select></label>
     ${cityHome()?`<p class="rc-sub" style="margin:4px 0">${_T`🏠 <b>Home-city prices</b> — a quarter off.`}</p>`:''}
-    ${sec('w','arms',_T`⚔️ The arms market`)}${sec('a','armor',_T`🛡 The armorer`)}<div data-cbar89sec="fix"><div class="sect">${_T`🔨 Repairs`} <span class="rc-sub">${_T`⅕ of the price`}</span></div>${dmg.length>1?`<button class="btn tksm" type="button" data-arm94fixall="1" ${pm.coin<arm94FixTotal(pm)?'disabled':''}>${_T`🔨 Repair all · ${arm94FixTotal(pm)} coin`}</button>`:''}<div class="ar94wares">${fix}</div></div>${sec('o','offer',_T`🧪 The offerings stall`)}
+    ${sec('w','arms',_T`⚔️ The arms market`)}${sec('a','armor',_T`🛡 The armorer`)}<div data-cbar89sec="fix"><div class="sect">${_T`🔨 Repairs`} <span class="rc-sub">${ARM94.fixFn?_T`a tenth of the price`:_T`⅕ of the price`}</span></div>${dmg.length>1?`<button class="btn tksm" type="button" data-arm94fixall="1" ${pm.coin<arm94FixTotal(pm)?'disabled':''}>${_T`🔨 Repair all · ${arm94FixTotal(pm)} coin`}</button>`:''}<div class="ar94wares">${fix}</div></div>${sec('o','offer',_T`🧪 The offerings stall`)}
     ${(()=>{const sh=arm94H(pm).sh;if(!sh.length)return '';const sl=arm94SellLeft(pm,w);return `<details class="ar94sell" data-cbar89sec="sell"><summary>${_T`💰 Sell from the shelf · ${sh.length}`}</summary><small class="rc-sub">${_T`${Math.round(ARM94.sellK*100)}% of the price (${Math.round(ARM94.sellK*50)}% if damaged) · at most ${ARM94.sellMax} a week — ${sl} left`}</small><div class="ar94wares">${sh.map(P=>{const pr=Math.max(1,Math.floor(arm94Price(P.t,P.k)*(P.dmg?ARM94.sellK/2:ARM94.sellK)));return `<button class="ar94ware" type="button" data-arm94sell="${P.id}" ${sl?'':'disabled'}><span class="ar94art">${arm94Art(P,34)}</span><span class="ar94wn"><b>${P.dmg?'🩹 ':''}${esc(arm94Name(P))}</b><small>${arm94Meta(P)}</small></span><em>+${coinAmt87(pr)}</em></button>`}).join('')}</div></details>`})()}
     <p class="rc-sub" style="margin:6px 0 0">${_T`A fighter carries two offerings into a bout; unused ones come home.`}</p></div>`}
 function arm94Hands(g){const E=g.eq94;if(!E)return '';const n=h=>E[h]?arm94Name(E[h]):'';const a=[n('R'),n('L')].filter(Boolean);return a.length?a.join(' + '):_T('bare hands')}
