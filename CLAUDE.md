@@ -1441,6 +1441,19 @@ One global script; files are concatenated in order. Later "version modules" patc
   coin keeps the old table, AWARD_GIFT100). O2 RANKS Glory halved (0/45/90/275/575/1050/1750/2750; WORLD COUNTS recounted once,
   'seeded100'). O3 one rank-up gift per house per rank (D.rkg100, giftsIn + after100 → out.giftDup100). Test switches C.BAL100.dent/home. Tests server
   v100bal (+ routes/v83/v84/v85/v89a/v91/v92 updated), tonl83, tonl83u, tv91e.
+- **v1.01 WINDOWS + CITY (320-v101win, last before 08-setup; his M21 + M39; display only):** M21 the correspondence windows RE-HOMED (template
+  parse, live nodes keep every data-*/id/disabled reason) into the v1.0 rooms look: TEAM SCREEN (teamHTML wrapper → `.v101tm`: fresco banner
+  `.v101ban` with the lanista portrait, house shield + name, chips incl. opinion, gradebox/tcbtn/← Back moved in; roster rows `.v101lr` (fav kept,
+  grade chip, 🔍 `.v101cardb[data-v101card]` → Recruiting Signed elsewhere on him); Correspondence `.v101cor`; envoys as PLATES `.v101plt`
+  (`v101Plate`: icon · title · chips from the old <small>); trade / debt `.tradebox` → wax tabula `.v101tab` (rm100tab classes)); a CONTRACTED
+  fighter's card (detailHTML wrapper, skipped while rosterBlockHTML runs via `V101C.ros`) → `.v101card[data-v101fc]` (`.v101fh` fresco head +
+  chips, every `.sect` block → `section.v101s` via `v101Sections`, Keeping-him rows → plates, yours: contract tabula `.v101con` with the wagebox +
+  clauses, Extend `.v101pri` / Release `.v101dan`; a rival's: poach tabula `.v101poach`); ROSTER (final mgrHTML wrapper): 298's `.rm100keep`
+  plates + the More fold as sections. Sandstone via 306's `sd100CSS` on `.v101pri/.v101sec/.v101dan`. M39 CITY: door89 wrapped to record painted
+  door heights while bake89 runs → `V101C.h` = 0.85 × median door (z × ZK89, clamp 0.34–1 tile) → CR100.cityH (313's figures) + ours; cityImg
+  wrapper (outermost): 'me' = a crowd look tinted by his robe (house colour in Manager), 'yd<cls>' = crowd100_c_<class> (walk frames while
+  lunging), 'yddoc' = the bearded look in brown; flat fallbacks rescaled into their box; figShadow89 scaled; placeholders seeded; calm = stand.
+  Kill switch localStorage flavius_v101coff=1. Test `tv101d`; shots tools/plans/v101/shots/ (before_*/after_* via the scratch shot scripts, tv101d_*).
 - **v1.0 ANIMATED GLADIATOR TOKENS (311-v100anim, last before 08-setup; his 3D answers 2026-10-11 + SPEED × ANIMATION a + ANIM MEMORY; look test
   tools/plans/look100/NOTES-look-anim.md; display only — never S, dice, RNG, the log or onlHash):** the 8 PRINTED classes wear rig92 3D stand-ins (production
   token + gear100/body100 bake + each class kit from t93Parts, mm100's LOOK per class) rendered ONCE by `node tools/art/anim100/make.js [cls…]` (SwiftShader,
