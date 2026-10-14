@@ -115,3 +115,16 @@ Online already returns (keep). Not for lessons, challenges keep their rules (att
 - I · question 1 = A (2026-10-14): ONE growth system. The silent per-bout grow() (+1 lowest, +1 win) is REPLACED by XP levels: each level =
   +1 automatically to his weakest rating (today's rule) + 1 point the player places on the level-up screen. Levels up to 100, about every 2
   bouts early and slower later; total growth over ~150 typical Ranked bouts ≈ today's (~190 points). Build after this note: server + client.
+
+## J · Injuries and care timing (his answers 2026-10-14: d, 1a, 2 ok) — src/manager/341-v102care.js, test tv102j
+Root cause he hit: 318 care101Do clears a wound AT ONCE (Medicus / surgeon / Asclepius, bath can clear) — so a fighter hurt in tonight's bout
+was healed and out of bed the same week.
+- LIGHT wounds (no surgeon needed): treatments are BOOKED (like M1's limb regrow) — book any time, the wound closes when the week ENDS,
+  he is fit next week. Surgeon (if used on light) adds ~+10 recovery fatigue next week.
+- SERIOUS wounds (injReq = surgeon / ser76): a recovery course — week of the wound: bed/rest only, NO treatment; next week: the treatment is
+  booked and the wound closes at that week's end; the week after: back with recovery fatigue +15..+20 (a bath or the Care routine reduces it).
+- Lost limbs: M1 as staged (one a week, back at week's end, +20 fatigue).
+- 1a: Asclepius follows the same rules (no instant miracle).
+- 2: rival houses use the same rules (318 care101Cpu); check with tools/mgrsim.js (injury load, wins, treasury vs before) and report.
+- UI says it plainly: on each care tile "closes when the week ends" / "this week: rest only — treatment from next week"; the road-back
+  timeline shows the weeks. Lesson/first-hour text adjusted if they promise instant cures.
