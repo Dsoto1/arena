@@ -17,21 +17,21 @@ const o=await pg.evaluate(async(SEED)=>{let sd=SEED>>>0;Math.random=()=>{sd=(sd*
   const cot=q('[data-bedpick87]');r.emptyBtn=!!cot;if(cot)cot.click();await W8(300);
   const pick=q(`.bp87bg [data-bp87="${A.id}"]`);r.offer=!!pick;if(pick)pick.click();await W8(400);
   r.inBed=inBed76(A);bedsClean76(w);r.stays=inBed76(A); /* bedsClean76 used to throw light wounds out */
-  r.cot=!!q(`.iv90care [data-unbed76="${A.id}"]`)&&!!q('.iv90av svg')&&!!q('.iv90care .tr87')&&!!q(`.iv90beds .bd90.on[data-inf90="${A.id}"]`);
+  r.cot=!!q(`.iv90list [data-unbed76="${A.id}"]`) /* v1.01: Take out on the list row (318) */&&!!q('.iv90av svg')&&!!q('.iv90care .tr87')&&!!q(`.iv90beds .bd90.on[data-inf90="${A.id}"]`);
   /* 2 · take out, then put back with the bench button */
   q(`[data-unbed76="${A.id}"]`).click();await W8(400);r.out=!inBed76(A)&&!!q(`.iv90care [data-bed76="${A.id}"]`);
   q(`.iv90care [data-bed76="${A.id}"]`).click();await W8(400);r.back=inBed76(A);
   /* 3 · the plan: Bathhouse, then it runs again next week without a tap */
   const bt=q(`.iv90care [data-plan87="bath"]`);r.bathTile=!!bt;const c0=m.coin;if(bt)bt.click();await W8(400);
-  r.plan=A.inj&&A.inj.plan87==='bath'&&A.bathWk===w.week&&m.coin===c0-5&&!!q('.iv90care .plantile.pick87[data-plan87="bath"]');
+  r.plan=A.inj&&A.inj.plan87==='bath'&&A.bathWk===w.week&&m.coin===c0-care101Coin('bath')&&!!q('.iv90care .plantile.pick87[data-plan87="bath"]');
   A.inj.until=w.week+4;const u0=A.inj.until,wk0=w.week;for(const bo of w.night.bouts)bo.done=true;w.pend=[];await endWeek();await W8(800);
   const w2=W_();r.newWeek=w2.week===wk0+1;r.again=A.bathWk===w2.week&&!!A.inj&&A.inj.plan87==='bath'&&A.inj.until<u0&&inBed76(A);if(!r.again)r.dbgA=JSON.stringify({bw:A.bathWk,wk:w2.week,inj:A.inj,u0,bed:inBed76(A),beds:w2.beds76,al:A.alive,c:!!A.contract,news:(w2.news||[]).slice(0,40).filter(n=>n.text.includes(A.name)).map(n=>n.text).join(' | ').slice(0,1500)});
   /* Rest is pickable in bed */
   await go(A.id);const rt=q(`.iv90care [data-plan87="rest"]`);if(rt)rt.click();await W8(300);r.rest=A.inj&&A.inj.plan87==='rest';
   /* 4 · beds full */
   B.inj={until:w2.week+2,label:'a deep thigh cut',pen:2};await go(B.id);
-  r.full=!!q(`.iv90care [data-bed76="${B.id}"][disabled]`)&&!!q('.full87 [data-mg="build"][data-id="valet"]');
-  m.fac=m.fac||{};m.fac.valet=1;await go(B.id);r.more=bedsOf76(m)===2&&!!q(`.iv90care [data-bed76="${B.id}"]:not([disabled])`)&&!q('.full87');
+  r.full=!!q(`.iv90care [data-bed76="${B.id}"][data-dis]`)&&!!q('.iv90care [data-mg="build"][data-id="valet"]'); /* v1.01: refusals say why; the Valetudinarium is a care option (318) */
+  m.fac=m.fac||{};m.fac.valet=1;await go(B.id);r.more=bedsOf76(m)===2&&!!q(`.iv90care [data-bed76="${B.id}"]:not([data-dis])`)&&!q('.full87');
   /* 5 · three limbs lost: one week at home to regrow one, else he retires */
   delete A.inj;delete B.inj;w2.beds76=[];const C=ros[3],D=ros[4],E=ros[5]||ros[0];C.severed=['rarm','larm','rleg'];D.severed=['rarm','lleg','rleg'];E.severed=['larm','lleg','rleg'];
   /* a CPU house's fighter with three lost limbs and an empty purse: unchanged — he retires at the first week's end */
@@ -43,7 +43,7 @@ const o=await pg.evaluate(async(SEED)=>{let sd=SEED>>>0;Math.random=()=>{sd=(sd*
   r.careLine=/maim87/.test(careHTML(C))&&/this week/.test(maimLine87(C));
   /* a bed for E too (a second bed), and he regrows only ONE limb: two lost limbs are enough to stay */
   m.fac.valet=2;bedsClean76(w3);w3.beds76.push(E.id);await go(E.id);r.cotLine=!!q('.iv90care .maim87');
-  w3.repair=Math.max(0,repCap()-HYGEIA);const he=q(`.iv90care [data-mg="heal"][data-id="${E.id}"]`);if(he)he.click();else r.dbgE=JSON.stringify({n:ros.length,beds:w3.beds76,E:E.id,inBed:inBed76(E),N:bedsOf76(m),sev:E.severed,al:E.alive});await W8(400);r.oneLimb=E.severed.length===2;w3.repair=0;await go(C.id);
+  w3.mh101={wk:w3.week,u:mh101Max(m,w3)-CARE101.h.heal}; /* v1.01: hours for one limb (318) */const he=q(`.iv90care [data-mg="heal"][data-id="${E.id}"]`);if(he)he.click();else r.dbgE=JSON.stringify({n:ros.length,beds:w3.beds76,E:E.id,inBed:inBed76(E),N:bedsOf76(m),sev:E.severed,al:E.alive});await W8(400);r.oneLimb=E.severed.length===2;w3.mh101=null;await go(C.id);
   q(`.iv90care [data-bed76="${C.id}"]`).click();await W8(400);const hb=q(`.iv90care [data-mg="heal"][data-id="${C.id}"]`);r.hyBtn=!!hb&&!hb.disabled;if(hb)hb.click();await W8(400);
   r.regrown=C.severed.length<3;if(!r.regrown)r.dbg2=JSON.stringify({bed:inBed76(C),msg:MGR.msg,rep:W_().repair,busy:MGR.busy,cap:repCap(),coin:m.coin,hb:hb&&hb.outerHTML.slice(0,200)});
   await wkEnd();r.kept=C.alive!==false&&!!C.contract&&!C.maim87;r.retired=D.alive===false&&D.retired===true;r.keptE=E.alive!==false&&!!E.contract&&!E.maim87&&E.severed.length===2;r.noNag=!weekChecklist().some(x=>x.ic==='🦿');if(!r.kept)r.dbg3=JSON.stringify({wk:W_().week,a:C.alive,c:!!C.contract,m:C.maim87,s:C.severed,inj:C.inj});

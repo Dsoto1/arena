@@ -22,23 +22,23 @@ const o=await pg.evaluate(async()=>{let sd=90;Math.random=()=>{sd=(sd*1664525+10
   /* sweep: a resting fighter auto-entered somewhere comes off the card */
   const bo0=w.night.bouts[bi];const out=bo0.ents.find(id=>!mine.has(id));bo0.ents[bo0.ents.indexOf(out)]=R.id;r.sweep=sweep90(w)===1&&!bo0.ents.includes(R.id)&&bo0.ents.length===boutSize(bo0);
   /* resting a fighter who is on the card is refused */
-  const C=ros.find(g=>g!==R);const o3=bo0.ents.find(id=>!mine.has(id));bo0.ents[bo0.ents.indexOf(o3)]=C.id;MGR.inf90=C.id;await go('infirm');
-  const rb=q(`.iv90care [data-rest="${C.id}"]`);if(rb){rb.disabled=false;rb.click()}await W8(300);r.noRestOnCard=!!rb&&C.restWk!==w.week;
+  const C=ros.find(g=>g!==R);const o3=bo0.ents.find(id=>!mine.has(id));bo0.ents[bo0.ents.indexOf(o3)]=C.id;MGR.tr92=C.id;await go('practice'); /* v1.01: rest lives in the Training Yard's Recovery block (318) */
+  const rb=q(`.v101rec2 [data-rest="${C.id}"]`);if(rb){rb.disabled=false;rb.click()}await W8(300);r.noRestOnCard=!!rb&&C.restWk!==w.week;
   bo0.ents[bo0.ents.indexOf(C.id)]=o3;
   /* undo the rest from the Infirmary → he may be entered again */
-  MGR.inf90=R.id;await go('infirm');const ub=q(`.iv90care [data-rest="${R.id}"]`);if(ub)ub.click();await W8(300);r.undo=R.restWk!==w.week;await go('night');
+  MGR.tr92=R.id;await go('practice');const ub=q(`.v101rec2 [data-rest="${R.id}"]`);if(ub)ub.click();await W8(300);r.undo=R.restWk!==w.week;await go('night');
   const opt2=q(`select#ent${bi} option[value="${R.id}"]`);r.unlocked=!!opt2&&!opt2.disabled&&/Fresh/.test(opt2.textContent);
   /* ---- 2 · the Infirmary ---- */
   const A=ros[0]===R?ros[1]:ros[0];const B=ros.find(g=>g!==A&&g!==R&&g!==C)||C;
   A.inj={until:w.week+2,label:'a torn shoulder',pen:3};B.fat=74;MGR.inf90=null;await go('infirm');
   r.list=document.querySelectorAll('.iv90list .iv90row').length>=2&&!!q(`.iv90row.on[data-inf90="${A.id}"]`)&&!!q(`.iv90row[data-inf90="${B.id}"] .fb90-worn`)&&!!q('.iv90row .iv90mb.hp')&&!!q('.iv90row .iv90mb.ft');
   r.mid=!!q('.iv90mid .iv90hp .sg90')&&!!q('.iv90mid .iv90ft .iv90fb i')&&!!q('.iv90mid .iv90av svg .glow90')&&!!q('.iv90mid .sg90.wd');
-  r.opts=!!q('.iv90care .iv90s.wd .plantile .pd90')&&!!q(`.iv90care [data-bed76="${A.id}"]`)&&!!q(`.iv90care [data-bath="${A.id}"]`)&&!!q('.iv90care .iv90s.ba');
+  r.opts=!!q('.iv90care .iv90s.wd .plantile .pd90')&&!!q(`.iv90care [data-bed76="${A.id}"]`)&&!!q('.iv90care .v101ord'); /* v1.01: the bathhouse moved to the yard (318) */
   const med=q(`.iv90care [data-mg="medic"][data-id="${A.id}"]`);const c0=m.coin;if(med)med.click();await W8(400);r.cure=!!med&&!A.inj&&m.coin<c0;
-  const row=q(`[data-inf90="${B.id}"]`);if(row)row.click();await W8(400);r.select=MGR.inf90===B.id&&!!q(`.iv90care [data-bath="${B.id}"]`)&&!!q('.iv90av.worn');
-  const f0=B.fat;q(`.iv90care [data-bath="${B.id}"]`).click();await W8(400);r.rub=B.fat===f0-10;
-  q(`.iv90care [data-rest="${B.id}"]`).click();await W8(400);r.rest=B.restWk===w.week;
-  q(`.iv90care [data-care90="${B.id}"]`).click();await W8(400);r.care=B.ord87&&B.ord87.r==='care';
+  const row=q(`[data-inf90="${B.id}"]`);if(row)row.click();await W8(400);r.select=MGR.inf90===B.id&&!!q('.iv90av.worn');
+  MGR.tr92=B.id;await go('practice');const f0=B.fat;q(`.v101rec2 [data-bath="${B.id}"]`).click();await W8(400);r.rub=B.fat===f0-10;
+  q(`.v101rec2 [data-rest="${B.id}"]`).click();await W8(400);r.rest=B.restWk===w.week;
+  q(`.v101rec2 [data-care90="${B.id}"]`).click();await W8(400);r.care=B.ord87&&B.ord87.r==='care';await go('infirm');
   const why=q('[data-cure90]');if(why)why.click();await W8(300);r.guide=!!q('.cg90 .careguide[open]');const x=q('[data-cg90x]');if(x)x.click();await W8(200);r.guideClose=!q('.cg90');
   B.restWk=null;ord87Set(B,'off');
   /* ---- 4 · fatigue bands in a bout ---- */
