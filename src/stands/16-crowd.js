@@ -492,7 +492,7 @@ async function doSpear(player,spect){
 /* humanSpear — the human's spear window: pick a spectator in reach. */
 async function humanSpear(player){
   const t=spearTargets(player);if(!t.length)return;
-  const i=await modal(_T('Spear a spectator'),`<p>${_T`${cfAmt87(3)}, once per event. Roll 2 hit dice; 1 hit removes the spectator. You can only reach spectators whose section faces your quadrant (Q${quadOf(player)}). Every other spectator will hate you for it.`}</p>`,t.map((s,i)=>({label:`${s.name}${s.human?_T(' (the human spectator)'):''}`,sub:_T`${SECTIONS[s.sec].n} · ${SPECT_TASTES[s.taste][0]} fan · ${cfAmt87(s.cf)} · ${moodEmo(s.mood)}${s.fav!=null?' · backs '+S.players[s.fav].name:''}`,value:i})).concat([{label:_T('Cancel'),value:null}]));
+  const i=await askW(player,'spear',_T('Spear a spectator'),`<p>${_T`${cfAmt87(3)}, once per event. Roll 2 hit dice; 1 hit removes the spectator. You can only reach spectators whose section faces your quadrant (Q${quadOf(player)}). Every other spectator will hate you for it.`}</p>`,t.map((s,i)=>({label:`${s.name}${s.human?_T(' (the human spectator)'):''}`,sub:_T`${SECTIONS[s.sec].n} · ${SPECT_TASTES[s.taste][0]} fan · ${cfAmt87(s.cf)} · ${moodEmo(s.mood)}${s.fav!=null?' · backs '+S.players[s.fav].name:''}`,value:i})).concat([{label:_T('Cancel'),value:null}]));
   if(i==null)return;await doSpear(player,t[i]);
 }
 /* ---- turn rotation upkeep: spectators earn 1 CF, then may spend it (p.35) ---- */
@@ -572,7 +572,7 @@ async function humanSpectatorTurn(me){
       {label:_T('Change section'),sub:_T`${cfAmt87(3)} · move to another stand`,value:'move',disabled:me.cf<3},
       {label:_T('Chant “Tholo!”'),sub:tholoOK?_T`every quadrant has a spectator with ${cfAmt87(3)}: each pays 3`:bossSpent(_T('Tholo'))?_T('Tholo has already entered this event — once per event'):_T`needs a spectator with ${cfAmt87(3)} in every quadrant`,value:'tholo',disabled:!tholoOK},
       {label:_T('Watch this rotation'),value:'pass',primary:1}];
-    const v=await modal(_T`Spectator upkeep · you have ${cfAmt87(me.cf)}`,`<p>${_T`${me.fav!=null&&S.players[me.fav]?_T`📣 You cheer for <b>${esc(S.players[me.fav].name)}</b>. `:''}<b>One action per upkeep.</b> You sit in <b>${SECTIONS[me.sec].n}</b> (Q${q}), the section of ${secPlayer(me.sec)?nm(secPlayer(me.sec)):_T('no gladiator')}. You can only reach gladiators standing in Q${q}: ${inQ.length?inQ.map(nm).join(', '):_T('nobody right now')}.`}</p>${hint(_T`Spectators earn ${cfAmt87(1)} per turn rotation. A stone that eliminates a gladiator hands you all of their CF.`)}`,opts);
+    const v=await askW(me,'standsUpkeep',_T`Spectator upkeep · you have ${cfAmt87(me.cf)}`,`<p>${_T`${me.fav!=null&&S.players[me.fav]?_T`📣 You cheer for <b>${esc(S.players[me.fav].name)}</b>. `:''}<b>One action per upkeep.</b> You sit in <b>${SECTIONS[me.sec].n}</b> (Q${q}), the section of ${secPlayer(me.sec)?nm(secPlayer(me.sec)):_T('no gladiator')}. You can only reach gladiators standing in Q${q}: ${inQ.length?inQ.map(nm).join(', '):_T('nobody right now')}.`}</p>${hint(_T`Spectators earn ${cfAmt87(1)} per turn rotation. A stone that eliminates a gladiator hands you all of their CF.`)}`,opts);
     if(!v||v==='pass')return;
     if(v.startsWith('stone:')){me.cf-=2;const q9=S.players[+v.slice(6)];if(typeof spectHelpCheck==='function')spectHelpCheck('stone',q9);await spectStone(me,q9);render();return}
     if(v.startsWith('offer:')){me.cf-=8;const p=S.players[+v.slice(6)];if(typeof spectHelpCheck==='function')spectHelpCheck('offer',p);const off=drawOffer();p.items.push(mkOffer(off));stat(p,'spectOffers');stat(p,'spectVal',OFFER_VAL[off]||4);log(_T`You throw ${nm(p)} an offering from the stands: <b>${OFFER[off].n}</b> (${OFFER[off].s}).`);render();return}
@@ -719,7 +719,7 @@ const canSelfWager=player=>!player.cpu&&wagersOpen()&&!player.selfBet&&player.co
 async function humanSelfWager(player){
   const o=oddsTable().find(x=>x.ps.includes(player));if(!o)return;
   const opts=[2,4,6,10].filter(v=>v<=player.coin).map(v=>({label:coinAmt87(v),sub:_T`pays ${Math.round(v*o.odds)} if ${EV().teams?_T('your team wins'):_T('you win')}`,value:v}));
-  const v=await modal(_T('Wager on yourself'),`<p>${_T`The bookmaker offers <b>${fmtOdds(o.odds)}</b> on ${esc(o.label)}. Coin you stake leaves your purse now; if you win the event, the payout is added to your coin (and your Royal Reserve). Once per event.`}</p>`,opts.concat([{label:_T('Cancel'),value:null}]));
+  const v=await askW(player,'selfWager',_T('Wager on yourself'),`<p>${_T`The bookmaker offers <b>${fmtOdds(o.odds)}</b> on ${esc(o.label)}. Coin you stake leaves your purse now; if you win the event, the payout is added to your coin (and your Royal Reserve). Once per event.`}</p>`,opts.concat([{label:_T('Cancel'),value:null}]));
   if(!v)return;placeSelfBet(player,v,o.odds);
 }
 /* placeSelfBet — a gladiator slips coin to the bookmaker on themselves (logged on the exchange). */

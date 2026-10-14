@@ -114,7 +114,7 @@ async function defend(victim, damage, location, pw, bonus, h, attackerName, atta
       value: 'take',
       primary: 1
     });
-    choice = await modal(_T('Incoming attack'), `<p>${_T`${attackerName} will deal <b>${damage}</b> damage to your ${LOCN[location]} (${victim.ap[location]} AP, ${victim.hp[location]} HP).`}</p>${hint('defend')}`, btns);
+    choice = await askW(victim, 'defend', _T('Incoming attack'), `<p>${_T`${attackerName} will deal <b>${damage}</b> damage to your ${LOCN[location]} (${victim.ap[location]} AP, ${victim.hp[location]} HP).`}</p>${hint('defend')}`, btns);
   }
   if (choice === 'm') {
     fx(victim.r, victim.c, _T('dodged!'), '#9fd3ff', {
@@ -147,7 +147,7 @@ async function minervaStep(victim, attacker) {
     r: a[0],
     c: a[1]
   }, attacker) : 0)[0];else {
-    const k = await modal(_T("Minerva's Push"), `<p>${_T`Step one tile in any direction.`}</p>`, free.map(([r, c]) => ({
+    const k = await askW(victim, 'minervaStep', _T("Minerva's Push"), `<p>${_T`Step one tile in any direction.`}</p>`, free.map(([r, c]) => ({
       label: tl(r, c),
       sub: attacker ? _T`${cheb({
         r,
@@ -188,7 +188,7 @@ async function chooseLocation(player, other, how) {
     if (player.cpu) return weak[0];
     {
       const best = focusBest(other, locs);
-      return await modal(_T('Focus!'), `<p>${_T`Choose where to strike ${esc(other.name)}. 💡 The gold one is the quickest way to put them down.`}</p>`, locs.map(l => ({
+      return await askW(player, 'focusLoc', _T('Focus!'), `<p>${_T`Choose where to strike ${esc(other.name)}. 💡 The gold one is the quickest way to put them down.`}</p>`, locs.map(l => ({
         label: `${l === best ? '💡 ' : ''}${LOCN[l]}`,
         sub: _T`AP ${other.ap[l]} · HP ${other.hp[l]}${l === best ? _T(' · the fastest finish') : ''}`,
         value: l,
@@ -203,7 +203,7 @@ async function chooseLocation(player, other, how) {
   /* v0.46: show the three dice, and point at the location that finishes the target fastest (a lost head or chest is out) */
   const best = focusBest(other, opts);
   const dice = rolls.map(l => `<span class="focdie ${l === best ? 'best' : ''}">${typeof locIcon === 'function' ? locIcon(l) : ''}<b>${LOCN[l]}</b></span>`).join('');
-  return await modal(_T('🎯 Focus roll'), `<p>${_T`The location die was rolled three times for <b>${esc(other.name)}</b>:`}</p><div class="focdice">${dice}</div><p class="rc-sub" style="margin:6px 0 0">${_T`Pick one result to strike. 💡 The gold one is the quickest way to put ${esc(other.name)} down.`}</p>`, opts.map(l => ({
+  return await askW(player, 'focusRoll', _T('🎯 Focus roll'), `<p>${_T`The location die was rolled three times for <b>${esc(other.name)}</b>:`}</p><div class="focdice">${dice}</div><p class="rc-sub" style="margin:6px 0 0">${_T`Pick one result to strike. 💡 The gold one is the quickest way to put ${esc(other.name)} down.`}</p>`, opts.map(l => ({
     label: `${l === best ? '💡 ' : ''}${LOCN[l]}`,
     sub: _T`AP ${other.ap[l]} · HP ${other.hp[l]}${l === best ? _T(' · the fastest finish') : ''}${l === 'head' || l === 'chest' ? _T(' · a vital spot') : ''}`,
     value: l,
@@ -595,7 +595,7 @@ async function lyreControl(player) {
       d: dOf(x)
     })).filter(o => o.d < 1e9).sort((a, b) => a.d - b.d)[0]?.x;
   } else {
-    const id = await modal(_T('Lyre of Orpheus'), `<p>${_T`Serenade one beast and lead it toward your starting tile ${tl(sr, sc)}. Two captures let you exit. Step off your starting tile so the beast can reach it.`}</p>`, cands.map(x => ({
+    const id = await askW(player, 'lyreBeast', _T('Lyre of Orpheus'), `<p>${_T`Serenade one beast and lead it toward your starting tile ${tl(sr, sc)}. Two captures let you exit. Step off your starting tile so the beast can reach it.`}</p>`, cands.map(x => ({
       label: `${typeof npcTokHTML === 'function' ? `<span class="tok99">${npcTokHTML(x, 30)}</span>` : ''}${x.name} (${NPCT[x.t].n})`,
       sub: `${tl(x.r, x.c)} · ${dOf(x) >= 1e9 ? _T('no path') : dOf(x) + _T(' moves away')}`,
       value: x.id
@@ -813,7 +813,7 @@ async function mfLimbSwap(player) {
   }
   let pick;
   if (player.cpu) pick = pool.sort((a, b) => wScore(W[b.k]) - wScore(W[a.k]))[0];else {
-    const i = await modal(_T('Limb Justice'), `<p>${_T`Trade a severed limb weapon for any remaining weapon in the market.`}</p>`, pool.map((x, i) => ({
+    const i = await askW(player, 'limbSwap', _T('Limb Justice'), `<p>${_T`Trade a severed limb weapon for any remaining weapon in the market.`}</p>`, pool.map((x, i) => ({
       label: W[x.k].n,
       sub: _T`LV${x.lv} · ${wStats(mkW(x.k))}`,
       value: i,
@@ -1038,14 +1038,14 @@ async function resolveDrawn(player, k) {
 async function pickNPC(player, title, filter, note = '') {
   const c = S.npcs.filter(filter);
   if (!c.length) {
-    if (!player.cpu) await modal(title, `<p>${_T`There is no valid NPC in the arena.`}</p>`, [{
+    if (!player.cpu) await askW(player, 'npcNone', title, `<p>${_T`There is no valid NPC in the arena.`}</p>`, [{
       label: 'OK',
       value: 1
     }]);
     return null;
   }
   if (player.cpu) return c.sort((a, b) => cheb(player, a) - cheb(player, b))[0];
-  const id = await modal(title, `<p>${note}</p>`, c.map(n => ({
+  const id = await askW(player, 'npcPick', title, `<p>${note}</p>`, c.map(n => ({
     label: `${typeof npcTokHTML === 'function' ? `<span class="tok99">${npcTokHTML(n, 30)}</span>` : ''}${n.name} (${NPCT[n.t].n})`, /* v0.99: the beast's token round beside its name */
     sub: _T`${tl(n.r, n.c)} · ${n.hp} HP${n.tamedBy != null ? _T(' · tamed by ') + S.players[n.tamedBy].name : ''}`,
     value: n.id
@@ -1104,13 +1104,13 @@ async function useItem(player, it) {
       {
         const sev = LOCS.filter(l => player.hp[l] <= 0 && l !== 'head' && l !== 'chest');
         if (!sev.length) {
-          if (!player.cpu) await modal(_T('Nothing to regrow'), `<p>${_T`You have no severed limbs.`}</p>`, [{
+          if (!player.cpu) await askW(player, 'regrowNone', _T('Nothing to regrow'), `<p>${_T`You have no severed limbs.`}</p>`, [{
             label: 'OK',
             value: 1
           }]);
           return false;
         }
-        const l = player.cpu ? sev[0] : await modal(_T('Blessings of Hygeia'), `<p>${_T`Choose the limb to regrow.`}</p>`, sev.map(x => ({
+        const l = player.cpu ? sev[0] : await askW(player, 'limbRegrow', _T('Blessings of Hygeia'), `<p>${_T`Choose the limb to regrow.`}</p>`, sev.map(x => ({
           label: LOCN[x],
           value: x
         })));
@@ -1133,7 +1133,7 @@ async function useItem(player, it) {
         if (!n) return false;
         const targets = activePlayers().filter(other => other !== player && !other.underground && cheb(player, other) <= 4);
         if (!targets.length) {
-          if (!player.cpu) await modal(_T('Meat Lure'), `<p>${_T`No other gladiator is within 4 tiles to throw the lure at.`}</p>`, [{
+          if (!player.cpu) await askW(player, 'lureNone', _T('Meat Lure'), `<p>${_T`No other gladiator is within 4 tiles to throw the lure at.`}</p>`, [{
             label: 'OK',
             value: 1
           }]);
@@ -1141,7 +1141,7 @@ async function useItem(player, it) {
         }
         let q;
         if (player.cpu) q = targets.sort((a, b) => cheb(n, a) - cheb(n, b))[0];else {
-          const id = await modal(_T('Meat Lure'), `<p>${_T`Throw the lure at which gladiator (within 4 tiles)? ${n.name} will hunt them.`}</p>`, targets.map(target => ({
+          const id = await askW(player, 'lureTarget', _T('Meat Lure'), `<p>${_T`Throw the lure at which gladiator (within 4 tiles)? ${n.name} will hunt them.`}</p>`, targets.map(target => ({
             label: target.name,
             sub: _T`${cheb(n, target)} tiles from ${n.name}`,
             value: target.id
@@ -1214,7 +1214,7 @@ async function useItem(player, it) {
             value: 'swap'
           });
           if (!b.length) {
-            await modal(_T('Ammo'), `<p>${_T`No weapon needs ammo, and you need 2 Ammo cards to exchange for an ammo weapon.`}</p>`, [{
+            await askW(player, 'ammoNone', _T('Ammo'), `<p>${_T`No weapon needs ammo, and you need 2 Ammo cards to exchange for an ammo weapon.`}</p>`, [{
               label: 'OK',
               value: 1
             }]);
@@ -1224,7 +1224,7 @@ async function useItem(player, it) {
             label: _T('Cancel'),
             value: null
           });
-          mode = await modal(_T('Ammo'), hint('ammo'), b);
+          mode = await askW(player, 'ammoMode', _T('Ammo'), hint('ammo'), b);
         }
         if (!mode) return false;
         if (mode === 'refill') {
@@ -1234,7 +1234,7 @@ async function useItem(player, it) {
         }
         let pick;
         if (player.cpu) pick = pool.sort((a, b) => wScore(W[b.x]) - wScore(W[a.x]))[0];else {
-          const i = await modal(_T('Ammo exchange'), `<p>${_T`Choose an ammo weapon.`}</p>`, pool.map((o, i) => ({
+          const i = await askW(player, 'ammoPick', _T('Ammo exchange'), `<p>${_T`Choose an ammo weapon.`}</p>`, pool.map((o, i) => ({
             label: W[o.x].n,
             sub: wStats(mkW(o.x)),
             value: i,
@@ -1259,7 +1259,7 @@ async function useItem(player, it) {
     case 'fidelis':
     case 'minerva':
     case 'elixirSave':
-      if (!player.cpu) await modal(C.n, `<p>${_T`This card is played as a reaction. You will be asked when an attack is rolled against you or by you.`}</p>`, [{
+      if (!player.cpu) await askW(player, 'cardReaction', C.n, `<p>${_T`This card is played as a reaction. You will be asked when an attack is rolled against you or by you.`}</p>`, [{
         label: 'OK',
         value: 1
       }]);

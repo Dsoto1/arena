@@ -117,9 +117,11 @@ window.addEventListener('keydown',e=>{if(!RPP.on||S!==RPP.S||!e.isTrusted)return
       const nb={label:_T('🎞 Watch the replay'),sub:_T('every move again, from the first turn'),value:'rp100w'};buttons=buttons.slice();buttons.splice(i<0?buttons.length:i,0,nb);
       return Promise.resolve(base.call(this,title,body,buttons,opt)).then(v=>{if(v==='rp100w')setTimeout(()=>rp100Play(id),160);return v})}}catch(e){console.error(e)}
   const R=rp100Live();if(!R||(typeof ONLM!=='undefined'&&ONLM.info>0))return base.apply(this,arguments);
-  const u=rp100UiOpen(RPR.uiAt);const pre=rp100H();const t=String(title||'').slice(0,40);
+  /* v1.01: a question asked by the rules (326 ask) is recorded with its kind and is never "maybe the player's own" (u) */
+  const Q=typeof askNow==='function'?askNow():null;const kd=Q&&!Q.local?Q.kind:null;
+  const u=!kd&&rp100UiOpen(RPR.uiAt);const pre=rp100H();const t=String(title||'').slice(0,40);
   return Promise.resolve(base.apply(this,arguments)).then(v=>{try{let vv=v===undefined?null:v;try{JSON.stringify(vv)}catch(x){vv=null}
-      if(rp100Live()===R)rp100Push({k:'modal',v:vv,t,h:pre,...(u?{u:1}:{})})}catch(e){}return v})}}
+      if(rp100Live()===R)rp100Push({k:'modal',v:vv,t,...(kd?{kd}:{}),h:pre,...(u?{u:1}:{})})}catch(e){}return v})}}
 /* 🤖 / 🎮 hand-offs, ⏭ to the end, 162's off-turn gear, the sand-glass */
 {const base=seatToggle;seatToggle=async function(p){if(RPP.on&&S===RPP.S&&!RPP.applying)return;
   try{if(rp100Live()&&!RPP.applying&&seatCanToggle(p)){const seat=S.players.indexOf(p);rp100Push(rp100Settled()?{k:'seat',seat,h:rp100H()}:{k:'seat',seat,...rp100Pos()})}}catch(e){}
@@ -186,8 +188,9 @@ function rp100Rng(){const R0=RNG;if(!R0||R0._rp100)return;const nx=R0.next;R0.ne
 function rp100Head(){while(RPP.used.has(RPP.i))RPP.i++;let j=RPP.i;while(RPP.ins[j]&&(RPP.used.has(j)||RPP.ins[j].k==='modal'&&RPP.ins[j].u))j++;return j}
 /* the recorded window a window opening now answers to: the next one in the list with its title, past windows that only MAY have been the player's
    own and moves timed by the dice (those may land just after it); -1 = the recording does not know it (it opens for the viewer) */
-function rp100Match(t){let k=RPP.i;for(const P of RPP.pend)k=Math.max(k,P.j+1);for(let n=0;n<10;k++){const x=RPP.ins[k];if(!x)return -1;if(RPP.used.has(k))continue;n++;
-    if(x.k==='modal'&&x.t===t)return k;if(!((x.k==='modal'&&x.u)||x.pos))return -1}return -1}
+function rp100Match(t,kd){let k=RPP.i;for(const P of RPP.pend)k=Math.max(k,P.j+1);for(let n=0;n<10;k++){const x=RPP.ins[k];if(!x)return -1;if(RPP.used.has(k))continue;n++;
+    /* v1.01: by the question's kind when both sides know it (any language), else by the title (older recordings) */
+    if(x.k==='modal'&&(x.kd&&kd?x.kd===kd:x.t===t))return k;if(!((x.k==='modal'&&x.u)||x.pos))return -1}return -1}
 function rp100PosHit(){const j=rp100Head(),x=RPP.ins[j];if(x&&x.pos&&x.s===RNG.s&&!x._q){x._q=1;setTimeout(()=>rp100ApplyPos(x),0)}}
 function rp100ApplyPos(x){if(!RPP.on||S!==RPP.S)return;const j=rp100Head();if(RPP.ins[j]!==x)return;RPP.i=j+1;rp100Do(x);setTimeout(rp100Pump,30)}
 /* each turn: the sand-glass (if it ran out here), ⏭ next turn, the round jump */
@@ -208,8 +211,8 @@ function rp100Pump(){clearTimeout(RPP.pt);if(!RPP.on||S!==RPP.S||!S||S.over)retu
   if(x.k==='modal'){if(since>3000){RPP.i=j+1;RPP.readyAt=0;rp100Div(_T('a window never came'))}return}
   if(since<rp100Gap(RP100.GAP))return;RPP.readyAt=0;RPP.i=j+1;if(x.h&&x.h!==rp100H())rp100Div(_T`turn ${S.turnNo}`);rp100Do(x);setTimeout(rp100Pump,30)}
 function rp100Do(x){RPP.applying++;try{rp100Caption(x);
-    if(x.k==='tile'){const p=cur();if(p)p.focusRoll=!!x.focus;S.mode=x.mode;try{computeHL()}catch(e){}onTile(x.r,x.c)}
-    else if(x.k==='act'){const b=document.createElement('button');b.type='button';for(const [k,v] of Object.entries(x.d||{}))b.dataset[k]=v;b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}
+    if(x.k==='tile')command(S.players.indexOf(cur()),{k:'tile',r:x.r,c:x.c,mode:x.mode,focus:x.focus});
+    else if(x.k==='act')command(S.players.indexOf(cur()),{k:'act',d:{...(x.d||{})}});
     else if(x.k==='seat'){const p=S.players[x.seat];if(p)seatToggle(p)}
     else if(x.k==='sim')simToEnd(true);
     else if(x.k==='gear'){const p=S.players[x.seat];if(p){if(x.op==='swap')gear88Swap(p);else gear88Take(p)}}}
@@ -219,7 +222,7 @@ function rp100PlayModal(base,self,args){const [title,,buttons,opt]=args;
   if(rp100UiOpen(RPP.uiAt))return base.apply(self,args);
   const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;
   if(typeof ONLM!=='undefined'&&ONLM.info>0)return Promise.resolve(def);
-  if(RPP.onl||S.over)return base.apply(self,args);const t=String(title||'').slice(0,40);const j=rp100Match(t);
+  if(RPP.onl||S.over)return base.apply(self,args);const t=String(title||'').slice(0,40);const Q=typeof askNow==='function'?askNow():null;const j=rp100Match(t,Q&&!Q.local?Q.kind:null);
   if(j<0){rp100Div(rp100Strip(title).slice(0,40));return base.apply(self,args)}
   return new Promise(res=>{RPP.pend.push({res,j,t,title:String(title||''),buttons:buttons||[],def,pre:rp100H(),at:0});setTimeout(rp100Pump,0)})}
 function rp100Decide(){const P=RPP.pend[0];const j=P.j,x=RPP.ins[j];

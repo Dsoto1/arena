@@ -48,6 +48,8 @@ browser context per recording, so state read from outside S (localStorage, Math.
 **When to re-record:** only after a DELIBERATE rule or AI change (new card text, balance, a fixed rule bug) — say so in the
 commit. A refactor, a visual change or a perf change must replay unchanged; if it doesn't, the change is wrong, not the golden.
 Changing what the probe or `onlHash` reads also needs `--update`.
+The online golden also needs `--update` when the lockstep input format changes (v1.01 question port: window answers carry
+`kd`/`ds` and their hashes include them); it was recorded with `ONL_N=70` so the stream holds window answers (defend, shield, card).
 
 ## The server
 

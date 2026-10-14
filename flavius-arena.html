@@ -3779,7 +3779,7 @@ async function carmWeapon(player, lv, key) {
     return;
   }
   let k;
-  if (player.cpu) k = pool.sort((a, b) => wScore(W[b]) - wScore(W[a]))[0];else k = await modal(_T('Choose a weapon'), `<p>${_T`Any remaining level ${lv} weapon.`}</p>`, pool.map(x => ({
+  if (player.cpu) k = pool.sort((a, b) => wScore(W[b]) - wScore(W[a]))[0];else k = await askW(player, 'pickWeapon', _T('Choose a weapon'), `<p>${_T`Any remaining level ${lv} weapon.`}</p>`, pool.map(x => ({
     label: W[x].n,
     sub: wStats(mkW(x)),
     value: x,
@@ -4701,7 +4701,7 @@ async function chooseArmorLoc(player, key, title, single = false) {
     const free = opts.filter(l => !armorConflict(player, l, key));
     return [(free.length ? free : opts).sort((a, b) => player.ap[a] - player.ap[b])[0]];
   }
-  const v = await modal(title || _T`Equip ${d.n}`, `<p>${_T`${d.n}: ${d.ap} AP on the ${PT_NAME[d.pt]} equip point${d.stack ? ' (stackable)' : ''}${d.bonus ? ' · bonus ' + Object.entries(d.bonus).map(([l, a]) => `+${a} ${LOCN[l]}`).join(', ') : ''}. Choose a side.`}</p>`, opts.map(l => {
+  const v = await askW(player, 'armorSide', title || _T`Equip ${d.n}`, `<p>${_T`${d.n}: ${d.ap} AP on the ${PT_NAME[d.pt]} equip point${d.stack ? ' (stackable)' : ''}${d.bonus ? ' · bonus ' + Object.entries(d.bonus).map(([l, a]) => `+${a} ${LOCN[l]}`).join(', ') : ''}. Choose a side.`}</p>`, opts.map(l => {
     const c = armorConflict(player, l, key);
     return {
       label: LOCN[l],
@@ -4735,7 +4735,7 @@ async function gainArmorPiece(player, key, apOverride, {
     if (c) {
       // same equip point already taken in this layer: swap or keep
       let swap;
-      if (player.cpu) swap = (apOverride ?? d.ap) + (d.bonus ? Object.values(d.bonus).reduce((a, b) => a + b, 0) : 0) > Math.min(c.ap, player.ap[l]) + (ARM[c.key].bonus ? 1 : 0);else swap = await modal(_T`${LOCN[l]}: equip point taken`, `<p>${_T`Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[ARM[c.key].pt] || PT_NAME[d.pt]} point. Only one ${d.stack ? _T('stackable') : _T('regular')} armor fits there${d.stack ? '' : _T('; stackable padding and belts can sit beneath it')}.`}</p>`, [{
+      if (player.cpu) swap = (apOverride ?? d.ap) + (d.bonus ? Object.values(d.bonus).reduce((a, b) => a + b, 0) : 0) > Math.min(c.ap, player.ap[l]) + (ARM[c.key].bonus ? 1 : 0);else swap = await askW(player, 'armorSwap', _T`${LOCN[l]}: equip point taken`, `<p>${_T`Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[ARM[c.key].pt] || PT_NAME[d.pt]} point. Only one ${d.stack ? _T('stackable') : _T('regular')} armor fits there${d.stack ? '' : _T('; stackable padding and belts can sit beneath it')}.`}</p>`, [{
         label: _T`Swap in ${d.n}`,
         sub: _T`${apOverride ?? d.ap} AP · the old piece drops at your feet`,
         value: 1,
@@ -4825,13 +4825,13 @@ async function distributeAP(player, n, why) {
 async function apUp(player, n) {
   const locs = LOCS.filter(l => player.hp[l] > 0 && player.ap[l] > 0 && player.ap[l] < 7);
   if (!locs.length) {
-    if (!player.cpu) await modal(_T('No armored location'), `<p>${_T`AP upgrades only apply to a location that already has armor.`}</p>`, [{
+    if (!player.cpu) await askW(player, 'apUpNone', _T('No armored location'), `<p>${_T`AP upgrades only apply to a location that already has armor.`}</p>`, [{
       label: 'OK',
       value: 1
     }]);
     return false;
   }
-  const loc = player.cpu ? locs.sort((a, b) => player.ap[a] - player.ap[b] || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b))[0] : await modal(_T`AP Upgrade (+${n})`, `<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`, locs.map(l => ({
+  const loc = player.cpu ? locs.sort((a, b) => player.ap[a] - player.ap[b] || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b))[0] : await askW(player, 'apUpLoc', _T`AP Upgrade (+${n})`, `<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`, locs.map(l => ({
     label: LOCN[l],
     sub: _T`AP ${player.ap[l]} → ${Math.min(7, player.ap[l] + n)}`,
     value: l
@@ -5018,7 +5018,7 @@ async function askCard(player, keys, title, text, cpuWants) {
   const it = keys.map(k => player.items.find(x => x.kind === 'card' && x.key === k)).find(Boolean);
   if (!it) return null;
   let use;
-  if (player.cpu) use = (player.diff === 'hard' || rand() < (player.diff === 'easy' ? .5 : .75)) && cpuWants(it.key);else use = await modal(title, `<p>${text}</p>`, [{
+  if (player.cpu) use = (player.diff === 'hard' || rand() < (player.diff === 'easy' ? .5 : .75)) && cpuWants(it.key);else use = await askW(player, 'useCard', title, `<p>${text}</p>`, [{
     label: _T`Play ${CARDS[it.key].n}`,
     sub: CARDS[it.key].d,
     value: 1,
@@ -5069,7 +5069,7 @@ async function hurt(victim, location, damage, source, prefix, {
       const ab = Math.min(rem, w.absorb);
       let use;
       if (victim.cpu) use = victim.diff === 'hard' ? ab >= 2 || victim.ap[location] + victim.hp[location] - rem <= 1 || w.usesLeft >= 3 : rand() < (victim.diff === 'easy' ? .8 : .95); // hard lanistae save uses on chip damage when they can afford to
-      else use = await modal(_T`Raise the ${w.n}?`, `<p>${_T`${prefix || _T('An attack')} brings <b>${rem} damage</b> at your ${LOCN[location].toLowerCase()}. The ${w.n} can absorb <b>${ab}</b> of it; the rest falls on armor, then flesh.`}</p>${typeof hint === 'function' ? hint('shield') : ''}`, [{
+      else use = await askW(victim, 'shieldRaise', _T`Raise the ${w.n}?`, `<p>${_T`${prefix || _T('An attack')} brings <b>${rem} damage</b> at your ${LOCN[location].toLowerCase()}. The ${w.n} can absorb <b>${ab}</b> of it; the rest falls on armor, then flesh.`}</p>${typeof hint === 'function' ? hint('shield') : ''}`, [{
         label: wIco87('abs') + _T`Absorb ${ab} damage`,
         sub: `${wIco87('use')}${w.usesLeft - 1 === 0 ? _T('this use BREAKS the shield') : _T`${w.usesLeft - 1} use${w.usesLeft - 1 === 1 ? '' : 's'} left after`}`,
         value: 1,
@@ -5664,7 +5664,7 @@ async function marketRoll(player, kind, lv, {
   // returns key
   let slot;
   if (player.mchoice && !free) {
-    slot = player.cpu ? [1, 2, 3].sort((a, b) => itemValue(kind, S.market[kind][lv].slots[b - 1]) - itemValue(kind, S.market[kind][lv].slots[a - 1]))[0] : await modal(_T('Choose'), `<p>${_T`Pick the slot you want.`}</p>`, [1, 2, 3, 4].map(s => ({
+    slot = player.cpu ? [1, 2, 3].sort((a, b) => itemValue(kind, S.market[kind][lv].slots[b - 1]) - itemValue(kind, S.market[kind][lv].slots[a - 1]))[0] : await askW(player, 'marketSlot', _T('Choose'), `<p>${_T`Pick the slot you want.`}</p>`, [1, 2, 3, 4].map(s => ({
       label: _T`Slot ${s}: ${kName(kind, marketPeek(kind, lv, s))}`,
       value: s,
       card: kind === 'w' && s <= 3 && S.market.w[lv].slots[s - 1] ? 'w:' + S.market.w[lv].slots[s - 1] : null
@@ -5687,7 +5687,7 @@ async function marketRoll(player, kind, lv, {
       return near[0];
     }
     let pick;
-    if (player.cpu) pick = near.sort((a, b) => itemValue(kind, b <= 3 ? m.slots[b - 1] : null) - itemValue(kind, a <= 3 ? m.slots[a - 1] : null))[0];else pick = await modal(_T('Empty market slot'), `<p>${_T`Slot ${slot} is empty. Slots ${near.join(' and ')} are equally close: choose one.`}</p>`, near.map(s => ({
+    if (player.cpu) pick = near.sort((a, b) => itemValue(kind, b <= 3 ? m.slots[b - 1] : null) - itemValue(kind, a <= 3 ? m.slots[a - 1] : null))[0];else pick = await askW(player, 'marketEmpty', _T('Empty market slot'), `<p>${_T`Slot ${slot} is empty. Slots ${near.join(' and ')} are equally close: choose one.`}</p>`, near.map(s => ({
       label: _T`Slot ${s}: ${kName(kind, marketPeek(kind, lv, s))}`,
       value: s,
       card: kind === 'w' && s <= 3 ? 'w:' + m.slots[s - 1] : null
@@ -5704,7 +5704,7 @@ async function marketRoll(player, kind, lv, {
     }
     if (free || player.coin < 2) return marketTake(kind, lv, slot);
     let reroll = false;
-    if (player.cpu) reroll = player.diff === 'hard' && itemValue(kind, peek === 'face-down' ? null : S.market[kind][lv].slots[slot - 1]) < lv * 2 && player.coin >= 2 && rand() < .5;else reroll = await modal(_T('Market die'), `<p>${_T`The die shows <b>${slot}</b>: ${kName(kind, peek)}. Take it, or re-roll for ${coinAmt87(2)} (you have ${player.coin}).`}</p>`, [{
+    if (player.cpu) reroll = player.diff === 'hard' && itemValue(kind, peek === 'face-down' ? null : S.market[kind][lv].slots[slot - 1]) < lv * 2 && player.coin >= 2 && rand() < .5;else reroll = await askW(player, 'marketReroll', _T('Market die'), `<p>${_T`The die shows <b>${slot}</b>: ${kName(kind, peek)}. Take it, or re-roll for ${coinAmt87(2)} (you have ${player.coin}).`}</p>`, [{
       label: _T('Take it'),
       value: 0,
       primary: 1
@@ -5754,7 +5754,7 @@ async function gainWeapon(player, key, fromWeapon) {
   if (player.cpu) {
     const worst = [...arms].sort((a, b) => wScore(player['w' + a]) - wScore(player['w' + b]))[0];
     choice = wScore(w) > wScore(player['w' + worst]) ? worst : 'drop';
-  } else choice = await modal(_T`New weapon: ${w.n}`, `<p>${_T`${wStats(w)}. Both hands are full. Swap one out (it drops at your feet), or leave the new one.`}</p>`, [...arms.map(a => ({
+  } else choice = await askW(player, 'weaponSwap', _T`New weapon: ${w.n}`, `<p>${_T`${wStats(w)}. Both hands are full. Swap one out (it drops at your feet), or leave the new one.`}</p>`, [...arms.map(a => ({
     label: _T`Replace ${a === 'R' ? _T('right') : _T('left')}: ${player['w' + a].n}`,
     sub: wStats(player['w' + a]),
     value: a
@@ -5801,7 +5801,7 @@ async function chooseMarket(player, kind, lv) {
     return;
   }
   let k;
-  if (player.cpu) k = pool.sort((a, b) => itemValue(kind, b) - itemValue(kind, a))[0];else k = await modal(_T`Level ${lv} ${kind === 'w' ? _T('weapon') : _T('armor')}`, `<p>${_T`Choose any remaining piece.`}</p>`, pool.map(x => ({
+  if (player.cpu) k = pool.sort((a, b) => itemValue(kind, b) - itemValue(kind, a))[0];else k = await askW(player, 'marketPick', _T`Level ${lv} ${kind === 'w' ? _T('weapon') : _T('armor')}`, `<p>${_T`Choose any remaining piece.`}</p>`, pool.map(x => ({
     label: kind === 'w' ? W[x].n : ARM[x].n,
     sub: kind === 'w' ? wStats(mkW(x)) : armorDesc(x),
     value: x,
@@ -5928,7 +5928,7 @@ async function defend(victim, damage, location, pw, bonus, h, attackerName, atta
       value: 'take',
       primary: 1
     });
-    choice = await modal(_T('Incoming attack'), `<p>${_T`${attackerName} will deal <b>${damage}</b> damage to your ${LOCN[location]} (${victim.ap[location]} AP, ${victim.hp[location]} HP).`}</p>${hint('defend')}`, btns);
+    choice = await askW(victim, 'defend', _T('Incoming attack'), `<p>${_T`${attackerName} will deal <b>${damage}</b> damage to your ${LOCN[location]} (${victim.ap[location]} AP, ${victim.hp[location]} HP).`}</p>${hint('defend')}`, btns);
   }
   if (choice === 'm') {
     fx(victim.r, victim.c, _T('dodged!'), '#9fd3ff', {
@@ -5961,7 +5961,7 @@ async function minervaStep(victim, attacker) {
     r: a[0],
     c: a[1]
   }, attacker) : 0)[0];else {
-    const k = await modal(_T("Minerva's Push"), `<p>${_T`Step one tile in any direction.`}</p>`, free.map(([r, c]) => ({
+    const k = await askW(victim, 'minervaStep', _T("Minerva's Push"), `<p>${_T`Step one tile in any direction.`}</p>`, free.map(([r, c]) => ({
       label: tl(r, c),
       sub: attacker ? _T`${cheb({
         r,
@@ -6002,7 +6002,7 @@ async function chooseLocation(player, other, how) {
     if (player.cpu) return weak[0];
     {
       const best = focusBest(other, locs);
-      return await modal(_T('Focus!'), `<p>${_T`Choose where to strike ${esc(other.name)}. 💡 The gold one is the quickest way to put them down.`}</p>`, locs.map(l => ({
+      return await askW(player, 'focusLoc', _T('Focus!'), `<p>${_T`Choose where to strike ${esc(other.name)}. 💡 The gold one is the quickest way to put them down.`}</p>`, locs.map(l => ({
         label: `${l === best ? '💡 ' : ''}${LOCN[l]}`,
         sub: _T`AP ${other.ap[l]} · HP ${other.hp[l]}${l === best ? _T(' · the fastest finish') : ''}`,
         value: l,
@@ -6017,7 +6017,7 @@ async function chooseLocation(player, other, how) {
   /* v0.46: show the three dice, and point at the location that finishes the target fastest (a lost head or chest is out) */
   const best = focusBest(other, opts);
   const dice = rolls.map(l => `<span class="focdie ${l === best ? 'best' : ''}">${typeof locIcon === 'function' ? locIcon(l) : ''}<b>${LOCN[l]}</b></span>`).join('');
-  return await modal(_T('🎯 Focus roll'), `<p>${_T`The location die was rolled three times for <b>${esc(other.name)}</b>:`}</p><div class="focdice">${dice}</div><p class="rc-sub" style="margin:6px 0 0">${_T`Pick one result to strike. 💡 The gold one is the quickest way to put ${esc(other.name)} down.`}</p>`, opts.map(l => ({
+  return await askW(player, 'focusRoll', _T('🎯 Focus roll'), `<p>${_T`The location die was rolled three times for <b>${esc(other.name)}</b>:`}</p><div class="focdice">${dice}</div><p class="rc-sub" style="margin:6px 0 0">${_T`Pick one result to strike. 💡 The gold one is the quickest way to put ${esc(other.name)} down.`}</p>`, opts.map(l => ({
     label: `${l === best ? '💡 ' : ''}${LOCN[l]}`,
     sub: _T`AP ${other.ap[l]} · HP ${other.hp[l]}${l === best ? _T(' · the fastest finish') : ''}${l === 'head' || l === 'chest' ? _T(' · a vital spot') : ''}`,
     value: l,
@@ -6409,7 +6409,7 @@ async function lyreControl(player) {
       d: dOf(x)
     })).filter(o => o.d < 1e9).sort((a, b) => a.d - b.d)[0]?.x;
   } else {
-    const id = await modal(_T('Lyre of Orpheus'), `<p>${_T`Serenade one beast and lead it toward your starting tile ${tl(sr, sc)}. Two captures let you exit. Step off your starting tile so the beast can reach it.`}</p>`, cands.map(x => ({
+    const id = await askW(player, 'lyreBeast', _T('Lyre of Orpheus'), `<p>${_T`Serenade one beast and lead it toward your starting tile ${tl(sr, sc)}. Two captures let you exit. Step off your starting tile so the beast can reach it.`}</p>`, cands.map(x => ({
       label: `${typeof npcTokHTML === 'function' ? `<span class="tok99">${npcTokHTML(x, 30)}</span>` : ''}${x.name} (${NPCT[x.t].n})`,
       sub: `${tl(x.r, x.c)} · ${dOf(x) >= 1e9 ? _T('no path') : dOf(x) + _T(' moves away')}`,
       value: x.id
@@ -6627,7 +6627,7 @@ async function mfLimbSwap(player) {
   }
   let pick;
   if (player.cpu) pick = pool.sort((a, b) => wScore(W[b.k]) - wScore(W[a.k]))[0];else {
-    const i = await modal(_T('Limb Justice'), `<p>${_T`Trade a severed limb weapon for any remaining weapon in the market.`}</p>`, pool.map((x, i) => ({
+    const i = await askW(player, 'limbSwap', _T('Limb Justice'), `<p>${_T`Trade a severed limb weapon for any remaining weapon in the market.`}</p>`, pool.map((x, i) => ({
       label: W[x.k].n,
       sub: _T`LV${x.lv} · ${wStats(mkW(x.k))}`,
       value: i,
@@ -6852,14 +6852,14 @@ async function resolveDrawn(player, k) {
 async function pickNPC(player, title, filter, note = '') {
   const c = S.npcs.filter(filter);
   if (!c.length) {
-    if (!player.cpu) await modal(title, `<p>${_T`There is no valid NPC in the arena.`}</p>`, [{
+    if (!player.cpu) await askW(player, 'npcNone', title, `<p>${_T`There is no valid NPC in the arena.`}</p>`, [{
       label: 'OK',
       value: 1
     }]);
     return null;
   }
   if (player.cpu) return c.sort((a, b) => cheb(player, a) - cheb(player, b))[0];
-  const id = await modal(title, `<p>${note}</p>`, c.map(n => ({
+  const id = await askW(player, 'npcPick', title, `<p>${note}</p>`, c.map(n => ({
     label: `${typeof npcTokHTML === 'function' ? `<span class="tok99">${npcTokHTML(n, 30)}</span>` : ''}${n.name} (${NPCT[n.t].n})`, /* v0.99: the beast's token round beside its name */
     sub: _T`${tl(n.r, n.c)} · ${n.hp} HP${n.tamedBy != null ? _T(' · tamed by ') + S.players[n.tamedBy].name : ''}`,
     value: n.id
@@ -6918,13 +6918,13 @@ async function useItem(player, it) {
       {
         const sev = LOCS.filter(l => player.hp[l] <= 0 && l !== 'head' && l !== 'chest');
         if (!sev.length) {
-          if (!player.cpu) await modal(_T('Nothing to regrow'), `<p>${_T`You have no severed limbs.`}</p>`, [{
+          if (!player.cpu) await askW(player, 'regrowNone', _T('Nothing to regrow'), `<p>${_T`You have no severed limbs.`}</p>`, [{
             label: 'OK',
             value: 1
           }]);
           return false;
         }
-        const l = player.cpu ? sev[0] : await modal(_T('Blessings of Hygeia'), `<p>${_T`Choose the limb to regrow.`}</p>`, sev.map(x => ({
+        const l = player.cpu ? sev[0] : await askW(player, 'limbRegrow', _T('Blessings of Hygeia'), `<p>${_T`Choose the limb to regrow.`}</p>`, sev.map(x => ({
           label: LOCN[x],
           value: x
         })));
@@ -6947,7 +6947,7 @@ async function useItem(player, it) {
         if (!n) return false;
         const targets = activePlayers().filter(other => other !== player && !other.underground && cheb(player, other) <= 4);
         if (!targets.length) {
-          if (!player.cpu) await modal(_T('Meat Lure'), `<p>${_T`No other gladiator is within 4 tiles to throw the lure at.`}</p>`, [{
+          if (!player.cpu) await askW(player, 'lureNone', _T('Meat Lure'), `<p>${_T`No other gladiator is within 4 tiles to throw the lure at.`}</p>`, [{
             label: 'OK',
             value: 1
           }]);
@@ -6955,7 +6955,7 @@ async function useItem(player, it) {
         }
         let q;
         if (player.cpu) q = targets.sort((a, b) => cheb(n, a) - cheb(n, b))[0];else {
-          const id = await modal(_T('Meat Lure'), `<p>${_T`Throw the lure at which gladiator (within 4 tiles)? ${n.name} will hunt them.`}</p>`, targets.map(target => ({
+          const id = await askW(player, 'lureTarget', _T('Meat Lure'), `<p>${_T`Throw the lure at which gladiator (within 4 tiles)? ${n.name} will hunt them.`}</p>`, targets.map(target => ({
             label: target.name,
             sub: _T`${cheb(n, target)} tiles from ${n.name}`,
             value: target.id
@@ -7028,7 +7028,7 @@ async function useItem(player, it) {
             value: 'swap'
           });
           if (!b.length) {
-            await modal(_T('Ammo'), `<p>${_T`No weapon needs ammo, and you need 2 Ammo cards to exchange for an ammo weapon.`}</p>`, [{
+            await askW(player, 'ammoNone', _T('Ammo'), `<p>${_T`No weapon needs ammo, and you need 2 Ammo cards to exchange for an ammo weapon.`}</p>`, [{
               label: 'OK',
               value: 1
             }]);
@@ -7038,7 +7038,7 @@ async function useItem(player, it) {
             label: _T('Cancel'),
             value: null
           });
-          mode = await modal(_T('Ammo'), hint('ammo'), b);
+          mode = await askW(player, 'ammoMode', _T('Ammo'), hint('ammo'), b);
         }
         if (!mode) return false;
         if (mode === 'refill') {
@@ -7048,7 +7048,7 @@ async function useItem(player, it) {
         }
         let pick;
         if (player.cpu) pick = pool.sort((a, b) => wScore(W[b.x]) - wScore(W[a.x]))[0];else {
-          const i = await modal(_T('Ammo exchange'), `<p>${_T`Choose an ammo weapon.`}</p>`, pool.map((o, i) => ({
+          const i = await askW(player, 'ammoPick', _T('Ammo exchange'), `<p>${_T`Choose an ammo weapon.`}</p>`, pool.map((o, i) => ({
             label: W[o.x].n,
             sub: wStats(mkW(o.x)),
             value: i,
@@ -7073,7 +7073,7 @@ async function useItem(player, it) {
     case 'fidelis':
     case 'minerva':
     case 'elixirSave':
-      if (!player.cpu) await modal(C.n, `<p>${_T`This card is played as a reaction. You will be asked when an attack is rolled against you or by you.`}</p>`, [{
+      if (!player.cpu) await askW(player, 'cardReaction', C.n, `<p>${_T`This card is played as a reaction. You will be asked when an attack is rolled against you or by you.`}</p>`, [{
         label: 'OK',
         value: 1
       }]);
@@ -7909,7 +7909,7 @@ async function runDraft() {
             card: (x.kind === 'w' ? 'w:' : 'a:') + x.k
           };
         });
-        const idx = await modal(_T`Draft · ${p.name} · pick ${rd + 1} of ${picks(p)}`, `<p>${_T`Choose one weapon or armor from the <b style="color:var(--gold2)">${avail.length} offered</b> this pick (gold borders). Picks already taken show the drafter's color. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid" id="pickgrid"></div>`, [], {
+        const idx = await askW(p, 'draftPick', _T`Draft · ${p.name} · pick ${rd + 1} of ${picks(p)}`, `<p>${_T`Choose one weapon or armor from the <b style="color:var(--gold2)">${avail.length} offered</b> this pick (gold borders). Picks already taken show the drafter's color. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid" id="pickgrid"></div>`, [], {
           wide: 1,
           grid
         });
@@ -7927,7 +7927,7 @@ async function runDraft() {
     if (j) {
       for (let i = 0; i < 5; i++) {
         let k;
-        if (j.cpu) k = ['ward', 'focus', 'forge3', 'hercules2', 'rete'][i];else k = await modal(_T`Juggernaut card ${i + 1} of 5`, `<p>${_T`Choose a Declare-type arena card.`}</p>`, DECLARE_PICKS.map(x => ({
+        if (j.cpu) k = ['ward', 'focus', 'forge3', 'hercules2', 'rete'][i];else k = await askW(j, 'juggCard', _T`Juggernaut card ${i + 1} of 5`, `<p>${_T`Choose a Declare-type arena card.`}</p>`, DECLARE_PICKS.map(x => ({
           label: CARDS[x].n,
           sub: CARDS[x].d,
           value: x,
@@ -8171,7 +8171,7 @@ async function nextRound(why) {
       if (!opts.length) break;
       let pick;
       if (p.cpu) pick = opts.sort((a, b) => itemValue(b.kind, b.k) - itemValue(a.kind, a.k))[0];else {
-        const i = await modal(_T`Reward for ${p.name}`, `<p>${_T`Choose any remaining level 2 armor or weapon from the market.`}</p>`, opts.map((o, i) => ({
+        const i = await askW(p, 'roundReward', _T`Reward for ${p.name}`, `<p>${_T`Choose any remaining level 2 armor or weapon from the market.`}</p>`, opts.map((o, i) => ({
           label: o.kind === 'w' ? W[o.k].n : ARM[o.k].n,
           sub: o.kind === 'w' ? wStats(mkW(o.k)) : armorDesc(o.k),
           value: i,
@@ -8211,7 +8211,7 @@ async function nextRound(why) {
       if (p.captured.length) {
         let c;
         if (p.cpu) c = p.captured.sort((a, b) => NPCT[b.t].hp - NPCT[a.t].hp)[0];else {
-          const j = await modal(_T`${p.name}: choose your beast`, `<p>${_T`Choose one captured beast to fight beside you in the Duel Finale.`}</p>`, p.captured.map((x, j) => ({
+          const j = await askW(p, 'duelBeast', _T`${p.name}: choose your beast`, `<p>${_T`Choose one captured beast to fight beside you in the Duel Finale.`}</p>`, p.captured.map((x, j) => ({
             label: `${x.name} (${NPCT[x.t].n})`,
             value: j
           })));
@@ -8493,7 +8493,7 @@ async function endTurn() {
       const cards = p.items.filter(i => i.kind === 'card');
       let it;
       if (p.cpu) it = cards[0];else {
-        const id = await modal(_T('Hand limit'), `<p>${_T`Your hand holds more than 10 cards. Discard one.`}</p>`, cards.map(c => ({
+        const id = await askW(p, 'handLimit', _T('Hand limit'), `<p>${_T`Your hand holds more than 10 cards. Discard one.`}</p>`, cards.map(c => ({
           label: CARDS[c.key].n,
           value: c.id
         })));
@@ -9108,7 +9108,7 @@ async function flaviusTruceCheck() {
   }
   /* v0.46: a human among the truce-bound may tear the pacts up and fight on — but then no truce stands again this event */
   if (!S.truceGone && act.some(other => !other.cpu)) {
-    const v = S.tutorial ? 'fight' : await modal(_T`${edName()} rises from the editor’s seat`, `<div class="decree"><p>${_T`Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce — and the crowd did not pay to watch friendship.`}</p><p>${_T`<b>Break the truces and fight it out</b>, or let the thumb turn down on everyone.`}</p><p class="rc-sub">${_T`Break them and no truce may be sworn again for the rest of this event.`}</p></div>`, [{
+    const v = S.tutorial ? 'fight' : await askW(act.find(other => !other.cpu), 'truceDecree', _T`${edName()} rises from the editor’s seat`, `<div class="decree"><p>${_T`Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce — and the crowd did not pay to watch friendship.`}</p><p>${_T`<b>Break the truces and fight it out</b>, or let the thumb turn down on everyone.`}</p><p class="rc-sub">${_T`Break them and no truce may be sworn again for the rest of this event.`}</p></div>`, [{
       label: _T('⚔ Break the truces — fight on'),
       value: 'fight',
       primary: 1
@@ -9140,7 +9140,7 @@ async function flaviusTruceCheck() {
   banner(_T`${edName()} turns the thumb down`, _T('Friendship is not a spectacle'));
   log(_T`<b>${edName()} rises from the editor’s seat.</b> Every gladiator left standing (${act.map(other => nm(other)).join(', ')}) is bound by truce — and the crowd did not pay to watch friendship. <b>His thumb turns down.</b> Each will meet a death drawn from the d12 of the Fates.`, 'big');
   for (const q of act) think(q, pickOne([_T('So it ends like this.'), _T('We should have fought.'), _T('Flavius has spoken.'), _T('Forgive me, friend.')]), 'think');
-  const pr = modal(_T`${edName()} turns the thumb down`, `<div class="decree"><p>${_T`<b>${edName()} rises from the editor’s seat.</b>`}</p><p>${_T`Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce, so no one can win this ${esc(EV().short)}.`}</p><p>${_T`“The people did not come to watch friendship!” <b>The thumb turns down.</b> Each survivor is executed, their death drawn from the d12 of the Fates.`}</p></div>`, [{
+  const pr = askW(null, 'thumbDown', _T`${edName()} turns the thumb down`, `<div class="decree"><p>${_T`<b>${edName()} rises from the editor’s seat.</b>`}</p><p>${_T`Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce, so no one can win this ${esc(EV().short)}.`}</p><p>${_T`“The people did not come to watch friendship!” <b>The thumb turns down.</b> Each survivor is executed, their death drawn from the d12 of the Fates.`}</p></div>`, [{
     label: _T('So be it'),
     value: 1,
     primary: 1
@@ -9198,7 +9198,7 @@ function recordHist() {
 /* ================= RETIRE ================= */
 /* retirePlayer — after confirming, retires the gladiator: CF set to 0 and eliminated. */
 async function retirePlayer(player) {
-  const ok = await modal(_T`Retire ${player.name}?`, `<p>${_T`Retiring walks your gladiator out of the arena for good. Their Fate is set to <b>${cfAmt87(0)} (Ad Memoriae)</b>, they are eliminated from this event, and ${player.saved ? _T('their saved record in the Ludus') : _T('any saved record or missio for them')} is removed.`}</p>`, [{
+  const ok = await askX(player, 'retire', { local: 1 }, _T`Retire ${player.name}?`, `<p>${_T`Retiring walks your gladiator out of the arena for good. Their Fate is set to <b>${cfAmt87(0)} (Ad Memoriae)</b>, they are eliminated from this event, and ${player.saved ? _T('their saved record in the Ludus') : _T('any saved record or missio for them')} is removed.`}</p>`, [{
     label: _T('Retire from the event'),
     value: 1,
     primary: 1
@@ -9234,7 +9234,7 @@ async function chPartPickup(player) {
       continue;
     }
     let swap;
-    if (player.cpu) swap = hpOf(f.part) > hpOf(cur);else swap = await modal(_T`Spare ${key}`, `<p>${_T`Your chariot already has a ${desc(cur)}. Swap it for this ${desc(f.part)}? Your old ${key} is left on this tile.`}</p>`, [{
+    if (player.cpu) swap = hpOf(f.part) > hpOf(cur);else swap = await askW(player, 'chariotPart', _T`Spare ${key}`, `<p>${_T`Your chariot already has a ${desc(cur)}. Swap it for this ${desc(f.part)}? Your old ${key} is left on this tile.`}</p>`, [{
       label: _T('Swap'),
       value: 1,
       primary: 1
@@ -9258,7 +9258,7 @@ async function simToEnd(skipAsk) {
   const G = S;
   if (!skipAsk && !HEADLESS && typeof modal === 'function') {
     if (modalBusy()) return;
-    const ok = await modal(_T('⏭ Sim to end?'), `<p>${_T`Every gladiator hands to the CPU and the event <b>resolves at once</b> — straight to the results.`}</p><p class="rc-sub">${_T`Just want the CPUs quicker? Use the <b>Fast</b> speed instead. Want to stop playing a fighter but keep watching? Use <b>🤖 Hand to CPU</b> on their board.`}</p>`, [{
+    const ok = await askX(null, 'simToEnd', { local: 1 }, _T('⏭ Sim to end?'), `<p>${_T`Every gladiator hands to the CPU and the event <b>resolves at once</b> — straight to the results.`}</p><p class="rc-sub">${_T`Just want the CPUs quicker? Use the <b>Fast</b> speed instead. Want to stop playing a fighter but keep watching? Use <b>🤖 Hand to CPU</b> on their board.`}</p>`, [{
       label: _T('Sim to end'),
       value: 1,
       primary: 1
@@ -9783,7 +9783,7 @@ async function cpuDiplomacy(player) {
     wantTrade = mfWant && MANDATA[mfWant.idx].n === 'The Trade';
   if (!wantTrade && (wantTruce || strength(q) > strength(player) * 0.9 || P.loyalty > 75 && rand() < .5 || relOf(player, q) >= 25)) {
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => modal(_T`${player.name} offers a truce`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.`}</p>${hint('truce')}`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => askX(q, 'truceOffer', { from: player }, _T`${player.name} offers a truce`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.`}</p>${hint('truce')}`, [{
       label: _T('Accept truce'),
       value: 1,
       primary: 1
@@ -9805,7 +9805,7 @@ async function cpuDiplomacy(player) {
   if (!give) return;
   let ok;
   TRADE88 = { give, get, from: player, to: q }; /* v0.88: the offer window shows both sides (163-v88fix) */
-  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => modal(_T`${player.name} proposes a trade`, `<p>${_T`${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.`}</p>`, [{
+  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => askX(q, 'tradeOffer', { from: player }, _T`${player.name} proposes a trade`, `<p>${_T`${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.`}</p>`, [{
     label: _T('Accept trade'),
     value: 1,
     primary: 1
@@ -13370,13 +13370,19 @@ function render() {
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]');
   if (!b || !S) return;
-  const k = b.dataset.act;
-  if (k === 'trophies') {
+  if (b.dataset.act === 'trophies') {
     e.stopPropagation();
     return;
   } /* v0.51: the trophies read on hover, like coin and CF */
+  uiAct(b.dataset.act, b.dataset);
+});
+/* uiAct — the action panel's dispatcher: k = the button's data-act, ds = its dataset (or a plain object with the same keys).
+   The click above and 326-v101ask's command() registry (online lockstep, replays) both land here. */
+function uiAct(k, ds) {
+  if (!S) return;
+  if (k === 'trophies') return;
   if (k === 'inspect') {
-    const q = S.players[+b.dataset.pid];
+    const q = S.players[+ds.pid];
     if (!q) return;
     const home = typeof boardHome === 'function' ? boardHome(cur()) : null; /* v0.51: the panel swaps in place — click your own card to come back */
     S.boardPid = q === home || q.id === S.boardPid ? null : q.id;
@@ -13389,7 +13395,7 @@ document.addEventListener('click', e => {
   }
   if (k === 'zpick') {
     if (S.cmd && !S.cmd.lock) {
-      const o = zoraPickOptions(S.cmd.n)[+b.dataset.i];
+      const o = zoraPickOptions(S.cmd.n)[+ds.i];
       if (o) {
         zoraPickup(S.cmd.n, o);
         render();
@@ -13465,7 +13471,7 @@ document.addEventListener('click', e => {
   });
   if (k === 'loot') act(async () => {
     const opts = lootOptions(p).filter(o => o.t === 'fw' || !p.looted);
-    const i = await modal(_T('Loot'), `<p>${_T`Take one item per turn from a corpse or a dropped pile. Thrown weapons in the sand can always be picked up.`}</p>`, opts.map((o, i) => {
+    const i = await askW(p, 'loot', _T('Loot'), `<p>${_T`Take one item per turn from a corpse or a dropped pile. Thrown weapons in the sand can always be picked up.`}</p>`, opts.map((o, i) => {
       const w = o.t === 'w' ? o.pl.weapons[o.i] : o.t === 'fw' ? o.floor.w : null;
       const own = o.pl && S.players[o.pl.owner];
       return {
@@ -13505,10 +13511,10 @@ document.addEventListener('click', e => {
     await endTurn();
   });
   if (k === 'item') {
-    const it = p.items.find(x => x.id == +b.dataset.id);
+    const it = p.items.find(x => x.id == +ds.id);
     if (it) act(() => useItem(p, it));
   }
-});
+}
 /* showTrophies — shows a gladiator's trophy tables, reusing the open window if there is one. */
 function showTrophies(player) {
   if (!$('#modal').hidden) {
@@ -13595,10 +13601,7 @@ function modalResume() {
 /* modal — the one dialog everything uses: queues behind any open window, shows title, body and buttons (plus an optional grid) and resolves with the chosen value.
    The x / Escape give the close value; windows without one can be minimised to peek at the board. In HEADLESS mode it answers at once (close value, else the first enabled button). */
 function modal(title, body, buttons, opt = {}) {
-  if (HEADLESS) {
-    const b = [...buttons, ...(opt.grid || [])].find(x => !x.disabled);
-    return Promise.resolve(opt.close !== undefined ? opt.close : b ? b.value : null);
-  }
+  if (HEADLESS) return Promise.resolve(askAuto(buttons, opt)); /* v1.01: the headless provider's rule (326-v101ask) */
   /* run — builds and shows the window once its turn in the queue comes. */
   const run = () => new Promise(res => {
     $('#modal').classList.toggle('full', !!opt.full); // v0.35: the big modes run full screen wherever they are opened from
@@ -13715,7 +13718,7 @@ function distModal(player, n, why, kind) {
   const body = () => `<p>${_T`Distribute <b>${n} ${kind === 'hp' ? 'HP' : 'AP'}</b> from ${why}. Put it all in one location or spread it. Nothing can exceed 7.`}</p>
    <div class="dist">${LOCS.map(l => `<span>${sideBadge(l)} ${LOCN[l]} <span style="color:var(--dim);font:12px var(--mono)">${kind === 'hp' ? player.hp[l] : player.ap[l]} → ${(kind === 'hp' ? player.hp[l] : player.ap[l]) + plan[l]}</span></span><button class="btn" type="button" data-d="-" data-l="${l}" ${plan[l] ? '' : 'disabled'} aria-label="${_T`Remove from ${LOCN[l]}`}">−</button><span class="v">${plan[l]}</span><button class="btn" type="button" data-d="+" data-l="${l}" ${okLoc(l) && plan[l] < cap(l) && left() > 0 ? '' : 'disabled'} aria-label="${_T`Add to ${LOCN[l]}`}">+</button>`).join('')}</div>
    <p style="margin-top:10px">${_T`Left to assign: <b id="distLeft">${left()}</b>`}</p>`;
-  return modal(kind === 'hp' ? _T('Distribute health') : _T('Distribute armor'), body(), [{
+  return askW(player, kind === 'hp' ? 'distHP' : 'distAP', kind === 'hp' ? _T('Distribute health') : _T('Distribute armor'), body(), [{
     label: _T('Auto: head, chest, arms, legs'),
     value: 'auto'
   }, {
@@ -13825,7 +13828,7 @@ async function openMarket(player) {
       label: _T('Close market'),
       value: 'close'
     });
-    const v = await modal(_T('Market of Flavius'), body, btns, {
+    const v = await askW(player, 'market', _T('Market of Flavius'), body, btns, {
       wide: 1
     });
     if (v === 'close' || !v) break;
@@ -13894,7 +13897,7 @@ async function openCrowd(player) {
       label: _T('Close'),
       value: 'close'
     }];
-    const v = await modal(_T('Crowd Favor'), `<p>${_T`Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>${cfAmt87(player.cf)}</b> and <b>${coinAmt87(player.coin)}</b>.`}</p>`, opts);
+    const v = await askW(player, 'crowd', _T('Crowd Favor'), `<p>${_T`Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>${cfAmt87(player.cf)}</b> and <b>${coinAmt87(player.coin)}</b>.`}</p>`, opts);
     if (v === 'close' || !v) break;
     if (v === 'mk') {
       player.cf -= 3;
@@ -13933,7 +13936,7 @@ async function openCrowd(player) {
 /* openTrade — human trade window: pick a gladiator in range, then trade, gift, or propose / break a truce. CPUs answer via cpuAcceptsTrade / cpuAcceptsTruce; humans get a dialog. */
 async function openTrade(player) {
   const partners = tradePartners(player);
-  const qid = await modal(_T('Trade or truce'), `<p>${_T`Trading is a one-to-one exchange with a gladiator within 4 tiles. A truce is a verbal pact with no penalty for breaking it.`}</p>`, partners.map(other => ({
+  const qid = await askW(player, 'tradeMenu', _T('Trade or truce'), `<p>${_T`Trading is a one-to-one exchange with a gladiator within 4 tiles. A truce is a verbal pact with no penalty for breaking it.`}</p>`, partners.map(other => ({
     label: other.name,
     sub: _T`${other.cpu ? 'CPU' : _T('player')} · ${cheb(player, other)} tiles away${inTruce(player, other) ? _T(' · in truce') : ''}`,
     value: other.id
@@ -13943,7 +13946,7 @@ async function openTrade(player) {
   }]));
   if (qid == null) return;
   const q = S.players[qid];
-  const what = await modal(_T`With ${q.name}`, `<p>${_T`What would you like to propose?`}</p>`, [{
+  const what = await askX(player, 'tradeWith', { q }, _T`With ${q.name}`, `<p>${_T`What would you like to propose?`}</p>`, [{
     label: _T('Propose a trade'),
     value: 'trade',
     primary: 1
@@ -13967,7 +13970,7 @@ async function openTrade(player) {
       return;
     }
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => modal(_T`${q.name}: truce offer`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?`}</p>`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => askX(q, 'truceAsk', { from: player }, _T`${q.name}: truce offer`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?`}</p>`, [{
       label: _T('Accept'),
       value: 1,
       primary: 1
@@ -13983,7 +13986,7 @@ async function openTrade(player) {
   if (what === 'gift') {
     const mine = tradeables(player);
     if (!mine.length) return;
-    const gi = await modal(_T`Gift to ${q.name}`, `<p>${_T`Choose what to give. Allies remember generosity.`}</p>`, mine.map((x, i) => ({
+    const gi = await askX(player, 'gift', { q }, _T`Gift to ${q.name}`, `<p>${_T`Choose what to give. Allies remember generosity.`}</p>`, mine.map((x, i) => ({
       label: x.label,
       value: i
     })).concat([{
@@ -13999,13 +14002,13 @@ async function openTrade(player) {
   const mine = tradeables(player),
     theirs = tradeables(q);
   if (!mine.length || !theirs.length) {
-    await modal(_T('Nothing to trade'), `<p>${_T`One of you has nothing tradeable.`}</p>`, [{
+    await askW(player, 'tradeNone', _T('Nothing to trade'), `<p>${_T`One of you has nothing tradeable.`}</p>`, [{
       label: 'OK',
       value: 1
     }]);
     return;
   }
-  const gi = await modal(_T('You give…'), '', mine.map((x, i) => ({
+  const gi = await askX(player, 'tradeGive', { q }, _T('You give…'), '', mine.map((x, i) => ({
     label: trade88Label(x, player),
     value: i
   })).concat([{
@@ -14013,7 +14016,7 @@ async function openTrade(player) {
     value: null
   }]));
   if (gi == null) return;
-  const ti = await modal(_T('…and ask for'), `<p>${_T`${q.name} holds:`}</p>`, theirs.map((x, i) => ({
+  const ti = await askX(player, 'tradeGet', { q }, _T('…and ask for'), `<p>${_T`${q.name} holds:`}</p>`, theirs.map((x, i) => ({
     label: trade88Label(x, q),
     value: i
   })).concat([{
@@ -14025,7 +14028,7 @@ async function openTrade(player) {
     get = theirs[ti];
   let ok;
   TRADE88 = { give, get, from: player, to: q }; /* v0.88: the offer window shows both sides (163-v88fix) */
-  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => modal(_T`${q.name}: trade offer`, `<p>${_T`${player.name} offers ${give.label} for your ${get.label}. Accept?`}</p>`, [{
+  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => askX(q, 'tradeAsk', { from: player }, _T`${q.name}: trade offer`, `<p>${_T`${player.name} offers ${give.label} for your ${get.label}. Accept?`}</p>`, [{
     label: _T('Accept'),
     value: 1,
     primary: 1
@@ -14277,7 +14280,7 @@ async function chStep(player,fromR,fromC){
     if(o==='merc1'||o==='merc2'){const v=o==='merc1'?1:2;player.mv+=v;log(_T`Speed of Mercury: +${v} movement.`)}
     else if(o==='cf1'||o==='cf2'){const v=o==='cf1'?1:2;cfWhy(_T('breaking pots'));player.cf+=v;log(_T`The crowd roars: ${cfAmt87('+'+(v))}.`)}
     else if(o==='curse'){
-      let pay;if(player.cpu)pay=player.cf>=6;else pay=player.cf>=3&&await modal(_T('Curse Tablet'),`<p>${_T`Pay ${cfAmt87(3)}, or roll a d6 and deal that much damage to both your horse and your wheel.`}</p>`,[{label:_T`Pay ${cfAmt87(3)}`,value:1,primary:1},{label:_T('Roll the d6'),value:0}]);
+      let pay;if(player.cpu)pay=player.cf>=6;else pay=player.cf>=3&&await askW(player,'curseTablet',_T('Curse Tablet'),`<p>${_T`Pay ${cfAmt87(3)}, or roll a d6 and deal that much damage to both your horse and your wheel.`}</p>`,[{label:_T`Pay ${cfAmt87(3)}`,value:1,primary:1},{label:_T('Roll the d6'),value:0}]);
       if(pay){player.cf-=3;log(_T`${nm(player)} pays ${cfAmt87(3)} to lift the Curse Tablet.`)}
       else{const d=d6();log(_T`Curse Tablet: ${nm(player)} rolls ${d}.`,'bad');chHitPart(player,'wheel',d);chHitPart(player,'horse',d)}
     }
@@ -14300,7 +14303,7 @@ async function chAttack(player,source,target){
   const locs=LOCS.filter(l=>q.hp[l]>0);
   let tgt;
   if(player.cpu)tgt=parts.includes('horse')?'horse':parts.includes('wheel')?'wheel':locs.sort((a,b)=>(q.hp[a]+q.ap[a])-(q.hp[b]+q.ap[b]))[0];
-  else tgt=await modal(_T`Attack ${q.name}`,`<p>${_T`In a chariot race the attacker chooses the target: the wheel, the horse, or any body location.`}</p>`,[...parts.map(x=>({label:x==='wheel'?_T`${q.ch.wheel.name||_T('Wheel')} (${q.ch.wheel.hp} HP)`:_T`${q.ch.horse.name||_T('Horse')} (${q.ch.horse.sides[q.ch.horse.face].hp-q.ch.horse.dmg} HP)`,card:x==='wheel'?'h:'+(q.ch.wheel.art||'wheel8'):'h:'+(q.ch.horse.sides[q.ch.horse.face].art||'saxoA'),value:x})),...locs.map(l=>({label:LOCN[l],sub:_T`AP ${q.ap[l]} · HP ${q.hp[l]}`,value:l}))]);
+  else tgt=await askW(player,'chariotTarget',_T`Attack ${q.name}`,`<p>${_T`In a chariot race the attacker chooses the target: the wheel, the horse, or any body location.`}</p>`,[...parts.map(x=>({label:x==='wheel'?_T`${q.ch.wheel.name||_T('Wheel')} (${q.ch.wheel.hp} HP)`:_T`${q.ch.horse.name||_T('Horse')} (${q.ch.horse.sides[q.ch.horse.face].hp-q.ch.horse.dmg} HP)`,card:x==='wheel'?'h:'+(q.ch.wheel.art||'wheel8'):'h:'+(q.ch.horse.sides[q.ch.horse.face].art||'saxoA'),value:x})),...locs.map(l=>({label:LOCN[l],sub:_T`AP ${q.ap[l]} · HP ${q.hp[l]}`,value:l}))]);
   const hits=rollHits(2),h=cnt(hits),dmg=h*pw+(h?(hasCestus(player,source.arm)?1:0):0);
   const pre=_T`${nm(player)} attacks ${nm(q)} with ${w.n} ${diceHtml(hits)} = ${wIco87('dmg')+dmg}`;
   if(tgt==='wheel'||tgt==='horse'){log(`${pre} → ${tgt}`);chHitPart(q,tgt,dmg)}
@@ -14330,7 +14333,7 @@ async function chariotDraft(){
     for(const p of S.players){
       let k;
       if(p.cpu)k=avail.sort((a,b)=>itemValue(kind,b)-itemValue(kind,a))[0];
-      else{const i=await modal(_T`Draft · ${p.name} · ${title}`,`<p>${_T`Pick one.`}</p>`,avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
+      else{const i=await askW(p,'draftPick',_T`Draft · ${p.name} · ${title}`,`<p>${_T`Pick one.`}</p>`,avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
       avail.splice(avail.indexOf(k),1);
       if(kind==='w')p.wR=mkW(k);else equipPiece(p,k,ARM[k].slot);
       log(_T`${nm(p)} drafts ${kind==='w'?W[k].n:ARM[k].n}.`);
@@ -17750,7 +17753,7 @@ async function doSpear(player,spect){
 /* humanSpear — the human's spear window: pick a spectator in reach. */
 async function humanSpear(player){
   const t=spearTargets(player);if(!t.length)return;
-  const i=await modal(_T('Spear a spectator'),`<p>${_T`${cfAmt87(3)}, once per event. Roll 2 hit dice; 1 hit removes the spectator. You can only reach spectators whose section faces your quadrant (Q${quadOf(player)}). Every other spectator will hate you for it.`}</p>`,t.map((s,i)=>({label:`${s.name}${s.human?_T(' (the human spectator)'):''}`,sub:_T`${SECTIONS[s.sec].n} · ${SPECT_TASTES[s.taste][0]} fan · ${cfAmt87(s.cf)} · ${moodEmo(s.mood)}${s.fav!=null?' · backs '+S.players[s.fav].name:''}`,value:i})).concat([{label:_T('Cancel'),value:null}]));
+  const i=await askW(player,'spear',_T('Spear a spectator'),`<p>${_T`${cfAmt87(3)}, once per event. Roll 2 hit dice; 1 hit removes the spectator. You can only reach spectators whose section faces your quadrant (Q${quadOf(player)}). Every other spectator will hate you for it.`}</p>`,t.map((s,i)=>({label:`${s.name}${s.human?_T(' (the human spectator)'):''}`,sub:_T`${SECTIONS[s.sec].n} · ${SPECT_TASTES[s.taste][0]} fan · ${cfAmt87(s.cf)} · ${moodEmo(s.mood)}${s.fav!=null?' · backs '+S.players[s.fav].name:''}`,value:i})).concat([{label:_T('Cancel'),value:null}]));
   if(i==null)return;await doSpear(player,t[i]);
 }
 /* ---- turn rotation upkeep: spectators earn 1 CF, then may spend it (p.35) ---- */
@@ -17830,7 +17833,7 @@ async function humanSpectatorTurn(me){
       {label:_T('Change section'),sub:_T`${cfAmt87(3)} · move to another stand`,value:'move',disabled:me.cf<3},
       {label:_T('Chant “Tholo!”'),sub:tholoOK?_T`every quadrant has a spectator with ${cfAmt87(3)}: each pays 3`:bossSpent(_T('Tholo'))?_T('Tholo has already entered this event — once per event'):_T`needs a spectator with ${cfAmt87(3)} in every quadrant`,value:'tholo',disabled:!tholoOK},
       {label:_T('Watch this rotation'),value:'pass',primary:1}];
-    const v=await modal(_T`Spectator upkeep · you have ${cfAmt87(me.cf)}`,`<p>${_T`${me.fav!=null&&S.players[me.fav]?_T`📣 You cheer for <b>${esc(S.players[me.fav].name)}</b>. `:''}<b>One action per upkeep.</b> You sit in <b>${SECTIONS[me.sec].n}</b> (Q${q}), the section of ${secPlayer(me.sec)?nm(secPlayer(me.sec)):_T('no gladiator')}. You can only reach gladiators standing in Q${q}: ${inQ.length?inQ.map(nm).join(', '):_T('nobody right now')}.`}</p>${hint(_T`Spectators earn ${cfAmt87(1)} per turn rotation. A stone that eliminates a gladiator hands you all of their CF.`)}`,opts);
+    const v=await askW(me,'standsUpkeep',_T`Spectator upkeep · you have ${cfAmt87(me.cf)}`,`<p>${_T`${me.fav!=null&&S.players[me.fav]?_T`📣 You cheer for <b>${esc(S.players[me.fav].name)}</b>. `:''}<b>One action per upkeep.</b> You sit in <b>${SECTIONS[me.sec].n}</b> (Q${q}), the section of ${secPlayer(me.sec)?nm(secPlayer(me.sec)):_T('no gladiator')}. You can only reach gladiators standing in Q${q}: ${inQ.length?inQ.map(nm).join(', '):_T('nobody right now')}.`}</p>${hint(_T`Spectators earn ${cfAmt87(1)} per turn rotation. A stone that eliminates a gladiator hands you all of their CF.`)}`,opts);
     if(!v||v==='pass')return;
     if(v.startsWith('stone:')){me.cf-=2;const q9=S.players[+v.slice(6)];if(typeof spectHelpCheck==='function')spectHelpCheck('stone',q9);await spectStone(me,q9);render();return}
     if(v.startsWith('offer:')){me.cf-=8;const p=S.players[+v.slice(6)];if(typeof spectHelpCheck==='function')spectHelpCheck('offer',p);const off=drawOffer();p.items.push(mkOffer(off));stat(p,'spectOffers');stat(p,'spectVal',OFFER_VAL[off]||4);log(_T`You throw ${nm(p)} an offering from the stands: <b>${OFFER[off].n}</b> (${OFFER[off].s}).`);render();return}
@@ -17977,7 +17980,7 @@ const canSelfWager=player=>!player.cpu&&wagersOpen()&&!player.selfBet&&player.co
 async function humanSelfWager(player){
   const o=oddsTable().find(x=>x.ps.includes(player));if(!o)return;
   const opts=[2,4,6,10].filter(v=>v<=player.coin).map(v=>({label:coinAmt87(v),sub:_T`pays ${Math.round(v*o.odds)} if ${EV().teams?_T('your team wins'):_T('you win')}`,value:v}));
-  const v=await modal(_T('Wager on yourself'),`<p>${_T`The bookmaker offers <b>${fmtOdds(o.odds)}</b> on ${esc(o.label)}. Coin you stake leaves your purse now; if you win the event, the payout is added to your coin (and your Royal Reserve). Once per event.`}</p>`,opts.concat([{label:_T('Cancel'),value:null}]));
+  const v=await askW(player,'selfWager',_T('Wager on yourself'),`<p>${_T`The bookmaker offers <b>${fmtOdds(o.odds)}</b> on ${esc(o.label)}. Coin you stake leaves your purse now; if you win the event, the payout is added to your coin (and your Royal Reserve). Once per event.`}</p>`,opts.concat([{label:_T('Cancel'),value:null}]));
   if(!v)return;placeSelfBet(player,v,o.odds);
 }
 /* placeSelfBet — a gladiator slips coin to the bookmaker on themselves (logged on the exchange). */
@@ -27590,14 +27593,14 @@ chooseLocation=async function(p,q,how,damage=0){
   const alive=LOCS.filter(l=>q.hp[l]>0);
   if(how==='card'){if(p.cpu)return bestLocation(q,alive,damage);
     const best=showStrategy()?bestLocation(q,alive,damage):null;
-    return await modal(_T('Focus!'),`<p>${_T`Choose where to strike ${esc(q.name)}.${best?_T(' 💡 Gold is the fastest finish.'):''}`}</p>`,alive.map(l=>({label:`${l===best?'💡 ':''}${LOCN[l]}`,sub:_T`AP ${q.ap[l]} · HP ${q.hp[l]}${l==='larm'||l==='rarm'?' · arm':l==='rleg'||l==='lleg'?_T(' · only slows'):''}`,value:l,primary:l===best})))}
+    return await askW(p,'focusLoc',_T('Focus!'),`<p>${_T`Choose where to strike ${esc(q.name)}.${best?_T(' 💡 Gold is the fastest finish.'):''}`}</p>`,alive.map(l=>({label:`${l===best?'💡 ':''}${LOCN[l]}`,sub:_T`AP ${q.ap[l]} · HP ${q.hp[l]}${l==='larm'||l==='rarm'?' · arm':l==='rleg'||l==='lleg'?_T(' · only slows'):''}`,value:l,primary:l===best})))}
   const rolls=[rollLoc(q),rollLoc(q),rollLoc(q)];
   log(_T`${nm(p)} focuses: the location die shows ${rolls.map(l=>LOCN[l]).join(', ')}.`);
   if(p.cpu)return bestLocation(q,[...new Set(rolls)],damage);
   const best=showStrategy()?bestLocation(q,[...new Set(rolls)],damage):null;
   const faces=['head','chest','larm','rarm','rleg','lleg'];
   const dieHTML=(l,i)=>`<button type="button" class="focdie2 rolling" data-fdie="${i}" data-loc="${l}" disabled><span class="fdface">${locIcon(faces[i%6])}<b>…</b></span><span class="fdsub"></span></button>`;
-  const picked=await modal(_T('🎯 Focus roll'),`<p>${_T`Rolling the location die three times for <b>${esc(q.name)}</b>…`}</p><div class="focdice2">${rolls.map(dieHTML).join('')}</div><p class="rc-sub" id="fdHint" style="margin:6px 0 0;visibility:hidden">${_T`Click a die to strike there.${best?_T(' 💡 The gold one finishes fastest.'):''}`}</p>`,[...new Set(rolls)].map(l=>({label:LOCN[l],value:l})),{close:0,onOpen:done=>{
+  const picked=await askW(p,'focusRoll',_T('🎯 Focus roll'),`<p>${_T`Rolling the location die three times for <b>${esc(q.name)}</b>…`}</p><div class="focdice2">${rolls.map(dieHTML).join('')}</div><p class="rc-sub" id="fdHint" style="margin:6px 0 0;visibility:hidden">${_T`Click a die to strike there.${best?_T(' 💡 The gold one finishes fastest.'):''}`}</p>`,[...new Set(rolls)].map(l=>({label:LOCN[l],value:l})),{close:0,onOpen:done=>{
     const bar=$('#mBtns');if(bar)bar.style.display='none'; /* the dice are the buttons; the bar stays for keyboard/automation */
     const box=$('#mBody');const dice=[...box.querySelectorAll('[data-fdie]')];let spin=0;
     const timer=window.FOCUS_TIMER=setInterval(()=>{spin++;dice.forEach((d,i)=>{if(!d.classList.contains('rolling'))return;const f=faces[(spin+i*2)%6];d.querySelector('.fdface').innerHTML=`${locIcon(f)}<b>${LOCN[f]}</b>`})},85);
@@ -28682,10 +28685,10 @@ chariotDraft=async function(){
     for(const p of order){let k;
       if(kind==='c'){const want=p.ch?p.ch.art:null;
         if(p.cpu)k=avail.includes(want)?want:avail[0];
-        else{const i=await modal(_T`Draft · ${p.name} · ${title}`,`<p>${_T`Pick your chariot card.`}</p>`,avail.map((x,i)=>({label:CH_CARDS59.find(c=>c[0]===x)[1],value:i,card:'g:'+x})));k=avail[i??0]}
+        else{const i=await askW(p,'chariotCard',_T`Draft · ${p.name} · ${title}`,`<p>${_T`Pick your chariot card.`}</p>`,avail.map((x,i)=>({label:CH_CARDS59.find(c=>c[0]===x)[1],value:i,card:'g:'+x})));k=avail[i??0]}
         avail.splice(avail.indexOf(k),1);if(p.ch){p.ch.art=k;p.ch.name=CH_CARDS59.find(c=>c[0]===k)[1]}log(_T`${nm(p)} drafts the chariot <b>${esc(p.ch?p.ch.name:k)}</b>.`);continue}
       if(p.cpu)k=avail.sort((a,b)=>itemValue(kind,b)-itemValue(kind,a))[0];
-      else{const i=await modal(_T`Draft · ${p.name} · ${title}`,`<p>${_T`Pick one.`}</p>`,avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
+      else{const i=await askW(p,'draftPick',_T`Draft · ${p.name} · ${title}`,`<p>${_T`Pick one.`}</p>`,avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
       avail.splice(avail.indexOf(k),1);
       if(kind==='w')p.wR=mkW(k);else equipPiece(p,k,ARM[k].slot);
       log(_T`${nm(p)} drafts ${kind==='w'?W[k].n:ARM[k].n}.`)}}
@@ -31281,7 +31284,7 @@ async function marketBuy75(player,lv,opt={}){mktFix75();const W=S.market.w[lv],A
   let slot,opts;
   if(player.mchoice&&!opt.free){
     if(player.cpu){slot=[1,2,3,4].map(s=>[s,slotOpts75(lv,s,sides)]).filter(([,os])=>os.length).sort((a,b)=>aVal75(cpuPick(b[1]).kind,cpuPick(b[1]).key)-aVal75(cpuPick(a[1]).kind,cpuPick(a[1]).key))[0][0]}
-    else slot=await modal(_T('Market Choice'),`<p>${_T`Pick the slot you want — no die.`}</p>`,[1,2,3,4].map(s=>({label:_T`Slot ${s}`,sub:slotOpts75(lv,s,sides).map(o=>o.blind?'a face-down weapon':o.kind==='w'?WDEF75[o.key].n:ARM[o.key].n).join(' · ')||'empty',value:s})));
+    else slot=await askW(player,'marketSlot',_T('Market Choice'),`<p>${_T`Pick the slot you want — no die.`}</p>`,[1,2,3,4].map(s=>({label:_T`Slot ${s}`,sub:slotOpts75(lv,s,sides).map(o=>o.blind?'a face-down weapon':o.kind==='w'?WDEF75[o.key].n:ARM[o.key].n).join(' · ')||'empty',value:s})));
     slot=slot||1;log(_T`${nm(player)} uses Market Choice for slot ${slot}.`);opts=slotOpts75(lv,slot,sides)}
   else for(;;){slot=1+rnd(4);
     if(slot===4&&sides.includes('w')&&!wOpen75(W)&&W.deck.length){W.up4=W.deck[W.deck.length-1];log(_T`${nm(player)} rolls the market die: <b>4</b> — the top weapon is flipped: <b>${esc(WDEF75[W.up4].n)}</b>.`)}
@@ -31290,13 +31293,13 @@ async function marketBuy75(player,lv,opt={}){mktFix75();const W=S.market.w[lv],A
     if(opt.free||player.coin<2||!opts.length)break;
     let re=false;
     if(player.cpu){const b=cpuPick(opts);re=player.diff==='hard'&&aVal75(b.kind,b.key)<lv*2&&rand()<.5}
-    else{const v=await modal(_T`Market die · ${slot}`,`<p>${_T`The die shows <b>${slot}</b>. Take one of these, or pay ${coinAmt87(2)} to roll again${slot===4&&wOpen75(W)?_T(' (the flipped weapon stays face up in slot 4)'):''}.`}</p>`,
+    else{const v=await askW(player,'marketReroll',_T`Market die · ${slot}`,`<p>${_T`The die shows <b>${slot}</b>. Take one of these, or pay ${coinAmt87(2)} to roll again${slot===4&&wOpen75(W)?_T(' (the flipped weapon stays face up in slot 4)'):''}.`}</p>`,
       [...opts.map((o,i)=>({label:optLabel75(o),sub:optSub75(o),value:'t'+i,card:o.key?(o.kind==='w'?'w:':'a:')+o.key:null})),{label:'Re-roll',sub:coinAmt87(2),value:'re'}]);
       if(v&&v[0]==='t'){const o=opts[+v.slice(1)];return {kind:o.kind,key:o.kind==='w'?wTake75(W,o.s):aTake75(A,o.s,o.key)}}re=v==='re'}
     if(!re)break;player.coin-=2;coinLog(player,-2,'market re-rolls');log(_T`${nm(player)} pays ${coinAmt87(2)} to re-roll.`)}
   if(!opts.length)return {kind:null,key:null};
   let o;if(opts.length===1||player.cpu)o=player.cpu?cpuPick(opts):opts[0];
-  else{const v=await modal(_T`Market · slot ${slot}`,`<p>${_T`Take the weapon or one armor piece.`}</p>`,opts.map((x,i)=>({label:optLabel75(x),sub:optSub75(x),value:i,card:x.key?(x.kind==='w'?'w:':'a:')+x.key:null})));o=opts[v!=null?v:0]}
+  else{const v=await askW(player,'marketTake',_T`Market · slot ${slot}`,`<p>${_T`Take the weapon or one armor piece.`}</p>`,opts.map((x,i)=>({label:optLabel75(x),sub:optSub75(x),value:i,card:x.key?(x.kind==='w'?'w:':'a:')+x.key:null})));o=opts[v!=null?v:0]}
   return {kind:o.kind,key:o.kind==='w'?wTake75(W,o.s):aTake75(A,o.s,o.key)}}
 /* items that name their side (offerings, cards) roll on that side only, with no re-roll */
 marketRoll=async function(player,kind,lv,opt={}){const r=await marketBuy75(player,lv,{...opt,only:kind});return r.key};
@@ -31327,7 +31330,7 @@ openMarket=async function(player){mktFix75();const vetOn=weak(player,'tax');if(v
       btns.push({label:_T`Buy at level ${lv}`,sub:_T`${coinAmt87(purchaseCost(player,lv)+vet)}${vetCF?` + ${cfAmt87(1)}`:''}${left?'':' · empty'}`,value:'b'+lv,disabled:!left||player.coin<purchaseCost(player,lv)+vet||vetCF&&player.cf<1})}
     if(player.market&&vetOn)btns.push({label:vetCF?_T('⚖ Pay the +1 in coin instead'):_T('⚖ Pay the +1 in CF instead'),sub:_T('Veteranus old debts: every buy costs +1'),value:'taxswap'});
     btns.push({label:_T('Close market'),value:'close'});
-    const v=await modal(_T('Market of Flavius'),body,btns,{wide:1});
+    const v=await askW(player,'market',_T('Market of Flavius'),body,btns,{wide:1});
     if(v==='close'||!v)break;
     if(v==='taxswap'){player.taxPref=vetCF?'coin':'cf';continue}
     if(v==='unlock'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`);continue}
@@ -31462,7 +31465,7 @@ const WBACK75=lv=>assetURL('weapon_back'+lv+'b.webp'); /* v0.83: every level fro
 {const base=boardHTML75;boardHTML75=function(){let h=base.apply(this,arguments);try{h=h.replace(/<span class="mb-back" data-lv="(\d)" title="([^"]*)"><b>FLAVIUS<br>RULE<\/b><small>(×\d+)<\/small><\/span>/g,
   (m,lv,t,n)=>`<span class="mb-back mb-back75" title="${t}" style="background-image:url('${WBACK75(lv)}')"><small>${n}</small></span>`)}catch(e){}return h}}
 {const base=openChest;openChest=async function(player){try{if(player&&!player.cpu&&!HEADLESS&&!(S&&S.sim)&&S.chest&&S.chest.weapons.length){const key=S.chest.weapons[S.chest.weapons.length-1];
-    if(W[key]&&typeof modal==='function')await modal(_T('🗝 The Arena Chest'),`<div class="chest75"><div class="chest75-card"><span class="chest75-face chest75-back" style="background-image:url('${WBACK75(4)}')"></span><span class="chest75-face chest75-front"><span class="cimg" style="${cardStyle('w:'+key)}"></span></span></div><p><b>${esc(W[key].n)}</b> · ${esc(wStats(mkW(key)))}</p></div>`,[{label:_T('Take it'),value:1,primary:1}])}}catch(e){console.error(e)}
+    if(W[key]&&typeof modal==='function')await askW(player,'chestShow',_T('🗝 The Arena Chest'),`<div class="chest75"><div class="chest75-card"><span class="chest75-face chest75-back" style="background-image:url('${WBACK75(4)}')"></span><span class="chest75-face chest75-front"><span class="cimg" style="${cardStyle('w:'+key)}"></span></span></div><p><b>${esc(W[key].n)}</b> · ${esc(wStats(mkW(key)))}</p></div>`,[{label:_T('Take it'),value:1,primary:1}])}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}
 
 /* ---------- Match Week: the host city's banner ---------- */
@@ -34201,6 +34204,11 @@ const ONLC=(function(){
   {const base=C.domusRow;C.domusRow=function(D){const r=base.apply(this,arguments);if(r&&D){const X=D.cu||{};
     r.cu={bouts:X.bouts|0,wins:X.wins|0,lifeCF:X.lifeCF|0,survived:X.survived|0,fallen:X.fallen|0};if(D.split101){r.split101=+D.split101||0;r.pre101=D.pre101|0}}return r}}
   Object.assign(C,{domusNote:domusNote101})})(ONLC);
+/* ===== v1.01 QUESTION PORT (wave 2 Phase A; the page: 326-v101ask + 113/290) =====
+   PROTOCOL 9: a window answer carries the question's kind + decision number {k:'modal', v, kd, ds, pre} (no title), its hashes include
+   them, a question is owned by the human fighter it is asked of, and every question of the rules is recorded even right after a bar
+   click. A v1.0 page would wait for or skip different windows in the same match, so VER moves 8 → 9 (the server only compares it). */
+(function(C){C.VER=9})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
 /* =====================================================================
    112-ONLINE · MULTIPLAYER → ONLINE (phase 1: the landing space, against a mock server)
@@ -34585,11 +34593,15 @@ NET.on('match.settled',d=>{if(!d||!ONL.acct||(d.to&&d.to!==ONL.acct.id))return;i
        tile  — onTile(r,c) with S.mode and the Focus toggle;
        act   — an action-panel button (data-act + data-id/data-i), replayed by clicking a twin button;
        modal — the value a decision window resolved with (the owner sees it; others wait for the value).
-     Owner of a decision: RESPONDER (defend / askCard), the gladiator in humanCommand, else cur(); when cur() is a CPU,
-     the lowest human seat (e.g. the editor's truce decree). CPU offers of truce or trade to a human are declined
-     on every client in v1 (the engine does not say which human was asked).
-   • Not recorded: windows the player opens from the bars (a trusted click outside the board/actions/window, 300 ms),
-     rule pop-ups and the briefing (popRule, eventBriefing), anything after the event ends. Hotkeys are off online.
+     v1.01 (326-v101ask): a decision asked through the question port carries its KIND and decision number (kd, ds) and both
+     hashes of a window answer include them (onlmQHash) — no window title travels any more. Acts are applied through
+     command() (the registry), the twin button only for an act nobody registered.
+     Owner of a decision: the explicit humanCommand / stands override; else the HUMAN FIGHTER the question is asked of (ask's
+     seat); else RESPONDER (defend / askCard), cur(), and when cur() is a CPU the lowest human seat. CPU offers of truce or
+     trade to a human never happen online (06-ai filters them since v1.0); a stray one is declined by KIND on every client.
+   • Not recorded: windows the player opens from the bars (a trusted click outside the board/actions/window, 300 ms — only
+     for windows that did not come through ask(); a question of the rules is always recorded), rule pop-ups and the
+     briefing (popRule, eventBriefing), anything after the event ends. Hotkeys are off online.
    • Desync guard: each input carries the owner's state hash taken just before it; a client whose hash differs asks
      that owner for a snapshot and reloads it (match.snapreq → match.snap).
    • Off-turn: the board and the action panel ignore real clicks; a banner says whose move it is.
@@ -34602,6 +34614,10 @@ function onlmOwner(){if(ONLM.override!=null)return ONLM.override;if(typeof RESPO
   const c=cur();if(c&&!c.cpu)return onlmSeatOf(c);return ONLM.owners.findIndex(Boolean)}
 /* who may act on the board right now: never a CPU's turn (the lowest-human fallback is for windows only) */
 function onlmActor(){if(ONLM.override!=null)return ONLM.override;if(typeof RESPONDER!=='undefined'&&RESPONDER)return onlmSeatOf(RESPONDER);const c=cur();return c&&!c.cpu?onlmSeatOf(c):-1}
+/* v1.01: the owner of an asked question — an override (humanCommand, the stands) wins; else the human fighter it is asked of */
+function onlmAskOwner(Q){if(ONLM.override==null&&Q&&!Q.local&&Q.seat>=0&&Q.seat<onlmFighters()&&onlmHuman(Q.seat))return Q.seat;return onlmOwner()}
+/* v1.01: a window's hash = the state + the question (kind # decision number); old-style windows (no ask) = the state */
+function onlmQHash(Q){const h=onlHash();return Q&&!Q.local&&h?h+'|'+Q.kind+'#'+Q.ds:h}
 function onlmMine(){if(ONLM.me<0)return false;return onlmActor()===ONLM.me||(!!CUR_MODAL&&onlmOwner()===ONLM.me)}
 /* a decision seat's name: a fighter, or a ticket holder in the stands (seats after the fighters) */
 function onlmName(i){const p=S.players[i];if(p)return p.name;const t=((S.onl&&S.onl.stands)||[])[i-((S.onl&&S.onl.fighters)||S.players.length)];return t?t.name+_T(' (in the stands)'):_T('Another lanista')}
@@ -34625,19 +34641,21 @@ window.addEventListener('keydown',e=>{if(!onlmOn()||!e.isTrusted)return;const t=
 /* windows: decisions are recorded / awaited; rule pop-ups, the briefing and bar windows stay local */
 for(const nm of ['popRule','eventBriefing']){try{const base=eval(nm);if(typeof base!=='function')continue;eval(`${nm}=async function(){ONLM.info++;try{return await base.apply(this,arguments)}finally{ONLM.info--}}`)}catch(e){}}
 {const base=humanCommand;humanCommand=async function(p){const prev=ONLM.override;if(onlmOn())ONLM.override=onlmSeatOf(p);try{return await base.apply(this,arguments)}finally{ONLM.override=prev}}}
-{const base=modal;modal=function(title,body,buttons,opt){
-  if(!onlmOn()||ONLM.info>0||Date.now()-ONLM.uiAt<300)return base.apply(this,arguments);
+{const base=modal;modal=function(title,body,buttons,opt){const Q=typeof askNow==='function'?askNow():null;const eng=!!(Q&&!Q.local);
+  if(!onlmOn()||ONLM.info>0||(!eng&&Date.now()-ONLM.uiAt<300))return base.apply(this,arguments);
   const t=String(title||'');const c=cur();
-  /* a CPU offering a truce or a trade to a human: declined everywhere (v1) */
-  if(c&&c.cpu&&/offers a truce|proposes a trade/.test(t)){const no=(buttons||[]).find(b=>/decline|refuse|no\b|keep/i.test(b.label||''))||(buttons||[]).slice(-1)[0];return Promise.resolve(no?no.value:null)}
-  const own=onlmOwner();if(!onlmHuman(own))return base.apply(this,arguments);
+  /* a CPU offering a truce or a trade to a human: never asked online since v1.0 (06-ai); a stray one is declined on every client — by KIND, never the title */
+  if(Q&&(Q.kind==='truceOffer'||Q.kind==='tradeOffer')&&c&&c.cpu){const no=(buttons||[]).find(b=>b&&b.value===0)||(buttons||[]).slice(-1)[0];return Promise.resolve(no?no.value:null)}
+  const own=onlmAskOwner(Q);if(!onlmHuman(own))return base.apply(this,arguments);
   /* v1.0 (290-v100tt): decision numbers, one-button notices, the docked step panel and the decision clocks — a handler that returns a promise takes the window */
   if(typeof onlmDec100==='function'){const r=onlmDec100(own,t,title,body,buttons,opt,base,this);if(r)return r}
   /* a seat whose lanista abandoned: every client answers that seat's windows with the default (the same value everywhere) */
   if(ONLM.left&&ONLM.left[own]!=null){const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;return Promise.resolve(def)}
-  if(own===ONLM.me){const pre=onlHash();const pr=base.apply(this,arguments);if(own>=onlmFighters())onlmAutoPass(buttons,opt);return Promise.resolve(pr).then(v=>{const inp={k:'modal',v:v===undefined?null:v,t:t.slice(0,60)};inp.pre=pre;onlmSend(inp);return v})}
+  if(own===ONLM.me){const pre=onlmQHash(Q);const pr=base.apply(this,arguments);if(own>=onlmFighters())onlmAutoPass(buttons,opt);return Promise.resolve(pr).then(v=>{const inp={k:'modal',v:v===undefined?null:v,...onlmQTag(Q,t)};inp.pre=pre;onlmSend(inp);return v})}
   const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;
-  return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def};onlmWaitShow();onlmPump()})}}
+  return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def,kd:Q&&!Q.local?Q.kind:null};onlmWaitShow();onlmPump()})}}
+/* v1.01: what a window answer carries about its question — kind + decision number (asked), else a title slice (an old-style window) */
+function onlmQTag(Q,t){return Q&&!Q.local?{kd:Q.kind,ds:Q.ds}:{t:String(t||'').slice(0,60)}}
 /* ---------------- receiving ---------------- */
 NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;const inp=d.in;if(inp.from===ONL.acct.id||inp.seq<ONLM.next)return;if(!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);ONLM.q.sort((a,b)=>a.seq-b.seq);onlmPump()});
 function onlmReady(inp){if(!S||S.over)return false;if(inp.k==='void'||inp.k==='abandon')return true;if(inp.k==='drop')return ONLM.pend?ONLM.pend.seat===inp.seat:(!S.busy&&!CUR_MODAL&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat);if(inp.k==='modal')return !!ONLM.pend;
@@ -34653,11 +34671,11 @@ function onlmPump(){clearTimeout(ONLM_PUMP);if(!onlmOn()||ONLM.resyncing)return;
 function onlmPendHash(){return ONLM.pend&&ONLM.pend.h||onlHash()}
 function onlmApply(inp){ONLM.replay++;try{
   if(inp.k==='modal'){const P=ONLM.pend;ONLM.pend=null;onlmWaitShow();P.res(inp.v);return}
-  const p=cur();if(inp.k==='tile'){if(p)p.focusRoll=!!inp.focus;S.mode=inp.mode;try{if(typeof computeHL==='function')computeHL()}catch(e){}onTile(inp.r,inp.c);return}
-  if(inp.k==='act'){const b=document.createElement('button');b.type='button';b.dataset.act=inp.a;if(inp.id!=null)b.dataset.id=inp.id;if(inp.i!=null)b.dataset.i=inp.i;b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}
+  if(inp.k==='tile'){command(inp.seat,{k:'tile',r:inp.r,c:inp.c,mode:inp.mode,focus:inp.focus});return}
+  if(inp.k==='act'){command(inp.seat,{k:'act',a:inp.a,id:inp.id,i:inp.i})}
 }finally{ONLM.replay--}setTimeout(onlmPump,30)}
 /* the modal's own hash is taken when it opens */
-{const base=modal;modal=function(){if(onlmOn()&&!ONLM.replay){const h=onlHash();const r=base.apply(this,arguments);if(ONLM.pend&&!ONLM.pend.h)ONLM.pend.h=h;return r}return base.apply(this,arguments)}}
+{const base=modal;modal=function(){if(onlmOn()&&!ONLM.replay){const h=onlmQHash(typeof askNow==='function'?askNow():null);const r=base.apply(this,arguments);if(ONLM.pend&&!ONLM.pend.h)ONLM.pend.h=h;return r}return base.apply(this,arguments)}}
 async function onlmCatchUp(){if(ONLM.catching)return;ONLM.catching=true;try{const g=await NET.req('match.get',{id:S.onl.lobby,from:ONLM.next});for(const inp of g.inputs||[])if(inp.from!==ONL.acct.id&&inp.seq>=ONLM.next&&!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);
   for(const inp of g.inputs||[])if(inp.from===ONL.acct.id&&inp.seq>=ONLM.next)ONLM.own.add(inp.seq);ONLM.q.sort((a,b)=>a.seq-b.seq)}catch(e){}finally{ONLM.catching=false}onlmPump()}
 /* own inputs advance the shared counter too (the server echoes them back to everyone) */
@@ -34666,13 +34684,13 @@ NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;if(d.in.fro
 function onlmDrop(inp){const p=S.players[inp.seat];const sp=!p&&(S.spect||[]).find(s=>s.onlIdx===inp.seat);if(!p&&!sp)return;ONLM.owners[inp.seat]=null;
   if(sp){sp.human=false;log(_T`🔌 <b>${esc(sp.name)}</b> left the stands.`)}else{p.cpu=true;log(_T`🔌 <b>${esc(p.name)}</b> left the arena — a CPU fights on in that seat (the Fate still waits).`,'big')}
   if(inp.seat===ONLM.me){ONLM.me=-1;if(typeof mToast==='function')mToast(_T('🔌 You were away too long — a CPU took your seat. Your gladiator still faces the Fate.'))}
-  ONLM.replay++;try{if(ONLM.pend){const P=ONLM.pend;ONLM.pend=null;P.res(P.def)}else if(S.phase==='command'){const b=document.createElement('button');b.dataset.act='cmddone';b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}else{endTurn()}}finally{ONLM.replay--}onlmWaitShow()}
+  ONLM.replay++;try{if(ONLM.pend){const P=ONLM.pend;ONLM.pend=null;P.res(P.def)}else if(S.phase==='command'){command(inp.seat,{k:'act',a:'cmddone'})}else{endTurn()}}finally{ONLM.replay--}onlmWaitShow()}
 /* waiting on someone for 3 minutes: ask the server to drop them (it only agrees if their connection really is gone) */
 setInterval(()=>{if(!onlmOn()||S.onl.watch)return;const own=ONLM.pend?ONLM.pend.seat:onlmActor();if(!onlmHuman(own)||own===ONLM.me){ONLM.waitSince=0;return}
   if(ONLM.pend||!S.busy){if(!ONLM.waitSince||ONLM.waitFor!==own){ONLM.waitSince=Date.now();ONLM.waitFor=own}
     if(Date.now()-ONLM.waitSince>ONLC.AWAY_MS&&Date.now()-(ONLM.dropAt||0)>30000){ONLM.dropAt=Date.now();NET.req('match.drop',{id:S.onl.lobby,seat:own}).catch(()=>{})}}else ONLM.waitSince=0},5000);
 /* ---------------- resync ---------------- */
-function onlmResync(inp){ONLM.resyncs++;ONLM.lastResync={seq:inp.seq,k:inp.k,a:inp.a||inp.t||'',mine:inp.k==='modal'?onlmPendHash():onlHash(),theirs:inp.k==='modal'?inp.pre:inp.h,turn:S.turnNo,phase:S.phase,cur:cur()&&cur().name};ONLM.resyncing=true;ONLM.needAt=inp.seq;if(typeof mToast==='function')mToast(_T('🔄 Out of step with the others — fetching their arena…'));
+function onlmResync(inp){ONLM.resyncs++;ONLM.lastResync={seq:inp.seq,k:inp.k,a:inp.a||inp.kd||inp.t||'',mine:inp.k==='modal'?onlmPendHash():onlHash(),theirs:inp.k==='modal'?inp.pre:inp.h,turn:S.turnNo,phase:S.phase,cur:cur()&&cur().name};ONLM.resyncing=true;ONLM.needAt=inp.seq;if(typeof mToast==='function')mToast(_T('🔄 Out of step with the others — fetching their arena…'));
   NET.req('match.snapreq',{id:S.onl.lobby,to:ONLM.owners[inp.seat],seq:inp.seq}).catch(()=>{});setTimeout(()=>{if(ONLM.resyncing){ONLM.resyncing=false;onlmPump()}},15000)}
 /* a snapshot only at a settled point: a human's own decision, nothing resolving, every move so far applied (a freshly loaded
    client cannot resume a CPU's turn half-way, and must not replay a move this client already made) */
@@ -34753,7 +34771,7 @@ function onlmAbandonMark(inp){ONLM.left=ONLM.left||{};if(ONLM.left[inp.seat]!=nu
 function onlmLeftCheck(){if(!onlmOn()||!ONLM.left)return;if(S.busy||CUR_MODAL||ONLM.pend||!['choice','action','command'].includes(S.phase))return;
   const c=cur();const i=onlmSeatOf(c);const rule=ONLM.left[i];if(rule==null||!c||c.cpu||!c.alive)return;if(ONLM.leftDone&&ONLM.leftDone[i])return;(ONLM.leftDone=ONLM.leftDone||{})[i]=1;
   ONLM.replay++;try{if(rule==='fate'){ONLM.owners[i]=null;c.cpu=true;try{eliminate(c,{type:'retire'})}catch(e){console.error(e)}render();endTurn()}
-    else{c.cpu=true;ONLM.owners[i]=null;if(S.phase==='command'){const b=document.createElement('button');b.dataset.act='cmddone';b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}else endTurn()}}
+    else{c.cpu=true;ONLM.owners[i]=null;if(S.phase==='command'){command(i,{k:'act',a:'cmddone'})}else endTurn()}}
   finally{ONLM.replay--}onlmWaitShow()}
 {const base=render;render=function(){const r=base.apply(this,arguments);if(ONLM.on&&ONLM.left)setTimeout(onlmLeftCheck,40);return r}}
 /* =====================================================================
@@ -36217,7 +36235,7 @@ runDraft=async function(){
         const chip=x=>{if(x.by){const q=S.players[x.by-1];return `<span class="pc81 tk81" style="border-color:${q.color}" title="${_T`taken by ${esc(q.name)}`}">${esc(itemName81(x))}<i>${esc(q.name)}</i></span>`}
           const why=x.lv>maxLv(p)?_T('above your draft level'):!draftFits81(p,x)?_T('no free spot'):_T('not offered this pick');
           return `<span class="pc81" title="${why}">${_T`${esc(itemName81(x))}<i>LV${x.lv}</i>`}</span>`};
-        const idx=await modal(_T`Draft · ${p.name} · pick ${rd+1} of ${picks(p)}`,`<p>${_T`Take any lit piece — <b style="color:var(--gold2)">${avail.length}</b> fit you. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid two81" id="pickgrid"></div><details class="pool81"><summary>${_T`Rest of the pool · ${rest.length}`}</summary><div class="pool81b">${rest.map(chip).join('')}</div></details>`,[],{wide:1,grid});
+        const idx=await askW(p,'draftPick',_T`Draft · ${p.name} · pick ${rd+1} of ${picks(p)}`,`<p>${_T`Take any lit piece — <b style="color:var(--gold2)">${avail.length}</b> fit you. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid two81" id="pickgrid"></div><details class="pool81"><summary>${_T`Rest of the pool · ${rest.length}`}</summary><div class="pool81b">${rest.map(chip).join('')}</div></details>`,[],{wide:1,grid});
         pick=avail.find(x=>x.id===idx)||avail[0]}
       pick.by=p.id+1;
       log(_T`${nm(p)} drafts <b>${itemName81(pick)}</b>.`);
@@ -36230,7 +36248,7 @@ runDraft=async function(){
       const leftN=k=>deck?deck.slice(1).filter(x=>x===k).length:1;
       for(let i=0;i<5;i++){let k;const opts=DECLARE_PICKS.filter(x=>leftN(x)>0);if(!opts.length)break;
         if(j.cpu){k=['ward','focus','forge3','hercules2','rete','hercules1','forge2','hygeia','ammo','mchoice','discount','lure','lyre'].find(x=>opts.includes(x))||opts[0]}
-        else k=await modal(_T`Juggernaut card ${i+1} of 5`,`<p>${_T`Choose a Declare-type arena card. The card leaves the arena deck.`}</p><div class="pickgrid two81 jc81" id="pickgrid"></div>`,[],{wide:1,grid:opts.map(x=>({label:CARDS[x].n,sub:_T`×${leftN(x)} left · ${CARDS[x].d}`,value:x,card:'c:'+x}))});
+        else k=await askW(j,'juggCard',_T`Juggernaut card ${i+1} of 5`,`<p>${_T`Choose a Declare-type arena card. The card leaves the arena deck.`}</p><div class="pickgrid two81 jc81" id="pickgrid"></div>`,[],{wide:1,grid:opts.map(x=>({label:CARDS[x].n,sub:_T`×${leftN(x)} left · ${CARDS[x].d}`,value:x,card:'c:'+x}))});
         if(!k||!opts.includes(k))k=opts[0];
         if(deck){const at=deck.lastIndexOf(k);if(at>0)deck.splice(at,1)}
         j.items.push(mkCard(k))}
@@ -42913,7 +42931,7 @@ function gear88Bar(p){if(!gear88Ok(p))return '';const n=gear88Opts(p).length;con
 function gear88Swap(p){if(!gear88Ok(p))return;const r=p.wR,l=p.wL;p.wR=l||null;p.wL=r||null;if(p.armUses){const u=p.armUses.R;p.armUses.R=p.armUses.L;p.armUses.L=u}
   log(_T`${nm(p)} swaps hands: ${p.wR?esc(p.wR.n):_T('nothing')} is now primary, ${p.wL?esc(p.wL.n):_T('nothing')} secondary.`);render()}
 async function gear88Take(p){for(;;){if(!gear88Ok(p))break;const opts=gear88Opts(p);if(!opts.length)break;
-    const i=await modal(_T('🎒 Manage your gear'),`<p>${_T`Not your turn and nobody is attacking you: take anything lying here. Weapons go to a free hand (or swap one out); armor goes on a free spot.`}</p>`,
+    const i=await askX(p,'manageGear',{local:1},_T('🎒 Manage your gear'),`<p>${_T`Not your turn and nobody is attacking you: take anything lying here. Weapons go to a free hand (or swap one out); armor goes on a free spot.`}</p>`,
       opts.map((o,j)=>{const w=o.t==='w'?o.pl.weapons[o.i]:o.t==='fw'?o.floor.w:null;const a=o.t==='a'?o.pl.armor[o.i]:null;return {label:o.label,sub:o.sub,value:j,card:w&&w.key?'w:'+w.key:a&&a.key?'a:'+a.key:null}}).concat([{label:_T('Done'),value:null}]),{close:null});
     if(i==null||!gear88Ok(p))break;const was=p.looted;try{await doLoot(p,opts[i])}finally{p.looted=was}render()}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-gear88]');if(!b)return;e.preventDefault();e.stopPropagation();
@@ -42994,7 +43012,8 @@ function trade88Label(x,owner){const p=trade88Pic(x,owner);return p?`<span class
 function trade88Body(T){const side=(who,x,owner,cap)=>`<div class="tr88s"><div class="tr88h">${cap}</div><div class="tr88pic">${trade88Pic(x,owner)}</div><b>${x.label}</b></div>`;
   return `<div class="tr88">${side(T.from,T.give,T.from,_T`${esc(T.from.name)} gives you`)}<div class="tr88x">⇄</div>${side(T.to,T.get,T.to,_T`for your`)}</div>`}
 {const base=modal;modal=function(title,body,buttons,opt){const T=TRADE88;
-  if(T&&!HEADLESS){const t=String(title||'');if(t===_T`${T.from.name} proposes a trade`||t===_T`${T.to.name}: trade offer`){TRADE88=null;try{body=trade88Body(T)+body}catch(e){}return base.call(this,title,body,buttons,opt)}}
+  if(T&&!HEADLESS){const t=String(title||'');const K=typeof askKind==='function'?askKind():''; /* v1.01: the question's kind (326), the title only for an un-asked window */
+    if(K?K==='tradeOffer'||K==='tradeAsk':t===_T`${T.from.name} proposes a trade`||t===_T`${T.to.name}: trade offer`){TRADE88=null;try{body=trade88Body(T)+body}catch(e){}return base.call(this,title,body,buttons,opt)}}
   return base.apply(this,arguments)}}
 /* the closed market: the whole board dims under the lock (the weapon cards sat above the old veil), and the board fits the window */
 {const css=document.createElement('style');css.textContent=`
@@ -45410,7 +45429,7 @@ async function pick89(player,lvs,sides,opt={}){mktFix75();const opts=rowOpts89(l
   if(player.cpu){o=opts.map((x,i)=>[x,cpuVal89(player,x,opt.pref),i]).sort((a,b)=>b[1]-a[1]||a[2]-b[2])[0][0];
     if(!HEADLESS&&typeof mk88PeekOn==='function'&&mk88PeekOn())snap=boardHTML75(player)}
   else{const what=sides.length>1?_T('any weapon or one armor piece'):sides[0]==='w'?_T('any weapon'):_T('any one armor piece');
-    const v=await modal(opt.title||_T`Market · level ${one}`,`<p class="rc-sub" style="margin:6px 0 0">${one?_T`Take ${what} from the level ${one} row.`:_T`Take ${what} from the board.`}</p>`,
+    const v=await askW(player,'marketTake',opt.title||_T`Market · level ${one}`,`<p class="rc-sub" style="margin:6px 0 0">${one?_T`Take ${what} from the level ${one} row.`:_T`Take ${what} from the board.`}</p>`,
       opts.map((x,i)=>({label:x.kind==='w'?W[x.key].n:ARM[x.key].n,sub:x.kind==='w'?_T`weapon · level ${x.lv} · slot ${x.s}`:_T`armor · level ${x.lv} · slot ${x.s}`,value:'p'+i,card:(x.kind==='w'?'w:':'a:')+x.key})),
       {wide:1,mkt89:{player,lvs,sides,opts}});
     o=opts[typeof v==='string'&&v[0]==='p'?+v.slice(1):0]||opts[0]}
@@ -45444,7 +45463,7 @@ if(!/Now:/.test(CARDS.mchoice.d))CARDS.mchoice.d=CARDS.mchoice.d+' '+CARDS.mchoi
 const mchoiceHas89=()=>{try{mktFix75();return rowOpts89([1,2,3],['w']).length>0}catch(e){return false}};
 {const base=useItem;useItem=async function(player,it){if(!it||it.kind!=='card'||it.key!=='mchoice')return base.apply(this,arguments);
   if(!armsAttached(player).length||!mchoiceHas89()){
-    if(!player.cpu)await modal(CARDS.mchoice.n,`<p>${!armsAttached(player).length?_T('You have no arm left to hold a weapon.'):_T('No weapon is left in the market.')}</p>`,[{label:'OK',value:1}]);
+    if(!player.cpu)await askW(player,'marketNone',CARDS.mchoice.n,`<p>${!armsAttached(player).length?_T('You have no arm left to hold a weapon.'):_T('No weapon is left in the market.')}</p>`,[{label:'OK',value:1}]);
     return false}
   player.items=player.items.filter(x=>x!==it);cardShow('c:mchoice',player,_T('📣 Declared'));stat(player,'cardsPlayed');
   log(_T`${nm(player)} declares Choose: a free weapon from the market.`);
@@ -48700,7 +48719,7 @@ distModal=function(player,n,why,kind){const plan={};LOCS.forEach(l=>plan[l]=0);
    <p style="margin-top:10px">${_T`Left to assign: <b id="distLeft">${left()}</b>`}</p>`;
   const sync=()=>{const ok=document.querySelector('#mBtns [data-mi="1"]');if(ok)ok.disabled=left()>0&&room()};
   const btns=[{label:_T('Auto: head, chest, arms, legs'),value:'auto'},{label:_T('Confirm'),value:'ok',primary:1}];if(canCancel)btns.push({label:_T('Cancel'),value:'cancel'});
-  return modal(kind==='hp'?_T('Distribute health'):_T('Distribute armor'),body(),btns,{onOpen:()=>{const box=$('#mBody');sync();
+  return askW(player,kind==='hp'?'distHP':'distAP',kind==='hp'?_T('Distribute health'):_T('Distribute armor'),body(),btns,{onOpen:()=>{const box=$('#mBody');sync();
       box.onclick=e=>{const b=e.target.closest('[data-d]');if(!b||b.disabled)return;const l=b.dataset.l;plan[l]+=b.dataset.d==='+'?1:-1;box.innerHTML=body();sync()}}})
    .then(v=>{const mb=$('#mBody');if(mb)mb.onclick=null;
     if(v==='cancel'||(canCancel&&v==null))return null;
@@ -48710,7 +48729,7 @@ distModal=function(player,n,why,kind){const plan={};LOCS.forEach(l=>plan[l]=0);
     return plan})};
 /* distributeHP now says whether anything was healed (false: full health, or the player cancelled) */
 distributeHP=async function(player,n,why=_T('Health Elixir')){const locs=LOCS.filter(l=>player.hp[l]>0&&player.hp[l]<7);
-  if(!locs.length){if(DIST91.cancel){if(!player.cpu)await modal(_T('Nothing to heal'),`<p>${_T`Every location is already at full health — the elixir stays in your hand.`}</p>`,[{label:'OK',value:1}]);return false}
+  if(!locs.length){if(DIST91.cancel){if(!player.cpu)await askW(player,'healNone',_T('Nothing to heal'),`<p>${_T`Every location is already at full health — the elixir stays in your hand.`}</p>`,[{label:'OK',value:1}]);return false}
     log(_T`${nm(player)} is already at full health.`);return false}
   const plan=player.cpu?cpuHealPlan(player,n):await distModal(player,n,why,'hp');if(!plan)return false;
   const parts=[];for(const l of LOCS)if(plan[l]){player.hp[l]=Math.min(7,player.hp[l]+plan[l]);parts.push(`${LOCN[l]} +${plan[l]}`)}
@@ -48718,10 +48737,10 @@ distributeHP=async function(player,n,why=_T('Health Elixir')){const locs=LOCS.fi
   log(_T`${nm(player)} uses ${why}: ${parts.join(', ')||'nothing'}.`);return tot>0||!DIST91.cancel};
 /* the AP Upgrade window shows the piece it reinforces */
 apUp=async function(player,n){const locs=LOCS.filter(l=>player.hp[l]>0&&player.ap[l]>0&&player.ap[l]<7);
-  if(!locs.length){if(!player.cpu)await modal(_T('No armored location'),`<p>${_T`AP upgrades only apply to a location that already has armor.`}</p>`,[{label:'OK',value:1}]);return false}
+  if(!locs.length){if(!player.cpu)await askW(player,'apUpNone',_T('No armored location'),`<p>${_T`AP upgrades only apply to a location that already has armor.`}</p>`,[{label:'OK',value:1}]);return false}
   const pc=l=>((player.pieces&&player.pieces[l])||[]).find(x=>x&&x.key&&ARM[x.key]);
   const loc=player.cpu?locs.sort((a,b)=>player.ap[a]-player.ap[b]||HEAL_ORDER.indexOf(a)-HEAL_ORDER.indexOf(b))[0]
-   :await modal(_T`AP Upgrade (+${n})`,`<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`,locs.map(l=>{const P=pc(l);
+   :await askW(player,'apUpLoc',_T`AP Upgrade (+${n})`,`<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`,locs.map(l=>{const P=pc(l);
       return {label:`${P?`<span class="apu91">${armSideArt91(P.key,l,92)}</span>`:''}${LOCN[l]}`,sub:_T`${P?esc(P.n||ARM[P.key]&&ARM[P.key].n||'')+' · ':''}AP ${player.ap[l]} → ${Math.min(7,player.ap[l]+n)}`,value:l}}).concat([{label:_T('Cancel'),value:null}]));
   if(!loc)return false;player.ap[loc]=Math.min(7,player.ap[loc]+n);log(_T`${nm(player)} reinforces ${LOCN[loc]} to ${player.ap[loc]} AP.`);return true};
 {const base=useItem;useItem=async function(player,it){
@@ -53126,7 +53145,7 @@ runCarmina=async function(){
     const avail=CARMINA.map((c,i)=>i).filter(i=>!used.has(i));
     let i;
     if(p.cpu){const P=pers(p);const val=k=>({0:P.aggression,1:P.survival,2:P.survival,3:P.survival,4:P.aggression,5:(P.cf+P.coin)/2,6:P.aggression,7:P.coin,8:(P.coin+P.cf)/2,9:P.cf+10,10:P.coin,11:P.survival})[k]+rand()*30;i=avail.sort((a,b)=>val(b)-val(a))[0]}
-    else i=await modal(_T`Carmina Fescennina · ${p.name}`,carm96HTML(avail),avail.map(k=>({label:`${k+1}. “${CARMINA[k].v.length>70?CARMINA[k].v.slice(0,68)+'…':CARMINA[k].v}”`,sub:CARMINA[k].d,value:k,style:'display:none'})).concat([{label:_T('Opt out'),value:-1}]),{xwide:1,
+    else i=await askW(p,'carmina',_T`Carmina Fescennina · ${p.name}`,carm96HTML(avail),avail.map(k=>({label:`${k+1}. “${CARMINA[k].v.length>70?CARMINA[k].v.slice(0,68)+'…':CARMINA[k].v}”`,sub:CARMINA[k].d,value:k,style:'display:none'})).concat([{label:_T('Opt out'),value:-1}]),{xwide:1,
       onOpen:done=>{const box=document.getElementById('mBody');if(box)box.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-cm96]');if(!b||b.disabled)return;done(+b.dataset.cm96)})}});
     if(i==null||i<0){log(_T`${nm(p)} declines to recite.`);continue}
     used.add(i);log(_T`${nm(p)} recites: “${CARMINA[i].v}” (${CARMINA[i].d}).`);think(p,'“'+CARMINA[i].v+'”','say');cardShow('x:'+CARMINA[i].img,p,_T('🎭 Recited'));await CARMINA[i].apply(p);
@@ -53523,8 +53542,8 @@ var CPUDIP96=false; /* read by tradePartners (05-flow) */
 
 /* ---------- 2a · the menu chips + the limit in the windows ---------- */
 {const base=modal;modal=function(title,body,buttons,opt){try{
-  if(!HEADLESS&&S&&S.players&&Array.isArray(buttons)){const p=cur();const t=String(title||'');
-    if(p&&t===_T('Trade or truce')){
+  if(!HEADLESS&&S&&S.players&&Array.isArray(buttons)){const p=cur();const t=String(title||'');const Q=typeof askNow==='function'?askNow():null;const K=Q?Q.kind:''; /* v1.01: by kind (326) */
+    if(p&&(K?K==='tradeMenu':t===_T('Trade or truce'))){
       const rows=buttons.map((b,i)=>({b,i,q:typeof b.value==='number'?S.players[b.value]:null}));
       const rank=x=>!x.q?9:inTruce(p,x.q)||EV().teams&&friendly(p,x.q)?0:1;
       for(const x of rows){if(!x.q)continue;const chips=[];
@@ -53533,7 +53552,7 @@ var CPUDIP96=false; /* read by tradePartners (05-flow) */
         if(chips.length)x.b={...x.b,label:x.b.label+' '+chips.join(' ')};
         if(offered96(p,x.q))x.b={...x.b,sub:(x.b.sub?x.b.sub+' · ':'')+_T('Already offered this turn'),style:'opacity:.5'}}
       buttons=rows.sort((a,b)=>rank(a)-rank(b)||a.i-b.i).map(x=>x.b)}
-    else{const q=S.players.find(x=>x&&t===_T`With ${x.name}`);
+    else{const q=K?(K==='tradeWith'&&Q.spec&&Q.spec.q||null):S.players.find(x=>x&&t===_T`With ${x.name}`);
       if(q&&p&&offered96(p,q))buttons=buttons.map(b=>b.value==='trade'||b.value==='truce'&&!inTruce(p,q)?{...b,disabled:true,sub:_T('Already offered this turn')}:b)}}}catch(e){}
   return base.call(this,title,body,buttons,opt)}}
 
@@ -59939,7 +59958,7 @@ function tt100Status(r){if(!r||typeof r!=='object'||r.off)return;const now=Date.
 NET.on('match.clock100',d=>{try{if(S&&S.onl&&d&&d.id===S.onl.lobby)tt100Status(d)}catch(e){}});
 
 /* ---------------- decisions (113's modal hook) ---------------- */
-function onlmDec100(own,t,title,body,buttons,opt,base,self){
+function onlmDec100(own,t,title,body,buttons,opt,base,self){const Q=typeof askNow==='function'?askNow():null; /* v1.01: the question (326) — its kind # number rides in the hashes */
   S.dn100=(S.dn100|0)+1;const d=S.dn100;const def=tt100Def(buttons,opt);
   /* a seat whose turn ran out: its windows take the default at once (every client the same) */
   const X=S.tt100x;if(X&&X.seat===own&&X.t===S.turnNo){tt100Log({d,seat:own,v:def,by:'cpu'});return Promise.resolve(def)}
@@ -59948,16 +59967,16 @@ function onlmDec100(own,t,title,body,buttons,opt,base,self){
     if(own===ONLM.me){const tx=tt100Strip(body).slice(0,140);if(typeof mToast==='function')mToast(`<b>${tt100Strip(title)}</b>${tx?' — '+esc(tx):''}`)}tt100Log({d,seat:own,v,by:'note'});return Promise.resolve(v)}
   if(own>=onlmFighters())return null;
   const clock=tt100Clocked(own);
-  if(own===ONLM.me){const pre=onlHash();if(TT100C.steps.tn!==S.turnNo)TT100C.steps={tn:S.turnNo,n:0};TT100C.steps.n++;
+  if(own===ONLM.me){const pre=onlmQHash(Q);if(TT100C.steps.tn!==S.turnNo)TT100C.steps={tn:S.turnNo,n:0};TT100C.steps.n++;
     const O={d,seat:own,def,mine:true,t:title,clock,at:Date.now(),step:TT100C.steps.n,buttons,res:null,done:null};TT100C.open=O;if(clock)tt100Report('dec',{d,seat:own,t:S.turnNo});
     const o2={...(opt||{}),onOpen:done=>{O.done=done;if(O.byTimeout){try{done(def)}catch(e){}return}tt100Dock(O,opt);if(opt&&opt.onOpen)opt.onOpen(done)}};
     return new Promise(res=>{O.res=res;Promise.resolve(base.call(self,title,body,buttons,o2)).then(v=>{if(O.byTimeout)return;v=v===undefined?null:v;
-      if(!clock){if(TT100C.open===O)TT100C.open=null;onlmSend({k:'modal',v,t:t.slice(0,60),pre});tt100Log({d,seat:own,v,by:'me'});res(v);return}
+      if(!clock){if(TT100C.open===O)TT100C.open=null;onlmSend({k:'modal',v,...onlmQTag(Q,t),pre});tt100Log({d,seat:own,v,by:'me'});res(v);return}
       /* clocks on: the answer travels with its number and lands when its seq comes round */
-      O.answering=true;ONLM.pend={res:x=>{if(TT100C.open===O)TT100C.open=null;res(x)},t,seat:own,at:Date.now(),def,d,h:pre,mine100:true};tt100SendOwn({k:'modal',v,t:t.slice(0,60),pre,d})})})}
+      O.answering=true;ONLM.pend={res:x=>{if(TT100C.open===O)TT100C.open=null;res(x)},t,seat:own,at:Date.now(),def,d,h:pre,mine100:true};tt100SendOwn({k:'modal',v,...onlmQTag(Q,t),pre,d})})})}
   /* someone else's window: wait for their value (or the server's dto) */
   if(clock)tt100Report('dec',{d,seat:own,t:S.turnNo});
-  return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def,d,h:onlHash()};onlmWaitShow();onlmPump()})}
+  return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def,d,h:onlmQHash(Q),kd:Q&&!Q.local?Q.kind:null};onlmWaitShow();onlmPump()})}
 /* my answer, in order: the server's reply gives its seq; the pump applies it there (113 pump: ONLM.ownq / ownHold) */
 function tt100SendOwn(inp){ONLM.ownq=ONLM.ownq||new Set();inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.pre;inp.seat=ONLM.me;inp.n=++ONLM.sent;ONLM.inflight=(ONLM.inflight||0)+1;ONLM.ownHold=true;
   NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{ONLM.inflight--;ONLM.ownHold=false;if(!r||!Number.isInteger(r.seq)){onlmPump();return}
@@ -60017,7 +60036,7 @@ function tt100DropMark(inp){ONLM.left=ONLM.left||{};const p=S.players[inp.seat];
 /* the CPU finishes the turn once it is settled (every client at the same point: no input of that seat can land any more) */
 function tt100Kick(){try{if(!onlmOn()||!S.tt100x||TT100C.running)return;const X=S.tt100x;const p=S.players[X.seat];if(S.turnNo!==X.t||cur()!==p||!p||!p.alive||p.exited)return;
   if(S.busy||ONLM.pend||TT100C.open||tt100F98()||ONLM.resyncing)return;if(!['choice','action','command'].includes(S.phase))return;
-  if(S.phase==='command'){ONLM.replay++;try{const b=document.createElement('button');b.dataset.act='cmddone';b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}finally{ONLM.replay--}return}
+  if(S.phase==='command'){ONLM.replay++;try{command(X.seat,{k:'act',a:'cmddone'})}finally{ONLM.replay--}return}
   tt100Run(p)}catch(e){console.error(e)}}
 function tt100Run(p){TT100C.running=1;tt100Finish(p).catch(e=>console.error(e)).finally(()=>{TT100C.running=0;setTimeout(onlmPump,30)})}
 async function tt100Finish(p){const G=S;S.busy=true;try{render()}catch(e){}
@@ -66743,9 +66762,11 @@ window.addEventListener('keydown',e=>{if(!RPP.on||S!==RPP.S||!e.isTrusted)return
       const nb={label:_T('🎞 Watch the replay'),sub:_T('every move again, from the first turn'),value:'rp100w'};buttons=buttons.slice();buttons.splice(i<0?buttons.length:i,0,nb);
       return Promise.resolve(base.call(this,title,body,buttons,opt)).then(v=>{if(v==='rp100w')setTimeout(()=>rp100Play(id),160);return v})}}catch(e){console.error(e)}
   const R=rp100Live();if(!R||(typeof ONLM!=='undefined'&&ONLM.info>0))return base.apply(this,arguments);
-  const u=rp100UiOpen(RPR.uiAt);const pre=rp100H();const t=String(title||'').slice(0,40);
+  /* v1.01: a question asked by the rules (326 ask) is recorded with its kind and is never "maybe the player's own" (u) */
+  const Q=typeof askNow==='function'?askNow():null;const kd=Q&&!Q.local?Q.kind:null;
+  const u=!kd&&rp100UiOpen(RPR.uiAt);const pre=rp100H();const t=String(title||'').slice(0,40);
   return Promise.resolve(base.apply(this,arguments)).then(v=>{try{let vv=v===undefined?null:v;try{JSON.stringify(vv)}catch(x){vv=null}
-      if(rp100Live()===R)rp100Push({k:'modal',v:vv,t,h:pre,...(u?{u:1}:{})})}catch(e){}return v})}}
+      if(rp100Live()===R)rp100Push({k:'modal',v:vv,t,...(kd?{kd}:{}),h:pre,...(u?{u:1}:{})})}catch(e){}return v})}}
 /* 🤖 / 🎮 hand-offs, ⏭ to the end, 162's off-turn gear, the sand-glass */
 {const base=seatToggle;seatToggle=async function(p){if(RPP.on&&S===RPP.S&&!RPP.applying)return;
   try{if(rp100Live()&&!RPP.applying&&seatCanToggle(p)){const seat=S.players.indexOf(p);rp100Push(rp100Settled()?{k:'seat',seat,h:rp100H()}:{k:'seat',seat,...rp100Pos()})}}catch(e){}
@@ -66812,8 +66833,9 @@ function rp100Rng(){const R0=RNG;if(!R0||R0._rp100)return;const nx=R0.next;R0.ne
 function rp100Head(){while(RPP.used.has(RPP.i))RPP.i++;let j=RPP.i;while(RPP.ins[j]&&(RPP.used.has(j)||RPP.ins[j].k==='modal'&&RPP.ins[j].u))j++;return j}
 /* the recorded window a window opening now answers to: the next one in the list with its title, past windows that only MAY have been the player's
    own and moves timed by the dice (those may land just after it); -1 = the recording does not know it (it opens for the viewer) */
-function rp100Match(t){let k=RPP.i;for(const P of RPP.pend)k=Math.max(k,P.j+1);for(let n=0;n<10;k++){const x=RPP.ins[k];if(!x)return -1;if(RPP.used.has(k))continue;n++;
-    if(x.k==='modal'&&x.t===t)return k;if(!((x.k==='modal'&&x.u)||x.pos))return -1}return -1}
+function rp100Match(t,kd){let k=RPP.i;for(const P of RPP.pend)k=Math.max(k,P.j+1);for(let n=0;n<10;k++){const x=RPP.ins[k];if(!x)return -1;if(RPP.used.has(k))continue;n++;
+    /* v1.01: by the question's kind when both sides know it (any language), else by the title (older recordings) */
+    if(x.k==='modal'&&(x.kd&&kd?x.kd===kd:x.t===t))return k;if(!((x.k==='modal'&&x.u)||x.pos))return -1}return -1}
 function rp100PosHit(){const j=rp100Head(),x=RPP.ins[j];if(x&&x.pos&&x.s===RNG.s&&!x._q){x._q=1;setTimeout(()=>rp100ApplyPos(x),0)}}
 function rp100ApplyPos(x){if(!RPP.on||S!==RPP.S)return;const j=rp100Head();if(RPP.ins[j]!==x)return;RPP.i=j+1;rp100Do(x);setTimeout(rp100Pump,30)}
 /* each turn: the sand-glass (if it ran out here), ⏭ next turn, the round jump */
@@ -66834,8 +66856,8 @@ function rp100Pump(){clearTimeout(RPP.pt);if(!RPP.on||S!==RPP.S||!S||S.over)retu
   if(x.k==='modal'){if(since>3000){RPP.i=j+1;RPP.readyAt=0;rp100Div(_T('a window never came'))}return}
   if(since<rp100Gap(RP100.GAP))return;RPP.readyAt=0;RPP.i=j+1;if(x.h&&x.h!==rp100H())rp100Div(_T`turn ${S.turnNo}`);rp100Do(x);setTimeout(rp100Pump,30)}
 function rp100Do(x){RPP.applying++;try{rp100Caption(x);
-    if(x.k==='tile'){const p=cur();if(p)p.focusRoll=!!x.focus;S.mode=x.mode;try{computeHL()}catch(e){}onTile(x.r,x.c)}
-    else if(x.k==='act'){const b=document.createElement('button');b.type='button';for(const [k,v] of Object.entries(x.d||{}))b.dataset[k]=v;b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}
+    if(x.k==='tile')command(S.players.indexOf(cur()),{k:'tile',r:x.r,c:x.c,mode:x.mode,focus:x.focus});
+    else if(x.k==='act')command(S.players.indexOf(cur()),{k:'act',d:{...(x.d||{})}});
     else if(x.k==='seat'){const p=S.players[x.seat];if(p)seatToggle(p)}
     else if(x.k==='sim')simToEnd(true);
     else if(x.k==='gear'){const p=S.players[x.seat];if(p){if(x.op==='swap')gear88Swap(p);else gear88Take(p)}}}
@@ -66845,7 +66867,7 @@ function rp100PlayModal(base,self,args){const [title,,buttons,opt]=args;
   if(rp100UiOpen(RPP.uiAt))return base.apply(self,args);
   const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;
   if(typeof ONLM!=='undefined'&&ONLM.info>0)return Promise.resolve(def);
-  if(RPP.onl||S.over)return base.apply(self,args);const t=String(title||'').slice(0,40);const j=rp100Match(t);
+  if(RPP.onl||S.over)return base.apply(self,args);const t=String(title||'').slice(0,40);const Q=typeof askNow==='function'?askNow():null;const j=rp100Match(t,Q&&!Q.local?Q.kind:null);
   if(j<0){rp100Div(rp100Strip(title).slice(0,40));return base.apply(self,args)}
   return new Promise(res=>{RPP.pend.push({res,j,t,title:String(title||''),buttons:buttons||[],def,pre:rp100H(),at:0});setTimeout(rp100Pump,0)})}
 function rp100Decide(){const P=RPP.pend[0];const j=P.j,x=RPP.ins[j];
@@ -69831,6 +69853,77 @@ if(RP0.on){
     const c=RP0.cap;if(!c.done&&c.th.length<4000)c.th.push(S.turnNo+':'+onlHash())}}catch(e){}return base.apply(this,arguments)}}
   {const base=gameOver;gameOver=function(winners,reason){try{if(S&&!S.overShown)rp0Capture(winners,reason)}catch(e){console.error(e)}return base.apply(this,arguments)}}
 }
+/* =====================================================================
+   326-V101ASK · THE QUESTION PORT + THE COMMAND REGISTRY (v1.01 wave 2, Phase A of tools/plans/layers100/PLAN.md)
+   =====================================================================
+   ONE QUESTION PORT. A rule that needs a human's choice calls
+       ask(seat, kind, spec) → Promise<value>        (askW(seat, kind, title, body, buttons, opt) = the window form;
+                                                      askX(seat, kind, extra, title, body, buttons, opt) = with extra data)
+     seat  the player (or a ticket holder in the stands) the question is FOR — a player object, a seat index, or null;
+     kind  a stable key that never depends on the language ('defend', 'focusLoc', 'limbRegrow', 'truceOffer', 'roundReward', …);
+     spec  {title, body, buttons, opt} exactly as modal() took them + the options as data (values) + extras (from, q, …);
+           local:1 = a window the player opened outside the shared stream (a confirm behind a button, off-turn gear): not a
+           decision of the match — not counted, and online it keeps the old "opened from a bar" path.
+   PROVIDERS. The UI provider is today's modal() call with the SAME title/body/buttons/opt (same pixels, every modal wrapper still
+     runs); in HEADLESS, modal() answers with askAuto (07-ui's rule: the close value, else the first enabled button). askUse(kind|'*', fn)
+     installs another provider (tests now; a replayer / the server later): fn(Q) returns a value, or undefined to fall through to the UI.
+     CPU branches stay where they are (`p.cpu ? … : await ask(…)`).
+   WHILE A WINDOW OPENS the asking question is askNow() = Q {n, kind, seat, who, ds, local, spec} — set only during the synchronous
+     modal() call, so wrappers read it at their entry (113, 290, 309, 163, 236). askKind() = its kind or ''.
+   THE DECISION NUMBER. Every non-local ask counts S.ask101 (in S, so in every snapshot); Q.ds = that number. Online (113/290) a window
+     answer travels as {k:'modal', v, kd: kind, ds, pre} and BOTH the sender's pre-hash and the waiting client's window hash are
+     onlHash()+'|'+kind+'#'+ds (onlmQHash) — a client whose next decision is a different question (or the same question at another
+     point) fails the hash check and takes the majority's arena (119/121), never a wrong value. The old title slice is gone.
+   THE COMMAND REGISTRY. command(seat, {k:'act', a, id, i | d}) dispatches a turn action through CMD101.reg (07-ui's act handler is
+     uiAct(k, dataset) — the click listener calls it, every 07-ui act is registered here); an act nobody registered falls back to the
+     old hidden twin button click (cmdTwin). command(seat, {k:'tile', r, c, mode, focus}) = the tile replay (S.mode + Focus + onTile).
+     Used by the lockstep (113 onlmApply, drops, abandons, 290's timeout finish) and the replay player (309 rp100Do).
+     Kill switch localStorage flavius_cmd101off=1 → every act through the twin button again.
+   WHY 121's "void after 2.5 s" STAYS LOCAL (Phase A decision): the skip is a pure function of the state at the head of the stream —
+     onl80fImpossible() reads only S (phase, busy, cur(), the open decision's seat) at a settled point, and the 2.5 s is a settle wait, not
+     part of the decision. Every client in the same state (the hash) reaches the same verdict for the same seq; a client in another state
+     fails the hash check first and resyncs. A server-ordered void could not be decided by the server (it does not run the rules) and would
+     have to name an input that is already blocking the head, so it would add a round trip without adding information. A replayer
+     applies the same rule (skip the head when it cannot apply at a settled point); Phase C's `awaiting` replaces the settle wait.
+   Counts (ASK.count, CMD101.used/twin) are for tests (tv101q). No save change; protocol 9 (the "v1.01 QUESTION PORT" section of 111).
+   ===================================================================== */
+var ASK={n:0,now:null,prov:Object.create(null),count:Object.create(null),log:[],LOG_MAX:200};
+/* askSeat — a seat index: a fighter's place in S.players, a ticket holder's online index, else -1 */
+function askSeat(x){if(x==null)return -1;if(typeof x==='number')return x;try{if(S&&S.players){const i=S.players.indexOf(x);if(i>=0)return i}}catch(e){}return x&&x.onlIdx!=null?x.onlIdx:-1}
+/* askAuto — the headless answer (07-ui modal's HEADLESS rule): the close value, else the first enabled button (grid included) */
+function askAuto(buttons,opt){opt=opt||{};const b=[...(buttons||[]),...(opt.grid||[])].find(x=>x&&!x.disabled);return opt.close!==undefined?opt.close:b?b.value:null}
+function askNow(){return ASK.now}
+function askKind(){return ASK.now?ASK.now.kind:''}
+/* askUse — a provider for one kind ('*' = every kind); returns off() */
+function askUse(kind,fn){ASK.prov[kind]=fn;return ()=>{if(ASK.prov[kind]===fn)delete ASK.prov[kind]}}
+function ask(seat,kind,spec){spec=spec||{};kind=String(kind||'?');
+  const Q={n:++ASK.n,kind,seat:askSeat(seat),who:seat,ds:0,local:!!spec.local,spec};
+  if(!Q.local){try{if(S)Q.ds=S.ask101=(S.ask101|0)+1}catch(e){}}
+  ASK.count[kind]=(ASK.count[kind]|0)+1;ASK.log.push({n:Q.n,kind,seat:Q.seat,ds:Q.ds,local:Q.local});if(ASK.log.length>ASK.LOG_MAX)ASK.log.shift();
+  try{if(typeof BUS!=='undefined'&&BUS.has&&BUS.has('ask'))BUS.emit('ask',{kind,seat:Q.seat,ds:Q.ds,local:Q.local})}catch(e){}
+  const pv=ASK.prov[kind]||ASK.prov['*'];if(pv){let v;try{v=pv(Q)}catch(e){console.error(e)}if(v!==undefined)return Promise.resolve(v)}
+  const prev=ASK.now;ASK.now=Q;
+  try{return 'opt' in spec?modal(spec.title,spec.body,spec.buttons||[],spec.opt):modal(spec.title,spec.body,spec.buttons||[])}finally{ASK.now=prev}}
+/* askW — the window form: today's modal(title, body, buttons, opt) arguments behind a seat and a kind.
+   askX — the same with extra data first (from: who offers, q: the other gladiator, local: 1 …) for wrappers and providers */
+function askX(seat,kind,extra,title,body,buttons,opt){const spec={...(extra||{}),title,body,buttons:buttons||[],values:(buttons||[]).map(b=>b&&b.value)};
+  if(arguments.length>6)spec.opt=opt;return ask(seat,kind,spec)}
+function askW(seat,kind,title,body,buttons,opt){return arguments.length>5?askX(seat,kind,null,title,body,buttons,opt):askX(seat,kind,null,title,body,buttons)}
+
+/* ---------------- the command registry ---------------- */
+var CMD101={reg:Object.create(null),used:0,twin:0,n:0,last:'',off:(()=>{try{return localStorage.getItem('flavius_cmd101off')==='1'}catch(e){return false}})()};
+function cmdReg(a,fn){CMD101.reg[a]=fn}
+function cmdFor(a){a=String(a||'');return CMD101.reg[a]||(a.startsWith('m-')?CMD101.reg['m-*']:null)||null}
+/* the old path: a hidden button with the act's data-* clicked once (every document listener runs, as for a real click) */
+function cmdTwin(d){CMD101.twin++;const b=document.createElement('button');b.type='button';for(const [k,v] of Object.entries(d||{}))if(v!=null)b.dataset[k]=v;b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}
+function command(seat,c){if(!c)return;CMD101.n++;
+  if(c.k==='tile'){const p=cur();if(p&&'focus' in c)p.focusRoll=!!c.focus;if('mode' in c)S.mode=c.mode;try{if(typeof computeHL==='function')computeHL()}catch(e){}return onTile(c.r,c.c)}
+  if(c.k!=='act')return;
+  const d=c.d?{...c.d}:{act:c.a};if(c.d==null){if(c.id!=null)d.id=String(c.id);if(c.i!=null)d.i=String(c.i)}
+  const h=CMD101.off?null:cmdFor(d.act);if(!h)return cmdTwin(d);CMD101.used++;CMD101.last=d.act;return h(d,seat)}
+/* every act 07-ui's dispatcher knows (uiAct) — the click and the registry run the same code */
+const UI_ACTS101=['inspect','cmddone','zpick','zdrop','vetpref','coin','card','focus','end','market','crowd','chest','chestup','chestdown','loot','trade','spear','selfbet','zora','dismount','mount','leavedoor','exit','item'];
+if(typeof uiAct==='function'){for(const k of UI_ACTS101)cmdReg(k,d=>uiAct(k,d));cmdReg('m-*',d=>uiAct(d.act,d))}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

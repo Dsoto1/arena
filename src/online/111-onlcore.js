@@ -1697,4 +1697,9 @@ const ONLC=(function(){
   {const base=C.domusRow;C.domusRow=function(D){const r=base.apply(this,arguments);if(r&&D){const X=D.cu||{};
     r.cu={bouts:X.bouts|0,wins:X.wins|0,lifeCF:X.lifeCF|0,survived:X.survived|0,fallen:X.fallen|0};if(D.split101){r.split101=+D.split101||0;r.pre101=D.pre101|0}}return r}}
   Object.assign(C,{domusNote:domusNote101})})(ONLC);
+/* ===== v1.01 QUESTION PORT (wave 2 Phase A; the page: 326-v101ask + 113/290) =====
+   PROTOCOL 9: a window answer carries the question's kind + decision number {k:'modal', v, kd, ds, pre} (no title), its hashes include
+   them, a question is owned by the human fighter it is asked of, and every question of the rules is recorded even right after a bar
+   click. A v1.0 page would wait for or skip different windows in the same match, so VER moves 8 → 9 (the server only compares it). */
+(function(C){C.VER=9})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

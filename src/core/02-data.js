@@ -2397,7 +2397,7 @@ async function carmWeapon(player, lv, key) {
     return;
   }
   let k;
-  if (player.cpu) k = pool.sort((a, b) => wScore(W[b]) - wScore(W[a]))[0];else k = await modal(_T('Choose a weapon'), `<p>${_T`Any remaining level ${lv} weapon.`}</p>`, pool.map(x => ({
+  if (player.cpu) k = pool.sort((a, b) => wScore(W[b]) - wScore(W[a]))[0];else k = await askW(player, 'pickWeapon', _T('Choose a weapon'), `<p>${_T`Any remaining level ${lv} weapon.`}</p>`, pool.map(x => ({
     label: W[x].n,
     sub: wStats(mkW(x)),
     value: x,

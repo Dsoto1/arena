@@ -69,7 +69,7 @@ runDraft=async function(){
         const chip=x=>{if(x.by){const q=S.players[x.by-1];return `<span class="pc81 tk81" style="border-color:${q.color}" title="${_T`taken by ${esc(q.name)}`}">${esc(itemName81(x))}<i>${esc(q.name)}</i></span>`}
           const why=x.lv>maxLv(p)?_T('above your draft level'):!draftFits81(p,x)?_T('no free spot'):_T('not offered this pick');
           return `<span class="pc81" title="${why}">${_T`${esc(itemName81(x))}<i>LV${x.lv}</i>`}</span>`};
-        const idx=await modal(_T`Draft · ${p.name} · pick ${rd+1} of ${picks(p)}`,`<p>${_T`Take any lit piece — <b style="color:var(--gold2)">${avail.length}</b> fit you. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid two81" id="pickgrid"></div><details class="pool81"><summary>${_T`Rest of the pool · ${rest.length}`}</summary><div class="pool81b">${rest.map(chip).join('')}</div></details>`,[],{wide:1,grid});
+        const idx=await askW(p,'draftPick',_T`Draft · ${p.name} · pick ${rd+1} of ${picks(p)}`,`<p>${_T`Take any lit piece — <b style="color:var(--gold2)">${avail.length}</b> fit you. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid two81" id="pickgrid"></div><details class="pool81"><summary>${_T`Rest of the pool · ${rest.length}`}</summary><div class="pool81b">${rest.map(chip).join('')}</div></details>`,[],{wide:1,grid});
         pick=avail.find(x=>x.id===idx)||avail[0]}
       pick.by=p.id+1;
       log(_T`${nm(p)} drafts <b>${itemName81(pick)}</b>.`);
@@ -82,7 +82,7 @@ runDraft=async function(){
       const leftN=k=>deck?deck.slice(1).filter(x=>x===k).length:1;
       for(let i=0;i<5;i++){let k;const opts=DECLARE_PICKS.filter(x=>leftN(x)>0);if(!opts.length)break;
         if(j.cpu){k=['ward','focus','forge3','hercules2','rete','hercules1','forge2','hygeia','ammo','mchoice','discount','lure','lyre'].find(x=>opts.includes(x))||opts[0]}
-        else k=await modal(_T`Juggernaut card ${i+1} of 5`,`<p>${_T`Choose a Declare-type arena card. The card leaves the arena deck.`}</p><div class="pickgrid two81 jc81" id="pickgrid"></div>`,[],{wide:1,grid:opts.map(x=>({label:CARDS[x].n,sub:_T`×${leftN(x)} left · ${CARDS[x].d}`,value:x,card:'c:'+x}))});
+        else k=await askW(j,'juggCard',_T`Juggernaut card ${i+1} of 5`,`<p>${_T`Choose a Declare-type arena card. The card leaves the arena deck.`}</p><div class="pickgrid two81 jc81" id="pickgrid"></div>`,[],{wide:1,grid:opts.map(x=>({label:CARDS[x].n,sub:_T`×${leftN(x)} left · ${CARDS[x].d}`,value:x,card:'c:'+x}))});
         if(!k||!opts.includes(k))k=opts[0];
         if(deck){const at=deck.lastIndexOf(k);if(at>0)deck.splice(at,1)}
         j.items.push(mkCard(k))}

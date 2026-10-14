@@ -9,11 +9,15 @@
        tile  — onTile(r,c) with S.mode and the Focus toggle;
        act   — an action-panel button (data-act + data-id/data-i), replayed by clicking a twin button;
        modal — the value a decision window resolved with (the owner sees it; others wait for the value).
-     Owner of a decision: RESPONDER (defend / askCard), the gladiator in humanCommand, else cur(); when cur() is a CPU,
-     the lowest human seat (e.g. the editor's truce decree). CPU offers of truce or trade to a human are declined
-     on every client in v1 (the engine does not say which human was asked).
-   • Not recorded: windows the player opens from the bars (a trusted click outside the board/actions/window, 300 ms),
-     rule pop-ups and the briefing (popRule, eventBriefing), anything after the event ends. Hotkeys are off online.
+     v1.01 (326-v101ask): a decision asked through the question port carries its KIND and decision number (kd, ds) and both
+     hashes of a window answer include them (onlmQHash) — no window title travels any more. Acts are applied through
+     command() (the registry), the twin button only for an act nobody registered.
+     Owner of a decision: the explicit humanCommand / stands override; else the HUMAN FIGHTER the question is asked of (ask's
+     seat); else RESPONDER (defend / askCard), cur(), and when cur() is a CPU the lowest human seat. CPU offers of truce or
+     trade to a human never happen online (06-ai filters them since v1.0); a stray one is declined by KIND on every client.
+   • Not recorded: windows the player opens from the bars (a trusted click outside the board/actions/window, 300 ms — only
+     for windows that did not come through ask(); a question of the rules is always recorded), rule pop-ups and the
+     briefing (popRule, eventBriefing), anything after the event ends. Hotkeys are off online.
    • Desync guard: each input carries the owner's state hash taken just before it; a client whose hash differs asks
      that owner for a snapshot and reloads it (match.snapreq → match.snap).
    • Off-turn: the board and the action panel ignore real clicks; a banner says whose move it is.
@@ -26,6 +30,10 @@ function onlmOwner(){if(ONLM.override!=null)return ONLM.override;if(typeof RESPO
   const c=cur();if(c&&!c.cpu)return onlmSeatOf(c);return ONLM.owners.findIndex(Boolean)}
 /* who may act on the board right now: never a CPU's turn (the lowest-human fallback is for windows only) */
 function onlmActor(){if(ONLM.override!=null)return ONLM.override;if(typeof RESPONDER!=='undefined'&&RESPONDER)return onlmSeatOf(RESPONDER);const c=cur();return c&&!c.cpu?onlmSeatOf(c):-1}
+/* v1.01: the owner of an asked question — an override (humanCommand, the stands) wins; else the human fighter it is asked of */
+function onlmAskOwner(Q){if(ONLM.override==null&&Q&&!Q.local&&Q.seat>=0&&Q.seat<onlmFighters()&&onlmHuman(Q.seat))return Q.seat;return onlmOwner()}
+/* v1.01: a window's hash = the state + the question (kind # decision number); old-style windows (no ask) = the state */
+function onlmQHash(Q){const h=onlHash();return Q&&!Q.local&&h?h+'|'+Q.kind+'#'+Q.ds:h}
 function onlmMine(){if(ONLM.me<0)return false;return onlmActor()===ONLM.me||(!!CUR_MODAL&&onlmOwner()===ONLM.me)}
 /* a decision seat's name: a fighter, or a ticket holder in the stands (seats after the fighters) */
 function onlmName(i){const p=S.players[i];if(p)return p.name;const t=((S.onl&&S.onl.stands)||[])[i-((S.onl&&S.onl.fighters)||S.players.length)];return t?t.name+_T(' (in the stands)'):_T('Another lanista')}
@@ -49,19 +57,21 @@ window.addEventListener('keydown',e=>{if(!onlmOn()||!e.isTrusted)return;const t=
 /* windows: decisions are recorded / awaited; rule pop-ups, the briefing and bar windows stay local */
 for(const nm of ['popRule','eventBriefing']){try{const base=eval(nm);if(typeof base!=='function')continue;eval(`${nm}=async function(){ONLM.info++;try{return await base.apply(this,arguments)}finally{ONLM.info--}}`)}catch(e){}}
 {const base=humanCommand;humanCommand=async function(p){const prev=ONLM.override;if(onlmOn())ONLM.override=onlmSeatOf(p);try{return await base.apply(this,arguments)}finally{ONLM.override=prev}}}
-{const base=modal;modal=function(title,body,buttons,opt){
-  if(!onlmOn()||ONLM.info>0||Date.now()-ONLM.uiAt<300)return base.apply(this,arguments);
+{const base=modal;modal=function(title,body,buttons,opt){const Q=typeof askNow==='function'?askNow():null;const eng=!!(Q&&!Q.local);
+  if(!onlmOn()||ONLM.info>0||(!eng&&Date.now()-ONLM.uiAt<300))return base.apply(this,arguments);
   const t=String(title||'');const c=cur();
-  /* a CPU offering a truce or a trade to a human: declined everywhere (v1) */
-  if(c&&c.cpu&&/offers a truce|proposes a trade/.test(t)){const no=(buttons||[]).find(b=>/decline|refuse|no\b|keep/i.test(b.label||''))||(buttons||[]).slice(-1)[0];return Promise.resolve(no?no.value:null)}
-  const own=onlmOwner();if(!onlmHuman(own))return base.apply(this,arguments);
+  /* a CPU offering a truce or a trade to a human: never asked online since v1.0 (06-ai); a stray one is declined on every client — by KIND, never the title */
+  if(Q&&(Q.kind==='truceOffer'||Q.kind==='tradeOffer')&&c&&c.cpu){const no=(buttons||[]).find(b=>b&&b.value===0)||(buttons||[]).slice(-1)[0];return Promise.resolve(no?no.value:null)}
+  const own=onlmAskOwner(Q);if(!onlmHuman(own))return base.apply(this,arguments);
   /* v1.0 (290-v100tt): decision numbers, one-button notices, the docked step panel and the decision clocks — a handler that returns a promise takes the window */
   if(typeof onlmDec100==='function'){const r=onlmDec100(own,t,title,body,buttons,opt,base,this);if(r)return r}
   /* a seat whose lanista abandoned: every client answers that seat's windows with the default (the same value everywhere) */
   if(ONLM.left&&ONLM.left[own]!=null){const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;return Promise.resolve(def)}
-  if(own===ONLM.me){const pre=onlHash();const pr=base.apply(this,arguments);if(own>=onlmFighters())onlmAutoPass(buttons,opt);return Promise.resolve(pr).then(v=>{const inp={k:'modal',v:v===undefined?null:v,t:t.slice(0,60)};inp.pre=pre;onlmSend(inp);return v})}
+  if(own===ONLM.me){const pre=onlmQHash(Q);const pr=base.apply(this,arguments);if(own>=onlmFighters())onlmAutoPass(buttons,opt);return Promise.resolve(pr).then(v=>{const inp={k:'modal',v:v===undefined?null:v,...onlmQTag(Q,t)};inp.pre=pre;onlmSend(inp);return v})}
   const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;
-  return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def};onlmWaitShow();onlmPump()})}}
+  return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def,kd:Q&&!Q.local?Q.kind:null};onlmWaitShow();onlmPump()})}}
+/* v1.01: what a window answer carries about its question — kind + decision number (asked), else a title slice (an old-style window) */
+function onlmQTag(Q,t){return Q&&!Q.local?{kd:Q.kind,ds:Q.ds}:{t:String(t||'').slice(0,60)}}
 /* ---------------- receiving ---------------- */
 NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;const inp=d.in;if(inp.from===ONL.acct.id||inp.seq<ONLM.next)return;if(!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);ONLM.q.sort((a,b)=>a.seq-b.seq);onlmPump()});
 function onlmReady(inp){if(!S||S.over)return false;if(inp.k==='void'||inp.k==='abandon')return true;if(inp.k==='drop')return ONLM.pend?ONLM.pend.seat===inp.seat:(!S.busy&&!CUR_MODAL&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat);if(inp.k==='modal')return !!ONLM.pend;
@@ -77,11 +87,11 @@ function onlmPump(){clearTimeout(ONLM_PUMP);if(!onlmOn()||ONLM.resyncing)return;
 function onlmPendHash(){return ONLM.pend&&ONLM.pend.h||onlHash()}
 function onlmApply(inp){ONLM.replay++;try{
   if(inp.k==='modal'){const P=ONLM.pend;ONLM.pend=null;onlmWaitShow();P.res(inp.v);return}
-  const p=cur();if(inp.k==='tile'){if(p)p.focusRoll=!!inp.focus;S.mode=inp.mode;try{if(typeof computeHL==='function')computeHL()}catch(e){}onTile(inp.r,inp.c);return}
-  if(inp.k==='act'){const b=document.createElement('button');b.type='button';b.dataset.act=inp.a;if(inp.id!=null)b.dataset.id=inp.id;if(inp.i!=null)b.dataset.i=inp.i;b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}
+  if(inp.k==='tile'){command(inp.seat,{k:'tile',r:inp.r,c:inp.c,mode:inp.mode,focus:inp.focus});return}
+  if(inp.k==='act'){command(inp.seat,{k:'act',a:inp.a,id:inp.id,i:inp.i})}
 }finally{ONLM.replay--}setTimeout(onlmPump,30)}
 /* the modal's own hash is taken when it opens */
-{const base=modal;modal=function(){if(onlmOn()&&!ONLM.replay){const h=onlHash();const r=base.apply(this,arguments);if(ONLM.pend&&!ONLM.pend.h)ONLM.pend.h=h;return r}return base.apply(this,arguments)}}
+{const base=modal;modal=function(){if(onlmOn()&&!ONLM.replay){const h=onlmQHash(typeof askNow==='function'?askNow():null);const r=base.apply(this,arguments);if(ONLM.pend&&!ONLM.pend.h)ONLM.pend.h=h;return r}return base.apply(this,arguments)}}
 async function onlmCatchUp(){if(ONLM.catching)return;ONLM.catching=true;try{const g=await NET.req('match.get',{id:S.onl.lobby,from:ONLM.next});for(const inp of g.inputs||[])if(inp.from!==ONL.acct.id&&inp.seq>=ONLM.next&&!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);
   for(const inp of g.inputs||[])if(inp.from===ONL.acct.id&&inp.seq>=ONLM.next)ONLM.own.add(inp.seq);ONLM.q.sort((a,b)=>a.seq-b.seq)}catch(e){}finally{ONLM.catching=false}onlmPump()}
 /* own inputs advance the shared counter too (the server echoes them back to everyone) */
@@ -90,13 +100,13 @@ NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;if(d.in.fro
 function onlmDrop(inp){const p=S.players[inp.seat];const sp=!p&&(S.spect||[]).find(s=>s.onlIdx===inp.seat);if(!p&&!sp)return;ONLM.owners[inp.seat]=null;
   if(sp){sp.human=false;log(_T`🔌 <b>${esc(sp.name)}</b> left the stands.`)}else{p.cpu=true;log(_T`🔌 <b>${esc(p.name)}</b> left the arena — a CPU fights on in that seat (the Fate still waits).`,'big')}
   if(inp.seat===ONLM.me){ONLM.me=-1;if(typeof mToast==='function')mToast(_T('🔌 You were away too long — a CPU took your seat. Your gladiator still faces the Fate.'))}
-  ONLM.replay++;try{if(ONLM.pend){const P=ONLM.pend;ONLM.pend=null;P.res(P.def)}else if(S.phase==='command'){const b=document.createElement('button');b.dataset.act='cmddone';b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}else{endTurn()}}finally{ONLM.replay--}onlmWaitShow()}
+  ONLM.replay++;try{if(ONLM.pend){const P=ONLM.pend;ONLM.pend=null;P.res(P.def)}else if(S.phase==='command'){command(inp.seat,{k:'act',a:'cmddone'})}else{endTurn()}}finally{ONLM.replay--}onlmWaitShow()}
 /* waiting on someone for 3 minutes: ask the server to drop them (it only agrees if their connection really is gone) */
 setInterval(()=>{if(!onlmOn()||S.onl.watch)return;const own=ONLM.pend?ONLM.pend.seat:onlmActor();if(!onlmHuman(own)||own===ONLM.me){ONLM.waitSince=0;return}
   if(ONLM.pend||!S.busy){if(!ONLM.waitSince||ONLM.waitFor!==own){ONLM.waitSince=Date.now();ONLM.waitFor=own}
     if(Date.now()-ONLM.waitSince>ONLC.AWAY_MS&&Date.now()-(ONLM.dropAt||0)>30000){ONLM.dropAt=Date.now();NET.req('match.drop',{id:S.onl.lobby,seat:own}).catch(()=>{})}}else ONLM.waitSince=0},5000);
 /* ---------------- resync ---------------- */
-function onlmResync(inp){ONLM.resyncs++;ONLM.lastResync={seq:inp.seq,k:inp.k,a:inp.a||inp.t||'',mine:inp.k==='modal'?onlmPendHash():onlHash(),theirs:inp.k==='modal'?inp.pre:inp.h,turn:S.turnNo,phase:S.phase,cur:cur()&&cur().name};ONLM.resyncing=true;ONLM.needAt=inp.seq;if(typeof mToast==='function')mToast(_T('🔄 Out of step with the others — fetching their arena…'));
+function onlmResync(inp){ONLM.resyncs++;ONLM.lastResync={seq:inp.seq,k:inp.k,a:inp.a||inp.kd||inp.t||'',mine:inp.k==='modal'?onlmPendHash():onlHash(),theirs:inp.k==='modal'?inp.pre:inp.h,turn:S.turnNo,phase:S.phase,cur:cur()&&cur().name};ONLM.resyncing=true;ONLM.needAt=inp.seq;if(typeof mToast==='function')mToast(_T('🔄 Out of step with the others — fetching their arena…'));
   NET.req('match.snapreq',{id:S.onl.lobby,to:ONLM.owners[inp.seat],seq:inp.seq}).catch(()=>{});setTimeout(()=>{if(ONLM.resyncing){ONLM.resyncing=false;onlmPump()}},15000)}
 /* a snapshot only at a settled point: a human's own decision, nothing resolving, every move so far applied (a freshly loaded
    client cannot resume a CPU's turn half-way, and must not replay a move this client already made) */
@@ -177,6 +187,6 @@ function onlmAbandonMark(inp){ONLM.left=ONLM.left||{};if(ONLM.left[inp.seat]!=nu
 function onlmLeftCheck(){if(!onlmOn()||!ONLM.left)return;if(S.busy||CUR_MODAL||ONLM.pend||!['choice','action','command'].includes(S.phase))return;
   const c=cur();const i=onlmSeatOf(c);const rule=ONLM.left[i];if(rule==null||!c||c.cpu||!c.alive)return;if(ONLM.leftDone&&ONLM.leftDone[i])return;(ONLM.leftDone=ONLM.leftDone||{})[i]=1;
   ONLM.replay++;try{if(rule==='fate'){ONLM.owners[i]=null;c.cpu=true;try{eliminate(c,{type:'retire'})}catch(e){console.error(e)}render();endTurn()}
-    else{c.cpu=true;ONLM.owners[i]=null;if(S.phase==='command'){const b=document.createElement('button');b.dataset.act='cmddone';b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}else endTurn()}}
+    else{c.cpu=true;ONLM.owners[i]=null;if(S.phase==='command'){command(i,{k:'act',a:'cmddone'})}else endTurn()}}
   finally{ONLM.replay--}onlmWaitShow()}
 {const base=render;render=function(){const r=base.apply(this,arguments);if(ONLM.on&&ONLM.left)setTimeout(onlmLeftCheck,40);return r}}

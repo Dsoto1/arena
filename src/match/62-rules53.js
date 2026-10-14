@@ -59,14 +59,14 @@ chooseLocation=async function(p,q,how,damage=0){
   const alive=LOCS.filter(l=>q.hp[l]>0);
   if(how==='card'){if(p.cpu)return bestLocation(q,alive,damage);
     const best=showStrategy()?bestLocation(q,alive,damage):null;
-    return await modal(_T('Focus!'),`<p>${_T`Choose where to strike ${esc(q.name)}.${best?_T(' 💡 Gold is the fastest finish.'):''}`}</p>`,alive.map(l=>({label:`${l===best?'💡 ':''}${LOCN[l]}`,sub:_T`AP ${q.ap[l]} · HP ${q.hp[l]}${l==='larm'||l==='rarm'?' · arm':l==='rleg'||l==='lleg'?_T(' · only slows'):''}`,value:l,primary:l===best})))}
+    return await askW(p,'focusLoc',_T('Focus!'),`<p>${_T`Choose where to strike ${esc(q.name)}.${best?_T(' 💡 Gold is the fastest finish.'):''}`}</p>`,alive.map(l=>({label:`${l===best?'💡 ':''}${LOCN[l]}`,sub:_T`AP ${q.ap[l]} · HP ${q.hp[l]}${l==='larm'||l==='rarm'?' · arm':l==='rleg'||l==='lleg'?_T(' · only slows'):''}`,value:l,primary:l===best})))}
   const rolls=[rollLoc(q),rollLoc(q),rollLoc(q)];
   log(_T`${nm(p)} focuses: the location die shows ${rolls.map(l=>LOCN[l]).join(', ')}.`);
   if(p.cpu)return bestLocation(q,[...new Set(rolls)],damage);
   const best=showStrategy()?bestLocation(q,[...new Set(rolls)],damage):null;
   const faces=['head','chest','larm','rarm','rleg','lleg'];
   const dieHTML=(l,i)=>`<button type="button" class="focdie2 rolling" data-fdie="${i}" data-loc="${l}" disabled><span class="fdface">${locIcon(faces[i%6])}<b>…</b></span><span class="fdsub"></span></button>`;
-  const picked=await modal(_T('🎯 Focus roll'),`<p>${_T`Rolling the location die three times for <b>${esc(q.name)}</b>…`}</p><div class="focdice2">${rolls.map(dieHTML).join('')}</div><p class="rc-sub" id="fdHint" style="margin:6px 0 0;visibility:hidden">${_T`Click a die to strike there.${best?_T(' 💡 The gold one finishes fastest.'):''}`}</p>`,[...new Set(rolls)].map(l=>({label:LOCN[l],value:l})),{close:0,onOpen:done=>{
+  const picked=await askW(p,'focusRoll',_T('🎯 Focus roll'),`<p>${_T`Rolling the location die three times for <b>${esc(q.name)}</b>…`}</p><div class="focdice2">${rolls.map(dieHTML).join('')}</div><p class="rc-sub" id="fdHint" style="margin:6px 0 0;visibility:hidden">${_T`Click a die to strike there.${best?_T(' 💡 The gold one finishes fastest.'):''}`}</p>`,[...new Set(rolls)].map(l=>({label:LOCN[l],value:l})),{close:0,onOpen:done=>{
     const bar=$('#mBtns');if(bar)bar.style.display='none'; /* the dice are the buttons; the bar stays for keyboard/automation */
     const box=$('#mBody');const dice=[...box.querySelectorAll('[data-fdie]')];let spin=0;
     const timer=window.FOCUS_TIMER=setInterval(()=>{spin++;dice.forEach((d,i)=>{if(!d.classList.contains('rolling'))return;const f=faces[(spin+i*2)%6];d.querySelector('.fdface').innerHTML=`${locIcon(f)}<b>${LOCN[f]}</b>`})},85);

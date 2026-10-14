@@ -674,7 +674,7 @@ async function runDraft() {
             card: (x.kind === 'w' ? 'w:' : 'a:') + x.k
           };
         });
-        const idx = await modal(_T`Draft · ${p.name} · pick ${rd + 1} of ${picks(p)}`, `<p>${_T`Choose one weapon or armor from the <b style="color:var(--gold2)">${avail.length} offered</b> this pick (gold borders). Picks already taken show the drafter's color. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid" id="pickgrid"></div>`, [], {
+        const idx = await askW(p, 'draftPick', _T`Draft · ${p.name} · pick ${rd + 1} of ${picks(p)}`, `<p>${_T`Choose one weapon or armor from the <b style="color:var(--gold2)">${avail.length} offered</b> this pick (gold borders). Picks already taken show the drafter's color. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid" id="pickgrid"></div>`, [], {
           wide: 1,
           grid
         });
@@ -692,7 +692,7 @@ async function runDraft() {
     if (j) {
       for (let i = 0; i < 5; i++) {
         let k;
-        if (j.cpu) k = ['ward', 'focus', 'forge3', 'hercules2', 'rete'][i];else k = await modal(_T`Juggernaut card ${i + 1} of 5`, `<p>${_T`Choose a Declare-type arena card.`}</p>`, DECLARE_PICKS.map(x => ({
+        if (j.cpu) k = ['ward', 'focus', 'forge3', 'hercules2', 'rete'][i];else k = await askW(j, 'juggCard', _T`Juggernaut card ${i + 1} of 5`, `<p>${_T`Choose a Declare-type arena card.`}</p>`, DECLARE_PICKS.map(x => ({
           label: CARDS[x].n,
           sub: CARDS[x].d,
           value: x,
@@ -936,7 +936,7 @@ async function nextRound(why) {
       if (!opts.length) break;
       let pick;
       if (p.cpu) pick = opts.sort((a, b) => itemValue(b.kind, b.k) - itemValue(a.kind, a.k))[0];else {
-        const i = await modal(_T`Reward for ${p.name}`, `<p>${_T`Choose any remaining level 2 armor or weapon from the market.`}</p>`, opts.map((o, i) => ({
+        const i = await askW(p, 'roundReward', _T`Reward for ${p.name}`, `<p>${_T`Choose any remaining level 2 armor or weapon from the market.`}</p>`, opts.map((o, i) => ({
           label: o.kind === 'w' ? W[o.k].n : ARM[o.k].n,
           sub: o.kind === 'w' ? wStats(mkW(o.k)) : armorDesc(o.k),
           value: i,
@@ -976,7 +976,7 @@ async function nextRound(why) {
       if (p.captured.length) {
         let c;
         if (p.cpu) c = p.captured.sort((a, b) => NPCT[b.t].hp - NPCT[a.t].hp)[0];else {
-          const j = await modal(_T`${p.name}: choose your beast`, `<p>${_T`Choose one captured beast to fight beside you in the Duel Finale.`}</p>`, p.captured.map((x, j) => ({
+          const j = await askW(p, 'duelBeast', _T`${p.name}: choose your beast`, `<p>${_T`Choose one captured beast to fight beside you in the Duel Finale.`}</p>`, p.captured.map((x, j) => ({
             label: `${x.name} (${NPCT[x.t].n})`,
             value: j
           })));
@@ -1258,7 +1258,7 @@ async function endTurn() {
       const cards = p.items.filter(i => i.kind === 'card');
       let it;
       if (p.cpu) it = cards[0];else {
-        const id = await modal(_T('Hand limit'), `<p>${_T`Your hand holds more than 10 cards. Discard one.`}</p>`, cards.map(c => ({
+        const id = await askW(p, 'handLimit', _T('Hand limit'), `<p>${_T`Your hand holds more than 10 cards. Discard one.`}</p>`, cards.map(c => ({
           label: CARDS[c.key].n,
           value: c.id
         })));
@@ -1873,7 +1873,7 @@ async function flaviusTruceCheck() {
   }
   /* v0.46: a human among the truce-bound may tear the pacts up and fight on — but then no truce stands again this event */
   if (!S.truceGone && act.some(other => !other.cpu)) {
-    const v = S.tutorial ? 'fight' : await modal(_T`${edName()} rises from the editor’s seat`, `<div class="decree"><p>${_T`Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce — and the crowd did not pay to watch friendship.`}</p><p>${_T`<b>Break the truces and fight it out</b>, or let the thumb turn down on everyone.`}</p><p class="rc-sub">${_T`Break them and no truce may be sworn again for the rest of this event.`}</p></div>`, [{
+    const v = S.tutorial ? 'fight' : await askW(act.find(other => !other.cpu), 'truceDecree', _T`${edName()} rises from the editor’s seat`, `<div class="decree"><p>${_T`Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce — and the crowd did not pay to watch friendship.`}</p><p>${_T`<b>Break the truces and fight it out</b>, or let the thumb turn down on everyone.`}</p><p class="rc-sub">${_T`Break them and no truce may be sworn again for the rest of this event.`}</p></div>`, [{
       label: _T('⚔ Break the truces — fight on'),
       value: 'fight',
       primary: 1
@@ -1905,7 +1905,7 @@ async function flaviusTruceCheck() {
   banner(_T`${edName()} turns the thumb down`, _T('Friendship is not a spectacle'));
   log(_T`<b>${edName()} rises from the editor’s seat.</b> Every gladiator left standing (${act.map(other => nm(other)).join(', ')}) is bound by truce — and the crowd did not pay to watch friendship. <b>His thumb turns down.</b> Each will meet a death drawn from the d12 of the Fates.`, 'big');
   for (const q of act) think(q, pickOne([_T('So it ends like this.'), _T('We should have fought.'), _T('Flavius has spoken.'), _T('Forgive me, friend.')]), 'think');
-  const pr = modal(_T`${edName()} turns the thumb down`, `<div class="decree"><p>${_T`<b>${edName()} rises from the editor’s seat.</b>`}</p><p>${_T`Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce, so no one can win this ${esc(EV().short)}.`}</p><p>${_T`“The people did not come to watch friendship!” <b>The thumb turns down.</b> Each survivor is executed, their death drawn from the d12 of the Fates.`}</p></div>`, [{
+  const pr = askW(null, 'thumbDown', _T`${edName()} turns the thumb down`, `<div class="decree"><p>${_T`<b>${edName()} rises from the editor’s seat.</b>`}</p><p>${_T`Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce, so no one can win this ${esc(EV().short)}.`}</p><p>${_T`“The people did not come to watch friendship!” <b>The thumb turns down.</b> Each survivor is executed, their death drawn from the d12 of the Fates.`}</p></div>`, [{
     label: _T('So be it'),
     value: 1,
     primary: 1
@@ -1963,7 +1963,7 @@ function recordHist() {
 /* ================= RETIRE ================= */
 /* retirePlayer — after confirming, retires the gladiator: CF set to 0 and eliminated. */
 async function retirePlayer(player) {
-  const ok = await modal(_T`Retire ${player.name}?`, `<p>${_T`Retiring walks your gladiator out of the arena for good. Their Fate is set to <b>${cfAmt87(0)} (Ad Memoriae)</b>, they are eliminated from this event, and ${player.saved ? _T('their saved record in the Ludus') : _T('any saved record or missio for them')} is removed.`}</p>`, [{
+  const ok = await askX(player, 'retire', { local: 1 }, _T`Retire ${player.name}?`, `<p>${_T`Retiring walks your gladiator out of the arena for good. Their Fate is set to <b>${cfAmt87(0)} (Ad Memoriae)</b>, they are eliminated from this event, and ${player.saved ? _T('their saved record in the Ludus') : _T('any saved record or missio for them')} is removed.`}</p>`, [{
     label: _T('Retire from the event'),
     value: 1,
     primary: 1
@@ -1999,7 +1999,7 @@ async function chPartPickup(player) {
       continue;
     }
     let swap;
-    if (player.cpu) swap = hpOf(f.part) > hpOf(cur);else swap = await modal(_T`Spare ${key}`, `<p>${_T`Your chariot already has a ${desc(cur)}. Swap it for this ${desc(f.part)}? Your old ${key} is left on this tile.`}</p>`, [{
+    if (player.cpu) swap = hpOf(f.part) > hpOf(cur);else swap = await askW(player, 'chariotPart', _T`Spare ${key}`, `<p>${_T`Your chariot already has a ${desc(cur)}. Swap it for this ${desc(f.part)}? Your old ${key} is left on this tile.`}</p>`, [{
       label: _T('Swap'),
       value: 1,
       primary: 1
@@ -2023,7 +2023,7 @@ async function simToEnd(skipAsk) {
   const G = S;
   if (!skipAsk && !HEADLESS && typeof modal === 'function') {
     if (modalBusy()) return;
-    const ok = await modal(_T('⏭ Sim to end?'), `<p>${_T`Every gladiator hands to the CPU and the event <b>resolves at once</b> — straight to the results.`}</p><p class="rc-sub">${_T`Just want the CPUs quicker? Use the <b>Fast</b> speed instead. Want to stop playing a fighter but keep watching? Use <b>🤖 Hand to CPU</b> on their board.`}</p>`, [{
+    const ok = await askX(null, 'simToEnd', { local: 1 }, _T('⏭ Sim to end?'), `<p>${_T`Every gladiator hands to the CPU and the event <b>resolves at once</b> — straight to the results.`}</p><p class="rc-sub">${_T`Just want the CPUs quicker? Use the <b>Fast</b> speed instead. Want to stop playing a fighter but keep watching? Use <b>🤖 Hand to CPU</b> on their board.`}</p>`, [{
       label: _T('Sim to end'),
       value: 1,
       primary: 1

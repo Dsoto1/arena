@@ -60,7 +60,7 @@ function tt100Status(r){if(!r||typeof r!=='object'||r.off)return;const now=Date.
 NET.on('match.clock100',d=>{try{if(S&&S.onl&&d&&d.id===S.onl.lobby)tt100Status(d)}catch(e){}});
 
 /* ---------------- decisions (113's modal hook) ---------------- */
-function onlmDec100(own,t,title,body,buttons,opt,base,self){
+function onlmDec100(own,t,title,body,buttons,opt,base,self){const Q=typeof askNow==='function'?askNow():null; /* v1.01: the question (326) — its kind # number rides in the hashes */
   S.dn100=(S.dn100|0)+1;const d=S.dn100;const def=tt100Def(buttons,opt);
   /* a seat whose turn ran out: its windows take the default at once (every client the same) */
   const X=S.tt100x;if(X&&X.seat===own&&X.t===S.turnNo){tt100Log({d,seat:own,v:def,by:'cpu'});return Promise.resolve(def)}
@@ -69,16 +69,16 @@ function onlmDec100(own,t,title,body,buttons,opt,base,self){
     if(own===ONLM.me){const tx=tt100Strip(body).slice(0,140);if(typeof mToast==='function')mToast(`<b>${tt100Strip(title)}</b>${tx?' — '+esc(tx):''}`)}tt100Log({d,seat:own,v,by:'note'});return Promise.resolve(v)}
   if(own>=onlmFighters())return null;
   const clock=tt100Clocked(own);
-  if(own===ONLM.me){const pre=onlHash();if(TT100C.steps.tn!==S.turnNo)TT100C.steps={tn:S.turnNo,n:0};TT100C.steps.n++;
+  if(own===ONLM.me){const pre=onlmQHash(Q);if(TT100C.steps.tn!==S.turnNo)TT100C.steps={tn:S.turnNo,n:0};TT100C.steps.n++;
     const O={d,seat:own,def,mine:true,t:title,clock,at:Date.now(),step:TT100C.steps.n,buttons,res:null,done:null};TT100C.open=O;if(clock)tt100Report('dec',{d,seat:own,t:S.turnNo});
     const o2={...(opt||{}),onOpen:done=>{O.done=done;if(O.byTimeout){try{done(def)}catch(e){}return}tt100Dock(O,opt);if(opt&&opt.onOpen)opt.onOpen(done)}};
     return new Promise(res=>{O.res=res;Promise.resolve(base.call(self,title,body,buttons,o2)).then(v=>{if(O.byTimeout)return;v=v===undefined?null:v;
-      if(!clock){if(TT100C.open===O)TT100C.open=null;onlmSend({k:'modal',v,t:t.slice(0,60),pre});tt100Log({d,seat:own,v,by:'me'});res(v);return}
+      if(!clock){if(TT100C.open===O)TT100C.open=null;onlmSend({k:'modal',v,...onlmQTag(Q,t),pre});tt100Log({d,seat:own,v,by:'me'});res(v);return}
       /* clocks on: the answer travels with its number and lands when its seq comes round */
-      O.answering=true;ONLM.pend={res:x=>{if(TT100C.open===O)TT100C.open=null;res(x)},t,seat:own,at:Date.now(),def,d,h:pre,mine100:true};tt100SendOwn({k:'modal',v,t:t.slice(0,60),pre,d})})})}
+      O.answering=true;ONLM.pend={res:x=>{if(TT100C.open===O)TT100C.open=null;res(x)},t,seat:own,at:Date.now(),def,d,h:pre,mine100:true};tt100SendOwn({k:'modal',v,...onlmQTag(Q,t),pre,d})})})}
   /* someone else's window: wait for their value (or the server's dto) */
   if(clock)tt100Report('dec',{d,seat:own,t:S.turnNo});
-  return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def,d,h:onlHash()};onlmWaitShow();onlmPump()})}
+  return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def,d,h:onlmQHash(Q),kd:Q&&!Q.local?Q.kind:null};onlmWaitShow();onlmPump()})}
 /* my answer, in order: the server's reply gives its seq; the pump applies it there (113 pump: ONLM.ownq / ownHold) */
 function tt100SendOwn(inp){ONLM.ownq=ONLM.ownq||new Set();inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.pre;inp.seat=ONLM.me;inp.n=++ONLM.sent;ONLM.inflight=(ONLM.inflight||0)+1;ONLM.ownHold=true;
   NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{ONLM.inflight--;ONLM.ownHold=false;if(!r||!Number.isInteger(r.seq)){onlmPump();return}
@@ -138,7 +138,7 @@ function tt100DropMark(inp){ONLM.left=ONLM.left||{};const p=S.players[inp.seat];
 /* the CPU finishes the turn once it is settled (every client at the same point: no input of that seat can land any more) */
 function tt100Kick(){try{if(!onlmOn()||!S.tt100x||TT100C.running)return;const X=S.tt100x;const p=S.players[X.seat];if(S.turnNo!==X.t||cur()!==p||!p||!p.alive||p.exited)return;
   if(S.busy||ONLM.pend||TT100C.open||tt100F98()||ONLM.resyncing)return;if(!['choice','action','command'].includes(S.phase))return;
-  if(S.phase==='command'){ONLM.replay++;try{const b=document.createElement('button');b.dataset.act='cmddone';b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}finally{ONLM.replay--}return}
+  if(S.phase==='command'){ONLM.replay++;try{command(X.seat,{k:'act',a:'cmddone'})}finally{ONLM.replay--}return}
   tt100Run(p)}catch(e){console.error(e)}}
 function tt100Run(p){TT100C.running=1;tt100Finish(p).catch(e=>console.error(e)).finally(()=>{TT100C.running=0;setTimeout(onlmPump,30)})}
 async function tt100Finish(p){const G=S;S.busy=true;try{render()}catch(e){}

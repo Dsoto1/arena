@@ -168,7 +168,7 @@ runCarmina=async function(){
     const avail=CARMINA.map((c,i)=>i).filter(i=>!used.has(i));
     let i;
     if(p.cpu){const P=pers(p);const val=k=>({0:P.aggression,1:P.survival,2:P.survival,3:P.survival,4:P.aggression,5:(P.cf+P.coin)/2,6:P.aggression,7:P.coin,8:(P.coin+P.cf)/2,9:P.cf+10,10:P.coin,11:P.survival})[k]+rand()*30;i=avail.sort((a,b)=>val(b)-val(a))[0]}
-    else i=await modal(_T`Carmina Fescennina · ${p.name}`,carm96HTML(avail),avail.map(k=>({label:`${k+1}. “${CARMINA[k].v.length>70?CARMINA[k].v.slice(0,68)+'…':CARMINA[k].v}”`,sub:CARMINA[k].d,value:k,style:'display:none'})).concat([{label:_T('Opt out'),value:-1}]),{xwide:1,
+    else i=await askW(p,'carmina',_T`Carmina Fescennina · ${p.name}`,carm96HTML(avail),avail.map(k=>({label:`${k+1}. “${CARMINA[k].v.length>70?CARMINA[k].v.slice(0,68)+'…':CARMINA[k].v}”`,sub:CARMINA[k].d,value:k,style:'display:none'})).concat([{label:_T('Opt out'),value:-1}]),{xwide:1,
       onOpen:done=>{const box=document.getElementById('mBody');if(box)box.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-cm96]');if(!b||b.disabled)return;done(+b.dataset.cm96)})}});
     if(i==null||i<0){log(_T`${nm(p)} declines to recite.`);continue}
     used.add(i);log(_T`${nm(p)} recites: “${CARMINA[i].v}” (${CARMINA[i].d}).`);think(p,'“'+CARMINA[i].v+'”','say');cardShow('x:'+CARMINA[i].img,p,_T('🎭 Recited'));await CARMINA[i].apply(p);

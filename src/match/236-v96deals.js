@@ -40,8 +40,8 @@ var CPUDIP96=false; /* read by tradePartners (05-flow) */
 
 /* ---------- 2a · the menu chips + the limit in the windows ---------- */
 {const base=modal;modal=function(title,body,buttons,opt){try{
-  if(!HEADLESS&&S&&S.players&&Array.isArray(buttons)){const p=cur();const t=String(title||'');
-    if(p&&t===_T('Trade or truce')){
+  if(!HEADLESS&&S&&S.players&&Array.isArray(buttons)){const p=cur();const t=String(title||'');const Q=typeof askNow==='function'?askNow():null;const K=Q?Q.kind:''; /* v1.01: by kind (326) */
+    if(p&&(K?K==='tradeMenu':t===_T('Trade or truce'))){
       const rows=buttons.map((b,i)=>({b,i,q:typeof b.value==='number'?S.players[b.value]:null}));
       const rank=x=>!x.q?9:inTruce(p,x.q)||EV().teams&&friendly(p,x.q)?0:1;
       for(const x of rows){if(!x.q)continue;const chips=[];
@@ -50,7 +50,7 @@ var CPUDIP96=false; /* read by tradePartners (05-flow) */
         if(chips.length)x.b={...x.b,label:x.b.label+' '+chips.join(' ')};
         if(offered96(p,x.q))x.b={...x.b,sub:(x.b.sub?x.b.sub+' · ':'')+_T('Already offered this turn'),style:'opacity:.5'}}
       buttons=rows.sort((a,b)=>rank(a)-rank(b)||a.i-b.i).map(x=>x.b)}
-    else{const q=S.players.find(x=>x&&t===_T`With ${x.name}`);
+    else{const q=K?(K==='tradeWith'&&Q.spec&&Q.spec.q||null):S.players.find(x=>x&&t===_T`With ${x.name}`);
       if(q&&p&&offered96(p,q))buttons=buttons.map(b=>b.value==='trade'||b.value==='truce'&&!inTruce(p,q)?{...b,disabled:true,sub:_T('Already offered this turn')}:b)}}}catch(e){}
   return base.call(this,title,body,buttons,opt)}}
 

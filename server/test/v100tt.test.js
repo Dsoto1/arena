@@ -7,7 +7,7 @@
 const assert=require('assert');const store=require('../src/store.js');const C=require('../src/onlcore.js');
 
 function units(){
-  assert.strictEqual(C.VER,8,'protocol 8');
+  assert.ok(C.VER>=8,'protocol 8 or later (v1.01: 9)');
   assert.deepStrictEqual(C.ttOf100({ranked:true}),{t:60,d:20},'Ranked 60 / 20');assert.deepStrictEqual(C.ttOf100({ranked:false}),{t:0,d:0},'Custom Off');
   assert.deepStrictEqual(C.ttOf100({ranked:false,turnT:90}),{t:90,d:20});assert.deepStrictEqual(C.ttOf100({turnT:45}),{t:0,d:0},'no odd values');assert.deepStrictEqual(C.ttOf100(null),{t:0,d:0});
   assert.deepStrictEqual([1,2,3,4].map(C.dropNeed100),[1,2,2,3],'a majority of the others');

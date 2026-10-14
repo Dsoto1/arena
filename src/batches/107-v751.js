@@ -13,7 +13,7 @@ const WBACK75=lv=>assetURL('weapon_back'+lv+'b.webp'); /* v0.83: every level fro
 {const base=boardHTML75;boardHTML75=function(){let h=base.apply(this,arguments);try{h=h.replace(/<span class="mb-back" data-lv="(\d)" title="([^"]*)"><b>FLAVIUS<br>RULE<\/b><small>(×\d+)<\/small><\/span>/g,
   (m,lv,t,n)=>`<span class="mb-back mb-back75" title="${t}" style="background-image:url('${WBACK75(lv)}')"><small>${n}</small></span>`)}catch(e){}return h}}
 {const base=openChest;openChest=async function(player){try{if(player&&!player.cpu&&!HEADLESS&&!(S&&S.sim)&&S.chest&&S.chest.weapons.length){const key=S.chest.weapons[S.chest.weapons.length-1];
-    if(W[key]&&typeof modal==='function')await modal(_T('🗝 The Arena Chest'),`<div class="chest75"><div class="chest75-card"><span class="chest75-face chest75-back" style="background-image:url('${WBACK75(4)}')"></span><span class="chest75-face chest75-front"><span class="cimg" style="${cardStyle('w:'+key)}"></span></span></div><p><b>${esc(W[key].n)}</b> · ${esc(wStats(mkW(key)))}</p></div>`,[{label:_T('Take it'),value:1,primary:1}])}}catch(e){console.error(e)}
+    if(W[key]&&typeof modal==='function')await askW(player,'chestShow',_T('🗝 The Arena Chest'),`<div class="chest75"><div class="chest75-card"><span class="chest75-face chest75-back" style="background-image:url('${WBACK75(4)}')"></span><span class="chest75-face chest75-front"><span class="cimg" style="${cardStyle('w:'+key)}"></span></span></div><p><b>${esc(W[key].n)}</b> · ${esc(wStats(mkW(key)))}</p></div>`,[{label:_T('Take it'),value:1,primary:1}])}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}
 
 /* ---------- Match Week: the host city's banner ---------- */

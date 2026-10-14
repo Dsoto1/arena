@@ -14,7 +14,7 @@ distModal=function(player,n,why,kind){const plan={};LOCS.forEach(l=>plan[l]=0);
    <p style="margin-top:10px">${_T`Left to assign: <b id="distLeft">${left()}</b>`}</p>`;
   const sync=()=>{const ok=document.querySelector('#mBtns [data-mi="1"]');if(ok)ok.disabled=left()>0&&room()};
   const btns=[{label:_T('Auto: head, chest, arms, legs'),value:'auto'},{label:_T('Confirm'),value:'ok',primary:1}];if(canCancel)btns.push({label:_T('Cancel'),value:'cancel'});
-  return modal(kind==='hp'?_T('Distribute health'):_T('Distribute armor'),body(),btns,{onOpen:()=>{const box=$('#mBody');sync();
+  return askW(player,kind==='hp'?'distHP':'distAP',kind==='hp'?_T('Distribute health'):_T('Distribute armor'),body(),btns,{onOpen:()=>{const box=$('#mBody');sync();
       box.onclick=e=>{const b=e.target.closest('[data-d]');if(!b||b.disabled)return;const l=b.dataset.l;plan[l]+=b.dataset.d==='+'?1:-1;box.innerHTML=body();sync()}}})
    .then(v=>{const mb=$('#mBody');if(mb)mb.onclick=null;
     if(v==='cancel'||(canCancel&&v==null))return null;
@@ -24,7 +24,7 @@ distModal=function(player,n,why,kind){const plan={};LOCS.forEach(l=>plan[l]=0);
     return plan})};
 /* distributeHP now says whether anything was healed (false: full health, or the player cancelled) */
 distributeHP=async function(player,n,why=_T('Health Elixir')){const locs=LOCS.filter(l=>player.hp[l]>0&&player.hp[l]<7);
-  if(!locs.length){if(DIST91.cancel){if(!player.cpu)await modal(_T('Nothing to heal'),`<p>${_T`Every location is already at full health — the elixir stays in your hand.`}</p>`,[{label:'OK',value:1}]);return false}
+  if(!locs.length){if(DIST91.cancel){if(!player.cpu)await askW(player,'healNone',_T('Nothing to heal'),`<p>${_T`Every location is already at full health — the elixir stays in your hand.`}</p>`,[{label:'OK',value:1}]);return false}
     log(_T`${nm(player)} is already at full health.`);return false}
   const plan=player.cpu?cpuHealPlan(player,n):await distModal(player,n,why,'hp');if(!plan)return false;
   const parts=[];for(const l of LOCS)if(plan[l]){player.hp[l]=Math.min(7,player.hp[l]+plan[l]);parts.push(`${LOCN[l]} +${plan[l]}`)}
@@ -32,10 +32,10 @@ distributeHP=async function(player,n,why=_T('Health Elixir')){const locs=LOCS.fi
   log(_T`${nm(player)} uses ${why}: ${parts.join(', ')||'nothing'}.`);return tot>0||!DIST91.cancel};
 /* the AP Upgrade window shows the piece it reinforces */
 apUp=async function(player,n){const locs=LOCS.filter(l=>player.hp[l]>0&&player.ap[l]>0&&player.ap[l]<7);
-  if(!locs.length){if(!player.cpu)await modal(_T('No armored location'),`<p>${_T`AP upgrades only apply to a location that already has armor.`}</p>`,[{label:'OK',value:1}]);return false}
+  if(!locs.length){if(!player.cpu)await askW(player,'apUpNone',_T('No armored location'),`<p>${_T`AP upgrades only apply to a location that already has armor.`}</p>`,[{label:'OK',value:1}]);return false}
   const pc=l=>((player.pieces&&player.pieces[l])||[]).find(x=>x&&x.key&&ARM[x.key]);
   const loc=player.cpu?locs.sort((a,b)=>player.ap[a]-player.ap[b]||HEAL_ORDER.indexOf(a)-HEAL_ORDER.indexOf(b))[0]
-   :await modal(_T`AP Upgrade (+${n})`,`<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`,locs.map(l=>{const P=pc(l);
+   :await askW(player,'apUpLoc',_T`AP Upgrade (+${n})`,`<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`,locs.map(l=>{const P=pc(l);
       return {label:`${P?`<span class="apu91">${armSideArt91(P.key,l,92)}</span>`:''}${LOCN[l]}`,sub:_T`${P?esc(P.n||ARM[P.key]&&ARM[P.key].n||'')+' · ':''}AP ${player.ap[l]} → ${Math.min(7,player.ap[l]+n)}`,value:l}}).concat([{label:_T('Cancel'),value:null}]));
   if(!loc)return false;player.ap[loc]=Math.min(7,player.ap[loc]+n);log(_T`${nm(player)} reinforces ${LOCN[loc]} to ${player.ap[loc]} AP.`);return true};
 {const base=useItem;useItem=async function(player,it){

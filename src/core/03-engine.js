@@ -363,7 +363,7 @@ async function chooseArmorLoc(player, key, title, single = false) {
     const free = opts.filter(l => !armorConflict(player, l, key));
     return [(free.length ? free : opts).sort((a, b) => player.ap[a] - player.ap[b])[0]];
   }
-  const v = await modal(title || _T`Equip ${d.n}`, `<p>${_T`${d.n}: ${d.ap} AP on the ${PT_NAME[d.pt]} equip point${d.stack ? ' (stackable)' : ''}${d.bonus ? ' · bonus ' + Object.entries(d.bonus).map(([l, a]) => `+${a} ${LOCN[l]}`).join(', ') : ''}. Choose a side.`}</p>`, opts.map(l => {
+  const v = await askW(player, 'armorSide', title || _T`Equip ${d.n}`, `<p>${_T`${d.n}: ${d.ap} AP on the ${PT_NAME[d.pt]} equip point${d.stack ? ' (stackable)' : ''}${d.bonus ? ' · bonus ' + Object.entries(d.bonus).map(([l, a]) => `+${a} ${LOCN[l]}`).join(', ') : ''}. Choose a side.`}</p>`, opts.map(l => {
     const c = armorConflict(player, l, key);
     return {
       label: LOCN[l],
@@ -397,7 +397,7 @@ async function gainArmorPiece(player, key, apOverride, {
     if (c) {
       // same equip point already taken in this layer: swap or keep
       let swap;
-      if (player.cpu) swap = (apOverride ?? d.ap) + (d.bonus ? Object.values(d.bonus).reduce((a, b) => a + b, 0) : 0) > Math.min(c.ap, player.ap[l]) + (ARM[c.key].bonus ? 1 : 0);else swap = await modal(_T`${LOCN[l]}: equip point taken`, `<p>${_T`Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[ARM[c.key].pt] || PT_NAME[d.pt]} point. Only one ${d.stack ? _T('stackable') : _T('regular')} armor fits there${d.stack ? '' : _T('; stackable padding and belts can sit beneath it')}.`}</p>`, [{
+      if (player.cpu) swap = (apOverride ?? d.ap) + (d.bonus ? Object.values(d.bonus).reduce((a, b) => a + b, 0) : 0) > Math.min(c.ap, player.ap[l]) + (ARM[c.key].bonus ? 1 : 0);else swap = await askW(player, 'armorSwap', _T`${LOCN[l]}: equip point taken`, `<p>${_T`Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[ARM[c.key].pt] || PT_NAME[d.pt]} point. Only one ${d.stack ? _T('stackable') : _T('regular')} armor fits there${d.stack ? '' : _T('; stackable padding and belts can sit beneath it')}.`}</p>`, [{
         label: _T`Swap in ${d.n}`,
         sub: _T`${apOverride ?? d.ap} AP · the old piece drops at your feet`,
         value: 1,
@@ -487,13 +487,13 @@ async function distributeAP(player, n, why) {
 async function apUp(player, n) {
   const locs = LOCS.filter(l => player.hp[l] > 0 && player.ap[l] > 0 && player.ap[l] < 7);
   if (!locs.length) {
-    if (!player.cpu) await modal(_T('No armored location'), `<p>${_T`AP upgrades only apply to a location that already has armor.`}</p>`, [{
+    if (!player.cpu) await askW(player, 'apUpNone', _T('No armored location'), `<p>${_T`AP upgrades only apply to a location that already has armor.`}</p>`, [{
       label: 'OK',
       value: 1
     }]);
     return false;
   }
-  const loc = player.cpu ? locs.sort((a, b) => player.ap[a] - player.ap[b] || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b))[0] : await modal(_T`AP Upgrade (+${n})`, `<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`, locs.map(l => ({
+  const loc = player.cpu ? locs.sort((a, b) => player.ap[a] - player.ap[b] || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b))[0] : await askW(player, 'apUpLoc', _T`AP Upgrade (+${n})`, `<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`, locs.map(l => ({
     label: LOCN[l],
     sub: _T`AP ${player.ap[l]} → ${Math.min(7, player.ap[l] + n)}`,
     value: l
@@ -680,7 +680,7 @@ async function askCard(player, keys, title, text, cpuWants) {
   const it = keys.map(k => player.items.find(x => x.kind === 'card' && x.key === k)).find(Boolean);
   if (!it) return null;
   let use;
-  if (player.cpu) use = (player.diff === 'hard' || rand() < (player.diff === 'easy' ? .5 : .75)) && cpuWants(it.key);else use = await modal(title, `<p>${text}</p>`, [{
+  if (player.cpu) use = (player.diff === 'hard' || rand() < (player.diff === 'easy' ? .5 : .75)) && cpuWants(it.key);else use = await askW(player, 'useCard', title, `<p>${text}</p>`, [{
     label: _T`Play ${CARDS[it.key].n}`,
     sub: CARDS[it.key].d,
     value: 1,
@@ -731,7 +731,7 @@ async function hurt(victim, location, damage, source, prefix, {
       const ab = Math.min(rem, w.absorb);
       let use;
       if (victim.cpu) use = victim.diff === 'hard' ? ab >= 2 || victim.ap[location] + victim.hp[location] - rem <= 1 || w.usesLeft >= 3 : rand() < (victim.diff === 'easy' ? .8 : .95); // hard lanistae save uses on chip damage when they can afford to
-      else use = await modal(_T`Raise the ${w.n}?`, `<p>${_T`${prefix || _T('An attack')} brings <b>${rem} damage</b> at your ${LOCN[location].toLowerCase()}. The ${w.n} can absorb <b>${ab}</b> of it; the rest falls on armor, then flesh.`}</p>${typeof hint === 'function' ? hint('shield') : ''}`, [{
+      else use = await askW(victim, 'shieldRaise', _T`Raise the ${w.n}?`, `<p>${_T`${prefix || _T('An attack')} brings <b>${rem} damage</b> at your ${LOCN[location].toLowerCase()}. The ${w.n} can absorb <b>${ab}</b> of it; the rest falls on armor, then flesh.`}</p>${typeof hint === 'function' ? hint('shield') : ''}`, [{
         label: wIco87('abs') + _T`Absorb ${ab} damage`,
         sub: `${wIco87('use')}${w.usesLeft - 1 === 0 ? _T('this use BREAKS the shield') : _T`${w.usesLeft - 1} use${w.usesLeft - 1 === 1 ? '' : 's'} left after`}`,
         value: 1,
@@ -1326,7 +1326,7 @@ async function marketRoll(player, kind, lv, {
   // returns key
   let slot;
   if (player.mchoice && !free) {
-    slot = player.cpu ? [1, 2, 3].sort((a, b) => itemValue(kind, S.market[kind][lv].slots[b - 1]) - itemValue(kind, S.market[kind][lv].slots[a - 1]))[0] : await modal(_T('Choose'), `<p>${_T`Pick the slot you want.`}</p>`, [1, 2, 3, 4].map(s => ({
+    slot = player.cpu ? [1, 2, 3].sort((a, b) => itemValue(kind, S.market[kind][lv].slots[b - 1]) - itemValue(kind, S.market[kind][lv].slots[a - 1]))[0] : await askW(player, 'marketSlot', _T('Choose'), `<p>${_T`Pick the slot you want.`}</p>`, [1, 2, 3, 4].map(s => ({
       label: _T`Slot ${s}: ${kName(kind, marketPeek(kind, lv, s))}`,
       value: s,
       card: kind === 'w' && s <= 3 && S.market.w[lv].slots[s - 1] ? 'w:' + S.market.w[lv].slots[s - 1] : null
@@ -1349,7 +1349,7 @@ async function marketRoll(player, kind, lv, {
       return near[0];
     }
     let pick;
-    if (player.cpu) pick = near.sort((a, b) => itemValue(kind, b <= 3 ? m.slots[b - 1] : null) - itemValue(kind, a <= 3 ? m.slots[a - 1] : null))[0];else pick = await modal(_T('Empty market slot'), `<p>${_T`Slot ${slot} is empty. Slots ${near.join(' and ')} are equally close: choose one.`}</p>`, near.map(s => ({
+    if (player.cpu) pick = near.sort((a, b) => itemValue(kind, b <= 3 ? m.slots[b - 1] : null) - itemValue(kind, a <= 3 ? m.slots[a - 1] : null))[0];else pick = await askW(player, 'marketEmpty', _T('Empty market slot'), `<p>${_T`Slot ${slot} is empty. Slots ${near.join(' and ')} are equally close: choose one.`}</p>`, near.map(s => ({
       label: _T`Slot ${s}: ${kName(kind, marketPeek(kind, lv, s))}`,
       value: s,
       card: kind === 'w' && s <= 3 ? 'w:' + m.slots[s - 1] : null
@@ -1366,7 +1366,7 @@ async function marketRoll(player, kind, lv, {
     }
     if (free || player.coin < 2) return marketTake(kind, lv, slot);
     let reroll = false;
-    if (player.cpu) reroll = player.diff === 'hard' && itemValue(kind, peek === 'face-down' ? null : S.market[kind][lv].slots[slot - 1]) < lv * 2 && player.coin >= 2 && rand() < .5;else reroll = await modal(_T('Market die'), `<p>${_T`The die shows <b>${slot}</b>: ${kName(kind, peek)}. Take it, or re-roll for ${coinAmt87(2)} (you have ${player.coin}).`}</p>`, [{
+    if (player.cpu) reroll = player.diff === 'hard' && itemValue(kind, peek === 'face-down' ? null : S.market[kind][lv].slots[slot - 1]) < lv * 2 && player.coin >= 2 && rand() < .5;else reroll = await askW(player, 'marketReroll', _T('Market die'), `<p>${_T`The die shows <b>${slot}</b>: ${kName(kind, peek)}. Take it, or re-roll for ${coinAmt87(2)} (you have ${player.coin}).`}</p>`, [{
       label: _T('Take it'),
       value: 0,
       primary: 1
@@ -1416,7 +1416,7 @@ async function gainWeapon(player, key, fromWeapon) {
   if (player.cpu) {
     const worst = [...arms].sort((a, b) => wScore(player['w' + a]) - wScore(player['w' + b]))[0];
     choice = wScore(w) > wScore(player['w' + worst]) ? worst : 'drop';
-  } else choice = await modal(_T`New weapon: ${w.n}`, `<p>${_T`${wStats(w)}. Both hands are full. Swap one out (it drops at your feet), or leave the new one.`}</p>`, [...arms.map(a => ({
+  } else choice = await askW(player, 'weaponSwap', _T`New weapon: ${w.n}`, `<p>${_T`${wStats(w)}. Both hands are full. Swap one out (it drops at your feet), or leave the new one.`}</p>`, [...arms.map(a => ({
     label: _T`Replace ${a === 'R' ? _T('right') : _T('left')}: ${player['w' + a].n}`,
     sub: wStats(player['w' + a]),
     value: a
@@ -1463,7 +1463,7 @@ async function chooseMarket(player, kind, lv) {
     return;
   }
   let k;
-  if (player.cpu) k = pool.sort((a, b) => itemValue(kind, b) - itemValue(kind, a))[0];else k = await modal(_T`Level ${lv} ${kind === 'w' ? _T('weapon') : _T('armor')}`, `<p>${_T`Choose any remaining piece.`}</p>`, pool.map(x => ({
+  if (player.cpu) k = pool.sort((a, b) => itemValue(kind, b) - itemValue(kind, a))[0];else k = await askW(player, 'marketPick', _T`Level ${lv} ${kind === 'w' ? _T('weapon') : _T('armor')}`, `<p>${_T`Choose any remaining piece.`}</p>`, pool.map(x => ({
     label: kind === 'w' ? W[x].n : ARM[x].n,
     sub: kind === 'w' ? wStats(mkW(x)) : armorDesc(x),
     value: x,

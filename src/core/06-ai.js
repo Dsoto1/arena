@@ -443,7 +443,7 @@ async function cpuDiplomacy(player) {
     wantTrade = mfWant && MANDATA[mfWant.idx].n === 'The Trade';
   if (!wantTrade && (wantTruce || strength(q) > strength(player) * 0.9 || P.loyalty > 75 && rand() < .5 || relOf(player, q) >= 25)) {
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => modal(_T`${player.name} offers a truce`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.`}</p>${hint('truce')}`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => askX(q, 'truceOffer', { from: player }, _T`${player.name} offers a truce`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.`}</p>${hint('truce')}`, [{
       label: _T('Accept truce'),
       value: 1,
       primary: 1
@@ -465,7 +465,7 @@ async function cpuDiplomacy(player) {
   if (!give) return;
   let ok;
   TRADE88 = { give, get, from: player, to: q }; /* v0.88: the offer window shows both sides (163-v88fix) */
-  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => modal(_T`${player.name} proposes a trade`, `<p>${_T`${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.`}</p>`, [{
+  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => askX(q, 'tradeOffer', { from: player }, _T`${player.name} proposes a trade`, `<p>${_T`${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.`}</p>`, [{
     label: _T('Accept trade'),
     value: 1,
     primary: 1

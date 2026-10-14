@@ -381,7 +381,9 @@ Shared rules: the "v1.01" section at the end of `111-onlcore`; routes: the "v1.0
 ## Versions, deploy, rollout, rollback
 
 - **Protocol** `ONLC.VER` (111-onlcore): `$connect` refuses another version with 426 ("reload"). Bump it only when old clients
-  cannot work with the new server; most releases do not (v0.85–v0.93 kept 7).
+  cannot work with the new server; most releases do not (v0.85–v0.93 kept 7; v1.0 = 8; v1.01 = 9: the question port — a lockstep
+  window answer is `{k:'modal', v, kd, ds, pre}` with the question's kind + decision number in its hashes, owned by the human asked;
+  the server only stores and orders inputs, so nothing else changed there — see CLAUDE.md "v1.01 QUESTION PORT").
 - **Server stamp**: `node tools/srvstamp.js` writes `server/src/build.json` (game version + code hash) and the page's expected
   server (`src/online/195-v91srvexp.js`); the Online screens show a chip when they differ.
 - **Release** (`sh tools/release.sh X.YY`, then commit + push): Virgilante runs `bash flavius.sh release` in CloudShell. It clones the

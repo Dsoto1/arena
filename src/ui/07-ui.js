@@ -2871,13 +2871,19 @@ function render() {
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]');
   if (!b || !S) return;
-  const k = b.dataset.act;
-  if (k === 'trophies') {
+  if (b.dataset.act === 'trophies') {
     e.stopPropagation();
     return;
   } /* v0.51: the trophies read on hover, like coin and CF */
+  uiAct(b.dataset.act, b.dataset);
+});
+/* uiAct — the action panel's dispatcher: k = the button's data-act, ds = its dataset (or a plain object with the same keys).
+   The click above and 326-v101ask's command() registry (online lockstep, replays) both land here. */
+function uiAct(k, ds) {
+  if (!S) return;
+  if (k === 'trophies') return;
   if (k === 'inspect') {
-    const q = S.players[+b.dataset.pid];
+    const q = S.players[+ds.pid];
     if (!q) return;
     const home = typeof boardHome === 'function' ? boardHome(cur()) : null; /* v0.51: the panel swaps in place — click your own card to come back */
     S.boardPid = q === home || q.id === S.boardPid ? null : q.id;
@@ -2890,7 +2896,7 @@ document.addEventListener('click', e => {
   }
   if (k === 'zpick') {
     if (S.cmd && !S.cmd.lock) {
-      const o = zoraPickOptions(S.cmd.n)[+b.dataset.i];
+      const o = zoraPickOptions(S.cmd.n)[+ds.i];
       if (o) {
         zoraPickup(S.cmd.n, o);
         render();
@@ -2966,7 +2972,7 @@ document.addEventListener('click', e => {
   });
   if (k === 'loot') act(async () => {
     const opts = lootOptions(p).filter(o => o.t === 'fw' || !p.looted);
-    const i = await modal(_T('Loot'), `<p>${_T`Take one item per turn from a corpse or a dropped pile. Thrown weapons in the sand can always be picked up.`}</p>`, opts.map((o, i) => {
+    const i = await askW(p, 'loot', _T('Loot'), `<p>${_T`Take one item per turn from a corpse or a dropped pile. Thrown weapons in the sand can always be picked up.`}</p>`, opts.map((o, i) => {
       const w = o.t === 'w' ? o.pl.weapons[o.i] : o.t === 'fw' ? o.floor.w : null;
       const own = o.pl && S.players[o.pl.owner];
       return {
@@ -3006,10 +3012,10 @@ document.addEventListener('click', e => {
     await endTurn();
   });
   if (k === 'item') {
-    const it = p.items.find(x => x.id == +b.dataset.id);
+    const it = p.items.find(x => x.id == +ds.id);
     if (it) act(() => useItem(p, it));
   }
-});
+}
 /* showTrophies — shows a gladiator's trophy tables, reusing the open window if there is one. */
 function showTrophies(player) {
   if (!$('#modal').hidden) {
@@ -3096,10 +3102,7 @@ function modalResume() {
 /* modal — the one dialog everything uses: queues behind any open window, shows title, body and buttons (plus an optional grid) and resolves with the chosen value.
    The x / Escape give the close value; windows without one can be minimised to peek at the board. In HEADLESS mode it answers at once (close value, else the first enabled button). */
 function modal(title, body, buttons, opt = {}) {
-  if (HEADLESS) {
-    const b = [...buttons, ...(opt.grid || [])].find(x => !x.disabled);
-    return Promise.resolve(opt.close !== undefined ? opt.close : b ? b.value : null);
-  }
+  if (HEADLESS) return Promise.resolve(askAuto(buttons, opt)); /* v1.01: the headless provider's rule (326-v101ask) */
   /* run — builds and shows the window once its turn in the queue comes. */
   const run = () => new Promise(res => {
     $('#modal').classList.toggle('full', !!opt.full); // v0.35: the big modes run full screen wherever they are opened from
@@ -3216,7 +3219,7 @@ function distModal(player, n, why, kind) {
   const body = () => `<p>${_T`Distribute <b>${n} ${kind === 'hp' ? 'HP' : 'AP'}</b> from ${why}. Put it all in one location or spread it. Nothing can exceed 7.`}</p>
    <div class="dist">${LOCS.map(l => `<span>${sideBadge(l)} ${LOCN[l]} <span style="color:var(--dim);font:12px var(--mono)">${kind === 'hp' ? player.hp[l] : player.ap[l]} → ${(kind === 'hp' ? player.hp[l] : player.ap[l]) + plan[l]}</span></span><button class="btn" type="button" data-d="-" data-l="${l}" ${plan[l] ? '' : 'disabled'} aria-label="${_T`Remove from ${LOCN[l]}`}">−</button><span class="v">${plan[l]}</span><button class="btn" type="button" data-d="+" data-l="${l}" ${okLoc(l) && plan[l] < cap(l) && left() > 0 ? '' : 'disabled'} aria-label="${_T`Add to ${LOCN[l]}`}">+</button>`).join('')}</div>
    <p style="margin-top:10px">${_T`Left to assign: <b id="distLeft">${left()}</b>`}</p>`;
-  return modal(kind === 'hp' ? _T('Distribute health') : _T('Distribute armor'), body(), [{
+  return askW(player, kind === 'hp' ? 'distHP' : 'distAP', kind === 'hp' ? _T('Distribute health') : _T('Distribute armor'), body(), [{
     label: _T('Auto: head, chest, arms, legs'),
     value: 'auto'
   }, {
@@ -3326,7 +3329,7 @@ async function openMarket(player) {
       label: _T('Close market'),
       value: 'close'
     });
-    const v = await modal(_T('Market of Flavius'), body, btns, {
+    const v = await askW(player, 'market', _T('Market of Flavius'), body, btns, {
       wide: 1
     });
     if (v === 'close' || !v) break;
@@ -3395,7 +3398,7 @@ async function openCrowd(player) {
       label: _T('Close'),
       value: 'close'
     }];
-    const v = await modal(_T('Crowd Favor'), `<p>${_T`Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>${cfAmt87(player.cf)}</b> and <b>${coinAmt87(player.coin)}</b>.`}</p>`, opts);
+    const v = await askW(player, 'crowd', _T('Crowd Favor'), `<p>${_T`Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>${cfAmt87(player.cf)}</b> and <b>${coinAmt87(player.coin)}</b>.`}</p>`, opts);
     if (v === 'close' || !v) break;
     if (v === 'mk') {
       player.cf -= 3;
@@ -3434,7 +3437,7 @@ async function openCrowd(player) {
 /* openTrade — human trade window: pick a gladiator in range, then trade, gift, or propose / break a truce. CPUs answer via cpuAcceptsTrade / cpuAcceptsTruce; humans get a dialog. */
 async function openTrade(player) {
   const partners = tradePartners(player);
-  const qid = await modal(_T('Trade or truce'), `<p>${_T`Trading is a one-to-one exchange with a gladiator within 4 tiles. A truce is a verbal pact with no penalty for breaking it.`}</p>`, partners.map(other => ({
+  const qid = await askW(player, 'tradeMenu', _T('Trade or truce'), `<p>${_T`Trading is a one-to-one exchange with a gladiator within 4 tiles. A truce is a verbal pact with no penalty for breaking it.`}</p>`, partners.map(other => ({
     label: other.name,
     sub: _T`${other.cpu ? 'CPU' : _T('player')} · ${cheb(player, other)} tiles away${inTruce(player, other) ? _T(' · in truce') : ''}`,
     value: other.id
@@ -3444,7 +3447,7 @@ async function openTrade(player) {
   }]));
   if (qid == null) return;
   const q = S.players[qid];
-  const what = await modal(_T`With ${q.name}`, `<p>${_T`What would you like to propose?`}</p>`, [{
+  const what = await askX(player, 'tradeWith', { q }, _T`With ${q.name}`, `<p>${_T`What would you like to propose?`}</p>`, [{
     label: _T('Propose a trade'),
     value: 'trade',
     primary: 1
@@ -3468,7 +3471,7 @@ async function openTrade(player) {
       return;
     }
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => modal(_T`${q.name}: truce offer`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?`}</p>`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => askX(q, 'truceAsk', { from: player }, _T`${q.name}: truce offer`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?`}</p>`, [{
       label: _T('Accept'),
       value: 1,
       primary: 1
@@ -3484,7 +3487,7 @@ async function openTrade(player) {
   if (what === 'gift') {
     const mine = tradeables(player);
     if (!mine.length) return;
-    const gi = await modal(_T`Gift to ${q.name}`, `<p>${_T`Choose what to give. Allies remember generosity.`}</p>`, mine.map((x, i) => ({
+    const gi = await askX(player, 'gift', { q }, _T`Gift to ${q.name}`, `<p>${_T`Choose what to give. Allies remember generosity.`}</p>`, mine.map((x, i) => ({
       label: x.label,
       value: i
     })).concat([{
@@ -3500,13 +3503,13 @@ async function openTrade(player) {
   const mine = tradeables(player),
     theirs = tradeables(q);
   if (!mine.length || !theirs.length) {
-    await modal(_T('Nothing to trade'), `<p>${_T`One of you has nothing tradeable.`}</p>`, [{
+    await askW(player, 'tradeNone', _T('Nothing to trade'), `<p>${_T`One of you has nothing tradeable.`}</p>`, [{
       label: 'OK',
       value: 1
     }]);
     return;
   }
-  const gi = await modal(_T('You give…'), '', mine.map((x, i) => ({
+  const gi = await askX(player, 'tradeGive', { q }, _T('You give…'), '', mine.map((x, i) => ({
     label: trade88Label(x, player),
     value: i
   })).concat([{
@@ -3514,7 +3517,7 @@ async function openTrade(player) {
     value: null
   }]));
   if (gi == null) return;
-  const ti = await modal(_T('…and ask for'), `<p>${_T`${q.name} holds:`}</p>`, theirs.map((x, i) => ({
+  const ti = await askX(player, 'tradeGet', { q }, _T('…and ask for'), `<p>${_T`${q.name} holds:`}</p>`, theirs.map((x, i) => ({
     label: trade88Label(x, q),
     value: i
   })).concat([{
@@ -3526,7 +3529,7 @@ async function openTrade(player) {
     get = theirs[ti];
   let ok;
   TRADE88 = { give, get, from: player, to: q }; /* v0.88: the offer window shows both sides (163-v88fix) */
-  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => modal(_T`${q.name}: trade offer`, `<p>${_T`${player.name} offers ${give.label} for your ${get.label}. Accept?`}</p>`, [{
+  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => askX(q, 'tradeAsk', { from: player }, _T`${q.name}: trade offer`, `<p>${_T`${player.name} offers ${give.label} for your ${get.label}. Accept?`}</p>`, [{
     label: _T('Accept'),
     value: 1,
     primary: 1

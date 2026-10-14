@@ -64,7 +64,8 @@ function trade88Label(x,owner){const p=trade88Pic(x,owner);return p?`<span class
 function trade88Body(T){const side=(who,x,owner,cap)=>`<div class="tr88s"><div class="tr88h">${cap}</div><div class="tr88pic">${trade88Pic(x,owner)}</div><b>${x.label}</b></div>`;
   return `<div class="tr88">${side(T.from,T.give,T.from,_T`${esc(T.from.name)} gives you`)}<div class="tr88x">⇄</div>${side(T.to,T.get,T.to,_T`for your`)}</div>`}
 {const base=modal;modal=function(title,body,buttons,opt){const T=TRADE88;
-  if(T&&!HEADLESS){const t=String(title||'');if(t===_T`${T.from.name} proposes a trade`||t===_T`${T.to.name}: trade offer`){TRADE88=null;try{body=trade88Body(T)+body}catch(e){}return base.call(this,title,body,buttons,opt)}}
+  if(T&&!HEADLESS){const t=String(title||'');const K=typeof askKind==='function'?askKind():''; /* v1.01: the question's kind (326), the title only for an un-asked window */
+    if(K?K==='tradeOffer'||K==='tradeAsk':t===_T`${T.from.name} proposes a trade`||t===_T`${T.to.name}: trade offer`){TRADE88=null;try{body=trade88Body(T)+body}catch(e){}return base.call(this,title,body,buttons,opt)}}
   return base.apply(this,arguments)}}
 /* the closed market: the whole board dims under the lock (the weapon cards sat above the old veil), and the board fits the window */
 {const css=document.createElement('style');css.textContent=`

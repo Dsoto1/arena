@@ -39,7 +39,7 @@ async function pick89(player,lvs,sides,opt={}){mktFix75();const opts=rowOpts89(l
   if(player.cpu){o=opts.map((x,i)=>[x,cpuVal89(player,x,opt.pref),i]).sort((a,b)=>b[1]-a[1]||a[2]-b[2])[0][0];
     if(!HEADLESS&&typeof mk88PeekOn==='function'&&mk88PeekOn())snap=boardHTML75(player)}
   else{const what=sides.length>1?_T('any weapon or one armor piece'):sides[0]==='w'?_T('any weapon'):_T('any one armor piece');
-    const v=await modal(opt.title||_T`Market · level ${one}`,`<p class="rc-sub" style="margin:6px 0 0">${one?_T`Take ${what} from the level ${one} row.`:_T`Take ${what} from the board.`}</p>`,
+    const v=await askW(player,'marketTake',opt.title||_T`Market · level ${one}`,`<p class="rc-sub" style="margin:6px 0 0">${one?_T`Take ${what} from the level ${one} row.`:_T`Take ${what} from the board.`}</p>`,
       opts.map((x,i)=>({label:x.kind==='w'?W[x.key].n:ARM[x.key].n,sub:x.kind==='w'?_T`weapon · level ${x.lv} · slot ${x.s}`:_T`armor · level ${x.lv} · slot ${x.s}`,value:'p'+i,card:(x.kind==='w'?'w:':'a:')+x.key})),
       {wide:1,mkt89:{player,lvs,sides,opts}});
     o=opts[typeof v==='string'&&v[0]==='p'?+v.slice(1):0]||opts[0]}
@@ -73,7 +73,7 @@ if(!/Now:/.test(CARDS.mchoice.d))CARDS.mchoice.d=CARDS.mchoice.d+' '+CARDS.mchoi
 const mchoiceHas89=()=>{try{mktFix75();return rowOpts89([1,2,3],['w']).length>0}catch(e){return false}};
 {const base=useItem;useItem=async function(player,it){if(!it||it.kind!=='card'||it.key!=='mchoice')return base.apply(this,arguments);
   if(!armsAttached(player).length||!mchoiceHas89()){
-    if(!player.cpu)await modal(CARDS.mchoice.n,`<p>${!armsAttached(player).length?_T('You have no arm left to hold a weapon.'):_T('No weapon is left in the market.')}</p>`,[{label:'OK',value:1}]);
+    if(!player.cpu)await askW(player,'marketNone',CARDS.mchoice.n,`<p>${!armsAttached(player).length?_T('You have no arm left to hold a weapon.'):_T('No weapon is left in the market.')}</p>`,[{label:'OK',value:1}]);
     return false}
   player.items=player.items.filter(x=>x!==it);cardShow('c:mchoice',player,_T('📣 Declared'));stat(player,'cardsPlayed');
   log(_T`${nm(player)} declares Choose: a free weapon from the market.`);

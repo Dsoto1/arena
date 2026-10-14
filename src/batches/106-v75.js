@@ -178,7 +178,7 @@ async function marketBuy75(player,lv,opt={}){mktFix75();const W=S.market.w[lv],A
   let slot,opts;
   if(player.mchoice&&!opt.free){
     if(player.cpu){slot=[1,2,3,4].map(s=>[s,slotOpts75(lv,s,sides)]).filter(([,os])=>os.length).sort((a,b)=>aVal75(cpuPick(b[1]).kind,cpuPick(b[1]).key)-aVal75(cpuPick(a[1]).kind,cpuPick(a[1]).key))[0][0]}
-    else slot=await modal(_T('Market Choice'),`<p>${_T`Pick the slot you want — no die.`}</p>`,[1,2,3,4].map(s=>({label:_T`Slot ${s}`,sub:slotOpts75(lv,s,sides).map(o=>o.blind?'a face-down weapon':o.kind==='w'?WDEF75[o.key].n:ARM[o.key].n).join(' · ')||'empty',value:s})));
+    else slot=await askW(player,'marketSlot',_T('Market Choice'),`<p>${_T`Pick the slot you want — no die.`}</p>`,[1,2,3,4].map(s=>({label:_T`Slot ${s}`,sub:slotOpts75(lv,s,sides).map(o=>o.blind?'a face-down weapon':o.kind==='w'?WDEF75[o.key].n:ARM[o.key].n).join(' · ')||'empty',value:s})));
     slot=slot||1;log(_T`${nm(player)} uses Market Choice for slot ${slot}.`);opts=slotOpts75(lv,slot,sides)}
   else for(;;){slot=1+rnd(4);
     if(slot===4&&sides.includes('w')&&!wOpen75(W)&&W.deck.length){W.up4=W.deck[W.deck.length-1];log(_T`${nm(player)} rolls the market die: <b>4</b> — the top weapon is flipped: <b>${esc(WDEF75[W.up4].n)}</b>.`)}
@@ -187,13 +187,13 @@ async function marketBuy75(player,lv,opt={}){mktFix75();const W=S.market.w[lv],A
     if(opt.free||player.coin<2||!opts.length)break;
     let re=false;
     if(player.cpu){const b=cpuPick(opts);re=player.diff==='hard'&&aVal75(b.kind,b.key)<lv*2&&rand()<.5}
-    else{const v=await modal(_T`Market die · ${slot}`,`<p>${_T`The die shows <b>${slot}</b>. Take one of these, or pay ${coinAmt87(2)} to roll again${slot===4&&wOpen75(W)?_T(' (the flipped weapon stays face up in slot 4)'):''}.`}</p>`,
+    else{const v=await askW(player,'marketReroll',_T`Market die · ${slot}`,`<p>${_T`The die shows <b>${slot}</b>. Take one of these, or pay ${coinAmt87(2)} to roll again${slot===4&&wOpen75(W)?_T(' (the flipped weapon stays face up in slot 4)'):''}.`}</p>`,
       [...opts.map((o,i)=>({label:optLabel75(o),sub:optSub75(o),value:'t'+i,card:o.key?(o.kind==='w'?'w:':'a:')+o.key:null})),{label:'Re-roll',sub:coinAmt87(2),value:'re'}]);
       if(v&&v[0]==='t'){const o=opts[+v.slice(1)];return {kind:o.kind,key:o.kind==='w'?wTake75(W,o.s):aTake75(A,o.s,o.key)}}re=v==='re'}
     if(!re)break;player.coin-=2;coinLog(player,-2,'market re-rolls');log(_T`${nm(player)} pays ${coinAmt87(2)} to re-roll.`)}
   if(!opts.length)return {kind:null,key:null};
   let o;if(opts.length===1||player.cpu)o=player.cpu?cpuPick(opts):opts[0];
-  else{const v=await modal(_T`Market · slot ${slot}`,`<p>${_T`Take the weapon or one armor piece.`}</p>`,opts.map((x,i)=>({label:optLabel75(x),sub:optSub75(x),value:i,card:x.key?(x.kind==='w'?'w:':'a:')+x.key:null})));o=opts[v!=null?v:0]}
+  else{const v=await askW(player,'marketTake',_T`Market · slot ${slot}`,`<p>${_T`Take the weapon or one armor piece.`}</p>`,opts.map((x,i)=>({label:optLabel75(x),sub:optSub75(x),value:i,card:x.key?(x.kind==='w'?'w:':'a:')+x.key:null})));o=opts[v!=null?v:0]}
   return {kind:o.kind,key:o.kind==='w'?wTake75(W,o.s):aTake75(A,o.s,o.key)}}
 /* items that name their side (offerings, cards) roll on that side only, with no re-roll */
 marketRoll=async function(player,kind,lv,opt={}){const r=await marketBuy75(player,lv,{...opt,only:kind});return r.key};
@@ -224,7 +224,7 @@ openMarket=async function(player){mktFix75();const vetOn=weak(player,'tax');if(v
       btns.push({label:_T`Buy at level ${lv}`,sub:_T`${coinAmt87(purchaseCost(player,lv)+vet)}${vetCF?` + ${cfAmt87(1)}`:''}${left?'':' · empty'}`,value:'b'+lv,disabled:!left||player.coin<purchaseCost(player,lv)+vet||vetCF&&player.cf<1})}
     if(player.market&&vetOn)btns.push({label:vetCF?_T('⚖ Pay the +1 in coin instead'):_T('⚖ Pay the +1 in CF instead'),sub:_T('Veteranus old debts: every buy costs +1'),value:'taxswap'});
     btns.push({label:_T('Close market'),value:'close'});
-    const v=await modal(_T('Market of Flavius'),body,btns,{wide:1});
+    const v=await askW(player,'market',_T('Market of Flavius'),body,btns,{wide:1});
     if(v==='close'||!v)break;
     if(v==='taxswap'){player.taxPref=vetCF?'coin':'cf';continue}
     if(v==='unlock'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`);continue}
