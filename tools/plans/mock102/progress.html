@@ -1,0 +1,771 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Online Progression — v1.02 mock</title>
+<style>
+@import url("../mock98/fonts.css");
+/* =====================================================================
+   v1.02 mock — workstream I (his O2–O4 answers 3a/a/yes): online XP + levels,
+   the level-up screen, the XP bar on the Domus, Release a gladiator, and the
+   RESULTS TALLY shown when you come back to the Online menu after a match.
+   MOCK ONLY — not game code. States by URL hash: #tally #levelup #domus #release #notes
+   (add -survived / -custom / -fell to #tally, -worthy to #release).
+   ===================================================================== */
+:root{
+  --ink:#140f0b; --panel:#1f1711; --panel2:#2a1f17; --line:#3a2c1f; --line2:#4a3826;
+  --bone:#efe3cc; --muted:#b39d80; --dim:#a3907a;
+  --gold:#d6ab4c; --gold2:#f0cf7d; --blood:#a3281f; --blood2:#d24a3a;
+  --hp:#6fae4c; --xp:#7fb4e8; --xp2:#bfe0ff; --glory:#e0a64a; --cf:#c9b25a; --coin:#e9c45a;
+  --display:"Marcellus SC","Trajan Pro",Georgia,serif;
+  --body:"Alegreya Sans","Gill Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;background:radial-gradient(ellipse at 50% 30%,#2a1d14 0%,#170f0a 62%,#0e0906 100%) fixed;color:var(--bone);font:15px/1.45 var(--body);-webkit-font-smoothing:antialiased;overflow-x:clip}
+button{font:inherit;color:inherit}
+h1,h2,h3,h4{font-weight:400;margin:0}
+[hidden]{display:none!important}
+.view{display:none}.view.on{display:block}
+.disp{font-family:var(--display);letter-spacing:.04em}
+
+/* ---------- 2a SANDSTONE BUTTON (one style everywhere) ---------- */
+.sb{--h:46px;--fs:19px;position:relative;height:var(--h);display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:0 22px;border:0;border-radius:5px;cursor:pointer;white-space:nowrap;
+  font:400 var(--fs)/1 var(--display);letter-spacing:.07em;color:#4a3017;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .1 0 0 0 .8 0'/%3E%3C/filter%3E%3Crect width='240' height='120' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='160'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .05' numOctaves='4' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .85 0 0 0 0 .62 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='600' height='160' filter='url(%23m)'/%3E%3C/svg%3E"),
+    linear-gradient(176deg,#dcc196 0%,#c9a877 38%,#b48f5c 100%);
+  background-size:240px 120px,600px 160px,100% 100%;
+  box-shadow:inset 0 2px 0 rgba(255,244,214,.75),inset 0 -3px 0 rgba(92,60,28,.55),inset 2px 0 0 rgba(255,238,204,.35),inset -2px 0 0 rgba(80,52,24,.4),0 4px 0 #6b4e2b,0 5px 0 #4b3519,0 10px 18px rgba(0,0,0,.6);
+  text-shadow:0 1px 0 rgba(255,240,206,.75),0 -1px 0 rgba(60,36,14,.6);transition:transform .12s,box-shadow .12s,filter .12s}
+.sb::before{content:"";position:absolute;inset:5px;border-radius:3px;border:1px solid rgba(96,64,30,.45);box-shadow:0 1px 0 rgba(255,238,204,.45),inset 0 1px 0 rgba(255,238,204,.35);pointer-events:none}
+.sb::after{content:"";position:absolute;inset:0;border-radius:5px;pointer-events:none;background:linear-gradient(180deg,rgba(255,246,222,.2),transparent 38%,rgba(60,36,14,.16)),radial-gradient(ellipse 120% 160% at 50% 50%,transparent 60%,rgba(70,44,18,.28))}
+.sb>*{position:relative;z-index:1}
+.sb svg{width:calc(var(--fs) + 2px);height:calc(var(--fs) + 2px);fill:#4a3017;flex:none;filter:drop-shadow(0 1px 0 rgba(255,240,206,.7))}
+.sb small{font:500 11px var(--body);letter-spacing:.04em;color:#6b4c2a;text-shadow:0 1px 0 rgba(255,240,206,.6)}
+.sb:hover,.sb.hov{transform:translateY(-2px);filter:brightness(1.06);box-shadow:inset 0 2px 0 rgba(255,244,214,.75),inset 0 -3px 0 rgba(92,60,28,.55),0 6px 0 #6b4e2b,0 7px 0 #4b3519,0 14px 24px rgba(0,0,0,.7),0 0 0 2px rgba(240,207,125,.55),0 0 20px rgba(240,190,90,.28)}
+.sb:active,.sb.prs{transform:translateY(3px);filter:brightness(.94);box-shadow:inset 0 3px 6px rgba(60,36,14,.45),inset 0 -1px 0 rgba(255,238,204,.3),0 1px 0 #6b4e2b,0 2px 0 #4b3519,0 3px 6px rgba(0,0,0,.6)}
+.sb.dis{filter:grayscale(.6) brightness(.62);cursor:not-allowed;transform:none;box-shadow:inset 0 2px 0 rgba(255,244,214,.4),0 3px 0 #4b3519}
+/* primary: porphyry inlay + gold leaf */
+.sb.pri::before{inset:6px;border:0;background:linear-gradient(180deg,#8f2a1e,#6d1c13 60%,#5a160f);box-shadow:inset 0 2px 4px rgba(0,0,0,.6),inset 0 -1px 0 rgba(255,180,150,.25),0 1px 0 rgba(255,238,204,.55)}
+.sb.pri .t,.sb.dan .t{background:linear-gradient(180deg,#fff2be 0%,#f0cf7d 30%,#b98a2a 62%,#e7c46c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
+.sb.pri svg{fill:#f0cf7d;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
+.sb.pri.prs::before{box-shadow:inset 0 4px 8px rgba(0,0,0,.75)}
+/* danger: CARBON-BLACK slab (whole button) — deep matte black, faint weave + soot, red-gold letters */
+.sb.dan{color:#e0654c;text-shadow:none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .48 0 0 0 0 .46 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='200' height='100' filter='url(%23s)'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 4px),
+    repeating-linear-gradient(-45deg,rgba(0,0,0,.35) 0 2px,transparent 2px 4px),
+    linear-gradient(178deg,#26262a 0%,#151517 45%,#0b0b0c 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -2px 0 rgba(0,0,0,.8),0 4px 0 #050505,0 5px 0 #000,0 10px 18px rgba(0,0,0,.7)}
+.sb.dan::before{inset:5px;border:1px solid rgba(224,101,76,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);background:none}
+.sb.dan::after{background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 40%,rgba(0,0,0,.25))}
+.sb.dan .t{background:linear-gradient(180deg,#ffd9c4,#e8805f 40%,#c8402e 70%,#e7c46c 100%);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 1px 0 #000)}
+.sb.dan svg{fill:#e0654c;filter:drop-shadow(0 1px 0 #000)}
+.sb.dan:hover,.sb.dan.hov{box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 0 #050505,0 7px 0 #000,0 14px 24px rgba(0,0,0,.75),0 0 0 2px rgba(224,101,76,.55),0 0 20px rgba(224,101,76,.25)}
+.sb.dan.prs{box-shadow:inset 0 3px 6px rgba(0,0,0,.9),0 1px 0 #050505,0 2px 0 #000}
+/* sizes */
+.sb.l{--h:58px;--fs:24px;padding:0 30px}
+.sb.m{--h:46px;--fs:19px}
+.sb.s{--h:34px;--fs:14.5px;padding:0 14px;gap:7px}
+.sb.s::before{inset:4px}
+
+
+
+/* ---------- mock chrome (not part of the game) ---------- */
+.mk{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 16px;background:#0c0806ee;border-bottom:1px solid var(--line2);backdrop-filter:blur(4px)}
+.mk b{font:400 15px var(--display);color:var(--gold2);letter-spacing:.06em;margin-right:6px}
+.mk a{color:var(--muted);text-decoration:none;font-size:13.5px;padding:4px 10px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.mk a.on{color:var(--gold2);border-color:var(--gold);background:#2a1f12}
+.mk .sp{flex:1}
+.mk .note{font:500 11px var(--mono);color:#8c7759;letter-spacing:.08em}
+
+/* ---------- shared bits ---------- */
+.ico{width:20px;height:20px;vertical-align:-4px;flex:none}
+.wheat{display:inline-block;width:20px;height:20px;vertical-align:-4px;flex:none}
+.medal{display:inline-block;flex:none}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;padding:2px 9px;border-radius:999px;border:1px solid #6b5236;color:var(--gold2);background:#2e2212;white-space:nowrap}
+.chip.dim{color:var(--muted);border-color:var(--line2);background:#211810}
+.pin{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--blood);border:2px solid var(--gold2);color:#fff;font:700 12px var(--mono);box-shadow:0 2px 6px #000;flex:none}
+.anno{position:absolute;z-index:4}
+.panelx{border:1px solid var(--line2);border-top:3px solid var(--gold);border-radius:10px;background:linear-gradient(#2a1f17,#1f1711);box-shadow:0 18px 40px #000a}
+
+/* =====================================================================
+   1 · RESULTS TALLY (over the Online landing)
+   ===================================================================== */
+#v-tally{position:relative;min-height:calc(100vh - 46px)}
+.land{position:absolute;inset:0;background:url(../../../assets/rec100_colos.webp) center/cover;filter:blur(3px) brightness(.32) saturate(.8)}
+.land::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 40%,transparent,#0b0705 85%)}
+.tl{position:relative;max-width:1180px;margin:0 auto;padding:22px 24px 30px}
+.tlhd{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.tlhd .kick{font:500 12px var(--mono);letter-spacing:.22em;color:#c4ab84}
+.tlhd h1{font:400 64px/0.95 var(--display);letter-spacing:.08em;background:linear-gradient(180deg,#fff2be 0%,#f0cf7d 35%,#b98a2a 70%,#e7c46c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #2a1408) drop-shadow(0 0 22px #d6ab4c44)}
+.tlhd h1.fell{background:linear-gradient(180deg,#ffd9c4,#e8805f 40%,#a3281f 75%,#5a160f);-webkit-background-clip:text;background-clip:text}
+.tlhd h1.cust{background:linear-gradient(180deg,#f3ead8,#c9b38f 60%,#8c7556);-webkit-background-clip:text;background-clip:text}
+.tlhd .sub{color:var(--muted);font-size:15px;margin-top:4px}
+.tlhd .sp{flex:1}
+.scn{display:flex;gap:6px;flex-wrap:wrap}
+.scn button{font-size:12.5px;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);background:#211810;color:var(--muted);cursor:pointer}
+.scn button.on{border-color:var(--gold);color:var(--gold2);background:#3a2a18}
+.tlg{display:grid;grid-template-columns:330px 1fr;gap:22px;align-items:start}
+.figbox{position:relative;border-radius:12px;border:1px solid var(--line2);background:radial-gradient(ellipse 70% 55% at 50% 72%,#5a3b1d 0%,#2a1d12 55%,#18110b 100%);overflow:hidden;box-shadow:0 18px 40px #000a}
+.figbox canvas{display:block;width:100%;height:auto}
+.figbox .plate{position:absolute;left:0;right:0;bottom:0;padding:12px 14px 12px;background:linear-gradient(transparent,#0e0906f0 40%);display:flex;align-items:center;gap:10px}
+.figbox .plate .tok{width:46px;height:46px;border-radius:50%;flex:none;box-shadow:0 0 0 2px var(--gold),0 3px 8px #000}
+.figbox .plate .nm{font:400 21px/1.05 var(--display);color:var(--gold2)}
+.figbox .plate .cl{font-size:13px;color:var(--muted)}
+.figbox .lvtag{position:absolute;top:12px;left:12px}
+.figbox .rktag{position:absolute;top:12px;right:12px;text-align:center;font:400 12px var(--display);color:var(--gold2);letter-spacing:.06em}
+.figbox .rktag .medal{display:block;margin:0 auto 2px;transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.figbox .rktag.up .medal{transform:scale(1.25) rotate(-8deg)}
+.rows{display:flex;flex-direction:column;gap:12px}
+.tr{position:relative;border:1px solid var(--line2);border-radius:10px;background:linear-gradient(#251b13,#1b140e);padding:12px 16px;opacity:.28;transition:opacity .35s,border-color .35s,box-shadow .35s}
+.tr.live{opacity:1;border-color:#6b5236}
+.tr.done{opacity:1}
+.tr .top{display:flex;align-items:center;gap:10px}
+.tr .lbl{font:400 17px var(--display);letter-spacing:.06em;color:var(--bone)}
+.tr .lbl small{display:block;font:500 12px var(--body);letter-spacing:0;color:var(--muted)}
+.tr .sp{flex:1}
+.tr .gain{font:400 30px/1 var(--display);color:var(--gold2);min-width:90px;text-align:right;font-variant-numeric:tabular-nums}
+.tr .gain.zero{color:#7d6b55}
+.tr .to{font:500 13px var(--mono);color:var(--muted);text-align:right;min-width:150px;margin-left:14px;white-space:nowrap}
+.tr .to b{color:var(--bone);font-weight:500}
+.bar{position:relative;height:14px;margin-top:10px;border-radius:7px;background:#120c08;box-shadow:inset 0 1px 3px #000,0 1px 0 #ffffff10;overflow:hidden}
+.bar i{position:absolute;top:0;bottom:0;left:0;border-radius:7px}
+.bar .old{background:linear-gradient(#8a6a34,#5e4520)}
+.bar .new{background:linear-gradient(#ffe7a0,#e2b14f 55%,#a87a2a);box-shadow:0 0 12px #f0cf7d66}
+.bar.xp .old{background:linear-gradient(#41678c,#2a4562)}
+.bar.xp .new{background:linear-gradient(#e6f4ff,#8cc4f2 50%,#3f7fbf);box-shadow:0 0 14px #9fd0ff88}
+.bar.cf .new{background:linear-gradient(#f4ecb0,#cdb553 55%,#8e7a2a)}
+.bar .tick{position:absolute;top:-2px;bottom:-2px;width:2px;background:#f0cf7d;box-shadow:0 0 6px #f0cf7d}
+.bar .tick span{position:absolute;bottom:16px;transform:translateX(-50%);white-space:nowrap;font:500 10.5px var(--mono);color:var(--gold2)}
+.brk{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;min-height:24px}
+.brk span{font:500 12px var(--mono);padding:2px 8px;border-radius:4px;background:#2c2015;border:1px solid var(--line2);color:var(--muted);opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s}
+.brk span.in{opacity:1;transform:none}
+.brk span b{color:var(--bone);font-weight:500}
+.brk span.mul{color:#9fc6ec;border-color:#38536e}
+/* the XP row is the climax: bigger, blue-silver, level ring */
+.tr.xprow{padding:14px 18px 16px;border-top:3px solid #6f9cc7}
+.tr.xprow .bar{margin-top:22px}
+.tr.xprow.live{box-shadow:0 0 0 1px #6f9cc766,0 0 30px #7fb4e822}
+.lvring{position:relative;width:64px;height:64px;flex:none}
+.lvring svg{position:absolute;inset:0}
+.lvring b{position:absolute;inset:0;display:grid;place-items:center;font:400 27px var(--display);color:#e6f4ff;text-shadow:0 2px 0 #0b1a2a}
+.lvring small{position:absolute;left:0;right:0;bottom:-15px;text-align:center;font:500 10px var(--mono);letter-spacing:.14em;color:#8fb4d8}
+.lvup{position:absolute;right:16px;top:-16px;padding:6px 16px;border-radius:6px;font:400 20px var(--display);letter-spacing:.12em;color:#0f1d2b;background:linear-gradient(#e6f4ff,#8cc4f2);box-shadow:0 0 0 2px #e6f4ff,0 0 26px #9fd0ffaa;opacity:0;transform:scale(.6);transition:opacity .25s,transform .35s cubic-bezier(.3,1.7,.5,1)}
+.lvup.on{opacity:1;transform:scale(1)}
+.rkup{position:absolute;right:16px;top:-16px;padding:6px 16px;border-radius:6px;font:400 18px var(--display);letter-spacing:.1em;color:#2a1408;background:linear-gradient(#fff2be,#e2b14f);box-shadow:0 0 0 2px #fff2be,0 0 26px #f0cf7daa;opacity:0;transform:scale(.6);transition:opacity .25s,transform .35s cubic-bezier(.3,1.7,.5,1)}
+.rkup.on{opacity:1;transform:scale(1)}
+.flash{position:absolute;inset:0;border-radius:10px;pointer-events:none;opacity:0}
+.flash.go{animation:fl .9s ease-out}
+@keyframes fl{0%{opacity:.85;background:radial-gradient(ellipse at 30% 50%,#cfe8ff88,transparent 70%)}100%{opacity:0}}
+.fellbox{border:1px solid #6a2a20;border-top:3px solid var(--blood2);border-radius:10px;padding:12px 16px;background:linear-gradient(#2a1512,#1b0f0c);display:flex;gap:14px;align-items:center}
+.fellbox img{width:84px;border-radius:6px;box-shadow:0 4px 10px #000}
+.fellbox b{font:400 19px var(--display);color:#f3b49e}
+.tlft{display:flex;align-items:center;gap:14px;margin-top:18px;flex-wrap:wrap}
+.tlft .sp{flex:1}
+.tlft .hint{font-size:13px;color:#8c7759}
+.flav{display:flex;align-items:center;gap:10px;margin-top:4px}
+.flav img{width:56px;height:44px;object-fit:cover;border-radius:6px;border:1px solid #6b5236}
+.flav q{font-style:italic;color:#d9c7a6}
+.pulse{animation:pu 1.6s ease-in-out infinite}
+@keyframes pu{50%{filter:brightness(1.15) drop-shadow(0 0 10px #9fd0ff)}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}.flash.go{animation:none}}
+
+/* =====================================================================
+   2 · LEVEL UP
+   ===================================================================== */
+#v-levelup{position:relative;min-height:calc(100vh - 46px)}
+.lu{position:relative;max-width:1140px;margin:0 auto;padding:22px 24px 30px}
+.luhd{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:center;margin-bottom:16px}
+.luhd .fig{position:relative;height:230px;border-radius:12px;border:1px solid #38536e;background:radial-gradient(ellipse 70% 60% at 50% 70%,#24415e,#121c28 60%,#0b1119);overflow:hidden}
+.luhd .fig canvas{position:absolute;inset:0;width:100%;height:100%}
+.laurel{display:flex;align-items:center;gap:14px}
+.laurel .num{font:400 76px/0.9 var(--display);background:linear-gradient(180deg,#ffffff,#bfe0ff 40%,#5f9bd3 75%,#cfe8ff);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #0b1a2a) drop-shadow(0 0 18px #7fb4e866)}
+.laurel .t{font:400 22px var(--display);letter-spacing:.2em;color:#cfe8ff}
+.laurel .s{color:var(--muted);font-size:15px;max-width:560px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.rc{position:relative;text-align:left;cursor:pointer;border:1px solid var(--line2);border-radius:10px;padding:12px 12px 14px;background:linear-gradient(#271c14,#1b140e);transition:transform .15s,border-color .15s,box-shadow .15s}
+.rc:hover{transform:translateY(-3px);border-color:#8c6a3a}
+.rc.sel{border-color:var(--gold2);box-shadow:0 0 0 3px var(--gold),0 0 34px #d6ab4c77;background:linear-gradient(#4a3418,#2a1d10);transform:translateY(-6px)}
+.rc.sel::after{content:"✓ CHOSEN";position:absolute;left:50%;bottom:-11px;transform:translateX(-50%);font:600 10.5px var(--mono);letter-spacing:.12em;padding:2px 9px;border-radius:3px;color:#2a1408;background:linear-gradient(#fff2be,#e2b14f);white-space:nowrap}
+.cards .rc:not(.sel){}.cards:has(.sel) .rc:not(.sel){opacity:.72}
+.rc.cross::before{content:"BAND UP";position:absolute;top:-10px;right:10px;font:600 10px var(--mono);letter-spacing:.12em;padding:2px 7px;border-radius:3px;color:#2a1408;background:linear-gradient(#fff2be,#e2b14f)}
+.rc.max{opacity:.5;cursor:not-allowed}
+.rc .hd{display:flex;align-items:center;gap:8px}
+.rc .hd svg{width:30px;height:30px;flex:none}
+.rc .hd b{font:400 17px var(--display);letter-spacing:.04em}
+.rc .val{display:flex;align-items:baseline;gap:6px;margin:8px 0 2px;font:400 34px/1 var(--display);color:var(--bone);font-variant-numeric:tabular-nums}
+.rc .val .arr{font-size:18px;color:var(--muted)}
+.rc .val .nv{color:var(--gold2)}
+.trk{position:relative;height:30px;margin:10px 2px 6px}
+.trk .ln{position:absolute;left:0;right:0;top:12px;height:6px;border-radius:3px;background:#120c08;box-shadow:inset 0 1px 2px #000}
+.trk .fill{position:absolute;left:0;top:12px;height:6px;border-radius:3px;background:linear-gradient(90deg,#7a5a2c,#d6ab4c)}
+.trk .poor{position:absolute;left:0;top:12px;height:6px;border-radius:3px 0 0 3px;background:repeating-linear-gradient(45deg,#5a2a20 0 3px,#3a1a14 3px 6px)}
+.trk .bd{position:absolute;top:6px;width:2px;height:18px;background:#6b5236}
+.trk .bd.hit{background:var(--gold2);box-shadow:0 0 6px var(--gold2)}
+.trk .bd span{position:absolute;top:19px;transform:translateX(-50%);font:500 9.5px var(--mono);color:#8c7759}
+.trk .me{position:absolute;top:7px;width:12px;height:16px;margin-left:-6px;border-radius:3px;background:var(--bone);box-shadow:0 0 0 2px #1b140e}
+.trk .gh{position:absolute;top:7px;width:12px;height:16px;margin-left:-6px;border-radius:3px;border:2px dashed var(--gold2);opacity:0;transition:opacity .2s}
+.rc.sel .trk .gh,.rc:hover .trk .gh{opacity:1}
+.rc .now{font-size:13px;color:var(--muted);min-height:20px}
+.rc .now b{color:var(--bone);font-weight:500}
+.rc .wit{margin-top:6px;font-size:13.5px;line-height:1.3;padding:6px 8px;border-radius:6px;background:#2a1f12;border:1px solid var(--line2);min-height:54px}
+.rc.cross .wit{border-color:var(--gold);color:var(--gold2);background:#3a2a14}
+.rc .wit .dig{color:#cdb2f5}
+.lufoot{display:flex;align-items:center;gap:14px;margin-top:18px;flex-wrap:wrap}
+.lufoot .sp{flex:1}
+.lufoot .pts{font:400 18px var(--display);color:#cfe8ff}
+.lufoot .why{color:var(--muted);font-size:13.5px}
+.bands{margin-top:14px;font-size:13px;color:var(--muted);border-top:1px dashed var(--line2);padding-top:10px}
+.bands b{color:var(--bone);font-weight:500}
+
+/* =====================================================================
+   3 · DOMUS SHOWCASE with the XP bar (+ 4 · Release)
+   ===================================================================== */
+.dm{position:relative;max-width:1240px;margin:0 auto;padding:18px 24px 30px}
+.dmban{position:relative;display:flex;align-items:center;gap:14px;padding:12px 18px;border-radius:10px 10px 0 0;border:1px solid var(--line2);border-bottom:0;background:linear-gradient(90deg,#3a1c12,#2a1d14 40%,#1f1711);overflow:hidden}
+.dmban::after{content:"";position:absolute;inset:0;background:url(../../../assets/stone_wall.webp) center/cover;opacity:.15;pointer-events:none}
+.dmban h2{font:400 26px var(--display);color:var(--gold2);letter-spacing:.06em}
+.dmban .sub{color:var(--muted);font-size:13px}
+.dmban .sp{flex:1}
+.dmban .tre{display:flex;align-items:center;gap:6px;font:400 20px var(--display);color:var(--coin)}
+.stage{position:relative;display:grid;grid-template-columns:150px 300px 1fr 110px;gap:16px;padding:16px 18px 18px;border:1px solid var(--line2);border-radius:0 0 10px 10px;background:url(../../../assets/stone_wall.webp) center/cover;box-shadow:inset 0 0 0 2000px #140e0acc}
+.wslot{border:1px dashed #6b5236;border-radius:8px;height:92px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:var(--muted);font-size:12px;background:#1b140e99}
+.wslot img{width:120px;height:52px;object-fit:cover;object-position:0 0;border-radius:4px}
+.avbox{position:relative;height:360px;border-radius:12px;background:radial-gradient(ellipse 70% 55% at 50% 78%,#4a321b 0%,#21170f 60%,#130d09 100%);border:1px solid var(--line2)}
+.avbox canvas{position:absolute;inset:0;width:100%;height:100%}
+.info .nm{font:400 30px/1.05 var(--display);color:var(--gold2)}
+.info .cl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0 10px;color:var(--muted);font-size:14px}
+.lock{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--line2);color:#a3907a;background:#1b140e}
+.xpw{position:relative;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;border:1px solid #38536e;background:linear-gradient(#1a2633,#121a23)}
+.xpw .lvring{width:54px;height:54px}
+.xpw .lvring b{font-size:23px}
+.xpw .mid{flex:1;min-width:0}
+.xpw .mid .t{display:flex;align-items:baseline;gap:8px;font:400 15px var(--display);letter-spacing:.06em;color:#cfe8ff}
+.xpw .mid .t .sp{flex:1}
+.xpw .mid .t small{font:500 12px var(--mono);color:#8fb4d8;letter-spacing:0}
+.xpw .bar{margin-top:6px;height:12px}
+.spend{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:7px;border:1px solid #9fd0ff;background:linear-gradient(#2e4a66,#1d3045);color:#e6f4ff;font:400 14px var(--display);letter-spacing:.05em;cursor:pointer;white-space:nowrap}
+.gl{margin-top:10px;padding:10px 12px;border-radius:9px;border:1px solid var(--line2);background:#1b140eaa}
+.gl .t{display:flex;align-items:center;gap:8px;font:400 15px var(--display);letter-spacing:.05em}
+.gl .t .sp{flex:1}
+.gl .t small{font:500 12px var(--mono);color:var(--muted)}
+.rt{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.rt div{text-align:center;padding:6px 2px;border-radius:7px;background:#1b140ecc;border:1px solid var(--line2);font-size:11.5px;color:var(--muted)}
+.rt div b{display:block;font:400 20px var(--display);color:var(--bone)}
+.rt div.b1 b{color:var(--gold2)}
+.rec{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--muted)}
+.rec b{color:var(--bone);font-weight:500}
+.rkcol{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:4px 0 0 4px}
+.rkcol .rb{position:relative;width:14px;flex:1;min-height:240px;border-radius:7px;background:#120c08;box-shadow:inset 0 1px 3px #000}
+.rkcol .rb i{position:absolute;left:0;right:0;bottom:0;border-radius:7px;background:linear-gradient(#ffe7a0,#a87a2a)}
+.rkcol .rb em{position:absolute;left:18px;transform:translateY(50%);font:500 9.5px var(--mono);color:#8c7759;white-space:nowrap;font-style:normal}
+.rkcol .rb em.on{color:var(--gold2)}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.sc{position:relative;display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:9px;border:1px solid var(--line2);background:linear-gradient(#251b13,#1b140e)}
+.sc.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.sc img.t{width:44px;height:44px;border-radius:50%;box-shadow:0 0 0 2px #6b5236}
+.sc .n{font:400 16px var(--display);color:var(--bone)}
+.sc .m{font-size:12px;color:var(--muted)}
+.sc .lv{position:absolute;top:8px;right:10px;font:600 11px var(--mono);padding:1px 6px;border-radius:4px;background:#1d3045;color:#cfe8ff;border:1px solid #38536e}
+.sc .lv.pt{background:#2e4a66;box-shadow:0 0 8px #9fd0ff88}
+.sc .mini{height:4px;border-radius:2px;background:#120c08;margin-top:5px;overflow:hidden}
+.sc .mini i{display:block;height:100%;background:#8cc4f2}
+.sc.lockd{opacity:.55;border-style:dashed}
+.sc .more{position:absolute;bottom:8px;right:8px;width:26px;height:26px;border-radius:6px;border:1px solid var(--line2);background:#1b140e;color:var(--muted);cursor:pointer;line-height:1}
+.dmfoot{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.dmfoot .sp{flex:1}
+.legend{margin-top:18px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px 22px;font-size:13.5px;color:#d9c7a6}
+.legend div{display:flex;gap:9px;align-items:flex-start}
+.strike{text-decoration:line-through;color:#7d6b55}
+.menu{position:absolute;bottom:38px;right:8px;z-index:5;min-width:210px;padding:6px;border-radius:8px;border:1px solid #6b5236;background:#1b140e;box-shadow:0 12px 26px #000c}
+.menu button{display:flex;width:100%;gap:8px;align-items:center;padding:7px 10px;border:0;border-radius:5px;background:none;text-align:left;cursor:pointer;font-size:14px}
+.menu button:hover{background:#2a1f17}
+.menu button.rel{color:#f08a70}
+.menu hr{border:0;border-top:1px solid var(--line2);margin:4px 2px}
+/* release popup */
+.scrim{position:fixed;inset:0;z-index:40;overflow:auto;background:#000b;display:grid;place-items:center;padding:16px}
+.rel{width:min(720px,100%);max-height:calc(100vh - 32px);overflow:auto;border:1px solid #6a2a20;border-top:3px solid var(--blood2);border-radius:10px;background:linear-gradient(#24170f,#170f0b);box-shadow:0 24px 60px #000}
+.rel .hd{display:flex;gap:14px;align-items:center;padding:16px 18px 12px;border-bottom:1px solid var(--line2)}
+.rel .hd img{width:56px;height:56px;border-radius:50%;box-shadow:0 0 0 2px #8a3a2a}
+.rel .hd h3{font:400 24px var(--display);color:#f3c9b5;letter-spacing:.04em}
+.rel .hd p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.rel .bd{padding:14px 18px}
+.rel .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rel .box{border:1px solid var(--line2);border-radius:8px;padding:10px 12px;background:#1b140e}
+.rel .box h4{font:400 14px var(--display);letter-spacing:.08em;color:var(--gold2);margin-bottom:6px}
+.rel .box ul{margin:0;padding:0;list-style:none;font-size:13.5px}
+.rel .box li{display:flex;gap:8px;align-items:center;padding:3px 0;border-bottom:1px dotted #3a2c1f}
+.rel .box li:last-child{border-bottom:0}
+.rel .box li .r{margin-left:auto;font:500 11px var(--mono);color:var(--muted)}
+.rel .box li .r.nm{color:#cdb2f5}
+.verdict{margin-top:12px;display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:8px}
+.verdict.hall{border:1px solid var(--gold);background:linear-gradient(90deg,#3a2a14,#21170f)}
+.verdict.erase{border:1px solid #6a2a20;background:linear-gradient(90deg,#2a1210,#1b0f0c)}
+.verdict b{font:400 17px var(--display);letter-spacing:.04em}
+.verdict.hall b{color:var(--gold2)}.verdict.erase b{color:#f3b49e}
+.verdict p{margin:2px 0 0;font-size:13.5px;color:#d9c7a6}
+.typed{margin-top:14px}
+.typed label{display:block;font-size:13.5px;color:var(--muted);margin-bottom:6px}
+.typed label b{color:var(--bone);font-family:var(--mono);font-weight:500}
+.typed input{width:100%;padding:10px 12px;border-radius:6px;border:1px solid #6a2a20;background:#0e0906;color:var(--bone);font:16px var(--mono)}
+.typed input:focus{outline:2px solid #e0654c;outline-offset:1px}
+.rel .ft{display:flex;gap:12px;justify-content:flex-end;align-items:center;padding:12px 18px 16px;border-top:1px solid var(--line2);flex-wrap:wrap}
+.rel .ft .sp{flex:1}
+.rel .ft small{color:#8c7759}
+.toggle{display:flex;gap:6px;margin:0 0 12px}
+
+/* =====================================================================
+   NOTES
+   ===================================================================== */
+.nt{max-width:1000px;margin:0 auto;padding:22px 24px 60px}
+.nt h1{font:400 30px var(--display);color:var(--gold2)}
+.nt h2{font:400 21px var(--display);color:var(--gold2);margin:26px 0 8px;letter-spacing:.04em}
+.nt p,.nt li{color:#e2d4ba}
+.nt code{font:13px var(--mono);background:#2a1f17;padding:1px 5px;border-radius:3px;color:#f0dcb4}
+.nt pre{font:12.5px/1.5 var(--mono);background:#120c08;border:1px solid var(--line2);border-radius:8px;padding:12px;overflow:auto;color:#e2d4ba}
+.nt table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}
+.nt th,.nt td{border-bottom:1px solid var(--line2);padding:5px 8px;text-align:left}
+.nt th{font:500 12px var(--mono);letter-spacing:.06em;color:var(--muted)}
+.nt td.n{text-align:right;font-family:var(--mono);font-size:13px}
+.nt .warn{border-left:3px solid var(--blood2);padding:8px 12px;background:#2a1512;border-radius:0 6px 6px 0}
+
+/* ---------- phones ---------- */
+@media (max-width:900px){
+  .tlg{grid-template-columns:1fr}
+  .figbox{max-width:420px;margin:0 auto;width:100%}
+  .cards{grid-template-columns:1fr 1fr}
+  .stage{grid-template-columns:1fr}
+  .stage .wcol{display:flex;gap:10px}.stage .wcol .wslot{flex:1;margin:0}
+  .rkcol{display:none}
+  .slots{grid-template-columns:1fr 1fr}
+  .legend{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .mk{gap:4px;padding:6px 8px}.mk b{display:none}.mk .note{display:none}.mk a{padding:4px 7px;font-size:12.5px}
+  .tl,.lu,.dm{padding:14px 16px 24px}
+  .tlhd h1{font-size:44px}
+  .tlhd .scn{width:100%}
+  .figbox canvas{max-height:220px;object-fit:contain}
+  .tr .gain{font-size:24px;min-width:64px}
+  .tr .to{min-width:0;font-size:12px}
+  .tr .top{flex-wrap:wrap}
+  .luhd{grid-template-columns:1fr}
+  .luhd .fig{height:150px}
+  .laurel .num{font-size:56px}
+  .cards{grid-template-columns:1fr}
+  .rc{display:grid;grid-template-columns:1fr auto;column-gap:10px}
+  .rc .hd,.rc .trk,.rc .now,.rc .wit{grid-column:1/-1}
+  .rc .val{grid-row:1;grid-column:2;margin:0;font-size:26px}
+  .avbox{height:280px}
+  .slots{grid-template-columns:1fr}
+  .rel .two{grid-template-columns:1fr}
+  .tlft .sb,.lufoot .sb{flex:1}
+  .lvring small{display:none}
+  .tr.xprow .bar{margin-top:12px}
+  .xpw{flex-wrap:wrap}.xpw .spend{width:100%;justify-content:center}
+  .scrim{place-items:start center;overflow:auto;padding:58px 8px 8px}
+  .rel{max-height:none}
+}
+</style></head><body>
+
+<nav class="mk">
+  <b>v1.02 mock · Online progression</b>
+  <a href="#tally" data-v="tally">1 · Results tally</a>
+  <a href="#levelup" data-v="levelup">2 · Level up</a>
+  <a href="#domus" data-v="domus">3 · Domus · XP bar</a>
+  <a href="#release" data-v="release">4 · Release</a>
+  <a href="#notes" data-v="notes">Notes</a>
+  <span class="sp"></span><span class="note">MOCK — NOT GAME CODE</span>
+</nav>
+
+<!-- ================================================================ 1 TALLY -->
+<section class="view" id="v-tally">
+  <div class="land"></div>
+  <div class="tl">
+    <div class="tlhd">
+      <div>
+        <div class="kick" id="tKick">RANKED · CLASSIC DEMOCRITUS · ROMA</div>
+        <h1 id="tTitle">Victoria</h1>
+        <div class="sub" id="tSub">1st of 4 · 6 rotations · he walks out of the Porta Sanavivaria</div>
+      </div>
+      <span class="sp"></span>
+      <div>
+        <div class="scn" id="tScn">
+          <button data-s="win" class="on">Victory · rank up · level up</button>
+          <button data-s="survived">Survived</button>
+          <button data-s="custom">Custom bout</button>
+          <button data-s="fell">He fell</button>
+        </div>
+      </div>
+    </div>
+    <div class="tlg">
+      <div class="figbox">
+        <canvas id="tFig" width="330" height="390"></canvas>
+        <div class="lvtag"><div class="lvring" id="tFigLv"></div></div>
+        <div class="rktag" id="tRk"></div>
+        <div class="plate"><img class="tok" src="../../../assets/ptokf81_soldier.webp" alt=""><div><div class="nm">Marcus Ferox</div><div class="cl">Soldier · Domus Vulpina</div></div></div>
+      </div>
+      <div>
+        <div class="rows" id="tRows"></div>
+        <div class="flav"><img src="../../../assets/flavmood_pleased.webp" alt="Flavius"><q id="tFlav">Rome will remember that one — until supper.</q></div>
+      </div>
+    </div>
+    <div class="tlft">
+      <button class="sb s" id="tReplay"><span class="t">▶ Replay the tally</span></button>
+      <span class="hint" id="tHint">Click anywhere to skip to the end · Reduce motion = shown at once</span>
+      <span class="sp"></span>
+      <button class="sb s"><span class="t">⚔ Again</span></button>
+      <button class="sb s"><span class="t">🎞 Watch the replay</span></button>
+      <button class="sb m pri" id="tGo"><span class="t">Continue</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 2 LEVEL UP -->
+<section class="view" id="v-levelup">
+  <div class="land" style="filter:blur(4px) brightness(.25) saturate(.6) hue-rotate(160deg)"></div>
+  <div class="lu">
+    <div class="luhd">
+      <div class="fig"><canvas id="luFig" width="200" height="230"></canvas></div>
+      <div>
+        <div class="laurel"><span class="num">IX</span><div><div class="t">LEVEL 9 · MARCUS FEROX</div><div class="s">One point to spend: <b style="color:#cfe8ff">+1 to one rating</b>. Choose where he grows — a rating that reaches a band gains its edge on the sand at once.</div></div></div>
+      </div>
+    </div>
+    <div class="cards" id="luCards"></div>
+    <div class="lufoot">
+      <span class="pts" id="luPts">1 point to spend</span>
+      <span class="why" id="luWhy">Pick a rating.</span>
+      <span class="sp"></span>
+      <button class="sb s"><span class="t">Later</span><small>it waits on the Domus</small></button>
+      <button class="sb m pri dis" id="luGo"><span class="t">Train it</span></button>
+    </div>
+    <div class="bands">Bands (the game's own, 65-stats55): <b>Speed</b> 76 / 96 → +1 / +2 movement · <b>Strength</b> 76 / 87 / 96 → +1 / +2 / +3 damage · <b>Luck</b> 76 / 96 → +1 / +2 coin a turn · <b>Charisma</b> 76 / 96 → +1 / +2 CF a turn · <b>Intelligence</b> only when a CPU plays his seat (dropped or timed out): Apprentice 65 · Fighter 76 · Veteran 86 · Master 96. Scale drawn 40–99; online ratings never go below 50 (they start at 55). Hatched = the Studio's "Poor" below 60 (his v0.95 1a) — <i>not online today</i>, see question 4.</div>
+  </div>
+</section>
+
+<!-- ================================================================ 3 DOMUS -->
+<section class="view" id="v-domus">
+  <div class="dm">
+    <div class="dmban">
+      <svg width="40" height="46" viewBox="0 0 40 46"><path d="M3 3h34v20c0 11-8 17-17 21C11 40 3 34 3 23z" fill="#6d1c13" stroke="#f0cf7d" stroke-width="2"/><path d="M20 10l4 9h-8z M14 26h12" stroke="#f0cf7d" stroke-width="2" fill="#f0cf7d"/></svg>
+      <div><h2>Domus Vulpina</h2><div class="sub">Lanista Virgil · FID-7Q2K4M · <span id="dmRankChip"></span></div></div>
+      <span class="sp"></span>
+      <div class="tre"><img class="ico" src="../../../assets/coin.webp" alt="">1,275 <small style="font:12px var(--body);color:var(--muted)">house treasury</small></div>
+    </div>
+    <div class="stage" id="dmStage">
+      <div class="wcol">
+        <div class="wslot"><svg width="120" height="40" viewBox="0 0 120 40"><path d="M14 20h70l12-5v10l-12-5" fill="#c9ccd2" stroke="#4a3826"/><rect x="6" y="15" width="10" height="10" rx="2" fill="#8a5a2a"/><rect x="16" y="11" width="4" height="18" fill="#d6ab4c"/></svg>Gladius · Right hand</div>
+        <div class="wslot"><svg width="60" height="56" viewBox="0 0 60 56"><rect x="10" y="4" width="40" height="48" rx="8" fill="#8f2a1e" stroke="#d6ab4c" stroke-width="2.5"/><circle cx="30" cy="28" r="6" fill="#d6ab4c"/><path d="M30 6v44M12 28h36" stroke="#d6ab4c" stroke-width="1.5"/></svg>Scutum · Left hand</div>
+        <div class="wslot" style="height:auto;padding:8px;font-size:11.5px">Offerings 1 / 2</div>
+      </div>
+      <div class="avbox"><canvas id="dmFig" width="300" height="360"></canvas></div>
+      <div class="info">
+        <div class="nm">Marcus Ferox</div>
+        <div class="cl">Soldier <span class="lock" title="Chosen when he was made — it never changes">🔒 class set at creation</span><span class="chip" id="dmRk"></span></div>
+        <div class="xpw" id="dmXp">
+          <div class="lvring" id="dmLv"></div>
+          <div class="mid">
+            <div class="t">Level 9 <span class="sp"></span><small>18 / 340 XP to level 10</small></div>
+            <div class="bar xp"><i class="new" style="width:5%"></i></div>
+          </div>
+          <button class="spend pulse" onclick="location.hash='levelup'">＋1 point · spend</button>
+        </div>
+        <div class="gl">
+          <div class="t"><span id="dmGlMed"></span> Glory <span class="sp"></span><small>291 · Primus Palus at 575</small></div>
+          <div class="bar" style="height:10px"><i class="new" style="width:6%"></i></div>
+        </div>
+        <div class="rt">
+          <div>🏃 Speed<b>75</b></div><div class="b1">💪 Strength<b>84</b></div><div>🧠 Intel.<b>71</b></div><div>🍀 Luck<b>70</b></div><div class="b1">🎭 Charisma<b>80</b></div>
+        </div>
+        <div class="rec"><span>⚔ Ranked: <b>41</b> bouts · <b>38</b> survived · <b>9</b> wins</span><span>🎭 Unranked: <b>12</b> · <b>3</b> wins</span><span>🌾 Lifetime <b>435</b></span></div>
+      </div>
+      <div class="rkcol"><div class="rb" id="dmRb"></div></div>
+    </div>
+    <div class="slots">
+      <div class="sc on"><img class="t" src="../../../assets/ptokf81_soldier.webp" alt=""><div style="flex:1"><div class="n">Marcus Ferox</div><div class="m">Soldier · Veteranus · active</div><div class="mini"><i style="width:5%"></i></div></div><span class="lv pt">Lv 9 · +1</span><button class="more" id="dmMore" title="More">⋯</button></div>
+      <div class="sc"><img class="t" src="../../../assets/ptokf81_amazonia.webp" alt=""><div style="flex:1"><div class="n">Thalestris</div><div class="m">Amazonia · Gregarius</div><div class="mini"><i style="width:61%"></i></div></div><span class="lv">Lv 4</span><button class="more">⋯</button></div>
+      <div class="sc"><img class="t" src="../../../assets/ptokf81_slave.webp" alt=""><div style="flex:1"><div class="n">Spurius</div><div class="m">Slave · Tiro</div><div class="mini"><i style="width:30%"></i></div></div><span class="lv">Lv 1</span><button class="more">⋯</button></div>
+      <div class="sc lockd"><div style="width:44px;height:44px;border-radius:50%;border:2px dashed #6b5236;display:grid;place-items:center;color:#6b5236">🔒</div><div style="flex:1"><div class="n">Fourth slot</div><div class="m">1500 Glory · 1000 coin</div></div></div>
+    </div>
+    <div class="dmfoot"><span class="sp"></span><button class="sb s"><span class="t">Gear</span></button><button class="sb s"><span class="t">Offerings</span></button><button class="sb s"><span class="t">Trophies</span></button></div>
+    <div class="legend" id="dmLegend">
+      <div><span class="pin">1</span><span><b>XP bar</b> sits under the name, ABOVE Glory: level ring + bar + XP to the next level. Glory (the rank) keeps its own bar and the tall rank column on the right.</span></div>
+      <div><span class="pin">2</span><span><b>Unspent point</b>: the ＋1 button glows (opacity only, like 288's glows) and the slot card's Lv chip says "+1". Spending opens the level-up screen (2).</span></div>
+      <div><span class="pin">3</span><span><b>Change class is gone</b> (175's "Change class · 100" button). The class line shows 🔒 "class set at creation".</span></div>
+      <div><span class="pin">4</span><span><b>Release</b> lives in the slot card's ⋯ menu (never a big button on the stage) — see 4. Greyed with the reason while he is in a room or a live match.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 4 RELEASE -->
+<section class="view" id="v-release">
+  <div class="dm">
+    <div class="slots" style="margin-top:0">
+      <div class="sc on" style="position:relative"><img class="t" src="../../../assets/ptokf81_soldier.webp" alt=""><div style="flex:1"><div class="n" id="relCardN">Spurius</div><div class="m" id="relCardM">Slave · Tiro</div><div class="mini"><i style="width:30%"></i></div></div><span class="lv">Lv 1</span><button class="more" style="border-color:var(--gold);color:var(--gold2)">⋯</button>
+        <div class="menu" style="bottom:auto;top:58px">
+          <button>⭐ Make active</button><button>🛡 Gear</button><button>✎ Rename</button><hr>
+          <button class="rel">🕊 Release…</button>
+          <button disabled style="opacity:.45;font-size:12.5px">(greyed in a room or a live match)</button>
+        </div>
+      </div>
+    </div>
+    <div style="height:150px"></div>
+  </div>
+  <div class="scrim" id="relScrim">
+    <div style="width:min(720px,100%)"><div class="toggle scn" style="justify-content:center" id="relTog"><button data-w="0" class="on">Not Hall-worthy → erased</button><button data-w="1">Hall-worthy → Hall of the Fallen</button></div>
+    <div class="rel" role="dialog" aria-modal="true" aria-labelledby="relT">
+      <div class="hd"><img id="relTok" src="../../../assets/ptokf81_slave.webp" alt=""><div><h3 id="relT">Release Spurius?</h3><p id="relSub">Slave · Tiro · Lv 1 · 4 Ranked bouts, 4 survived, 0 wins · 61 lifetime CF</p></div></div>
+      <div class="bd">
+        <div class="two">
+          <div class="box"><h4>To the house shelf</h4><ul id="relGear"></ul></div>
+          <div class="box"><h4>What else happens</h4><ul>
+            <li>🪙 Coin: nothing to move — it is all in the house treasury</li>
+            <li>🔓 His slot is free for a new gladiator</li>
+            <li>📜 The house record keeps his bouts</li>
+            <li>⚔ Not a death: no Fate, nobody loots him</li>
+            <li>↺ <b>Cannot be undone</b></li>
+          </ul></div>
+        </div>
+        <div class="verdict erase" id="relVerd">
+          <svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="#2a1210" stroke="#a3281f" stroke-width="2"/><path d="M12 14h20M12 22h20M12 30h14" stroke="#7d6b55" stroke-width="3"/><path d="M8 36L36 8" stroke="#d24a3a" stroke-width="3"/></svg>
+          <div><b>Damnatio memoriae</b><p>He is not great enough for the Hall. His name is erased: no Hall plaque, no house card line, gone from Today and the rank counts.</p></div>
+        </div>
+        <div class="typed">
+          <label for="relIn">Type <b id="relName">Spurius</b> to release him</label>
+          <input id="relIn" autocomplete="off" spellcheck="false" placeholder="his name">
+        </div>
+      </div>
+      <div class="ft"><small>Same weight as a death: one typed confirm.</small><span class="sp"></span><button class="sb m"><span class="t">Keep him</span></button><button class="sb m dan dis" id="relGo"><span class="t">Release him</span></button></div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ NOTES -->
+<section class="view" id="v-notes"><div class="nt">
+<h1>Notes · proposed numbers</h1>
+<p>His answers (2026-10-14, O2–O4 = 3a / a / yes): online XP = CF earned + survival + win bonuses; each level = +1 to a rating of his choice; class change only at creation; Release with gear → house shelf, Hall only if hallWorthy else erased, typed confirm; a results tally on return to the Online menu. Everything below is a proposal — questions in <code>NOTES-progress.md</code>.</p>
+
+<h2>XP per match (server, inside applyResult)</h2>
+<pre>xp = round( f × K × ( min(CF, 40) + 20·survived + 15·won ) )
+  f  = the existing table factor × CPU cut (2 humans ×0.5, 3 ×0.75, 4+ ×1; a CPU-played seat ×0.25)
+  K  = 1 Ranked · 0.5 Custom (proposal) · 0 if he fell (a dead gladiator has no next level)
+  CF counted ≤ 40 a match (anti-farming; Glory still takes all of it)
+Custom XP ≤ 300 a UTC day per gladiator.</pre>
+<p>A typical survived Ranked bout ≈ 20 CF + 20 + (a win 1 in 4 ≈ 4) ≈ <b>44 XP</b>; a win with 23 CF = 58 XP (the mock's tally).</p>
+
+<h2>Level curve (to ~20 over ~150 Ranked bouts)</h2>
+<pre>XP to go from level n to n+1 = 100 + 30·(n−1)        (n = 1 … 19)
+cap: level 20 (7,030 XP). Past 20 the bar shows a laurel; XP keeps counting (question 3).</pre>
+<table><tr><th>Level</th><th>XP to next</th><th>Total XP</th><th>≈ Ranked bouts survived (44 XP)</th></tr>
+<tr><td>2</td><td class="n">130</td><td class="n">100</td><td class="n">2–3</td></tr>
+<tr><td>5</td><td class="n">220</td><td class="n">580</td><td class="n">13</td></tr>
+<tr><td>8</td><td class="n">310</td><td class="n">1,330</td><td class="n">30</td></tr>
+<tr><td>9</td><td class="n">340</td><td class="n">1,640</td><td class="n">37</td></tr>
+<tr><td>10</td><td class="n">370</td><td class="n">1,980</td><td class="n">45</td></tr>
+<tr><td>15</td><td class="n">520</td><td class="n">4,130</td><td class="n">95</td></tr>
+<tr><td>20</td><td class="n">—</td><td class="n">7,030</td><td class="n">≈ 160</td></tr></table>
+<p class="warn"><b>Big catch (question 1):</b> today every survived bout already grows the LOWEST rating by +1 (+1 more for a win) — <code>grow()</code> in 111-onlcore, ≈ 190 points over 150 bouts. Twenty level-ups at +1 = only 19 points. Either the automatic growth stays and the level point is extra "steering" (my pick — nothing taken from today's gladiators), or levels replace it and then each level must be worth much more than +1 (or the curve must reach ~level 100).</p>
+
+<h2>Where it lives (server data shape)</h2>
+<pre>char.xp   : int   lifetime XP (Ranked + Custom), never drops
+char.lv   : int   1–20, derived from xp but stored (cheap reads in rooms/house cards)
+char.pts  : int   unspent level points (0+); also stored per gladiator, survives reloads
+char.lvlog: [[lv,'spd',at],…] ≤ 20 entries — what he picked (house card / Hall)
+char.last102 : {m, at, ranked, won, fell, coin, cf, glory:[g0,g1], rank:[k0,k1], xp:[x0,x1], lv:[l0,l1], gifts:[…]}
+               written by settleMatch; the page plays the tally once, then route char.seen102 {id} clears it
+route char.lvup {id, k, rid}   (IDEM93 rid) → refuses: not owner · dead · pts&lt;1 · k not a rating · stats[k] ≥ 99 · busyIn (room/match)
+route char.release {id, name, rid} → refuses: not owner · busyIn · name ≠ ch.name (server-side compare) ·
+               moves every piece (printed, named, Issued vanishes as today) to the house shelf, ch.alive=false, ch.gone={at,why:'released'},
+               hallWorthy(ch) ? Hall row 'Released' : erased (no DNAME#, no Today, rank counts −1)
+domus.change-class: REMOVED (server refuses with code class_fixed; old pages get a plain message)
+retro-fill on first touch: xp = lifeCF(≤40/bout, estimated) + 20·survived + 15·rwins → lv, pts = 0 (question 6)</pre>
+
+<h2>Results tally (page)</h2>
+<ul>
+<li>Opens when the Online landing shows and <code>last102</code> is unseen (after the results window, after a reload, on another device). Order: CF → coin → Glory (rank-up flourish) → XP (level-up flourish, last = the climax). ≈ 5 s; click/key skips to the end; Reduce motion / Animations Off = the end state at once; Fast speed has no effect (it is a screen, not the board).</li>
+<li>Continue → the level-up screen when a point is unspent, else the landing. "Later" keeps the point (it waits on the Domus).</li>
+<li>Coin goes to the house treasury (v0.92 one treasury). Custom shows "no coin is paid" (as 292's #onr100 says) and half XP.</li>
+<li>A fall shows his Fate card, what was lost, and the Hall verdict; no XP.</li>
+</ul>
+
+<h2>Anti-abuse</h2>
+<ul>
+<li>XP is computed only on the server from the agreed / verified table row (same path as Glory; the v1.01 verifier logs mismatches). Pages never send XP.</li>
+<li>Custom farming between friends: half XP, CF counted ≤ 40, table factor (2 humans ×0.5), Custom XP ≤ 300 a day, MIN_HUMANS 2 (no solo-vs-CPU farming), CPU-played seats ×0.25.</li>
+<li>Level points are spent one at a time with a request id (replays answered once), never during a room/match (the kit's ratings are frozen at the horns).</li>
+<li>Release: typed name checked on the server; refused while in a room/match (no releasing to dodge a Fate); does not reset the house's leaver count; a released gladiator counts like the fallen for Domus rank only if Hall-worthy (question 5) — so release can never raise a house's rank.</li>
+<li>No respec (question 2) — a respec would let a house re-tune a gladiator for each event.</li>
+</ul>
+</div></section>
+
+<script>
+/* ===================== art helpers ===================== */
+const A='../../../assets/';
+const META={soldier:{w:1062,c:{idle0:[487,114,184,57,154],idle1:[602,114,187,57,157],flex:[717,114,224,57,194],hit1:[947,114,187,57,157]}}};
+const img=new Image();img.src=A+'mm100_g_soldier.webp';
+const imgs={};function im(f){if(!imgs[f]){imgs[f]=new Image();imgs[f].src=A+f}return imgs[f]}
+function fig(cv,cell,o){o=o||{};const c=cv.getContext('2d');const draw=()=>{c.clearRect(0,0,cv.width,cv.height);
+  const m=META.soldier.c[cell];const s=o.s||((cv.height*0.78)/m[2]);const x=cv.width/2,y=cv.height*(o.y||0.86);
+  c.fillStyle='rgba(0,0,0,.45)';c.beginPath();c.ellipse(x,y+4*s,62*s,14*s,0,0,Math.PI*2);c.fill();
+  if(o.glow){const g=c.createRadialGradient(x,y-m[4]*s*.55,10,x,y-m[4]*s*.55,cv.height*.55);g.addColorStop(0,o.glow);g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.fillRect(0,0,cv.width,cv.height)}
+  if(o.grey)c.filter='grayscale(1) brightness(.55)';
+  c.drawImage(img,m[0],0,m[1],m[2],x-m[3]*s,y-m[4]*s,m[1]*s,m[2]*s);c.filter='none'};
+  if(img.complete&&img.naturalWidth)draw();else img.addEventListener('load',draw,{once:true})}
+const WHEAT='<svg class="wheat" viewBox="0 0 20 20"><path d="M10 19V6" stroke="#d9c06a" stroke-width="1.6"/><g fill="#e2c768" stroke="#8e7a2a" stroke-width=".6"><ellipse cx="10" cy="4" rx="1.8" ry="3"/><ellipse cx="7.4" cy="8" rx="1.6" ry="2.7" transform="rotate(-30 7.4 8)"/><ellipse cx="12.6" cy="8" rx="1.6" ry="2.7" transform="rotate(30 12.6 8)"/><ellipse cx="7.4" cy="12" rx="1.6" ry="2.7" transform="rotate(-30 7.4 12)"/><ellipse cx="12.6" cy="12" rx="1.6" ry="2.7" transform="rotate(30 12.6 12)"/></g></svg>';
+const COIN='<img class="ico" src="'+A+'coin.webp" alt="">';
+/* Glory rank medals (the 8 of 111; thresholds halved by 316) */
+const RANKS=[['tiro','Tiro',0,'#8c6a3a','I'],['novicius','Novicius',45,'#7d8c4a','II'],['gregarius','Gregarius',90,'#8a9aa8','III'],['veteranus','Veteranus',275,'#c0c8d0','IV'],['primus','Primus Palus',575,'#d6ab4c','V'],['summa','Summa Rudis',1050,'#f0cf7d','VI'],['rudiarius','Rudiarius',1750,'#e6e0ff','VII'],['invictus','Invictus',2750,'#ffe28a','VIII']];
+function rankOf(g){let r=RANKS[0];for(const R of RANKS)if(g>=R[2])r=R;return r}
+function medal(k,px){const R=RANKS.find(r=>r[0]===k)||RANKS[0];px=px||40;
+  return `<svg class="medal" width="${px}" height="${px}" viewBox="0 0 40 40"><defs><radialGradient id="m${k}${px}" cx=".35" cy=".3"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="${R[3]}"/><stop offset="1" stop-color="#3a2a18"/></radialGradient></defs><circle cx="20" cy="20" r="18" fill="url(#m${k}${px})" stroke="#2a1408" stroke-width="1.5"/><circle cx="20" cy="20" r="13.5" fill="none" stroke="#2a140888" stroke-width="1"/><text x="20" y="25" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="${R[4].length>2?10:13}" fill="#2a1408">${R[4]}</text></svg>`}
+function ring(el,lv,frac,big){el.innerHTML=`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="#0f1822" stroke="#26384a" stroke-width="5"/><circle class="arc" cx="32" cy="32" r="28" fill="none" stroke="url(#xg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(2*Math.PI*28).toFixed(1)}" stroke-dashoffset="${((1-frac)*2*Math.PI*28).toFixed(1)}" transform="rotate(-90 32 32)"/><defs><linearGradient id="xg"><stop offset="0" stop-color="#e6f4ff"/><stop offset="1" stop-color="#5f9bd3"/></linearGradient></defs></svg><b>${lv}</b>${big?'<small>LEVEL</small>':''}`}
+/* level curve (proposal) */
+const need=n=>100+30*(n-1);
+function lvOf(x){let l=1,acc=0;while(l<20&&x>=acc+need(l)){acc+=need(l);l++}return {l,into:x-acc,need:l<20?need(l):0}}
+const ease=t=>1-Math.pow(1-t,3);
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ===================== 1 · tally ===================== */
+const SCN={
+ win:{kick:'RANKED · CLASSIC DEMOCRITUS · ROMA',title:'Victoria',cls:'',sub:'1st of 4 · 6 rotations · he walks out of the Porta Sanavivaria',flav:'Rome will remember that one — until supper.',mood:'pleased',
+   cf:23,cf0:412,coin:23,coinBrk:['award <b>12</b> (Gregarius at the horns)','× win <b>1.5</b>','× streak <b>+30%</b>','→ <b>23</b> to the treasury'],tre0:1240,
+   gl0:248,glBrk:['CF <b>+23</b>','survived <b>+12</b>','victory <b>+8</b>'],gl:43,
+   xp0:1600,xpBrk:[['CF earned','+23'],['Survived','+20'],['Victory','+15'],['Ranked','×1']],xp:58,cell:'flex'},
+ survived:{kick:'RANKED · CLASSIC EGIDIOUS · CAPUA',title:'He lives',cls:'',sub:'3rd of 4 · the Thumb of Flavius never came close',flav:'Alive. I suppose that counts for something.',mood:'calm',
+   cf:14,cf0:412,coin:16,coinBrk:['award <b>12</b>','× streak <b>+30%</b>','→ <b>16</b> to the treasury'],tre0:1240,
+   gl0:248,glBrk:['CF <b>+14</b>','survived <b>+12</b>'],gl:26,
+   xp0:1600,xpBrk:[['CF earned','+14'],['Survived','+20'],['Ranked','×1']],xp:34,cell:'idle0'},
+ custom:{kick:'CUSTOM · LUDUS · POMPEII',title:'Ludus done',cls:'cust',sub:'2nd of 5 · a friendly bout — no coin, no Fate',flav:'A practice bout. My lions are bored.',mood:'bored',
+   cf:19,cf0:412,coin:0,coinBrk:['Custom bout — no coin is paid'],tre0:1240,
+   gl0:248,glBrk:['CF <b>+19</b> (Glory counts CF in Custom too)'],gl:19,
+   xp0:1600,xpBrk:[['CF earned','+19'],['Survived','+20'],['Custom','×0.5'],['2 lanistas','×0.5']],xp:10,cell:'idle1'},
+ fell:{kick:'RANKED · CLASSIC CASSIAN · VERONA',title:'He fell',cls:'fell',sub:'Eliminated in round 2 · 9 CF at the end — the Fate was against him',flav:'Take him away. Next!',mood:'bored',fell:true}};
+let cur='win',run=0,skip=false;
+function row(id,cls,ic,lbl,sub){return `<div class="tr ${cls||''}" id="${id}"><div class="flash"></div><div class="top">${ic}<div class="lbl">${lbl}<small>${sub}</small></div><span class="sp"></span><span class="gain zero">+0</span><span class="to"></span></div><div class="bar ${cls==='xprow'?'xp':cls==='cfrow'?'cf':''}"><i class="old"></i><i class="new"></i></div><div class="brk"></div></div>`}
+function build(){const S=SCN[cur];const R=document.getElementById('tRows');
+  document.getElementById('tKick').textContent=S.kick;const T=document.getElementById('tTitle');T.textContent=S.title;T.className=S.cls;
+  document.getElementById('tSub').textContent=S.sub;document.getElementById('tFlav').textContent=S.flav;
+  document.querySelector('.flav img').src=A+'flavmood_'+S.mood+'.webp';
+  if(S.fell){R.innerHTML=`<div class="fellbox"><div style="width:84px;height:121px;flex:none;border-radius:6px;box-shadow:0 4px 10px #000;background:url(${A}fates.jpg) 0 0/600% 200%"></div><div><b>Marcus Ferox fell · Veteranus</b><p style="margin:4px 0 0;color:#d9c7a6;font-size:14px">His killer took the Gladius. Scutum and Galea go home to the house shelf, dented (316); the offering he carried is lost. No XP — his levels end with him.</p></div></div>
+     <div class="fellbox" style="border-color:var(--gold);border-top-color:var(--gold);background:linear-gradient(90deg,#3a2a14,#21170f)">${medal('veteranus',54)}<div><b style="color:var(--gold2)">To the Hall of the Fallen</b><p style="margin:4px 0 0;color:#d9c7a6;font-size:14px">Fell at Veteranus — Level 9, 435 lifetime CF. His plaque lists the ratings he chose at each level.</p></div></div>
+     <div class="tr done" style="opacity:1"><div class="top">${COIN}<div class="lbl">Treasury<small>no award for a fall</small></div><span class="sp"></span><span class="gain zero">+0</span></div></div>`;
+    fig(document.getElementById('tFig'),'hit1',{grey:true});ring(document.getElementById('tFigLv'),9,.0);document.getElementById('tRk').innerHTML=medal('veteranus',44)+'Veteranus';
+    document.getElementById('tGo').querySelector('.t').textContent='Continue';return}
+  R.innerHTML=row('rCF','cfrow',WHEAT,'Crowd Favor','lifetime CF')+row('rCoin','',COIN,'Treasury','Domus Vulpina')+row('rGl','',medal(rankOf(S.gl0)[0],30),'Glory','rank')+row('rXp','xprow','<div class="lvring" id="xpRing"></div>','Experience','level');
+  document.getElementById('rXp').insertAdjacentHTML('beforeend','<div class="lvup" id="lvUp">LEVEL UP</div>');
+  document.getElementById('rGl').insertAdjacentHTML('beforeend','<div class="rkup" id="rkUp"></div>');
+  fig(document.getElementById('tFig'),S.cell,{glow:S.cell==='flex'?'rgba(240,207,125,.25)':null});
+  const L=lvOf(S.xp0);ring(document.getElementById('tFigLv'),L.l,L.into/L.need);ring(document.getElementById('xpRing'),L.l,L.into/L.need,true);
+  const rk=rankOf(S.gl0);document.getElementById('tRk').innerHTML=medal(rk[0],44)+rk[1];document.getElementById('tRk').className='rktag';
+  document.getElementById('tGo').querySelector('.t').textContent='Continue'}
+const sleep=ms=>new Promise(r=>setTimeout(r,skip||RM?0:ms));
+function tween(ms,fn){return new Promise(res=>{if(skip||RM){fn(1);return res()}const t0=performance.now();const st=()=>{if(skip){fn(1);return res()}const t=Math.min(1,(performance.now()-t0)/ms);fn(ease(t));t<1?requestAnimationFrame(st):res()};requestAnimationFrame(st)})}
+function setBar(el,o,n){el.querySelector('.old').style.width=(o*100)+'%';el.querySelector('.new').style.width=(n*100)+'%'}
+async function chips(el,list,mul){const b=el.querySelector('.brk');b.innerHTML=list.map(x=>Array.isArray(x)?`<span class="${/×/.test(x[1])?'mul':''}">${x[0]} <b>${x[1]}</b></span>`:`<span>${x}</span>`).join('');for(const s of b.children){s.classList.add('in');await sleep(170)}}
+async function play(){const my=++run;skip=false;build();const S=SCN[cur];if(S.fell)return;const ok=()=>my===run;const fmt=n=>Math.round(n).toLocaleString('en');
+  await sleep(350);if(!ok())return;
+  /* CF */
+  let e=document.getElementById('rCF');e.classList.add('live');const cfMax=500;
+  e.querySelector('.to').innerHTML=`<b>${S.cf0}</b> → ${S.cf0+S.cf}`;setBar(e,S.cf0/cfMax,S.cf0/cfMax);
+  await chips(e,[['final CF',`+${S.cf}`]]);
+  await tween(800,t=>{e.querySelector('.gain').textContent='+'+fmt(S.cf*t);e.querySelector('.gain').classList.toggle('zero',!S.cf);setBar(e,S.cf0/cfMax,(S.cf0+S.cf*t)/cfMax)});
+  e.classList.replace('live','done');if(!ok())return;
+  /* coin */
+  e=document.getElementById('rCoin');e.classList.add('live');const tMax=1600;
+  e.querySelector('.to').innerHTML=S.coin?`<b>${fmt(S.tre0)}</b> → ${fmt(S.tre0+S.coin)}`:'no coin';setBar(e,S.tre0/tMax,S.tre0/tMax);
+  await chips(e,S.coinBrk);
+  await tween(900,t=>{e.querySelector('.gain').textContent='+'+fmt(S.coin*t);e.querySelector('.gain').classList.toggle('zero',!S.coin);setBar(e,S.tre0/tMax,(S.tre0+S.coin*t)/tMax)});
+  e.classList.replace('live','done');if(!ok())return;
+  /* Glory */
+  e=document.getElementById('rGl');e.classList.add('live');const r0=rankOf(S.gl0),i0=RANKS.indexOf(r0),nx=RANKS[i0+1];
+  const lo=r0[2],hi=nx?nx[2]:r0[2]+1000;let crossed=false;
+  e.querySelector('.to').innerHTML=`<b>${S.gl0}</b> → ${S.gl0+S.gl} · ${nx?nx[1]+' at '+nx[2]:''}`;setBar(e,(S.gl0-lo)/(hi-lo),(S.gl0-lo)/(hi-lo));
+  await chips(e,S.glBrk);
+  await tween(1000,t=>{const g=S.gl0+S.gl*t;e.querySelector('.gain').textContent='+'+fmt(S.gl*t);e.querySelector('.gain').classList.remove('zero');
+    if(nx&&g>=nx[2]&&!crossed){crossed=true;e.querySelector('.flash').classList.add('go');const u=document.getElementById('rkUp');u.textContent=nx[1].toUpperCase()+' REACHED';u.classList.add('on');
+      document.getElementById('tRk').innerHTML=medal(nx[0],44)+nx[1];document.getElementById('tRk').classList.add('up');const n2=RANKS[i0+2];e.querySelector('.to').innerHTML=`<b>${S.gl0}</b> → ${S.gl0+S.gl} · ${n2?n2[1]+' at '+n2[2]:''}`;e.querySelector('.top').firstElementChild.outerHTML=medal(nx[0],30)}
+    const R=crossed?nx:r0,N=RANKS[RANKS.indexOf(R)+1];const l2=R[2],h2=N?N[2]:R[2]+1000;const o=crossed?0:(S.gl0-lo)/(hi-lo);setBar(e,o,Math.min(1,(g-l2)/(h2-l2)))});
+  if(crossed){const b=e.querySelector('.brk');b.insertAdjacentHTML('beforeend','<span class="in" style="border-color:#d6ab4c;color:#f0cf7d">🎁 a Donativum waits in the Domus</span>');await sleep(500)}
+  e.classList.replace('live','done');if(!ok())return;
+  /* XP — the climax */
+  e=document.getElementById('rXp');e.classList.add('live');let L=lvOf(S.xp0);const lv0=L.l;
+  e.querySelector('.to').innerHTML=`<b>${fmt(L.into)}</b> / ${fmt(L.need)} XP`;setBar(e,L.into/L.need,L.into/L.need);
+  await chips(e,S.xpBrk);await sleep(200);
+  let up=false;
+  await tween(1300,t=>{const x=S.xp0+S.xp*t;const N=lvOf(x);e.querySelector('.gain').textContent='+'+fmt(S.xp*t)+' XP';e.querySelector('.gain').classList.remove('zero');
+    if(N.l>lv0&&!up){up=true;e.querySelector('.flash').classList.add('go');document.getElementById('lvUp').classList.add('on');document.getElementById('lvUp').textContent='LEVEL '+N.l+' · +1 POINT';
+      document.querySelector('#tFigLv').classList.add('pulse')}
+    setBar(e,up?0:L.into/L.need,N.into/N.need);ring(document.getElementById('xpRing'),N.l,N.into/N.need,true);ring(document.getElementById('tFigLv'),N.l,N.into/N.need);
+    e.querySelector('.to').innerHTML=`<b>${fmt(N.into)}</b> / ${fmt(N.need)} XP`});
+  e.classList.replace('live','done');
+  if(up){const g=document.getElementById('tGo');g.querySelector('.t').textContent='Choose your +1';g.classList.add('pulse');g.onclick=()=>location.hash='levelup'}
+  else{document.getElementById('tGo').classList.remove('pulse');document.getElementById('tGo').onclick=null}}
+document.getElementById('tScn').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;cur=b.dataset.s;for(const x of b.parentNode.children)x.classList.toggle('on',x===b);history.replaceState(null,'','#tally'+(cur==='win'?'':'-'+cur));play()});
+document.getElementById('tReplay').onclick=e=>{e.stopPropagation();play()};
+document.getElementById('v-tally').addEventListener('click',ev=>{if(ev.target.closest('button'))return;skip=true});
+
+/* ===================== 2 · level up ===================== */
+const ST=[['spd','Speed','#7fc7a0','movement',[[76,'+1 movement'],[96,'+2 movement']],75,'<path d="M6 24l6-6 4 3 6-9" stroke="#7fc7a0" stroke-width="2.4" fill="none"/><circle cx="20" cy="7" r="3" fill="#7fc7a0"/>'],
+ ['str','Strength','#e08a6a','damage',[[76,'+1 damage'],[87,'+2 damage'],[96,'+3 damage']],84,'<path d="M5 17c3-6 8-6 10-3 2-5 8-6 11 0v6H5z" fill="#e08a6a"/>'],
+ ['int','Intelligence','#a7a0e8','CPU mind',[[65,'Apprentice mind'],[76,'Fighter mind'],[86,'Veteran mind'],[96,'Master mind']],71,'<circle cx="15" cy="14" r="9" fill="none" stroke="#a7a0e8" stroke-width="2.4"/><path d="M11 14h8M15 10v8" stroke="#a7a0e8" stroke-width="2"/>'],
+ ['lck','Luck','#9fd07a','coin a turn',[[76,'+1 coin a turn'],[96,'+2 coin a turn']],70,'<g fill="#9fd07a"><circle cx="11" cy="11" r="5"/><circle cx="19" cy="11" r="5"/><circle cx="11" cy="19" r="5"/><circle cx="19" cy="19" r="5"/></g>'],
+ ['cha','Charisma','#f0cf7d','CF a turn',[[76,'+1 CF a turn'],[96,'+2 CF a turn']],80,'<path d="M5 9c4-3 16-3 20 0v5c0 6-6 10-10 10S5 20 5 14z" fill="none" stroke="#f0cf7d" stroke-width="2.2"/><path d="M10 15c2 2 8 2 10 0" stroke="#f0cf7d" stroke-width="2" fill="none"/>']];
+const X0=40,X1=99,px=v=>((v-X0)/(X1-X0)*100).toFixed(2)+'%';
+function luBuild(){let sel=null;const C=document.getElementById('luCards');
+  C.innerHTML=ST.map(s=>{const v=s[5],n=v+1;const now=[...s[4]].reverse().find(b=>v>=b[0]);const hit=s[4].find(b=>b[0]===n);const nxt=s[4].find(b=>b[0]>v);
+    const wit=hit?`<b>${v} → ${n}:</b> ${hit[1]} — at once`+(s[0]==='int'?' <span class="dig">(only if a CPU takes his seat)</span>':''):nxt?`${v} → ${n}. ${nxt[0]-n} more to <b>${nxt[1]}</b> at ${nxt[0]}`:`${v} → ${n}. Top band reached.`;
+    return `<button class="rc ${hit?'cross':''}" data-k="${s[0]}"><div class="hd"><svg viewBox="0 0 30 30">${s[6]}</svg><b style="color:${s[2]}">${s[1]}</b></div>
+      <div class="val">${v}<span class="arr">→</span><span class="nv">${n}</span></div>
+      <div class="trk"><div class="ln"></div><div class="fill" style="width:${px(v)};left:0"></div><div class="poor" style="width:${px(60)};opacity:.85" title="Poor below 60 (Studio rule — not online)"></div>${s[4].map(b=>`<div class="bd ${b[0]===n?'hit':''}" style="left:${px(b[0])}"><span>${b[0]}</span></div>`).join('')}<div class="me" style="left:${px(v)}"></div><div class="gh" style="left:${px(n)}"></div></div>
+      <div class="now">Now: <b>${now?now[1]:'no '+s[3]+' bonus'}</b></div><div class="wit">${wit}</div></button>`}).join('');
+  C.onclick=ev=>{const b=ev.target.closest('.rc');if(!b)return;sel=b.dataset.k;for(const x of C.children)x.classList.toggle('sel',x===b);const s=ST.find(z=>z[0]===sel);
+    const g=document.getElementById('luGo');g.classList.remove('dis');g.querySelector('.t').textContent='Train '+s[1];
+    document.getElementById('luWhy').innerHTML=`${s[1]} ${s[5]} → <b style="color:var(--gold2)">${s[5]+1}</b>. Final — no respec.`};
+  fig(document.getElementById('luFig'),'flex',{glow:'rgba(159,208,255,.35)',y:.9})}
+document.getElementById('luGo').onclick=()=>{const g=document.getElementById('luGo');if(g.classList.contains('dis'))return;document.getElementById('luPts').textContent='0 points left';g.classList.add('dis');g.querySelector('.t').textContent='Trained ✓'};
+
+/* ===================== 3 · domus ===================== */
+function dmBuild(){ring(document.getElementById('dmLv'),9,.05,false);
+  document.getElementById('dmRk').innerHTML=medal('veteranus',18)+' Veteranus';document.getElementById('dmGlMed').innerHTML=medal('veteranus',22);
+  document.getElementById('dmRankChip').innerHTML='<span class="chip">Ludus Minor</span>';
+  fig(document.getElementById('dmFig'),'idle0',{y:.9});
+  const rb=document.getElementById('dmRb');const top=Math.sqrt(2750),y=g=>Math.sqrt(g)/top*100;rb.innerHTML='<i style="height:'+y(291)+'%"></i>'+RANKS.map(r=>`<em class="${r[0]==='veteranus'?'on':''}" style="bottom:${y(r[2])}%">${r[1]}</em>`).join('');
+  /* annotation pins on the stage */
+  const st=document.getElementById('dmStage');if(!st.querySelector('.anno')){
+    document.getElementById('dmXp').insertAdjacentHTML('afterbegin','<span class="pin anno" style="left:-10px;top:-10px">1</span>');
+    document.querySelector('#dmXp .spend').insertAdjacentHTML('afterend','<span class="pin anno" style="right:-8px;top:-10px">2</span>');
+    document.querySelector('.info .lock').insertAdjacentHTML('afterend','<span class="pin">3</span>');
+    document.getElementById('dmMore').insertAdjacentHTML('beforebegin','<span class="pin anno" style="right:30px;bottom:6px">4</span>')}}
+
+/* ===================== 4 · release ===================== */
+const REL=[{n:'Spurius',lv:1,m:'Slave · Tiro',tok:'slave',sub:'Slave · Tiro · Lv 1 · 4 Ranked bouts, 4 survived, 0 wins · 61 lifetime CF',
+   gear:[['🗡','Pugio','L1'],['🛡','Leather Arm Wrap','L1'],['🩹','Galea (dented · repair 2)','L1']],hall:false},
+ {n:'Gannicus',lv:12,m:'Venatore · Veteranus',tok:'venatore',sub:'Venatore · Veteranus · Lv 12 · 63 Ranked bouts, 58 survived, 14 wins · 812 lifetime CF',
+   gear:[['🏹','Bow','L2'],['🗡','Celeritas Acutus I (Rare)','named'],['🛡','Lorica Squamata','L3'],['🛡','Greaves of Laudis (Epic)','named'],['🌾','Elixir of Life +2','offering']],hall:true}];
+function relBuild(w){const R=REL[w];document.getElementById('relCardN').textContent=R.n;document.querySelector('#v-release .sc .lv').textContent='Lv '+R.lv;document.getElementById('relCardM').textContent=R.m;
+  document.querySelector('#v-release .sc img').src=A+'ptokf81_'+R.tok+'.webp';document.getElementById('relTok').src=A+'ptokf81_'+R.tok+'.webp';
+  document.getElementById('relT').textContent='Release '+R.n+'?';document.getElementById('relSub').textContent=R.sub;document.getElementById('relName').textContent=R.n;
+  document.getElementById('relGear').innerHTML=R.gear.map(g=>`<li>${g[0]} ${g[1]}<span class="r ${g[2]==='named'?'nm':''}">${g[2]}</span></li>`).join('')+'<li style="color:#8c7759">Issued kit pieces vanish (worth 0)</li>';
+  const V=document.getElementById('relVerd');
+  V.className='verdict '+(R.hall?'hall':'erase');
+  V.innerHTML=R.hall?medal('veteranus',44)+`<div><b>To the Hall of the Fallen</b><p>Great enough (Veteranus). He goes to the Hall as <b>Released</b> — his plaque, his record and the ratings he chose at each level stay for all to see.</p></div>`
+    :`<svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="#2a1210" stroke="#a3281f" stroke-width="2"/><path d="M12 14h20M12 22h20M12 30h14" stroke="#7d6b55" stroke-width="3"/><path d="M8 36L36 8" stroke="#d24a3a" stroke-width="3"/></svg><div><b>Damnatio memoriae</b><p>Not great enough for the Hall (needs Veteranus, 25 survived, 500 lifetime CF or Commodus slain). His name is erased: no plaque, gone from the house card, Today and the rank counts.</p></div>`;
+  const I=document.getElementById('relIn');I.value='';const G=document.getElementById('relGo');G.classList.add('dis');
+  I.oninput=()=>G.classList.toggle('dis',I.value.trim()!==R.n)}
+document.getElementById('relTog').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;for(const x of b.parentNode.children)x.classList.toggle('on',x===b);relBuild(+b.dataset.w);history.replaceState(null,'','#release'+(b.dataset.w==='1'?'-worthy':''))});
+
+/* ===================== router ===================== */
+function route(){const h=(location.hash||'#tally').slice(1);const [v,o]=h.split('-');const V=['tally','levelup','domus','release','notes'].includes(v)?v:'tally';
+  for(const s of document.querySelectorAll('.view'))s.classList.toggle('on',s.id==='v-'+V);
+  for(const a of document.querySelectorAll('.mk a'))a.classList.toggle('on',a.dataset.v===V);
+  if(V==='tally'){cur=SCN[o]?o:'win';for(const b of document.querySelectorAll('#tScn button'))b.classList.toggle('on',b.dataset.s===cur);play()}
+  if(V==='levelup')luBuild();if(V==='domus')dmBuild();
+  if(V==='release'){const w=o==='worthy'?1:0;for(const b of document.querySelectorAll('#relTog button'))b.classList.toggle('on',+b.dataset.w===w);relBuild(w)}
+  scrollTo(0,0)}
+addEventListener('hashchange',route);
+(img.complete?Promise.resolve():new Promise(r=>{img.onload=r;img.onerror=r})).then(route);
+</script>
+</body></html>
