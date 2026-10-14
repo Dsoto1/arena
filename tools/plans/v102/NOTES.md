@@ -112,3 +112,6 @@ Online already returns (keep). Not for lessons, challenges keep their rules (att
   at level 1 (ratings kept) · 7a Custom half XP ≤300/day · 8a tally after every match fought, once, any device · 9a level shown everywhere ·
   10a released gear → house shelf · 11a Hall plaque "Released" + his idea: "🗡 Grant the rudis" for 100 coin = he is freed as if he took the
   Rudis, always honoured with a plaque · 12a nothing to undo.
+- I · question 1 = A (2026-10-14): ONE growth system. The silent per-bout grow() (+1 lowest, +1 win) is REPLACED by XP levels: each level =
+  +1 automatically to his weakest rating (today's rule) + 1 point the player places on the level-up screen. Levels up to 100, about every 2
+  bouts early and slower later; total growth over ~150 typical Ranked bouts ≈ today's (~190 points). Build after this note: server + client.
