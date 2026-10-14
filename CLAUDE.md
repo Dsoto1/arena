@@ -1441,6 +1441,12 @@ One global script; files are concatenated in order. Later "version modules" patc
   coin keeps the old table, AWARD_GIFT100). O2 RANKS Glory halved (0/45/90/275/575/1050/1750/2750; WORLD COUNTS recounted once,
   'seeded100'). O3 one rank-up gift per house per rank (D.rkg100, giftsIn + after100 → out.giftDup100). Test switches C.BAL100.dent/home. Tests server
   v100bal (+ routes/v83/v84/v85/v89a/v91/v92 updated), tonl83, tonl83u, tv91e.
+- **v1.01 ONLINE (322-v101onl + the "v1.01" section of 111-onlcore + its block in routes.js + index.js `requireGoogle`; docs/backend.md "v1.01";
+  findings tools/plans/v101/SECURITY.md; no protocol bump):** online kits/loadouts follow the v1.0 classes (Damnatio kit Iron Helm + Belt I, no Falcata;
+  322 makes 315's `bal100Old` a plain call). SECURITY: snapshots (`match.open`/`match.snap`, `C.snapBad101` → `snap_bad`, opening written once) and moves
+  (`C.inBad101` → `in_bad`) carrying markup are refused; the page cleans every state it loads + other pages' moves (`snap101Clean`, kill switch
+  flavius_snap101off=1); result tables cleaned against the room (`tableFix101`) + `AUDIT#<match>` for odd/unverified Ranked tables (wave 2's server check
+  reads them); Cognito self sign-up off + `REQUIRE_GOOGLE` (stack update); own routes only. Tests `tonl101`, server `v101.test.js`.
 - **v1.0 ANIMATED GLADIATOR TOKENS (311-v100anim, last before 08-setup; his 3D answers 2026-10-11 + SPEED × ANIMATION a + ANIM MEMORY; look test
   tools/plans/look100/NOTES-look-anim.md; display only — never S, dice, RNG, the log or onlHash):** the 8 PRINTED classes wear rig92 3D stand-ins (production
   token + gear100/body100 bake + each class kit from t93Parts, mm100's LOOK per class) rendered ONCE by `node tools/art/anim100/make.js [cls…]` (SwiftShader,

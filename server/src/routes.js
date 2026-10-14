@@ -1708,9 +1708,30 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
         if(await store.putUnless('WORLD','COUNTS',o,'seeded100'))return o}catch(e){}return null}
     rankCounts=async function(){const X=await store.get('WORLD','COUNTS');if(!X||X.seeded100==null)await (seeding100||(seeding100=seed100().finally(()=>{seeding100=null})));return base()}}
   /* ══════════ end of v1.0 BALANCE ══════════ */
+  /* ══════════ v1.01 (shared rules: the "v1.01" section of onlcore; docs/backend.md "v1.01"; tools/plans/v101/SECURITY.md; NO protocol bump) ══════════
+     S1 match.open / match.snap: a snapshot that could run script on another page is refused (code snap_bad, C.snapBad101); the opening is written ONCE
+        (a host who reloads and opens again keeps the first: late watchers and the replay start from the real opening).
+     S2 match.input: a move carrying markup is refused before it takes a seq (code in_bad, C.inBad101).
+     S3 match.result: the table is cleaned against the room's seats (C.tableFix101); a settled Ranked table with audit flags (C.tableFlags101) or accepted
+        unverified while 2+ humans started → AUDIT#<match> / A {flags, ranked, humans, at} (GSI1PK 'AUDIT', ttl 90 days) + one '[audit101]' log line.
+        Nothing is refused or changed by the audit: it is the evidence for the planned server check of Ranked results (wave 2). */
+  {const B=C;const MK=id=>'MATCH#'+id;
+    {const base=R['match.open'];R['match.open']=async(d,ctx)=>{d=d||{};const M=await meta(d.id);if(M.host!==ctx.acct)return base(d,ctx);
+      const why=B.snapBad101(d.snap);if(why){try{console.log('[snap101] refused an opening',d.id,ctx.acct)}catch(e){}throw fail('snap_bad',why)}
+      if(await store.get(MK(d.id),'OPEN'))return {kept:1};return base(d,ctx)}}
+    {const base=R['match.snap'];R['match.snap']=async(d,ctx)=>{d=d||{};const why=B.snapBad101(d.snap);if(why){try{console.log('[snap101] refused a snapshot',d.id,ctx.acct)}catch(e){}throw fail('snap_bad',why)}return base(d,ctx)}}
+    {const base=R['match.input'];R['match.input']=async(d,ctx)=>{d=d||{};const why=B.inBad101(d.in);if(why)throw fail('in_bad',why);return base(d,ctx)}}
+    {const base=R['match.result'];R['match.result']=async(d,ctx)=>{d=d||{};try{const L=await store.get('LOBBY#'+d.id,'LOBBY');if(L&&L.seats)d={...d,table:B.tableFix101(d.table,L.seats)}}catch(e){}return base(d,ctx)}}
+    {const base=settleMatch;settleMatch=async function(id,M){const r=await base.apply(this,arguments);try{const M2=await store.get(MK(id),'META');const A=M2&&M2.agreed;
+        if(M2&&M2.ranked&&A&&!A.void&&A.table){const L=await store.get('LOBBY#'+id,'LOBBY');const ab=M2.abandoned||{};
+          const hs=(M2.players||[]).filter(a=>!ab[a]).map(a=>(M2.seats||{})[a]).filter(s=>Number.isInteger(s));
+          const flags=B.tableFlags101(A.table,{team:!!(L&&L.team),humanSeats:hs});
+          if(A.unverified&&(M2.players||[]).length>1)flags.push('unverified');
+          if(flags.length){await store.put('AUDIT#'+id,'A',{flags,ranked:true,humans:(M2.players||[]).length,ev:(L&&L.ev)||null,at:now(),GSI1PK:'AUDIT',GSI1SK:now(),ttl:ttl(90)});try{console.log('[audit101]',id,flags.join(','))}catch(e){}}}}catch(e){}return r}}}
+  /* ══════════ end of v1.01 ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
-  const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);
+  const route=async function(t,d,ctx){const f=typeof t==='string'&&Object.prototype.hasOwnProperty.call(R,t)?R[t]:null; /* v1.01: own routes only (never 'constructor', '__proto__' …) */if(!f)throw fail('unknown_req','Unknown request: '+String(t).slice(0,40));
     if(LIM93){const w=LIM93(ctx.acct||(ctx.guest&&ctx.guest.id)||ctx.conn,t,now());if(w)throw fail('rate_limit','Too many requests — wait a moment.',{wait:w})}
     /* v0.82 guests look, never act — for 2 hours from their first connect */
     if(!ctx.acct&&ctx.guest){if(now()-(ctx.guest.first||0)>C.GUEST_MS)throw fail('guest_expired','Your two hours as a guest are up — sign in to keep watching.');

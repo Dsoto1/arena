@@ -358,6 +358,26 @@ replays); page + mock: `316-v100balonl`. Tests `server/test/v100bal.test.js`. **
 - Switches for tests: `C.BAL100.dent` / `C.BAL100.home` (default on). **Rollback:** redeploy the previous server; dented pieces keep `st 'damaged'`
   and repair at the old `ceil(value × dmg)`; `D.rkg100` is simply ignored.
 
+## v1.01
+
+Shared rules: the "v1.01" section at the end of `111-onlcore`; routes: the "v1.01" block in `routes.js` (just before the general rate limit);
+`index.js` (`requireGoogle`); page + mock: `322-v101onl`. Findings and status: `tools/plans/v101/SECURITY.md`. Tests `server/test/v101.test.js`,
+`tools/tests/tonl101.js`. **No protocol bump** — a match's loadouts come from the host's opening snapshot, so v1.0 and v1.01 pages still share matches.
+
+- **Kits follow the v1.0 loadouts** (315-v100bal): the Damnatio's class kit = Iron Helm + Belt I + padding (`CLASS_KITS92`; `kits92.json` rebuilt by
+  `mkserver`); the page's online `giveLoadout` no longer puts the Falcata back on the Amazonia (322 makes `bal100Old` a plain call). The Issued kit
+  (`ISSUE_W100`) already matched.
+- **Snapshots (S1)**: `match.open` / `match.snap` refuse a state carrying markup that can run script (`C.snapBad101`, code `snap_bad`); the opening is
+  written once (`{kept:1}` after that). **Inputs (S2)**: `match.input` refuses one (`C.inBad101`, code `in_bad`) before it takes a seq. The page cleans every
+  state it loads and every other page's move anyway (`snap101Clean`, `onlmApply` wrapper; kill switch localStorage `flavius_snap101off=1`).
+- **Results (S3)**: the reported table is cleaned against the room's seats (`C.tableFix101`); a settled Ranked table with flags (`C.tableFlags101`:
+  `missing:<seat>`, `multi_win`, `all_won`, `f_high`) or accepted `unverified` with 2+ humans → `AUDIT#<match>` / `A` `{flags, ranked, humans, ev, at}`
+  (GSI1PK `AUDIT`, ttl 90 days) + one `[audit101]` log line. Nothing is refused or paid differently.
+- **Sign-in (S4)**: the template sets `AdminCreateUserConfig.AllowAdminCreateUserOnly` (no self sign-up through Cognito's API) and Lambda env
+  `REQUIRE_GOOGLE` (`true` when Google is configured): `$connect` refuses an ID token without a Google identity (401).
+- **Routes**: only the route table's own names are requests (`constructor`, `__proto__` … → `unknown_req`).
+- **Rollback**: the previous server simply stops checking; `AUDIT#` items expire on their own; `AllowAdminCreateUserOnly` can stay.
+
 ## Versions, deploy, rollout, rollback
 
 - **Protocol** `ONLC.VER` (111-onlcore): `$connect` refuses another version with 426 ("reload"). Bump it only when old clients
