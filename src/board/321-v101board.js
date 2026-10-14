@@ -188,7 +188,7 @@ function bs101Proc(img,sx,sy,sw,sh,f,ax,ay,ppm,mode){
       g.drawImage(src,x,0,1,e,x,0,1,e);
       g.drawImage(src,x,e,1,Tp,x,e,1,Tp*k);
       g.drawImage(src,x,e+Tp,1,Math.max(0,H-e-Tp),x,e+Tp*k,1,Math.max(0,H-e-Tp))}}
-  m.set(key,c);if(m.size>80)m.delete(m.keys().next().value);BS101.stats.proc++;return c}
+  c._off=!!done;/* v1.02 G6: a base-less cell is drawn T lower (feet on the tile floor) */m.set(key,c);if(m.size>80)m.delete(m.keys().next().value);BS101.stats.proc++;return c}
 /* off: flood from the base's outline inward over the base's own colours (a tight tolerance on the flat top, a looser one on the wall: the figure's
    skin / leather is close to the cream top, its ink outline is not); then the outline ring of the base itself (a thin band along the silhouette) */
 function bs101Off(sg,src,c,g,W,H,cx,cyT,rx,ry,Tp){
@@ -220,7 +220,7 @@ function bs101Patch(){if(typeof ctx==='undefined')return;if(!BS101.nat)BS101.nat
     try{let sx=0,sy=0,sw,sh,dx,dy,dw,dh;if(arguments.length>=9){sx=a;sy=b;sw=c;sh=d;dx=e;dy=f2;dw=g;dh=h}else{sw=img.width||img.naturalWidth;sh=img.height||img.naturalHeight;dx=a;dy=b;dw=c;dh=d}
       if(!sw||!sh||!dw||!dh)return BS101.nat.apply(this,arguments);const mode=bs101Mode();if(!mode)return BS101.nat.apply(this,arguments);
       const sc=dw/sw;if(!(sc>0))return BS101.nat.apply(this,arguments);const ax=sx+(F.x-dx)/sc,ay=sy+(F.y-dy)/sc,ppm=F.ppm/sc;
-      const pc=bs101Proc(img,sx,sy,sw,sh,F,ax-sx,ay-sy,ppm,mode);return BS101.nat.call(this,pc,0,0,Math.ceil(sw),Math.ceil(sh),dx,dy,dw*Math.ceil(sw)/sw,dh*Math.ceil(sh)/sh)}
+      const pc=bs101Proc(img,sx,sy,sw,sh,F,ax-sx,ay-sy,ppm,mode);return BS101.nat.call(this,pc,0,0,Math.ceil(sw),Math.ceil(sh),dx,dy+(pc._off&&!window.V102C_OFF?BS101.FAM[F.fam].T*F.ppm:0),dw*Math.ceil(sw)/sw,dh*Math.ceil(sh)/sh)}
     catch(err){return BS101.nat.apply(this,arguments)}}}
 /* off: the soft ground shadow under a token shrinks with the base (it was drawn for the whole disc) */
 if(typeof ell==='function'){const be=ell;ell=function(x,y,rx,ry){if(BS101.f&&bs101Mode()===2){rx*=0.62;ry*=0.62}return be.call(this,x,y,rx,ry)}}

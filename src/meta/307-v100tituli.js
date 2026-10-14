@@ -101,7 +101,7 @@ function tit100PnLoad(){if(TIT100.pnD||TIT100.pnBusy)return TIT100.pnD;TIT100.pn
     TIT100.pnD={A:A||{got:{},events:0,classWins:[]},hall:hall||{locs:[],killed:[]},R:R||null,tro:tro||[]};TIT100.pnBusy=false;
     try{if(typeof MGR!=='undefined'&&MGR.tab==='trophy'&&typeof WD100!=='undefined'&&WD100.tf==='pn'&&typeof MGR_REDRAW==='function')MGR_REDRAW()}catch(e){}}).catch(()=>{TIT100.pnBusy=false});return null}
 async function tit100PnLoadNow(){TIT100.pnD=null;TIT100.pnBusy=false;tit100PnLoad();for(let i=0;i<40&&!TIT100.pnD;i++)await new Promise(r=>setTimeout(r,25));return TIT100.pnD}
-function tit100OnlD(){try{const dg=typeof ONL82!=='undefined'&&ONL82.dg;if(!dg)return null;const got={};for(const t of dg.trophies||[])if(t&&t.k)got[t.k]=t;return {dg,got,glads:dg.glads||[]}}catch(e){return null}}
+function tit100OnlD(){try{const dg=typeof ONL82!=='undefined'&&ONL82.dg;if(!dg)return null;const arr=v=>Array.isArray(v)?v:(v&&typeof v==='object'?Object.values(v):[]);const got={};for(const t of arr(dg.trophies))if(t&&t.k)got[t.k]=t;return {dg,got,glads:arr(dg.glads)}/* v1.02 E1: dg.glads may be an object / missing (Manager mode, Safari) */}catch(e){return null}}
 /* the state of one entry in one mode: {won (text|''), prog [have, need]|null, hint} */
 function tit100State(e,mode,D){const none={won:'',prog:null,hint:''};try{
   if(mode==='manager'){const M=D.mgr;if(!M)return {...none,hint:_T('open a Manager career')};
