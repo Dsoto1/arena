@@ -90,6 +90,13 @@ out.m20=await teamTest(pg);ok(out.m20.have[0]===out.m20.have[2]&&out.m20.have[1]
 /* the kill switch shows the old failure (reproduction) */
 const pg2=await open(true);out.m20old=await teamTest(pg2);out.m2old=await pg2.evaluate(async()=>{const w=W_();const r={max:0};for(let k=1;k<=24;k++){if(BYE_WKS.includes(((k-1)%12)+1))continue;w.week=k;w.night=null;try{makeNight()}catch(e){continue}if(w.night&&w.night.bouts)r.max=Math.max(r.max,w.night.bouts.length)}return r});ok(out.m2old.max>=5,'M2 old behaviour (kill switch) reaches 5 bouts '+JSON.stringify(out.m2old));ok(out.m20old.have[0]===out.m20old.have[2]&&!out.m20old.ok,'M20 old behaviour (kill switch) '+JSON.stringify(out.m20old));
 
+/* M21 · Armory: starters in gold */
+out.m21=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const ros=rosterOf(me()).filter(x=>!x.inj);if(typeof st95Ensure==='function')st95Ensure(me());MGR.tab='armory';MGR_REDRAW();await W8(600);
+  const st=new Set(rosterOf(me()).filter(x=>x.slot95>=1&&x.slot95<=3).map(x=>x.id));const tiles=[...document.querySelectorAll('#mgrBody .ar94g[data-ar94g]')];
+  const gold=tiles.filter(t=>t.classList.contains('st102')).map(t=>t.dataset.ar94g);const bad=tiles.filter(t=>t.classList.contains('st102')!==st.has(t.dataset.ar94g)).length;
+  const glow=gold.length?getComputedStyle(document.querySelector('.ar94g.st102')).boxShadow:'';return {n:tiles.length,starters:st.size,gold:gold.length,bad,glow:/rgb/.test(glow)}});
+ok(out.m21.n>0&&out.m21.starters>0&&out.m21.gold===Math.min(out.m21.starters,out.m21.n)&&!out.m21.bad&&out.m21.glow,'M21 armory starters in gold '+JSON.stringify(out.m21));
+
 for(const p of [pg,pg2])out.errs=(out.errs||[]).concat(await p.evaluate(()=>typeof errNew92==='function'?errNew92(window.RM_MARK).map(e=>e.kind+':'+e.msg):[]));
 ok(!out.errs.length,'00c errors '+JSON.stringify(out.errs));
 console.log(JSON.stringify(out,null,1).slice(0,3500));console.log('PAGEERRS',JSON.stringify(errs));console.log('MISS',JSON.stringify(miss));

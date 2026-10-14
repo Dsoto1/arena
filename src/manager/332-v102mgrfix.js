@@ -1,4 +1,5 @@
 /* v1.02 (332-v102mgrfix) · MANAGER FIXES — his v1.01 notes, workstream A (tools/plans/v102/NOTES.md). Kill switch localStorage flavius_v102aoff=1.
+   M21 (his ask 2026-10-14): Armory fighter list — the 3 starters (g.slot95 1–3) wear a gold border + soft glow (.ar94g.st102) and their bout numeral.
    M1  Regrow a lost limb: ONE limb a week per fighter; Hygeia's operation is booked (g.rg102 {wk,l}, 318's care101Do) and the limb is back only when
        that week ENDS (endWeek wrapper, undone if the week did not turn); the following week +20 fatigue per limb. The cure tile says so.
    M2  No 5-bout Match Week: when the week's fixture already became a headline special, the editor adds no second one (any100Make wrapper) — at most
@@ -97,3 +98,11 @@ try{if(typeof ROUT87_SUB!=='undefined')ROUT87_SUB.care=_T("2 of the Training Yar
 .rm100plt.off .v102why,.plantile.off .v102why{display:block;font-size:11px;color:#f09a88}
 `;document.head.appendChild(st)}
 }
+
+/* M21 · Armory: starters in gold (display only) */
+if(V102A.on){const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);
+  if(typeof MGR==='undefined'||MGR.tab!=='armory'||typeof h!=='string')return h;
+  return h.replace(/class="ar94g ?(on)?" data-ar94g="([^"]+)"/g,(m,on,id)=>{const g=typeof gById==='function'?gById(id):null;const sl=g&&g.slot95;
+    return sl>=1&&sl<=3?`class="ar94g${on?' on':''} st102" data-ar94g="${id}" data-st102="${['I','II','III'][sl-1]}"`:m})};
+ const st=document.createElement('style');st.textContent=`.ar94g.st102{border-color:#d4a73c!important;box-shadow:0 0 0 1px #d4a73c,0 0 10px rgba(212,167,60,.45);position:relative}
+.ar94g.st102::after{content:attr(data-st102);position:absolute;top:2px;right:5px;font:700 10px var(--serif,Georgia),serif;color:#f2d27a}`;document.head.appendChild(st)}
