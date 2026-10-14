@@ -40,6 +40,7 @@ if [ "${REG:-ci}" = "local" ]; then node tools/smartreg.js --full ${REGJ:+-j $RE
 else echo "on GitHub Actions: push the release commit, then wait for the 'regression' run to go green (REG=local runs it here)"; fi
 step "4b advert shot (play.html)"
 mkdir -p share && node tools/siteshot.js "$PWD/flavius-arena.html" share/arena_shot.png | tail -1
+node tools/sitewhatsnew.js || true
 python3 -c "from PIL import Image;im=Image.open('share/arena_shot.png').convert('RGB');im=im.resize((1200,round(im.height*1200/im.width)),Image.LANCZOS);im.save('share/arena_shot.webp',quality=82,method=6)" && rm -f share/arena_shot.png
 echo "share/arena_shot.webp → the game zip's play/arena_shot.webp (flavius.sh game uploads it; play.html shows it)"
 cp share/arena_shot.webp tools/deploy/arena_shot.webp   # committed: flavius.sh release fetches it from GitHub
