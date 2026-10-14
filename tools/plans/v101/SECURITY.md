@@ -37,3 +37,5 @@ that deploy updates the stack).
 - `server/src/index.js`: `requireGoogle` (env `REQUIRE_GOOGLE`); `server/template.yaml`: `AllowAdminCreateUserOnly`, `REQUIRE_GOOGLE`.
 - `src/322-v101onl.js`: the page's snapshot / input cleaner, the mock's matching refusals.
 - Server texts: `node tools/i18n/srvtext93.js` (3 new refusal texts → `texts93.json`, `223a-v93srvtext.js`; translations follow with the release's language pass).
+
+Lead note (2026-10-14): AllowAdminCreateUserOnly was taken back out of template.yaml before release — REQUIRE_GOOGLE at $connect already refuses non-Google tokens, and the pool setting risked blocking new Google sign-ups (Cognito federation behaviour not verifiable from here). Scripted pool sign-ups stay possible but cannot connect.

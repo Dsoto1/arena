@@ -88,8 +88,6 @@ Resources:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: flavius-arena-players
-      # v1.01 security pass S4: nobody signs up through the open SignUp API (Google federation still creates its users)
-      AdminCreateUserConfig: {AllowAdminCreateUserOnly: true}
       UsernameAttributes: [email]
       AutoVerifiedAttributes: [email]
       Schema:
