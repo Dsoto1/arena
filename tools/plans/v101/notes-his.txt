@@ -1,0 +1,319 @@
+     Manager Mode:
+     -Received a letter that said:
+     You have 0 fit fighters. Sign or heal one this week, or the house loses 8 fame
+     and the editor fills your places.
+     Name no one and the Consilium sends your best two.
+     So I am not sure based on what this letter said: do i lose 8 fame and editor lls my places or is
+     it the consilium sends our best two? I would think its the rst one
+     -Setting my lineup for match week, after choosing from the modal, the portraits that appear of
+     the selected gladiator are blurry.
+     -Manager mode>hard setting should not show which recruiting/scouting button is advised
+     unless they have a top level advisor for recruiting.
+     -when o ering a contract to a recruit, what does “🗡 Promise the rudis path (+14)” mean
+
+
+                                   -on the recruiting image, the green box shows empty space(i am
+                                   using full screen on macbook). We need the recruit list to span
+                                   that empty space.
+                                   -same screen, the stable tab does not look good, columns
+                                   overlapping/text not tting
+                                   -in recruiting, the tab should always default to Free Agents. I
+                                   clicked a letter about a good deal on a recruit but when it took me
+                                   to recruiting i was still looking at the Stable Tab(not sure we need
+                                   this tab anymore, thoughts?)
+                                   -For the imperium/empire map, i turned o all the buttons but still
+                                   saw those icons? Are they for recruiting?
+                                   -i feel like the Season tab should go in the League tab as a simple
+                                   button on the banner
+                                   -in the league tab, the team cards that appear on the right side
+                                   when clicking on a team show: Scout, Challenge, Team Screen. I
+                                   would rather not confuse scouting here with scouting for recruiting
+                                   free agents. I think the idea of scouting another team should really
+     be to simply click into a team and look at their ratings. Given this, the ‘scouting’ button should
+     be removed from those compact team cards. Also since Challenge is also the exhibition button
+                                   on their main team screen, lets remove that button as well and
+                                   push them to click the “Team Screen” (Should say “Team Details”)
+
+
+                                        -My Ludus>Promote should just open a small popup window/
+                                        screen to choose what to promote, instead of opening at the
+                                        bottom. The Clerk has the ledger, maybe we can integrate that
+                                        into their initial advisor popup vs showing at the bottom.
+
+
+                                        -manager mode>my ludus; advisors and consilum council sound
+                                        the same, maybe we nd way to blend those.
+
+                                        -manager mode: if not already, i should not be be able to start/
+                                        enter a gladiator that is using an in rmary bed or has too severe of
+                                        an injury. I think it would make sense to not allow them to ght if
+                                        they are missing any limbs. If i have a ghter that ‘resting’ only and
+                                        i start them, it should stop them from ‘resting’, and vice versa.
+                                                                                    -Clicking any of the in rmary care
+                                                                                    options ickers the nav bar(the
+                                                                                    number for recruiting hours
+                                                                                     ickers)
+
+
+
+
+                    -the in rmary banner should incorporate/integrate the ‘hire a house medicus’ section into the
+                    banner. Let’s clean up the redundant information and move the Hygeia blessings button into
+                    that new part of the banner layout. (feel free to propose a di erent location for this). As a
+                    manager i really need to know these values: how many injured, how many beds, how much left
+                    do i have to work with this week. With this system using only coin, i think it could bene t the
+                    wealthy teams more than the poor, which begs the question, do we need ‘In rmary Hours’
+                    brought back, with the value derived from the facility level and doctor/medicus’ on duty? I
+                    could be completely o base, help me bring this idea together if im missing something or it
+                    could use improvement.
+
+
+
+
+                    -Clicking the consilium advisor shows the old advisor/tasks in manager mode. How can we
+                    update/integrate this better. I don’t want anything to show below the new advisor panels, i like
+                    that they pop up.
+
+                    - manager mode; the armory, in upper right, it says i have 13 pieces on the shelf, but there is
+                    also something below it that says, spares on the shelf, which i can apparently buy? Help me
+                    make sense of this.
+
+                    -manager mode>in rmary>The list view of injured gladiators seems scrunched, and the t and
+                    fresh list can default open(not collapsed). The care tiles need more variety of art and only span
+                    1 row, not wrap to another. “Take Out” could be integrated into the list view(once put in bed)
+                    instead of he care tiles. *notice the art for the tiles(in screenshot) are same for several di erent
+                    options? There should logical order of care when gladiators come back with certain nunmber
+                    and type of injuries. How can we improve the in rmary care loop?
+
+                    -manager mode, recruiting hours. I have 8 gladiators signed, a few injured, and now 20+hrs of
+                    recruiting each week. It could make sense to ‘scout’ 4-5 at any given time, that way giving
+                    them an o er is not far o but I think the hours should scale based on how many gladiators are
+                    rostered on the team(how much the team needs more bodies). Why would i want to have 10+
+                    gladiators and tons more being recruited? i can only eld(at most) 4 a week, so bad weeks i
+                    could lose as many. We should nd a healthy balance so teams who want to focus on their
+                    already rostered team can do so, and those who are in need have the ‘resources’ available to
+                    get it done. I guess we would need a scale based on a roster’s size, and i would think 10
+                    gladiators on team is what most should strive for(4-5 ready to start at any given time, rest
+                    waiting in the wing, some being loaned, etc). I would think most up and coming teams would
+     start small 2-3 max and try to build up solid wins or placings so they can improve their team
+     facilities and gladiators. Those small teams would have to be calculated in which bouts to
+     enter, meanwhile larger teams can a ord to toss their ghters in more often. Maybe we also
+     need a limit to how many bouts a team can enter into since larger teams would e ectively have
+     more wins in than smaller teams due to sheer volume, thought i am not sure how we balance
+     that out.
+
+     -manager mode>recruiting; if a recruit is ready to sight as i am pitching, the o er tab should
+     pulse/glow so i know i can try to send them an o er.
+
+     -manager mode; when looking at a rostered gladiator or another team, need to rework the
+     design for team correspondence windows to match how we have been updating elsewhere.
+     The “keeping him’ options(for my own team) could use an update as well.
+
+
+
+
+                                                                               -manager mode>league>we
+                                                                               can widen the team cards on
+                                                                               the right side of this page. I
+                                                                               drew green lines showing
+                                                                               where we can take advantage
+                                                                               of the empty space to
+                                                                               accommodate.
+
+
+                                                                         -while a gladiator was in a bed
+                                                                         in the in rmary, i also had a
+                                                                         letter saying they are without
+                                                                         armor or weapons. That should
+     only appear for healthy gladiators not in in rmary bed who also have no weapons or armor on.
+     Also, i should not even be able to put armor or weapons on gladiators in the in rmary(in bed,
+     etc), the armory should have them disabled from the selectable options.
+     -in manager mode, loaned gladiators should only be loaned out with padded leg or arm armors
+     and a gladius(we can call it the loaner kit). It is up to the manager to change/add to their
+     equipment. Any items of what the kit provided that get replaced go to the system’s ether, not to
+     anyone’s shelves. If they are loaned with equipment, it is left behind in the armory of their main
+     house.
+     -i think we could move ‘the recruiting board’ to below the banner. I think ‘this week’ could be
+     removed(it may show up in the ledger anyways).
+
+
+     -in rmary, the care options sometimes dont give any visual feedback when i select them(such
+     as care routine/resting. And to be honest, i am not sure what some of the care routines are
+     even providing for my team. I feel like my only use of this tab to put injured dudes in beds and
+     hope i have coin to heal them. Everything else is largely forgotten or unnoticed. How can we
+     improve this?
+
+     -manager mode>special event, juggarnaut, the bout lled up for the sunday event, and it said i
+     could enter my ghter, i had made enough from previous bouts, but it said all seats were taken.
+     I would still like to be able to enter my gladiator the ‘day of’.
+
+     -manager mode, match week, if my gladiator earns any coin for the team via a top 3 nish, i
+     should see it in the results details.
+     -manager mode, after match week is done(all events for the week), i try to end week but get
+     notice my armor needs repairing. I should not receive that rst notice and any further of those
+     armor notices until the following week begins.
+
+     -manager mode; i should only be able to upgrade any facility through their respective advisor.
+     ex. Valetudinarium is upgradable directly in the in rmary tab as one of the care options.
+
+     -it is kinda odd to use training hours in the Valetudinarium/in rmary. I personally get it, but
+     maybe those options should remain in the training facility and be incorporated more
+     thematically/logically. I also don’t really know what rub down or care routine does, those also
+     feel out of place. CLEARED FOR THE SAND also feel redundant to the list view we already see.
+
+     -manager mode>match week; when my ghters dont ‘ t’/‘none of them t’ the bout, i would
+     like to know why.
+
+     -the lanista tab and banner could also have unused perk poiints displayed. The trophies nav
+     tab can show a value for any trophies the manager has not seen yet, once they visit the page
+     and click the trophy they won, it should remain. does that make sense?
+
+     -the trophies tab can be renamed to Tituli and the glass case moved to its own tab within. We
+     dont need to list the trophies again below the glass case, but make sure we integrate any of
+     the data from the old into the new ones, such as CF, Coin, and Fame earned when won. Does
+     it make sense anymore that we give out CF for those trophies in manager mode?
+
+     -one of my solider class gladiators was called to war while they were in the in rmary bed. i had
+     to let them go since i could not pay. Not only are they at war without an arm and leg, but
+     simultaneously occupying an in rmary bed. We should not have any injured gladiators get
+     called for duty and if any go o to war, make sure they give up their in rmary bed and armor/
+     weapons and o erings to the armory. i also should not be able to train or really do much with a
+     gladiator that is o to war(similar to loans).
+
+     -match night, the banner card in upper right that shows the cards, do not wrap to a new row,
+     just move them all to the left if there is ever a 4th event that needs to t.
+
+     -if one of my gladiators asks for a ght and match week concludes, their task asking for it
+     should be gone. any positive or negative a ects from these types of things should not trigger
+                                                                  until the week ends and resolves.
+                                                                  Other mail and tasks should have
+                                                                  logic baked in so it knows when it
+                                                                  cannot be accomplished or has
+                                                                  already been and queue up any
+                                                                  rewards or penalties respectively.
+                                                                  This could be added to those
+                                                                  weekly reports, shows not only our
+                                                                  roster improvements, but things
+                                                                  that cost us or earned us anything.
+
+                                                                 -my manager mode treasury is in
+                                                                 the negative and i see it showing
+                                                                 that info bar at the bottom of My
+                                                                 Ludus. it should be in a more
+                                                                 prominent location such as the
+                                                                 other bars that popup right above
+     the my ludus banner such as those blue notes.
+
+     -city centers>training yard and my own lanista still uses old character tokens, not the new 3d
+     ones(we can use a similar spectator model for my lanista). they also look massive compared to
+     some of the buildings and structures, can we scale them down as if they could t through
+     those building doors?
+
+     -manager mode tasks, instead of getting N+ individual tasks from each advisor(had 3 for
+     di erent recruits i needed to make o ers on, 2 for healed ones that needed to re equip
+     weapons, 2 for the same guys to reequip their armors. I think we need to just get 1 detailed
+     report from each advisor that includes these types of things in one task/letter for that week. we
+     shouldn’t have to scroll and see 4 of the same tasks, instead it should be 1 report that has all
+     listed.
+
+     -one of my gladiators entered in an event with 1 leg left, but by turn 2 draw a card to regrow
+     that leg. we went on to nish 2nd but again lost some limbs in the process. I healed this
+     gladiator in the in rmary(got their limbs back) but when i try to equip leg armor, only 1 goes on.
+     not sure if thats because of all the back and forth with their limbs.
+
+     -have a task that says i have 18 unspent trainings hours. when i clicked it, took me to the
+     in rmary page. I clicked training yard to check it out, and no longer could replicate it.
+
+
+     -manager mode>season; my acta should show all the results for my team most importantly,
+     along with any purse or league points we earned. I am not sure what the my acta is trying to
+                                 show me, i mainly want to see how any of my gladiators
+                                 performed and what they brought back to the team from
+                                 participating in events.
+
+
+                                  -incorporate the payments for sica syndicate loans to the clerk
+                                  advisor. They can be the ones to remind us.
+
+                                  i clicked an advisor, then clicked another button entirely(mail) and
+                                  the advisor popup remained open. We would always close an
+                                  opened popup when clicking another button or tab.
+          GENERAL:
+          Labyrs can be used for one or both attacks. That does not mean they cannot hold a 2nd
+          weapon or a shield in their other hand. It just means if both attacks are used by the Labyrs, the
+          other weapon cannot be used for an ‘attack’. If the 2nd weapon is a shield, they can still use it
+          for absorbs when attacked.
+
+          -learn to play tutorial has a new coach instead of avius but sometimes i see text like this: “I
+          am Flavius, editor of these games.”. Let’s just have a uni ed coach for both with the same
+          name, “Terynious Tutorialis”. learn to play 5/18 - i can topple the pillar and the o ering falls a
+          few tiles away, rendering the text explaining them disjointed due to it thinking we already have
+          the o ering.
+
+          -play not has an X and Back. Lets keep only “Back” and remove the extra text of it that is in the
+          bottom right of that popup.
+
+          -the new spectators all face the wrong way.
+
+          -daily/weekly challenges from play now should never be allowed to be simulated or handed o
+          to CPU. users should also not be able to watch the replay or see the seed number, we want
+          this to be an actual challenge for anyone who attempts.
+
+          -3d token animations
+                   -we do not need the active breathing animation. We only want that emphasized if at all,
+          in the actions they do, to bring life to them. the animations should only really show when there
+          is something worth animating for the players to see, such as when a player clicks and
+          attacks(swing sword, shoot arrow, etc), when they move around, push, etc., o erings toss in,
+          etc.
+          -i also see some gladiators doing other animations on the turn of another player, or after they
+          attack something, some kinda of crouch or hide, the beasts do some movement too. Can you
+          make a list of all the animations in the game and categorize them respectively. I will be making
+          more animation cuts.
+          -3d Token corpses need to replace the old token corpses. Sometimes it takes too long to
+          redraw the severed limb, maybe we can try a di erent technique instead of ashing the old
+          tokens while it loads, maybe we just don’t update the token when it has a severed limb until
+          the system gives green light to show the render?
+          -the solder token appears instead of the 3d token(when severed arm or leg)
+          -the sword swipe animation needs work with a slash visual e ect. maybe it could use a few
+          di erent swipe animations, pokes, overhead, slash down, across, let it be relatively random
+          animation when a sword swipe happens. For spear, tridents, weighted pilum, jade spear, those
+          should have a poke animation for the basic attack and a throw animation when actually
+          throwing.
+          -do famous spectators use 3d tokens too?
+     -the walking animation looks a little robotic, needs to be a smoother more cautious creep to
+     each tile.
+
+     -arrows and other projectiles may need a visual uplift to blend in better with the new
+     animations and 3d tokens.
+
+     -the ags shouldnt be waving and oating above the stadium, lets just put them in the
+     spectators hands. There can be a seated state where they hold it and a standing up cheering
+     state.
+     -when setting up a new event in play now, when i hover over the x in the upper right of window,
+     it says “save career…”. Let’s instead have the button be the main menu button/icon/symbol we
+     already see elsewhere(events show it in upper right)
+
+     -online>lobby browser>move the join by FID over to the right, to the left the other buttons,
+     update the buttons to be same style as other menu(sandstone, main menu, etc), make join by
+     FID much less prominent.
+
+     -the throw icon that shows up on the weapon for the action bar is not correct, its currently
+     using the icon that represents a weapon that can be used for both attacks. Look at the weapon
+     icon set and make sure we use the proper ‘throw’ icon.
+
+     -when looking at the play now new event screen, move the bar/row for challenges into a tab on
+     the same page(next to tournaments). Move the date for the empire calendar into the options
+     section for “follow” the schedule.
+
+     -for character and best token minis in the arena, the bases are a little thick(tall), can we thin
+     them by 15%?. can we also add a toggle in settings to remove the base from tokens?
+
+     -when clicking zoom in or zoom out, the game locks up for short time before continuing.
+     should we preemptively remove zooming in for online play??
+
+     -i think we should have spectator speech/thought bubbles rate limited but in a natural way. I
+     think we can prevent the game from slowing if we cascade their reactions to some extent.
+
+     -when minerva’s push is used by a user, can we show them visualization of the arena tile
+     options they have inside their popup?
+
