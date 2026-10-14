@@ -1245,6 +1245,7 @@ const WEAKNESSES = {
 /* weak — true if the player's class has weakness k (a custom character's own weak field, else CLASS_WEAK). */
 const weak = (player, k) => {
   if (!player) return false;
+  if (player.wk102 != null) return player.wk102 === k; /* v1.02 (338): an ability pair carries its own class's weakness */
   const C = CLASSES[player.cls];
   return (C && C.weak || CLASS_WEAK[player.cls] || 'none') === k;
 };

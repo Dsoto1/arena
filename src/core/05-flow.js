@@ -476,7 +476,7 @@ async function startEvent(config) {
     }
   }
   if (ev.draft) await runDraft();
-  else if (typeof dr102On === 'function' && dr102On()) await draft102Run(); /* v1.02 (338): the Play Now Draft switch */
+  else if (typeof dr102On === 'function' && (dr102On() || dr102Pair())) await draft102Run(); /* v1.02 (338): the Play Now Draft switch */
   if (ev.kind === 'chariot') await chariotDraft();
   if (G !== S || S.over) return; // v0.89: an event called off during its draft stops here
   if (config.opts.carmina || S.fest && S.fest.stage === 1) await runCarmina();
