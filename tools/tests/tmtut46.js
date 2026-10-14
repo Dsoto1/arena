@@ -49,7 +49,7 @@ for(let iter=0;iter<140;iter++){const s=await step();if(s<0)break;
    case 39:await clk('[data-mg="tab"][data-id="sched"]');break;
    case 41:await clk('[data-mg="endask"]');break;
    case 42:await clk('[data-mg="endweek"]');await pg.waitForTimeout(3000);break;
-   case 43:await pg.screenshot({path:'mt_paper.png'});await clk('#mgrPane [data-mg="tab"][data-id="ludus"]');await pg.waitForTimeout(1200);break;
+   case 43:await pg.screenshot({path:'mt_paper.png'});await clk('.mtabs [data-mg="tab"][data-id="ludus"]')||await clk('[data-mg="tab"][data-id="ludus"]') /* v1.02 342: the paper has no Start-next-week button — the rail's Your ludus */;await pg.waitForTimeout(1200);break;
    default:await pg.waitForTimeout(500);}
   if(log.length>3&&log.slice(-4).every(x=>x===log[log.length-1])){await pg.screenshot({path:'mt_stuck.png'});break}
 }

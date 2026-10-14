@@ -14,7 +14,7 @@ out.m=await pg.evaluate(async()=>{newWorld({type:'custom',mgr:{name:'T',ludus:'L
   p=R('night');r.noExch=!p.querySelector('.exch');
   calSet(w.season,((w.week-1)%12)+4);p=R('ludus');r.lag=!!p.querySelector('.lagbox');
   const t0=Date.now();const cr=await catchUpWeeks();r.catch={...cr,heads:undefined,ms:Date.now()-t0};r.lagAfter=calLag();
-  p=R('paper');r.darwin=p.innerHTML.includes('DARWINIUS');r.nextAfterOverheard=p.innerHTML.indexOf('OVERHEARD')<p.innerHTML.indexOf('NEXT WEEK');
+  p=R('paper');r.darwin=/DARWINIUS/i.test(p.innerHTML);r.nextAfterOverheard=p.innerHTML.toUpperCase().indexOf('OVERHEARD')<p.innerHTML.indexOf('NEXT WEEK') /* v1.02 342: mixed-case heads */;
   r.exchWhen=betlogLoad().slice(-3).map(x=>x.date);
   return r});
 await pg.screenshot({path:'shot_paper24.png'});
