@@ -179,9 +179,11 @@ if(!V102C.off&&typeof sd100CSS==='function'){const st=document.createElement('st
 #modal:not(.sand100):not(.bf100) #mClose:not(.saveq):active{transform:translateY(1px)}
 #modal:not(.sand100):not(.bf100) #mClose:not(.saveq):focus-visible{outline:2px solid #fff2be;outline-offset:2px}
 /* the labelled closers + the in-match bar button: compact slabs */
-html.sd100on:is(#sd100i,html) #modal #mClose.saveq{--sdh:34px;--sdf:13px;padding:3px 14px;float:right;margin:-6px -8px 0 10px}
+html.sd100on:is(#sd100i,html) #modal #mClose.saveq{--sdh:38px;--sdf:13px;padding:3px 14px;float:right;margin:-6px -8px 0 10px}
 html.sd100on:is(#sd100i,html) #btnOnlLeave{--sdh:32px;--sdf:12.5px;padding:2px 12px;min-height:32px}
 html.sd100on:is(#sd100i,html) #onl .sb102 .sb100nav .btn{--sdh:32px;--sdf:16px;padding:0 12px;min-width:38px}
+/* phones: the Gambit's long 'Fix the bout' line wraps inside its card (it ran 250 px off the window) */
+#mgrBody .acts>.btn[data-mg="rig"],#mgrBody .acts>.btn[data-mg="rig"] small{white-space:normal;max-width:100%;box-sizing:border-box;overflow-wrap:anywhere;text-align:left}
 /* O1 — the Season banner */
 #onl .sb102{display:block;max-width:980px}
 #onl .sb102 .onl-lbtop{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin:0 0 4px}
