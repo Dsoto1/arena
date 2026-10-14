@@ -57,7 +57,7 @@ const SHADE = 'brightness(0.8) contrast(1.14) saturate(0.88)';   /* the darker p
 
 /* ---------------- helpers ---------------- */
 let TOK = null, REND = null, DRESS = [];
-async function tok() { if (!TOK) TOK = await createToken({}); return TOK; }
+async function tok() { if (!TOK) TOK = await createToken({ scale: 1.15 }); return TOK; }   /* v1.02: the v1.0 figure size (the board tokens moved to FIG_SCALE) */
 function renderer(w, h) { if (!REND) { REND = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); REND.outputColorSpace = THREE.SRGBColorSpace; REND.setClearColor(0x000000, 0); REND.setPixelRatio(1); }
   REND.setSize(w, h, false); return REND; }
 function alphaBox(c) { const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1;

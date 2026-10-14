@@ -1,583 +1,583 @@
 {
  "soldier_move": {
-  "kb": 146.6,
-  "w": 656,
-  "h": 1066,
+  "kb": 97.6,
+  "w": 560,
+  "h": 763,
   "cells": 72,
-  "decodedKB": 2569,
-  "ms": 14442
+  "decodedKB": 1649,
+  "ms": 18966
  },
  "soldier_act": {
-  "kb": 735.2,
-  "w": 1088,
-  "h": 5422,
+  "kb": 464.7,
+  "w": 704,
+  "h": 3941,
   "cells": 368,
-  "decodedKB": 14177,
-  "ms": 70854
+  "decodedKB": 8677,
+  "ms": 81505
  },
- "totalKB": 7322,
+ "totalKB": 4546,
  "pxmm": 2.6,
  "q": 0.8,
  "hero_move": {
-  "kb": 169.3,
-  "w": 640,
-  "h": 1120,
+  "kb": 102.2,
+  "w": 560,
+  "h": 782,
   "cells": 72,
-  "decodedKB": 2662,
-  "ms": 18484
+  "decodedKB": 1691,
+  "ms": 26793
  },
  "hero_act": {
-  "kb": 815.2,
-  "w": 1088,
-  "h": 5599,
+  "kb": 486.7,
+  "w": 704,
+  "h": 3968,
   "cells": 368,
-  "decodedKB": 15694,
-  "ms": 74262
+  "decodedKB": 8711,
+  "ms": 167352
  },
  "slave_move": {
-  "kb": 167.7,
-  "w": 672,
-  "h": 1161,
+  "kb": 98.5,
+  "w": 560,
+  "h": 873,
   "cells": 72,
-  "decodedKB": 2920,
-  "ms": 21806
+  "decodedKB": 1890,
+  "ms": 37819
  },
  "slave_act": {
-  "kb": 858.6,
-  "w": 1088,
-  "h": 5782,
+  "kb": 509.6,
+  "w": 880,
+  "h": 4280,
   "cells": 368,
-  "decodedKB": 19671,
-  "ms": 83421
+  "decodedKB": 10084,
+  "ms": 172601
  },
  "royalty_move": {
-  "kb": 147.6,
+  "kb": 96.1,
   "w": 560,
-  "h": 1125,
+  "h": 783,
   "cells": 72,
-  "decodedKB": 2441,
-  "ms": 15507
+  "decodedKB": 1693,
+  "ms": 31393
  },
  "royalty_act": {
-  "kb": 753,
-  "w": 1088,
-  "h": 5566,
+  "kb": 457.9,
+  "w": 656,
+  "h": 3899,
   "cells": 368,
-  "decodedKB": 13406,
-  "ms": 68864
+  "decodedKB": 8463,
+  "ms": 162213
  },
  "amazonia_move": {
-  "kb": 149.5,
+  "kb": 100.6,
   "w": 560,
-  "h": 1044,
+  "h": 792,
   "cells": 72,
-  "decodedKB": 2264,
-  "ms": 14028
+  "decodedKB": 1713,
+  "ms": 37895
  },
  "amazonia_act": {
-  "kb": 719.7,
-  "w": 1088,
-  "h": 5312,
+  "kb": 470.8,
+  "w": 720,
+  "h": 3986,
   "cells": 368,
-  "decodedKB": 13090,
-  "ms": 131955
+  "decodedKB": 8756,
+  "ms": 158072
  },
  "veteranus_move": {
-  "kb": 155.3,
-  "w": 656,
-  "h": 1038,
+  "kb": 96.9,
+  "w": 560,
+  "h": 747,
   "cells": 72,
-  "decodedKB": 2501,
-  "ms": 36353
+  "decodedKB": 1614,
+  "ms": 36317
  },
  "veteranus_act": {
-  "kb": 731.8,
-  "w": 1088,
-  "h": 5347,
+  "kb": 463.6,
+  "w": 704,
+  "h": 3897,
   "cells": 368,
-  "decodedKB": 13930,
-  "ms": 318082
+  "decodedKB": 8571,
+  "ms": 116991
  },
  "venatore_move": {
-  "kb": 151.5,
+  "kb": 99.6,
   "w": 560,
-  "h": 1161,
+  "h": 861,
   "cells": 72,
-  "decodedKB": 2520,
-  "ms": 100331
+  "decodedKB": 1864,
+  "ms": 21844
  },
  "venatore_act": {
-  "kb": 783.7,
-  "w": 1088,
-  "h": 5764,
+  "kb": 485.3,
+  "w": 864,
+  "h": 4242,
   "cells": 368,
-  "decodedKB": 18728,
-  "ms": 356955
+  "decodedKB": 9909,
+  "ms": 114645
  },
  "damnatio_move": {
-  "kb": 143.8,
+  "kb": 86,
   "w": 560,
-  "h": 1046,
+  "h": 738,
   "cells": 72,
-  "decodedKB": 2268,
-  "ms": 70287
+  "decodedKB": 1595,
+  "ms": 32255
  },
  "damnatio_act": {
-  "kb": 693.4,
-  "w": 1088,
-  "h": 5256,
+  "kb": 430.3,
+  "w": 656,
+  "h": 3705,
   "cells": 368,
-  "decodedKB": 12110,
-  "ms": 318087
+  "decodedKB": 8028,
+  "ms": 123990
  },
  "sev_soldier_rarm_move": {
-  "kb": 65.5,
+  "kb": 42.1,
   "w": 560,
-  "h": 592,
+  "h": 425,
   "cells": 40,
-  "ms": 12396
+  "ms": 16516
  },
  "sev_soldier_rarm_act": {
-  "kb": 52.8,
-  "w": 944,
-  "h": 403,
+  "kb": 30.7,
+  "w": 592,
+  "h": 292,
   "cells": 32,
-  "ms": 7505
+  "ms": 9461
  },
  "sev_soldier_larm_move": {
-  "kb": 69.3,
-  "w": 656,
-  "h": 592,
+  "kb": 43.4,
+  "w": 560,
+  "h": 425,
   "cells": 40,
-  "ms": 9523
+  "ms": 15159
  },
  "sev_soldier_larm_act": {
-  "kb": 56,
-  "w": 1024,
-  "h": 419,
+  "kb": 30.4,
+  "w": 656,
+  "h": 305,
   "cells": 32,
-  "ms": 7901
+  "ms": 10093
  },
  "sev_soldier_rleg_move": {
-  "kb": 72.7,
-  "w": 704,
-  "h": 595,
+  "kb": 44.5,
+  "w": 560,
+  "h": 426,
   "cells": 40,
-  "ms": 9884
+  "ms": 14119
  },
  "sev_soldier_rleg_act": {
-  "kb": 55.1,
-  "w": 1024,
-  "h": 422,
+  "kb": 32,
+  "w": 656,
+  "h": 308,
   "cells": 32,
-  "ms": 8323
+  "ms": 10304
  },
  "sev_soldier_lleg_move": {
-  "kb": 72.5,
-  "w": 624,
-  "h": 595,
+  "kb": 44,
+  "w": 560,
+  "h": 426,
   "cells": 40,
-  "ms": 9137
+  "ms": 11470
  },
  "sev_soldier_lleg_act": {
-  "kb": 54.9,
-  "w": 1024,
-  "h": 417,
+  "kb": 32,
+  "w": 656,
+  "h": 305,
   "cells": 32,
-  "ms": 7016
+  "ms": 8240
  },
- "sevTotalKB": 4066,
- "sevQ": 0.7,
+ "sevTotalKB": 2010,
+ "sevQ": 0.6,
  "sev_hero_rarm_move": {
-  "kb": 81,
-  "w": 608,
-  "h": 625,
+  "kb": 45.9,
+  "w": 560,
+  "h": 435,
   "cells": 40,
-  "ms": 10851
+  "ms": 10714
  },
  "sev_hero_rarm_act": {
-  "kb": 59.7,
-  "w": 1088,
-  "h": 426,
+  "kb": 33.8,
+  "w": 688,
+  "h": 301,
+  "cells": 32,
+  "ms": 7349
+ },
+ "sev_hero_larm_move": {
+  "kb": 44.9,
+  "w": 560,
+  "h": 435,
+  "cells": 40,
+  "ms": 13013
+ },
+ "sev_hero_larm_act": {
+  "kb": 32.9,
+  "w": 624,
+  "h": 305,
+  "cells": 32,
+  "ms": 10205
+ },
+ "sev_hero_rleg_move": {
+  "kb": 42.5,
+  "w": 560,
+  "h": 437,
+  "cells": 40,
+  "ms": 13909
+ },
+ "sev_hero_rleg_act": {
+  "kb": 34.2,
+  "w": 688,
+  "h": 308,
+  "cells": 32,
+  "ms": 10401
+ },
+ "sev_hero_lleg_move": {
+  "kb": 46.2,
+  "w": 560,
+  "h": 436,
+  "cells": 40,
+  "ms": 10020
+ },
+ "sev_hero_lleg_act": {
+  "kb": 34.1,
+  "w": 688,
+  "h": 305,
+  "cells": 32,
+  "ms": 9711
+ },
+ "sev_slave_rarm_move": {
+  "kb": 40.4,
+  "w": 560,
+  "h": 410,
+  "cells": 40,
+  "ms": 12307
+ },
+ "sev_slave_rarm_act": {
+  "kb": 31.5,
+  "w": 736,
+  "h": 292,
+  "cells": 32,
+  "ms": 9139
+ },
+ "sev_slave_larm_move": {
+  "kb": 44.2,
+  "w": 560,
+  "h": 485,
+  "cells": 40,
+  "ms": 13096
+ },
+ "sev_slave_larm_act": {
+  "kb": 33.9,
+  "w": 672,
+  "h": 336,
+  "cells": 32,
+  "ms": 10176
+ },
+ "sev_slave_rleg_move": {
+  "kb": 48.1,
+  "w": 560,
+  "h": 490,
+  "cells": 40,
+  "ms": 11786
+ },
+ "sev_slave_rleg_act": {
+  "kb": 33.6,
+  "w": 736,
+  "h": 331,
+  "cells": 32,
+  "ms": 8466
+ },
+ "sev_slave_lleg_move": {
+  "kb": 48.1,
+  "w": 560,
+  "h": 476,
+  "cells": 40,
+  "ms": 9294
+ },
+ "sev_slave_lleg_act": {
+  "kb": 36.1,
+  "w": 736,
+  "h": 339,
+  "cells": 32,
+  "ms": 7428
+ },
+ "sev_royalty_rarm_move": {
+  "kb": 42.5,
+  "w": 560,
+  "h": 435,
+  "cells": 40,
+  "ms": 9997
+ },
+ "sev_royalty_rarm_act": {
+  "kb": 31.5,
+  "w": 608,
+  "h": 296,
+  "cells": 32,
+  "ms": 7688
+ },
+ "sev_royalty_larm_move": {
+  "kb": 42.5,
+  "w": 560,
+  "h": 435,
+  "cells": 40,
+  "ms": 9400
+ },
+ "sev_royalty_larm_act": {
+  "kb": 32.3,
+  "w": 608,
+  "h": 296,
+  "cells": 32,
+  "ms": 6024
+ },
+ "sev_royalty_rleg_move": {
+  "kb": 43.3,
+  "w": 560,
+  "h": 441,
+  "cells": 40,
+  "ms": 8444
+ },
+ "sev_royalty_rleg_act": {
+  "kb": 31.5,
+  "w": 608,
+  "h": 296,
+  "cells": 32,
+  "ms": 7618
+ },
+ "sev_royalty_lleg_move": {
+  "kb": 43.4,
+  "w": 560,
+  "h": 439,
+  "cells": 40,
+  "ms": 10197
+ },
+ "sev_royalty_lleg_act": {
+  "kb": 31.6,
+  "w": 608,
+  "h": 297,
+  "cells": 32,
+  "ms": 6784
+ },
+ "sev_amazonia_rarm_move": {
+  "kb": 39.9,
+  "w": 560,
+  "h": 407,
+  "cells": 40,
+  "ms": 9919
+ },
+ "sev_amazonia_rarm_act": {
+  "kb": 28.9,
+  "w": 560,
+  "h": 284,
+  "cells": 32,
+  "ms": 7039
+ },
+ "sev_amazonia_larm_move": {
+  "kb": 41.5,
+  "w": 560,
+  "h": 407,
+  "cells": 40,
+  "ms": 11236
+ },
+ "sev_amazonia_larm_act": {
+  "kb": 30.3,
+  "w": 560,
+  "h": 291,
+  "cells": 32,
+  "ms": 9833
+ },
+ "sev_amazonia_rleg_move": {
+  "kb": 41.5,
+  "w": 560,
+  "h": 411,
+  "cells": 40,
+  "ms": 11945
+ },
+ "sev_amazonia_rleg_act": {
+  "kb": 30.1,
+  "w": 560,
+  "h": 294,
+  "cells": 32,
+  "ms": 8823
+ },
+ "sev_amazonia_lleg_move": {
+  "kb": 40.5,
+  "w": 560,
+  "h": 411,
+  "cells": 40,
+  "ms": 10652
+ },
+ "sev_amazonia_lleg_act": {
+  "kb": 29.6,
+  "w": 560,
+  "h": 291,
+  "cells": 32,
+  "ms": 8691
+ },
+ "sev_veteranus_rarm_move": {
+  "kb": 42.1,
+  "w": 560,
+  "h": 415,
+  "cells": 40,
+  "ms": 10283
+ },
+ "sev_veteranus_rarm_act": {
+  "kb": 30.8,
+  "w": 576,
+  "h": 287,
+  "cells": 32,
+  "ms": 8706
+ },
+ "sev_veteranus_larm_move": {
+  "kb": 43.3,
+  "w": 560,
+  "h": 415,
+  "cells": 40,
+  "ms": 9970
+ },
+ "sev_veteranus_larm_act": {
+  "kb": 30.1,
+  "w": 656,
+  "h": 302,
   "cells": 32,
   "ms": 7947
  },
- "sev_hero_larm_move": {
-  "kb": 77.8,
-  "w": 640,
-  "h": 625,
-  "cells": 40,
-  "ms": 9345
- },
- "sev_hero_larm_act": {
-  "kb": 58.4,
-  "w": 1024,
-  "h": 429,
-  "cells": 32,
-  "ms": 7383
- },
- "sev_hero_rleg_move": {
-  "kb": 77.7,
-  "w": 672,
-  "h": 627,
-  "cells": 40,
-  "ms": 9349
- },
- "sev_hero_rleg_act": {
-  "kb": 61.2,
-  "w": 1088,
-  "h": 433,
-  "cells": 32,
-  "ms": 7705
- },
- "sev_hero_lleg_move": {
-  "kb": 79.7,
-  "w": 592,
-  "h": 627,
-  "cells": 40,
-  "ms": 10239
- },
- "sev_hero_lleg_act": {
-  "kb": 57.4,
-  "w": 1088,
-  "h": 428,
-  "cells": 32,
-  "ms": 7790
- },
- "sev_slave_rarm_move": {
-  "kb": 72.9,
-  "w": 656,
-  "h": 582,
-  "cells": 40,
-  "ms": 10073
- },
- "sev_slave_rarm_act": {
-  "kb": 53.3,
-  "w": 1088,
-  "h": 404,
-  "cells": 32,
-  "ms": 7135
- },
- "sev_slave_larm_move": {
-  "kb": 75.4,
-  "w": 592,
-  "h": 645,
-  "cells": 40,
-  "ms": 9643
- },
- "sev_slave_larm_act": {
-  "kb": 59.6,
-  "w": 1088,
-  "h": 473,
-  "cells": 32,
-  "ms": 7832
- },
- "sev_slave_rleg_move": {
-  "kb": 78.9,
-  "w": 768,
-  "h": 645,
-  "cells": 40,
-  "ms": 9379
- },
- "sev_slave_rleg_act": {
-  "kb": 60.8,
-  "w": 1088,
-  "h": 466,
-  "cells": 32,
-  "ms": 7297
- },
- "sev_slave_lleg_move": {
-  "kb": 79.2,
-  "w": 624,
-  "h": 645,
-  "cells": 40,
-  "ms": 9351
- },
- "sev_slave_lleg_act": {
-  "kb": 60.6,
-  "w": 1088,
-  "h": 476,
-  "cells": 32,
-  "ms": 7323
- },
- "sev_royalty_rarm_move": {
-  "kb": 72.7,
-  "w": 560,
-  "h": 628,
-  "cells": 40,
-  "ms": 9446
- },
- "sev_royalty_rarm_act": {
-  "kb": 54.9,
-  "w": 1008,
-  "h": 420,
-  "cells": 32,
-  "ms": 7734
- },
- "sev_royalty_larm_move": {
-  "kb": 73.2,
-  "w": 560,
-  "h": 628,
-  "cells": 40,
-  "ms": 12423
- },
- "sev_royalty_larm_act": {
-  "kb": 56.6,
-  "w": 1008,
-  "h": 420,
-  "cells": 32,
-  "ms": 15903
- },
- "sev_royalty_rleg_move": {
-  "kb": 66.5,
-  "w": 560,
-  "h": 634,
-  "cells": 40,
-  "ms": 18799
- },
- "sev_royalty_rleg_act": {
-  "kb": 55.4,
-  "w": 1008,
-  "h": 420,
-  "cells": 32,
-  "ms": 13748
- },
- "sev_royalty_lleg_move": {
-  "kb": 71.7,
-  "w": 560,
-  "h": 632,
-  "cells": 40,
-  "ms": 17346
- },
- "sev_royalty_lleg_act": {
-  "kb": 55.1,
-  "w": 1008,
-  "h": 420,
-  "cells": 32,
-  "ms": 15392
- },
- "sev_amazonia_rarm_move": {
-  "kb": 72.4,
-  "w": 672,
-  "h": 582,
-  "cells": 40,
-  "ms": 19756
- },
- "sev_amazonia_rarm_act": {
-  "kb": 53.7,
-  "w": 1072,
-  "h": 401,
-  "cells": 32,
-  "ms": 15333
- },
- "sev_amazonia_larm_move": {
-  "kb": 71.2,
-  "w": 560,
-  "h": 582,
-  "cells": 40,
-  "ms": 20447
- },
- "sev_amazonia_larm_act": {
-  "kb": 53.5,
-  "w": 896,
-  "h": 401,
-  "cells": 32,
-  "ms": 11085
- },
- "sev_amazonia_rleg_move": {
-  "kb": 71.6,
-  "w": 592,
-  "h": 585,
-  "cells": 40,
-  "ms": 16691
- },
- "sev_amazonia_rleg_act": {
-  "kb": 55.2,
-  "w": 1072,
-  "h": 404,
-  "cells": 32,
-  "ms": 11403
- },
- "sev_amazonia_lleg_move": {
-  "kb": 72.1,
-  "w": 672,
-  "h": 585,
-  "cells": 40,
-  "ms": 14680
- },
- "sev_amazonia_lleg_act": {
-  "kb": 55.7,
-  "w": 1072,
-  "h": 401,
-  "cells": 32,
-  "ms": 12521
- },
- "sev_veteranus_rarm_move": {
-  "kb": 68.9,
-  "w": 560,
-  "h": 577,
-  "cells": 40,
-  "ms": 13806
- },
- "sev_veteranus_rarm_act": {
-  "kb": 51.4,
-  "w": 896,
-  "h": 393,
-  "cells": 32,
-  "ms": 12571
- },
- "sev_veteranus_larm_move": {
-  "kb": 73.1,
-  "w": 656,
-  "h": 577,
-  "cells": 40,
-  "ms": 14981
- },
- "sev_veteranus_larm_act": {
-  "kb": 55.2,
-  "w": 1024,
-  "h": 412,
-  "cells": 32,
-  "ms": 10357
- },
  "sev_veteranus_rleg_move": {
-  "kb": 67.1,
-  "w": 704,
-  "h": 583,
+  "kb": 43.7,
+  "w": 560,
+  "h": 417,
   "cells": 40,
-  "ms": 11505
+  "ms": 9968
  },
  "sev_veteranus_rleg_act": {
-  "kb": 54.5,
-  "w": 1024,
-  "h": 415,
+  "kb": 32,
+  "w": 656,
+  "h": 303,
   "cells": 32,
-  "ms": 6639
+  "ms": 8295
  },
  "sev_veteranus_lleg_move": {
-  "kb": 71.7,
-  "w": 624,
-  "h": 584,
+  "kb": 43,
+  "w": 560,
+  "h": 417,
   "cells": 40,
-  "ms": 9910
+  "ms": 11756
  },
  "sev_veteranus_lleg_act": {
-  "kb": 53.9,
-  "w": 1024,
-  "h": 412,
+  "kb": 31.8,
+  "w": 656,
+  "h": 302,
   "cells": 32,
-  "ms": 17005
+  "ms": 7328
  },
  "sev_venatore_rarm_move": {
-  "kb": 69.3,
+  "kb": 41.4,
   "w": 560,
-  "h": 592,
+  "h": 415,
   "cells": 40,
-  "ms": 18557
+  "ms": 10037
  },
  "sev_venatore_rarm_act": {
-  "kb": 51.9,
-  "w": 944,
-  "h": 404,
+  "kb": 30.4,
+  "w": 576,
+  "h": 287,
   "cells": 32,
-  "ms": 14509
+  "ms": 7265
  },
  "sev_venatore_larm_move": {
-  "kb": 75.6,
+  "kb": 45,
   "w": 560,
-  "h": 645,
+  "h": 479,
   "cells": 40,
-  "ms": 14067
+  "ms": 10868
  },
  "sev_venatore_larm_act": {
-  "kb": 60.2,
-  "w": 1088,
-  "h": 473,
+  "kb": 34.3,
+  "w": 688,
+  "h": 337,
   "cells": 32,
-  "ms": 7055
+  "ms": 6380
  },
  "sev_venatore_rleg_move": {
-  "kb": 74.8,
-  "w": 688,
-  "h": 645,
+  "kb": 45.5,
+  "w": 560,
+  "h": 484,
   "cells": 40,
-  "ms": 9270
+  "ms": 9072
  },
  "sev_venatore_rleg_act": {
-  "kb": 58.9,
-  "w": 1088,
-  "h": 464,
+  "kb": 34.1,
+  "w": 688,
+  "h": 330,
   "cells": 32,
-  "ms": 7154
+  "ms": 6499
  },
  "sev_venatore_lleg_move": {
-  "kb": 69.4,
+  "kb": 42.7,
   "w": 560,
-  "h": 645,
+  "h": 468,
   "cells": 40,
-  "ms": 8855
+  "ms": 9016
  },
  "sev_venatore_lleg_act": {
-  "kb": 58.8,
-  "w": 1088,
-  "h": 477,
+  "kb": 33.8,
+  "w": 688,
+  "h": 339,
   "cells": 32,
-  "ms": 6340
+  "ms": 7174
  },
  "sev_damnatio_rarm_move": {
-  "kb": 64.5,
+  "kb": 40,
   "w": 560,
-  "h": 582,
+  "h": 410,
   "cells": 40,
-  "ms": 13025
+  "ms": 6541
  },
  "sev_damnatio_rarm_act": {
-  "kb": 47.8,
-  "w": 896,
-  "h": 396,
+  "kb": 29.2,
+  "w": 560,
+  "h": 285,
   "cells": 32,
-  "ms": 7280
+  "ms": 6924
  },
  "sev_damnatio_larm_move": {
-  "kb": 64.2,
+  "kb": 37.3,
   "w": 560,
-  "h": 582,
+  "h": 410,
   "cells": 40,
-  "ms": 12479
+  "ms": 7316
  },
  "sev_damnatio_larm_act": {
-  "kb": 48.9,
-  "w": 896,
-  "h": 396,
+  "kb": 29.5,
+  "w": 560,
+  "h": 285,
   "cells": 32,
-  "ms": 7184
+  "ms": 6204
  },
  "sev_damnatio_rleg_move": {
-  "kb": 62.6,
+  "kb": 40.2,
   "w": 560,
-  "h": 585,
+  "h": 412,
   "cells": 40,
-  "ms": 9100
+  "ms": 7481
  },
  "sev_damnatio_rleg_act": {
-  "kb": 48.2,
-  "w": 896,
-  "h": 396,
+  "kb": 29.3,
+  "w": 560,
+  "h": 285,
   "cells": 32,
-  "ms": 7679
+  "ms": 5645
  },
  "sev_damnatio_lleg_move": {
-  "kb": 62.8,
+  "kb": 40.1,
   "w": 560,
-  "h": 585,
+  "h": 412,
   "cells": 40,
-  "ms": 8851
+  "ms": 8341
  },
  "sev_damnatio_lleg_act": {
-  "kb": 48.2,
-  "w": 896,
-  "h": 396,
+  "kb": 29.2,
+  "w": 560,
+  "h": 285,
   "cells": 32,
-  "ms": 7306
+  "ms": 7823
  }
 }

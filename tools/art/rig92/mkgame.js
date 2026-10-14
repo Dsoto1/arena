@@ -32,6 +32,8 @@ for (const m of MODS) {
   src = src.replace(/^export\s+(const|let)\s+(\w+)/mg, (_, k, n) => { names.push(n); return k + ' ' + n; });
   src = src.replace(/^export\s*\{([^}]*)\};?\s*$/mg, (_, list) => { names.push(...list.split(',').map(s => s.trim()).filter(Boolean).map(s => { const r = /^(\S+)\s+as\s+(\S+)$/.exec(s); return r ? r[2] + ':' + r[1] : s; })); return ''; });
   if (/^\s*(import|export)\b/m.test(src)) throw new Error(m + ': import/export left');
+  /* v1.02: whole-line block comments are left out of the bundle (the sources keep them; tv100g caps tok93.js at 260 KB) — never the vendor's */
+  if (!/^vendor\//.test(m)) src = src.replace(/^[ \t]*\/\*[\s\S]*?\*\/[ \t]*\n/mg, '');
   out += `__M.${modName(m)}=(function(){\n${src}\nreturn {${names.join(',')}};})();\n`;
 }
 out += 'return __M.game;};\n';
