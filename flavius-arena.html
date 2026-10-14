@@ -69120,7 +69120,7 @@ function v101Roster(h){const t=v101Tpl(h);const R=t.content;const keep=R.querySe
     if(MGR.tab==='roster'&&h.indexOf('rm100keep')>=0)return v101Roster(h)}catch(e){console.error(e)}return h}}
 /* 🔍 on a rival's roster row → his card in Recruiting (Signed elsewhere) */
 document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('#mgrBody .v101cardb[data-v101card]');if(!b||!v101On())return;e.preventDefault();e.stopPropagation();
-  const g=gById(b.dataset.v101card);if(!g)return;MGR.tab='recruit';MGR.filter=g.contract&&g.contract.mgr===me().id?'mine':'signed';MGR.sel=g.id;MGR.rq='';if(typeof MGR_REDRAW==='function')MGR_REDRAW();
+  const g=gById(b.dataset.v101card);if(!g)return;try{if(typeof P101!=='undefined')P101.gcard=true}catch(err){}MGR.tab='recruit';MGR.filter=g.contract&&g.contract.mgr===me().id?'mine':'signed';MGR.sel=g.id;MGR.rq='';if(typeof MGR_REDRAW==='function')MGR_REDRAW();
   setTimeout(()=>{const c=document.querySelector('#mgrBody [data-v101fc="'+g.id+'"]');if(c)c.scrollIntoView({block:'nearest'})},40)},true);
 
 {const st=document.createElement('style');st.id='v101ccss';st.textContent=`
@@ -69258,14 +69258,14 @@ function v101Me(){const P=CITY.player;if(!P)return null;const lk=P.look||{};let 
   return v101Fig({k:'s'+look,tint:cr100Tint(robe||'#7a2230')},{...V101_BOX.me,...p})}
 /* the training yard: two sparring stand-ins (lunging = walk frames) and the doctore */
 const V101Y={hero:{fi:3},soldier:{fi:3},doc:{fi:0}};
-function v101Yard(key){const now=performance.now();const calm=v101Calm();
+function v101cYard(key){const now=performance.now();const calm=v101Calm();
   if(key==='yddoc')return v101Fig({k:'s0',tint:cr100Tint('#6a3a22')},{...V101_BOX.yd,fi:0,row:'stand'});
   const cls=key.slice(2);const k='c_'+(CR100_CLS.includes(cls)?cls:'soldier');const ph=cls==='soldier'?Math.PI:0;
   const lunge=Math.sin(now/260+ph);const row=!calm&&lunge>0?'walk'+(Math.floor(now/(CR100.walkMs||140))&3):'stand';
   return v101Fig({k,tint:''},{...V101_BOX.yd,fi:3,row})}
 function v101CityReady(){try{return typeof cr100CityReady==='function'&&cr100CityReady()}catch(e){return false}}
 {const base=cityImg;cityImg=function(key,svg){try{if(v101On()&&CITY.open&&typeof key==='string'){
-      if(key==='me'||key.startsWith('yd')){if(v101CityReady()){const c=key==='me'?v101Me():v101Yard(key);if(c)return c}
+      if(key==='me'||key.startsWith('yd')){if(v101CityReady()){const c=key==='me'?v101Me():v101cYard(key);if(c)return c}
         const im=base.apply(this,arguments);return im&&v101CityH()?v101Flat(im,key==='me'?V101_BOX.me:V101_BOX.yd,key):im}
       if(key.startsWith('fg')){const im=base.apply(this,arguments);if(im&&!(im instanceof HTMLCanvasElement)&&v101CityH())return v101Flat(im,V101_BOX.fg,key);return im}}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}
