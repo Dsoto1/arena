@@ -1,0 +1,26 @@
+[
+ {
+  "k": "Beasts are the savings account: gladiators with 2+ beast trophies won {0}% and reached the Ludus {1}% of the time — with none, {2}% and {3}%.",
+  "w": "53-guide50.js:3"
+ },
+ {
+  "k": "Spend your coin: 2+ market buys won {0}% of events; never buying, {1}%.",
+  "w": "53-guide50.js:3"
+ },
+ {
+  "k": "Break pots: 2+ pots broken meant {0}% wins and {1}% Ludus, against {2}% and {3}% for the pot-shy.",
+  "w": "53-guide50.js:3"
+ },
+ {
+  "k": "Draw cards: 2+ arena cards won {0}% against {1}% for coin-only turns.",
+  "w": "53-guide50.js:3"
+ },
+ {
+  "k": "Ratings: a Charisma perk ({0} a turn) won {1}% against {2}% without, with {3} on average; a Luck perk ({4} a turn) won {5}% against {6}%. A lone +1 movement or +1 damage changes little by itself: spend it early, in the rounds that allow it.",
+  "w": "53-guide50.js:3"
+ },
+ {
+  "k": "Events last {0} turns on average: Democritus {1}, Egidious {2}, Cassian {3}. Beasts slain per event: {4}.",
+  "w": "53-guide50.js:3"
+ }
+]

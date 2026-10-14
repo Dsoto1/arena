@@ -1,8 +1,8 @@
 /* simguide.js — the Play Now guide's numbers: N all-CPU Classic events (Democritus, Egidious, Cassian), four gladiators
    each, printed classes with rolled ratings and personalities. Prints SIM JSON (the shape of SIM50 in 53-guide50.js,
-   plus "perk": win rates by rating perk).  Usage: node tools/simguide.js flavius-arena.html [games=600] > sim.json */
+   plus "perk": win rates by rating perk).  Usage: node tools/simguide.js flavius-arena.html [games=300] > sim.json */
 const {chromium}=require('playwright');
-(async()=>{const page=process.argv[2];const N=+(process.argv[3]||600);
+(async()=>{const page=process.argv[2];const N=+(process.argv[3]||300);
 const b=await chromium.launch();const pg=await b.newPage();await pg.route(/fonts\./,r=>r.abort());
 await pg.goto('file://'+require('path').resolve(page));await pg.waitForTimeout(2000);
 await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide()});
@@ -27,7 +27,7 @@ const hist={labels,all:labels.map((_,i)=>rows.filter(x=>x.f>=bins[i]&&x.f<bins[i
 const winners=rows.filter(x=>x.won);const evT={};for(const g of games){(evT[g.ev]=evT[g.ev]||[]).push(g.turns)}
 const bold=rows.filter(x=>x.pers.survival<=30),caut=rows.filter(x=>x.pers.survival>=70);
 const S={ver:process.env.SIMVER||'0.56',games:games.length,gladiators:rows.length,winCF:Math.round(winners.reduce((a,x)=>a+x.f,0)/Math.max(1,winners.length)),
-  ludusPct:pct(rows.filter(x=>ludus(x)).length,rows.length),avgTurns:Math.round(games.reduce((a,g)=>a+g.turns,0)/Math.max(1,games.length)),
+  ludusPct:pct(rows.filter(x=>x.won||ludus(x)).length,rows.length),avgTurns:Math.round(games.reduce((a,g)=>a+g.turns,0)/Math.max(1,games.length)),
   evTurns:Object.fromEntries(Object.entries(evT).map(([k,v])=>[k,Math.round(v.reduce((a,b)=>a+b,0)/v.length)])),
   potWin:pct(rows.filter(x=>x.pots>0&&x.won).length,rows.filter(x=>x.pots>0).length),noPotWin:pct(rows.filter(x=>!x.pots&&x.won).length,rows.filter(x=>!x.pots).length),
   cls:grp(x=>x.cls),pers:grp(x=>Object.entries(x.pers).sort((a,b)=>b[1]-a[1])[0][0]),
