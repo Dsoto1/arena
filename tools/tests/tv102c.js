@@ -53,7 +53,7 @@ ok(p4.h<p4.vh-120&&p4.gap<60,'P4 the window is only as large as its content '+JS
 /* ---- S1 / S2 / S3 / S5 / S6 · the Studio ---- */
 const flick=async(P,tab,act)=>{await P.evaluate(async t=>{menuHide();try{await Store.put('customChars','tv102x',Object.assign(blankChar(),{id:'tv102x',name:'Tester'}));await Store.put('customClasses','tv102y',Object.assign(blankClass(),{id:'tv102y',name:'Testclass'}))}catch(e){console.error(e)}openStudio();await new Promise(r=>setTimeout(r,1500));ST.tab=t;if(t==='classes')ST.draft=blankClass();else if(t==='chars'){ST.draft=blankChar();ST.view='edit'}studioRedraw();await new Promise(r=>setTimeout(r,700))},tab);
   await P.evaluate(()=>{window.__f=[];window.__on=1;const loop=()=>{if(!window.__on)return;const st=document.getElementById('studio');const inner=document.querySelector('#mBody #studio');
-    const bars=inner?inner.querySelectorAll('.st98bar').length:-1,counts=inner?inner.querySelectorAll('.st77c').length:-1,hidden=inner?inner.querySelectorAll('.st98off').length:-1,form=inner?inner.querySelectorAll('select[data-f],input[data-f]').length:-1;
+    const bars=inner?Math.min(1,inner.querySelectorAll('.st98bar,.df99.d102').length):-1,counts=inner?inner.querySelectorAll('.st77c').length:-1,hidden=inner?inner.querySelectorAll('.st98off,.df99pane[hidden]').length:-1,form=inner?inner.querySelectorAll('select[data-f],input[data-f]').length:-1;
     window.__f.push([bars,counts,hidden,form]);requestAnimationFrame(loop)};requestAnimationFrame(loop)});
   await P.evaluate(act);await W(P,1000);return P.evaluate(()=>{window.__on=0;return window.__f})};
 const chk=()=>{const e=document.querySelector('#studio input[type=checkbox][data-f="arm.belt"],#studio input[type=checkbox][data-f]');if(!e)return;e.checked=!e.checked;e.dispatchEvent(new Event('change',{bubbles:true}))};
@@ -64,7 +64,7 @@ await closeAll(pg);
 const fh=await flick(pg,'chars',()=>{const e=document.querySelector('#studio input[type=checkbox][data-f],#studio select[data-f]');if(e){if(e.type==='checkbox')e.checked=!e.checked;else e.selectedIndex=Math.min(1,e.options.length-1);e.dispatchEvent(new Event('change',{bubbles:true}))}});
 const cnt0=fh[0][1];const badH=fh.filter(f=>f[1]!==cnt0||f[1]<1).length;ok(cnt0>=1&&badH===0,'S2 the rail counts never blink on a change in the character designer ('+badH+' bad frames, '+cnt0+' counts)');
 /* the repro: with the kill switch the old path blinks (frames without the tabs / counts) */
-{const pg2=await open({flavius_v102coff:'1'});const fo=await flick(pg2,'classes',chk);const badO=fo.filter(f=>f[0]!==1||f[2]===0).length;ok(badO>0,'S1 repro: the old path shows frames without the tabs ('+badO+' of '+fo.length+')');
+{const pg2=await open({flavius_v102coff:'1',flavius_v102doff:'1'});const fo=await flick(pg2,'classes',chk);const badO=fo.filter(f=>f[0]!==1||f[2]===0).length;ok(badO>0,'S1 repro: the old path shows frames without the tabs ('+badO+' of '+fo.length+')');
  await closeAll(pg2);const fo2=await flick(pg2,'chars',()=>{const e=document.querySelector('#studio input[type=checkbox][data-f],#studio select[data-f]');if(e){if(e.type==='checkbox')e.checked=!e.checked;else e.selectedIndex=Math.min(1,e.options.length-1);e.dispatchEvent(new Event('change',{bubbles:true}))}});
  const c2=fo2[0][1];ok(fo2.filter(f=>f[1]!==c2||f[1]<1).length>0,'S2 repro: the old path blinks the rail counts');await pg2.context().close()}
 /* S6 + S3 */
