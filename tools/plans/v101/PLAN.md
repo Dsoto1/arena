@@ -25,3 +25,5 @@ hitch, keep zoom online.
      pass report (tools/plans/v101/SECURITY.md) + fix the high-severity findings
 - Wave 2 FOUNDATIONS (tools/plans/layers100/PLAN.md): replay tests → regroup src by topic → clean layers A–C → card/beast effects as data →
      rules in Node → server Ranked check (mismatches logged only the first month) → Manager morph rendering.
+
+B1 choices approved by him 2026-10-14 ("sounds good for start"): CARE101 hours Medicus 2 / surgeon 3 / Hygeia 3 a limb / bath 1 / Asclepius 1; bath + Asclepius cost hours; medicus +2 h per skill level.
