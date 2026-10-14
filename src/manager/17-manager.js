@@ -1762,9 +1762,11 @@ function mToast(html){
   let t=document.getElementById('mToast');if(!t){t=document.createElement('div');t.id='mToast';t.setAttribute('role','status');t.setAttribute('aria-live','polite');document.body.appendChild(t)}
   t.innerHTML=html;t.classList.remove('show');void t.offsetWidth;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),4200);
 }
+/* mgrPaint — puts a freshly built Manager page into #mgrBody (330-v101morph patches it in place instead). */
+function mgrPaint(el,html){el.innerHTML=html}
 /* wireManager — wires every click, input and change in the Manager window (all [data-mg] actions). */
 function wireManager(done){
-  const box=$('#mBody');const redraw=()=>{const sc=box.scrollTop;$('#mgrBody').innerHTML=mgrHTML();box.scrollTop=sc;mgrCloseLabel()};window.MGR_REDRAW=redraw;
+  const box=$('#mBody');const redraw=()=>{const sc=box.scrollTop;mgrPaint($('#mgrBody'),mgrHTML());box.scrollTop=sc;mgrCloseLabel()};window.MGR_REDRAW=redraw;
   // feedback you cannot miss: the note stays at the top, AND a toast floats over the window where you are looking
   const say=t=>{MGR.msg=t;redraw();mToast(t)};
   box.oninput=e=>{const t=e.target;if(t.dataset.nmrule&&NEWMGR){(NEWMGR.rules=NEWMGR.rules||{})[t.dataset.nmrule]=+t.value;NEWMGR.rulePre=null;t.nextElementSibling.textContent=t.value+'%';return}if(t.dataset.nmfest&&NEWMGR){NEWMGR.festPick=t.value;return}if(t.dataset.nmspect&&NEWMGR){NEWMGR.spectOK=t.checked;return}if(t.dataset.ruleFest){const w2=W_();if(w2){w2.festPick=t.value;saveWorld()}return}if(NEWMGR&&t.dataset.nm){NEWMGR[t.dataset.nm]=t.value;if(t.dataset.nm==='color'){$('#nmPortrait').firstElementChild.outerHTML=portraitHTML({name:NEWMGR.name,portrait:NEWMGR.portrait,color:NEWMGR.color},'lg')}}if(NEWMGR&&t.dataset.nmp){NEWMGR.p[t.dataset.nmp]=+t.value;t.nextElementSibling.textContent=t.value}};
