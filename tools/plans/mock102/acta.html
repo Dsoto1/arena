@@ -1,0 +1,404 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Acta Diurna</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@500;700;900&family=IM+Fell+English:ital@0;1&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+/* =====================================================================
+   v1.02 MOCK — K · Acta Diurna restyle (his picks 1b 2a 3a 4a).
+   One page: masthead (◀ ▶ editions) · stats strip (non-zero only) · lead ·
+   three columns (Your house | The arena + In memoriam | The empire) ·
+   the fun section + Classifieds corner · Next week ribbon + Start next week.
+   Mock only: the data below is hand-written; the game builds it from
+   composeWeekPaper (17-manager) + rab100List (284).
+   ===================================================================== */
+:root{
+  --display:"Marcellus SC","Trajan Pro",Georgia,serif;
+  --roman:"Cinzel","Trajan Pro","Marcellus SC",Georgia,serif;
+  --news:"IM Fell English","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --body:"Alegreya Sans","Gill Sans","Segoe UI",system-ui,sans-serif;
+  --ink:#2b1a0d;--ink2:#4a3019;--ink3:#6e5233;--rule:rgba(52,30,12,.62);--rule2:rgba(52,30,12,.32);
+  --blood:#7a1d12;--gold:#b98a2a;--paper:#e7d3a6;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+html{background:#0e0906}
+body{background:radial-gradient(ellipse at 50% 30%,#2a1d14 0%,#170f0a 62%,#0e0906 100%) fixed;color:#e9dcc0;font:14px/1.4 var(--body);-webkit-font-smoothing:antialiased;padding:12px 16px 16px}
+
+/* ---- mock controls (not part of the design) ---- */
+.mockbar{position:fixed;bottom:6px;left:10px;z-index:20;display:flex;gap:4px;align-items:center;font:600 11px var(--body);color:#c9b48a;background:rgba(20,12,7,.86);border:1px solid #5b4128;border-radius:6px;padding:4px 6px}
+.mockbar button{font:600 11px var(--body);background:#3a2817;color:#e9dcc0;border:1px solid #6b4e2b;border-radius:4px;padding:3px 8px;cursor:pointer}
+.mockbar button.on{background:#b98a2a;color:#21140a;border-color:#e7c46c}
+
+/* ---- the sheet of papyrus ---- */
+.paper{position:relative;max-width:1400px;margin:0 auto;color:var(--ink);padding:12px 22px 10px;border-radius:3px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .19 0 0 0 0 .08 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(0deg,rgba(120,84,40,.06) 0 2px,transparent 2px 7px,rgba(255,240,205,.07) 7px 8px,transparent 8px 13px),
+    repeating-linear-gradient(90deg,rgba(120,84,40,.05) 0 1px,transparent 1px 23px,rgba(120,84,40,.035) 23px 25px,transparent 25px 61px),
+    radial-gradient(ellipse 120% 90% at 50% 40%,transparent 55%,rgba(110,70,30,.35) 100%),
+    url("../../../assets/parchment.webp") center/cover,
+    var(--paper);
+  box-shadow:0 0 0 1px #6b4e2b,0 10px 40px rgba(0,0,0,.7),inset 0 0 60px rgba(120,80,35,.35)}
+.paper a,.lk{color:var(--blood);text-decoration:none;font:700 12px var(--body);cursor:pointer;border-bottom:1px dotted rgba(122,29,18,.5)}
+.lk:hover{color:#a52a1a}
+
+/* masthead */
+.mast{display:grid;grid-template-columns:240px 1fr 240px;align-items:center;gap:10px;padding-bottom:4px;border-bottom:3px double var(--rule)}
+.pager{display:flex;align-items:center;gap:6px;font:12px var(--body);color:var(--ink2)}
+.pager button{width:28px;height:28px;border-radius:50%;border:1px solid var(--rule);background:rgba(255,245,220,.35);color:var(--ink);font:700 13px var(--body);cursor:pointer;display:grid;place-items:center}
+.pager button:disabled{opacity:.3;cursor:default}
+.pager button:not(:disabled):hover{background:rgba(185,138,42,.35)}
+.pager .pg{line-height:1.15}.pager .pg b{font:400 15px var(--roman);letter-spacing:.06em;color:var(--ink)}
+.pager .pg small{display:block;color:var(--ink3);font-size:11px}
+.title{text-align:center}
+.title h1{margin:0;font:900 40px/1 var(--roman);letter-spacing:.16em;color:var(--ink);text-shadow:0 1px 0 rgba(255,240,205,.5)}
+.title .dek{font:italic 13px var(--news);color:var(--ink2);margin-top:2px}
+.title .dek b{font-style:normal;font-family:var(--roman);font-weight:700;letter-spacing:.06em}
+.mright{justify-self:end;text-align:right;font:12px var(--news);color:var(--ink2);line-height:1.3}
+.mright .price{font:700 11px var(--roman);letter-spacing:.12em;color:var(--ink)}
+.omen{display:inline-block;margin-top:2px;padding:1px 7px;border:1px solid var(--rule2);border-radius:10px;font:italic 12px var(--news)}
+
+/* stats strip: only the numbers that happened */
+.strip{display:flex;justify-content:center;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--rule);padding:3px 0}
+.strip span{padding:0 14px;font:12.5px var(--news);color:var(--ink2);border-left:1px solid var(--rule2);display:flex;align-items:center;gap:5px}
+.strip span:first-child{border-left:0}
+.strip b{font:700 16px var(--roman);color:var(--ink)}
+.coin{width:14px;height:14px;vertical-align:-2px}
+
+/* lead */
+.lead{display:grid;grid-template-columns:136px 1fr 250px;gap:16px;padding:6px 0 6px;align-items:start;border-bottom:2px solid var(--rule)}
+
+.kicker{font:700 10.5px var(--body);letter-spacing:.2em;color:var(--blood);text-transform:uppercase}
+.lead h2{margin:1px 0 2px;font:700 28px/1.04 var(--roman);letter-spacing:.03em;color:var(--ink)}
+.lead .deck{font:italic 14px/1.25 var(--news);color:var(--ink2);margin-bottom:4px}
+.lead .txt{columns:2;column-gap:20px;column-rule:1px solid var(--rule2);font:13px/1.33 var(--news);text-align:justify;hyphens:auto}
+.lead .txt p{margin:0 0 5px}
+.lead .txt p:first-child::first-letter{float:left;font:700 46px/.82 var(--roman);color:var(--blood);padding:4px 6px 0 0;text-shadow:1px 1px 0 rgba(255,240,205,.6)}
+/* the sepia engraving */
+.engr{position:relative;width:130px;height:160px;overflow:hidden;border-radius:50% 50% 46% 46%/42% 42% 58% 58%;box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ink2),0 0 0 6px var(--paper),0 0 0 7px var(--rule2);background:#d9c08e}
+.engr img{position:absolute;max-width:none;filter:grayscale(1) sepia(1) contrast(1.55) brightness(.92) saturate(.75)}
+.engr::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(118deg,rgba(43,26,13,.22) 0 1px,transparent 1px 3px),radial-gradient(ellipse at 50% 42%,transparent 50%,rgba(215,190,140,.9) 78%);mix-blend-mode:multiply}
+.cap{font:italic 11.5px/1.25 var(--news);color:var(--ink2);text-align:center;margin-top:6px}
+.cap b{font:700 11px var(--roman);letter-spacing:.05em;font-style:normal;color:var(--ink);display:block}
+.side{border-left:1px solid var(--rule2);padding-left:12px;display:grid;grid-template-columns:104px 1fr;gap:4px 10px;align-items:start}
+.side .evcard{grid-row:span 4}
+.evcard{width:104px;height:150px;overflow:hidden;border:1px solid var(--ink2);box-shadow:0 2px 4px rgba(60,30,10,.35);margin:0 auto}
+.evcard i{display:block;width:104px;height:150px;background:url("../../../assets/events.jpg") no-repeat;background-size:500% 300%;filter:sepia(.35) contrast(1.05)}
+.fact{font:12px/1.25 var(--news);color:var(--ink2);border-top:1px solid var(--rule2);padding-top:3px}
+.fact:first-of-type{border-top:0}
+.fact b{font-family:var(--roman);color:var(--ink);font-size:12.5px}
+/* map engraving (lead art on an empire week, and the empire column) */
+.mapbox{position:relative;overflow:hidden;border:1px solid var(--ink2);background:url("../../../assets/map.jpg") no-repeat;filter:sepia(.55) saturate(.8) contrast(1.05)}
+.mapbox .pin{position:absolute;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#7a1d12;box-shadow:0 0 0 2px rgba(255,240,205,.85),0 0 0 3px #2b1a0d}
+.mapbox .pin.big{width:13px;height:13px;margin:-6.5px 0 0 -6.5px}
+.mapbox .pin i{display:none;position:absolute;left:12px;top:-5px;white-space:nowrap;font:700 10px var(--roman);letter-spacing:.04em;color:#2b1a0d;text-shadow:0 0 3px #f4e6c4,0 0 3px #f4e6c4,0 0 2px #f4e6c4}
+.mapbox .pin.l i{left:auto;right:12px}
+.mapbox .pin.nb{width:15px;height:15px;margin:-7.5px 0 0 -7.5px;color:#fff;font:700 9.5px/15px var(--roman);text-align:center}
+.mapbox .pin.nb i{display:none}
+.lead .mapbox{width:136px;height:160px}
+
+/* three columns */
+.cols{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:2px solid var(--rule)}
+.col{padding:4px 14px 6px;border-left:1px solid var(--rule)}
+.col:first-child{border-left:0;padding-left:0}.col:last-child{padding-right:0}
+h3{margin:0 0 4px;font:700 13px var(--roman);letter-spacing:.14em;color:var(--ink);text-align:center;border-bottom:1px solid var(--rule2);padding-bottom:2px}
+h3 small{display:block;font:italic 11px var(--news);letter-spacing:0;color:var(--ink3)}
+h4{margin:6px 0 2px;font:700 11px var(--roman);letter-spacing:.14em;color:var(--blood);text-align:center}
+h4::before,h4::after{content:"";display:inline-block;width:24px;height:1px;background:var(--rule2);vertical-align:middle;margin:0 6px}
+.it{font:12.5px/1.25 var(--news);padding:2px 0;border-bottom:1px dotted var(--rule2);display:flex;gap:7px;align-items:flex-start}
+.it:last-child{border-bottom:0}
+.face{flex:none;display:inline-block;width:30px;height:30px;border-radius:50%;overflow:hidden;position:relative;box-shadow:0 0 0 1px var(--ink2);background:#d9c08e}
+.face img{position:absolute;max-width:none;filter:grayscale(1) sepia(1) contrast(1.4)}
+.it .t{flex:1}
+.it b{font-weight:700}
+.res{flex:none;font:700 11px var(--roman);letter-spacing:.05em;padding:1px 5px;border:1px solid currentColor;border-radius:2px;margin-top:1px}
+.res.w{color:#2d5a1f}.res.l{color:#7a1d12}.res.s{color:#6e5233}
+.mine{font:700 9.5px var(--body);letter-spacing:.1em;color:var(--gold);text-transform:uppercase}
+.money{font:700 12.5px var(--roman)}
+.money.up{color:#2d5a1f}.money.dn{color:#7a1d12}
+.ledger{display:flex;justify-content:space-between;font:12px var(--news);margin-top:4px;padding:3px 6px;border:1px solid var(--rule2);background:rgba(255,245,220,.25)}
+.obit{font:12.5px/1.3 var(--news);padding:4px 0 2px;text-align:center}
+.obit .cross{font:700 15px var(--roman);color:var(--ink)}
+.obit b{font:700 13px var(--roman);letter-spacing:.04em;display:block}
+.obit i{color:var(--ink2)}
+.quiet{font:italic 12.5px var(--news);color:var(--ink3);text-align:center;padding:6px 0}
+.emp{display:grid;grid-template-columns:130px 1fr;gap:10px}
+.emp .mapbox{width:130px;height:130px}
+.ev{font:12px/1.25 var(--news);padding:2px 0;border-bottom:1px dotted var(--rule2)}
+.ev:last-child{border:0}
+.ev .n{display:inline-block;width:15px;height:15px;border-radius:50%;background:#7a1d12;color:#fff;font:700 9.5px/15px var(--roman);text-align:center;margin-right:4px}
+.ev small{display:block;color:var(--ink3);font-style:italic;padding-left:19px}
+.sev{letter-spacing:-1px;color:var(--blood)}
+
+/* fun section + classifieds */
+.lower{display:grid;grid-template-columns:repeat(4,1fr) 470px;border-bottom:1px solid var(--rule)}
+.fun{padding:4px 12px 6px;border-left:1px solid var(--rule2);font:12px/1.3 var(--news)}
+.fun:first-child{border-left:0;padding-left:0}
+.fun p{margin:0 0 4px}
+.fun .dh{font:700 11.5px/1.15 var(--roman);letter-spacing:.02em;color:var(--ink)}
+.fun q{font-style:italic;quotes:"“" "”"}
+.fun .who{display:block;text-align:right;color:var(--ink3);font-size:11px}
+.rab{display:flex;gap:6px;align-items:center;padding:2px 0;border-bottom:1px dotted var(--rule2)}
+.rab:last-child{border:0}
+.rab .face{width:26px;height:26px}
+.rab .tl{flex:1;line-height:1.15}.rab .tl small{display:block;color:var(--ink3);font-size:11px}
+.class{margin:4px 0 6px 10px;padding:5px 9px 6px;border:2px solid var(--ink2);outline:1px solid var(--ink2);outline-offset:2px;background:rgba(255,245,220,.28)}
+.class h3{border-bottom:2px solid var(--ink2);font-size:12px}
+.class .c2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.cl{font:11.8px/1.25 var(--news);display:flex;gap:6px;align-items:baseline;padding:1px 0}
+.cl .d{flex:1;border-bottom:1px dotted var(--rule2);transform:translateY(-3px)}
+.cl.me{background:rgba(185,138,42,.22);margin:0 -4px;padding:1px 4px}
+.cl .g{font:700 10.5px var(--roman);border:1px solid var(--ink2);padding:0 3px;border-radius:2px}
+.clhd{display:flex;justify-content:space-between;align-items:baseline;font:700 10.5px var(--roman);letter-spacing:.1em;color:var(--blood);margin-top:4px;border-top:1px solid var(--rule2);padding-top:2px}
+.c2>div>.clhd:first-child{border-top:0;margin-top:0}
+
+/* next week ribbon */
+.ribbon{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;margin:8px -8px 0;padding:6px 14px;position:relative;
+  background:linear-gradient(180deg,#8f2a1e,#6d1c13 60%,#5a160f);color:#f3e2bd;box-shadow:inset 0 1px 0 rgba(255,200,170,.3),0 3px 6px rgba(40,15,5,.5);
+  clip-path:polygon(0 0,100% 0,calc(100% - 14px) 50%,100% 100%,0 100%,14px 50%)}
+.ribbon .nw{font:700 12px var(--roman);letter-spacing:.18em;color:#f0cf7d;padding-left:10px;line-height:1.1}
+.ribbon .nw b{display:block;font-size:18px;letter-spacing:.08em;color:#fff2be}
+.ribbon .card{font:13px/1.3 var(--news);display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center}
+.ribbon .card span{white-space:nowrap}
+.ribbon .card b{font-family:var(--roman);color:#fff2be;font-size:12.5px;letter-spacing:.04em}
+.ribbon .card .rival{color:#ffc9a8}
+.ribbon .go{padding-right:12px}
+.foot{text-align:center;font:italic 11px var(--news);color:var(--ink3);padding-top:4px}
+
+/* sandstone button (from mock100/playnow.html, = 306 sd100CSS) */
+
+/* ---------- 2a SANDSTONE BUTTON (one style everywhere) ---------- */
+.sb{--h:46px;--fs:19px;position:relative;height:var(--h);display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:0 22px;border:0;border-radius:5px;cursor:pointer;white-space:nowrap;
+  font:400 var(--fs)/1 var(--display);letter-spacing:.07em;color:#4a3017;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .1 0 0 0 .8 0'/%3E%3C/filter%3E%3Crect width='240' height='120' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='160'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .05' numOctaves='4' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .85 0 0 0 0 .62 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='600' height='160' filter='url(%23m)'/%3E%3C/svg%3E"),
+    linear-gradient(176deg,#dcc196 0%,#c9a877 38%,#b48f5c 100%);
+  background-size:240px 120px,600px 160px,100% 100%;
+  box-shadow:inset 0 2px 0 rgba(255,244,214,.75),inset 0 -3px 0 rgba(92,60,28,.55),inset 2px 0 0 rgba(255,238,204,.35),inset -2px 0 0 rgba(80,52,24,.4),0 4px 0 #6b4e2b,0 5px 0 #4b3519,0 10px 18px rgba(0,0,0,.6);
+  text-shadow:0 1px 0 rgba(255,240,206,.75),0 -1px 0 rgba(60,36,14,.6);transition:transform .12s,box-shadow .12s,filter .12s}
+.sb::before{content:"";position:absolute;inset:5px;border-radius:3px;border:1px solid rgba(96,64,30,.45);box-shadow:0 1px 0 rgba(255,238,204,.45),inset 0 1px 0 rgba(255,238,204,.35);pointer-events:none}
+.sb::after{content:"";position:absolute;inset:0;border-radius:5px;pointer-events:none;background:linear-gradient(180deg,rgba(255,246,222,.2),transparent 38%,rgba(60,36,14,.16)),radial-gradient(ellipse 120% 160% at 50% 50%,transparent 60%,rgba(70,44,18,.28))}
+.sb>*{position:relative;z-index:1}
+.sb svg{width:calc(var(--fs) + 2px);height:calc(var(--fs) + 2px);fill:#4a3017;flex:none;filter:drop-shadow(0 1px 0 rgba(255,240,206,.7))}
+.sb small{font:500 11px var(--body);letter-spacing:.04em;color:#6b4c2a;text-shadow:0 1px 0 rgba(255,240,206,.6)}
+.sb:hover,.sb.hov{transform:translateY(-2px);filter:brightness(1.06);box-shadow:inset 0 2px 0 rgba(255,244,214,.75),inset 0 -3px 0 rgba(92,60,28,.55),0 6px 0 #6b4e2b,0 7px 0 #4b3519,0 14px 24px rgba(0,0,0,.7),0 0 0 2px rgba(240,207,125,.55),0 0 20px rgba(240,190,90,.28)}
+.sb:active,.sb.prs{transform:translateY(3px);filter:brightness(.94);box-shadow:inset 0 3px 6px rgba(60,36,14,.45),inset 0 -1px 0 rgba(255,238,204,.3),0 1px 0 #6b4e2b,0 2px 0 #4b3519,0 3px 6px rgba(0,0,0,.6)}
+.sb.dis{filter:grayscale(.6) brightness(.62);cursor:not-allowed;transform:none;box-shadow:inset 0 2px 0 rgba(255,244,214,.4),0 3px 0 #4b3519}
+/* primary: porphyry inlay + gold leaf */
+.sb.pri::before{inset:6px;border:0;background:linear-gradient(180deg,#8f2a1e,#6d1c13 60%,#5a160f);box-shadow:inset 0 2px 4px rgba(0,0,0,.6),inset 0 -1px 0 rgba(255,180,150,.25),0 1px 0 rgba(255,238,204,.55)}
+.sb.pri .t,.sb.dan .t{background:linear-gradient(180deg,#fff2be 0%,#f0cf7d 30%,#b98a2a 62%,#e7c46c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
+.sb.pri svg{fill:#f0cf7d;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
+.sb.pri.prs::before{box-shadow:inset 0 4px 8px rgba(0,0,0,.75)}
+
+.sb{--display:var(--roman)}
+.sb.m{--h:44px;--fs:17px}
+
+/* ---- tablets ---- */
+@media (max-width:1100px){
+  .lower{grid-template-columns:1fr 1fr}
+  .fun:nth-child(3){border-left:0;padding-left:0}
+  .class{grid-column:1/-1;margin-left:0}
+  .lead{grid-template-columns:140px 1fr}.lead .side{grid-column:1/-1;flex-direction:row;border-left:0;padding-left:0;border-top:1px solid var(--rule2);padding-top:6px}
+}
+/* ---- phones: one column ---- */
+@media (max-width:700px){
+  body{padding:6px 6px 12px}
+  .paper{padding:10px 12px}
+  .mast{grid-template-columns:1fr;text-align:center;gap:4px}
+  .title{order:-1}.title h1{font-size:30px;letter-spacing:.1em}
+  .pager{justify-content:center}.mright{justify-self:center;text-align:center}
+  .strip span{padding:0 8px}
+  .lead,.lead.noart{grid-template-columns:1fr}
+  .lead .art{display:flex;flex-direction:column;align-items:center}
+  .lead h2{font-size:23px;text-align:center}.lead .deck{text-align:center}
+  .lead .txt{columns:1}
+  .lead .side{flex-direction:row;flex-wrap:wrap;justify-content:center}
+  .cols{grid-template-columns:1fr}
+  .col{border-left:0;padding:6px 0;border-top:1px solid var(--rule)}.col:first-child{border-top:0}
+  .lower{grid-template-columns:1fr}
+  .fun{border-left:0;padding:6px 0;border-top:1px solid var(--rule2)}
+  .class{margin:6px 0}
+  .ribbon{grid-template-columns:1fr;text-align:center;clip-path:none;margin:8px 0 0;border-radius:3px}
+  .ribbon .card span{white-space:normal}
+  .class .c2{grid-template-columns:1fr}
+  .emp{grid-template-columns:110px 1fr}.emp .mapbox{width:110px;height:110px}
+  .ribbon .card{justify-content:center}.ribbon .nw{padding:0}.ribbon .go{padding:0}
+  .ribbon .sb{width:100%}
+  .mockbar{position:static;margin:0 auto 6px;width:max-content}
+}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><symbol id="i-swords" viewBox="0 0 24 24"><path d="M3 2l9.2 9.2-1.4 1.4L1.6 3.4 3 2zm18 0l1.4 1.4-7.1 7.1 2.1 2.1 1.4-1.4 1.4 1.4-2.1 2.1 2.8 2.8-1.4 1.4-2.8-2.8-2.1 2.1-1.4-1.4 1.4-1.4-2.1-2.1-2.1 2.1 1.4 1.4-1.4 1.4-2.1-2.1-2.8 2.8L4.6 20l2.8-2.8-2.1-2.1 1.4-1.4 1.4 1.4L21 2z"/></symbol></svg>
+
+<div class="mockbar">MOCK · <button data-mk="3" class="on">Big week</button><button data-mk="2">Quiet week</button></div>
+<div class="paper" id="paper"></div>
+
+<script>
+/* ---------- tiny helpers (mock only) ---------- */
+const A='../../../assets/';
+const COIN=`<img class="coin" src="${A}coin.webp" alt="coin">`;
+const R=['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+/* events.jpg cell: col,row of the printed event card */
+const EVC={democritus:[0,0],egidious:[1,0],cassian:[2,0],commodus:[3,0],familia:[4,0],gauntlet:[0,1],goldenEagle:[1,1],juggernaut:[2,1],orpheus:[3,1],triumviratus:[4,1]};
+const evArt=k=>{const[c,r]=EVC[k];return `<div class="evcard"><i style="background-position:${c*25}% ${r*50}%"></i></div>`};
+/* a face: crop of a printed class card's figure, engraved by CSS */
+/* FIG: top of the bust on the 554×800 card (x of the left edge of a 160 px wide window, y) */
+const FIG={veteranus:[348,128],hero:[348,150],amazonia:[348,150],soldier:[348,132],venatore:[348,145],royalty:[348,145],slave:[348,140],damnatio:[348,150]};
+const crop=(cls,x0,y0,cw,W)=>{const k=W/cw;return `<img src="${A}cls_${cls}.webp" style="left:${-x0*k}px;top:${-y0*k}px;width:${554*k}px" alt="">`};
+const engr=cls=>{const[x,y]=FIG[cls];return `<div class="engr">${crop(cls,x,y,160,130)}</div>`};
+const face=(cls,px=30)=>{const[x,y]=FIG[cls];return `<span class="face" style="width:${px}px;height:${px}px">${crop(cls,x+40,y,80,px)}</span>`};
+const flav=m=>`<span class="face" style="width:26px;height:26px"><img src="${A}flavmood_${m}.webp" style="left:-4px;top:-2px;width:34px" alt=""></span>`;
+/* map crop: show x0..x1, y0..y1 of map.jpg (0-1), pins at LOCATIONS x,y */
+const LOC={Syracusae:[.7089,.6261],Verona:[.4914,.0925],Arles:[.2738,.2015],Capua:[.7396,.2991],Thysdrus:[.4862,.7858],Roma:[.6360,.2611],Nemausus:[.1907,.1711],Pompeii:[.7460,.3346],Uthina:[.4543,.7199],Pola:[.6859,.0520],Puteoli:[.7191,.3232]};
+function mapBox(view,pins,cls=''){const[x0,y0,x1,y1]=view;const sx=100/(x1-x0),sy=100/(y1-y0);
+  const bg=`background-size:${sx}% ${sy}%;background-position:${x0/(1-(x1-x0))*100}% ${y0/(1-(y1-y0))*100}%`;
+  return `<div class="mapbox ${cls}" style="${bg}">${pins.slice().reverse().map(([c,lab,o])=>{const[x,y]=LOC[c];return `<span class="pin ${o||''}" style="left:${(x-x0)*sx}%;top:${(y-y0)*sy}%">${o==='nb'?lab:''}<i>${lab}</i></span>`}).join('')}</div>`}
+const stat=(n,l)=>n?`<span><b>${n}</b>${l}</span>`:'';
+
+/* ---------- three stored editions (game: w.acta102[] — last 12 kept) ---------- */
+const ED={
+3:{wk:3,city:'Capua',omen:'An eagle over the gate — fortune favours the bold',price:'II',
+  nums:{bouts:3,purses:412,topCF:31,deaths:1,empire:4,crowd:'13K'},
+  lead:{why:'Your house · an upset',art:'veteranus',kicker:'Main event at Capua · your house',
+    h:'Ferox Fells the Favourite at Capua',
+    deck:'Rated 64 and priced at six to one, Ludus Aquilae’s Veteranus outlasts Tullius Rex in the Cassian and walks off with the purse.',
+    p:['Nobody in Capua’s upper tiers had money on <b>Marcus Ferox</b>. The touts priced him at six to one against <b>Tullius Rex</b> of Ludus Corvi, rated 81 and unbeaten since the spring. By the third round of the Cassian the stands had changed their minds, and their wagers, twice.',
+       'Ferox spent the first two rounds out of reach, let the lions find Rex, and took the final duel on turn 14 with 31 Crowd Favor — the week’s best. The purse of 180 coin goes to the house of Ludus Aquilae, whose lanista was seen, for once, smiling in public.',
+       'Corvi’s lanista declined to speak to the criers. Their runners report he is “studying the footage”, which in Capua means shouting at a slave.'],
+    side:[['Upset','rated 64 beat 81'],['Purse',`180 ${COIN}`],['Crowd Favor','31 · best of the week'],['Odds','6 to 1']],ev:'cassian',cap:['Marcus Ferox','Veteranus · Ludus Aquilae']},
+  house:[{cls:'veteranus',res:'w',t:'<b>Marcus Ferox</b> won the Main event (Cassian), 31 CF',m:180},
+         {cls:'amazonia',res:'s',t:'<b>Lucia the Wren</b> 2nd in the Undercard (Democritus), lost the left arm armour',m:24},
+         {cls:'hero',res:'s',t:'<b>Brutus Gallus</b> rested — fatigue 72 → 22',m:0}],
+  signed:'<b>Severa of Arles</b> signed for three seasons at 14 a week.',
+  yard:'Ferox · Strength <b>C+ → B</b> · Lucia · Speed <b>B</b> holds',
+  ledger:[640,+188],
+  arena:[{res:'w',t:'<b>Quintus Varro</b> (Ludus Corvi) took the Feature bout, Egidious, 22 CF',m:96},
+         {res:'w',t:'<b>Nerva the Dacian</b>, free sword, won the Undercard',m:48},
+         {res:'l',t:'<b>Tullius Rex</b> (Ludus Corvi) beaten in the Main event — first loss in nine'}],
+  memoriam:[{n:'Gaius Pellex',d:'Hero · Ludus Sicae · aged 27',f:'Ad Bestias — the lions of Capua',r:'9 bouts · 4 wins · 2 kills'}],
+  empire:{view:[.40,.02,.86,.48],ev:[
+    ['Pompeii','Vesuvius rumbles',2,'Gates at Pompeii thin (−10%)'],
+    ['Roma','The Senate funds new games',1,'Roma crowds in a giving mood'],
+    ['Verona','Grain riots in the forum',2,'Verona sour, hungry for blood'],
+    ['Puteoli','A fleet comes home from Egypt',1,'+5% at Puteoli and Capua']]},
+  darwin:[['Area Man Who Bet His Goats On A Six-To-One Longshot Now Has Twice The Goats','Capua’s happiest goatherd'],
+          ['Gaius Pellex Tried To Make Friends With Leo On Turn 6','Leo declined, loudly.'],
+          ['Senator Attends Games “Purely For The Architecture”','He left before the architecture.']],
+  rabble:[['damnatio','Opimia the Loud','3 stones thrown · 1 hit Rex'],['slave','Old Sextus','2 offerings, both to Ferox'],['royalty','Cornelia Varia','survived a spear, kept her seat']],
+  overheard:[['“I told my wife Ferox would win. She said I should get a job. We are both right.”','a fishmonger'],
+             ['“Tholo winked at me. I think. It only has the one eye.”','a boy selling figs']],
+  brief:['Ludus Corvi put Tullius Rex on the trading block, say the touts.','Capua’s sand to be raked twice a day after complaints.','A Pompeii bookmaker has fled “for his health”.'],
+  hire:[['Nerva the Dacian','B','Thysdrus',22],['Severina','B','Arles',19],['Old Caro','C+','Roma',11]],
+  table:[[1,'Ludus Corvi',12],[2,'House Duckio',10],[4,'Ludus Aquilae',9,1]],
+  finest:[['Tullius Rex','Corvi',81],['Quintus Varro','Corvi',79],['Nerva the Dacian','free',76],['Aemilia Saxa','Duckio',75],['Marcus Ferox','Aquilae',66,1]],
+  next:{bye:true,wk:4,txt:'A bye across the league — no bouts anywhere. Rest, train and recruit.',then:'Week V at Roma · the Democritus',rival:'Ludus Corvi want Ferox back on the sand'}},
+2:{wk:2,city:'Verona',omen:null,price:'II',
+  nums:{bouts:3,purses:296,topCF:22,deaths:0,empire:3,crowd:'11K'},
+  lead:{why:'League · the empire',map:true,kicker:'The empire · Pompeii',
+    h:'Vesuvius Stirs; Pompeii Shuts Its Gates',
+    deck:'Ash on the forum steps, the Commodus postponed, and every ludus in Campania counting what it would cost to travel north.',
+    p:['The mountain spoke on Tuesday and Pompeii listened. By nightfall the magistrates had closed the arena gates “until the gods are finished”, and the week’s Commodus was moved to the nearest open arena, Puteoli.',
+       'Crowds across Campania are thinner and sourer; the touts expect smaller gates at Capua and Puteoli next week. In Roma, where nothing is on fire, the Senate voted funds for new games and attendance rose by a tenth.',
+       'Your editor sent two runners to Pompeii. One came back, and he will not stop talking about the sausages.'],
+    side:[['Severity','▮▮▮ of 3'],['Gates','Pompeii shut · Campania −10%'],['Moved','Commodus → Puteoli'],['Crowd mood','sour']],cap:['Pompeii','the arena closed']},
+  house:[{cls:'amazonia',res:'l',t:'<b>Lucia the Wren</b> out in round 2 of the Undercard',m:0},
+         {cls:'veteranus',res:'l',t:'<b>Marcus Ferox</b> 3rd in the Feature bout, 12 CF',m:0},
+         {cls:'hero',res:'s',t:'<b>Brutus Gallus</b> in the infirmary — chest wound, fit in week 3',m:0}],
+  signed:null,yard:'Lucia · Speed <b>B− → B</b>',ledger:[452,-31],
+  arena:[{res:'w',t:'<b>Tullius Rex</b> (Ludus Corvi) took the Main event, Egidious, 22 CF',m:150},
+         {res:'w',t:'<b>Aemilia Saxa</b> (House Duckio) won the Feature bout',m:90},
+         {res:'w',t:'<b>Nerva the Dacian</b>, free sword, won the Undercard',m:40}],
+  memoriam:[],
+  empire:{view:[.40,.02,.86,.48],ev:[
+    ['Pompeii','Vesuvius stirs — gates shut',3,'Commodus moved to Puteoli'],
+    ['Roma','The Senate funds new games',1,'+10% at Roma'],
+    ['Pola','Storms in the Adriatic',1,'Ships late; Pola quiet']]},
+  darwin:[['Ludus Sicae Announces Bold New Strategy Of “Not Dying”; Early Results Mixed',''],
+          ['Pompeii Sausage Vendor Unveils Bold New Sausage That Is Also, Somehow, Ash',''],
+          ['Commodus Impersonator Arrested For Being Too Convincing','']],
+  rabble:[['venatore','Titus the Hound','2 stones · both wide'],['royalty','Cornelia Varia','1 offering to Rex']],
+  overheard:[['“Vesuvius? Good. Maybe now they will fix the aqueduct.”','a retired centurion'],['“Back in my day we fought lions bare-handed. Then the lions won, mostly.”','a very old gladiator']],
+  brief:['House Duckio paid 30 coin to court Nerva the Dacian.','The Verona crowd booed the weather.'],
+  hire:[['Nerva the Dacian','B','Thysdrus',20],['Severa of Arles','B−','Arles',14],['Severina','B','Arles',19]],
+  table:[[1,'Ludus Corvi',9],[2,'House Duckio',7],[5,'Ludus Aquilae',6,1]],
+  finest:[['Tullius Rex','Corvi',81],['Quintus Varro','Corvi',79],['Nerva the Dacian','free',76],['Aemilia Saxa','Duckio',75],['Sabina Ursa','Sicae',73]],
+  next:{bye:false,wk:3,where:'Capua',bouts:[['Main event','Cassian','Marcus Ferox (yours), Tullius Rex, +2',180],['Feature','Egidious','Quintus Varro, +3',96],['Undercard','Democritus','Lucia the Wren (yours), +3',48]],rival:'Ludus Corvi — bitter'}},
+1:{wk:1,city:'Roma',omen:null,price:'II',nums:{bouts:3,purses:270,topCF:19,deaths:0,empire:2,crowd:'15K'},
+  lead:{why:'League · main event',art:'soldier',kicker:'Main event at Roma',h:'Rex Opens The Season In Roma',
+    deck:'Ludus Corvi’s champion takes the Democritus before fifteen thousand; the new houses watch and take notes.',
+    p:['The season opened as the touts said it would: <b>Tullius Rex</b> of Ludus Corvi, rated 81, took the Democritus with 19 Crowd Favor and barely a scratch.','The new houses — Ludus Aquilae among them — sent their fighters to the Undercard and learned how hot Roman sand is in the first week of the season.'],
+    side:[['Purse',`150 ${COIN}`],['Crowd','15K'],['Turns','11']],ev:'democritus',cap:['Tullius Rex','Soldier · Ludus Corvi']},
+  house:[{cls:'amazonia',res:'s',t:'<b>Lucia the Wren</b> 2nd in the Undercard',m:20},{cls:'veteranus',res:'l',t:'<b>Marcus Ferox</b> out in round 1',m:0}],
+  signed:null,yard:'First week: the Doctore sizes up the squad.',ledger:[483,+20],
+  arena:[{res:'w',t:'<b>Tullius Rex</b> won the Main event',m:150},{res:'w',t:'<b>Sabina Ursa</b> (Ludus Sicae) won the Feature',m:80}],
+  memoriam:[],empire:{view:[.40,.02,.86,.48],ev:[['Roma','Triumph for the legions',1,'Roma cheerful'],['Arles','Bridge collapses',2,'Arles gates −5%']]},
+  darwin:[['Man Who Shouted “Ad Bestias!” At The Wrong Moment Now Lives With Bestias','']],rabble:[['slave','Old Sextus','1 offering']],
+  overheard:[['“My cousin’s neighbour’s ludus is the best in the empire. I have never been.”','a baker of the Aventine']],brief:['Ten houses enter the season.'],
+  hire:[['Nerva the Dacian','B','Thysdrus',20],['Severina','B','Arles',19],['Old Caro','C+','Roma',11]],
+  table:[[1,'Ludus Corvi',3],[2,'Ludus Sicae',3],[6,'Ludus Aquilae',1,1]],
+  finest:[['Tullius Rex','Corvi',81],['Quintus Varro','Corvi',79],['Nerva the Dacian','free',76],['Aemilia Saxa','Duckio',75],['Sabina Ursa','Sicae',73]],
+  next:{bye:false,wk:2,where:'Verona',bouts:[['Main event','Egidious','Tullius Rex, +3',150],['Feature','Egidious','Marcus Ferox (yours), +3',90],['Undercard','Democritus','Lucia the Wren (yours), +3',40]],rival:''}}
+};
+const STORED=[1,2,3];let cur=3;
+
+function render(){const E=ED[cur];const L=E.lead;const n=E.nums;const i=STORED.indexOf(cur);
+  const money=m=>m?`<span class="money up">+${m}</span>`:'';
+  const resTag=r=>`<span class="res ${r}">${r==='w'?'WON':r==='l'?'LOST':'—'}</span>`;
+  const leadArt=L.map?`<div class="art">${mapBox([.58,.18,.86,.46],[['Pompeii','Pompeii','big'],['Puteoli','Puteoli','l'],['Capua','Capua'],['Roma','Roma','l']])}<div class="cap"><b>${L.cap[0]}</b>${L.cap[1]}</div></div>`
+    :`<div class="art">${engr(L.art)}<div class="cap"><b>${L.cap[0]}</b>${L.cap[1]}</div></div>`;
+  const side=`<div class="side">${L.ev?evArt(L.ev):''}${L.side.map(([k,v])=>`<div class="fact"><b>${k}</b><br>${v}</div>`).join('')}</div>`;
+  const nx=E.next;
+  document.getElementById('paper').innerHTML=`
+  <div class="mast">
+    <div class="pager"><button data-pg="-1" ${i<=0?'disabled':''} aria-label="Older edition">◀</button><div class="pg"><b>Week ${R[E.wk]}</b><small>edition ${i+1} of ${STORED.length} kept · up to 12</small></div><button data-pg="1" ${i>=STORED.length-1?'disabled':''} aria-label="Newer edition">▶</button></div>
+    <div class="title"><h1>ACTA DIURNA</h1><div class="dek">Season <b>I</b> · Week <b>${R[E.wk]}</b> of XII · nailed to the forum wall at <b>${E.city}</b></div></div>
+    <div class="mright"><span class="price">PRICE ${E.price} SESTERTII</span>${E.omen?`<br><span class="omen">Omen: ${E.omen}</span>`:''}</div>
+  </div>
+  <div class="strip">${stat(n.bouts,' bouts')}${stat(n.purses&&n.purses+' '+COIN,' in purses')}${stat(n.topCF,' top Crowd Favor')}${stat(n.deaths,n.deaths===1?' fallen':' fallen')}${stat(n.empire,' empire events')}${stat(n.crowd,' spectators')}</div>
+  <div class="lead">${leadArt}<div><div class="kicker">${L.kicker}</div><h2>${L.h}</h2><div class="deck">${L.deck}</div><div class="txt">${L.p.map(t=>`<p>${t}</p>`).join('')}</div></div>${side}</div>
+  <div class="cols">
+    <div class="col"><h3>Your House<small>Ludus Aquilae this week</small></h3>
+      ${E.house.map(h=>`<div class="it">${face(h.cls)}<div class="t">${h.t}</div>${money(h.m)}${h.res!=='s'?resTag(h.res):''}</div>`).join('')}
+      ${E.signed?`<h4>Signed</h4><div class="it"><div class="t">${E.signed}</div></div>`:''}
+      <h4>From the Training Yard</h4><div class="it"><div class="t">${E.yard}</div></div>
+      <div class="ledger"><span>Treasury <b class="money">${E.ledger[0]}</b> ${COIN}</span><span>this week <b class="money ${E.ledger[1]>=0?'up':'dn'}">${E.ledger[1]>=0?'+':'−'}${Math.abs(E.ledger[1])}</b></span></div>
+    </div>
+    <div class="col"><h3>The Arena<small>the rest of the card at ${E.city}</small></h3>
+      ${E.arena.map(a=>`<div class="it"><div class="t">${a.t}</div>${money(a.m)}${resTag(a.res)}</div>`).join('')}
+      <h4>In Memoriam</h4>
+      ${E.memoriam.length?E.memoriam.map(o=>`<div class="obit"><span class="cross">✝</span><b>${o.n}</b>${o.d}<br><i>${o.f}</i><br><span style="color:var(--ink3)">${o.r}</span></div>`).join(''):`<div class="quiet">No one fell this week. The sand is patient.</div>`}
+    </div>
+    <div class="col"><h3>The Empire<small>news from the provinces</small></h3>
+      <div class="emp">${mapBox(E.empire.view,E.empire.ev.map(([c,,],k)=>[c,String(k+1),'nb']))}
+      <div>${E.empire.ev.map(([c,t,s,eff],k)=>`<div class="ev"><span class="n">${k+1}</span><b>${t}</b> · ${c} <span class="sev">${'▮'.repeat(s)}</span><small>${eff}</small></div>`).join('')}</div></div>
+    </div>
+  </div>
+  <div class="lower">
+    <div class="fun"><h3>The Darwinius Awards</h3>${E.darwin.map(([h,s])=>`<p><span class="dh">${h}</span>${s?` <i>${s}</i>`:''}</p>`).join('')}</div>
+    <div class="fun"><h3>Rabble-Rousers<small>of the week</small></h3>${E.rabble.map(([c,nm,d])=>`<div class="rab">${face(c,26)}<div class="tl"><b>${nm}</b><small>${d}</small></div></div>`).join('')}</div>
+    <div class="fun"><h3>Overheard</h3>${E.overheard.map(([q,w])=>`<p><i>${q}</i><span class="who">— ${w}</span></p>`).join('')}</div>
+    <div class="fun"><h3>In Brief</h3>${E.brief.map(t=>`<p>· ${t}</p>`).join('')}</div>
+    <div class="class"><h3>Classifieds</h3>
+      <div class="c2"><div><div class="clhd"><span>SWORDS FOR HIRE</span><span class="lk" title="Recruiting · Free agents">Scout ▸</span></div>
+      ${E.hire.map(([nm,g,c,w])=>`<div class="cl"><span class="g">${g}</span><span>${nm}, of ${c}</span><span class="d"></span><span>${w}/wk</span></div>`).join('')}
+      <div class="clhd"><span>THE LEAGUE</span><span class="lk" title="World · League">League ▸</span></div>
+      ${E.table.map(([p,nm,pts,me])=>`<div class="cl${me?' me':''}"><span>${R[p]}.</span><span>${nm}${me?' <span class="mine">yours</span>':''}</span><span class="d"></span><span>${pts} pts</span></div>`).join('')}
+      </div><div><div class="clhd"><span>THE SAND’S FINEST</span></div>
+      ${E.finest.map(([nm,h,o,me],k)=>`<div class="cl${me?' me':''}"><span>${R[k+1]}.</span><span>${nm} <span style="color:var(--ink3)">· ${h}</span></span><span class="d"></span><span>${o}</span></div>`).join('')}</div></div>
+    </div>
+  </div>
+  <div class="ribbon">
+    <div class="nw">${i===STORED.length-1?'NEXT WEEK':'AS PRINTED THEN'}<b>Week ${R[nx.wk]}${nx.bye?' · Bye':' · '+nx.where}</b></div>
+    <div class="card">${nx.bye?`<span>${nx.txt}</span><span><b>Then:</b> ${nx.then}</span>`:nx.bouts.map(([t,ev,who,p])=>`<span><b>${t}</b> · ${ev} · ${p} ${COIN}: ${who}</span>`).join('')}${nx.rival?`<span class="rival">Bad blood: ${nx.rival}</span>`:''}</div>
+    <div class="go">${i===STORED.length-1?`<button class="sb pri m" type="button"><svg><use href="#i-swords"/></svg><span class="t">Start next week</span></button>`:`<button class="sb m" type="button" data-pg="${STORED.length-1-i}"><span class="t">Back to this week ▶</span></button>`}</div>
+  </div>
+  <div class="foot">The Acta Diurna is nailed to the forum wall at week’s end. Complaints may be addressed to the editor, who does not read them.</div>`;
+  document.querySelectorAll('[data-mk]').forEach(b=>b.classList.toggle('on',+b.dataset.mk===cur));
+}
+document.addEventListener('click',e=>{const p=e.target.closest('[data-pg]');if(p&&!p.disabled){const i=STORED.indexOf(cur)+(+p.dataset.pg);if(STORED[i]){cur=STORED[i];render()}return}
+  const m=e.target.closest('[data-mk]');if(m){cur=+m.dataset.mk;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){const i=STORED.indexOf(cur)+(e.key==='ArrowLeft'?-1:1);if(STORED[i]){cur=STORED[i];render()}}});
+if(/quiet/.test(location.hash))cur=2;if(/week1/.test(location.hash))cur=1;
+render();
+</script>
+</body></html>
