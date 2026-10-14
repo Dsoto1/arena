@@ -59,13 +59,13 @@ out.yd=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const
 for(const k of ['room','ban','rows','cards','doc','plan','plates','trials','sel','preBefore','planned','locked','plateOn','drill','badge','planRow','drillLocked'])ok(out.yd[k],'yard '+k);
 /* INFIRMARY */
 out.wd=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const q=s=>document.querySelector(s);const r={};const pm=me(),w=W_();const ros=rosterOf(pm);pm.coin=900;
-  const A=ros[ros.length-1];A.inj={until:w.week+3,label:'a gashed chest',pen:3};A.severed=['larm'];A.fat=64;w.beds76=[];MGR.inf90=A.id;MGR.tab='infirm';MGR_REDRAW();await W8(600);
+  const A=ros[ros.length-1];A.inj={until:w.week+3,label:'a gashed chest',pen:3,wk102:w.week-1 /* v1.02 (341): last week's wound — a fresh serious one rests its first week */};A.severed=['larm'];A.fat=64;w.beds76=[];MGR.inf90=A.id;MGR.tab='infirm';MGR_REDRAW();await W8(600);
   r.room=!!q('#mgrPane .rm100.rm100-ward.iv90');r.ban=!!q('.roomhd.rm100ban .rm100adv');r.list=!!q('.rm100list .iv90list .iv90row.on[data-inf90="'+A.id+'"]');
   r.mid=!!q('.rm100w3.iv90mid .rm100pat .iv90hp')&&!!q('.rm100w3.iv90mid .rm100sta .rm100niche .iv90av svg');
   r.marble=!!q('.rm100niche svg image[mask]')&&!!q('.rm100niche .rm100ghost')&&!!q('.rm100niche .rm100spot');
   r.road=document.querySelectorAll('.rm100road .rm100tr').length>=3;r.plates=document.querySelectorAll('.rm100care.iv90care .rm100plt .rm100fr').length>=3;
   const bed=q(`.iv90care [data-bed76="${A.id}"]`);r.bedBtn=!!bed&&!bed.disabled;if(bed)bed.click();await W8(500);r.inBed=inBed76(A);
-  const asc=q(`.iv90care [data-mg="asclepius"][data-id="${A.id}"]`);r.asc=!!asc&&!asc.disabled;if(asc)asc.click();await W8(500);for(let k=0;k<4&&CUR_MODAL;k++){const bt=document.querySelector('#mBtns button.primary');if(bt)bt.click();else CUR_MODAL.done(true);await W8(300)}r.cured=!A.inj;
+  const asc=q(`.iv90care [data-mg="asclepius"][data-id="${A.id}"]`);r.asc=!!asc&&!asc.disabled;if(asc)asc.click();await W8(500);for(let k=0;k<4&&CUR_MODAL;k++){const bt=document.querySelector('#mBtns button.primary');if(bt)bt.click();else CUR_MODAL.done(true);await W8(300)}r.cured=!A.inj||!!A.inj.bk102; /* v1.02 (341): Asclepius is booked — the wound closes when the week ends */
   r.errs=typeof errNew92==='function'?errNew92(window.RM_MARK).map(e=>e.kind+':'+e.msg):[];return r});
 for(const k of ['room','ban','list','mid','marble','road','plates','bedBtn','inBed','asc','cured'])ok(out.wd[k],'infirmary '+k);
 ok(!out.wd.errs.length,'no new 00c errors '+JSON.stringify(out.wd.errs));

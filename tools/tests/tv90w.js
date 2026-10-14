@@ -35,7 +35,7 @@ const o=await pg.evaluate(async()=>{let sd=90;Math.random=()=>{sd=(sd*1664525+10
   r.list=document.querySelectorAll('.iv90list .iv90row').length>=2&&!!q(`.iv90row.on[data-inf90="${A.id}"]`)&&!!q(`.iv90row[data-inf90="${B.id}"] .fb90-worn`)&&!!q('.iv90row .iv90mb.hp')&&!!q('.iv90row .iv90mb.ft');
   r.mid=!!q('.iv90mid .iv90hp .sg90')&&!!q('.iv90mid .iv90ft .iv90fb i')&&!!q('.iv90mid .iv90av svg .glow90')&&!!q('.iv90mid .sg90.wd');
   r.opts=!!q('.iv90care .iv90s.wd .plantile .pd90')&&!!q(`.iv90care [data-bed76="${A.id}"]`)&&!!q('.iv90care .v101ord'); /* v1.01: the bathhouse moved to the yard (318) */
-  const med=q(`.iv90care [data-mg="medic"][data-id="${A.id}"]`);const c0=m.coin;if(med)med.click();await W8(400);r.cure=!!med&&!A.inj&&m.coin<c0;
+  const med=q(`.iv90care [data-mg="medic"][data-id="${A.id}"]`);const c0=m.coin;if(med)med.click();await W8(400);r.cure=!!med&&(!A.inj||!!A.inj.bk102)&&m.coin<c0;if(A.inj&&A.inj.bk102)delete A.inj; /* v1.02 (341): the cure is booked — it closes when the week ends (simulated here) */
   const row=q(`[data-inf90="${B.id}"]`);if(row)row.click();await W8(400);r.select=MGR.inf90===B.id&&!!q('.iv90av.worn');
   MGR.tr92=B.id;await go('practice');const f0=B.fat;q(`.v101rec2 [data-bath="${B.id}"]`).click();await W8(400);r.rub=B.fat===f0-10;
   q(`.v101rec2 [data-rest="${B.id}"]`).click();await W8(400);r.rest=B.restWk===w.week;

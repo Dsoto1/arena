@@ -52,6 +52,7 @@ function care101Cpu(m,k){if(!V101B.on)return CARE101_PRICE[k]();try{const w=W_()
 if(V101B.on){
 /* ---------- 1 · the rules: why a treatment is refused, and doing it ---------- */
 function care101Why(g,k,o={}){const w=W_(),m=me();if(!g||!w||!m)return _T('Nobody to treat.');
+  {const j=typeof care102Why==='function'?care102Why(g,k,o):'';if(j)return j} /* v1.02 (341): a booked cure / a fresh serious wound */
   if(!o.auto&&typeof roadLocked76==='function'&&roadLocked76(w))return _T`🛣 On the road — the Infirmary reopens when the week ends.`;
   const i=g.inj;const war=i&&i.war;const sevN=(g.severed||[]).length;const bedNeed=_T('Needs a bed first — put him in one.');
   if(k==='medic'){if(war)return _T`${g.name} is with the legions — no Medicus reaches a marching camp.`;if(g.medWk===w.week)return _T`${g.name} has already seen the Medicus this week.`;
@@ -66,6 +67,7 @@ function care101Why(g,k,o={}){const w=W_(),m=me();if(!g||!w||!m)return _T('Nobod
   if(m.coin<c)return _T`Needs ${c} coin — your treasury holds ${m.coin}.`;
   return ''}
 function care101Do(g,k,o={}){const why=care101Why(g,k,o);if(why)return {ok:false,msg:why};const w=W_(),m=me();const h=CARE101.h[k],c=care101Coin(k);
+  {const j=typeof care102Do==='function'?care102Do(g,k,o):null;if(j)return j} /* v1.02 (341): the cure is BOOKED — the wound closes when the week ends */
   if(k==='heal'){/* v1.02 (332 M1): ONE limb a week; it is back when the week ENDS (endWeek wrapper), fatigue +20 after */const n=1;m.coin-=c*n;mh101Spend(w,m,h*n);const was=g.severed.slice(0,n);g.rg102={wk:w.week,l:was[0]};
     ghist(g,_T`booked the Blessings of Hygeia for ${was.map(l=>LOCN[l].toLowerCase()).join(', ')}`);
     return {ok:true,msg:_T`🌿 The priests of Hygeia operate on ${esc(g.name)}'s ${was.map(l=>esc(LOCN[l]).toLowerCase()).join(', ')} (${h*n} h · ${c*n} coin) — the limb is back when the week ends, then fatigue +20.`}}

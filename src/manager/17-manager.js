@@ -575,7 +575,7 @@ async function endWeek(){
     if(m.coin<0){const ros=rosterOf(m).sort((a,b)=>b.contract.wage-a.contract.wage);if(ros[0]){ghist(ros[0],_T`walked out of ${esc(m.ludus)} over unpaid wages`);ros[0].contract=null;m.broken=(m.broken||0)+1;mnews(_T`${esc(m.ludus)} cannot pay its fighters. ${esc(ros[0].name)} walks out.`,'bad');if(m.isPlayer)tnews(_T`${esc(ros[0].name)} walked out — the treasury could not cover wages.`,'bad')}}
   }
   for(const g of w.glads.filter(g=>g.alive&&(g.severed||[]).length)){const m=g.contract?mgrById(g.contract.mgr):null;
-    if(m&&!m.isPlayer&&m.coin>60+20*g.severed.length){let c;while(g.severed.length&&(c=typeof care101Cpu==='function'?care101Cpu(m,'heal'):HYGEIA)>=0){m.coin-=c;g.severed.pop()}if(!g.severed.length)continue} /* v1.01 (318): a limb per Medicus hours */
+    if(m&&!m.isPlayer&&m.coin>60+20*g.severed.length){let c;while(g.severed.length&&(c=typeof care101Cpu==='function'?care101Cpu(m,'heal'):HYGEIA)>=0){m.coin-=c;g.severed.pop();if(typeof care102Limb==='function'&&care102Limb(g))break}if(!g.severed.length)continue} /* v1.01 (318): a limb per Medicus hours; v1.02 (341): one limb a week, +20 fatigue */
     if(!m&&Math.random()<.25){g.severed.pop();continue}
     if(g.severed.length>=2&&!g.sotonium&&!(m&&m.isPlayer&&g.severed.length<3)){g.alive=false;g.retired=true;mnews(_T`${esc(g.name)}, maimed, lays down the sword for good.`,m&&m.isPlayer?'bad':'');if(m)g.contract=null}}
   for(const g of w.glads)if(g.loyB)g.loyB=Math.max(0,g.loyB-1); // bonds fade a little each week unless tended

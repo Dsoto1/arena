@@ -49,7 +49,7 @@ const MTUT_STEPS=[
   {k:'interest',spot:'#mgrPane',spotOnly:1,say:_T`Their <b>interest</b> climbs as you court them — feasts, pitches, a famous house, a fair wage. When it is high enough, <b>Offer a contract</b>. Not today: we have a card to fight.`,next:1},
   // the infirmary
   {k:'infirm',spot:'[data-mg="tab"][data-id="infirm"]',say:()=>_T`${mtNm('A')} came home hurt last week. Open the <b>⚕ Infirmary</b>.`,tab:'infirm'},
-  {k:'medic',spot:()=>document.querySelector(`#mgrPane [data-mg="medic"][data-id="${MTUT.A}"]`),say:()=>_T`A hurt fighter cannot be entered. Call the <b>Medicus</b> for ${mtNm('A')} — it clears the wound and lifts their spirits.`,until:()=>{const g=mtG('A');return g&&!g.inj}},
+  {k:'medic',spot:()=>document.querySelector(`#mgrPane [data-mg="medic"][data-id="${MTUT.A}"]`),say:()=>_T`A hurt fighter cannot be entered. Call the <b>Medicus</b> for ${mtNm('A')} — it lifts their spirits, and in this lesson it clears the wound at once (in your own career a cure closes the wound when the week ends).`,until:()=>{const g=mtG('A');return g&&!g.inj}},
   // my ludus: spending to improve
   {k:'ludus',spot:'[data-mg="tab"][data-id="ludus"]',say:_T`Cleared for play. Now <b>🏛 Your ludus</b> — where coin and points become a better house.`,tab:'ludus'},
   {k:'fac',spot:'[data-mg="run"][data-id="fac"]',say:_T`Open <b>🏗 Facilities</b>: permanent upgrades — one project a week.`,until:()=>MGR.run==='fac'},
