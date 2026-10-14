@@ -59,16 +59,16 @@ function care101Why(g,k,o={}){const w=W_(),m=me();if(!g||!w||!m)return _T('Nobod
   else if(k==='surgeon'){if(!i||war||injReq(i)!=='surgeon')return _T('Nothing for the surgeon.');if(serious76(g)&&!inBed76(g))return bedNeed}
   else if(k==='bath'){if(!i||war)return _T('No wound to steam.');if(g.bathWk===w.week)return _T`${g.name} has already been steamed, scraped and oiled this week.`}
   else if(k==='asclepius'){if(!i||war)return _T('No wound for the temple.')}
-  else if(k==='heal'){if(!sevN)return _T('No lost limb.');if(!inBed76(g))return _T('Hygeia works only on a patient in bed — put him in one first.')}
+  else if(k==='heal'){if(!sevN)return _T('No lost limb.');if(g.rg102&&g.rg102.wk===w.week)return _T`One limb a week — ${g.name}'s operation is booked; the limb is back when this week ends.`;if(!inBed76(g))return _T('Hygeia works only on a patient in bed — put him in one first.')}
   else return _T('Unknown treatment.');
   const h=CARE101.h[k],L=mh101Left(w,m),c=care101Coin(k);
   if(L<h)return _T`Needs ${h} Medicus hours — ${L} left this week. They come back when the week ends.`;
   if(m.coin<c)return _T`Needs ${c} coin — your treasury holds ${m.coin}.`;
   return ''}
 function care101Do(g,k,o={}){const why=care101Why(g,k,o);if(why)return {ok:false,msg:why};const w=W_(),m=me();const h=CARE101.h[k],c=care101Coin(k);
-  if(k==='heal'){const n=Math.min(g.severed.length,Math.floor(mh101Left(w,m)/h),Math.floor(m.coin/c));m.coin-=c*n;mh101Spend(w,m,h*n);const was=g.severed.slice(0,n);g.severed=g.severed.slice(n);
-    ghist(g,_T`the Blessings of Hygeia regrew ${was.map(l=>LOCN[l].toLowerCase()).join(', ')}`);
-    return {ok:true,msg:_T`🌿 The priests of Hygeia regrow ${esc(g.name)}'s ${was.map(l=>esc(LOCN[l]).toLowerCase()).join(', ')} (${h*n} h · ${c*n} coin)${g.severed.length?_T` — ${g.severed.length} still lost`:''}.`}}
+  if(k==='heal'){/* v1.02 (332 M1): ONE limb a week; it is back when the week ENDS (endWeek wrapper), fatigue +20 after */const n=1;m.coin-=c*n;mh101Spend(w,m,h*n);const was=g.severed.slice(0,n);g.rg102={wk:w.week,l:was[0]};
+    ghist(g,_T`booked the Blessings of Hygeia for ${was.map(l=>LOCN[l].toLowerCase()).join(', ')}`);
+    return {ok:true,msg:_T`🌿 The priests of Hygeia operate on ${esc(g.name)}'s ${was.map(l=>esc(LOCN[l]).toLowerCase()).join(', ')} (${h*n} h · ${c*n} coin) — the limb is back when the week ends, then fatigue +20.`}}
   m.coin-=c;mh101Spend(w,m,h);const i=g.inj;
   if(k==='medic'){g.medWk=w.week;g.morale=clamp(g.morale+12,0,100);if(i)delete g.inj;
     return {ok:true,msg:i?_T`⚕ The Medicus clears ${esc(g.name)}'s ${esc(i.label)} (${h} h · ${c} coin) — morale ${g.morale}.`:_T`⚕ The Medicus puts ${esc(g.name)} on a Health Elixir regimen (${h} h · ${c} coin) — morale ${g.morale}.`}}
