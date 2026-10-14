@@ -11,16 +11,16 @@ const o={};
 /* ---------- 1 · advisor levels by start type ---------- */
 o.lv=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
   const lv=()=>council83(W_()).map(a=>a.lv);const cm=d=>({type:'custom',mgr:{name:'T',ludus:'LT',city:'Roma',color:'#c0433a',p:{...MGR_PRESETS.balanced[1]},portrait:{},diff:d}});const r={};
-  newWorld(cm('normal'));r.custom=lv();r.hCustom=rec98HrsMax(W_());
-  newWorld(cm('easy'));r.easy=lv();r.hEasy=rec98HrsMax(W_());
+  newWorld(cm('normal'));r.custom=lv();r.hCustom=rec98HrsMax(W_());r.xCustom=rec101Base(rec101Own(W_()))+4*(adv98Lv(W_())-1);
+  newWorld(cm('easy'));r.easy=lv();r.hEasy=rec98HrsMax(W_());r.xEasy=rec101Base(rec101Own(W_()))+4*(adv98Lv(W_())-1);
   newWorld({type:'pre',key:'servius'});r.small=lv();
-  newWorld({type:'pre',key:'crispus'});r.big=lv();r.hBig=rec98HrsMax(W_());
-  newWorld(cm('normal'));const m=me();m.coin=900;const c0=m.coin;const u=adv98Up('recruiter');r.up=[u.ok,u.lv,c0-m.coin,rec98HrsMax(W_())];const c1=m.coin;const u2=adv98Up('recruiter');r.up2=[u2.ok,u2.lv,c1-m.coin];const u3=u2;r.up3=[u3.ok,m.coin===c1,council83(W_()).find(x=>x.k==='recruiter').lv];const u4=adv98Up('doctore');r.upD=[u4.ok,u4.lv];a_=council83(W_()).find(x=>x.k==='recruiter');a_.lv=1;m.coin=900;r.noBtn2=null;
+  newWorld({type:'pre',key:'crispus'});r.big=lv();r.hBig=rec98HrsMax(W_());r.xBig=rec101Base(rec101Own(W_()))+4*(adv98Lv(W_())-1);
+  newWorld(cm('normal'));const m=me();m.coin=900;const c0=m.coin;const u=adv98Up('recruiter');r.up=[u.ok,u.lv,c0-m.coin,rec98HrsMax(W_())-rec101Base(rec101Own(W_()))+20];const c1=m.coin;const u2=adv98Up('recruiter');r.up2=[u2.ok,u2.lv,c1-m.coin];const u3=u2;r.up3=[u3.ok,m.coin===c1,council83(W_()).find(x=>x.k==='recruiter').lv];const u4=adv98Up('doctore');r.upD=[u4.ok,u4.lv];a_=council83(W_()).find(x=>x.k==='recruiter');a_.lv=1;m.coin=900;r.noBtn2=null;
   MGR.view=null;MGR.tab='ludus';MGR_REDRAW();await W8(500);r.card=document.querySelectorAll('#mgrBody .c98lv').length;r.btn=!!document.querySelector('#mgrBody [data-c98up="recruiter"]');
   const a=council83(W_()).find(x=>x.k==='recruiter');a.lv=2;MGR_REDRAW();await W8(400);r.btn2=!!document.querySelector('#mgrBody [data-c98up="recruiter"]');r.ev2=(document.querySelector('#mgrBody [data-c83="recruiter"] .c98ev')||{}).textContent;a.lv=3;return r});
 const all=(a,v)=>Array.isArray(a)&&a.length===6&&a.every(x=>x===v);
-ok(all(o.lv.custom,1)&&o.lv.hCustom===20,'a new house: level 1, 20 h '+JSON.stringify(o.lv));ok(all(o.lv.easy,2)&&o.lv.hEasy===24,'an Easy start: level 2');
-ok(all(o.lv.small,2)&&all(o.lv.big,3)&&o.lv.hBig===28,'a taken-over house: 2, or 3 when established');
+ok(all(o.lv.custom,1)&&o.lv.hCustom===o.lv.xCustom,'a new house: level 1, hours = roster band (v1.01) + 4 per level above 1 '+JSON.stringify(o.lv));ok(all(o.lv.easy,2)&&o.lv.hEasy===o.lv.xEasy,'an Easy start: level 2');
+ok(all(o.lv.small,2)&&all(o.lv.big,3)&&o.lv.hBig===o.lv.xBig,'a taken-over house: 2, or 3 when established');
 ok(o.lv.up[0]&&o.lv.up[1]===2&&o.lv.up[2]===60&&o.lv.up[3]===24,'coin: level 1 → 2 costs 60 and adds hours '+JSON.stringify(o.lv.up));ok(!o.lv.up2[0]&&o.lv.up2[2]===0,'coin: level 2 → 3 is refused');ok(!o.lv.up3[0]&&o.lv.up3[1]&&o.lv.up3[2]===2,'coin stops at level 2 '+JSON.stringify(o.lv.up3));ok(o.lv.upD[0]&&o.lv.upD[1]===2,'every advisor can be trained (Doctore)');ok(!o.lv.btn2&&/Level 3/.test(o.lv.ev2||''),'level 2: no Train button, progress for level 3 '+o.lv.ev2);ok(o.lv.card===6&&o.lv.btn,'council card shows levels + the train button');
 /* ---------- 2 · no numbers before signing ---------- */
 o.nn=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const w=W_(),m=me();m.fame=Math.max(m.fame,60);

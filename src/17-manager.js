@@ -335,7 +335,7 @@ function makeNight(){
     if(g.contract&&mgrById(g.contract.mgr)&&mgrById(g.contract.mgr).isPlayer)mnews(_T`${esc(g.name)} fights before their home city of ${esc(L.n)} this week${(omen.local||0)<0?_T(' — under a bad omen (morale −4)'):' (morale +3)'}.`)}
   // THE LEVY: a hot war (severity 3) calls men up — soldiers of the sand first
   {const wars=(typeof worldEvents==='function'?worldEvents(wkey):[]).filter(e=>e.war&&e.sev>=3);
-   if(wars.length)for(const g of w.glads.filter(g=>g.alive&&!g.inj&&!g.contractHidden)){
+   if(wars.length)for(const g of w.glads.filter(g=>g.alive&&!g.inj&&!g.contractHidden&&!(typeof levyExempt101==='function'&&levyExempt101(g)))){ /* v1.01: the hurt, the bedded and the maimed are never called */
      const pSoldier=g.cls==='soldier'?0.05:g.cls==='veteranus'?0.02:0.006;
      if(Math.random()>=pSoldier)continue;const e=pickOne(wars);const m2=g.contract?mgrById(g.contract.mgr):null;
      if(m2&&m2.isPlayer){ // the levy officer calls at YOUR gate — and officers have prices
@@ -903,6 +903,7 @@ function settlePending(pendIdx,choice,extra){
     if(choice==='pay'){if(m.coin<P.price){w.pend.splice(pendIdx,0,P);return _T('Not enough coin for the editor.')}buyBack(g,m,F,P.price);setRow('bought',`${F.g} · ${F.n}`);return _T`${coinAmt87(P.price)} changes hands. ${esc(g.name)} lives — and owes you a life.`}
     killFighter(g,m,F,where);setRow('killed',`${F.g} · ${F.n}`);return _T`The sentence stands. ${esc(g.name)} is gone: ${F.n}.`}
   if(P.t==='levy'){
+    if(typeof levyExempt101==='function'&&levyExempt101(g)){ghist(g,_T`the levy passed over them — not fit to march`);tnews(_T`${esc(g.name)} is not fit to march — the levy officer leaves empty-handed.`);return _T`The levy officer sees ${esc(g.name)}'s wounds and moves on — no one is called who cannot walk.`}
     if(choice==='bribe'){if(m.coin<P.price){w.pend.splice(pendIdx,0,P);return _T('Not enough coin for the officer.')}
       if(Math.random()<.15){m.coin-=P.price;m.fame=clamp(m.fame-3,0,100);ghist(g,_T`the levy took them despite a bribe — ${P.war.rome} against ${P.war.foe}`);g.inj={until:P.until,label:_T`serving with ${P.war.rome} against ${P.war.foe}`,pen:0,war:P.war};tnews(_T`The officer pocketed ${coinAmt87(P.price)} and took ${esc(g.name)} anyway. Fame −3.`,'bad');return _T`The officer takes your ${coinAmt87(P.price)}, thanks you — and marches ${esc(g.name)} off regardless. Word gets around (fame −3).`}
       m.coin-=P.price;m.p.honor=clamp(m.p.honor-1,1,95);ghist(g,_T`spared the levy — ${esc(m.ludus)} paid the officer ${coinAmt87(P.price)}`);g.loyB=clamp((g.loyB||0)+4,0,25);tnews(_T`Bribed the levy officer ${coinAmt87(P.price)} to keep ${esc(g.name)}.`);return _T`${coinAmt87(P.price)} and ${esc(g.name)}'s name comes off the list. They know who paid (+4 loyalty).`}
