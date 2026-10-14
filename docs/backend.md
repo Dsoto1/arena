@@ -394,3 +394,7 @@ Shared rules: the "v1.01" section at the end of `111-onlcore`; routes: the "v1.0
   its page. Data stays: items written by the newer server (e.g. `RID#`) are ignored by the older one and expire on their own.
   A protocol bump cannot be rolled back while players hold the newer page — they would be refused until they reload.
 - Zips (`flavius-server-N.zip` + game zip) remain the fallback when GitHub is unavailable (`bash flavius.sh server …`).
+
+## v1.01 domus records
+
+A house keeps TWO records. RANKED = the existing top-level fields (`D.bouts/wins/lifeCF/survived/fallen`), written only for Ranked seats from v1.01 on. UNRANKED = `D.cu` `{bouts,wins,lifeCF,survived,fallen}` (Custom or any other non-ranked online event; `survived` counts survivors of non-ranked bouts too). Rules: the "v1.01 DOMUS RECORDS" section at the end of `src/111-onlcore.js` (`domusNote` override; routes.js `domusAfter` and the mock both call `C.domusNote`). History cannot be split: earlier totals (Custom matches included) stay in the top-level record. `D.split101` = time of the first write by the new code, `D.pre101` = bouts the house already had then. `domusRow` returns `cu` (zeros when none), `split101`, `pre101` (so `domusPub89`, `house.card`, `domus.get`, `domus.visit` carry them). Glory, Domus rank, ranks, coin and trophies do not read it. No protocol bump, no migration (old houses start with no `cu`). Page: `src/324-v101domrec.js`. Test: `server/test/v101rec.test.js`.
