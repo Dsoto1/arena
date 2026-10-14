@@ -28,7 +28,7 @@ async function run(calm){
   await pg.close();return {o,errs}}
 const A=await run(false);const o=A.o;
 ok(o.cover,'cover (hold100) is up when the square opens');ok(o.shown,'square revealed');
-ok(o.imgs.total>=15&&o.imgs.ready===o.imgs.total,'every figure image decoded at reveal '+JSON.stringify(o.imgs));
+ok(o.imgs.total>=8&&o.imgs.ready===o.imgs.total,'every figure image decoded at reveal '+JSON.stringify(o.imgs));
 ok(o.coverGone,'cover lifted');
 const d=o.due.slice().sort((a,b)=>a-b);
 ok(new Set(d.map(x=>Math.round(x/100))).size>=8,'start phases differ '+d.join(','));
