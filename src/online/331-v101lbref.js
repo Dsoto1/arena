@@ -4,7 +4,7 @@
    (sd100 lb101r) and a stylesheet: its data-* and 234's click handler are unchanged. Off with 321's board kill switch (B101.off), like G16.
    ========================================================= */
 if(typeof lb96BarHTML==='function'){const base=lb96BarHTML;lb96BarHTML=function(){const h=base.apply(this,arguments);
-  try{if(typeof B101!=='undefined'&&B101.off)return h;return h.replace(/class="btn tksm" data-lb96r="1"/,_T('class="btn tksm sd100 lb101r" data-lb96r="1"'))}catch(e){return h}}}
+  try{if(typeof B101!=='undefined'&&B101.off)return h;return h.replace(/class="btn tksm" data-lb96r="1"/,'class="btn tksm sd100 lb101r" data-lb96r="1"')}catch(e){return h}}} // i18n:skip
 try{if(typeof sd100CSS==='function'&&!(typeof B101!=='undefined'&&B101.off)){const st=document.createElement('style');st.id='lb101sd';
   st.textContent=sd100CSS({pri:[],sec:['#onl .lb96f .btn.lb101r[data-lb96r]'],dan:[],m:[]})+
     /* the filter bar keeps its height: the slab sits at the end of the row, no wider than its label */
