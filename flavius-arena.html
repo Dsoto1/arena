@@ -17183,7 +17183,10 @@ function styleOf(player){
 function pickFavorite(sp){
   const act=activePlayers();if(!act.length)return null;
   if(sp.taste==='underdog')return [...act].sort((a,b)=>perfScore(a)-perfScore(b))[0].id;
-  return [...act].sort((a,b)=>styleOf(b)[sp.taste]-styleOf(a)[sp.taste]+(rand()-.5)*8)[0].id;
+  /* v1.01: one jitter per gladiator drawn in seat order, then a plain sort (a rand() inside the comparator drew dice in the
+     engine's own comparison order, which differs between Chromium, Firefox, Safari and Node — an online desync risk) */
+  const k=act.map(p=>({p,v:styleOf(p)[sp.taste]+(rand()-.5)*8}));
+  return k.sort((a,b)=>b.v-a.v)[0].p.id;
 }
 /* ================= FAMOUS VISITORS (v0.18) =================
    Rarely (about one event in twelve) a real historical figure attends. Each nudges the crowd and the
