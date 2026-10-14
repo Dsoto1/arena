@@ -16,7 +16,7 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   /* roster check */
   const ros=rosterOf(me());for(const g of ros.slice(1))g.contract=null;w.glads.forEach(g=>g.favd=false);r.short=weekChecklist().some(x=>!x.done&&/Short-handed/.test(x.txt));fa.favd=true;r.cleared=!weekChecklist().some(x=>!x.done&&/Short-handed/.test(x.txt));
   /* plan + compare */
-  MGR.cmp=[fa.id];MGR_REDRAW();await W8(200);r.plan=!!document.querySelector('.rplan');r.cmp=!!document.querySelector('.cmpc');
+  MGR.cmp=[fa.id];MGR_REDRAW();await W8(200);r.plan=!document.querySelector('.rplan'); /* v1.01 (317 M): the recruiting plan line is gone */r.cmp=!!document.querySelector('.cmpc');
   /* Sica */
   const sm=sicaMgr(w);r.sica=!!sm&&rosterOf(sm).length===4&&rosterOf(sm).every(g=>gStats(g).str>=86);
   const bt=w.night.bouts.find(b=>b.ents.some(id=>isSicaG(gById(id))));if(bt){bt.sicaSpear=true;const c=boutCfg(bt,true);r.spear=!!c.syndSpear&&!isSicaG(gById(c.syndSpear))}else r.spear=true;
@@ -41,7 +41,7 @@ o.p=await ph.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   await W8(2800);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}await W8(800);const r={pp:document.body.classList.contains('phoneP2'),tabs:!!document.querySelector('#ppTabs [data-pp="side"]')};
   document.querySelector('#ppTabs [data-pp="side"]').click();await W8(300);r.board=getComputedStyle(document.getElementById('board')).display!=='none';return r});
 const m=o.m,a=o.a,p=o.p;ok(m.banner&&!m.missing&&m.recStat,'tab banners + count');ok(m.noHrs,'hours out of the header');ok(m.ovals,'rail ovals');ok(m.scout,'scouting shows ratings + personality');
-ok(m.short&&m.cleared,'roster check clears with a board recruit');ok(m.plan&&m.cmp,'recruiting plan + compare');ok(m.sica&&m.spear&&m.noSuperbus,'Sica house');
+ok(m.short&&m.cleared,'roster check clears with a board recruit');ok(m.plan&&m.cmp,'no recruiting plan line + compare');ok(m.sica&&m.spear&&m.noSuperbus,'Sica house');
 ok(!a.groups&&a.start,'no Start from; a printed piece still loads');ok(a.levels,'armor levels');ok(a.croc,'croc token');ok(a.noChips&&a.zones&&a.flash,'avatar hover zones + flash');ok(a.sr&&a.ratShut,'summa rudis hidden + ratings always show (v0.81)');
 ok(a.face&&a.face2,'mini facing');ok(p.pp&&p.tabs&&p.board,'phone portrait sheet');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();
