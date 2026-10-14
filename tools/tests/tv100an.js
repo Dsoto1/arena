@@ -104,7 +104,8 @@ const s11=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,m
   await __samp(500);const qs=[...new Set(AN100.trace.filter(x=>x.id===Q.id&&x.src).map(x=>x.src))];
   await cut(P,'rleg');for(let i=0;i<60&&!(AN100.src.get('p:soldier:rleg')&&AN100.src.get('p:soldier:rleg').move.bm.idle&&AN100.src.get('p:soldier:rleg').move.bm.idle!==1);i++)await __samp(150);
   AN100.trace=[];P.mv=6;const free=[[5,2],[7,2],[5,1],[7,1]].find(([r,c])=>!S.players.some(x=>x.alive&&x.r===r&&x.c===c)&&!S.npcs.some(n=>n.alive&&n.r===r&&n.c===c)&&!S.pillars.some(x=>x.r===r&&x.c===c));
-  if(free){const mv=movePlayer(P,[free[0]*N+free[1]]);let dn=false;mv.then(()=>dn=true);while(!dn){draw();await W8(20)}}await __samp(600);
+  /* v1.01: the walk steps with the glide (half a stride a tile) — Slow gives the one-tile hobble time to show its frames */
+  if(free){SPEED='slow';const mv=movePlayer(P,[free[0]*N+free[1]]);let dn=false;mv.then(()=>dn=true);while(!dn){draw();await W8(20)}SPEED='normal'}await __samp(600);
   const ps=AN100.trace.filter(x=>x.id===P.id&&x.src);const pSrc=[...new Set(ps.map(x=>x.src))],pWalk=[...new Set(ps.filter(x=>/^walk/.test(x.pose)).map(x=>x.pose))];
   AN100.trace=[];await cut(Q,'rleg');await __samp(900);const two=AN100.trace.filter(x=>x.id===Q.id&&x.pose).length;AN100.trace=null;
   const files=sevKeys();
