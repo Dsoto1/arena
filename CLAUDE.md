@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.0**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v1.01**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -1945,6 +1945,13 @@ share copy — the site download play/flavius-rule-arena.zip.)
   306; balance (tools/plans/balance100/REPORT.md, his picks): Damnatio pelted every other turn + Iron Helm + Belt I, Amazonia without the Falcata,
   seats by lot in Chariot/Orpheus/Golden Eagle (315); online dented printed gear (repair ⅒), award ladder 24–80, halved rank Glory, one rank gift a
   house (316, server). Version history tab "91–1.0" (187 hist90Num = major×100 + minor). Server changed — flavius.sh release deploys it.
+
+- **v1.01** steadier and tidier (his PDF notes M1–M45 + G1–G22, answers 1a–10a): Manager UI 317, Infirmary loop + Medicus hours 318, Manager rules 319,
+  windows + city 320, board 321 (first fan of each gladiator holds his flag, his call 2026-10-14), online kits + security 322, 3D attack variety / walk /
+  projectiles 323, two Domus records 324; zoom pre-baked while idle 330-v101zoom2, sandstone Lobby ↻ 331; FOUNDATIONS: replay harness 325, src/ by topic,
+  question port 326 (protocol 9), log + pauses 327, effects as data 328, rules in Node (tools/node), Ranked verification Lambda (log only, VERIFY#/AUDIT#,
+  build pinning 329), Manager morph 330; pickFavorite no longer sorts with rand() (cross-browser desync). Server + full stack update (new VerifyFn) —
+  flavius.sh release deploys it. Site play.html "New in vX" now written by release.sh (tools/sitewhatsnew.js).
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
