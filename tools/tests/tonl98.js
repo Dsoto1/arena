@@ -133,7 +133,7 @@ async function start(ev,H,G,seats){const L=await H.evaluate(async([ev,seats])=>{
 const nIn=p=>p.evaluate(async()=>{try{return S&&S.onl?(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.length:0}catch(e){return 0}}).catch(()=>0);
 async function result(ev,H,G){for(const t1=Date.now();Date.now()-t1<40000;){const top=await H.evaluate(async()=>{const ins=(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs;return ins.length?ins[ins.length-1].seq:0}).catch(()=>0);
     const ns=await Promise.all([H,G].map(p=>p.evaluate(()=>ONLM.next).catch(()=>0)));if(ns.every(x=>x>top))break;await H.waitForTimeout(300)}
-  const inputs=await H.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from,x.h||x.pre,x.k]));
+  const inputs=await H.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from,x.k==="modal"&&x.pre?x.pre:(x.h||x.pre),x.k]));
   const HH={H:await H.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,acct:ONL.acct.id,ev:S.evKey,n:S.players.length,teams:S.players.map(p=>p.team||''),seats:S.players.map(p=>!!p.cpu)})),G:await G.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,acct:ONL.acct.id,ev:S.evKey,n:S.players.length}))};
   let same=0,diff=0;for(const [seq,from,h] of inputs){if(!h)continue;for(const k of ['H','G']){if(HH[k].acct===from)continue;const o=HH[k].h['s'+seq];if(!o)continue;o===h?same++:diff++}}
   return {ev,inputs:inputs.length,kinds:[...new Set(inputs.map(x=>x[3]))],same,diff,resync:[HH.H.r,HH.G.r],evH:HH.H.ev,evG:HH.G.ev,players:HH.H.n,teams:HH.H.teams,cpu:HH.H.seats}}

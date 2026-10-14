@@ -81,7 +81,7 @@ await run(10000);
 for(let t1=Date.now();Date.now()-t1<45000;){const ins=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from===ONL.acct.id]));const ha=await A.evaluate(()=>ONLM.hlog),hb=await B.evaluate(()=>ONLM.hlog);if(ins.every(([q,fa])=>(fa?hb:ha)['s'+q]))break;await wait(300)}
 /* lockstep: A's own sends are the inputs B applied in order, and vice versa (pre-input hashes) */
 const ha=await A.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,last:ONLM.lastResync||null}));const hb=await B.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,last:ONLM.lastResync||null}));
-const ins=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from===ONL.acct.id,x.h||x.pre,x.k]));
+const ins=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from===ONL.acct.id,x.k==="modal"&&x.pre?x.pre:(x.h||x.pre),x.k]));
 let same=0,diff=0;for(const [seq,fromA,h] of ins){const other=fromA?hb.h['s'+seq]:ha.h['s'+seq];if(!other)continue;if(other===h)same++;else diff++}
 /* the bout ends on both screens at the same input → both report → the match settles */
 for(const T_=Date.now();Date.now()-T_<60000;){const s=await Promise.all([A,B].map(p=>p.evaluate(()=>({n:ONLM.next,ok:(typeof onlmSettled==='function'?onlmSettled():true)&&!S.busy,over:S.over}))));if(s[0].over&&s[1].over)break;if(s[0].n===s[1].n&&s[0].ok&&s[1].ok)break;await drive(A);await drive(B);await wait(250)}

@@ -49,7 +49,7 @@ while(Date.now()-t0<420000){if(Date.now()-t0>=(+process.env.T78||110000)&&Date.n
 for(const t1=Date.now();Date.now()-t1<60000;){const top=await P.A.evaluate(async()=>{const ins=(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs;return ins.length?ins[ins.length-1].seq:0}).catch(()=>0);
   const ns=await Promise.all(['A','B','C','D'].map(n=>P[n].evaluate(()=>ONLM.next).catch(()=>0)));if(ns.every(x=>x>top))break;await P.A.waitForTimeout(300)}
 await P.A.waitForTimeout(500);
-const inputs=await P.A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from,x.h||x.pre,x.k]));
+const inputs=await P.A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from,x.k==="modal"&&x.pre?x.pre:(x.h||x.pre),x.k]));
 const H={};for(const n of ['A','B','C','D'])H[n]=await P[n].evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,me:ONLM.me,acct:ONL.acct.id,on:!!(S&&S.onl),watch:!!(S&&S.onl&&S.onl.watch),next:ONLM.next}));
 let same=0,diff=0,dSame=0,dDiff=0;const diffs=[];for(const [seq,from,h] of inputs){if(!h)continue;/* server inputs (v0.82 stands.result) carry no hash */for(const n of ['A','B','C','D']){if(H[n].acct===from)continue;const o=H[n].h['s'+seq];if(!o)continue;const ok=o===h;if(n==='D'){ok?dSame++:dDiff++}else{ok?same++:(diff++,diffs.push(n+seq))}}}
 
