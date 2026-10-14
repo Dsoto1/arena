@@ -141,7 +141,7 @@ const R2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
     MGR.tab='ludus';MGR_REDRAW();await W8(600);o.m37.shown=!!document.querySelector('.fx101')&&/sat out|got the fight/.test((document.querySelector('.fx101')||{}).textContent||'')}
   /* ---- M35 · war ---- */
   {const w3=W_(),m3=me();const rs=rosterOf(m3).filter(g=>!g.lanista);const a=rs[0],b2=rs[1];
-    b2.severed=['rleg'];o.m35={exempt:levyExempt101(b2)&&!levyExempt101(rs[2])};
+    b2.severed=['rleg'];const hz=rs.find(x=>x!==a&&x!==b2&&!x.inj&&!(x.severed||[]).length&&!r101Bed(x));o.m35={exempt:levyExempt101(b2)&&(!hz||!levyExempt101(hz))};
     (w3.pend=w3.pend||[]).push({t:'levy',gid:b2.id,bi:0,f:0,price:20,war:{foe:'Parthia',rome:'the legion',city:'Roma'},until:w3.week+2});
     const msg=settlePending(w3.pend.length-1,undefined,{});o.m35.pendSkipped=!(b2.inj&&b2.inj.war)&&/moves on|passed over|fit/i.test(String(msg)+JSON.stringify(b2.hist||[]).slice(-200)||'x');
     b2.severed=[];
