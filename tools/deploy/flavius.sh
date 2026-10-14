@@ -190,7 +190,9 @@ gh_pick(){ local want="${1:-}" b v best="" bestv="0"; local list; list=$(gh_api 
     [ -n "$v" ] || continue; if [ -n "$want" ]; then [ "$v" = "$want" ] && { echo "$b $v"; return; }; continue; fi
     if python3 -c "import sys;a,b=sys.argv[1:];sys.exit(0 if tuple(map(int,a.split('.')))>tuple(map(int,b.split('.'))) else 1)" "$v" "$bestv"; then best="$b"; bestv="$v"; fi; done
   [ -n "$want" ] && die "No branch on GitHub carries v$want yet."; [ -n "$best" ] || die "No release found on GitHub."; echo "$best $bestv"; }
-srv_hash(){ (cd "$1/server" && cat template.yaml deploy.sh src/*.js src/*.json 2>/dev/null | sha256sum | cut -c1-16); }
+# the server's code — and, since v1.01, the rules its Ranked verifier replays with (the page + tools/node, bundled by deploy.sh): a release that
+# changes the game redeploys the stack so the verifier always holds the build the players run (matches on another build are only skipped)
+srv_hash(){ (cd "$1" && cat server/template.yaml server/deploy.sh server/src/*.js server/src/*.json server/verify/*.js tools/node/*.js flavius-arena.html 2>/dev/null | sha256sum | cut -c1-16); }
 # room for a release in CloudShell's 1 GB home: old clones/temp dirs, filed zips beyond the newest 3, npm caches
 free_space(){ rm -rf "$HOME/.npm/_cacache" "$HOME/.cache/pip" "$HOME/server/node_modules" 2>/dev/null || true
   ls -t "$HOME"/flavius-done/*.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
@@ -202,16 +204,16 @@ cmd_gitrelease(){ local want="${1:-}"; gh_token
   else say "Looking for the release on GitHub"; local pk; pk=$(gh_pick "$want") || exit 1; read -r br v <<< "$pk"; [ -n "$br" ] || die "No release found on GitHub."; ok "v$v on $br"
     say "Fetching v$v (only what a release needs, ~60 MB)"; rm -rf "$SRC" "$HOME"/.flavius-????; free_space
     # CloudShell's home is 1 GB and the repo's tools/plans (screenshots) alone is ~700 MB: a partial, sparse clone takes only the
-    # page, version.json, assets/, server/, site/ and tools/ (its files + tools/deploy) — nothing else is ever downloaded
+    # page, version.json, assets/, server/, site/ and tools/ (its files + tools/deploy + tools/node: the verifier's rules bundler) — nothing else is ever downloaded
     local gauth; gauth="Authorization: Basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
     git -c http.extraHeader="$gauth" clone -q --depth 1 --filter=blob:none --sparse --branch "$br" "https://github.com/$REPO.git" "$SRC" || die "git clone failed"
-    git -C "$SRC" -c http.extraHeader="$gauth" sparse-checkout set assets server site tools/deploy || die "git sparse checkout failed (disk full? run: bash flavius.sh clean)"
+    git -C "$SRC" -c http.extraHeader="$gauth" sparse-checkout set assets server site tools/deploy tools/node || die "git sparse checkout failed (disk full? run: bash flavius.sh clean)"
     ok "fetched $(git -C "$SRC" log -1 --format='%h · %cd' --date=format:'%Y-%m-%d %H:%M')"
     # the release carries the newest flavius.sh: when it differs from this one, swap it in and run again (so the steps never change)
     if ! cmp -s "$SRC/tools/deploy/flavius.sh" "$0"; then cp "$SRC/tools/deploy/flavius.sh" "$0"; ok "flavius.sh updated from the release — continuing with the new one"; FLAVIUS_SRC_OK=1 exec bash "$0" release "$want"; fi; fi
   [ -f "$CONF" ] && . "$CONF"; local sh; sh=$(srv_hash "$SRC"); local live; live=$(curl -s -m 10 "$SITE/play/version.json?x=$RANDOM" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p')
   local dosrv=0; [ "$sh" != "${SERVER_HASH:-}" ] && dosrv=1
-  say "Release plan (from GitHub, $br)"; echo "  1 server   : $([ $dosrv = 1 ] && echo "deploy — its code changed since the last server deploy from here" || echo 'unchanged — skipped')"
+  say "Release plan (from GitHub, $br)"; echo "  1 server   : $([ $dosrv = 1 ] && echo "deploy — its code or the game's rules changed since the last server deploy from here (the Ranked verifier replays with this build)" || echo 'unchanged — skipped')"
   echo "  2 game     : v$v   (live now: v${live:-?})"; echo "  3 download : the standalone v$v (built here)"; echo "  4 site     : the pages in site/ (only when they changed)"
   if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
   if [ $dosrv = 1 ]; then local email="${ALERT_EMAIL:-}"

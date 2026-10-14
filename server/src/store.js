@@ -46,6 +46,10 @@
      TOK#<char>        PIC           the gladiator's 3D token sheet {owner, h, b (base64 WebP ≤ 64 KB), meta, pose, pk, at, v}; CHAR carries tok94 {h, at}
      TOKUP#<char>      U#<up>        an upload in parts {owner, n, meta, pose, pk, p0…p3} (ttl 1 h)
      ACCT#<sub>        PROFILE       + tq94 {h: online day, n}: pictures saved that day
+   v1.01 wave 2 (Ranked verification, docs/backend.md "v1.01 Ranked verification"):
+     MATCH#<id>        META          + build (the host page's build hash, first opening), vq101 (the verify call was made)
+     VERIFY#<id>       V             the verifier's verdict {ok | skipped, build, ms, inputs, firstDiff…} (GSI1PK 'VERIFY', ttl 90 days)
+     AUDIT#<id>        VERIFY        a mismatch {kind 'verify_mismatch', firstDiff, inDiff…} (GSI1PK 'AUDIT', ttl 90 days)
 */
 'use strict';
 function memory(){
@@ -55,7 +59,8 @@ function memory(){
     async put(pk,sk,item){t.set(key(pk,sk),clone({...item,PK:pk,SK:sk}))},
     async del(pk,sk){t.delete(key(pk,sk))},
     async query(pk,prefix,o){o=o||{};let r=[...t.values()].filter(x=>x.PK===pk&&String(x.SK).startsWith(prefix||'')).sort((a,b)=>a.SK<b.SK?-1:1);if(o.desc)r.reverse();if(o.limit)r=r.slice(0,o.limit);return r.map(clone)},
-    async byIndex(gpk){return [...t.values()].filter(x=>x.GSI1PK===gpk).sort((a,b)=>(b.GSI1SK||0)-(a.GSI1SK||0)).map(clone)},
+    /* v1.01 o.limit = the newest n only (admin lists) */
+    async byIndex(gpk,o){let r=[...t.values()].filter(x=>x.GSI1PK===gpk).sort((a,b)=>(b.GSI1SK||0)-(a.GSI1SK||0));if(o&&o.limit)r=r.slice(0,o.limit);return r.map(clone)},
     async counter(pk,sk,field,by){const k=key(pk,sk);const x=t.get(k)||{PK:pk,SK:sk};x[field]=(x[field]||0)+(by||1);t.set(k,x);return x[field]-(by||1)},
     /* v0.80: a put only when the item is new → true if written */
     async putNew(pk,sk,item){const k=key(pk,sk);if(t.has(k))return false;t.set(k,clone({...item,PK:pk,SK:sk}));return true},
@@ -93,7 +98,8 @@ function dynamo(table){
     async del(pk,sk){await db.send(new DeleteCommand({TableName:table,Key:{PK:pk,SK:sk}}))},
     async query(pk,prefix,o){o=o||{};const q={TableName:table,KeyConditionExpression:'PK = :p AND begins_with(SK, :s)',ExpressionAttributeValues:{':p':pk,':s':prefix||''},ScanIndexForward:!o.desc};
       if(o.limit){const r=await db.send(new QueryCommand({...q,Limit:o.limit}));return r.Items||[]}return all(q)},
-    async byIndex(gpk){return all({TableName:table,IndexName:'GSI1',KeyConditionExpression:'GSI1PK = :p',ExpressionAttributeValues:{':p':gpk},ScanIndexForward:false})},
+    async byIndex(gpk,o){const q={TableName:table,IndexName:'GSI1',KeyConditionExpression:'GSI1PK = :p',ExpressionAttributeValues:{':p':gpk},ScanIndexForward:false};
+      if(o&&o.limit){const r=await db.send(new QueryCommand({...q,Limit:o.limit}));return r.Items||[]}return all(q)},
     /* one call per move: the seq this caller owns AND the match record (players, connections, status) */
     async bump(pk,sk,field){try{const r=await db.send(new UpdateCommand({TableName:table,Key:{PK:pk,SK:sk},UpdateExpression:'ADD #f :one',ConditionExpression:'attribute_exists(PK)',ExpressionAttributeNames:{'#f':field},ExpressionAttributeValues:{':one':1},ReturnValues:'ALL_NEW'}));return {seq:r.Attributes[field]-1,item:r.Attributes}}catch(e){if(e.name==='ConditionalCheckFailedException')return null;throw e}},
     async setIn(pk,sk,map,k2,v){try{await db.send(new UpdateCommand({TableName:table,Key:{PK:pk,SK:sk},UpdateExpression:'SET #m.#k = :v',ConditionExpression:'attribute_exists(#m)',ExpressionAttributeNames:{'#m':map,'#k':k2},ExpressionAttributeValues:{':v':v}}))}catch(e){if(e.name!=='ConditionalCheckFailedException')throw e}},

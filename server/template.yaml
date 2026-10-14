@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
-  Flavius Rule — the Online Arena. A WebSocket API (API Gateway) with one Lambda, one DynamoDB table,
+  Flavius Rule — the Online Arena. A WebSocket API (API Gateway) with one Lambda (+ the Ranked verifier, v1.01), one DynamoDB table,
   Cognito sign-in with Google, and a monthly budget that closes the arena (until the 1st) when it is reached. Deploy from CloudShell with server/deploy.sh.
 
 Parameters:
@@ -47,6 +47,11 @@ Parameters:
     Default: ''
     NoEcho: true
     Description: 'Comma-separated Google e-mails of online testers (admin.grant on their own house only; their houses become TEST houses, Custom only). Empty = nobody.'
+  VerifyMode:
+    Type: String
+    AllowedValues: ['log', 'off', 'enforce']
+    Default: log
+    Description: 'v1.01 Ranked verification: log = replay every settled Ranked match and LOG mismatches (VERIFY# / AUDIT#), never changing a result; off = no verify calls (rollback); enforce = not built yet (logs only, a TODO).'
   DevNames:
     Type: String
     AllowedValues: ['false', 'true']
@@ -173,6 +178,9 @@ Resources:
                 Action: [dynamodb:GetItem, dynamodb:PutItem, dynamodb:DeleteItem, dynamodb:UpdateItem, dynamodb:Query, dynamodb:Scan]
                 Resource: [!GetAtt Table.Arn, !Sub '${Table.Arn}/index/*']
               - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !GetAtt VerifyFn.Arn
+              - Effect: Allow
                 Action: execute-api:ManageConnections
                 Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WsApi}/*'
   Fn:
@@ -194,11 +202,62 @@ Resources:
           DEV_NAMES: !Ref DevNames
           TESTERS: !Ref Testers
           REQUIRE_GOOGLE: !If [HasGoogle, 'true', 'false']   # v1.01 S4: only Google sign-ins once Google is set up
+          VERIFY_FN: !Ref VerifyFn       # v1.01 wave 2: a settled Ranked match → an async invoke of the verifier
+          VERIFY_MODE: !Ref VerifyMode
   FnLogs:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: /aws/lambda/flavius-arena
       RetentionInDays: 7
+
+  # ---------- v1.01 wave 2: the verifier (replays each settled Ranked match with this build's rules; LOG ONLY) ----------
+  # Its own function: the rules bundle (~9 MB, server/verify/rules.js from tools/node/mkbundle.js, built by deploy.sh) never rides in the arena
+  # Lambda, and a replay (1-10 s, ~300 MB) never holds a player's request. Called with an async invoke (no table stream, no queue: one call per
+  # Ranked match, retried once by Lambda itself; the verdict is written once, so a retry is harmless).
+  VerifyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - {Effect: Allow, Principal: {Service: lambda.amazonaws.com}, Action: sts:AssumeRole}
+      ManagedPolicyArns: [arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole]
+      Policies:
+        - PolicyName: verify
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [dynamodb:GetItem, dynamodb:PutItem, dynamodb:Query, dynamodb:UpdateItem]
+                Resource: [!GetAtt Table.Arn, !Sub '${Table.Arn}/index/*']
+  VerifyFn:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: flavius-arena-verify
+      Runtime: nodejs24.x
+      Architectures: [arm64]
+      Handler: index.handler
+      Code: ./verify
+      Role: !GetAtt VerifyRole.Arn
+      MemorySize: 1024
+      Timeout: 120
+      # no reserved concurrency: a new AWS account (10 in all) cannot reserve any; one call per Ranked match keeps the volume small
+      Environment:
+        Variables:
+          TABLE: !Ref Table
+          VERIFY_MODE: !Ref VerifyMode
+  VerifyInvokeConfig:
+    Type: AWS::Lambda::EventInvokeConfig
+    Properties:
+      FunctionName: !Ref VerifyFn
+      Qualifier: $LATEST
+      MaximumRetryAttempts: 1
+      MaximumEventAgeInSeconds: 3600
+  VerifyLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/flavius-arena-verify
+      RetentionInDays: 30
 
   WsApi:
     Type: AWS::ApiGatewayV2::Api
@@ -286,7 +345,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: [lambda:PutFunctionConcurrency, lambda:DeleteFunctionConcurrency]
-                Resource: !GetAtt Fn.Arn
+                Resource: [!GetAtt Fn.Arn, !GetAtt VerifyFn.Arn]
   Switch:
     Type: AWS::Lambda::Function
     Properties:
@@ -297,16 +356,16 @@ Resources:
       Role: !GetAtt SwitchRole.Arn
       MemorySize: 128
       Timeout: 10
-      Environment: {Variables: {ARENA: !Ref Fn}}
+      Environment: {Variables: {ARENA: !Ref Fn, VERIFY: !Ref VerifyFn}}
       Code:
         ZipFile: |
           // Closes the arena (concurrency 0: it cannot run, nothing is billed, nothing is deleted) when the budget
-          // topic fires; reopens it when called with {"reopen":true} (the monthly rule, or by hand).
+          // topic fires; reopens it when called with {"reopen":true} (the monthly rule, or by hand). The verifier (v1.01) closes and reopens with it.
           const {LambdaClient,PutFunctionConcurrencyCommand,DeleteFunctionConcurrencyCommand}=require('@aws-sdk/client-lambda');
           const L=new LambdaClient({});
-          exports.handler=async ev=>{const fn=process.env.ARENA;
-            if(ev&&ev.reopen){await L.send(new DeleteFunctionConcurrencyCommand({FunctionName:fn}));console.log('arena reopened');return 'open'}
-            await L.send(new PutFunctionConcurrencyCommand({FunctionName:fn,ReservedConcurrentExecutions:0}));console.log('arena closed: budget reached');return 'closed'};
+          exports.handler=async ev=>{const fn=process.env.ARENA,vf=process.env.VERIFY;
+            if(ev&&ev.reopen){await L.send(new DeleteFunctionConcurrencyCommand({FunctionName:fn}));if(vf)await L.send(new DeleteFunctionConcurrencyCommand({FunctionName:vf}));console.log('arena reopened');return 'open'}
+            await L.send(new PutFunctionConcurrencyCommand({FunctionName:fn,ReservedConcurrentExecutions:0}));if(vf)await L.send(new PutFunctionConcurrencyCommand({FunctionName:vf,ReservedConcurrentExecutions:0}));console.log('arena closed: budget reached');return 'closed'};
   SwitchSub:
     Type: AWS::SNS::Subscription
     Properties: {TopicArn: !Ref BudgetTopic, Protocol: lambda, Endpoint: !GetAtt Switch.Arn}
@@ -327,6 +386,9 @@ Outputs:
   ReopenCommand:
     Description: Reopen the arena by hand after it closed for the month.
     Value: !Sub 'aws lambda invoke --function-name ${Switch} --cli-binary-format raw-in-base64-out --payload ''{"reopen":true}'' /dev/stdout'
+  VerifyLogs:
+    Description: The Ranked verifier's log (mismatches print '[verify101] MISMATCH <match>').
+    Value: /aws/lambda/flavius-arena-verify
   WebSocketUrl:
     Description: Paste into the game (Settings > Online server) — or put in play/online.json.
     Value: !Sub 'wss://${WsApi}.execute-api.${AWS::Region}.amazonaws.com/live'

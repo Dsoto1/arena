@@ -40,7 +40,7 @@ function fail(code,msg,extra){const e=new Error(msg);e.code=code;if(extra)e.extr
 const NEED_DOMUS=new Set(['auction.bid','offer.move','offer.buy','offer.bring','gear.repair','domus.buy','gift.open','loot.pick','market.buy','domus.follow','char.create','char.buy','char.edit','char.active','lobby.create','lobby.join','lobby.accept','lobby.quick','lobby.sit','lobby.ticket','lobby.invite','lobby.call','lobby.again','lobby.say','bet.place','party.create','party.join','forum.say','domus.move','domus.equip','lobby.pass','domus.patron']);
 /* what a guest is told when a request needs a sign-in */
 const GUEST_WHY={'forum.say':'speak in the Forum','bet.place':'wager','lobby.ticket':'buy a ticket','char.create':'raise gladiators','domus.create':'found a house','lobby.pass':'take a seat in the stands'};
-function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0,countdown=C.COUNTDOWN_MS,roomGrace=C.ROOM_GRACE,limits}){
+function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0,countdown=C.COUNTDOWN_MS,roomGrace=C.ROOM_GRACE,limits,verify=null}){
   const ttl=days=>Math.floor(now()/1000)+days*DAY;
   /* v0.93 a store failure caught mid-request becomes a plain line for the player (the error itself goes to the log) */
   const errOf93=e=>{if(H93.internal(e)){try{console.error('[soft93]',e&&e.stack||e)}catch(x){}return 'The arena is busy — try again in a moment.'}return e.message};if(C.setCatalog)C.setCatalog(catalog); /* v0.84: equip points (C.equipOf / gearEquip) read the catalog */
@@ -1729,6 +1729,25 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
           if(A.unverified&&(M2.players||[]).length>1)flags.push('unverified');
           if(flags.length){await store.put('AUDIT#'+id,'A',{flags,ranked:true,humans:(M2.players||[]).length,ev:(L&&L.ev)||null,at:now(),GSI1PK:'AUDIT',GSI1SK:now(),ttl:ttl(90)});try{console.log('[audit101]',id,flags.join(','))}catch(e){}}}}catch(e){}return r}}}
   /* ══════════ end of v1.01 ══════════ */
+  /* ══════════ v1.01 wave 2 RANKED VERIFICATION (server/verify; docs/backend.md "v1.01 Ranked verification"; NO protocol bump) ══════════
+     V1 match.open {build}: the host's page sends the first 12 hex of sha256(its script) (src/online/329-v101build.js) = the build of the rules bundle
+        (tools/node/mkbundle.js). Kept on META.build with the FIRST opening only (an optional field: older pages send none → the verifier skips 'nobuild').
+     V2 after a Ranked match settles with a table (not void), verify(id) is called once (META.vq101) — index.js makes it an ASYNC invoke of the verify
+        Lambda (VERIFY_FN; VERIFY_MODE=off → no call). The invoke is awaited (~30 ms), the replay is not; a failed call is logged, never seen by the players.
+     V3 admin.verify {limit}: testers only (like admin.grant) → the latest VERIFY# verdicts + AUDIT entries (≤ 50 each), newest first. */
+  {const MK=id=>'MATCH#'+id;const BUILD_RE=/^[0-9a-f]{12}$/;
+    {const base=R['match.open'];R['match.open']=async(d,ctx)=>{d=d||{};const r=await base(d,ctx);
+      try{if(r&&!r.kept&&BUILD_RE.test(String(d.build||'')))await store.set(MK(d.id),'META',{build:String(d.build)})}catch(e){}return r}}
+    if(verify){const base=settleMatch;settleMatch=async function(id){const r=await base.apply(this,arguments);
+      try{const M=await store.get(MK(id),'META');if(M&&M.ranked&&M.status==='done'&&M.agreed&&!M.agreed.void&&M.agreed.table&&!M.vq101){
+          await store.set(MK(id),'META',{vq101:now()});
+          /* awaited: a Lambda frozen after its reply would drop a pending call (an async invoke answers in ~30 ms; the verify run itself is not waited for) */
+          try{await verify(id)}catch(e){try{console.log('[verify101] could not start',id,String(e&&e.message||e))}catch(x){}}}}catch(e){}return r}}
+    R['admin.verify']=async(d,ctx)=>{if(!ctx.tester)throw fail('notTester','Only testers may do that.');const n=Math.max(1,Math.min(50,(d&&d.limit)|0||20));
+      const strip=x=>{const o={...x};delete o.PK;delete o.SK;delete o.GSI1PK;delete o.GSI1SK;delete o.ttl;return o};
+      const v=(await store.byIndex('VERIFY',{limit:n})).map(strip);const a=(await store.byIndex('AUDIT',{limit:n})).map(x=>({match:String(x.PK||'').replace(/^AUDIT#/,''),sk:x.SK,...strip(x)}));
+      return {verify:v,audit:a,ok:v.filter(x=>x.ok).length,bad:v.filter(x=>x.ok===false).length,skipped:v.filter(x=>x.skipped).length}}}
+  /* ══════════ end of v1.01 wave 2 RANKED VERIFICATION ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=typeof t==='string'&&Object.prototype.hasOwnProperty.call(R,t)?R[t]:null; /* v1.01: own routes only (never 'constructor', '__proto__' …) */if(!f)throw fail('unknown_req','Unknown request: '+String(t).slice(0,40));

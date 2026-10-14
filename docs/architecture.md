@@ -105,4 +105,6 @@ Math.random is a seeded stream (cosmetic only). Nothing in src/ knows about Node
   byte; ~9 MB, not committed) and `rules.json` {v, build}. build = first 12 hex of sha256(script) (`--hash` prints it for any page). The
   online server zip (`server/src`) never includes it. `require('./server/verify/rules.js').open({ls, t0})` → the page; `.page` for the
   replay tools.
+- **Phase E (v1.01 wave 2):** the verify Lambda (`server/verify/`) runs that bundle on the server to replay every settled Ranked match and log
+  mismatches — docs/backend.md "v1.01 Ranked verification".
 

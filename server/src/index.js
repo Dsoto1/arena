@@ -17,12 +17,12 @@ const catalog=require('./catalog.json');
 /* v0.83 tester grants: TESTERS = comma-separated sign-in e-mails (deploy parameter → Lambda env). Only a yes/no rides on the connection;
    the e-mail itself is never stored or sent. Dev stacks/tests may pass ?email= with ?dev= (dev only). */
 const testerSet=s=>new Set(String(s||'').split(',').map(x=>x.trim().toLowerCase()).filter(x=>x&&x!=='none'));
-function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd,testers='',roomGrace,limits,log,requireGoogle=false}){const TESTERS=testerSet(testers);let route=null;
+function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd,testers='',roomGrace,limits,log,requireGoogle=false,verifyMatch=null}){const TESTERS=testerSet(testers);let route=null;
   /* a push to a known connection: true when the socket is gone (then the account's presence is cleared) */
   /* a push that finds the socket gone clears presence AND marks the lanista away in a live match (their $disconnect may come later and find
      nothing left to clear) — so the others can drop the seat after AWAY_MS */
   const pushConn=async(conn,t,d,acct)=>{const gone=await send(conn,{push:t,d});if(gone&&acct){if(/^guest-/.test(acct))await db.clearGuest(acct,conn);else if(await db.clearConn(acct,conn,now())){await away(db,acct,now());if(route&&route.presence)await route.presence(acct,false,now())}}return gone};
-  route=makeRoutes({store:db,catalog,dev,now,hereMs,countdown,...(limits!==undefined?{limits}:{}),...(rnd?{rnd}:{}),...(roomGrace!=null?{roomGrace}:{}),pushConn,push:async(acct,t,d)=>{const a=await db.get('ACCT#'+acct,'PROFILE');if(a&&a.conn)await pushConn(a.conn,t,d,acct)}});
+  route=makeRoutes({store:db,catalog,dev,now,hereMs,countdown,verify:verifyMatch,...(limits!==undefined?{limits}:{}),...(rnd?{rnd}:{}),...(roomGrace!=null?{roomGrace}:{}),pushConn,push:async(acct,t,d)=>{const a=await db.get('ACCT#'+acct,'PROFILE');if(a&&a.conn)await pushConn(a.conn,t,d,acct)}});
   return async ev=>{const rc=ev.requestContext||{};const conn=rc.connectionId;
     if(rc.routeKey==='$connect'){const q=ev.queryStringParameters||{};if(String(q.ver)!==String(C.VER))return {statusCode:426,body:'Please reload: a new version is out.'};
       /* v0.82 a guest: looks only, 2 hours from the first connect of that guest id */
@@ -50,6 +50,9 @@ exports.handler=async ev=>{if(!LIVE){const {ApiGatewayManagementApiClient,PostTo
     const rc=ev.requestContext;const api=new ApiGatewayManagementApiClient({endpoint:`https://${rc.domainName}/${rc.stage}`});const db=store.dynamo(process.env.TABLE);
     const send=async(conn,msg)=>{try{await api.send(new PostToConnectionCommand({ConnectionId:conn,Data:Buffer.from(JSON.stringify(msg))}));return false}
       catch(e){if(e.name==='GoneException'||e.$metadata&&e.$metadata.httpStatusCode===410){await db.del('CONN#'+conn,'CONN');return true}throw e}};
-    LIVE=makeHandler({db,send,hereMs:20000,dev:process.env.DEV_NAMES==='true',roomGrace:process.env.ROOM_GRACE_MS?+process.env.ROOM_GRACE_MS:undefined,verifyCfg:{region:process.env.AWS_REGION,poolId:process.env.POOL_ID,clientId:process.env.CLIENT_ID},testers:process.env.TESTERS||'',requireGoogle:process.env.REQUIRE_GOOGLE==='true'})}
+    /* v1.01 wave 2: a settled Ranked match → an ASYNC invoke of the verify Lambda (server/verify; log only). VERIFY_MODE=off or no VERIFY_FN → never called */
+    let verifyMatch=null;if(process.env.VERIFY_FN&&String(process.env.VERIFY_MODE||'log').toLowerCase()!=='off'){const {LambdaClient,InvokeCommand}=require('@aws-sdk/client-lambda');const lc=new LambdaClient({});
+      verifyMatch=async id=>{await lc.send(new InvokeCommand({FunctionName:process.env.VERIFY_FN,InvocationType:'Event',Payload:Buffer.from(JSON.stringify({id}))}))}}
+    LIVE=makeHandler({verifyMatch,db,send,hereMs:20000,dev:process.env.DEV_NAMES==='true',roomGrace:process.env.ROOM_GRACE_MS?+process.env.ROOM_GRACE_MS:undefined,verifyCfg:{region:process.env.AWS_REGION,poolId:process.env.POOL_ID,clientId:process.env.CLIENT_ID},testers:process.env.TESTERS||'',requireGoogle:process.env.REQUIRE_GOOGLE==='true'})}
   return LIVE(ev)};
 exports.makeHandler=makeHandler;

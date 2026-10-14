@@ -2,7 +2,7 @@
 # Deploys (or updates) the Online Arena from AWS CloudShell. Run inside the server/ folder:
 #   sh deploy.sh you@example.com                      first time, without Google (DevNames off: nobody can sign in yet)
 #   GOOGLE_ID=xxx GOOGLE_SECRET=yyy sh deploy.sh you@example.com     with Google sign-in
-# Optional: TESTERS='a@gmail.com,b@gmail.com' (online testers, see README), STACK (default flavius-arena), REGION (default us-east-1), BUDGET (default 10), AUTH_PREFIX, DEV=true (test stack only)
+# Optional: TESTERS='a@gmail.com,b@gmail.com' (online testers, see README), VERIFY_MODE=log|off (the Ranked verifier, docs/backend.md; left out = the stack keeps its setting), STACK (default flavius-arena), REGION (default us-east-1), BUDGET (default 10), AUTH_PREFIX, DEV=true (test stack only)
 set -e
 # pasted values can carry invisible characters (a carriage return, a tab, a space): strip them all
 clean(){ printf '%s' "$1" | tr -d '\r\n\t '; }
@@ -22,18 +22,26 @@ case "$AUTH_STAGE" in cert|live) ;; *) echo "AUTH_STAGE is cert or live."; exit 
 if [ "$AUTH_DOMAIN" != none ]; then PARENT="${AUTH_DOMAIN#*.}"; ZONE=$(aws route53 list-hosted-zones-by-name --dns-name "$PARENT" --query "HostedZones[?Name=='$PARENT.'].Id | [0]" --output text 2>/dev/null | sed 's#/hostedzone/##'); case "$ZONE" in Z*) echo "Sign-in address: https://$AUTH_DOMAIN (Route 53 zone $ZONE)";; *) echo "No Route 53 zone for $PARENT — keeping the amazoncognito.com sign-in address."; AUTH_DOMAIN=none; ZONE=none;; esac; fi
 # online testers: TESTERS='a@gmail.com,b@gmail.com' sets the list, TESTERS=none clears it; left out, the stack keeps the list it has
 TP=""; if [ -n "${TESTERS+x}" ]; then TP="Testers=$(printf '%s' "$TESTERS" | tr -d '\r\n\t ')"; fi
+# the Ranked verifier (v1.01): VERIFY_MODE=off stops the verify calls (rollback), log turns them back on; left out, the stack keeps its mode
+VP=""; if [ -n "${VERIFY_MODE:-}" ]; then case "$VERIFY_MODE" in log|off|enforce) VP="VerifyMode=$VERIFY_MODE";; *) echo "VERIFY_MODE is log, off or enforce."; exit 1;; esac; fi
 ACCT=$(aws sts get-caller-identity --query Account --output text)
 BUCKET="flavius-arena-code-$ACCT-$REGION"
 # a first deploy that failed leaves the stack in ROLLBACK_COMPLETE, which cannot be updated: clear it first
 ST=$(aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].StackStatus" --output text 2>/dev/null || true)
 if [ "$ST" = "ROLLBACK_COMPLETE" ]; then echo "Clearing the failed first attempt…"; aws cloudformation delete-stack --region "$REGION" --stack-name "$STACK"; aws cloudformation wait stack-delete-complete --region "$REGION" --stack-name "$STACK"; ST=""; fi
 aws s3api head-bucket --bucket "$BUCKET" 2>/dev/null || aws s3 mb "s3://$BUCKET" --region "$REGION"
+# v1.01 wave 2: the Ranked verifier's package (Code ./verify): the rules of THIS build (tools/node/mkbundle.js → verify/rules.js, ~9 MB, needs node)
+# + the store / shared rules it reads. From a GitHub release (flavius.sh) the page and tools/node sit beside server/; a server-only zip has
+# neither → the verifier deploys without rules and skips every match ('nobundle') until a release brings them.
+if [ -f ../flavius-arena.html ] && [ -f ../tools/node/mkbundle.js ] && command -v node >/dev/null 2>&1; then node ../tools/node/mkbundle.js ../flavius-arena.html --out verify || { echo "Building the verifier's rules failed."; exit 1; }
+else echo "No page / tools/node here (or no node): the Ranked verifier deploys without rules (it skips every match until a release brings them)."; rm -f verify/rules.js verify/rules.json; fi
+cp src/store.js src/onlcore.js verify/
 aws cloudformation package --region "$REGION" --template-file template.yaml --s3-bucket "$BUCKET" --output-template-file packaged.yaml
 # the Google secret: only sent when given; otherwise an existing stack keeps the one it already holds (CloudFormation keeps a
 # parameter that is not overridden), so updates need no secret. A first deploy (no stack yet) still needs it.
 GSEC=""; if [ -n "$GOOGLE_SECRET" ]; then GSEC="GoogleClientSecret=$GOOGLE_SECRET"; elif [ -z "$ST" ] || [ "$ST" = "None" ]; then GSEC="GoogleClientSecret=none"; fi
 aws cloudformation deploy --region "$REGION" --template-file packaged.yaml --stack-name "$STACK" --capabilities CAPABILITY_IAM \
   --parameter-overrides AlertEmail="$EMAIL" MonthlyBudgetUSD="${BUDGET:-10}" GoogleClientId="${GOOGLE_ID:-none}" $GSEC \
-    AuthDomainPrefix="${AUTH_PREFIX:-flaviusrule-arena}" DevNames="${DEV:-false}" CustomAuthDomain="$AUTH_DOMAIN" HostedZoneId="$ZONE" CustomAuthStage="$AUTH_STAGE" $TP
+    AuthDomainPrefix="${AUTH_PREFIX:-flaviusrule-arena}" DevNames="${DEV:-false}" CustomAuthDomain="$AUTH_DOMAIN" HostedZoneId="$ZONE" CustomAuthStage="$AUTH_STAGE" $TP $VP
 aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].Outputs" --output table
 if [ "$AUTH_DOMAIN" != none ] && [ "$AUTH_STAGE" = cert ]; then echo "Certificate for $AUTH_DOMAIN is made. In 15 minutes, run the same deploy again with AUTH_STAGE=live to add the sign-in address."; fi

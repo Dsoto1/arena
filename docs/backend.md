@@ -396,7 +396,58 @@ Shared rules: the "v1.01" section at the end of `111-onlcore`; routes: the "v1.0
   its page. Data stays: items written by the newer server (e.g. `RID#`) are ignored by the older one and expire on their own.
   A protocol bump cannot be rolled back while players hold the newer page — they would be refused until they reload.
 - Zips (`flavius-server-N.zip` + game zip) remain the fallback when GitHub is unavailable (`bash flavius.sh server …`).
+- **The Ranked verifier** (v1.01): stop it with `VERIFY_MODE=off` (see "v1.01 Ranked verification"); it is log only, so a rollback never touches a result.
 
 ## v1.01 domus records
 
 A house keeps TWO records. RANKED = the existing top-level fields (`D.bouts/wins/lifeCF/survived/fallen`), written only for Ranked seats from v1.01 on. UNRANKED = `D.cu` `{bouts,wins,lifeCF,survived,fallen}` (Custom or any other non-ranked online event; `survived` counts survivors of non-ranked bouts too). Rules: the "v1.01 DOMUS RECORDS" section at the end of `src/online/111-onlcore.js` (`domusNote` override; routes.js `domusAfter` and the mock both call `C.domusNote`). History cannot be split: earlier totals (Custom matches included) stay in the top-level record. `D.split101` = time of the first write by the new code, `D.pre101` = bouts the house already had then. `domusRow` returns `cu` (zeros when none), `split101`, `pre101` (so `domusPub89`, `house.card`, `domus.get`, `domus.visit` carry them). Glory, Domus rank, ranks, coin and trophies do not read it. No protocol bump, no migration (old houses start with no `cu`). Page: `src/online/324-v101domrec.js`. Test: `server/test/v101rec.test.js`.
+
+## v1.01 Ranked verification
+
+The server replays every settled Ranked match with the game's own rules and compares the end with what the lanistas agreed. **Policy
+(Virgilante, v1.01): LOG ONLY for the first month** — nothing here changes a settlement, payout, death, strike or refund; a mismatch is a
+record for a human to read. After the month he decides what a mismatch does (`enforce` is a documented TODO, not built).
+Code: `server/verify/` (`index.js` = the Lambda, `verify.js` = the replay + comparison), the "v1.01 wave 2 RANKED VERIFICATION" block in
+`routes.js`, `index.js` (`verifyMatch` → the async invoke), the page's `src/online/329-v101build.js`. Test `server/test/verify.test.js`
+(in `npm test`, ~6 s, no browser; needs the built page). **No protocol bump** (one optional field).
+
+- **Architecture.** A SEPARATE Lambda `flavius-arena-verify` (1024 MB, 120 s, arm64, Node 24): the rules bundle is ~9 MB and a replay takes
+  1–10 s and ~300 MB, so neither rides in the arena Lambda (256 MB, 10 s) nor holds a player's request. Trigger = an **async invoke**
+  (`InvocationType: Event`) from the request that settles the match — awaited (~30 ms) so a frozen Lambda never drops it, the replay itself is
+  not waited for. Chosen over a DynamoDB stream (would need a stream on the retained table and a filter on every write) and SQS (another
+  resource; Lambda's own async queue already retries — `MaximumRetryAttempts 1`, events older than 1 h dropped). One call a Ranked match
+  (`META.vq101`); the verdict is written once (`putNew`), so a retry is harmless.
+- **What it replays.** `MATCH#<id>` OPEN (the host's opening, written once since v1.01 S1) + every `IN#` input in seq order (players' moves and
+  the server's own: void, drop, abandon, reclaim, cpugo, dto/timeout, stands.result) through the game's own late-watcher path (113 `onlmLoad` +
+  `onlmWatchOn`, rules mode = HEADLESS — the path `tools/node/replay.js` proves against the Chromium goldens), then the REAL `gameOver`: the end
+  hash is taken where a fighter's page takes it (124 `onlRepStart81`) and each seat's row is built by 124's `onlRow81` (+ the v0.83/0.84/0.91
+  extras) once `S.lastResult` exists — the same table a fighter reports. Checked when built: Node, Chromium headless and Chromium with the
+  screen code give the same end hash and table for the test match.
+- **Compared** with the agreed result (`META.agreed.table` + the hash of the reports that table came from): end hash first, then row by row
+  (`tableFix101` against the room's seats), field by field (won, place, f, coin, kills, survives, slew, brk, off, dmg, ks, kb, thumb, cpu).
+  `firstDiff` = the first difference; `inDiff` = the first input whose sender's pre-hash differs from the replay's (where the stream left the
+  fighters — diagnostic only).
+- **Build pinning.** The host page sends `build` on `match.open` = the first 12 hex of sha256(its main script), the same number
+  `node tools/node/mkbundle.js --hash` prints and stamps on the bundle (`rules.json`). Kept on `META.build` (first opening only, 12 hex only).
+  One bundle a deploy: a match played on another build is skipped (`skipped:'build'`), never judged by the wrong rules. Pages before v1.01 wave 2
+  send none (`nobuild`).
+- **Records.** `VERIFY#<id>` / `V` `{ok | skipped, build, ms, virtMs, inputs, turns, unverified, humans, firstDiff?, inDiff?, errors?, mode, at}`
+  (GSI1PK `VERIFY`, ttl 90 days). A mismatch also writes `AUDIT#<id>` / `VERIFY` `{kind:'verify_mismatch', firstDiff, inDiff, build, …}` (GSI1PK
+  `AUDIT`, ttl 90 days — beside v1.01's `AUDIT#<id>` / `A` flags) and one `[verify101] MISMATCH <id> …` line in the log group
+  `/aws/lambda/flavius-arena-verify` (30 days). Skips: `custom`, `void`, `nobundle`, `nobuild`, `build`, `noopen`, `nomatch`; a match still live is
+  not written. An unfinished replay (out of time, or the stream ended while a human seat waits) counts as a mismatch with `firstDiff.field 'end'`.
+- **Read them.** `admin.verify {limit ≤ 50}` (testers only, like `admin.grant`) → the newest verdicts + audit entries and the ok / bad / skipped
+  counts. Or the console: DynamoDB → Explore items → index GSI1, `GSI1PK = VERIFY` (or `AUDIT`); CloudWatch → the log group above, filter
+  `MISMATCH`.
+- **Deploy.** `server/deploy.sh` builds the bundle before `cloudformation package`: `node ../tools/node/mkbundle.js ../flavius-arena.html --out verify`
+  (+ copies `src/store.js` and `src/onlcore.js` into `verify/`; all four are git-ignored) — the verify function's code asset is `./verify` only, the
+  arena Lambda's stays `./src`. `flavius.sh` (cmd_gitrelease) now also fetches `tools/node`, and its server hash includes the page and `tools/node`:
+  **every release that changes the game redeploys the stack**, so the verifier always holds the build the players run. A server-only zip (no page
+  beside it) deploys the verifier without rules: every match `nobundle` until a release brings them.
+- **Kill switch / rollback.** `VERIFY_MODE=off sh deploy.sh …` (stack parameter `VerifyMode`, kept across deploys; `log` turns it back on) — the
+  arena then never calls the verifier. The budget switch closes and reopens the verifier with the arena. Removing it entirely = an older
+  release (its stack has no VerifyFn); the VERIFY#/AUDIT# items expire on their own.
+- **Cost.** Per Ranked match: one async invoke + one run of ~2–6 s at 1 GB (cold start ≈ 2–3 s to load and compile the 9 MB script, the replay
+  1–5 s; the test match: 1.6 s warm) = ~3–6 GB-s ≈ $0.00005–0.00008 on arm64 ($0.0000133/GB-s) + $0.0000002 for the request + reads (the opening
+  ~15 KB and ~100–400 inputs: ~20–40 RCU strongly consistent) ≈ **under $0.0001 a match, ~$1 per 10 000 Ranked matches**. Lambda's free tier
+  (400 000 GB-s a month) covers ~80 000 matches. Logs: one line a match.

@@ -1,9 +1,9 @@
-/* srvstamp.js — v0.91: stamps the online server's version. Hashes the server code (server/template.yaml, deploy.sh, src/*.js, catalog.json;
+/* srvstamp.js — v0.91: stamps the online server's version. Hashes the server code (server/template.yaml, deploy.sh, verify/index.js + verify.js (v1.01), src/*.js, catalog.json;
    never build.json itself); when it differs from server/src/build.json, writes build.json {v: the game version from the badge, hash}.
    It also writes src/online/195-v91srvexp.js (the page's expected server) so the Online screens can tell an old server apart.
-   Run after mkserver, before the build:  node tools/srvstamp.js [X.YY to force the version]   (release.sh runs it). The same hash as flavius.sh srv_hash. */
+   Run after mkserver, before the build:  node tools/srvstamp.js [X.YY to force the version]   (release.sh runs it). (flavius.sh srv_hash hashes the same files + since v1.01 the page and tools/node: the verifier's rules.) */
 const fs=require('fs'),path=require('path'),crypto=require('crypto');const root=path.resolve(__dirname,'..');const sd=path.join(root,'server');
-const files=['template.yaml','deploy.sh',...fs.readdirSync(path.join(sd,'src')).filter(f=>/\.js$/.test(f)).sort().map(f=>'src/'+f),...fs.readdirSync(path.join(sd,'src')).filter(f=>/\.json$/.test(f)&&f!=='build.json').sort().map(f=>'src/'+f)];
+const files=['template.yaml','deploy.sh','verify/index.js','verify/verify.js',...fs.readdirSync(path.join(sd,'src')).filter(f=>/\.js$/.test(f)).sort().map(f=>'src/'+f),...fs.readdirSync(path.join(sd,'src')).filter(f=>/\.json$/.test(f)&&f!=='build.json').sort().map(f=>'src/'+f)];
 const h=crypto.createHash('sha256');for(const f of files){const q=path.join(sd,f);if(fs.existsSync(q))h.update(fs.readFileSync(q))}const hash=h.digest('hex').slice(0,12);
 const ver=process.argv[2]||(fs.readFileSync(path.join(root,'src/core/01-head.html'),'utf8').match(/arena · v([0-9.]+)/)||[])[1]||'?';
 const bp=path.join(sd,'src/build.json');let B={};try{B=JSON.parse(fs.readFileSync(bp,'utf8'))}catch(e){}
