@@ -53,7 +53,7 @@ const REC98={hrs:20,perLv:4,cap:8,lvMax:5,
   up:[0,60,120,200,320],coinMax:2,
   pitch:{'A+':9,A:8,'B+':7,B:6,'C+':4,C:3,D:1,F:-2},wantX:2,motX:10,
   deal:1.25,dealP:6,rivalLv:2};
-const REC98_ACT_L=g=>({ask:[_T('Ask around the forum'),_T('one rough grade')],watch:[sx(g,_T('Watch him train'),_T('Watch her train')),_T('Speed · Strength')],cup:[_T('Share a cup'),_T('Intelligence · Charisma')],study:[sx(g,_T('Study his bouts'),_T('Study her bouts')),_T('every grade sharper · Luck')],trial:[_T('Trial bout'),_T('everything sure · interest')]});
+const REC98_ACT_L=g=>({ask:[_T('Ask around the forum'),_T('two rough grades')],watch:[sx(g,_T('Watch him train'),_T('Watch her train')),_T('Speed · Strength')],cup:[_T('Share a cup'),_T('Intelligence · Charisma')],study:[sx(g,_T('Study his bouts'),_T('Study her bouts')),_T('Luck + the two weakest reads')],trial:[_T('Trial bout'),_T('everything sure · interest')]});
 const REC98_SURE=()=>[_T('not graded yet'),_T('a rough guess — could be a grade or two off'),_T('a fair read — maybe one step off'),_T('sure — your recruiter would bet on it')];
 const REC98_MEAN=()=>({'A+':_T('among the very best in the empire'),A:_T('elite'),'B+':_T('very good'),B:_T('good'),'C+':_T('decent'),C:_T('ordinary'),D:_T('weak'),F:_T('poor')});
 const rec98G=v=>trait96Grade(v);

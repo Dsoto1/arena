@@ -632,7 +632,7 @@ async function endWeek(){
        tnews(_T`${esc(g.name)} injured in ${R.n.toLowerCase()} training: ${lbl}.`,'bad');continue}
      if(g.ovr<g.pot&&Math.random()<gain){const dbl=solo&&g.ovr+1<g.pot&&Math.random()<.35;g.ovr+=dbl?2:1;
        w.lastTraining.push({n:g.name,txt:_T`+${dbl?2:1} rating${solo?_T(' (personal trainer)'):''} — ${pickOne([_T('footwork drills'),_T('shield discipline'),_T('long mornings at the palus'),_T('breath and nerve work'),_T('weighted sword work'),_T('sparring the doctors')])}${omenBad?_T(', despite ill omens over the yard'):''}`})}
-     else{g.morale=clamp(g.morale+2,0,100);w.lastTraining.push({n:g.name,txt:`+2 morale — ${teamOn?R.n.toLowerCase()+' week':_T('a private session')}${omenBad?_T(' (the omens counselled rest)'):''}${g.ovr>=g.pot?_T('; they have reached their potential'):''}`})}
+     else{g.morale=clamp(g.morale+2,0,100);w.lastTraining.push({n:g.name,txt:`+2 morale — ${teamOn?R.n.toLowerCase()+' week':_T('a private session')}${omenBad?_T(' (the omens advised rest)'):''}${g.ovr>=g.pot?_T('; they have reached their potential'):''}`})}
    }
    if(w.lastTraining.length){const up=w.lastTraining.filter(x=>/\+\d rating/.test(x.txt)).length;
      tnews(_T`Training (${R.n}${w.lastTraining.some(x=>/personal trainer/.test(x.txt))?_T(' + personal trainers'):''}): ${up} improved, ${w.lastTraining.filter(x=>/injured/.test(x.txt)).length} injured.`);
@@ -718,7 +718,7 @@ async function endWeek(){
       w.finaleDue={season:w.season,kind,top4,lead:lead.id};
       mnews(_T`🏛 <b>The regular season is over.</b> The Flavius Superbus is set for Roma: ${top4.map(id=>esc(mgrById(id).ludus)).join(', ')} are invited — one fighter each. ${esc(lead.isPlayer?_T('You'):lead.name)} chose the ${esc((FEST_KINDS[kind]||FEST_KINDS.ludi).n)} gift.`,'big');
       if(top4.includes(w.playerId))tnews(_T`🏛 <b>You are invited to the Flavius Superbus!</b> Choose your champion on Match Week when it opens next week.`,'big')}
-    const top=leagueSort(w.mgrs)[0];mnews(_T`Season ${w.season} ends. Top of the table: <b>${esc(top.name)}</b> (${esc(top.ludus)}, ${msp(top).pts} points, ${msp(top).w}-${msp(top).b-msp(top).w}).`,'big');w.season++;for(const m of w.mgrs)m.fame=clamp(Math.round(m.fame*0.92),0,100);
+    const top=leagueSort(w.mgrs)[0];mnews(_T`Season ${w.season} ends. Top of the table: <b>${esc(top.name)}</b> (${esc(top.ludus)}, ${msp(top).pts} points, ${lp102Txt(msp(top))}).`,'big');w.season++;for(const m of w.mgrs)m.fame=clamp(Math.round(m.fame*0.92),0,100);
     for(const g of w.glads.filter(g=>g.alive))g.age=gAge(g)+1; // birthdays at season's end: the sand ages everyone
     // season's end is when doors open: the rich and famous can BUY their freedom; the old diehards sometimes simply don't see spring
     if(typeof sotoSeason==='function')sotoSeason(w);
@@ -757,7 +757,7 @@ async function endWeek(){
       champLanista:(()=>{const t=leagueSort(w.mgrs,doneSeason)[0];return {name:t.name,ludus:t.ludus,fame:t.fame,you:!!t.isPlayer}})(),
       you:{fame:pm.fame,coin:pm.coin,rec:`${pm.wins}-${Math.max(0,pm.bouts-pm.wins)}`,deaths:pm.deaths||0,kept:pm.kept||0,broken:pm.broken||0,betNet:pm.betNet||0,rigCaught:pm.rigStrikes||0},
       best:w.glads.filter(g=>g.alive&&g.contract).sort((a,b)=>effOvr(b)-effOvr(a)).slice(0,3).map(g=>({n:g.name,ovr:effOvr(g),ludus:mgrById(g.contract.mgr).ludus})),
-      standings:leagueSort(w.mgrs,doneSeason).slice(0,8).map(m2=>({ludus:m2.ludus,me:!!m2.isPlayer,pts:msp(m2,doneSeason).pts,rec:`${msp(m2,doneSeason).w}–${msp(m2,doneSeason).b-msp(m2,doneSeason).w}`})),
+      standings:leagueSort(w.mgrs,doneSeason).slice(0,8).map(m2=>({ludus:m2.ludus,me:!!m2.isPlayer,pts:msp(m2,doneSeason).pts,rec:lp102Txt(msp(m2,doneSeason))})),
       graves:w.grave.filter(x=>x.s===doneSeason).length,
       obits:w.grave.filter(x=>x.s===doneSeason).slice(0,6).map(x=>`${x.name} (${x.fate})`)};
     (w.archives=w.archives||[]).push(R2);
@@ -1197,7 +1197,7 @@ function exchTabHTML(){const w=W_(),m=me(),n=w.night;const L=betlogLoad();const 
      ${tips?`<table class="tally compact"><tr><th>${_T`Fighter`}</th><th class="n">${_T`Book`}</th><th class="n">${_T`Scouts`}</th><th></th><th class="n">${_T`Odds`}</th><th></th></tr>${tips}</table>`:`<p class="rc-sub">${_T`Every bout this week is decided — the next card posts when the week ends.`}</p>`}</div>
     <div class="card2"><div class="sect" style="margin-top:0">${_T`🎲 The lanistae at the rail`} <span class="rc-sub">${_T`who wins and loses on the book`}</span></div><table class="tally compact"><tr><th>${_T`Lanista`}</th><th class="n">${_T`Net`}</th><th>${_T`Rivalry`}</th></tr>${lan.map(x=>`<tr class="${x.isPlayer?'me':''}"><td><span style="color:${x.color}">■</span> ${esc(x.name)} <span class="rc-sub">${esc(x.ludus)}</span></td><td class="n">${(x.betNet||0)>=0?'+':''}${x.betNet||0}</td><td class="rc-sub">${x.isPlayer?'—':rivalTier(x.rivalry||0)}</td></tr>`).join('')}</table></div></div>
    <div class="card2" style="margin-top:10px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${_T`<b>📈 The ledger</b>`}<div class="seg">${[['all',_T('All')],['you',_T('Yours')],['lanista',_T('Lanistae')],['crowd',_T('The crowd')],['glad',_T('Gladiators')]].map(([k,l])=>`<button type="button" data-mg="exf" data-id="${k}" class="${F===k?'on':''}">${l}</button>`).join('')}</div><span class="rc-sub">${_T`every wager laid across the empire, newest first`}</span></div>${exchangeHTML(flt,60)}</div>`}
-/* v0.24 THE CONSILIUM: four advisors read your ludus every week and each gives one piece of counsel you can act on */
+/* v0.24 THE CONSILIUM: four advisors read your ludus every week and each gives one piece of advice you can act on */
 function consiliumHTML(){const w=W_(),m=me(),n=w.night;const ros=rosterOf(m);const wages=ros.reduce((a,g)=>a+g.contract.wage,0);
   const R=w.review;const income=R&&R.boutsD?Math.max(0,R.coinD+wages):0;const runway=wages>0?Math.floor(Math.max(0,m.coin)/wages):99;
   const go=(tab,l)=>`<button class="btn tksm" type="button" data-mg="tab" data-id="${tab}">${l}</button>`;
@@ -1213,7 +1213,7 @@ function consiliumHTML(){const w=W_(),m=me(),n=w.night;const ros=rosterOf(m);con
   const fx=[1,2,3].map(k=>{const wk=w.week+k;const f=fixtureFor(w.season+Math.floor((((w.week-1)%12)+k)/12),wk);return f?`${esc(LOCATIONS[f.loc].n)} (${esc((EVENTS[f.ev]||{}).short||'')}${f.purse>1?_T(', rich purse'):''})`:''}).filter(Boolean);
   const au=_T`${n?_T`This week: <b>${esc(LOCATIONS[n.loc].n)}</b>${n.omen&&n.omen.k!=='clear'?_T` under <i>${esc(n.omen.n)}</i>`:''}. `:''}Coming: ${fx.join(' → ')}. Fighters from those cities fight harder at home.`;
   const row=(ic,who,t,b)=>`<div class="cons"><span class="ci">${ic}</span><div><b>${who}</b><div>${t}</div></div>${b||''}</div>`;
-  return `<div class="card2 consil"><div class="sect" style="margin-top:0">${_T`🧭 The Consilium`} <span class="rc-sub">${_T`your advisors' counsel this week`}</span></div>
+  return `<div class="card2 consil"><div class="sect" style="margin-top:0">${_T`🧭 The Consilium`} <span class="rc-sub">${_T`your advisors' word this week`}</span></div>
     ${row(ICO.coin,_T('The Quaestor'),q,m.coin<0||runway<3?go('night',_T('Match Week')):'')}${row('🏋',_T('The Doctore'),d,hurt.length?go('infirm',_T('Infirmary')):go('roster',_T('Roster')))}${row('🔭',_T('The Scout'),sc,go('recruit',_T('Recruiting')))}${row('🦅',_T('The Augur'),au,go('sched',_T('Season')))}</div>`}
 /* rosterBlockHTML — your roster as cards. */
 function rosterBlockHTML(){const m=me(),w=W_();const ros=rosterOf(m).sort((a,b)=>effOvr(b)-effOvr(a));
@@ -1595,7 +1595,7 @@ function leagueHTML(){
     return Object.entries(heat).filter(([id2,v])=>v>=15&&id2!==mgr.id&&mgrById(id2)).sort((a,b)=>b[1]-a[1]).slice(0,3)
       .map(([id2,v])=>{const r2=mgrById(id2);return `<span style="white-space:nowrap"><span style="color:${r2.color}">■</span> ${esc(r2.ludus)} <span class="rc-sub" ${v>=35?'style="color:var(--blood2)"':''}>${rivalTier(v)}</span></span>`}).join('<br>')||'<span class="rc-sub">—</span>'};
   return `<div style="overflow-x:auto"><table class="tally"><tr><th>#</th><th>${_T`Lanista`}</th><th title="${_T`League points this season: a win 3, a runner-up finish 1`}">${_T`Pts`}</th><th title="${_T`This season's bouts: won-lost`}">${_T`Season`}</th><th title="${_T`Average rating of the house's five best fighters`}">${_T`Roster`}</th><th>${_T`Fame`}</th><th>${_T`Treasury`}</th><th>${_T`Morale`}</th><th>${_T`Rivals`}</th><th title="${_T`How this lanista feels about YOUR ludus`}">${_T`Toward you`}</th><th>${_T`Fighters`}</th><th title="${_T`All-time record`}">${_T`Record`}</th><th>${_T`Bets`}</th><th>${_T`Personality`}</th></tr>${ms.map((m,mi)=>{const mo=morale(m);const rv=m.rivalry||0;const sp=msp(m);
-    return `<tr class="${m.isPlayer?'me':''} lrowlink" data-mg="team" data-id="${m.id}" title="${_T`Open ${esc(m.ludus)}'s team screen`}"><td class="n">${mi+1}${mi<4?' <span title="Superbus place">🏛</span>':''}</td><td>${typeof flagChip==='function'?flagChip(m,16):`<span style="color:${m.color}">■</span>`} <span style="color:${m.color}">■</span> <b>${esc(m.name)}</b> ${m.custom?customTag():''}<br><span class="rc-sub">${esc(m.ludus)} · ${esc(m.city)}</span></td><td class="n"><b style="font-size:16px;color:var(--gold2)">${sp.pts}</b></td><td class="n">${sp.w}-${sp.b-sp.w}</td><td class="n">${rosterRating(m)||'—'}</td><td class="n">${fameHTML(m.fame)}<br>${m.fame} <span class="rc-sub">${mgrTier(m.fame)}</span></td><td class="n">${m.coin}</td>
+    return `<tr class="${m.isPlayer?'me':''} lrowlink" data-mg="team" data-id="${m.id}" title="${_T`Open ${esc(m.ludus)}'s team screen`}"><td class="n">${mi+1}${mi<4?' <span title="Superbus place">🏛</span>':''}</td><td>${typeof flagChip==='function'?flagChip(m,16):`<span style="color:${m.color}">■</span>`} <span style="color:${m.color}">■</span> <b>${esc(m.name)}</b> ${m.custom?customTag():''}<br><span class="rc-sub">${esc(m.ludus)} · ${esc(m.city)}</span></td><td class="n"><b style="font-size:16px;color:var(--gold2)">${sp.pts}</b></td><td class="n">${lp102Rec(sp)}</td><td class="n">${rosterRating(m)||'—'}</td><td class="n">${fameHTML(m.fame)}<br>${m.fame} <span class="rc-sub">${mgrTier(m.fame)}</span></td><td class="n">${m.coin}</td>
     <td>${mo==null?'<span class="rc-sub">—</span>':`<div class="meter" style="min-width:56px"><i style="width:${mo}%"></i></div><span class="rc-sub">${mo}</span>`}</td>
     <td style="font-size:12.5px;line-height:1.5">${rivalsOf(m)}</td>
     <td>${m.isPlayer?'<span class="rc-sub">—</span>':`<div class="meter" style="min-width:56px"><i style="width:${rv}%;background:${rv>=60?'var(--blood2)':rv>=35?'#d97a3a':''}"></i></div><span class="rc-sub" ${rv>=35?'style="color:var(--blood2)"':''}>${rivalTier(rv)}</span>`}</td>
@@ -1671,7 +1671,7 @@ function composeWeekPaper(world,night=world.night,season=world.season){
   const briefs=wkNews.filter(n=>n.text!==lead.body&&!/^Week \d/.test(n.text.replace(/<[^>]*>/g,''))).slice(0,4);
   return {wk,season,locN:loc.n,grand:!!(night&&night.grand),omen:night&&night.omen&&night.omen.n?night.omen.n:null,
     lead,also,numbers,empire:empire.slice(0,5).map(e=>({i:e.i,n:e.n,city:e.city,sev:e.sev,mood:e.mood})),briefs:briefs.map(n=>n.text),
-    standings:top5m.map(m=>({name:m.name,ludus:m.ludus,color:m.color,fame:m.fame,pts:msp(m,season).pts,srec:`${msp(m,season).w}–${msp(m,season).b-msp(m,season).w}`,tier:mgrTier(m.fame),rec:`${m.wins}–${Math.max(0,m.bouts-m.wins)}`,me:!!m.isPlayer})),
+    standings:top5m.map(m=>({name:m.name,ludus:m.ludus,color:m.color,fame:m.fame,pts:msp(m,season).pts,srec:lp102Txt(msp(m,season)),tier:mgrTier(m.fame),rec:`${m.wins}–${Math.max(0,m.bouts-m.wins)}`,me:!!m.isPlayer})),
     best:top5g.map(g=>({gid:g.id,name:g.name,stars:starsOf(pubOvr(g)),ovr:pubOvr(g),ludus:ludusOf(g),me:!!(g.contract&&g.contract.mgr===pm.id)})),
     agents:top5f.map(g=>({gid:g.id,name:g.name,stars:starsOf(pubOvr(g)),ovr:pubOvr(g),wage:askWage(g),city:g.city})),
     obits:deaths.map(d=>`<b>${esc(d.name)}</b>, ${CLASSES[d.cls]?CLASSES[d.cls].name:d.cls}${d.age?_T`, aged ${d.age}`:''}${d.mgr?_T` · ${esc(d.mgr)}'s stable`:_T(' · a free sword')}<br><span class="rc-sub">${_T`${d.ovr!=null?_T`rated ${d.ovr} ${'★'.repeat(starsOf(d.ovr))}`:''}${d.f!=null?_T` · ${cfAmt87(d.f)} in their last bout`:''}${d.fame?_T` · fame ${d.fame}`:''} · ${d.rec.ev} bouts, ${d.rec.w} wins, ${d.rec.kp} kills · <i>${esc(d.fate||'')}</i>${d.kin&&d.kin.length?_T`<br>Survived by ${d.kin.map(esc).join(', ')}, who watched from the stands.`:''}`}</span>`),

@@ -166,7 +166,7 @@ function seasonAwards(world,season=world.season){
   const top=(arr,key,filter=()=>true,dir=1)=>arr.filter(filter).sort((a,b)=>dir*(key(b)-key(a))||(b.fame||0)-(a.fame||0))[0]||null;
   const add=(tid,g,m,stat)=>{const d=trophyDef(tid);if(!d)return;const mm=m||(g&&ludusOf(g));out.push({tid,name:d.name,cat:d.cat,desc:d.desc,gid:g?g.id:null,gname:g?g.name:null,mid:mm?mm.id:null,mname:mm?mm.name:null,ludus:mm?mm.ludus:(g?_T('free agent'):null),mine:!!(mm&&mm.isPlayer),stat})};
   // lanista of the season: the most fame (the old "Lanista of the season" line, now with a cup)
-  {const m=leagueSort(world.mgrs,season)[0];if(m){const P=msp(m,season);add('flavian_cup',null,m,_T`${P.pts} points · ${P.w}-${P.b-P.w}`)}}
+  {const m=leagueSort(world.mgrs,season)[0];if(m){const P=msp(m,season);add('flavian_cup',null,m,_T`${P.pts} points · ${lp102Txt(P)}`)}}
   if(world.finale&&world.finale.season===season&&world.finale.champ){const g=world.glads.find(x=>x.name===world.finale.champ);add('palm_roma',g||null,g?ludusOf(g):null,_T`the Flavius Superbus · ${world.finale.f} CF`)}
   {const g=top(G,x=>x.ss.w*100+x.ss.best);if(g&&g.ss.w)add('aureus',g,null,_T`${g.ss.w} win${g.ss.w===1?'':'s'} in ${g.ss.ev}`)}
   {const g=top(G,x=>x.ss.w*100+x.ss.best,x=>x.debut&&x.debut.s===season);if(g)add('tiro',g,null,_T`${g.ss.w}-${g.ss.ev-g.ss.w} in their first season`)}

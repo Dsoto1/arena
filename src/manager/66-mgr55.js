@@ -87,8 +87,8 @@ function adviseWeek(w){const n=w.night;if(!n||n.bye||typeof worldImpact!=='funct
   if(!(imp.att<=ADVISE.att||imp.mood<=ADVISE.mood))return;
   const bad=imp.list.filter(e=>e.att*e.k<0||e.mood*e.k<0).slice(0,4);
   const lines=bad.map(e=>`<li>${_T`${e.i} <b>${esc(e.n)}</b>${e.k<1?` <span class="rc-sub">${_T`(felt from ${esc(e.city)})`}</span>`:''} — attendance ${Math.round(e.att*e.k*100)}%, mood ${Math.round(e.mood*e.k)}`}</li>`).join('');
-  sendLetter(w,{key:'consil-'+w.week,from:_T('the Consilium'),seal:'🏛',title:_T`Counsel for ${L.n}: hold our fighters back`,
-    body:`<p>${_T`Lanista — the news from around ${esc(L.n)} is poor:`}</p><ul>${lines}</ul><p>${_T`All told the stands will be about <b>${Math.round(imp.att*100)}%</b> on a normal week and the crowd's temper <b>${imp.mood}</b>${omen?_T(', and the omens are against us'):''}. Thin gates and a sour crowd mean poor ticket sales, little Crowd Favor and a hostile verdict. <b>We counsel you to enter no one this week.</b> The decision is yours.`}</p>`})}
+  sendLetter(w,{key:'consil-'+w.week,from:_T('the Consilium'),seal:'🏛',title:_T`Consilium's report for ${L.n}: hold our fighters back`,
+    body:`<p>${_T`Lanista — the news from around ${esc(L.n)} is poor:`}</p><ul>${lines}</ul><p>${_T`All told the stands will be about <b>${Math.round(imp.att*100)}%</b> on a normal week and the crowd's temper <b>${imp.mood}</b>${omen?_T(', and the omens are against us'):''}. Thin gates and a sour crowd mean poor ticket sales, little Crowd Favor and a hostile verdict. <b>We advise you to enter no one this week.</b> The decision is yours.`}</p>`})}
 /* =====================================================================
    3. LOANS — Sica's syndicate lends only to a house in the red, on the worst terms; it never touches the treasury.
       Interest is added to the debt; each week names a minimum. Three weeks short and an anonymous spectator's
