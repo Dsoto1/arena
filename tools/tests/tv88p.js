@@ -12,7 +12,7 @@ await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'
 const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 const run=async(mode)=>{const vp=mode==='p'?{width:390,height:844}:{width:844,height:390};
   const ctx=await b.newContext({viewport:vp,screen:vp,isMobile:true,hasTouch:true,deviceScaleFactor:2});await ctx.route(/fonts\./,r=>r.abort());
-  await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
+  await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');localStorage.setItem('flavius_onlcd83','0')});
   const P=await ctx.newPage();P.on('pageerror',e=>errs.push(mode+':'+e.message+' '+(e.stack||'').split('\n')[1]));
   await P.goto(URL0,{timeout:90000});await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester)/.test(k))localStorage.removeItem(k)});await P.reload({timeout:90000});await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
   const W=ms=>P.waitForTimeout(ms);const shot=async n=>{if(SHOT)await P.screenshot({path:path.join(SHOT,`p88_${mode}_${n}.png`)})};

@@ -104,7 +104,7 @@ const settle=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,
 
 /* ======== 3. Online: the host's Day/Night reaches both screens (mock, two windows) ======== */
 {const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
-  await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0');localStorage.removeItem('flavius_onltest89')});
+  await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');localStorage.setItem('flavius_onlcd83','0');localStorage.removeItem('flavius_onltest89')});
   const open=async(n,first)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);if(first)await p.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});return p};
   const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});return ONL.acct.id},[name,cls]);
   const until=async(p,fn,arg,ms=20000)=>{for(let t0=Date.now();Date.now()-t0<ms;){if(await p.evaluate(fn,arg))return true;await p.waitForTimeout(150)}return false};

@@ -4,7 +4,7 @@ const {chromium}=require('playwright');const path=require('path'),fs=require('fs
 const page=path.resolve(process.argv[2]||'flavius-arena.html');
 (async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:850}});const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 pg.on('pageerror',e=>errs.push(e.message));
-await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1')});
+await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1')});
 await pg.goto('file://'+page);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:90000});
 const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));onlineOpen();for(let i=0;i<60&&!document.getElementById('srv91');i++)await W8(100);
   const h=await NET.req('hello',{});const o={mockBuild:h.build,expect:SRV_EXPECT91,t1:(document.getElementById('srv91')||{}).textContent||''};

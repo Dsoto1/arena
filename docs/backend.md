@@ -451,3 +451,35 @@ Code: `server/verify/` (`index.js` = the Lambda, `verify.js` = the replay + comp
   1–5 s; the test match: 1.6 s warm) = ~3–6 GB-s ≈ $0.00005–0.00008 on arm64 ($0.0000133/GB-s) + $0.0000002 for the request + reads (the opening
   ~15 KB and ~100–400 inputs: ~20–40 RCU strongly consistent) ≈ **under $0.0001 a match, ~$1 per 10 000 Ranked matches**. Lambda's free tier
   (400 000 GB-s a month) covers ~80 000 matches. Logs: one line a match.
+
+## v1.02 progression
+
+Shared rules: the "v1.02 PROGRESSION" section at the end of `src/online/111-onlcore.js` (copied by `node tools/mkserver.js`); server: the
+"v1.02 PROGRESSION" block at the end of `server/src/routes.js`; page: `src/online/340-v102prog.js` (+ its mock routes). **No protocol bump**: new
+routes and new optional fields only (an older page simply never asks for them). Test: `server/test/v102prog.test.js` (`npm test`), `tools/tests/tonl102p.js`.
+
+- **One growth system.** The silent per-bout `grow()` (+1 to the lowest rating, +1 more for a win) is gone: `applyResult` keeps the ratings it was
+  given. XP is decided **only at settlement, on the server** (`C.xpSettle102`, called inside `C.applyResult`; a page never sends XP):
+  `xp = round(f × K × (min(CF, 40) + 20 if he survived + 15 if he won))`, `f` = applyResult's factor (table size × CPU cut), `K` = 1 Ranked ·
+  0.5 Custom · 0 when he fell (Ranked death, abandon, or fallen in a Custom bout). Custom XP ≤ 300 a UTC day a gladiator (`ch.xpd102 {d, n}`).
+- **Levels 1–100.** Level n → n+1 costs `round(42 + 0.6·(n−1))` XP (42 … 101; 7 069 XP in all). A typical survived Ranked bout (24 CF, 4 humans)
+  = 44 XP → level 10 after ~10 bouts, 41 after 50, 95 after 150 (99 after 160) — 2 points a level ≈ 190 rating points over a career, as before.
+  Each level: +1 automatically to the weakest rating (the old tie rule, STAT_KEYS order) + 1 unspent point `ch.pts`, granted only while some rating
+  can still take it. Ratings stay 50–99, no respec. At 100 XP keeps counting (a laurel on the bar). Existing gladiators: `lv` missing = level 1, xp 0,
+  their ratings kept (nothing rewritten).
+- **CHAR fields.** `lv, xp, pts, lvlog [[lv, stat, at]] (≤120), xpd102, last102` (the tally: `{at, ranked, won, died, cf, coin, g0, g1, rk0, rk1, xp0, xp1,
+  gain, lv0, lv1, pts, auto, f, cap?, m, ev, loc}` — m/ev/loc added after settling, `META.lt102` marks it once), `rel102 {at, k: released|rudis, lv, hall}`.
+  The kit carries `lv` (room seats / members; `liteRow` copies it to lists); the presence entry `ACCT.here.lv` (Who's online `lv`); `house.card` glads
+  carry `lv`, its `fallen` leaves the released out, `released` = their count.
+- **Routes.** `char.lvup {id, k, rid}` (IDEM93) → `{char}`; refused `lvup_bad` (dead / no point / at 99 / not a rating) or `in_match` (in a room, seated,
+  or still fighting: points are frozen at the horns — the kit was taken when he sat down). `char.seen102 {id}` → clears `last102` (once, any device).
+  `char.release {id, name, rudis, rid}` (IDEM93): the typed name must match (`nameKey102`: case/space-insensitive) → `release_bad`; `in_match` in a
+  room / match (no Fate to dodge); rudis needs `RUDIS102` (100) coin → `no_coin`, paid first (ledger out `rudis`, refunded if the release fails). His
+  gear → the house shelf (Issued pieces vanish), offerings → the offerings shelf (`offersIn`), gifts → the house, any purse → the treasury; the
+  memorial wall gets `{by:{k:'rel'|'rudis'}, lv, rel}`; the rank counters −1; the account's active gladiator moves on. Hall: rudis → always
+  (`why` "Rudiarius — freed · Lv N · picks"), released → only when `hallWorthy` ("Released · Lv N · …"), else erased. Domus rank: a released
+  gladiator counts like the fallen only when Hall-worthy (`drankScore98` wrapper) — release can never raise a house's rank (dr98 never drops anyway).
+  `char.class` → always `class_fixed`; `char.edit {cls}` → `class_fixed` (the class is set at creation; houses that paid for a change keep it).
+- **Deploy.** Server code changed → `bash flavius.sh release` redeploys it (no stack/template change). New server texts have codes in
+  `server/src/texts93.json` (`node tools/i18n/srvtext93.js`). Rollback = the previous release; the new CHAR fields are ignored by older code
+  (an older server would grow ratings again and allow class changes).

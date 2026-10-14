@@ -42,7 +42,7 @@ ok(out.aLang1.LANG==='es'&&out.aLang1.html==='es'&&out.aLang1.dict,'A: Sí → r
 ok(out.aNo.LANG==='en'&&!out.aNo.ask,'A: Keep English → English, not asked again '+JSON.stringify(out.aNo))}
 
 LG('── B/C');/* ── B/C · the Spanish walk ── */
-const ctx=await mk('en-US',WL=>{if(!sessionStorage.getItem('t86')){sessionStorage.setItem('t86','1');localStorage.setItem('flavius_lang',WL)}localStorage.setItem('flavius_online77','1')},WL);
+const ctx=await mk('en-US',WL=>{if(!sessionStorage.getItem('t86')){sessionStorage.setItem('t86','1');localStorage.setItem('flavius_lang',WL)}localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1')},WL);
 const P=await open(ctx,'B');
 /* English-looking text in what is visible right now */
 const sweep=async(where)=>P.evaluate(([where,WL])=>{

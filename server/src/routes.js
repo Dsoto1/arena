@@ -359,7 +359,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       if(d.all&&me){const chars=await store.byIndex('OWNER#'+ctx.acct);out.chars=chars.map(strip);const f=flagOf(me);
       const live=chars.filter(c=>c.alive);const ch=live.find(c=>c.id===me.active)||live[live.length-1]||null;out.active=ch?ch.id:null;
       /* the presence entry: gladiator, rank and time zone (written only when it changed) */
-      const hr={glad:ch?ch.name:null,rank:ch?C.rankFor(ch).k:'tiro',tz:d.tz!=null?C.cleanTz(d.tz):((me.here&&me.here.tz)||''),...(me.dname?{domus:me.dname}:{})};
+      const hr={glad:ch?ch.name:null,rank:ch?C.rankFor(ch).k:'tiro',...(ch&&C.lv102?{lv:C.lv102(ch)}:{}),tz:d.tz!=null?C.cleanTz(d.tz):((me.here&&me.here.tz)||''),...(me.dname?{domus:me.dname}:{})};
       if(JSON.stringify(me.here||null)!==JSON.stringify(hr)){await store.set('ACCT#'+ctx.acct,'PROFILE',{here:hr});out.me={...me,here:hr};const c=(hereC||[]).find(x=>x.id===ctx.acct);if(c)c.here=hr}
       const list=await prune((await lobbies()).filter(L=>!!L.flag===f));out.lobbies=listFor(list,ctx.acct,f);
       out.here=await summary(list);out.online=out.here.n;out.forum=await forumLines();
@@ -1748,6 +1748,58 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       const v=(await store.byIndex('VERIFY',{limit:n})).map(strip);const a=(await store.byIndex('AUDIT',{limit:n})).map(x=>({match:String(x.PK||'').replace(/^AUDIT#/,''),sk:x.SK,...strip(x)}));
       return {verify:v,audit:a,ok:v.filter(x=>x.ok).length,bad:v.filter(x=>x.ok===false).length,skipped:v.filter(x=>x.skipped).length}}}
   /* ══════════ end of v1.01 wave 2 RANKED VERIFICATION ══════════ */
+  /* ══════════ v1.02 PROGRESSION (shared rules: the "v1.02 PROGRESSION" section of onlcore; docs/backend.md "v1.02 progression"; NO protocol bump) ══════════
+     CHAR  + lv, xp, pts (unspent level points), lvlog [[lv, stat, at]], xpd102 {d: UTC day, n: Custom XP that day}, last102 (the tally of his last
+           settled match, set by C.applyResult; + m/ev/loc here), rel102 {at, k: released|rudis, lv, hall} once he leaves the house alive.
+     XP is decided only at settlement (C.applyResult → C.xpSettle102); a page never sends it.
+     char.lvup    {id, k, rid}        one unspent point → +1 to rating k (≤ 99); refused for the dead, with no point, at 99, or in a room / a live match
+                                      (points are frozen at the horns: the kit was taken when he sat down).
+     char.seen102 {id}                the tally was shown → last102 cleared (once, on any device).
+     char.release {id, name, rudis, rid}  the typed name must match (server-side); refused in a room / a live match (no Fate to dodge). His gear → the
+                                      house shelf (Issued pieces vanish), offerings → the offerings shelf, gifts → the house; Hall only when Hall-worthy
+                                      ("Released"), or always with rudis (RUDIS102 coin from the treasury: "Rudiarius — freed"); erased otherwise.
+     char.class   refused: code class_fixed (the class is set at creation). */
+  {const B=C;
+    for(const t of ['char.lvup','char.release','char.seen102'])NEED_DOMUS.add(t);
+    const cid102=d=>String((d&&(d.id||d.char))||'');
+    async function busy102(acct,chId){const A=await acctOf(acct);if(await busyIn(acct)||await stillFighting(A)||charBusy(chId,await lobbies()))throw fail('in_match','Finish or leave your room or match first.');return A}
+    R['char.class']=async(d,ctx)=>{const ch=await ownChar(ctx.acct,d&&d.char);void ch;throw fail('class_fixed',B.CLASS_FIXED102)};
+    {const base=R['char.edit'];R['char.edit']=async(d,ctx)=>{try{return await base(d,ctx)}catch(e){if(e&&e.code==='class_fixed')throw fail('class_fixed',B.CLASS_FIXED102);throw e}}}
+    R['char.lvup']=async(d,ctx)=>{d=d||{};const ch=await ownChar(ctx.acct,cid102(d));const k=String(d.k||'');const why=B.lvupWhy102(ch,k);if(why)throw fail('lvup_bad',why);
+      await busy102(ctx.acct,ch.id);let err='';const c=await editChar(ch.id,x=>{err=B.lvupWhy102(x,k);if(err)return false;B.lvup102(x,k,now())});
+      if(!c)throw fail('lvup_bad',err||'Try again.');return {char:strip(c)}};
+    R['char.seen102']=async(d,ctx)=>{const id=cid102(d);const ch=await charById(id);if(!ch||ch.owner!==ctx.acct)throw new Error('Not yours.');if(!ch.last102)return {char:strip(ch)};
+      const c=await editChar(id,x=>{if(!x.last102)return false;delete x.last102});return {char:strip(c||ch)}};
+    R['char.release']=async(d,ctx)=>{d=d||{};const rudis=!!d.rudis;const {A,D}=await myHouse89(ctx.acct);const ch=await ownChar(ctx.acct,cid102(d));if(ch.domus!==D.id)throw new Error('Not of your house.');
+      let why=B.releaseWhy102(ch,d.name,rudis,D.treasury|0);if(why)throw fail(/treasury/.test(why)?'no_coin':'release_bad',why,/treasury/.test(why)?{cost:B.RUDIS102}:undefined);
+      await busy102(ctx.acct,ch.id);const t=now();
+      /* the rudis is paid first (refunded if he cannot be released) */
+      if(rudis){const X=await editDomus(D.id,Y=>{if((Y.treasury|0)<B.RUDIS102)return false;Y.treasury-=B.RUDIS102;B.ledAdd(Y,'rudis',B.RUDIS102,ch,t)});if(!X)throw fail('no_coin',`The treasury needs ${B.RUDIS102} coin to grant the rudis.`,{cost:B.RUDIS102})}
+      let G=null,mk=null;const rk0=B.rankFor(ch).k;
+      const c=await soft93(editChar(ch.id,x=>{if(!x.alive)return false;const w=B.releaseWhy102(x,d.name,false,0);if(w){why=w;return false}G=B.releaseGear102(x);mk=B.releaseMark102(x,rudis,t)}));
+      if(!c||!mk){if(rudis)await editDomus(D.id,Y=>{Y.treasury=(Y.treasury|0)+B.RUDIS102;if(Y.led89&&Y.led89.out)Y.led89.out.rudis=Math.max(0,(Y.led89.out.rudis|0)-B.RUDIS102)});throw new Error(why||'Try again.')}
+      /* the house: his pieces, offerings, gifts and any purse left; the memorial wall */
+      const X=await editDomus(D.id,Y=>{for(const P of G.shelf)B.putPiece(Y,P,false);if(G.offers.length)B.offersIn(Y,G.offers);if(G.gifts.length)B.giftsIn(Y,G.gifts);
+        const w=c.wallet|0;if(w>0){Y.treasury=(Y.treasury|0)+w;B.ledAdd(Y,'purse',w,c,t)}
+        B.memoAdd(Y,{...B.memoEntry(c,null,{k:mk.kind==='rudis'?'rudis':'rel'},t),lv:B.lv102(c),rel:mk.kind})});
+      if((c.wallet|0)>0)await editChar(c.id,x=>{x.wallet=0});
+      await countRank(rk0,-1,c);
+      if(A&&A.active===c.id){const left=(await store.byIndex('OWNER#'+ctx.acct)).filter(y=>y.alive&&y.id!==c.id);await store.set('ACCT#'+ctx.acct,'PROFILE',{active:left.length?left[left.length-1].id:null})}
+      if(mk.plaque){const e=B.hallEntry102(c,mk.kind,t);if(!c.test){const H=await world('HALL');H.list=[e,...H.list].slice(0,200);await store.put('WORLD','HALL',H)}
+        if(!c.test)await news(mk.kind==='rudis'?['🗡',`${c.name} receives the rudis — freed. The Hall of the Fallen keeps the name.`]:['🏛',`${c.name} leaves the sand, released. The Hall of the Fallen keeps the name.`])}
+      try{await dr98Upd(D.id)}catch(e){}
+      const D2=await domusGet(D.id);
+      return {char:strip(c),domus:B.domusRow(X||D2),hall:!!mk.plaque,kind:mk.kind,vanish:G.vanish,shelf:G.shelf.length,offers:G.offers.length,gear:(D2&&D2.gear)||[],pcs:(D2&&D2.pcs)||{}}};
+    /* the tally knows its match: id, event, city */
+    {const base=settleMatch;settleMatch=async function(id,M){const r=await base.apply(this,arguments);try{const M2=await store.get('MATCH#'+id,'META');if(M2&&M2.status==='done'&&!(M2.agreed&&M2.agreed.void)&&!M2.lt102){
+        await store.set('MATCH#'+id,'META',{lt102:now()});const L=await store.get('LOBBY#'+id,'LOBBY');
+        for(const p of (L&&L.players)||[]){if(!p||!p.char||!(M2.players||[]).includes(p.id))continue;await editChar(p.char,x=>{if(!x.last102||x.last102.m)return false;x.last102={...x.last102,m:id,ev:L.ev||null,loc:L.loc|0}})}}}catch(e){}return r}}
+    /* the house card: every gladiator's level; the fallen count leaves out the released */
+    {const base=R['house.card'];R['house.card']=async(d,ctx)=>{const r=await base(d,ctx);try{const D=r&&r.domus&&r.domus.id?await domusGet(r.domus.id):null;if(D){
+        const all=(await store.byIndex('OWNER#'+D.owner)).filter(c=>c.domus===D.id);const by=new Map(all.map(c=>[c.id,c]));
+        for(const g of r.glads||[]){const c=by.get(g.id);if(c)g.lv=B.lv102(c)}r.fallen=Math.max(D.fallen|0,all.filter(c=>!c.alive&&!c.rel102).length);
+        const rel=all.filter(c=>c.rel102);if(rel.length)r.released=rel.length}}catch(e){}return r}}}
+  /* ══════════ end of v1.02 PROGRESSION ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=typeof t==='string'&&Object.prototype.hasOwnProperty.call(R,t)?R[t]:null; /* v1.01: own routes only (never 'constructor', '__proto__' …) */if(!f)throw fail('unknown_req','Unknown request: '+String(t).slice(0,40));

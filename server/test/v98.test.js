@@ -33,8 +33,8 @@ function units(){
   const RL=C.newLobby({ev:'democritus',ranked:true},{id:'a',name:'A',rank:'tiro'},'L3',1);assert.match(C.roomSet(RL,'a',{ev:'goldenEagle'},2),/Custom only/);
   /* Damnatio */
   const live=cls=>({alive:true,cls});const T={treasury:999};
-  assert.match(C.classWhy(live('hero'),'damnatio',T),/Damnatio/);assert.match(C.classWhy(live('damnatio'),'hero',T),/Damnatio/);assert.strictEqual(C.classWhy(live('hero'),'slave',T),'');
-  assert.match(C.classWhy(live('hero'),'slave',{treasury:5}),/treasury/,'other switches still cost 100');
+  /* v1.02: the class is set at creation for every class (Damnatio included) */for(const [a,b] of [['hero','damnatio'],['damnatio','hero'],['hero','slave']])assert.strictEqual(C.classWhy(live(a),b,T),C.CLASS_FIXED102);
+
   /* renames */
   const U=k=>C.UNIQUES.find(u=>u.k===k).n,UA=k=>C.UNIQUES_A.find(u=>u.k===k).n;
   assert.deepStrictEqual([U('gloria'),U('percussor'),U('aegis'),UA('mercurialis'),UA('gloriosa')],['Gloriosus II','Acutus II','Aegis','Velox II','Laudis'],'unique names');
@@ -136,9 +136,9 @@ async function routes(){
   /* ── 7 · Damnatio only at creation ── */
   const dm=await cat.req('char.create',{name:'Cat Damned',cls:'damnatio'});assert.strictEqual(dm.cls,'damnatio','a Damnatio may be raised');
   const DC=await db.get('DOMUS#'+(await cat.req('domus.get',{})).domus.id,'DOMUS');DC.treasury=900;await db.put('DOMUS#'+DC.id,'DOMUS',DC);
-  await rejects(cat.req('char.class',{char:dm.id,cls:'hero'}),null,/Damnatio/);await rejects(cat.req('char.class',{char:cat.ch.id,cls:'damnatio'}),null,/Damnatio/);
-  const ok=await cat.req('char.class',{char:cat.ch.id,cls:'slave'});assert.strictEqual(ok.char.cls,'slave','other switches stay open (100 coin)');
-  assert.strictEqual((await db.get('DOMUS#'+DC.id,'DOMUS')).treasury,800,'and cost 100');
+  await rejects(cat.req('char.class',{char:dm.id,cls:'hero'}),'class_fixed');await rejects(cat.req('char.class',{char:cat.ch.id,cls:'damnatio'}),'class_fixed');
+  await rejects(cat.req('char.class',{char:cat.ch.id,cls:'slave'}),'class_fixed');
+  assert.strictEqual((await db.get('DOMUS#'+DC.id,'DOMUS')).treasury,900,'nothing paid (v1.02)');
   /* ── 9 · OFFERINGS CAP 2 ── */
   assert.strictEqual(C.OFF_MAX,2);assert.deepStrictEqual(C.offersBrought({offers:['elix2','ap2'],offerEq:['ap2']}),['elix2','ap2'],'all he holds is brought, offerEq ignored');
   const eve=await client('eve');const EC=await db.get('CHAR#'+eve.ch.id,'CHAR'),ED=await db.get('DOMUS#'+eve.ch.domus,'DOMUS');

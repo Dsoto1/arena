@@ -9,11 +9,11 @@ function rules(){C.setCatalog(catalog);
   assert.strictEqual(C.gladMax({}),4);assert.strictEqual(C.gladMax({upg89:{slot5:1}}),5);assert.strictEqual(C.shelfMax({}),30);assert.strictEqual(C.shelfMax({upg89:{shelf:1}}),34);
   /* the look is set at creation; the class only through char.class */
   const g=C.newChar({name:'Rule Keeper',cls:'hero',look:{token:{sc:1,c1:'#aa0000'}}},'o','rk',0);
-  assert.throws(()=>C.editChar(g,{cls:'slave'}),/Change class in the Domus/);assert.throws(()=>C.editChar(g,{look:{token:{sc:1,c1:'#00aa00'}}}),/look is set/);
+  assert.throws(()=>C.editChar(g,{cls:'slave'}),/never changes/);assert.throws(()=>C.editChar(g,{look:{token:{sc:1,c1:'#00aa00'}}}),/look is set/);
   C.editChar(g,{name:'Rule Bender',look:{token:{c1:'#aa0000',sc:1}},cls:'hero'});assert.strictEqual(g.name,'Rule Bender','the same look and class pass; the name changes');
   const old=C.newChar({name:'Old Token',cls:'hero',look:{color:'#112233'}},'o','ot',0);C.editChar(old,{look:{color:'#112233',token:{sc:1}}});assert.ok(old.look.token.sc,'the one-time sculpted conversion passes');
   assert.throws(()=>C.editChar(C.newChar({name:'Old Token',cls:'hero',look:{color:'#112233'}},'o','o2',0),{look:{color:'#445566'}}),/look is set/,'an old look without the conversion stays');
-  assert.match(C.classWhy(g,'hero',{treasury:500}),/already/);assert.match(C.classWhy(g,'dragon',{treasury:500}),/eight printed/);assert.match(C.classWhy(g,'slave',{treasury:99}),/100 coin/);assert.strictEqual(C.classWhy(g,'slave',{treasury:100}),'');
+  /* v1.02: the class is set at creation — every change refused */for(const k of ['hero','dragon','slave'])assert.strictEqual(C.classWhy(g,k,{treasury:500}),C.CLASS_FIXED102);
   /* dressing: the incoming pieces, what he wears (≤2 bought weapons, one per point), the rest to the shelf */
   const d=C.newChar({name:'Dress Up',cls:'hero'},'o','du',0);d.gear=['gladius','galea','ocrea'];
   let r=C.dressApply(d,['galea','axe','gladius','mace','greaves','ocrea'],[{item:'axe',pc:null},{item:'mace',pc:null},{item:'greaves',pc:null}],catalog);
@@ -69,11 +69,10 @@ async function routes(){
   const ann=await client('ann'),bob=await client('bob',{cls:'soldier'});
 
   /* ── the class from the treasury ── */
-  await rejects(ann.req('char.class',{char:ann.ch.id,cls:'slave'}),'no_coin');await setD(ann.domus.id,{treasury:250});
-  await rejects(ann.req('char.edit',{char:ann.ch.id,cls:'slave'}),null,/Change class in the Domus/);
-  const cc=await ann.req('char.class',{char:ann.ch.id,cls:'slave'});assert.strictEqual(cc.char.cls,'slave');assert.strictEqual(cc.domus.treasury,150);assert.strictEqual(cc.domus.led89.out.class,100);
-  await rejects(ann.req('char.class',{char:ann.ch.id,cls:'slave'}),null,/already/);
-  const RM=await ann.req('lobby.create',{ev:'cassian',cry:false});await rejects(ann.req('char.class',{char:ann.ch.id,cls:'hero'}),'in_match');await ann.req('lobby.leave',{id:RM.id});
+  /* v1.02: the class is set at creation — char.class refuses (class_fixed), the treasury is never touched */
+  await setD(ann.domus.id,{treasury:250});
+  await rejects(ann.req('char.edit',{char:ann.ch.id,cls:'slave'}),'class_fixed',/never changes/);
+  await rejects(ann.req('char.class',{char:ann.ch.id,cls:'slave'}),'class_fixed',/never changes/);assert.strictEqual((await getD(ann.domus.id)).treasury,250,'nothing paid');
   /* the look stays */
   await setC(ann.ch.id,{look:{token:{sc:1,c1:'#aa0000'}}});await rejects(ann.req('char.edit',{char:ann.ch.id,look:{token:{sc:1,c1:'#00aa00'}}}),null,/look is set/);
 

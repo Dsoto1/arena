@@ -156,7 +156,7 @@ await pg.close();
 
 /* ---- G16 · the Lobby Browser (mock Online) ---- */
 {const ctx=await b.newContext({viewport:{width:1440,height:900}});await ctx.route(/fonts\./,r=>r.abort());
-await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
+await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');localStorage.setItem('flavius_onlcd83','0')});
 const A=await ctx.newPage();A.on('pageerror',e=>errs.push('A:'+e.message));await A.goto(URL0,{timeout:90000});await A.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 await A.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Alpha'});await NET.req('domus.create',{name:'Domus Alpha'});await NET.req('lanista.name',{name:'Lanista Alpha'});ONL.char=await NET.req('char.create',{name:'Alpha the Bold',cls:'hero'})});
 A.evaluate(()=>{onlineOpen('lobby')}).catch(()=>{});await A.waitForSelector('#onl',{timeout:30000});await A.evaluate(()=>{ONL.tab='lobby';onlRedraw()});await A.waitForSelector('#onl .onl-lbtop .lb100-jb',{timeout:15000}).catch(()=>{});

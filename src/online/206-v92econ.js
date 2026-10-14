@@ -125,7 +125,7 @@ d89Stake=function(c){let v=0;for(const it of ONLC.equipOf(c)){if(ONLC.isHome(c,i
 /* the ledger: every source by name */
 d89Ledger=function(){const L=(ONL.domus||{}).led89;const T=onlT92();
   const IN=[['cut',_T('Bout earnings')],['back',_T('Coin brought home')],['wager',_T('Wagers won & refunds')],['gift',_T('Donativa (Flavius)')],['purse',_T('Purses moved to the treasury')],['sale',_T('Sales (a full shelf)')],['refund',_T('Refunds')],['grant',_T('Tester grants')]];
-  const OUT=[['gear',_T('Gear')],['kit',_T('Kits')],['off',_T('Offerings')],['repair',_T('Repairs')],['sent',_T('Coin sent into matches')],['bet',_T('Tickets & wagers')],['auc',_T('Auction bids')],['class',_T('Class changes')],['upg',_T('Upgrades')]];
+  const OUT=[['gear',_T('Gear')],['kit',_T('Kits')],['off',_T('Offerings')],['repair',_T('Repairs')],['sent',_T('Coin sent into matches')],['bet',_T('Tickets & wagers')],['auc',_T('Auction bids')],['class',_T('Class changes')],['rudis',_T('Rudis granted')],['upg',_T('Upgrades')]];
   const row=(l,v,neg)=>`<div class="lg89-r"><span>${l}</span><b class="${neg?'neg':''}">${neg?'−':''}${d89Coin(v)}</b></div>`;
   if(!L)return `<div class="lg89"><b class="lg89-h">${_T`🏛 The treasury · ${d89Coin(T)}`}</b><p class="rc-sub">${_T`The ledger starts with v0.89 — nothing booked yet.`}</p></div>`;
   const ins=IN.filter(([k])=>L.in[k]).map(([k,l])=>row(l,L.in[k])).join('')||`<p class="rc-sub">${_T`Nothing yet.`}</p>`;

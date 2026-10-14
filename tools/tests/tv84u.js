@@ -129,7 +129,7 @@ if(o.st1==='ready'){
 await p.evaluate(()=>{SETTINGS.confirmEnd=false;applySettings();if(S)S.over=true;for(const x of document.querySelectorAll('.ask76bg'))x.remove()});await ctx.close();
 
 /* ── 5 · the Online landing on one screen ── */
-{const {ctx,p}=await mk(()=>{localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
+{const {ctx,p}=await mk(()=>{localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');localStorage.setItem('flavius_onlcd83','0')});
   await p.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await p.reload({timeout:90000});await W8(p,2300);
   await p.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Vettii'});ONL.domus=(await NET.req('domus.create',{name:'Vettii'})).domus;ONL.char=await NET.req('char.create',{name:'Vettii the Bold',cls:'hero'});
     onlineOpen('play');await new Promise(r=>setTimeout(r,1200));ONL.tab='play';await onlRefresh();

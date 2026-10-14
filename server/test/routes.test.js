@@ -20,11 +20,11 @@ C.SEAT_RND100=false; /* v1.0 batch B: Ranked seats are dealt at random at the ho
   await assert.rejects(route('char.create',{name:'Zeta Five',cls:'hero'},Z),/Up to 4/,'v0.82: four gladiators a house');assert.strictEqual((await route('hello',{all:1},Z)).active,z1.id,'the first gladiator is active');
   await route('char.active',{char:z2.id},Z);assert.strictEqual((await route('hello',{all:1},Z)).active,z2.id);
   /* v0.89: the class changes only in the Domus (char.class, 100 coin from the treasury); a look may still be set once on a gladiator from before the sculpted tokens */
-  await assert.rejects(route('char.edit',{char:z2.id,cls:'amazonia'},Z),/Change class in the Domus/);
+  await assert.rejects(route('char.edit',{char:z2.id,cls:'amazonia'},Z),/never changes/);
   const z2e=await route('char.edit',{char:z2.id,cls:'slave',name:'Zeta Swift',look:{portrait:{skin:'#c58c5c',helm:'galea<script>'},color:'#123456',token:{c1:'#ff0000',sc:1}}},Z);
   await assert.rejects(route('char.edit',{char:z2.id,look:{color:'#654321',token:{c1:'#00ff00',sc:1}}},Z),/look is set/,'v0.89: then the look is locked');
   assert.strictEqual(z2e.cls,'slave');assert.strictEqual(z2e.name,'Zeta Swift');assert.strictEqual(z2e.look.portrait.helm,'galeascript','looks are cleaned');assert.deepStrictEqual(z2e.stats,C.START_STATS,'ratings stay');
-  await assert.rejects(route('char.edit',{char:z2.id,cls:'dragon'},Z),/Change class in the Domus/);
+  await assert.rejects(route('char.edit',{char:z2.id,cls:'dragon'},Z),/never changes/);
   const ZL=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false},Z);await assert.rejects(route('char.edit',{char:z2.id,name:'Busy'},Z),/Finish or leave/);
   await assert.rejects(route('lobby.start',{id:ZL.id},Z),/at least 2/,'no online match with one human');
   await assert.rejects(route('lobby.chat',{id:ZL.id,text:'Ave'},Z),/Quick chat only/,'v0.80: no free text online');
@@ -54,7 +54,7 @@ C.SEAT_RND100=false; /* v1.0 batch B: Ranked seats are dealt at random at the ho
   const table=[{seat:0,won:false,place:2,f:6,coin:4,survives:false},{seat:1,won:true,place:1,f:40,coin:12,survives:true},{seat:2,won:false,place:3,f:9},{seat:3,won:false,place:4,f:2}];
   const ra=await route('match.result',{id:L.id,table,hash:'h1'},A);assert.ok(ra.pending,'waits for the other report');
   const rb=await route('match.result',{id:L.id,table,hash:'h1'},B);
-  assert.ok(!rb.void);assert.ok(!rb.out.died);assert.strictEqual(rb.char.survived,1);assert.strictEqual(rb.char.streak,1);assert.strictEqual(rb.char.stats.spd+rb.char.stats.str+rb.char.stats.int+rb.char.stats.lck+rb.char.stats.cha,275+2,'+1 survived, +1 won');
+  assert.ok(!rb.void);assert.ok(!rb.out.died);assert.strictEqual(rb.char.survived,1);assert.strictEqual(rb.char.streak,1);assert.strictEqual(rb.char.stats.spd+rb.char.stats.str+rb.char.stats.int+rb.char.stats.lck+rb.char.stats.cha,275,'v1.02: no silent growth — ratings grow by levels');assert.ok(rb.char.xp>0&&rb.out.xp102&&rb.out.xp102.gain===rb.char.xp,'XP instead');
   assert.strictEqual(rb.char.wallet,0);assert.strictEqual(await treOf('dev-b'),30+18+10,'v1.0: the Tiro award ×3 (24); v0.82: the Tiro award ×1.5 for the win, ×0.5 at two lanistas (no coin carried out); v0.92: all of it into the house treasury');
   assert.ok(pushed.some(([a,ty,d])=>a==='dev-a'&&ty==='match.settled'&&d.out&&d.out.died),'A hears the verdict');
   assert.ok(!(await db.get('CHAR#'+ca.id,'CHAR')).alive,'A is dead');assert.strictEqual((await route('hall.list',{},A)).length,0,'a fallen Tiro is forgotten');
@@ -144,7 +144,7 @@ async function v80(){
   const prof=a=>db.get('ACCT#'+a,'PROFILE');const getL=id=>db.get('LOBBY#'+id,'LOBBY');
   /* presence: $connect marks the account 'ON'; hello stores {glad,rank,tz} and sums the zones */
   const ann=await client('ann',{tz:'Europe/Rome'}),bob=await client('bob',{tz:'America/New_York'}),cat=await client('cat',{tz:'Europe/Rome'});
-  let P=await prof(ann.acct);assert.strictEqual(P.GSI1PK,'ON');assert.strictEqual(P.conn,ann.conn);assert.deepStrictEqual(P.here,{glad:'Ann Gladius',rank:'tiro',tz:'Europe/Rome',domus:'Domus ann'},'v0.82: the house name rides along');
+  let P=await prof(ann.acct);assert.strictEqual(P.GSI1PK,'ON');assert.strictEqual(P.conn,ann.conn);assert.deepStrictEqual(P.here,{glad:'Ann Gladius',rank:'tiro',lv:1,tz:'Europe/Rome',domus:'Domus ann'},'v0.82: the house name rides along');
   const hc=await cat.req('hello',{all:1,tz:'Europe/Rome'});assert.strictEqual(hc.here.n,3);assert.strictEqual(hc.online,3);assert.deepStrictEqual(hc.here.zones,{'Europe/Rome':2,'America/New_York':1});assert.deepStrictEqual(hc.forum,[]);
   assert.strictEqual((await cat.req('hello',{all:1,tz:'Not a zone!'})).here.zones['Not a zone!'],undefined,'bad zones are dropped');await cat.req('hello',{all:1,tz:'Europe/Rome'});
   /* a reconnect, then the OLD socket closes: the newer connection is kept (conditional clear) */
