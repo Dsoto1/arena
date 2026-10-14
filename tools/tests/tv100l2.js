@@ -17,12 +17,12 @@ const pg=await open(1440,900);
 const A=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={per:{},mk:[]};
   r.mk=[...document.querySelectorAll('#council83 .c83p .c83f>.lu2bm')].map(x=>x.closest('.c83p').dataset.c83).sort();
   for(const k of ['doctore','medicus','barracks','clerk','recruiter']){LU100.pop=k;MGR_REDRAW();await W8(250);const p=document.getElementById('lu100pop');r.per[k]=p?[...p.querySelectorAll('[data-mg="build"]')].map(x=>x.dataset.id).sort().join():'-'}
-  LU100.pop=null;MGR_REDRAW();await W8(200);const t=document.querySelector('.lu100t.k-school');r.tile=!!t&&t.dataset.lu100adv==='consilium'&&!t.hasAttribute('data-mg');
-  t.click();await W8(300);let p=document.getElementById('lu100pop');r.ov=!!p&&!!p.querySelector('.lu2ov')&&p.querySelectorAll('.lu2o[data-lu100adv]').length===4&&/Ludus grade/.test(p.textContent);
-  p.querySelector('.lu2o[data-lu100adv="medicus"]').click();await W8(300);p=document.getElementById('lu100pop');r.jump=LU100.pop==='medicus'&&!!p&&!!p.querySelector('[data-mg="build"][data-id="valet"]');
+  LU100.pop=null;MGR_REDRAW();await W8(200);const t=document.querySelector('.lu100t.k-school');r.tile=!!t&&t.dataset.lu102fac==='1'&&!t.hasAttribute('data-mg'); /* v1.02 (333 M10): the Upgrade School popup, not the Consilium */
+  t.click();await W8(300);let p=document.querySelector('#mgrPane .lu102fac');r.ov=!!p&&p.querySelectorAll('.lu2b').length>=4&&/levels/.test(p.textContent);
+  r.jump=!!p&&!!p.querySelector('[data-mg="build"][data-id="valet"]');document.querySelector('[data-lu102fac="0"]').click();await W8(300);
   r.links=!document.querySelector('.lu100lk [data-id="consil"],.lu100lk [data-id="ledger"]');return r});
 ok(A.per.doctore==='stands,yard'&&A.per.medicus==='kitchen,valet'&&A.per.barracks==='armory,barracks,shrine'&&A.per.clerk==='stables'&&A.per.recruiter==='','buildings per advisor '+JSON.stringify(A));
-ok(A.mk.join()==='barracks,clerk,doctore,medicus','🏗 marker on the four builders');ok(A.tile&&A.ov&&A.jump,'Upgrade School → the Consilium overview → an advisor');ok(A.links,'counsel + Ledger left the links row');
+ok(A.mk.join()==='barracks,clerk,doctore,medicus','🏗 marker on the four builders');ok(A.tile&&A.ov&&A.jump,'Upgrade School → every building in its popup');ok(A.links,'counsel + Ledger left the links row');
 /* build from the popover: coin, level, one a week */
 const B=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};LU100.pop='doctore';MGR_REDRAW();await W8(250);const c0=m.coin;
   document.querySelector('#lu100pop [data-mg="build"][data-id="yard"]').click();await W8(500);r.built=facLvl(m,'yard')===1&&m.coin===c0-FAC_COST[0]&&m.facWk===w.week;
@@ -41,15 +41,15 @@ const L=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   MGR.tab='league';MGR_REDRAW();await W8(300);document.querySelector('.badge.ledger[data-lu2led]').click();await W8(400);
   r.badge=MGR.tab==='ludus'&&LU100.pop==='clerk'&&!!document.querySelector('#lu100pop .led101')&&!document.querySelector('#mgrPane .lu100panel');LU100.pop=null;LU100.panel=null;MGR_REDRAW();await W8(200);return r});
 ok(L.pop&&L.badge,'Ledger from the Clerk and the badge '+JSON.stringify(L));
-/* counsel: v1.01 — his counsel lives inside his popover; the head lights for a warning and darkens once read */
-const K=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};const lit=()=>!!document.querySelector('#council83 .c83p.lit[data-c83="consilium"]');
+/* the Consilium's report: v1.02 (333 M10) — inside his popover; the head lights only from his urgent letter and darkens once read */
+const K=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};const lit=()=>!!document.querySelector('.lu100t.k-adv .c83p.lit[data-c83="consilium"]'); /* v1.02: his head sits at the strip's bottom left */
   delete w.lu2c;w.loan=null;m.coin=900;MGR_REDRAW();await W8(250);r.quiet=!lit()&&lu2Counsel(w)===null;
   LU100.pop='consilium';MGR_REDRAW();await W8(250);r.always=!!document.getElementById('lu100pop').querySelector('.cn101 .cons');LU100.pop=null;
   m.coin=-5;MGR_REDRAW();await W8(250);r.lit=lit();
-  LU100.pop='consilium';MGR_REDRAW();await W8(250);const p=document.getElementById('lu100pop');const rd=p.querySelector('[data-lu100read^="lu2:"]');r.rd=!!rd;rd.click();await W8(400);
-  r.panel=w.lu2c===w.week&&!lit()&&LU100.pop==='consilium'&&!document.querySelector('#mgrPane .lu100panel');
+  LU100.pop='consilium';MGR_REDRAW();await W8(250);const p=document.getElementById('lu100pop');const rd=p.querySelector('[data-lu100read^="L:consil102-"]');r.rd=!!rd;rd.click();await W8(400);
+  r.panel=!lit()&&!document.querySelector('#mgrPane .lu100panel');
   LU100.pop=null;LU100.panel=null;m.coin=900;MGR_REDRAW();await W8(200);return r});
-ok(K.quiet&&K.always&&K.lit&&K.rd&&K.panel,'Consilium counsel: lit, read, inside his popover '+JSON.stringify(K));
+ok(K.quiet&&K.always&&K.lit&&K.rd&&K.panel,'Consilium report: lit, read, inside his popover '+JSON.stringify(K));
 /* banners */
 const N=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};MGR.tab='roster';MGR_REDRAW();await W8(400);let h=document.querySelector('.roomhd.b73-roster');
   r.roster=!!h&&!!h.querySelector('img.lu2ban[data-sc100^="team|banner"]')&&!h.querySelector(':scope>svg')&&/roster/i.test(h.querySelector('.roomttl').textContent);
@@ -62,7 +62,7 @@ const pp=await open(390,844);
 const F=await ev(pp,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));LU100.pop='doctore';MGR_REDRAW();await W8(300);const p=document.getElementById('lu100pop');const pr=p.getBoundingClientRect();
   const sheet=pr.left<=1&&pr.right>=389&&Math.abs(pr.bottom-innerHeight)<3;const bs=[...p.querySelectorAll('[data-mg="build"]')];bs.forEach(x=>x.scrollIntoView({block:'nearest'}));await W8(100);
   const reach=bs.length===2&&bs.every(x=>{const r=x.getBoundingClientRect();return r.right<=390&&r.bottom<=innerHeight&&r.top>=pr.top-1});
-  LU100.pop='consilium';MGR_REDRAW();await W8(300);const p2=document.getElementById('lu100pop');const g=p2.querySelector('.lu2g').getBoundingClientRect();
+  LU100.pop=null;LU102.fac=true;MGR_REDRAW();await W8(300);const p2=document.querySelector('#mgrPane .lu102fac');const g=p2.getBoundingClientRect();LU102.fac=false;
   return {sheet,reach,grid:g.right<=390,doc:document.documentElement.scrollWidth<=390}});
 ok(F.sheet&&F.reach&&F.grid&&F.doc,'390: bottom sheet, buildings fit '+JSON.stringify(F));await pp.close();
 /* kill switch */

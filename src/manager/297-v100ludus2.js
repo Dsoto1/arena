@@ -37,11 +37,11 @@ function lu2Rebate(w,pm){try{if(!w||!pm||w.tutorial||w.dead)return 0;const wages
    waiting); the counsel itself is always readable from his popover. Reading a warning (w.lu2c = week) darkens the head. */
 function lu2Counsel(w){try{const pm=me();if(!w||!pm||w.tutorial)return null;if(w.lu2c===w.week)return null;
   const wages=rosterOf(pm).reduce((a,g)=>a+((g.contract&&g.contract.wage)||0),0);const run=wages>0?Math.floor(Math.max(0,pm.coin)/wages):99;
-  if(pm.coin<0)return _T('Counsel: the treasury is in debt');
-  if(run<3)return _T('Counsel: coin for less than 3 weeks of wages');
-  const L=w.loan;if(L&&L.amt>0&&(L.due||0)>(L.paid||0))return _T('Counsel: a loan payment is due');
+  if(pm.coin<0)return _T('the treasury is in debt');
+  if(run<3)return _T('coin for less than 3 weeks of wages');
+  const L=w.loan;if(L&&L.amt>0&&(L.due||0)>(L.paid||0))return _T('a loan payment is due');
   const ch=(w.letters||[]).find(x=>x&&x.rl76&&x.rl76.kind==='chal'&&x.until>=w.week&&!x.read);
-  if(ch&&!(w.chal76&&w.chal76.s===w.season&&w.chal76.wk===w.week))return _T('Counsel: a rival challenge is waiting');
+  if(ch&&!(w.chal76&&w.chal76.s===w.season&&w.chal76.wk===w.week))return _T('a rival challenge is waiting');
   return null}catch(e){return null}}
 
 /* ---------- the buildings in a popover ---------- */
@@ -60,7 +60,7 @@ function lu2Overview(w,pm){const C=council83(w);const nm=k=>{const a=C.find(x=>x
     <div class="lu2g">${owners.map(k=>`<button type="button" class="lu2o${lu2Keys(k).some(fk=>lu2Can(w,pm,fk))?' can':''}" data-lu100adv="${k}"><b>${nm(k)}</b><small>${ro(k)}</small>${lu2Keys(k).map(fk=>{const l=facLvl(pm,fk);return `<span>${FAC[fk].i} ${esc(FAC[fk].n)} <span class="facpips">${[0,1,2].map(i=>`<i class="${i<l?'on':''}"></i>`).join('')}</span></span>`}).join('')}</button>`).join('')}</div>
     <div class="lu2nx">${next}${nx&&!busy?` <button type="button" class="lnk" data-lu100adv="${lu2Owner(nx)}">${_T`Open ${nm(lu2Owner(nx))} ›`}</button>`:''}</div>
     ${own.length?own.map(fk=>lu2Row(w,pm,fk)).join(''):''}
-    <div class="lu2ln"><button type="button" class="btn tksm" data-mg="run" data-id="consil">🏛 ${_T`The Consilium's counsel`}</button></div></div>`}
+    <div class="lu2ln"><button type="button" class="btn tksm" data-mg="run" data-id="consil">🏛 ${_T`Consilium's report`}</button></div></div>`}
 function lu2PopExtra(w,pm,k){
   if(k==='consilium')return lu2Overview(w,pm);
   if(k==='recruiter')return `<div class="lu2b"><div class="lu2bh">🏗 ${_T`What recruits see`} ${lu2Grade(pm)}</div><small class="lu2nt">${_T('Free agents weigh your Ludus grade. Every building any advisor raises lifts it.')} <button type="button" class="lnk" data-lu100adv="consilium">${_T`The buildings ›`}</button></small></div>`;

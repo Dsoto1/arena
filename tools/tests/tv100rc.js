@@ -18,7 +18,7 @@ const open=async(W,H,ls)=>{const pg=await b.newPage({viewport:{width:W,height:H}
 const ev=(pg,f,a)=>pg.evaluate(f,a);
 /* ---------- desktop: list, head, scout ---------- */
 const pg=await open(1440,900);
-const A=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const g=FA[4];await SEL(g,1);const w=W_();const r={};const q=s=>document.querySelector('#mgrBody '+s);
+const A=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(const a of council83(W_()))if(a.k==='recruiter')a.lv=3; /* v1.02 (333 M6): ★ from Recruiter level 3 */const g=FA[4];await SEL(g,1);const w=W_();const r={};const q=s=>document.querySelector('#mgrBody '+s);
   const grid=q('.mgrid.rc100g');const list=q('#recTable'),card=q('.card2.rc100');r.grid=!!grid&&!!card&&card.dataset.rc100card===g.id;
   r.cols=list&&card?[Math.round(list.getBoundingClientRect().width),Math.round(card.getBoundingClientRect().width)]:null;r.narrow=!!r.cols&&r.cols[0]<=480&&r.cols[1]>r.cols[0]*1.2; /* v1.01 (317 M5): the list column is wider on big screens */
   r.tb=!!q('.rtb85.rc1tb')&&!grid.contains(q('.rtb85'));r.board=!!q('.pipeline.rc1board')&&!grid.contains(q('.pipeline'));
@@ -34,7 +34,7 @@ const A=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   card.querySelector('.rc1act[data-rec98a="watch"]').click();await W8(450);r.spent=l0-rec98Left(w);const K=rec98K(g);r.p=[K.p.spd,K.p.str];
   const c2=q('.card2.rc100');r.done=!!c2.querySelector('.rc1act[data-rec98a="watch"].done .rc1done')&&c2.querySelector('.rc1act[data-rec98a="watch"]').disabled;
   r.gr=[...c2.querySelectorAll('.gs98 .gb98[data-gb98="spd"],.gs98 .gb98[data-gb98="str"]')].map(e=>e.dataset.p+e.querySelector('b').textContent);
-  r.hrs=/\d+ of \d+ left/.test((c2.querySelector('.rc1hrs')||{}).textContent||'');r.pips=c2.querySelectorAll('.rc1pips i.him').length===2;
+  r.hrs=/\d+ of \d+ left/.test((c2.querySelector('.rc1hrs')||{}).textContent||'');r.pips=c2.querySelectorAll('.rc1pips i.him').length===1; /* v1.02: watch = 1 h */
   r.learned=/Speed|Strength/.test((c2.querySelector('.rc1lg')||{}).textContent||'');
   r.ban=!!document.querySelector('.roomhd.b73-recruit img.rc1ban');
   return r});
@@ -43,7 +43,7 @@ ok(A.row&&A.rowHidden,'list rows one line with class + grade, Fit/Ask folded');
 ok(A.por&&A.rows===6&&A.q===5&&A.qText==='?????'&&A.nodigit&&A.lock,'head: portrait, six tablet rows, "?" before scouting, lock names the next action '+JSON.stringify(A));
 ok(JSON.stringify(A.steps)==='["scout*","court","offer"]','three big steps, Scout current '+JSON.stringify(A.steps));
 ok(A.acts===5&&A.mur&&A.adv&&A.learn===2,'five scout cards with murals, ★ ADVISED, learned + street panels');
-ok(A.spent===2&&A.p[0]===2&&A.p[1]===2&&A.done&&A.gr.every(x=>/^2[A-F]/.test(x))&&A.hrs&&A.pips&&A.learned,'watch through the card: 2 h, Speed+Strength fair, ✓ this week, pips on him '+JSON.stringify(A));
+ok(A.spent===1&&A.p[0]===1&&A.p[1]===1&&A.done&&A.gr.every(x=>/^1[A-F]/.test(x))&&A.hrs&&A.pips&&A.learned,'watch through the card: 1 h (v1.02), Speed+Strength one step, ✓ this week, pips on him '+JSON.stringify(A));
 ok(A.ban,'the Recruiting banner wears the forum mural');
 /* ---------- court ---------- */
 const C=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const g=FA[5];const m=me();rec98Act(g,'watch');rec98Act(g,'cup');rec98Act(g,'study');await SEL(g,2);const r={};const card=document.querySelector('#mgrBody .card2.rc100');

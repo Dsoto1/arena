@@ -195,6 +195,7 @@ function any100Drop(bi){const w=W_(),m=me(),n=w.night,b=n.bouts[bi];if(!any100Sp
 {const base=applyBout;applyBout=function(bi,res){const w=W_();const b=w&&w.night&&w.night.bouts&&w.night.bouts[bi];if(!any100Sp(b)||b.done)return base.apply(this,arguments);
   const P=b.purse;let nw=1;try{nw=b.rig&&gById(b.rig)&&gById(b.rig).alive!==false?1:Math.max(1,(res&&res.winners||[]).length)}catch(e){} /* a fixed bout has one victor (17's rig) */b.purse=Math.max(1,Math.round(P/nw));let r;
   try{r=base.apply(this,arguments)}finally{b.purse=P}
+  if(typeof any102Split==='function'){try{any102Split(b,P,nw)}catch(e){console.error(e)}return r}
   try{const win=new Set((b.res&&b.res.winners)||[]);for(const [gid,h] of Object.entries(b.any100.hire||{})){if(!win.has(gid))continue;const hm=mgrById(h.by);if(!hm)continue;const cut=Math.round(P/nw*0.5);hm.coin+=cut;
       if(hm.isPlayer)tnews(_T`🤝 ${(gById(gid)||{}).name||''}, your hired partner, wins — his share comes home: ${coinAmt87('+'+cut)}.`)}}catch(e){console.error(e)}
   return r}}

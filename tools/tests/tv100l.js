@@ -27,8 +27,8 @@ const A=await ev(pg,()=>{const q=s=>document.querySelector(s);const ban=q('.room
     rows,todo:ludusTodo73(),prog:(q('.lu100n2')||{}).textContent||'',hd:/Weekly tasks/.test(desk.querySelector('.dk99hd').textContent),
     pinned:Math.abs(dr.height-tr.height)<3&&Math.abs(dr.top-tr.top)<3,tiles:[...tiles.querySelectorAll(':scope>.lu100t')].map(t=>t.getAttribute('data-mg')+':'+(t.getAttribute('data-id')||'')),
     sc:document.querySelectorAll('.lu100t img.sc100').length,drawerHidden:getComputedStyle(desk.querySelector('.lu100mail')).display==='none',
-    letters:!!desk.querySelector('.lu100mail .dk99lt details.mail'),old:!q('#mgrPane .rundash')&&!q('#mgrPane>#council83'),fz:document.querySelectorAll('.lu100t.k-adv #council83.lu100fz .c83p').length,
-    lit:[...document.querySelectorAll('#council83 .c83p.lit')].map(x=>x.dataset.c83),cnt:(q('.lu100t.k-adv .cnt')||{}).textContent||'',doc:document.documentElement.scrollWidth<=1440}});
+    letters:!!desk.querySelector('.lu100mail .dk99lt details.mail'),old:!q('#mgrPane .rundash')&&!q('#mgrPane>#council83'),fz:document.querySelectorAll('.lu100t.k-adv #council83.lu100fz .c83p').length+document.querySelectorAll('.lu100t.k-adv .cap>.c83p').length, /* v1.02: Consilium at the strip's bottom left */
+    lit:[...document.querySelectorAll('.lu100t.k-adv .c83p.lit')].map(x=>x.dataset.c83),cnt:(q('.lu100t.k-adv .cnt')||{}).textContent||'',doc:document.documentElement.scrollWidth<=1440}});
 ok(A.ban&&A.card,'banner + Match Week card '+JSON.stringify(A));ok(A.chips&&A.dots[0].includes('fresh')&&A.dots[1].includes('tired')&&A.dots[2].includes('worn'),'bout chips: face, name, fatigue dot');
 ok(A.rows===A.todo&&A.rows>=3&&A.hd&&new RegExp('^\\d+/\\d+$').test(A.prog),'parchment = the desk rows');ok(A.pinned,'parchment pinned to the tiles');
 ok(A.tiles.join()==='tab:roster,run:promote,run:fac,tab:armory,null:','five tiles '+A.tiles);ok(A.sc===4,'scene art on the four tiles');ok(A.drawerHidden&&A.letters&&A.old,'letters in the closed drawer, old council/dash gone');

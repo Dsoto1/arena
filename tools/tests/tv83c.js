@@ -23,7 +23,7 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   r.consil=!!dc&&dc.querySelector('.mbody .adv83').textContent.includes(C[0].name);
   r.sica=!!ds&&!ds.querySelector('.adv83');
   /* the Council card */
-  const cc=q('#mgrPane #council83');r.card=!!cc&&cc.querySelectorAll('.c83p').length===6&&cc.querySelectorAll('.c83p svg.sface').length===6&&C.every(a=>cc.textContent.includes(a.name.split(' ')[0].toUpperCase().replace(/U/g,'V'))&&!![...cc.querySelectorAll('.c83p')].find(p=>(p.getAttribute('aria-label')||'').includes(a.name)))&&/Barracks master/i.test(cc.textContent);
+  const cc0=q('#mgrPane #council83');const cc=cc0&&(cc0.closest('.lu100t.k-adv')||cc0); /* v1.02 (333 M10): the Consilium's head sits at the tile's bottom left */r.card=!!cc0&&cc.querySelectorAll('.c83p').length===6&&cc.querySelectorAll('.c83p svg.sface').length===6&&C.every(a=>cc.textContent.includes(a.name.split(' ')[0].toUpperCase().replace(/U/g,'V'))&&!![...cc.querySelectorAll('.c83p')].find(p=>(p.getAttribute('aria-label')||'').includes(a.name)))&&/Barracks master/i.test(cc.textContent);
   r.place=!!cc&&(!!cc.closest('.lu100t.k-adv')||(cc.previousElementSibling&&(cc.previousElementSibling.classList.contains('landing')||cc.previousElementSibling.id==='mailBox'||cc.previousElementSibling.id==='desk99'||cc.previousElementSibling.classList.contains('lrow91')))); /* v1.0: the frieze in the Advisors tile (294) */
   /* other tabs: no card */
   MGR.tab='roster';MGR_REDRAW();await W8(300);r.onlyLudus=!q('#council83');MGR.tab='ludus';MGR_REDRAW();await W8(300);

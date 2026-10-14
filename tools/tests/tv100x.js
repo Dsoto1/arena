@@ -114,7 +114,7 @@ await pm.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const 
 out.c1=await pm.evaluate(()=>{const t=document.querySelector('#mgrBody .wd100lgt');const hs=[...t.querySelectorAll('.wd100rh>span')];const th=hs.map(x=>x.textContent.trim());const rows=[...t.querySelectorAll('.wd100r.me .pts')].map(x=>x.textContent.trim());
   const i=hs.find(x=>x.textContent.trim()==='Pts');return {th,rows,tip:i?i.title:'',pts:[...t.querySelectorAll('.wd100r .pts')].map(x=>x.textContent.trim())}});
 ok(out.c1.th.includes('Pts')&&out.c1.th.indexOf('Pts')===3,'C1a Points column '+out.c1.th);ok(out.c1.rows[0]==='7'&&out.c1.pts.length>=3,'C1b my points shown '+JSON.stringify(out.c1.pts));
-ok(/win/.test(out.c1.tip)&&/3/.test(out.c1.tip)&&/runner-up/.test(out.c1.tip),'C1c ⓘ explains points '+out.c1.tip);
+ok(/1st/.test(out.c1.tip)&&/3/.test(out.c1.tip)&&/2nd/.test(out.c1.tip)&&/survived/.test(out.c1.tip), /* v1.02 (333 M5): podium points */'C1c ⓘ explains points '+out.c1.tip);
 if(SHOT){await pm.screenshot({path:path.join(SHOT,'c1_league.png')})}
 const pp=await boot({width:390,height:844});
 await pp.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();for(let i=0;i<40&&typeof newWorld!=='function';i++)await W8(100);await W8(300);

@@ -198,7 +198,7 @@ function lu100PopHTML(w,pm,k){const a=council83(w).find(x=>x.k===k);if(!a)return
   const council=lu100Frieze(R,w,pm);const cc=pane.querySelector(':scope>#council83');if(cc)cc.remove();
   const grid=document.createElement('div');grid.className='lu100';grid.innerHTML=`<div class="lu100L"></div>${lu100Tiles(w,pm,council)}`;grid.querySelector('.lu100L').appendChild(desk);
   const links=document.createElement('div');links.className='lu100lk';
-  links.innerHTML=[w.tutorial?`<button type="button" class="btn tksm" data-mg="run" data-id="school">🎓 ${_T`Schooling`}</button>`:'',`<button type="button" class="btn tksm" data-mg="run" data-id="consil">🏛 ${_T`The Consilium's counsel`}</button>`,`<button type="button" class="btn tksm" data-mg="run" data-id="ledger">📜 ${_T`Ledger`} <small>${(w.tlog||[]).length}</small></button>`].join('');
+  links.innerHTML=[w.tutorial?`<button type="button" class="btn tksm" data-mg="run" data-id="school">🎓 ${_T`Schooling`}</button>`:'',`<button type="button" class="btn tksm" data-mg="run" data-id="consil">🏛 ${_T`Consilium's report`}</button>`,`<button type="button" class="btn tksm" data-mg="run" data-id="ledger">📜 ${_T`Ledger`} <small>${(w.tlog||[]).length}</small></button>`].join('');
   if(dh)dh.remove();if(dash)dash.remove();if(rp)rp.remove();
   const rest=[...pane.childNodes];pane.innerHTML='';pane.appendChild(grid);pane.appendChild(links);
   if(panel){const box=document.createElement('div');box.className='lu100panel';box.innerHTML=`<button type="button" class="lu100x" data-lu100panel="" title="${esc(_T('Close'))}" aria-label="${esc(_T('Close'))}">✕</button>`;box.appendChild(panel);pane.appendChild(box)}

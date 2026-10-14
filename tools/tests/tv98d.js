@@ -28,13 +28,14 @@ o.nn=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));c
   rec98Act(fa[1],'watch');rec98Act(fa[1],'cup');rec98Act(fa[1],'study');MGR.cmp=[fa[0].id,fa[1].id];
   const r={unq:[],steps:[]};const dig=s=>/\d/.test(String(s||''));MGR.tab='recruit';
   for(const s of [1,2,3]){MGR.sel=g.id;MGR.recFor=g.id;MGR.recStep=s;MGR_REDRAW();await W8(300);
-    const card=document.querySelector('#mgrBody .gs98')&&document.querySelector('#mgrBody .gs98').closest('.card2');
-    r.steps.push({strip:document.querySelectorAll('#mgrBody .gs98 .gb98').length,q:[...document.querySelectorAll('#mgrBody .gs98 .gb98:not(.ov98) b')].map(e=>e.textContent).join(''),
+    const gs0=[...document.querySelectorAll('#mgrBody .gs98')].find(e=>!e.closest('.cmpbox'));const card=gs0&&gs0.closest('.card2');
+    const nc=e=>!e.closest('.cmpbox'); /* v1.02: the compare box wears the same grade rows */
+    r.steps.push({strip:[...document.querySelectorAll('#mgrBody .gs98 .gb98')].filter(nc).length,q:[...document.querySelectorAll('#mgrBody .gs98 .gb98:not(.ov98) b')].filter(nc).map(e=>e.textContent).join(''),
       odds:card?[...card.querySelectorAll('.odds')].map(e=>e.textContent).join('|'):null,rng:document.querySelectorAll('#mgrBody [data-rng88]').length,pot:card?/potential \d/.test(card.textContent):null})}
   r.list=[...document.querySelectorAll('#recTable tr[data-mg="sel"]')].filter(tr=>{const x=gById(tr.dataset.id);return x&&!x.contract}).map(tr=>(tr.querySelector('.odds')||{}).textContent||'').filter(dig);
   r.tabs=[...document.querySelectorAll('#mgrBody .pt85 .ps85 b')].map(e=>e.textContent).filter(dig);
-  r.cmp=[...document.querySelectorAll('#mgrBody .cmpbox .cmpc')].map(c=>[...c.querySelectorAll('.cmpr b')].slice(0,6).map(e=>e.textContent).filter(dig)).flat();
-  r.cmpN=document.querySelectorAll('#mgrBody .cmpbox .cmpc').length;
+  r.cmp=[...document.querySelectorAll('#mgrBody .cmpbox .cmp102c')].map(c=>[...c.querySelectorAll('.gb98 b')].slice(0,6).map(e=>e.textContent).filter(dig)).flat();
+  r.cmpN=document.querySelectorAll('#mgrBody .cmpbox .cmp102c').length;
   /* the recruiter's letters */
   for(let i=0;i<3;i++){try{recruiter84(w)}catch(e){}}r.letters=(w.letters||[]).filter(L=>/^rec84/.test(L.key||'')).map(L=>(String(L.body).match(/rating ([^·<]*)/)||[])[1]||'').filter(dig);
   /* the free agent's ratings block anywhere */
@@ -53,20 +54,20 @@ o.h=await pg.evaluate(()=>{const w=W_(),m=me();const r={};const g=FA[5];const L0
   let n=0;for(const x of FA.slice(6)){for(const a of ['trial','study','watch','cup','ask']){if(rec98Act(x,a).ok)n++}if(rec98Left(w)<1)break}
   r.drained=rec98Left(w);r.used=rec98Used(w);r.more=FA.slice(6).some(x=>rec98Can(x,'ask')[0]);
   w.week++;r.newWeek=rec98Left(w)===rec98HrsMax(w)&&rec98On(g,w)===0;w.week--;return r});
-ok(o.h.a&&o.h.l1===2&&o.h.again===false,'watch costs 2 h, once a recruit a week '+JSON.stringify(o.h));
-ok(o.h.cup&&o.h.study&&o.h.on===7&&o.h.l2===7&&o.h.trial[0]===false&&/8/.test(o.h.trial[1]),'per-recruit cap 8 h stops a 5 h trial after 7 h');
+ok(o.h.a&&o.h.l1===1&&o.h.again===false,'watch costs 1 h (v1.02), once a recruit a week '+JSON.stringify(o.h));
+ok(o.h.cup&&o.h.study&&o.h.on===3&&o.h.l2===3&&o.h.trial[0]===false&&/9/.test(o.h.trial[1]),'per-recruit cap 9 h stops an 8 h trial after 3 h (v1.02)');
 ok(o.h.used<=o.h.max&&o.h.drained<=1&&!o.h.more,'the weekly pool runs dry and never overspends');ok(o.h.newWeek,'a new week: a fresh pool');
 /* ---------- 4 · each action sharpens the right grades ---------- */
 o.a=await pg.evaluate(()=>{const w=W_(),m=me();w.week+=7;const r={};const P=g=>({...rec98K(g).p});const fresh=FA.slice(20).filter(g=>!g.contract&&!(g.scout>0)&&!g.inj);const [a,b,c,d]=fresh;m.coin=500;
   rec98Act(a,'watch');r.watch=P(a);rec98Act(a,'cup');r.cup=P(a);r.aSc=a.scout;
   rec98Act(b,'ask');r.ask=P(b);rec98Act(c,'study');r.study=P(c);
-  const i0=interestOf(d,m),c0=m.coin;const t=rec98Act(d,'trial');r.trial=P(d);r.tri=[t.ok,interestOf(d,m)-i0,c0-m.coin,d.scout];
+  r.trial0=rec98Can(d,'trial')[0];rec98Act(d,'ask');const i0=interestOf(d,m),c0=m.coin;const t=rec98Act(d,'trial');r.trial=P(d);r.tri=[t.ok,interestOf(d,m)-i0,c0-m.coin,d.scout];
   window.GA=a;window.GD=d;return r});
 const P=(p,v)=>Object.entries(v).every(([k,x])=>p[k]===x);
-ok(P(o.a.watch,{spd:2,str:2,int:0,lck:0,cha:0}),'watch: Speed + Strength '+JSON.stringify(o.a.watch));ok(P(o.a.cup,{spd:2,str:2,int:2,lck:0,cha:2})&&!(o.a.aSc>=2),'share a cup: Intelligence + Charisma');
-ok(Object.values(o.a.ask).filter(x=>x===1).length===1&&Object.values(o.a.ask).filter(x=>x>0).length===1,'ask around: one rough grade '+JSON.stringify(o.a.ask));
-ok(P(o.a.study,{spd:1,str:1,int:1,lck:2,cha:1}),'study: every grade one step, Luck fair '+JSON.stringify(o.a.study));
-ok(P(o.a.trial,{spd:3,str:3,int:3,lck:3,cha:3})&&o.a.tri[0]&&o.a.tri[1]>0&&o.a.tri[2]===4&&o.a.tri[3]===3,'trial: everything sure, interest, coin '+JSON.stringify(o.a.tri));
+ok(P(o.a.watch,{spd:1,str:1,int:0,lck:0,cha:0}),'watch: Speed + Strength one step (v1.02) '+JSON.stringify(o.a.watch));ok(P(o.a.cup,{spd:1,str:1,int:1,lck:0,cha:1})&&!(o.a.aSc>=2),'share a cup: Intelligence + Charisma');
+ok(Object.values(o.a.ask).filter(x=>x===1).length===2&&Object.values(o.a.ask).filter(x=>x>0).length===2,'ask around: two rough grades (v1.02) '+JSON.stringify(o.a.ask));
+ok(o.a.study.lck===1&&Object.values(o.a.study).filter(x=>x===1).length===3&&Object.values(o.a.study).filter(x=>x>0).length===3,'study: Luck + the two weakest reads one step (v1.02) '+JSON.stringify(o.a.study));
+ok(P(o.a.trial,{spd:3,str:3,int:3,lck:3,cha:3})&&o.a.trial0===false&&o.a.tri[0]&&o.a.tri[1]>0&&o.a.tri[2]===15&&o.a.tri[3]===3,'trial: after a cheaper look, everything sure, interest, 15 coin (v1.02) '+JSON.stringify(o.a.tri));
 /* ---------- 5 · estimates by Recruiter level ---------- */
 o.e=await pg.evaluate(()=>{const w=W_();const a=council83(w).find(x=>x.k==='recruiter');const pool=w.glads.filter(g=>g.alive!==false&&!g.contract).slice(0,80);const keep=pool.map(g=>[g.sc98,g.scout]);
   const err=(lv,p)=>{a.lv=lv;let s=0,n=0,hit=0;for(const g of pool){g.sc98={p:{spd:p,str:p,int:p,lck:p,cha:p},s:{},a:{},h:null,sc:9};const st=gStats(g);for(const [k] of STATS){const e=rec98Est(g,k);s+=Math.abs(e.v-st[k]);n++;if(e.g===trait96Grade(st[k]))hit++}}return {mae:+(s/n).toFixed(2),hit:+(hit/n).toFixed(2)}};

@@ -18789,7 +18789,7 @@ async function endWeek(){
        tnews(_T`${esc(g.name)} injured in ${R.n.toLowerCase()} training: ${lbl}.`,'bad');continue}
      if(g.ovr<g.pot&&Math.random()<gain){const dbl=solo&&g.ovr+1<g.pot&&Math.random()<.35;g.ovr+=dbl?2:1;
        w.lastTraining.push({n:g.name,txt:_T`+${dbl?2:1} rating${solo?_T(' (personal trainer)'):''} — ${pickOne([_T('footwork drills'),_T('shield discipline'),_T('long mornings at the palus'),_T('breath and nerve work'),_T('weighted sword work'),_T('sparring the doctors')])}${omenBad?_T(', despite ill omens over the yard'):''}`})}
-     else{g.morale=clamp(g.morale+2,0,100);w.lastTraining.push({n:g.name,txt:`+2 morale — ${teamOn?R.n.toLowerCase()+' week':_T('a private session')}${omenBad?_T(' (the omens counselled rest)'):''}${g.ovr>=g.pot?_T('; they have reached their potential'):''}`})}
+     else{g.morale=clamp(g.morale+2,0,100);w.lastTraining.push({n:g.name,txt:`+2 morale — ${teamOn?R.n.toLowerCase()+' week':_T('a private session')}${omenBad?_T(' (the omens advised rest)'):''}${g.ovr>=g.pot?_T('; they have reached their potential'):''}`})}
    }
    if(w.lastTraining.length){const up=w.lastTraining.filter(x=>/\+\d rating/.test(x.txt)).length;
      tnews(_T`Training (${R.n}${w.lastTraining.some(x=>/personal trainer/.test(x.txt))?_T(' + personal trainers'):''}): ${up} improved, ${w.lastTraining.filter(x=>/injured/.test(x.txt)).length} injured.`);
@@ -18875,7 +18875,7 @@ async function endWeek(){
       w.finaleDue={season:w.season,kind,top4,lead:lead.id};
       mnews(_T`🏛 <b>The regular season is over.</b> The Flavius Superbus is set for Roma: ${top4.map(id=>esc(mgrById(id).ludus)).join(', ')} are invited — one fighter each. ${esc(lead.isPlayer?_T('You'):lead.name)} chose the ${esc((FEST_KINDS[kind]||FEST_KINDS.ludi).n)} gift.`,'big');
       if(top4.includes(w.playerId))tnews(_T`🏛 <b>You are invited to the Flavius Superbus!</b> Choose your champion on Match Week when it opens next week.`,'big')}
-    const top=leagueSort(w.mgrs)[0];mnews(_T`Season ${w.season} ends. Top of the table: <b>${esc(top.name)}</b> (${esc(top.ludus)}, ${msp(top).pts} points, ${msp(top).w}-${msp(top).b-msp(top).w}).`,'big');w.season++;for(const m of w.mgrs)m.fame=clamp(Math.round(m.fame*0.92),0,100);
+    const top=leagueSort(w.mgrs)[0];mnews(_T`Season ${w.season} ends. Top of the table: <b>${esc(top.name)}</b> (${esc(top.ludus)}, ${msp(top).pts} points, ${lp102Txt(msp(top))}).`,'big');w.season++;for(const m of w.mgrs)m.fame=clamp(Math.round(m.fame*0.92),0,100);
     for(const g of w.glads.filter(g=>g.alive))g.age=gAge(g)+1; // birthdays at season's end: the sand ages everyone
     // season's end is when doors open: the rich and famous can BUY their freedom; the old diehards sometimes simply don't see spring
     if(typeof sotoSeason==='function')sotoSeason(w);
@@ -18914,7 +18914,7 @@ async function endWeek(){
       champLanista:(()=>{const t=leagueSort(w.mgrs,doneSeason)[0];return {name:t.name,ludus:t.ludus,fame:t.fame,you:!!t.isPlayer}})(),
       you:{fame:pm.fame,coin:pm.coin,rec:`${pm.wins}-${Math.max(0,pm.bouts-pm.wins)}`,deaths:pm.deaths||0,kept:pm.kept||0,broken:pm.broken||0,betNet:pm.betNet||0,rigCaught:pm.rigStrikes||0},
       best:w.glads.filter(g=>g.alive&&g.contract).sort((a,b)=>effOvr(b)-effOvr(a)).slice(0,3).map(g=>({n:g.name,ovr:effOvr(g),ludus:mgrById(g.contract.mgr).ludus})),
-      standings:leagueSort(w.mgrs,doneSeason).slice(0,8).map(m2=>({ludus:m2.ludus,me:!!m2.isPlayer,pts:msp(m2,doneSeason).pts,rec:`${msp(m2,doneSeason).w}–${msp(m2,doneSeason).b-msp(m2,doneSeason).w}`})),
+      standings:leagueSort(w.mgrs,doneSeason).slice(0,8).map(m2=>({ludus:m2.ludus,me:!!m2.isPlayer,pts:msp(m2,doneSeason).pts,rec:lp102Txt(msp(m2,doneSeason))})),
       graves:w.grave.filter(x=>x.s===doneSeason).length,
       obits:w.grave.filter(x=>x.s===doneSeason).slice(0,6).map(x=>`${x.name} (${x.fate})`)};
     (w.archives=w.archives||[]).push(R2);
@@ -19354,7 +19354,7 @@ function exchTabHTML(){const w=W_(),m=me(),n=w.night;const L=betlogLoad();const 
      ${tips?`<table class="tally compact"><tr><th>${_T`Fighter`}</th><th class="n">${_T`Book`}</th><th class="n">${_T`Scouts`}</th><th></th><th class="n">${_T`Odds`}</th><th></th></tr>${tips}</table>`:`<p class="rc-sub">${_T`Every bout this week is decided — the next card posts when the week ends.`}</p>`}</div>
     <div class="card2"><div class="sect" style="margin-top:0">${_T`🎲 The lanistae at the rail`} <span class="rc-sub">${_T`who wins and loses on the book`}</span></div><table class="tally compact"><tr><th>${_T`Lanista`}</th><th class="n">${_T`Net`}</th><th>${_T`Rivalry`}</th></tr>${lan.map(x=>`<tr class="${x.isPlayer?'me':''}"><td><span style="color:${x.color}">■</span> ${esc(x.name)} <span class="rc-sub">${esc(x.ludus)}</span></td><td class="n">${(x.betNet||0)>=0?'+':''}${x.betNet||0}</td><td class="rc-sub">${x.isPlayer?'—':rivalTier(x.rivalry||0)}</td></tr>`).join('')}</table></div></div>
    <div class="card2" style="margin-top:10px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${_T`<b>📈 The ledger</b>`}<div class="seg">${[['all',_T('All')],['you',_T('Yours')],['lanista',_T('Lanistae')],['crowd',_T('The crowd')],['glad',_T('Gladiators')]].map(([k,l])=>`<button type="button" data-mg="exf" data-id="${k}" class="${F===k?'on':''}">${l}</button>`).join('')}</div><span class="rc-sub">${_T`every wager laid across the empire, newest first`}</span></div>${exchangeHTML(flt,60)}</div>`}
-/* v0.24 THE CONSILIUM: four advisors read your ludus every week and each gives one piece of counsel you can act on */
+/* v0.24 THE CONSILIUM: four advisors read your ludus every week and each gives one piece of advice you can act on */
 function consiliumHTML(){const w=W_(),m=me(),n=w.night;const ros=rosterOf(m);const wages=ros.reduce((a,g)=>a+g.contract.wage,0);
   const R=w.review;const income=R&&R.boutsD?Math.max(0,R.coinD+wages):0;const runway=wages>0?Math.floor(Math.max(0,m.coin)/wages):99;
   const go=(tab,l)=>`<button class="btn tksm" type="button" data-mg="tab" data-id="${tab}">${l}</button>`;
@@ -19370,7 +19370,7 @@ function consiliumHTML(){const w=W_(),m=me(),n=w.night;const ros=rosterOf(m);con
   const fx=[1,2,3].map(k=>{const wk=w.week+k;const f=fixtureFor(w.season+Math.floor((((w.week-1)%12)+k)/12),wk);return f?`${esc(LOCATIONS[f.loc].n)} (${esc((EVENTS[f.ev]||{}).short||'')}${f.purse>1?_T(', rich purse'):''})`:''}).filter(Boolean);
   const au=_T`${n?_T`This week: <b>${esc(LOCATIONS[n.loc].n)}</b>${n.omen&&n.omen.k!=='clear'?_T` under <i>${esc(n.omen.n)}</i>`:''}. `:''}Coming: ${fx.join(' → ')}. Fighters from those cities fight harder at home.`;
   const row=(ic,who,t,b)=>`<div class="cons"><span class="ci">${ic}</span><div><b>${who}</b><div>${t}</div></div>${b||''}</div>`;
-  return `<div class="card2 consil"><div class="sect" style="margin-top:0">${_T`🧭 The Consilium`} <span class="rc-sub">${_T`your advisors' counsel this week`}</span></div>
+  return `<div class="card2 consil"><div class="sect" style="margin-top:0">${_T`🧭 The Consilium`} <span class="rc-sub">${_T`your advisors' word this week`}</span></div>
     ${row(ICO.coin,_T('The Quaestor'),q,m.coin<0||runway<3?go('night',_T('Match Week')):'')}${row('🏋',_T('The Doctore'),d,hurt.length?go('infirm',_T('Infirmary')):go('roster',_T('Roster')))}${row('🔭',_T('The Scout'),sc,go('recruit',_T('Recruiting')))}${row('🦅',_T('The Augur'),au,go('sched',_T('Season')))}</div>`}
 /* rosterBlockHTML — your roster as cards. */
 function rosterBlockHTML(){const m=me(),w=W_();const ros=rosterOf(m).sort((a,b)=>effOvr(b)-effOvr(a));
@@ -19752,7 +19752,7 @@ function leagueHTML(){
     return Object.entries(heat).filter(([id2,v])=>v>=15&&id2!==mgr.id&&mgrById(id2)).sort((a,b)=>b[1]-a[1]).slice(0,3)
       .map(([id2,v])=>{const r2=mgrById(id2);return `<span style="white-space:nowrap"><span style="color:${r2.color}">■</span> ${esc(r2.ludus)} <span class="rc-sub" ${v>=35?'style="color:var(--blood2)"':''}>${rivalTier(v)}</span></span>`}).join('<br>')||'<span class="rc-sub">—</span>'};
   return `<div style="overflow-x:auto"><table class="tally"><tr><th>#</th><th>${_T`Lanista`}</th><th title="${_T`League points this season: a win 3, a runner-up finish 1`}">${_T`Pts`}</th><th title="${_T`This season's bouts: won-lost`}">${_T`Season`}</th><th title="${_T`Average rating of the house's five best fighters`}">${_T`Roster`}</th><th>${_T`Fame`}</th><th>${_T`Treasury`}</th><th>${_T`Morale`}</th><th>${_T`Rivals`}</th><th title="${_T`How this lanista feels about YOUR ludus`}">${_T`Toward you`}</th><th>${_T`Fighters`}</th><th title="${_T`All-time record`}">${_T`Record`}</th><th>${_T`Bets`}</th><th>${_T`Personality`}</th></tr>${ms.map((m,mi)=>{const mo=morale(m);const rv=m.rivalry||0;const sp=msp(m);
-    return `<tr class="${m.isPlayer?'me':''} lrowlink" data-mg="team" data-id="${m.id}" title="${_T`Open ${esc(m.ludus)}'s team screen`}"><td class="n">${mi+1}${mi<4?' <span title="Superbus place">🏛</span>':''}</td><td>${typeof flagChip==='function'?flagChip(m,16):`<span style="color:${m.color}">■</span>`} <span style="color:${m.color}">■</span> <b>${esc(m.name)}</b> ${m.custom?customTag():''}<br><span class="rc-sub">${esc(m.ludus)} · ${esc(m.city)}</span></td><td class="n"><b style="font-size:16px;color:var(--gold2)">${sp.pts}</b></td><td class="n">${sp.w}-${sp.b-sp.w}</td><td class="n">${rosterRating(m)||'—'}</td><td class="n">${fameHTML(m.fame)}<br>${m.fame} <span class="rc-sub">${mgrTier(m.fame)}</span></td><td class="n">${m.coin}</td>
+    return `<tr class="${m.isPlayer?'me':''} lrowlink" data-mg="team" data-id="${m.id}" title="${_T`Open ${esc(m.ludus)}'s team screen`}"><td class="n">${mi+1}${mi<4?' <span title="Superbus place">🏛</span>':''}</td><td>${typeof flagChip==='function'?flagChip(m,16):`<span style="color:${m.color}">■</span>`} <span style="color:${m.color}">■</span> <b>${esc(m.name)}</b> ${m.custom?customTag():''}<br><span class="rc-sub">${esc(m.ludus)} · ${esc(m.city)}</span></td><td class="n"><b style="font-size:16px;color:var(--gold2)">${sp.pts}</b></td><td class="n">${lp102Rec(sp)}</td><td class="n">${rosterRating(m)||'—'}</td><td class="n">${fameHTML(m.fame)}<br>${m.fame} <span class="rc-sub">${mgrTier(m.fame)}</span></td><td class="n">${m.coin}</td>
     <td>${mo==null?'<span class="rc-sub">—</span>':`<div class="meter" style="min-width:56px"><i style="width:${mo}%"></i></div><span class="rc-sub">${mo}</span>`}</td>
     <td style="font-size:12.5px;line-height:1.5">${rivalsOf(m)}</td>
     <td>${m.isPlayer?'<span class="rc-sub">—</span>':`<div class="meter" style="min-width:56px"><i style="width:${rv}%;background:${rv>=60?'var(--blood2)':rv>=35?'#d97a3a':''}"></i></div><span class="rc-sub" ${rv>=35?'style="color:var(--blood2)"':''}>${rivalTier(rv)}</span>`}</td>
@@ -19828,7 +19828,7 @@ function composeWeekPaper(world,night=world.night,season=world.season){
   const briefs=wkNews.filter(n=>n.text!==lead.body&&!/^Week \d/.test(n.text.replace(/<[^>]*>/g,''))).slice(0,4);
   return {wk,season,locN:loc.n,grand:!!(night&&night.grand),omen:night&&night.omen&&night.omen.n?night.omen.n:null,
     lead,also,numbers,empire:empire.slice(0,5).map(e=>({i:e.i,n:e.n,city:e.city,sev:e.sev,mood:e.mood})),briefs:briefs.map(n=>n.text),
-    standings:top5m.map(m=>({name:m.name,ludus:m.ludus,color:m.color,fame:m.fame,pts:msp(m,season).pts,srec:`${msp(m,season).w}–${msp(m,season).b-msp(m,season).w}`,tier:mgrTier(m.fame),rec:`${m.wins}–${Math.max(0,m.bouts-m.wins)}`,me:!!m.isPlayer})),
+    standings:top5m.map(m=>({name:m.name,ludus:m.ludus,color:m.color,fame:m.fame,pts:msp(m,season).pts,srec:lp102Txt(msp(m,season)),tier:mgrTier(m.fame),rec:`${m.wins}–${Math.max(0,m.bouts-m.wins)}`,me:!!m.isPlayer})),
     best:top5g.map(g=>({gid:g.id,name:g.name,stars:starsOf(pubOvr(g)),ovr:pubOvr(g),ludus:ludusOf(g),me:!!(g.contract&&g.contract.mgr===pm.id)})),
     agents:top5f.map(g=>({gid:g.id,name:g.name,stars:starsOf(pubOvr(g)),ovr:pubOvr(g),wage:askWage(g),city:g.city})),
     obits:deaths.map(d=>`<b>${esc(d.name)}</b>, ${CLASSES[d.cls]?CLASSES[d.cls].name:d.cls}${d.age?_T`, aged ${d.age}`:''}${d.mgr?_T` · ${esc(d.mgr)}'s stable`:_T(' · a free sword')}<br><span class="rc-sub">${_T`${d.ovr!=null?_T`rated ${d.ovr} ${'★'.repeat(starsOf(d.ovr))}`:''}${d.f!=null?_T` · ${cfAmt87(d.f)} in their last bout`:''}${d.fame?_T` · fame ${d.fame}`:''} · ${d.rec.ev} bouts, ${d.rec.w} wins, ${d.rec.kp} kills · <i>${esc(d.fate||'')}</i>${d.kin&&d.kin.length?_T`<br>Survived by ${d.kin.map(esc).join(', ')}, who watched from the stands.`:''}`}</span>`),
@@ -21201,7 +21201,7 @@ function seasonAwards(world,season=world.season){
   const top=(arr,key,filter=()=>true,dir=1)=>arr.filter(filter).sort((a,b)=>dir*(key(b)-key(a))||(b.fame||0)-(a.fame||0))[0]||null;
   const add=(tid,g,m,stat)=>{const d=trophyDef(tid);if(!d)return;const mm=m||(g&&ludusOf(g));out.push({tid,name:d.name,cat:d.cat,desc:d.desc,gid:g?g.id:null,gname:g?g.name:null,mid:mm?mm.id:null,mname:mm?mm.name:null,ludus:mm?mm.ludus:(g?_T('free agent'):null),mine:!!(mm&&mm.isPlayer),stat})};
   // lanista of the season: the most fame (the old "Lanista of the season" line, now with a cup)
-  {const m=leagueSort(world.mgrs,season)[0];if(m){const P=msp(m,season);add('flavian_cup',null,m,_T`${P.pts} points · ${P.w}-${P.b-P.w}`)}}
+  {const m=leagueSort(world.mgrs,season)[0];if(m){const P=msp(m,season);add('flavian_cup',null,m,_T`${P.pts} points · ${lp102Txt(P)}`)}}
   if(world.finale&&world.finale.season===season&&world.finale.champ){const g=world.glads.find(x=>x.name===world.finale.champ);add('palm_roma',g||null,g?ludusOf(g):null,_T`the Flavius Superbus · ${world.finale.f} CF`)}
   {const g=top(G,x=>x.ss.w*100+x.ss.best);if(g&&g.ss.w)add('aureus',g,null,_T`${g.ss.w} win${g.ss.w===1?'':'s'} in ${g.ss.ev}`)}
   {const g=top(G,x=>x.ss.w*100+x.ss.best,x=>x.debut&&x.debut.s===season);if(g)add('tiro',g,null,_T`${g.ss.w}-${g.ss.ev-g.ss.w} in their first season`)}
@@ -25201,7 +25201,7 @@ function lanRecordHTML(m,w){const s=msp(m,w.season);const L=leagueSort(w.mgrs,w.
   const sup=A.filter(a=>a.finale&&(a.finale.names||[]).length&&a.finale.champLudus===m.ludus).length;const T=(w.trophies||[]).reduce((a,t)=>a+(t.count||1),0);
   const pct=m.bouts?Math.round(m.wins/m.bouts*100):0;
   return `<div class="card2 lanrec"><div class="sect" style="margin-top:0">${_T`📊 Your record`}</div>
-    <div class="rc-stats">${_T`<span><b>${pos?`${pos}${['th','st','nd','rd'][pos%10>3||Math.floor(pos/10)===1?0:pos%10]}`:'—'}</b>this season · of ${w.mgrs.length}</span><span><b>${s.pts}</b>points</span><span><b>${s.w}–${Math.max(0,s.b-s.w)}</b>season W–L</span>`}</div>
+    <div class="rc-stats">${_T`<span><b>${pos?`${pos}${['th','st','nd','rd'][pos%10>3||Math.floor(pos/10)===1?0:pos%10]}`:'—'}</b>this season · of ${w.mgrs.length}</span><span><b>${s.pts}</b>points</span><span><b>${lp102Txt(s)}</b>season podiums</span>`}</div>
     <div class="rc-stats" style="margin-top:6px">${_T`<span><b>${m.wins}–${Math.max(0,m.bouts-m.wins)}</b>all-time W–L</span><span><b>${pct}%</b>win rate</span><span><b>${A.length}</b>season${A.length===1?'':'s'} done</span>`}</div>
     <div class="rc-stats" style="margin-top:6px">${_T`<span><b>${best?best+(['th','st','nd','rd'][best>3?0:best]):'—'}</b>best finish</span><span><b>${sup}</b>Superbus crowns</span><span><b>${T}</b>trophies</span>`}</div>
     <div class="badges" style="margin-top:8px"><span class="badge">${_T`Fame ${m.fame} (best ${m.fameBest||m.fame})`}</span><span class="badge">${_T`Fighters improved ${m.improved||0}`}</span><span class="badge">${_T`Pledges kept ${m.kept||0} · broken ${m.broken||0}`}</span><span class="badge">${_T`Poached ${m.poached||0}`}</span><span class="badge">${_T`Deaths ${m.deaths||0}`}</span><span class="badge">${_T`Betting ${(m.betNet||0)>=0?'+':''}${m.betNet||0}`}</span></div>
@@ -27623,8 +27623,8 @@ function adviseWeek(w){const n=w.night;if(!n||n.bye||typeof worldImpact!=='funct
   if(!(imp.att<=ADVISE.att||imp.mood<=ADVISE.mood))return;
   const bad=imp.list.filter(e=>e.att*e.k<0||e.mood*e.k<0).slice(0,4);
   const lines=bad.map(e=>`<li>${_T`${e.i} <b>${esc(e.n)}</b>${e.k<1?` <span class="rc-sub">${_T`(felt from ${esc(e.city)})`}</span>`:''} — attendance ${Math.round(e.att*e.k*100)}%, mood ${Math.round(e.mood*e.k)}`}</li>`).join('');
-  sendLetter(w,{key:'consil-'+w.week,from:_T('the Consilium'),seal:'🏛',title:_T`Counsel for ${L.n}: hold our fighters back`,
-    body:`<p>${_T`Lanista — the news from around ${esc(L.n)} is poor:`}</p><ul>${lines}</ul><p>${_T`All told the stands will be about <b>${Math.round(imp.att*100)}%</b> on a normal week and the crowd's temper <b>${imp.mood}</b>${omen?_T(', and the omens are against us'):''}. Thin gates and a sour crowd mean poor ticket sales, little Crowd Favor and a hostile verdict. <b>We counsel you to enter no one this week.</b> The decision is yours.`}</p>`})}
+  sendLetter(w,{key:'consil-'+w.week,from:_T('the Consilium'),seal:'🏛',title:_T`Consilium's report for ${L.n}: hold our fighters back`,
+    body:`<p>${_T`Lanista — the news from around ${esc(L.n)} is poor:`}</p><ul>${lines}</ul><p>${_T`All told the stands will be about <b>${Math.round(imp.att*100)}%</b> on a normal week and the crowd's temper <b>${imp.mood}</b>${omen?_T(', and the omens are against us'):''}. Thin gates and a sour crowd mean poor ticket sales, little Crowd Favor and a hostile verdict. <b>We advise you to enter no one this week.</b> The decision is yours.`}</p>`})}
 /* =====================================================================
    3. LOANS — Sica's syndicate lends only to a house in the red, on the worst terms; it never touches the treasury.
       Interest is added to the debt; each week names a minimum. Three weeks short and an anonymous spectator's
@@ -46110,7 +46110,7 @@ function lg90HTML(R){const w=W_();const ros=rosterOf(R).sort((a,b)=>effOvr(b)-ef
   const rows=ros.map(g=>{const b=on.get(g.id);const sc=g.scout;const o=sc?effOvr(g):pubOvr(g);
     return `<tr><td>${gArt(g,'xs')}</td><td><b>${esc(g.name)}</b> <span class="rc-sub">${CLASSES[g.cls]?esc(CLASSES[g.cls].name):''}</span>${g.inj?` <span title="${esc(g.inj.label||'')}">🩹</span>`:''}</td><td class="n"><span class="stars">${'★'.repeat(starsOf(o))}</span> <span class="rc-sub">${sc?o:'~'+o}</span></td><td class="n">${(g.rec&&g.rec.w)||0}-${Math.max(0,((g.rec&&g.rec.ev)||0)-((g.rec&&g.rec.w)||0))}</td><td class="nowrap">${form(g)}</td><td>${b?`<span class="badge gold">⚔ ${esc(TIERS[b.tier].n)}</span>`:''}</td></tr>`}).join('');
   const why=lg90ChalWhy(R);const set=w.chal76&&w.chal76.s===w.season&&w.chal76.wk===w.week&&w.chal76.mgr===R.id;
-  return `<div class="lg90" data-lg90box="${R.id}"><div class="lg90h"><b style="color:${R.color}">🔍 ${esc(R.ludus)}</b> <span class="rc-sub">${_T`${esc(R.name)} · ${sp.pts} pts · season ${sp.w}-${Math.max(0,sp.b-sp.w)} · fame ${R.fame}`}</span></div>
+  return `<div class="lg90" data-lg90box="${R.id}"><div class="lg90h"><b style="color:${R.color}">🔍 ${esc(R.ludus)}</b> <span class="rc-sub">${_T`${esc(R.name)} · ${sp.pts} pts · season ${lp102Txt(sp)} · fame ${R.fame}`}</span></div>
     <div class="lg90week">${fl.length?_T`This week: ${fl.map(x=>`<b>${esc(x.g.name)}</b> <span class="rc-sub">(${esc(TIERS[x.b.tier].n)}${x.b.done?_T(' · fought'):''})</span>`).join(' · ')}`:_T('This week: nobody on the card.')}</div>
     ${ros.length?`<table class="tally compact lg90r"><tr><th></th><th>${_T`Fighter`}</th><th title="${_T`Public rating band — exact once your scouts have seen them`}">${_T`Rating`}</th><th>${_T`Record`}</th><th>${_T`Last five`}</th><th>${_T`This week`}</th></tr>${rows}</table>`:`<p class="rc-sub">${_T`No fighters under contract.`}</p>`}
     <div class="acts" style="margin-top:6px"><button class="btn tksm" type="button" data-mg="team" data-id="${R.id}">${_T`🏛 Team screen`}</button>
@@ -52295,22 +52295,22 @@ function lp96Top(m){const g=rosterOf(m).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(!
 function lp96Podium(L,n,pos){const cup=(()=>{try{const d=trophyDef('palm_roma');return d?trophySVG(d,62):''}catch(e){return ''}})();
   const slot=(i,cls)=>{const m=L[i];if(!m)return '';const sp=msp(m);
     return `<div class="lp96p ${cls}${m.isPlayer?' me':''}" title="${esc(lp96Tip(i+1,n))}" tabindex="0">${i===0?`<div class="lp96cup">${cup}</div>`:''}
-      <div class="lp96ban" style="--hc:${m.color||'#c9a14a'}"><span class="lp96fl">${typeof flagChip==='function'?flagChip(m,16):''}</span><b>${esc(m.ludus)}</b><small>${sp.pts} ${_T('pts')} · ${sp.w}-${Math.max(0,sp.b-sp.w)}</small></div>
+      <div class="lp96ban" style="--hc:${m.color||'#c9a14a'}"><span class="lp96fl">${typeof flagChip==='function'?flagChip(m,16):''}</span><b>${esc(m.ludus)}</b><small>${sp.pts} ${_T('pts')} · ${lp102Txt(sp)}</small></div>
       <div class="lp96step"><span>${i+1}</span></div></div>`};
   return `<div class="lp96pod" role="group" aria-label="${_T('The top three houses')}">${slot(1,'p2')}${slot(0,'p1')}${slot(2,'p3')}</div>`}
-/* v1.00: how league points are earned (leaguePtsAfterBout in 23-ludus: a win 3, a runner-up finish 1; ties by win rate, then fame) */
-const LP100_TIP=()=>_T('League points are earned per bout your fighters take part in: a win scores 3 points, finishing runner-up 1, anything else 0. Ties in the table go to the better win rate, then to fame. The top four houses at week 12 are invited to the Flavius Superbus.');
+/* v1.02: how league points are earned (333-v102mgr leaguePtsAfterBout: 1st 3 · 2nd 2 · 3rd 1, only if the fighter survived; ties by win rate, then fame) */
+const LP100_TIP=()=>_T('League points are earned per bout your fighters take part in: 1st place scores 3 points, 2nd 2, 3rd 1, anything else 0 — and a podium counts only if the fighter survived the bout. Ties in the table go to the better win rate, then to fame. The top four houses at week 12 are invited to the Flavius Superbus.');
 lp90StakesHTML=function(){const w=W_(),pm=me();const L=leagueSort(w.mgrs);const n=L.length;const pos=L.indexOf(pm)+1;
   const row=(p,lab,m)=>{const me2=!lab&&p===pos;
     if(!m)return `<tr><td class="n"><b>${lab}</b></td><td colspan="6" class="rc-sub">…</td></tr>`;const sp=msp(m);
     return `<tr class="${me2?'me':''}" title="${esc(lp96Tip(p,n))}"><td class="n"><b>${lp90Ord(p)}</b></td>
       <td>${typeof flagChip==='function'?flagChip(m,14):`<span style="color:${m.color}">■</span>`} <b style="color:${m.color}">${esc(m.ludus)}</b>${me2?` <span class="rc-sub">${_T('◀ you')}</span>`:''}<br><span class="rc-sub">${esc(m.name)}</span></td>
-      <td class="n lp100pt"><b>${sp.pts}</b></td><td>${lp96Top(m)}</td><td class="n"><b>${sp.w}-${Math.max(0,sp.b-sp.w)}</b></td><td>${lp96Latest(m)}</td><td class="n">${p<=4?'🏛':'<span class="rc-sub">—</span>'}</td></tr>`};
+      <td class="n lp100pt"><b>${sp.pts}</b></td><td>${lp96Top(m)}</td><td class="n">${lp102Rec(sp)}</td><td>${lp96Latest(m)}</td><td class="n">${p<=4?'🏛':'<span class="rc-sub">—</span>'}</td></tr>`};
   const K=LP90.length;let rows=L.slice(0,K).map((m,i)=>row(i+1,'',m)).join('');
   if(n>K){if(pos>K)rows+=row(pos,'',pm);const rest=n-K-(pos>K?1:0);if(rest>0)rows+=`<tr><td class="n"><b>${K+1}–${n}</b></td><td colspan="6" class="rc-sub">${_T`the other ${rest} houses`}</td></tr>`}
   return `<details class="card2 lp90 lp96" open><summary>${_T`<b>🏆 Standings</b>`} <span class="rc-sub">${_T`hover a place for its season-finish prizes`}</span> <span class="qi lp100i" tabindex="0" data-tip="${esc(LP100_TIP())}">ⓘ</span></summary>
     ${lp96Podium(L,n,pos)}${lp90NextHTML('in')}
-    <table class="tally compact lp90t lp96t"><tr><th>${_T`Place`}</th><th>${_T`Ludus`}</th><th class="n" title="${esc(LP100_TIP())}">${_T`Points`}</th><th>${_T`Top gladiator`}</th><th title="${_T`This season's bouts: won-lost`}">${_T`Record`}</th><th>${_T`Latest event`}</th><th title="${_T`The top four are invited to the Flavius Superbus`}">${_T`Superbus`}</th></tr>${rows}</table></details>`};
+    <table class="tally compact lp90t lp96t"><tr><th>${_T`Place`}</th><th>${_T`Ludus`}</th><th class="n" title="${esc(LP100_TIP())}">${_T`Points`}</th><th>${_T`Top gladiator`}</th><th title="${_T`This season's podiums (1st · 2nd · 3rd, survived) and bouts`}">${_T`Record`}</th><th>${_T`Latest event`}</th><th title="${_T`The top four are invited to the Flavius Superbus`}">${_T`Superbus`}</th></tr>${rows}</table></details>`};
 
 /* ---------------- 11 · invitational Answer = pick the fighters and accept ---------------- */
 function iv96Ask(iv){const w=W_(),pm=me();const D=specDef(iv.sid);if(!w||!pm||!D)return;for(const o of document.querySelectorAll('.iv96bg'))o.remove();
@@ -54983,7 +54983,7 @@ const REC98={hrs:20,perLv:4,cap:8,lvMax:5,
   up:[0,60,120,200,320],coinMax:2,
   pitch:{'A+':9,A:8,'B+':7,B:6,'C+':4,C:3,D:1,F:-2},wantX:2,motX:10,
   deal:1.25,dealP:6,rivalLv:2};
-const REC98_ACT_L=g=>({ask:[_T('Ask around the forum'),_T('one rough grade')],watch:[sx(g,_T('Watch him train'),_T('Watch her train')),_T('Speed · Strength')],cup:[_T('Share a cup'),_T('Intelligence · Charisma')],study:[sx(g,_T('Study his bouts'),_T('Study her bouts')),_T('every grade sharper · Luck')],trial:[_T('Trial bout'),_T('everything sure · interest')]});
+const REC98_ACT_L=g=>({ask:[_T('Ask around the forum'),_T('two rough grades')],watch:[sx(g,_T('Watch him train'),_T('Watch her train')),_T('Speed · Strength')],cup:[_T('Share a cup'),_T('Intelligence · Charisma')],study:[sx(g,_T('Study his bouts'),_T('Study her bouts')),_T('Luck + the two weakest reads')],trial:[_T('Trial bout'),_T('everything sure · interest')]});
 const REC98_SURE=()=>[_T('not graded yet'),_T('a rough guess — could be a grade or two off'),_T('a fair read — maybe one step off'),_T('sure — your recruiter would bet on it')];
 const REC98_MEAN=()=>({'A+':_T('among the very best in the empire'),A:_T('elite'),'B+':_T('very good'),B:_T('good'),'C+':_T('decent'),C:_T('ordinary'),D:_T('weak'),F:_T('poor')});
 const rec98G=v=>trait96Grade(v);
@@ -58974,7 +58974,7 @@ function wd100HouseCard(R){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);cons
   const why=!mine&&typeof lg90ChalWhy==='function'?lg90ChalWhy(R):'';const set=!mine&&w.chal76&&w.chal76.s===w.season&&w.chal76.wk===w.week&&w.chal76.mgr===R.id;
   const heat=R.rivalry||0;
   return `<div class="wd100hc"${mine?'':` data-lg90box="${R.id}"`}><div class="top2"><div class="sc">${scutum100(R)}</div><div class="hi"><h3>${esc(R.ludus)}</h3>
-      <div class="ln2">${esc(R.city||'')} · <b>${lp90Ord(pos)}</b> · ${sp.pts} ${_T('pts')} · <b>${sp.w}-${Math.max(0,sp.b-sp.w)}</b></div>
+      <div class="ln2">${esc(R.city||'')} · <b>${lp90Ord(pos)}</b> · ${sp.pts} ${_T('pts')} · <b>${lp102Txt(sp)}</b></div>
       <div class="ln2">${_T('Fame')} <b>${R.fame||0}</b> · ${tr.map(([l,v])=>`${esc(l)} ${gch100(trait96Grade(v))}`).join(' ')}</div>
       <div class="lan">${typeof mgrPortrait==='function'?`<span class="wd100fc lg">${mgrPortrait(R,'xs')}</span>`:''}<div><div class="ln2"><b>${esc(R.name)}</b></div><div class="ln2">${_T('Lanista')}${mine?' · '+_T('you'):''}</div></div></div></div></div>
     ${!mine&&heat>=15?`<div class="heat">${flames100(heat)} <b>${esc(rivalTier(heat))}</b> · ${_T('toward you')}</div>`:''}
@@ -58990,10 +58990,10 @@ function wd100LeagueView(){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);cons
     return `<div class="wd100r${m.isPlayer?' me':''}${m===sel?' sel':''}${i<4?' top4':''}" data-wd100h="${m.id}" role="button" tabindex="0" aria-pressed="${m===sel}" title="${esc(typeof lp96Tip==='function'?lp96Tip(i+1,Ls.length):'')}">
       <span class="pl">${i+1}</span>${parma100(m,28)}<span class="hn"><b>${esc(m.ludus)}</b><small>${esc(m.name)}</small>${m.isPlayer?'':`<span class="rv">${flames100(m.rivalry)}</span>`}</span>
       <span class="pts">${sp.pts}</span>${form100(m)}<span class="tg c-tg">${g?face100(g):''}<span>${g?esc(g.name):'—'}</span>${g?wd100Grade(g,m):''}</span>
-      <span class="rec c-rec">${sp.w}-${Math.max(0,sp.b-sp.w)}</span><span class="c-riv">${m.isPlayer?'':flames100(m.rivalry)}</span><span class="chev">›</span></div>`}).join('');
+      <span class="rec c-rec">${lp102Rec(sp,1)}</span><span class="c-riv">${m.isPlayer?'':flames100(m.rivalry)}</span><span class="chev">›</span></div>`}).join('');
   return `${N?`<div class="wd100next"><span class="tx">${N.txt}</span>${N.need?`<span class="bar"><i style="width:${Math.max(6,Math.min(100,100-N.need*8))}%"></i></span>`:''}<span class="left">${_T`${Math.max(0,12-wk)} weeks left`}</span></div>`:''}
     <div class="wd100lg"><div class="wd100lgt">${plq100(_T`Season ${w.season} · week ${wk}`,_T`${Ls.length} houses`)}
-      <div class="wd100rh"><span>#</span><span></span><span>${_T('House')}</span><span class="n" title="${esc(typeof LP100_TIP==='function'?LP100_TIP():'')}">${_T('Pts')}</span><span>${_T('Form')}</span><span class="c-tg">${_T('Top gladiator')}</span><span class="c-rec n">${_T('W-L')}</span><span class="c-riv">${_T('Rivalry')}</span><span></span></div>
+      <div class="wd100rh"><span>#</span><span></span><span>${_T('House')}</span><span class="n" title="${esc(typeof LP100_TIP==='function'?LP100_TIP():'')}">${_T('Pts')}</span><span>${_T('Form')}</span><span class="c-tg">${_T('Top gladiator')}</span><span class="c-rec n">${_T('Podiums')}</span><span class="c-riv">${_T('Rivalry')}</span><span></span></div>
       <div class="wd100rows">${rows}</div></div>
     <div class="wd100side">${wd100HouseCard(sel)}</div></div>`}
 
@@ -61231,7 +61231,7 @@ function lu100PopHTML(w,pm,k){const a=council83(w).find(x=>x.k===k);if(!a)return
   const council=lu100Frieze(R,w,pm);const cc=pane.querySelector(':scope>#council83');if(cc)cc.remove();
   const grid=document.createElement('div');grid.className='lu100';grid.innerHTML=`<div class="lu100L"></div>${lu100Tiles(w,pm,council)}`;grid.querySelector('.lu100L').appendChild(desk);
   const links=document.createElement('div');links.className='lu100lk';
-  links.innerHTML=[w.tutorial?`<button type="button" class="btn tksm" data-mg="run" data-id="school">🎓 ${_T`Schooling`}</button>`:'',`<button type="button" class="btn tksm" data-mg="run" data-id="consil">🏛 ${_T`The Consilium's counsel`}</button>`,`<button type="button" class="btn tksm" data-mg="run" data-id="ledger">📜 ${_T`Ledger`} <small>${(w.tlog||[]).length}</small></button>`].join('');
+  links.innerHTML=[w.tutorial?`<button type="button" class="btn tksm" data-mg="run" data-id="school">🎓 ${_T`Schooling`}</button>`:'',`<button type="button" class="btn tksm" data-mg="run" data-id="consil">🏛 ${_T`Consilium's report`}</button>`,`<button type="button" class="btn tksm" data-mg="run" data-id="ledger">📜 ${_T`Ledger`} <small>${(w.tlog||[]).length}</small></button>`].join('');
   if(dh)dh.remove();if(dash)dash.remove();if(rp)rp.remove();
   const rest=[...pane.childNodes];pane.innerHTML='';pane.appendChild(grid);pane.appendChild(links);
   if(panel){const box=document.createElement('div');box.className='lu100panel';box.innerHTML=`<button type="button" class="lu100x" data-lu100panel="" title="${esc(_T('Close'))}" aria-label="${esc(_T('Close'))}">✕</button>`;box.appendChild(panel);pane.appendChild(box)}
@@ -62134,6 +62134,7 @@ function any100Drop(bi){const w=W_(),m=me(),n=w.night,b=n.bouts[bi];if(!any100Sp
 {const base=applyBout;applyBout=function(bi,res){const w=W_();const b=w&&w.night&&w.night.bouts&&w.night.bouts[bi];if(!any100Sp(b)||b.done)return base.apply(this,arguments);
   const P=b.purse;let nw=1;try{nw=b.rig&&gById(b.rig)&&gById(b.rig).alive!==false?1:Math.max(1,(res&&res.winners||[]).length)}catch(e){} /* a fixed bout has one victor (17's rig) */b.purse=Math.max(1,Math.round(P/nw));let r;
   try{r=base.apply(this,arguments)}finally{b.purse=P}
+  if(typeof any102Split==='function'){try{any102Split(b,P,nw)}catch(e){console.error(e)}return r}
   try{const win=new Set((b.res&&b.res.winners)||[]);for(const [gid,h] of Object.entries(b.any100.hire||{})){if(!win.has(gid))continue;const hm=mgrById(h.by);if(!hm)continue;const cut=Math.round(P/nw*0.5);hm.coin+=cut;
       if(hm.isPlayer)tnews(_T`🤝 ${(gById(gid)||{}).name||''}, your hired partner, wins — his share comes home: ${coinAmt87('+'+cut)}.`)}}catch(e){console.error(e)}
   return r}}
@@ -62346,11 +62347,11 @@ function lu2Rebate(w,pm){try{if(!w||!pm||w.tutorial||w.dead)return 0;const wages
    waiting); the counsel itself is always readable from his popover. Reading a warning (w.lu2c = week) darkens the head. */
 function lu2Counsel(w){try{const pm=me();if(!w||!pm||w.tutorial)return null;if(w.lu2c===w.week)return null;
   const wages=rosterOf(pm).reduce((a,g)=>a+((g.contract&&g.contract.wage)||0),0);const run=wages>0?Math.floor(Math.max(0,pm.coin)/wages):99;
-  if(pm.coin<0)return _T('Counsel: the treasury is in debt');
-  if(run<3)return _T('Counsel: coin for less than 3 weeks of wages');
-  const L=w.loan;if(L&&L.amt>0&&(L.due||0)>(L.paid||0))return _T('Counsel: a loan payment is due');
+  if(pm.coin<0)return _T('the treasury is in debt');
+  if(run<3)return _T('coin for less than 3 weeks of wages');
+  const L=w.loan;if(L&&L.amt>0&&(L.due||0)>(L.paid||0))return _T('a loan payment is due');
   const ch=(w.letters||[]).find(x=>x&&x.rl76&&x.rl76.kind==='chal'&&x.until>=w.week&&!x.read);
-  if(ch&&!(w.chal76&&w.chal76.s===w.season&&w.chal76.wk===w.week))return _T('Counsel: a rival challenge is waiting');
+  if(ch&&!(w.chal76&&w.chal76.s===w.season&&w.chal76.wk===w.week))return _T('a rival challenge is waiting');
   return null}catch(e){return null}}
 
 /* ---------- the buildings in a popover ---------- */
@@ -62369,7 +62370,7 @@ function lu2Overview(w,pm){const C=council83(w);const nm=k=>{const a=C.find(x=>x
     <div class="lu2g">${owners.map(k=>`<button type="button" class="lu2o${lu2Keys(k).some(fk=>lu2Can(w,pm,fk))?' can':''}" data-lu100adv="${k}"><b>${nm(k)}</b><small>${ro(k)}</small>${lu2Keys(k).map(fk=>{const l=facLvl(pm,fk);return `<span>${FAC[fk].i} ${esc(FAC[fk].n)} <span class="facpips">${[0,1,2].map(i=>`<i class="${i<l?'on':''}"></i>`).join('')}</span></span>`}).join('')}</button>`).join('')}</div>
     <div class="lu2nx">${next}${nx&&!busy?` <button type="button" class="lnk" data-lu100adv="${lu2Owner(nx)}">${_T`Open ${nm(lu2Owner(nx))} ›`}</button>`:''}</div>
     ${own.length?own.map(fk=>lu2Row(w,pm,fk)).join(''):''}
-    <div class="lu2ln"><button type="button" class="btn tksm" data-mg="run" data-id="consil">🏛 ${_T`The Consilium's counsel`}</button></div></div>`}
+    <div class="lu2ln"><button type="button" class="btn tksm" data-mg="run" data-id="consil">🏛 ${_T`Consilium's report`}</button></div></div>`}
 function lu2PopExtra(w,pm,k){
   if(k==='consilium')return lu2Overview(w,pm);
   if(k==='recruiter')return `<div class="lu2b"><div class="lu2bh">🏗 ${_T`What recruits see`} ${lu2Grade(pm)}</div><small class="lu2nt">${_T('Free agents weigh your Ludus grade. Every building any advisor raises lifts it.')} <button type="button" class="lnk" data-lu100adv="consilium">${_T`The buildings ›`}</button></small></div>`;
@@ -68453,7 +68454,7 @@ function led101HTML(w){const row=n=>`<div class="${n.cls||''}"><span class="rc-s
     <div class="news led101l">${L.length?L.map(row).join(''):`<p class="rc-sub" style="margin:0">${_T`Nothing yet — sign someone.`}</p>`}</div>
     ${mine.length?`<details class="led101f"><summary class="rc-sub">✝ ${_T`The fallen`} · ${mine.length}</summary><div class="news led101l">${mine.slice(0,20).map(x=>`<div class="bad"><b>${esc(x.name)}</b>${x.age?`, ${x.age}`:''} <span class="rc-sub">${CLASSES[x.cls]?esc(CLASSES[x.cls].name):''} · ${esc(x.fate||'')} · S${x.s} W${x.wk}</span></div>`).join('')}</div></details>`:''}</div>`}
 {const base=lu100PopHTML;lu100PopHTML=function(w,pm,k){let h=base.apply(this,arguments);try{if(!a101On()||!h)return h;
-  if(k==='consilium'){const c=`<div class="lu2b cn101"><div class="lu2bh">🧭 ${_T`The Consilium's counsel`}</div>${consiliumHTML()}</div>`;
+  if(k==='consilium'){const c=`<div class="lu2b cn101"><div class="lu2bh">🧭 ${_T`Consilium's report`}</div>${consiliumHTML()}</div>`;
     const re=/<div class="lu2ln"><button[^>]*data-id="consil"[^>]*>[\s\S]*?<\/button><\/div>/;h=re.test(h)?h.replace(re,()=>c):h.replace('</div><div class="lu100scrim"',()=>c+_T('</div><div class="lu100scrim"'))}
   if(k==='clerk'){const re=/<div class="lu2ln"><button[^>]*data-id="ledger"[^>]*>[\s\S]*?<\/button><\/div>/;h=h.replace(re,'');const i=h.lastIndexOf('</div><div class="lu100scrim"');if(i>0)h=h.slice(0,i)+led101HTML(w)+h.slice(i)}}catch(e){console.error(e)}return h}}
 /* the Ledger badge + the counsel's "Read it" open the popover, never a panel under the tiles */
@@ -70512,6 +70513,231 @@ try{if(typeof sd100CSS==='function'&&!(typeof B101!=='undefined'&&B101.off)){con
     /* the filter bar keeps its height: the slab sits at the end of the row, no wider than its label */
     '#onl .lb96f .btn.lb101r[data-lb96r]{margin-left:auto;flex:0 0 auto;white-space:nowrap}@media (max-width:600px){#onl .lb96f .btn.lb101r[data-lb96r]{margin-left:0}}';
   document.head.appendChild(st)}}catch(e){console.error(e)}
+/* =====================================================================
+   333-V102MGR · v1.02 workstream B — MANAGER CHANGES (his v1.01 notes 2026-10-14, picks 3a 4a 6a 7a 8a; plan tools/plans/v102/NOTES.md)
+   =====================================================================
+   M5  (3a) LEAGUE POINTS = PODIUMS. leaguePtsAfterBout (23-ludus) replaced: 1st 3 · 2nd 2 · 3rd 1 · else 0, and a podium counts ONLY when the
+       fighter survived the bout (alive at the end AND after the Fate). Place = 17-manager's finishing order (winners first); in a team event
+       every winner is 1st and the losers rank after them. msp(m) now also keeps p1/p2/p3 (S2.w stays the wins count for older readers).
+       The record shows as podiums "🥇2 🥈1 🥉3 · 7 bouts" (lp102Rec / lp102Txt) in 231's standings + podium, 290's League rows + house card,
+       17's tables + season letters, 185's scouting card, 47's lanista page and 22's Flavian Cup line (direct template edits). 231 LP100_TIP
+       reworded. The Season tab's "+N pts" per week (290 wd100Acta96) follows the same rule. League prizes follow the points (they always
+       followed the table). Rivals score the same way (every bout goes through leaguePtsAfterBout). SAVE_MIGRATIONS '1.02': older seasons
+       get p1 = their wins (p2/p3 unknown → 0).
+   M6  (4a) RECRUITING BALANCE. Hours: Ask around 1 h (two rough grades: the ungraded first), Watch him train 1 h (Speed + Strength one step
+       sharper), Share a cup 1 h (Intelligence + Charisma one step), Study his bouts 1 h (Luck + the two weakest reads one step) — ~1.9 precision
+       points an hour (15 in 8 h), but each once a recruit a week, so a recruit takes 2 weeks of cheap scouting (3 if a step is skipped). TRIAL BOUT 8 h +
+       15 coin (~1.7 points an hour), everything sure at once, and only after at least one cheaper look at that recruit (REC98.cap 9 h on one recruit a week → the
+       usual trial week is Ask + Trial = 9 h). Measured with tools/tests/tv102b.js (section M6). The advisor's ★ only from Recruiter level 3
+       (REC102.starLv); rec98Next = the action with the most precision per hour that fits the hours left (the trial only when nothing cheaper is
+       left and the recruit is worth it); the list row of the best VALUE FOR COST free agent wears a ★ (rec102Best: estimated grade + roster
+       need over asking price, hours left).
+   M9  (6a) TEAM PURSE BY CF. 296's applyBout wrapper calls any102Split after the base: the purse goes to the WINNING side's SURVIVORS in
+       proportion to the CF each earned in the bout (equal shares when none earned CF); a dead winner's equal share is taken back; a hired
+       partner's share goes to the hirer (as 296: half of his share). b.any100.split = {gid: coin} for the record + the news line.
+   M10 (7a) THE COUNCIL. Only "The Council" (the tile) and "Consilium" (the advisor) remain: every "counsel" wording is gone (17 consiliumHTML,
+       66 letter title, 294/297/317 buttons and heads). The Consilium's face sits at the BOTTOM LEFT of the frieze in place of the 🏛 icon; the
+       other five spread along the strip. His popover loses the Buildings section (the Upgrade School tile opens its own popup: every building,
+       grouped by the advisor who runs it, 23's data-mg="build" buttons). His warnings (debt, wage runway, loan due, rival challenge) are ONE
+       "🧭 Consilium's report" row in Weekly tasks (a weekChecklist item) + a letter only when urgent (debt or a loan payment due); his head no
+       longer lights from 297's lu2Counsel.
+   M12 Recruiting list: no horizontal scroll at 1280–1920 (border-collapse, tighter fixed columns, the class chip shrinks first).
+   M13 Recruiting Compare (MGR.cmp / data-reccmp) = side by side in the v1.0 look: fresco portrait, chips, home-city map inset, the Stats
+       Tablet (299 rc100Grades), the personality card (299 rc100Pers) — recCmpHTML replaced.
+   M15 (8a) Every letter (and the Week in review) ends with a quiet "File away ✓" text button at the bottom right (same data-ltr / data-rev99
+       handlers); 272's ✕ on the Week in review is gone.
+   M16 A READ letter no longer counts: the 📬 Letters count = unread envelopes + the Week in review only until opened (w.rev102), and the
+       rail oval / "this week" count (ludusTodo73) skips desk rows that come from a letter already read.
+   Test: tools/tests/tv102b.js
+   ===================================================================== */
+const REC102={starLv:3,trialH:8,trialCoin:15,cap:9};
+const V102B={};
+
+/* ---------------- M5 · league points = podiums ---------------- */
+const LP102_PTS=[0,3,2,1];
+function lp102Of(sp){sp=sp||{};const p1=sp.p1!=null?sp.p1:(sp.w||0);return {p1,p2:sp.p2||0,p3:sp.p3||0,b:sp.b||0}}
+function lp102Txt(sp){const P=lp102Of(sp);return _T`🥇${P.p1} 🥈${P.p2} 🥉${P.p3} · ${P.b} bouts`}
+function lp102Rec(sp,short){const P=lp102Of(sp);const tip=_T`Podiums this season (fighter survived): ${P.p1} first, ${P.p2} second, ${P.p3} third · ${P.b} bouts`;
+  return `<span class="pd102" title="${esc(tip)}">🥇${P.p1} 🥈${P.p2} 🥉${P.p3}${short?` <small>· ${P.b}</small>`:` <small>${_T`· ${P.b} bouts`}</small>`}</span>`}
+/* the place that scores: a winner is 1st; the others rank after the winners in 17's finishing order */
+function lp102Place(r,nWin){return r.won?1:1+Math.max(0,(r.place||99)-Math.max(1,nWin))}
+leaguePtsAfterBout=function(bout){if(!bout||!bout.res)return;const w=W_();const rows=bout.res.rows||[];const nWin=rows.filter(r=>r.won).length;
+  for(const r of rows){const g=gById(r.gid);if(g){(g.recent=g.recent||[]).push({s:w.season,wk:((w.week-1)%12)+1,t:TIERS[bout.tier]?TIERS[bout.tier].n:'',ev:(EVENTS[bout.ev]||{}).short||'',loc:w.night?LOCATIONS[w.night.loc].n:'',place:r.place,won:!!r.won,f:r.f||0,vd:r.vd||''});g.recent=g.recent.slice(-8)}
+    const m=g&&g.contract?mgrById(g.contract.mgr):null;if(!m)continue;const S2=msp(m);S2.b++;if(S2.p1==null)S2.p1=S2.w||0;S2.p2=S2.p2||0;S2.p3=S2.p3||0;
+    if(r.won){S2.w++;if(typeof gemCheck==='function')try{gemCheck(g,m)}catch(e){}}
+    const pl=lp102Place(r,nWin);const alive=r.alive!==false&&g.alive!==false;
+    if(alive&&pl<=3){S2['p'+pl]=(S2['p'+pl]||0)+1;S2.pts+=LP102_PTS[pl]}}};
+/* the Season tab's weekly "+N pts" (only your house's rows are kept there) */
+if(typeof wd100Acta96==='function'){wd100Acta96=function(w,abs){const A=w.acta96&&w.acta96[abs];if(!A)return null;let pts=0,best=null;const nW=(A.rows||[]).filter(r=>r.w).length;
+  for(const r of A.rows||[]){const dead=/✝|kill|slain|fell|died|dead|death/i.test(String(r.fate||''));const pl=r.w?1:Math.max(1,r.p||99);if(!dead&&pl<=3)pts+=LP102_PTS[pl];const p=r.w?1:r.p||99;if(!best||p<best.p)best={p,n:r.n}}
+  return {pts,best,n:(A.rows||[]).length,nW}}}
+function lp102Migrate(w){let ch=false;for(const m of (w&&w.mgrs)||[])for(const sp of Object.values(m.spS||{}))if(sp&&sp.p1==null){sp.p1=sp.w||0;sp.p2=sp.p2||0;sp.p3=sp.p3||0;ch=true}return ch}
+SAVE_MIGRATIONS.push(['1.02',w=>{lp102Migrate(w)}]);
+
+/* ---------------- M6 · recruiting balance ---------------- */
+Object.assign(REC98.acts.ask,{h:1});Object.assign(REC98.acts.watch,{h:1});Object.assign(REC98.acts.cup,{h:1});Object.assign(REC98.acts.study,{h:1});
+Object.assign(REC98.acts.trial,{h:REC102.trialH,coin:REC102.trialCoin});REC98.cap=REC102.cap;
+rec98Gain=function(g,a){const K=rec98K(g);const P=K.p;const out=[];const w=W_();const add=(k,t)=>{t=Math.min(3,t);if(t>(P[k]||0)&&!out.some(x=>x[0]===k))out.push([k,P[k]||0,t])};
+  const ks=STATS.map(x=>x[0]);const seed=`rec102:${w&&w.id}:${g.id}:${w&&w.week}:`;
+  const low=(n,max,skip)=>ks.filter(k=>!(skip||[]).includes(k)&&(P[k]||0)<max).sort((x,y)=>(P[x]||0)-(P[y]||0)||(hashStr(seed+x)%997)-(hashStr(seed+y)%997)).slice(0,n);
+  if(a==='ask'){for(const k of low(2,2))add(k,(P[k]||0)+1)}
+  else if(a==='watch'||a==='cup'){for(const k of REC98.acts[a].st)add(k,(P[k]||0)+1)}
+  else if(a==='study'){add('lck',(P.lck||0)+1);for(const k of low(2,3,['lck']))add(k,(P[k]||0)+1)}
+  else if(a==='trial'){for(const k of ks)add(k,3)}
+  return out};
+const REC102_CHEAP=['ask','watch','cup','study'];
+function rec102Looked(g){const K=rec98K(g);return REC102_CHEAP.some(a=>K.a[a]!=null)||STATS.some(([k])=>(K.p[k]||0)>0)}
+{const base=rec98Can;rec98Can=function(g,a){const r=base.apply(this,arguments);try{if(r&&r[0]&&a==='trial'&&!rec102Looked(g))return [false,sx(g,_T('A trial bout comes after a cheaper look at him: ask around, watch him train or share a cup first.'),_T('A trial bout comes after a cheaper look at her: ask around, watch her train or share a cup first.'))]}catch(e){console.error(e)}return r}}
+/* the advisor's pick: the most precision per hour that fits; the trial only when nothing cheaper is left and he is worth it */
+function rec102Pph(g,a){const n=rec98Gain(g,a).reduce((s,[,f,t])=>s+t-f,0);return n/Math.max(1,REC98.acts[a].h)}
+rec98Next=function(g){try{const ok=REC102_CHEAP.filter(a=>rec98Can(g,a)[0]);
+    if(ok.length)return ok.map(a=>[a,rec102Pph(g,a),REC98.acts[a].h]).sort((x,y)=>(y[1]-x[1])||(x[2]-y[2])||(REC102_CHEAP.indexOf(x[0])-REC102_CHEAP.indexOf(y[0])))[0][0];
+    if(rec98Can(g,'trial')[0]&&rec102Worth(g))return 'trial'}catch(e){console.error(e)}
+  return REC98.order.find(a=>rec98Gain(g,a).length)||null};
+/* value for cost: the estimated grade + what the roster lacks, over the asking price; a recruit already looked at is cheaper to finish */
+function rec102Value(g,m,w){try{const est=rec98Ovr(g).v;const ros=rosterOf(m).filter(x=>x.alive!==false);const need=(ros.some(x=>x.cls===g.cls)?0:6)+(ros.length<5?4:0);
+  const left=rec98Left(w);const K=rec98K(g);const seen=STATS.filter(([k])=>(K.p[k]||0)>0).length;const hrs=left>=3?1:seen?1:.6;
+  return (est+need-40)/(askWage(g)+8)*hrs}catch(e){return 0}}
+function rec102Best(w,m){w=w||W_();m=m||me();if(!w||!m)return null;let best=null,bv=-1e9;
+  for(const g of freeAgents()){if(g.inj||g.auction)continue;const v=rec102Value(g,m,w);if(v>bv){bv=v;best=g}}return best}
+function rec102Worth(g){try{const w=W_(),m=me();const fa=freeAgents().filter(x=>!x.inj).map(x=>[x,rec102Value(x,m,w)]).sort((a,b)=>b[1]-a[1]).slice(0,3);return fa.some(([x])=>x===g)}catch(e){return false}}
+function rec102Star(w){try{return !!w&&adv98Lv(w,'recruiter')>=REC102.starLv}catch(e){return false}}
+function rec102Strip(h){return String(h).replace(/<i class="star85[^"]*"[^>]*>[\s\S]*?<\/i>/g,'').replace(/<i class="adv85b"[^>]*>★<span class="t85">[^<]*<\/span><\/i>/g,'').replace(/ adv74\b/g,'').replace(/ data-adv85="[^"]*"/g,'').replace(/<i class="rc102st"[^>]*>★<\/i>/g,'')}
+{const base=recAdvice74;recAdvice74=function(g,m,step){try{if(!rec102Star(W_()))return null}catch(e){}return base.apply(this,arguments)}}
+{const base=detailHTML;detailHTML=function(g){const h=base.apply(this,arguments);try{if(typeof h==='string'&&g&&!g.contract&&W_()&&!rec102Star(W_()))return rec102Strip(h)}catch(e){console.error(e)}return h}}
+
+/* ---------------- M9 · team purses by CF ---------------- */
+function any102Split(b,P,nw){const res=b.res;if(!res||b.rig)return;const win=new Set(res.winners||[]);if(!win.size)return;const rows=(res.rows||[]).filter(r=>win.has(r.gid));
+  const alive=rows.filter(r=>r.alive!==false&&(gById(r.gid)||{}).alive!==false);const tot=alive.reduce((s,r)=>s+Math.max(0,r.f||0),0);
+  const Pe=Math.max(1,Math.round(P/nw));const net=(m,p)=>p>0?Math.round(p*(0.5+m.p.greed/300))-Math.max(1,Math.round(p*0.1)):0;const fsh=p=>p>0?Math.max(1,Math.round(p*0.1)):0;
+  const split={};const pm=me();
+  for(const r of rows){const g=gById(r.gid);if(!g)continue;const lives=alive.includes(r);const Pi=lives?Math.round(tot>0?P*Math.max(0,r.f||0)/tot:P/alive.length):0;split[r.gid]=Pi;
+    const m=g.contract?mgrById(g.contract.mgr):null;
+    if(m){m.coin+=net(m,Pi)-net(m,Pe);g.purse=Math.max(0,(g.purse||0)+fsh(Pi)-fsh(Pe))}
+    const h=b.any100.hire&&b.any100.hire[r.gid];const hm=h&&mgrById(h.by);
+    if(hm){const cut=Math.round(Pi*0.5);if(cut>0){hm.coin+=cut;if(hm.isPlayer)tnews(_T`🤝 ${esc(g.name)}, your hired partner, wins — his share comes home: ${coinAmt87('+'+cut)}.`)}}}
+  b.any100.split=split;
+  try{const mine=rows.filter(r=>{const g=gById(r.gid);return g&&((g.contract&&pm&&g.contract.mgr===pm.id)||(b.any100.hire[r.gid]&&pm&&b.any100.hire[r.gid].by===pm.id))});
+    if(mine.length)tnews(_T`👥 The ${esc((EVENTS[b.ev]||{}).n||'')} purse is shared by the winners who walked off the sand, by Crowd Favor earned: ${rows.map(r=>`${esc((gById(r.gid)||{}).name||'?')} ${split[r.gid]?coinAmt87(split[r.gid]):'—'}`).join(' · ')}.`)}catch(e){}}
+
+/* ---------------- M10 · the Council ---------------- */
+function lu102Report(w){const out=[];try{const pm=me();if(!w||!pm||w.tutorial||w.dead)return out;
+  const wages=rosterOf(pm).reduce((a,g)=>a+((g.contract&&g.contract.wage)||0),0);const run=wages>0?Math.floor(Math.max(0,pm.coin)/wages):99;
+  if(pm.coin<0)out.push({k:'debt',u:1,t:_T('the treasury is in debt')});else if(run<3)out.push({k:'run',t:_T`coin for ${run} week${run===1?'':'s'} of wages`});
+  const L=w.loan;if(L&&L.amt>0&&(L.due||0)>(L.paid||0))out.push({k:'loan',u:1,t:_T('a loan payment is due')});
+  const ch=(w.letters||[]).find(x=>x&&x.rl76&&x.rl76.kind==='chal'&&x.until>=w.week&&!x.read);
+  if(ch&&!(w.chal76&&w.chal76.s===w.season&&w.chal76.wk===w.week))out.push({k:'chal',t:_T('a rival challenge is waiting')})}catch(e){console.error(e)}return out}
+DK99_TIER['🧭']=2;DK99_CLS['🧭']='k-council';
+{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const w=W_();const R=lu102Report(w);if(!R.length||!Array.isArray(I))return I;
+    const k='consil102:'+R.map(x=>x.k).join(',');const sk=typeof dk99Skips==='function'?dk99Skips(w):[];const skip=sk.includes(k);
+    I.unshift({ic:'🧭',txt:_T`<b>Consilium's report</b> — ${R.map(x=>esc(x.t)).join(' · ')}`,btn:`<button class="btn tksm" type="button" data-lu100adv="consilium">${_T`Hear him`}</button>`,done:skip,skipped:skip,k99:k,req99:false})}catch(e){console.error(e)}return I}}
+/* a letter only when urgent (debt / a loan payment due), once a week */
+function lu102Letter(w){try{if(!w||w.tutorial||w.dead||typeof sendLetter!=='function')return;const R=lu102Report(w).filter(x=>x.u);if(!R.length)return;const key='consil102-'+w.season+'-'+w.week;
+  if((w.letters||[]).some(x=>x.key===key))return;
+  sendLetter(w,{key,kind:'letter',from:_T('the Consilium'),adv:'consilium',seal:'🏛',until:w.week,act:false,title:_T("Consilium's report: this cannot wait"),
+    body:`<p>${_T`Lanista — before anything else this week:`}</p><ul>${R.map(x=>`<li>${esc(x.t)}</li>`).join('')}</ul><p>${_T`Enter fighters on Match Week, mind the wages and pay what is due. Every week in the red costs the house.`}</p>`})}catch(e){console.error(e)}}
+{const base=mailLive;mailLive=function(){try{lu102Letter(W_())}catch(e){}return base.apply(this,arguments)}}
+/* his head lights only from a letter of his (the urgent report, 66's warning), never from 297's lu2Counsel */
+{const base=lu100Lit;lu100Lit=function(){const out=base.apply(this,arguments);try{if(out&&out.consilium&&out.consilium.key==='lu2:consil')delete out.consilium}catch(e){}return out}}
+/* his popover: no Buildings section; the report stays */
+{const base=lu100PopHTML;lu100PopHTML=function(w,pm,k){let h=base.apply(this,arguments);try{if(k!=='consilium'||!h)return h;const T=document.createElement('template');T.innerHTML=h;const R=T.content;
+    const ov=R.querySelector('.lu2ov');const cn=R.querySelector('.cn101');const pop=R.querySelector('#lu100pop');if(cn&&pop)pop.appendChild(cn);if(ov)ov.remove();
+    const rep=lu102Report(w);if(pop&&rep.length){const d=document.createElement('div');d.className='lu2b rp102';d.innerHTML=`<div class="lu2bh">⚠ ${_T`This week`}</div><ul>${rep.map(x=>`<li>${esc(x.t)}</li>`).join('')}</ul>`;pop.insertBefore(d,cn&&cn.parentNode===pop?cn:null)}
+    return T.innerHTML}catch(e){console.error(e)}return h}}
+/* the frieze: the Consilium's face at the bottom left in place of the 🏛 icon; the other five spread along the strip */
+{const base=lu100Frieze;lu100Frieze=function(){let h=base.apply(this,arguments);try{if(typeof h!=='string'||!h)return h;const T=document.createElement('template');T.innerHTML=h;const R=T.content;
+    const cc=R.querySelector('#council83');const cons=cc&&cc.querySelector('.c83p[data-c83="consilium"]');const em=R.querySelector('.lu100t.k-adv .cap .em');if(!cc||!cons||!em)return h;
+    cons.classList.add('c102cons');const top=cc.querySelector('.c101top');em.replaceWith(cons);if(top)top.remove();cc.classList.add('c102');
+    const tile=R.querySelector('.lu100t.k-adv');if(tile){tile.classList.add('c102t');if(LU100.pop==='consilium')tile.style.setProperty('--hx','7%')}
+    return T.innerHTML}catch(e){console.error(e)}return h}}
+/* the Upgrade School tile: every building, by the advisor who runs it */
+const LU102={fac:false};
+function lu102FacHTML(w,pm){const C=council83(w);const by={};for(const fk of Object.keys(FAC)){const o=lu2Owner(fk);(by[o]=by[o]||[]).push(fk)}
+  const busy=lu2Busy(w,pm);const nm=k=>{const a=C.find(x=>x.k===k);return a?esc(a.name):k};const ro=k=>{const a=C.find(x=>x.k===k);return a?esc(a.role):''};
+  return `<div class="lu100panel pr101 lu102fac" role="dialog" aria-label="${esc(_T('Upgrade School'))}"><div class="lu102fh"><b>🏛 ${_T`Upgrade School`}</b> ${lu2Grade(pm)}<span class="rc-sub">${busy?_T('the builders are busy this week'):_T('one project a week')} · ${_T`${facSum(pm)} of ${Object.keys(FAC).length*3} levels`}</span><button type="button" class="lu100x" data-lu102fac="0" aria-label="${esc(_T('Close'))}">✕</button></div>
+    <div class="lu100pop lu102fb">${Object.entries(by).map(([k,L])=>`<div class="lu2b"><div class="lu2bh">${nm(k)} <span class="rc-sub">${ro(k)}</span></div>${L.map(fk=>lu2Row(w,pm,fk)).join('')}</div>`).join('')}</div></div>`}
+{const base=lu100Tiles;lu100Tiles=function(){let h=base.apply(this,arguments);try{h=h.replace(/(<button type="button" class="lu100t k-school") data-lu100adv="consilium"/,'$1 data-lu102fac="1"')}catch(e){}return h}}
+window.addEventListener('click',e=>{const t=e.target&&e.target.closest&&e.target.closest('[data-lu102fac]');if(!t||!t.closest('#mgrBody'))return;e.preventDefault();e.stopPropagation();
+  LU102.fac=t.dataset.lu102fac==='1';if(LU102.fac&&typeof LU100!=='undefined')LU100.pop=null;if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&LU102.fac&&document.querySelector('#mgrPane .lu102fac')){e.preventDefault();e.stopPropagation();LU102.fac=false;if(typeof MGR_REDRAW==='function')MGR_REDRAW()}},true);
+
+/* ---------------- M13 · Compare, side by side ---------------- */
+recCmpHTML=function(){const m=me(),w=W_();const L=(MGR.cmp||[]).map(gById).filter(g=>g&&g.alive!==false);MGR.cmp=L.map(g=>g.id);if(!L.length||!m||!w)return '';
+  const col=g=>{const free=!g.contract;const iv=interestOf(g,m);const rank=suitors(g).findIndex(x=>x.m===m)+1;const cl=CLASSES[g.cls];
+    let map='';try{const P=typeof mi100Pt==='function'&&g.city?mi100Pt(g.city):null;if(P&&typeof mapInset100==='function')map=mapInset100({w:120,h:70,minW:150,label:_T`${g.city}: home city`,frame:P.off?[6,1,5]:[g.city],pts:[{p:g.city,k:'home',lab:P.off?'':g.city,tip:g.city}]})||''}catch(e){}
+    const grades=free&&typeof rc100Grades==='function'?rc100Grades(g):(typeof ratingsHTML==='function'?ratingsHTML(g):'');
+    const pers=free&&typeof rc100Pers==='function'?rc100Pers(g,m):'';
+    const chips=[`<span class="ch">${esc(cl?cl.name:g.cls)}</span>`,`<span class="ch">${_T`${g.age||'?'} yrs`}</span>`,free?`<span class="ch">${_T`asks ${coinAmt87(askWage(g))}/wk`}</span>`:'',free?`<span class="ch">${_T`interest ${iv}${rank?` · #${rank}`:''}`}</span>`:`<span class="ch">${esc((mgrById(g.contract.mgr)||{}).ludus||'')}</span>`,g.inj?`<span class="ch bad">⚕ ${esc(g.inj.label||'')}</span>`:''].join('');
+    return `<section class="cmp102c"><div class="cmp102h"><span class="rc1fr cmp102p"><span class="pic"></span><span class="rc1pp">${gArt(g,'md')}</span></span><div class="cmp102i"><b>${esc(g.name)}</b><div class="cmp102ch">${chips}</div>${map?`<div class="cmp102m">${map}<small>${esc(g.city||'')}</small></div>`:''}</div>
+      <button class="btn tksm cmp102x" type="button" data-reccmp="${g.id}" title="${_T`Take out of the comparison`}" aria-label="${_T`Take out of the comparison`}">✕</button></div>
+      <div class="cmp102g">${grades}</div>${pers?`<div class="cmp102pe">${pers}</div>`:''}</section>`};
+  return `<div class="card2 cmpbox cmp102"><div class="sect" style="margin-top:0">${_T`⇄ Compare`} <span class="rc-sub">${L.length<2?_T('pick one more with ⇄ on a fighter’s card'):_T('side by side')}</span></div><div class="cmp102g2" style="--n:${Math.min(L.length,3)}">${L.map(col).join('')}</div></div>`};
+
+/* ---------------- M15 + M16 · letters ---------------- */
+const fa102Btn=attr=>`<div class="fa102r"><button type="button" class="fa102" ${attr}>${_T`File away ✓`}</button></div>`;
+function rev102Read(w){const R=w&&w.review;return !!(R&&w.rev102&&w.rev102.s===R.season&&w.rev102.wk===R.wk)}
+document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.rev91')||!d.open)return;const w=W_();const R=w&&w.review;if(!R||rev102Read(w))return;w.rev102={s:R.season,wk:R.wk};try{saveWorld(true)}catch(err){}
+  const b=document.querySelector('#desk99 .lu100mb b');if(b){const n=Math.max(0,(+b.textContent||0)-1);if(n)b.textContent=n;else b.remove()}},true);
+/* the rail oval / "this week": a desk row that comes from a letter already read does not count */
+function lu102ReadRow(w,r){try{const R=new Set(w.mailRead||[]);const k=r.ltr||r.key;return r.src==='mail'&&!r.req&&!!k&&/^L:/.test(k)&&R.has(k)}catch(e){return false}}
+{const base=ludusTodo73;ludusTodo73=function(){const n=base.apply(this,arguments);try{const w=W_();if(!w||w.dead||typeof desk99Open!=='function')return n;const open=desk99Open();if(open.length!==n)return n;return open.filter(r=>!lu102ReadRow(w,r)).length}catch(e){return n}}}
+
+/* ---------------- the final mgrHTML wrapper ---------------- */
+function v102bPost(h,w){const T=document.createElement('template');T.innerHTML=h;const R=T.content;const tab=MGR.tab;
+  /* M15: File away ✓ at the bottom right of every letter */
+  for(const d of R.querySelectorAll('details.mail[data-mail]')){const b=d.querySelector(':scope>.acts>[data-ltr]');if(!b)continue;const k=b.getAttribute('data-ltr');b.parentNode.replaceWith(dk99Tmpl(fa102Btn(`data-ltr="${esc(k)}"`)))}
+  if(tab==='ludus'){const rev=R.querySelector('details.rev91');if(rev){rev.querySelectorAll('.rev99x').forEach(x=>x.remove());if(!rev.querySelector('.fa102'))rev.appendChild(dk99Tmpl(fa102Btn('data-rev99="1"')))}
+    /* M16: the Letters count */
+    const mb=R.querySelector('#desk99 .lu100mb');if(mb){const n=R.querySelectorAll('#desk99 .dk99lt>details.mail.unread').length+(rev&&!rev102Read(w)?1:0);const b=mb.querySelector('b');if(b)b.remove();if(n)mb.insertAdjacentHTML('beforeend',` <b>${n}</b>`)}
+    const sub=R.querySelector('#desk99 .lu100mail .lu100mh .rc-sub');if(sub){const n=R.querySelectorAll('#desk99 .dk99lt>details.mail.unread').length+(rev&&!rev102Read(w)?1:0);sub.textContent=n?_T`${n} unread`:_T('all read')}
+    /* M10: the Upgrade School popup */
+    if(LU102.fac){const pane=R.querySelector('#mgrPane');const pm=me();if(pane&&pm){pane.appendChild(dk99Tmpl(`<div class="pr101scrim" data-lu102fac="0"></div>`+lu102FacHTML(w,pm)))}}}
+  if(tab==='recruit'){
+    if(!rec102Star(w)){for(const el of R.querySelectorAll('.star85,.adv85b,.rc102st'))el.remove();for(const el of R.querySelectorAll('.adv74'))el.classList.remove('adv74');for(const el of R.querySelectorAll('[data-adv85]'))el.removeAttribute('data-adv85')}
+    else{const best=rec102Best(w,me());const tr=best&&R.querySelector(`#recTable tr[data-mg="sel"][data-id="${CSS.escape(best.id)}"] .r85n`);
+      if(tr)tr.insertAdjacentHTML('beforebegin',`<i class="rc102st" title="${esc(_T('★ Your recruiter: the best value for the coin on the market'))}">★</i>`)}}
+  return T.innerHTML}
+{const base=mgrHTML;mgrHTML=function(){const h=base.apply(this,arguments);try{const w=W_();if(typeof h==='string'&&w&&!w.dead&&!MGR.view)return v102bPost(h,w)}catch(e){console.error(e)}return h}}
+{const base=mgrMigrate;mgrMigrate=function(w){const o=base.apply(this,arguments);try{if(o&&lp102Migrate(o))o._lp102dirty=1}catch(e){console.error(e)}return o}}
+{const base=openManager;openManager=async function(){const r=await base.apply(this,arguments);try{const w=W_();if(w&&w._lp102dirty){delete w._lp102dirty;saveWorld()}}catch(e){}return r}}
+/* the lesson's Facilities step: the Upgrade School tile now opens the building list */
+try{const st=MTUT_STEPS.find(x=>x&&x.k==='fac');if(st){const un0=st.until;st.until=()=>(un0&&un0())||LU102.fac}}catch(e){console.error(e)}
+
+(()=>{const st=document.createElement('style');st.textContent=`
+.pd102{white-space:nowrap;font-variant-numeric:tabular-nums}.pd102 small{opacity:.75;font-size:.85em}
+.wd100lgt .wd100rh,.wd100lgt .wd100r{grid-template-columns:22px 28px minmax(0,1.5fr) 40px 84px minmax(0,1.2fr) 112px 48px 12px}
+@media (max-width:1100px){.wd100lgt .wd100rh,.wd100lgt .wd100r{grid-template-columns:22px 28px minmax(0,1.5fr) 40px 84px minmax(0,1fr) 108px 12px}}
+@media (max-width:760px){.wd100lgt .wd100rh,.wd100lgt .wd100r{grid-template-columns:18px 24px minmax(0,1fr) 34px 70px 12px}}
+.wd100lgt .c-rec .pd102{font-size:12.5px}
+/* M10 the Council strip: Consilium bottom left, the five spread */
+.lu100t.k-adv.c102t .cap>.c83p.c102cons{flex:none;width:58px;margin:-26px 4px 0 -2px;position:relative;z-index:2;cursor:pointer}
+.lu100t.k-adv.c102t .cap>.c83p.c102cons>b,.lu100t.k-adv.c102t .cap>.c83p.c102cons>.c83r,.lu100t.k-adv.c102t .cap>.c83p.c102cons>.note{display:none}
+.lu100t.k-adv.c102t .cap>.c83p.c102cons .c83f{width:54px!important;height:54px!important;border-radius:50%;overflow:hidden;border:2px solid #c9a458;box-shadow:0 2px 6px rgba(0,0,0,.6)}
+.lu100t.k-adv.c102t .cap>.c83p.c102cons.lit .c83f{border-color:#ffd77a;box-shadow:0 0 10px #ffd77a99}
+#council83.lu100fz.c102 .c83row{justify-content:space-evenly;width:100%}
+.lu100pop .rp102 ul{margin:2px 0 0 18px;padding:0;font-size:12.5px;color:#ffcf9a}
+.lu102fac{max-width:640px}.lu102fac .lu102fh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.lu102fac .lu102fh .rc-sub{margin-right:auto}
+.lu102fac .lu100pop.lu102fb{position:static;inset:auto;width:auto;max-height:min(70vh,560px);overflow:auto;box-shadow:none;margin:0;transform:none}
+/* M12 the list fits */
+.rc100g #recTable{overflow-x:hidden}.rc100g #recTable table{border-collapse:collapse;border-spacing:0}
+.rc100g #recTable .rc1cl{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.rc100g #recTable .r85n{flex:1 1 40px}
+#recTable .rc102st{font-style:normal;color:var(--gold2);flex:none;font-size:13px;cursor:help}
+@media (min-width:1251px){.rc100g #recTable col.c85r{width:42px}.rc100g #recTable col.c85f{width:34px}.rc100g #recTable col.c85i{width:34px}.rc100g #recTable col.c85a{width:58px}}
+/* M13 compare */
+.cmp102 .cmp102g2{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:10px}
+.cmp102c{border:1px solid var(--line2,#5a4636);border-radius:9px;padding:8px;background:linear-gradient(#ffffff08,#0000);min-width:0}
+.cmp102h{display:flex;gap:9px;align-items:flex-start}.cmp102p{flex:none;width:74px;height:96px;position:relative;display:block;border-radius:6px;overflow:hidden;border:2px solid #8a6a3a}
+.cmp102p .rc1pp,.cmp102p .rc1pp>*{display:block;width:100%;height:100%}.cmp102i{flex:1;min-width:0}.cmp102i>b{font:400 17px var(--display,Georgia,serif);color:#f3e3b8}
+.cmp102ch{display:flex;flex-wrap:wrap;gap:4px;margin:3px 0}.cmp102ch .ch{font-size:11.5px;border:1px solid var(--line2,#5a4636);border-radius:9px;padding:0 7px;white-space:nowrap}.cmp102ch .ch.bad{border-color:#b0503a;color:#ffb3a0}
+.cmp102m{display:flex;gap:6px;align-items:center}.cmp102m small{font-size:11px;color:var(--muted)}.cmp102x{flex:none}
+.cmp102g .gs98{grid-template-columns:1fr 1fr;margin:6px 0}.cmp102pe .pe98{margin-top:4px}
+@media (max-width:760px){.cmp102 .cmp102g2{grid-template-columns:1fr}}
+/* M15 File away */
+.fa102r{display:flex;justify-content:flex-end;padding:2px 8px 6px}
+button.fa102{all:unset;cursor:pointer;font-size:12px;color:var(--muted,#b3a58a);text-decoration:underline dotted;text-underline-offset:3px;padding:2px 2px}
+button.fa102:hover,button.fa102:focus-visible{color:var(--gold2,#f0cf7d);outline:none}
+`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

@@ -25,7 +25,7 @@ ok(B.w54>=Math.round(B.shown*1.5),'M2 raster width '+JSON.stringify(B));
 const C=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};MGR.tab='recruit';MGR_REDRAW();await W8(700);
   const fa=freeAgents();let g=fa.find(x=>wants88(x).includes('rudis'))||fa[0];MGR.sel=g.id;g.scout=2;MGR.recStep=3;
   let seen=0,bad=0;for(const x of fa.filter(y=>wants88(y).includes('rudis'))){x.scout=2;MGR.sel=x.id;MGR.recStep=3;const hx=detailHTML(x);if(/id="ofRudis88"/.test(hx)){seen++;if(!/title="He wants a path to the rudis/.test(hx))bad++}}o.rudis=seen>0&&!bad;o.rudisSeen=seen;MGR.sel=g.id;MGR.recStep=3;const h=detailHTML(g);
-  w.startDiff='normal';MGR.recStep=1;const h1=detailHTML(g);o.starN=/star85|adv74/.test(h1);
+  w.startDiff='normal';for(const a of council83(w))if(a.k==='recruiter')a.lv=3; /* v1.02 (333 M6): ★ from Recruiter level 3 */MGR.recStep=1;const h1=detailHTML(g);o.starN=/star85|adv74/.test(h1);
   w.startDiff='hard';for(const a of council83(w))a.lv=1;MGR.recStep=1;const h2=detailHTML(g);o.starH=/star85|adv74/.test(h2);o.advNull=recAdvice74(g,m,1)===null;
   for(const a of council83(w))if(a.k==='recruiter')a.lv=REC98.lvMax;const h3=detailHTML(g);o.starTop=/star85|adv74/.test(h3)||recAdvice74(g,m,1)!==null;
   w.startDiff='normal';for(const a of council83(w))a.lv=1;
@@ -95,9 +95,10 @@ const J=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
 ok(J.letter&&J.lit&&J.cleared&&J.warn,'M44 Clerk loan letter '+JSON.stringify(J));
 /* M11 M12 M16 M45 · the Council, popups */
 const K=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),pm=me();const o={};MGR.tab='ludus';LU100.pop=null;LU100.panel=null;MGR.run=null;MGR_REDRAW();await W8(700);
-  const cc=document.querySelector('#council83.c101');o.council=!!cc&&!!cc.querySelector('.c101top>.c83p[data-c83="consilium"]')&&cc.querySelectorAll('.c83row .c83p').length===5;
-  o.title=/The Council/.test(document.querySelector('.lu100t.k-adv .cap b').textContent)&&!/Advisors/.test(document.querySelector('.lu100t.k-adv .cap b').textContent);
-  const tr=document.querySelector('.lu100t.k-adv').getBoundingClientRect(),cr=document.querySelector('.c101cons .c83f').getBoundingClientRect();o.centred=Math.abs((cr.left+cr.width/2)-(tr.left+tr.width/2))<24;const big=cr.width>document.querySelector('.c83row .c83f').getBoundingClientRect().width+8;o.bigger=big;
+  /* v1.02 (333 M10): the Consilium sits at the bottom left of the strip, the five along it */
+  const cc=document.querySelector('#council83.c101');o.council=!!cc&&!!document.querySelector('.lu100t.k-adv .cap>.c83p[data-c83="consilium"]')&&cc.querySelectorAll('.c83row .c83p').length===5;
+  o.title=/The Council/.test(document.querySelector('.lu100t.k-adv .cap .ct>b').textContent)&&!/Advisors/.test(document.querySelector('.lu100t.k-adv .cap .ct>b').textContent);
+  const tr=document.querySelector('.lu100t.k-adv').getBoundingClientRect(),cr=document.querySelector('.c102cons .c83f').getBoundingClientRect();o.centred=cr.left<tr.left+90&&cr.bottom>tr.bottom-100;o.bigger=cr.width>=40;
   document.querySelector('.c83p[data-c83="consilium"]').click();await W8(500);let p=document.getElementById('lu100pop');o.counsel=!!p&&!!p.querySelector('.cn101 .cons')&&!document.querySelector('.lu100panel');
   document.querySelector('.c83p[data-c83="clerk"]').click();await W8(500);p=document.getElementById('lu100pop');o.ledger=!!p&&!!p.querySelector('.led101')&&!p.querySelector('[data-id="ledger"]')&&!document.querySelector('.lu100panel');
   /* M45 · another button closes it */
@@ -109,7 +110,7 @@ const K=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   /* M11 · Promote is a popup */
   document.querySelector('.lu100t.k-promote').click();await W8(600);const pn=document.querySelector('#mgrPane .lu100panel.pr101');o.promote=!!pn&&getComputedStyle(pn).position==='fixed'&&!!document.querySelector('.pr101scrim')&&pn.getBoundingClientRect().width<=800&&/Feast/.test(pn.textContent);
   document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await W8(400);o.escClose=!document.querySelector('#mgrPane .lu100panel');return o});
-ok(K.council&&K.title&&K.centred&&K.bigger,'M12 The Council '+JSON.stringify(K));ok(K.counsel&&K.ledger&&K.badge,'M16 counsel + ledger inside the popovers '+JSON.stringify(K));ok(K.closedMail&&K.openAgain&&K.closedTab&&K.stayShut,'M45 popover closes '+JSON.stringify(K));ok(K.promote&&K.escClose,'M11 Promote popup '+JSON.stringify(K));
+ok(K.council&&K.title&&K.centred&&K.bigger,'M12 The Council (v1.02: Consilium bottom left) '+JSON.stringify(K));ok(K.counsel&&K.ledger&&K.badge,'M16 counsel + ledger inside the popovers '+JSON.stringify(K));ok(K.closedMail&&K.openAgain&&K.closedTab&&K.stayShut,'M45 popover closes '+JSON.stringify(K));ok(K.promote&&K.escClose,'M11 Promote popup '+JSON.stringify(K));
 await pg.close();
 /* phone: no sideways scroll on the changed pages */
 const pp=await open(390,844);
@@ -119,6 +120,6 @@ ok(Object.values(P).every(Boolean),'390: no sideways scroll '+JSON.stringify(P))
 /* kill switch */
 const po=await open(1440,900,true);
 const Z=await ev(po,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};MGR.tab='recruit';MGR_REDRAW();await W8(700);o.stable=!!document.querySelector('[data-mg="filter"][data-id="mine"]');o.sched=!!document.querySelector('.rail [data-mg="tab"][data-id="sched"]');
-  MGR.tab='ludus';MGR_REDRAW();await W8(500);o.noCouncil=!document.querySelector('#council83.c101');o.adv=/Advisors/.test(document.querySelector('.lu100t.k-adv .cap b').textContent);return o});
+  MGR.tab='ludus';MGR_REDRAW();await W8(500);o.noCouncil=!document.querySelector('#council83.c101');o.adv=/Advisors/.test(document.querySelector('.lu100t.k-adv .cap .ct>b').textContent);return o});
 ok(Z.stable&&Z.sched&&Z.noCouncil&&Z.adv,'kill switch → the old pages '+JSON.stringify(Z));await po.close();
 console.log(JSON.stringify({A,B,C,D,E,F,G,H,I,J,K,P,Z}));console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();

@@ -204,7 +204,7 @@ function wd100HouseCard(R){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);cons
   const why=!mine&&typeof lg90ChalWhy==='function'?lg90ChalWhy(R):'';const set=!mine&&w.chal76&&w.chal76.s===w.season&&w.chal76.wk===w.week&&w.chal76.mgr===R.id;
   const heat=R.rivalry||0;
   return `<div class="wd100hc"${mine?'':` data-lg90box="${R.id}"`}><div class="top2"><div class="sc">${scutum100(R)}</div><div class="hi"><h3>${esc(R.ludus)}</h3>
-      <div class="ln2">${esc(R.city||'')} · <b>${lp90Ord(pos)}</b> · ${sp.pts} ${_T('pts')} · <b>${sp.w}-${Math.max(0,sp.b-sp.w)}</b></div>
+      <div class="ln2">${esc(R.city||'')} · <b>${lp90Ord(pos)}</b> · ${sp.pts} ${_T('pts')} · <b>${lp102Txt(sp)}</b></div>
       <div class="ln2">${_T('Fame')} <b>${R.fame||0}</b> · ${tr.map(([l,v])=>`${esc(l)} ${gch100(trait96Grade(v))}`).join(' ')}</div>
       <div class="lan">${typeof mgrPortrait==='function'?`<span class="wd100fc lg">${mgrPortrait(R,'xs')}</span>`:''}<div><div class="ln2"><b>${esc(R.name)}</b></div><div class="ln2">${_T('Lanista')}${mine?' · '+_T('you'):''}</div></div></div></div></div>
     ${!mine&&heat>=15?`<div class="heat">${flames100(heat)} <b>${esc(rivalTier(heat))}</b> · ${_T('toward you')}</div>`:''}
@@ -220,10 +220,10 @@ function wd100LeagueView(){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);cons
     return `<div class="wd100r${m.isPlayer?' me':''}${m===sel?' sel':''}${i<4?' top4':''}" data-wd100h="${m.id}" role="button" tabindex="0" aria-pressed="${m===sel}" title="${esc(typeof lp96Tip==='function'?lp96Tip(i+1,Ls.length):'')}">
       <span class="pl">${i+1}</span>${parma100(m,28)}<span class="hn"><b>${esc(m.ludus)}</b><small>${esc(m.name)}</small>${m.isPlayer?'':`<span class="rv">${flames100(m.rivalry)}</span>`}</span>
       <span class="pts">${sp.pts}</span>${form100(m)}<span class="tg c-tg">${g?face100(g):''}<span>${g?esc(g.name):'—'}</span>${g?wd100Grade(g,m):''}</span>
-      <span class="rec c-rec">${sp.w}-${Math.max(0,sp.b-sp.w)}</span><span class="c-riv">${m.isPlayer?'':flames100(m.rivalry)}</span><span class="chev">›</span></div>`}).join('');
+      <span class="rec c-rec">${lp102Rec(sp,1)}</span><span class="c-riv">${m.isPlayer?'':flames100(m.rivalry)}</span><span class="chev">›</span></div>`}).join('');
   return `${N?`<div class="wd100next"><span class="tx">${N.txt}</span>${N.need?`<span class="bar"><i style="width:${Math.max(6,Math.min(100,100-N.need*8))}%"></i></span>`:''}<span class="left">${_T`${Math.max(0,12-wk)} weeks left`}</span></div>`:''}
     <div class="wd100lg"><div class="wd100lgt">${plq100(_T`Season ${w.season} · week ${wk}`,_T`${Ls.length} houses`)}
-      <div class="wd100rh"><span>#</span><span></span><span>${_T('House')}</span><span class="n" title="${esc(typeof LP100_TIP==='function'?LP100_TIP():'')}">${_T('Pts')}</span><span>${_T('Form')}</span><span class="c-tg">${_T('Top gladiator')}</span><span class="c-rec n">${_T('W-L')}</span><span class="c-riv">${_T('Rivalry')}</span><span></span></div>
+      <div class="wd100rh"><span>#</span><span></span><span>${_T('House')}</span><span class="n" title="${esc(typeof LP100_TIP==='function'?LP100_TIP():'')}">${_T('Pts')}</span><span>${_T('Form')}</span><span class="c-tg">${_T('Top gladiator')}</span><span class="c-rec n">${_T('Podiums')}</span><span class="c-riv">${_T('Rivalry')}</span><span></span></div>
       <div class="wd100rows">${rows}</div></div>
     <div class="wd100side">${wd100HouseCard(sel)}</div></div>`}
 
