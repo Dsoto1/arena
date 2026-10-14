@@ -20,4 +20,5 @@ for(let rep=0;rep<REPS;rep++)for(const on of [false,true]){
     return out},on);R[on].push(...r)}
 const med=a=>{const s=a.slice().sort((x,y)=>x-y);return s[Math.floor((s.length-1)/2)]};
 for(const on of [false,true]){const a=R[on];console.log((on?'sliced (321)':'one settle (294)').padEnd(16),'maxDraw med',med(a.map(x=>x.maxDraw)),'max',Math.max(...a.map(x=>x.maxDraw)),'| maxGap med',med(a.map(x=>x.maxGap)),'| sum of draws med',med(a.map(x=>x.sumDraw)),'| draws',med(a.map(x=>x.n)))}
+for(const on of [false,true])for(const lab of ['in','out']){const a=R[on].filter(x=>x.lab===lab);console.log((on?'sliced':'one settle').padEnd(11),('zoom '+lab).padEnd(9),'maxDraw med',med(a.map(x=>x.maxDraw)),'| maxGap med',med(a.map(x=>x.maxGap)),'| sum of draws med',med(a.map(x=>x.sumDraw)))}
 console.log(JSON.stringify(R));await b.close()})();

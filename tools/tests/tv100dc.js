@@ -2,7 +2,7 @@
    (one of them with crowd regulars and the 'rolls' roster, which a challenge must ignore); another date gives another; each twist is applied
    (pauper, bare, wild, nomarket, noheal, cf20, mandata, mods); only the FIRST daily attempt counts (later = practice); weekly 3 attempts, the best
    counts, a 4th is refused; streak; medal tiers; the results window card + 📅 Challenges (no Replay) + BUS challenge.done; the Play Now submenu
-   button + the Play Now page strip; normal Play Now unaffected; the kill switch flavius_daily100off=1; 390 px without sideways scroll; no new 00c errors.
+   button + the Play Now page Challenges tab (v1.01: was a strip); normal Play Now unaffected; the kill switch flavius_daily100off=1; 390 px without sideways scroll; no new 00c errors.
    SHOT=dir writes screenshots (1440 + 390). */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const SHOT=process.env.SHOT||'';
 const open=async(w,h,ls)=>{const pg=await b.newPage({viewport:{width:w,height:h}});await pg.route(/fonts\.g/,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
@@ -112,10 +112,10 @@ await pA.evaluate(()=>{playNowMenu()});ok(await until(pA,()=>[...document.queryS
 if(SHOT)await pA.screenshot({path:SHOT+'/submenu_1440.png'});
 await pA.evaluate(()=>{const b=[...document.querySelectorAll('#mBtns button')].find(x=>/Challenges/.test(x.textContent));b.click()});
 ok(await until(pA,()=>document.querySelectorAll('#mBody .dc100c').length===2),'the submenu button opens the window');await closeAll(pA);
-await pA.evaluate(()=>{openSetup(true)});ok(await until(pA,()=>document.querySelector('#mBody .dc100pn')&&document.querySelector('#mBody .pn100ev')),'the strip on the Play Now page');
-const order=await pA.evaluate(()=>{const a=document.querySelector('#mBody .dc100pn'),e=document.querySelector('#mBody .pn100ev');return !!(a.compareDocumentPosition(e)&Node.DOCUMENT_POSITION_FOLLOWING)});ok(order,'the strip sits above the event panel');
+await pA.evaluate(()=>{openSetup(true)});ok(await until(pA,()=>document.querySelector('#mBody .pn-tabs [data-dc100pn]')&&document.querySelector('#mBody .pn100ev')),'v1.01 G18: the Challenges tab on the Play Now page');
+const order=await pA.evaluate(()=>{const t=[...document.querySelectorAll('#mBody .pn-tabs .seg button')].map(x=>x.textContent);const a=document.querySelector('#mBody .pn-tabs [data-dc100pn]'),e=document.querySelector('#mBody .pn100ev');return !document.querySelector('#mBody .dc100pn')&&t.findIndex(x=>/Tournament/.test(x))<t.findIndex(x=>/Challenges/.test(x))&&!!(a.compareDocumentPosition(e)&Node.DOCUMENT_POSITION_FOLLOWING)});ok(order,'the tab sits beside Tournament, the strip is gone');
 if(SHOT)await pA.screenshot({path:SHOT+'/playnow_1440.png'});
-await pA.click('#mBody [data-dc100pn]');ok(await until(pA,()=>document.querySelectorAll('#mBody .dc100c').length===2),'the strip opens the window');
+await pA.click('#mBody .pn-tabs [data-dc100pn]');ok(await until(pA,()=>document.querySelectorAll('#mBody .dc100c').length===2),'the tab opens the window');
 await closeAll(pA);
 const eA=await newErr(pA);ok(!eA.length,'no new 00c errors '+JSON.stringify(eA));await pA.close();
 

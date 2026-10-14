@@ -58,9 +58,9 @@ const r3=await pg.evaluate(()=>{const w=W_(),m=me();const A=gById(window.__A);co
   A.eq94.o=[{id:'o1',t:'o',k:'elix2'},{id:'o2',t:'o',k:'ap2'}];o.third=!!arm94Fit(A,NP('o','elix4'),'off').no;A.eq94.o=[];
   const helm=A.eq94.a.find(P=>ARM[P.k].slot==='head');const F=arm94Fit(A,NP('a','cassis'),'body');o.helm=!!helm&&F.rep.includes(helm);
   const F2=arm94Fit(A,NP('a','balteus1'),'body');o.layer=!F2.no&&!F2.rep.some(P=>!ARM[P.k].stack);
-  const F3=arm94Fit(A,NP('w','labrys'),'L');o.both=F3.z==='R';o.wpnBody=!arm94Fit(A,NP('w','gladius'),'body').no;o.armHand=!!arm94Fit(A,NP('a','galea'),'R').no;return o});
+  const F3=arm94Fit(A,NP('w','labrys'),'L');o.both=F3.z==='L'&&!F3.no; /* v1.01 G1: a Labrys leaves the other hand free — it goes where it is put */o.wpnBody=!arm94Fit(A,NP('w','gladius'),'body').no;o.armHand=!!arm94Fit(A,NP('a','galea'),'R').no;return o});
 ok(r3.manicaL&&r3.manicaAuto&&r3.handL,'3 a severed arm refuses, auto picks the other side '+JSON.stringify(r3));ok(r3.dmg,'3 a damaged piece must be repaired first');
-ok(r3.third,'3 two offerings at most');ok(r3.helm&&r3.layer,'3 a helm replaces the helm; padding stacks under a regular piece');ok(r3.both&&r3.wpnBody&&r3.armHand,'3 hands and body take the right things');
+ok(r3.third,'3 two offerings at most');ok(r3.helm&&r3.layer,'3 a helm replaces the helm; padding stacks under a regular piece');ok(r3.both&&r3.wpnBody&&r3.armHand,'3 hands and body take the right things (v1.01: the Labrys goes in the hand it is put in)');
 /* ---- 4 · the City Square stalls ---- */
 const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();m.coin=2000;const o={};const li=n=>LOCATIONS.findIndex(L=>L&&L.n===n);
   const sig=(li2,wk)=>{const k=w.week;w.week=wk;const s=arm94Stock(w,li2).map(x=>x.t+x.k).join();w.week=k;return s};

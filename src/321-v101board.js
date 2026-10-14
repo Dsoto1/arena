@@ -36,7 +36,7 @@
    G22 Minerva's Push: the step window shows a small board picture of the 3×3 tiles round the fighter in the board's own projection (turned
        with the camera), the tiles you may step to lit and clickable, blocked tiles marked (pillar / fighter / spikes), the attacker if near.
    Tests: tv101e. */
-const B101={off:(()=>{try{return localStorage.getItem('flavius_board101off')==='1'}catch(e){return false}})()};
+const B101={off:(()=>{try{return localStorage.getItem('flavius_board101off')==='1'}catch(e){return false}})(),skip:new Set() /* tests / profiling: 'flags' | 'base' | 'hands' | 'corpse' */};
 const dc101=()=>{try{return !!(S&&S.daily100)}catch(e){return false}};
 
 /* ---------------- G2 · one coach, Terynious Tutorialis ---------------- */
@@ -74,7 +74,9 @@ try{if(typeof CROWD100_META!=='undefined'&&CROWD100_META.a&&!CROWD100_META._m101
 /* ---------------- G8 / G9 · severed limb: keep the current 3D figure until the new sheet is decoded; 3D corpses stay ---------------- */
 const CORPSE101=[];
 if(typeof an100DrawP==='function'){const base=an100DrawP;an100DrawP=function(sp,x,y,opt){const r=base.apply(this,arguments);if(r!=null||B101.off)return r;
-  try{const p=AN100.cur;if(!p||!an100On()||an100Lost(p).length!==1)return r;const s0=an100St(p);const keep=s0.sevT;
+  try{const p=AN100.cur;if(!p||!an100On()||an100Lost(p).length!==1)return r;
+    const ls=an100SrcFor(p,sp);if(ls&&an100Bm(ls,'move','idle'))return r; /* the severed set is decoded: whatever returned null stays as it was */
+    const s0=an100St(p);const keep=s0.sevT;
     s0.sevT=an100Now()+AN100.poseMs;try{return base.apply(this,arguments)}finally{s0.sevT=keep}}catch(e){return r}}}
 if(typeof BUS!=='undefined'){BUS.on('elim',e=>{try{if(B101.off||!e||e.sim||typeof AN100==='undefined')return;const g=AN100.ghosts[AN100.ghosts.length-1];
     if(g&&g.p&&e.victim&&g.p.id===e.victim.id&&g.S===S){CORPSE101.push({r:g.r,c:g.c,src:g.src,face:g.face,t0:g.t0,S,color:g.color})}}catch(x){}});
@@ -107,31 +109,38 @@ function em101Drain(){EM101.tm=0;const now=performance.now();EM101.win=EM101.win
 const POSE101=new Map();
 {const base=look91;look91=function(sp,back){const o=base.apply(this,arguments);try{if(!B101.off&&sp)POSE101.set(sp.id,{up:o.up||0,st:o.st||0})}catch(e){}return o}}
 if(typeof drawFanFlags==='function'&&!B101.off)drawFanFlags=function(){};
-const FLAG101={n:0,holders:null,key:''};
-function flag101Holders(){const list=[];const seen=CR91&&CR91.seen;if(!seen||!S||!S.spect)return list;const byId=new Map();for(const sp of S.spect)byId.set(sp.id,sp);
+const FLAG101={n:0,hold:null,hk:'',des:{},im:{}};
+/* who holds a flag: up to two fans per section (cached while the stands' makeup is the same: spectators, seats seen, camera turn) */
+function flag101Holders(){const seen=CR91&&CR91.seen;if(!seen||!S||!S.spect)return [];
+  const key=S.spect.length+'|'+seen.length+'|'+(typeof ROT89!=='undefined'?ROT89.k:0)+'|'+(S.players?S.players.length:0)+'|'+(S.turnNo||0);if(key===FLAG101.hk&&FLAG101.hold)return FLAG101.hold;
+  const list=[];const byId=new Map();for(const sp of S.spect)byId.set(sp.id,sp);
   const per={};for(const e of seen){const sp=byId.get(e.id);if(!sp||sp.gone||sp.human||e.human)continue;const p=typeof secPlayer==='function'?secPlayer(e.sec):null;if(!p)continue;
-    const d=per[e.sec]||(per[e.sec]={p,fans:[],any:[]});(sp.fav===p.id?d.fans:d.any).push({sp,e})}
-  for(const si in per){const d=per[si];const pick=d.fans.concat(d.any).slice(0,2);for(const h of pick)list.push({...h,si:+si})}return list}
+    const d=per[e.sec]||(per[e.sec]={p,fans:[],any:[]});(sp.fav===p.id?d.fans:d.any).push({sp,back:e.back})}
+  for(const si in per){const d=per[si];for(const h of d.fans.concat(d.any).slice(0,2))list.push({...h,si:+si})}
+  FLAG101.hk=key;FLAG101.hold=list;return list}
+function flag101Img(si,fw,fh,dpr,now){let c=FLAG101.im[si];const w=Math.ceil(fw*dpr/4)*4,h=Math.ceil(fh*dpr/4)*4;
+  if(c&&c.w===w&&c.h===h&&now-c.t<1200)return c.im;let im=null;try{let d=FLAG101.des[si];if(!d||now-d.t>1500){d=FLAG101.des[si]={d:ar91Design100(si),t:now}}
+    im=d.d&&typeof insignia100!=='undefined'?insignia100.bmp(d.d,'vexillum',32,{},w,h):null}catch(e){}
+  FLAG101.im[si]={w,h,im,t:now};return im}
 function flag101Draw(){if(!S||!S.spect||typeof ctx==='undefined'||!STANDS)return;
-  const M0=cr100Scale('s0');if(!M0)return;const S1=TW*SIZE91*0.765*CR100.size/M0._hs;const drop=CR100.drop*M0.ppm*S1;const mid=center((N-1)/2,(N-1)/2);const D=cr100Sand();const dpr=window.devicePixelRatio||1;let n=0;
-  for(const h of flag101Holders()){const {sp,e,si}=h;const ps=POSE101.get(sp.id)||{up:0,st:0};const dr=DRAWN91.get(sp);if(!dr||dr.hidden||dr.walking)continue;
+  const M0=cr100Scale('s0');if(!M0)return;const S1=TW*SIZE91*0.765*CR100.size/M0._hs;const drop=CR100.drop*M0.ppm*S1;const mid=center((N-1)/2,(N-1)/2);const D=cr100Sand();const dpr=window.devicePixelRatio||1;const now=performance.now();let n=0;
+  for(const h of flag101Holders()){const {sp,si,back}=h;const ps=POSE101.get(sp.id)||{up:0,st:0};const dr=DRAWN91.get(sp);if(!dr||dr.hidden||dr.walking||dr.x!==dr.x)continue;
     const row=(ps.st?'stand':'sit')+(ps.up===2?'cheer':ps.up===1?'fist':'');const W1=cr100Of(sp),M=cr100Meta(W1.k);if(!M||!M.r[row])continue;
-    const fi=e.back?(mid.x<e.x?1:2):(mid.x<e.x?0:3);const cell=M.r[row][fi];if(!cell)continue;const up=M.k[row]==='u';const dy=up?drop:0;
-    const hx=e.x+(cell[6]-cell[4])*S1,hy=e.y+dy+(cell[7]-cell[5])*S1;
+    const fi=back?(mid.x<dr.x?1:2):(mid.x<dr.x?0:3);const cell=M.r[row][fi];if(!cell)continue;const up=M.k[row]==='u';const dy=up?drop:0;
+    const hx=dr.x+(cell[6]-cell[4])*S1,hy=dr.y+dy+(cell[7]-cell[5])*S1;
     const raised=ps.up>=1;const gx=hx+TW*(raised?0.2:0.25),gy=raised?hy-TW*0.02:hy+TW*0.3;const len=TW*(raised?0.6:0.64);
-    const fw=TW*0.34,fh=TW*0.46;let design=null;try{design=ar91Design100(si)}catch(x){}
-    const im=design&&typeof insignia100!=='undefined'?insignia100.bmp(design,'vexillum',32,{},Math.ceil(fw*dpr/4)*4,Math.ceil(fh*dpr/4)*4):null;
-    ctx.save();if(e.back){ctx.beginPath();ctx.rect(-1e5,-1e5,2e5,2e5);ctx.moveTo(D.top[0],D.top[1]);ctx.lineTo(D.left[0],D.left[1]);ctx.lineTo(D.bottom[0],D.bottom[1]);ctx.lineTo(D.right[0],D.right[1]);ctx.closePath();ctx.clip('evenodd')}
+    const fw=TW*0.34,fh=TW*0.46;const im=flag101Img(si,fw,fh,dpr,now);
+    ctx.save();ctx.beginPath();ctx.rect(-1e5,-1e5,2e5,2e5);ctx.moveTo(D.top[0],D.top[1]);ctx.lineTo(D.left[0],D.left[1]);ctx.lineTo(D.bottom[0],D.bottom[1]);ctx.lineTo(D.right[0],D.right[1]);ctx.closePath();ctx.clip('evenodd');
     ctx.strokeStyle='#4a321c';ctx.lineWidth=Math.max(1.2,TW*0.028);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(gx,gy+TW*0.05);ctx.lineTo(gx,gy-len);ctx.stroke();
     ctx.fillStyle='#c9a24e';ctx.beginPath();ctx.arc(gx,gy-len,TW*0.022,0,Math.PI*2);ctx.fill();
     if(im)ctx.drawImage(im,gx,gy-len+TW*0.02,fw,fh);else{ctx.fillStyle=(S.players[sp.fav]||{}).color||'#8f8474';ctx.fillRect(gx,gy-len+TW*0.02,fw,fh*0.7)}
     ctx.restore();n++}
   FLAG101.n=n}
-{const base=draw91;draw91=function(){const r=base.apply(this,arguments);if(!B101.off&&typeof cr100StandsReady==='function'&&cr100StandsReady()){try{flag101Draw()}catch(e){console.error(e)}}return r}}
+{const base=draw91;draw91=function(){const r=base.apply(this,arguments);if(!B101.off&&!B101.skip.has('flags')&&typeof cr100StandsReady==='function'&&cr100StandsReady()){try{flag101Draw()}catch(e){console.error(e)}}return r}}
 
 /* the tall tapestry flags on two poles above each section (192/304 ar91DecoPaint) are the floating flags: gone while the 3D crowd carries the flags in
    its hands; the coloured section line along the stands stays. Without the sheets (the standalone) the old tapestries stay. */
-const hands101=()=>{try{return !B101.off&&typeof cr100StandsReady==='function'&&cr100StandsReady()}catch(e){return false}};
+const hands101=()=>{try{return !B101.off&&!B101.skip.has('hands')&&typeof cr100StandsReady==='function'&&cr100StandsReady()}catch(e){return false}};
 if(typeof ar91DecoPaint==='function'){const bp=ar91DecoPaint;ar91DecoPaint=function(g){if(!hands101())return bp.apply(this,arguments);if(ar91Lud())return;const T4=ar91Tiers()>3;
   for(let si=0;si<8;si++){const col=secColor(si);const TT=T4?3:2;const Q=secQuad(si,1.35+TT*0.47,1.82+TT*0.47).map(([r,c])=>pt(r,c)).map(p=>({x:p.x,y:p.y-TT*TW*0.08}));
     g.save();g.strokeStyle='rgba(20,12,6,.6)';g.lineWidth=Math.max(3,TW*0.085);g.lineCap='butt';g.beginPath();g.moveTo(Q[2].x,Q[2].y);g.lineTo(Q[3].x,Q[3].y);g.stroke();
@@ -161,7 +170,7 @@ if(typeof ar91DecoKey==='function'){const bk=ar91DecoKey;ar91DecoKey=function(){
 /* ---------------- G19 · token bases: 15% thinner, optional ---------------- */
 const BS101={f:null,thin:0.85,cache:new WeakMap(),stats:{proc:0,hit:0,off:0,taint:0},nat:null,
   FAM:{rig:{ct:-3.3,T:3.5,rx:12.75},tts:{ct:-2.4,T:2.2,rx:12.5}}};
-const bs101Mode=()=>{try{if(B101.off||HEADLESS)return 0;return SETTINGS.bases101===false?2:1}catch(e){return 1}};
+const bs101Mode=()=>{try{if(B101.off||HEADLESS||B101.skip.has('base'))return 0;return SETTINGS.bases101===false?2:1}catch(e){return 1}};
 function bs101Proc(img,sx,sy,sw,sh,f,ax,ay,ppm,mode){
   let m=BS101.cache.get(img);if(!m){m=new Map();BS101.cache.set(img,m)}
   const key=mode+'|'+sx+'|'+sy+'|'+sw+'|'+sh+'|'+f.fam+'|'+ax.toFixed(1)+'|'+ay.toFixed(1)+'|'+ppm.toFixed(3);let c=m.get(key);if(c){BS101.stats.hit++;return c}
@@ -258,13 +267,15 @@ document.addEventListener('click',e=>{const t=e.target&&e.target.closest&&e.targ
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const t=e.target&&e.target.closest&&e.target.closest('#mBody [data-m101]');if(!t)return;e.preventDefault();t.dispatchEvent(new MouseEvent('click',{bubbles:true}))},true);
 
 /* ---------------- G20 · zoom in / out: the crisp repaint is spread over frames ---------------- */
-/* MEASURED (tools/plans/v101/zoom101.js, a paused 4-seat Democritus, the Zoom button clicked, 60 frames after each click, LAYERS93 reset before):
-   the lock is NOT the zoom motion (294 draws the last crisp layers scaled while TW changes) but the SETTLE draw Z100.hold ms later: ONE draw
-   repaints stands/under + deco + the 260 tiles chunks + walls/top + walls/light + wear together (on the loaded test box 110 + 52 + 464 + 318 +
-   183 + 13 ms in the same frame; every zoom in/out). 321 splits that settle into one rebuild a frame: Z100.force draws run with a budget
-   (Z101.budget layers); a stale layer over budget is drawn scaled again (294's own path, forced through z100Moving) and the next rAF draw
-   continues — the longest single frame is the biggest single layer, not their sum. Zoom stays available online (his answer 10a). Z101.on=false
-   (or the board kill switch) = 294's one big settle. */
+/* MEASURED (tools/plans/v101/zoom101.js; a paused 4-seat Democritus + 48 spectators over http, the Zoom button clicked, 60 frames timed, LAYERS93 reset
+   before; Z101.on false vs true alternated in ONE page): the zoom MOTION already draws the last crisp layers scaled (294) — about 20 frames of 30–45 ms
+   in headless software raster — and the lock is the SETTLE draw Z100.hold ms later: ONE draw repaints stands/under + deco + the 260 tiles chunks +
+   walls/top + walls/light + wear together. Zoom IN, load ≈ 2: longest draw median 122 ms → 88 ms (tv101e's own A/B 116/102 → 69/68), longest frame gap
+   152 → 131 ms, zoom OUT 49 → 49 ms (no settle burst there); on a box at load 40 the same A/B read 872 → 507 ms. What is left is the single biggest layer: the
+   260 tiles bake (50–190 ms, one paint) — slicing that bake per pass, or pre-baking it while the match is idle, is the next lever (open question).
+   321 splits the settle into one rebuild a frame: Z100.force draws run with a budget (Z101.budget layers); a stale layer over budget is drawn scaled again
+   (294's own path, forced through z100Moving) and the next rAF draw continues. Zoom stays available online (his answer 10a). Z101.on=false (or the board
+   kill switch) = 294's one big settle. */
 const Z101={on:true,budget:1,stale:0,iter:0,raf:0,hold:false,loop:0,stats:{slices:0,loops:0}};
 if(typeof Z100!=='undefined'&&typeof ar91Layer==='function'&&typeof z100Moving==='function'&&typeof z100Settle==='function'){
   {const b=z100Moving;z100Moving=function(){if(Z101.hold)return true;return b.apply(this,arguments)}}
@@ -292,6 +303,7 @@ if(typeof Z100!=='undefined'&&typeof ar91Layer==='function'&&typeof z100Moving==
 .mclose.menu101{width:auto;min-width:40px;font-size:20px;line-height:1}
 .dc100 .sd,.dc100c .sd{display:none}
 .pn-tabs .seg button.tab101{margin-left:6px}
+@media (max-width:760px){.pn-tabs,.pn98 .pn-tabs{max-width:100%}.pn-tabs .seg{display:flex;flex-wrap:wrap;gap:4px}.pn-tabs .seg button{flex:1 1 auto;margin:0}}
 .pn100follow .calline.cal101{flex:none;display:flex;align-items:center;gap:7px;border:1px solid var(--line2);border-radius:6px;padding:4px 9px;background:var(--panel2,#1a130e);font-size:13.5px;white-space:nowrap}
 .m101{margin:10px 0 2px;text-align:center}.m101 svg{display:block;margin:0 auto;overflow:visible}
 .m101 .m101t.go{cursor:pointer}.m101 .m101t.go polygon{filter:drop-shadow(0 0 4px rgba(255,215,122,.55))}.m101 .m101t.go:hover polygon,.m101 .m101t.go:focus-visible polygon{fill:#8a6a1e}
