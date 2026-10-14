@@ -1,0 +1,8 @@
+{
+ "Beasts are the savings account: gladiators with 2+ beast trophies won {0}% and reached the Ludus {1}% of the time — with none, {2}% and {3}%.": "猛獣は貯金:猛獣のトロフィーが2つ以上の剣闘士は{0}%勝ち、{1}%が Ludus に到達 — なしなら{2}%と{3}%。",
+ "Spend your coin: 2+ market buys won {0}% of events; never buying, {1}%.": "コインを使おう:市場で2回以上買うと勝率{0}%、一度も買わないと{1}%。",
+ "Break pots: 2+ pots broken meant {0}% wins and {1}% Ludus, against {2}% and {3}% for the pot-shy.": "壺を壊そう:2つ以上壊すと勝率{0}%、Ludus {1}%。壺を避ける者は{2}%と{3}%。",
+ "Draw cards: 2+ arena cards won {0}% against {1}% for coin-only turns.": "カードを引こう:アリーナカード2枚以上で勝率{0}%、コインだけのターンは{1}%。",
+ "Ratings: a Charisma perk ({0} a turn) won {1}% against {2}% without, with {3} on average; a Luck perk ({4} a turn) won {5}% against {6}%. A lone +1 movement or +1 damage changes little by itself: spend it early, in the rounds that allow it.": "能力値:魅力の特典(ターンごと{0})は勝率{1}%(なしは{2}%)、平均{3};運の特典(ターンごと{4})は勝率{5}%(なしは{6}%)。移動+1やダメージ+1だけではあまり変わりません:許されるラウンドで早めに使いましょう。",
+ "Events last {0} turns on average: Democritus {1}, Egidious {2}, Cassian {3}. Beasts slain per event: {4}.": "大会は平均{0}ターン:Democritus {1}、Egidious {2}、Cassian {3}。1大会あたりの猛獣撃破数:{4}。"
+}

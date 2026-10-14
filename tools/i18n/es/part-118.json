@@ -1,0 +1,8 @@
+{
+ "Beasts are the savings account: gladiators with 2+ beast trophies won {0}% and reached the Ludus {1}% of the time — with none, {2}% and {3}%.": "Las bestias son la cuenta de ahorros: los gladiadores con 2+ trofeos de bestia ganaron el {0}% y llegaron al Ludus el {1}% de las veces — sin ninguno, {2}% y {3}%.",
+ "Spend your coin: 2+ market buys won {0}% of events; never buying, {1}%.": "Gasta tus monedas: con 2+ compras en el mercado se ganó el {0}% de los eventos; sin comprar nunca, el {1}%.",
+ "Break pots: 2+ pots broken meant {0}% wins and {1}% Ludus, against {2}% and {3}% for the pot-shy.": "Rompe vasijas: 2+ vasijas rotas dieron {0}% de victorias y {1}% de Ludus, frente a {2}% y {3}% de los que las evitan.",
+ "Draw cards: 2+ arena cards won {0}% against {1}% for coin-only turns.": "Roba cartas: con 2+ cartas de la arena se ganó el {0}% frente al {1}% con turnos solo de monedas.",
+ "Ratings: a Charisma perk ({0} a turn) won {1}% against {2}% without, with {3} on average; a Luck perk ({4} a turn) won {5}% against {6}%. A lone +1 movement or +1 damage changes little by itself: spend it early, in the rounds that allow it.": "Atributos: una ventaja de Carisma ({0} por turno) ganó el {1}% frente al {2}% sin ella, con {3} de media; una de Suerte ({4} por turno) ganó el {5}% frente al {6}%. Un +1 de movimiento o +1 de daño solo cambia poco: úsalo pronto, en las rondas que lo permiten.",
+ "Events last {0} turns on average: Democritus {1}, Egidious {2}, Cassian {3}. Beasts slain per event: {4}.": "Los eventos duran {0} turnos de media: Democritus {1}, Egidious {2}, Cassian {3}. Bestias abatidas por evento: {4}."
+}

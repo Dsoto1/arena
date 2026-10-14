@@ -1,0 +1,8 @@
+{
+ "Beasts are the savings account: gladiators with 2+ beast trophies won {0}% and reached the Ludus {1}% of the time — with none, {2}% and {3}%.": "野兽是储蓄账户：拥有2个以上野兽战利品的角斗士胜率{0}%，{1}%的时候进入Ludus——一个都没有的则是{2}%和{3}%。",
+ "Spend your coin: 2+ market buys won {0}% of events; never buying, {1}%.": "花掉你的金币：在市场购买2次以上的赢下了{0}%的赛事；从不购买的只有{1}%。",
+ "Break pots: 2+ pots broken meant {0}% wins and {1}% Ludus, against {2}% and {3}% for the pot-shy.": "打破罐子：打破2个以上罐子意味着{0}%的胜率和{1}%进入Ludus，不爱打罐子的只有{2}%和{3}%。",
+ "Draw cards: 2+ arena cards won {0}% against {1}% for coin-only turns.": "抽卡：抽2张以上竞技场卡牌胜率{0}%，只拿金币的回合则为{1}%。",
+ "Ratings: a Charisma perk ({0} a turn) won {1}% against {2}% without, with {3} on average; a Luck perk ({4} a turn) won {5}% against {6}%. A lone +1 movement or +1 damage changes little by itself: spend it early, in the rounds that allow it.": "属性：有魅力天赋（每回合{0}）的胜率{1}%，没有的{2}%，平均{3}；有运气天赋（每回合{4}）的胜率{5}%，没有的{6}%。单独的+1移动或+1伤害本身影响不大：在允许使用的回合中尽早用掉。",
+ "Events last {0} turns on average: Democritus {1}, Egidious {2}, Cassian {3}. Beasts slain per event: {4}.": "赛事平均持续{0}回合：Democritus {1}，Egidious {2}，Cassian {3}。每场赛事被杀的野兽：{4}头。"
+}
