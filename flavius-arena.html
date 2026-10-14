@@ -2627,6 +2627,7 @@ const WEAKNESSES = {
 /* weak — true if the player's class has weakness k (a custom character's own weak field, else CLASS_WEAK). */
 const weak = (player, k) => {
   if (!player) return false;
+  if (player.wk102 != null) return player.wk102 === k; /* v1.02 (338): an ability pair carries its own class's weakness */
   const C = CLASSES[player.cls];
   return (C && C.weak || CLASS_WEAK[player.cls] || 'none') === k;
 };
@@ -7287,7 +7288,7 @@ async function startEvent(config) {
     }
   }
   if (ev.draft) await runDraft();
-  else if (typeof dr102On === 'function' && dr102On()) await draft102Run(); /* v1.02 (338): the Play Now Draft switch */
+  else if (typeof dr102On === 'function' && (dr102On() || dr102Pair())) await draft102Run(); /* v1.02 (338): the Play Now Draft switch */
   if (ev.kind === 'chariot') await chariotDraft();
   if (G !== S || S.over) return; // v0.89: an event called off during its draft stops here
   if (config.opts.carmina || S.fest && S.fest.stage === 1) await runCarmina();
@@ -71518,7 +71519,21 @@ document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.targ
      back. Seeded RNG only where runDraft already uses it → the same seed gives the same draft. HEADLESS sims draft too (CPU picks).
    • NOT ONLINE (S.onl), not in daily challenges (S.daily100), not Chariot Racing. Manager bouts never set the option.
    • EVENT DETAILS: Play Now's rounds table (pn100Rounds wrapper) and the briefing's rule cards (bf100Rules wrapper) say "Drafts its gear".
-   Kill switch localStorage flavius_v102goff=1 (no option, no wrappers, draft102Run is a no-op).
+   • ABILITIES (his follow-up): Options select #oAbil102 → CFG.opts.abil102 = 'own' (default) · 'random' · 'draft', independent of the gear
+     switch. A PAIR = one printed class's ability with the weakness that class has; an ability whose class has no weakness comes ALONE
+     ("no weakness" — nothing invented or borrowed). Pool (pair102Pool, from CLASSES + CLASS_WEAK): Soldier Iron Fist · Royalty Patron's
+     Purse · Hero Crowd Darling · Slave Fleet-footed (alone) · Veteranus Lanista + Old debts · Venatore Eagle Handler (Zora — works on any
+     class) + Claustrophobic · Damnatio Stone Gatherer + Hated by the crowd. The Amazonia has no ability (her edge is gear) → not in the
+     pool; the tamed-ally ability (custom classes' C.ally) is custom-only → not in the pool. The printed ability is RESTORED as printed (+1
+     dmg in round 1 via a statDmgB wrapper, +1 coin / CF / move / Lanista via 05-flow's upkeep) on top of the seat's ratings.
+     Random pair = one deck of the 7 pairs shuffled from the event seed (own mulberry32 — never the dice RNG, never Math.random), dealt to
+     the seats in order. Draft a pair = AFTER the gear picks (so a slinger can take Stone Gatherer): each seat is offered 3 pairs dealt from
+     the same seeded deck and picks one (ask kind 'pairPick102'; CPUs by ABILITIES points − WEAKNESSES points, +3/−3 for Stone Gatherer
+     with/without a sling). The weakness is per player: p.wk102 (02-data weak() reads it first), p.abil / p.pair102 — all in S (saves,
+     snapshots, replays). Off where the event switches abilities off (Chariot Racing, Orpheus, events that draft by the rulebook).
+   • NEVER: online, daily challenges, Manager / exhibitions / pen, missios, the lessons, the first-hour match — a startEvent wrapper strips
+     both options from those configs (they spread CFG.opts).
+   Kill switch localStorage flavius_v102goff=1 (no options, no wrappers, draft102Run is a no-op).
    ===================================================================== */
 const DR102={off:(()=>{try{return localStorage.getItem('flavius_v102goff')==='1'}catch(e){return false}})(),
   picks:5 /* TWEAK: picks per gladiator when the switch drafts an event (Ludus drafts 5) */};
@@ -71528,9 +71543,43 @@ function dr102NA(ev){return !!ev&&ev.kind==='chariot'}
 /* dr102On — this live event drafts because of the switch */
 function dr102On(st){const s=st||(typeof S!=='undefined'?S:null);if(DR102.off||!s||!s.opts||!s.opts.draft102)return false;
   if(s.onl||s.daily100)return false;const ev=EVENTS[s.evKey];return !!ev&&!dr102Native(ev)&&!dr102NA(ev)}
+/* ---------- ability pairs ---------- */
+/* dr102AbilNA — why the abilities option cannot apply to this event ('' = it can) */
+function dr102AbilNA(ev){if(!ev)return '';if(ev.kind==='chariot'||ev.kind==='orpheus'||dr102Native(ev))return _T('No class abilities in this event');return ''}
+/* dr102Pair — the abilities mode of this live event: 'random' | 'draft' | '' */
+function dr102Pair(st){const s=st||(typeof S!=='undefined'?S:null);if(DR102.off||!s||!s.opts)return '';const m=s.opts.abil102;if(m!=='random'&&m!=='draft')return '';
+  if(s.onl||s.daily100)return '';return dr102AbilNA(EVENTS[s.evKey])?'':m}
+/* pair102Pool — the printed classes' abilities, each with its own class's weakness when it has one (none → the ability comes alone) */
+function pair102Pool(){return BASE_CLS.filter(k=>CLASSES[k]&&!CLASSES[k].custom&&CLASSES[k].abil&&ABILITIES[CLASSES[k].abil])
+  .map(k=>({k,abil:CLASSES[k].abil,weak:CLASS_WEAK[k]||'none'}))}
+const pair102Ab=x=>ABILITIES[x.abil]?ABILITIES[x.abil][0]:x.abil;
+const pair102Wk=x=>x.weak!=='none'&&WEAKNESSES[x.weak]?WEAKNESSES[x.weak][0]:_T('no weakness');
+/* pair102Deck — the 7 pairs shuffled from the event seed (own generator: the dice stream is untouched) */
+function pair102Deck(){const pool=pair102Pool();const g=mulberry32(hashStr('abil102|'+(S.seed>>>0))>>>0);
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(g.next()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}return pool}
+/* pair102Give — the seat takes the pair (ability as printed, its own weakness or none) */
+function pair102Give(p,x){p.abil=x.abil;p.abilVal=1;p.wk102=x.weak;p.pair102=x.k;p.zoraUsed=0;
+  if(!S.sim)log(_T`${nm(p)} takes the ${CLASSES[x.k].name} pair: <b>${pair102Ab(x)}</b> (${ABILITIES[x.abil]?ABILITIES[x.abil][1]:''}) · ${x.weak!=='none'?_T`weakness <b>${pair102Wk(x)}</b>`:_T('no weakness')}.`)}
+/* pair102Cpu — a CPU's choice: ability points − weakness points, the stones only with a sling */
+function pair102Cpu(p,offer){const sling=['R','L'].some(a=>p['w'+a]&&p['w'+a].stones);
+  const sc=x=>(ABILITIES[x.abil]?ABILITIES[x.abil][2]:0)-(WEAKNESSES[x.weak]?WEAKNESSES[x.weak][2]:0)+(x.abil==='stone'?(sling?3:-3):0);
+  let best=offer[0];for(const x of offer)if(sc(x)>sc(best))best=x;return best}
+/* pair102Run — Random pair (dealt) or Draft a pair (3 offered each) */
+async function pair102Run(){const m=dr102Pair();if(!m)return;const S0=S;const deck=pair102Deck();const n=deck.length;
+  if(m==='random'){if(!S.sim)log(_T('Ability pairs are dealt at random.'),'hd');S.players.forEach((p,i)=>pair102Give(p,deck[i%n]));return}
+  if(!S.sim)log(_T('Ability draft: each gladiator chooses one of three ability pairs.'),'hd');
+  for(let i=0;i<S.players.length;i++){if(S!==S0||S.over)return;const p=S.players[i];
+    const offer=[0,1,2].map(j=>deck[(i*3+j)%n]);let x;
+    if(p.cpu)x=pair102Cpu(p,offer);
+    else{const v=await askW(p,'pairPick102',_T`Ability draft · ${p.name}`,`<p>${_T`Choose one ability pair. A class's weakness always comes with its ability; some abilities come alone.`}</p>`,
+        offer.map(o=>({label:pair102Ab(o),sub:_T`${CLASSES[o.k].name} · ${o.weak!=='none'?_T`weakness: ${pair102Wk(o)}`:_T('no weakness')}`,value:o.k})));
+      x=offer.find(o=>o.k===v)||offer[0]}
+    if(S!==S0)return;pair102Give(p,x);render()}}
 /* draft102Run — the switch's draft: runDraft with a copy of the event that carries a draft spec */
 async function draft102Run(){
-  if(!dr102On())return;
+  if(dr102On())await draft102Gear();
+  if(dr102Pair())await pair102Run()}
+async function draft102Gear(){
   const k=S.evKey;const d=Object.getOwnPropertyDescriptor(EVENTS,k);if(!d)return;
   const ev=EVENTS[k];const tmp=Object.assign(Object.create(Object.getPrototypeOf(ev)),ev,{draft:{all:DR102.picks},draft102:1});
   let pr;
@@ -71551,18 +71600,37 @@ if(!DR102.off){
       const why=nat?_T('Drafts its gear'):na?_T('Chariot Racing drafts its chariot'):'';
       const tip=_T('Every gladiator starts with only what they draft (snake draft, levels 1-3) — no class weapons or armor. Coin, keys, CF and items stay.');
       const box=`<label class="dr102o" title="${esc(why||tip)}" ${why?'style="opacity:.6"':''}><input type="checkbox" id="oDraft102" ${on?'checked':''} ${why?'disabled':''}> ${_T`Draft the gear`}${why?` <span style="font-size:12px;color:var(--dim)">(${esc(why)})</span>`:''}</label>`;
-      const at=h.indexOf('<label title=');return at>0?h.slice(0,at)+box+h.slice(at):h.replace('<div class="opts">','<div class="opts">'+box)}catch(e){console.error(e);return h}}}
-  document.addEventListener('change',e=>{const t=e.target;if(!t||t.id!=='oDraft102'||typeof CFG==='undefined')return;CFG.opts.draft102=!!t.checked;
-    try{if(typeof pn100Rounds==='function'){const r=document.querySelector('.pn100det .dr102chip');const ev=EVENTS[CFG.ev];if(r)r.hidden=!(dr102Native(ev)||t.checked&&!dr102NA(ev))}}catch(x){}},true);
+      const aw=dr102AbilNA(evDef);const am=aw?'own':(CFG.opts.abil102||'own');
+      const sel=`<label class="ab102o" title="${esc(aw||_T("A pair = a printed class's ability with its own weakness (some abilities have none)."))}" ${aw?'style="opacity:.6"':''}>${_T`Abilities`} <select id="oAbil102" ${aw?'disabled':''}>${[['own',_T("Class's own")],['random',_T('Random pair')],['draft',_T('Draft a pair')]].map(([v,l])=>`<option value="${v}" ${am===v?'selected':''}>${l}</option>`).join('')}</select>${aw?` <span style="font-size:12px;color:var(--dim)">(${esc(aw)})</span>`:''}</label>`;
+      const at=h.indexOf('<label title=');return at>0?h.slice(0,at)+box+sel+h.slice(at):h.replace('<div class="opts">','<div class="opts">'+box+sel)}catch(e){console.error(e);return h}}}
+  document.addEventListener('change',e=>{const t=e.target;if(!t||typeof CFG==='undefined')return;
+    if(t.id==='oDraft102')CFG.opts.draft102=!!t.checked;else if(t.id==='oAbil102')CFG.opts.abil102=t.value;else return;
+    try{const det=document.querySelector('.pn100det');const ev=EVENTS[CFG.ev];if(det&&ev){const old=det.querySelector('.dr102chips');if(old)old.outerHTML=dr102Chips(ev)}}catch(x){}},true);
+  /* the configs that must never carry the options (they spread CFG.opts) */
+  {const base=startEvent;startEvent=function(cfg){try{if(cfg&&cfg.opts&&(cfg.opts.draft102||cfg.opts.abil102)&&(cfg.tutorial||cfg.missio||cfg.mgrCtx||cfg.specCtx||cfg.exhibCtx||cfg.pen76||cfg.bestias85||cfg.daily100||cfg.onl||DR102.block))
+      cfg.opts={...cfg.opts,draft102:false,abil102:'own'}}catch(e){}return base.apply(this,arguments)}}
+  if(typeof fh100Match==='function'){const base=fh100Match;fh100Match=function(){DR102.block=1;try{return base.apply(this,arguments)}finally{DR102.block=0}}}
+  /* the fighter panel's class line names the pair he fights with */
+  {const base=boardHTML;boardHTML=function(p){const h=base.apply(this,arguments);try{if(p&&p.pair102&&typeof h==='string'){const C=CLASSES[p.cls];const x={k:p.pair102,abil:p.abil,weak:p.wk102||'none'};
+      const t=_T`Ability pair (${CLASSES[x.k].name}): ${pair102Ab(x)} · ${pair102Wk(x)}.`;if(C&&C.ab&&h.includes(C.ab))return h.replace(C.ab,esc(t))}}catch(e){}return h}}
+  /* a restored printed Iron Fist: +1 damage on every hit in round 1 */
+  {const base=statDmgB;statDmgB=function(p){const r=base.apply(this,arguments);try{if(p&&p.pair102&&p.abil==='dmg'&&S&&S.ri===0&&caAllowed())return r+1}catch(e){}return r}}
   /* Play Now's event details */
   if(typeof pn100Rounds==='function'){const base=pn100Rounds;pn100Rounds=function(ev){const h=base.apply(this,arguments);
-    try{if(!ev||dr102NA(ev))return h;const on=dr102Native(ev)||typeof CFG!=='undefined'&&CFG.ev&&EVENTS[CFG.ev]===ev&&!!(CFG.opts&&CFG.opts.draft102);
-      return `<div class="dr102chip" ${on?'':'hidden'} title="${esc(_T('Snake draft before the horns: every gladiator takes their weapons and armor from the market, levels 1-3.'))}">${_T`🛡 Drafts its gear`}</div>`+h}catch(e){return h}}}
+    try{if(!ev)return h;
+      return dr102Chips(ev)+h}catch(e){return h}}}
   /* the briefing's rule cards */
   if(typeof bf100Rules==='function'){const base=bf100Rules;bf100Rules=function(ev){const R=base.apply(this,arguments);
-    try{if(ev&&(dr102Native(ev)||dr102On())&&!R.some(x=>x[0]==='🛡')){R.splice(1,0,['🛡',_T('Drafts its gear'),dr102On()?_T('No class weapons or armor: every gladiator starts with what they drafted.'):_T('Every gladiator drafts their weapons and armor before the horns.'),'ev']);return R.slice(0,6)}}catch(e){}
+    try{const m=dr102Pair();if(m&&!R.some(x=>x[0]==='🎭'))R.splice(1,0,['🎭',m==='random'?_T('Random ability pairs'):_T('Drafted ability pairs'),_T("Each gladiator fights with a printed class's ability and that class's own weakness — or none, when the class has no weakness."),'ev']);
+      if(ev&&(dr102Native(ev)||dr102On())&&!R.some(x=>x[0]==='🛡'))R.splice(1,0,['🛡',_T('Drafts its gear'),dr102On()?_T('No class weapons or armor: every gladiator starts with what they drafted.'):_T('Every gladiator drafts their weapons and armor before the horns.'),'ev']);
+      return R.slice(0,6)}catch(e){}
     return R}}
-  (()=>{const st=document.createElement('style');st.textContent=`.dr102chip{display:inline-block;margin:0 0 6px;padding:2px 10px;border-radius:999px;border:1px solid #7a5a24;background:linear-gradient(135deg,#33261a,#251b13);color:var(--gold2,#e8c56a);font-size:13px}
+  /* dr102Chips — the event-details chips (gear draft · ability pairs) for the Play Now config */
+  function dr102Chips(ev){const c=typeof CFG!=='undefined'?CFG:{opts:{}};const mine=EVENTS[c.ev]===ev;
+    const gear=!dr102NA(ev)&&(dr102Native(ev)||mine&&!!(c.opts&&c.opts.draft102));
+    const am=mine&&!dr102AbilNA(ev)&&c.opts?c.opts.abil102:'';
+    return `<div class="dr102chips"><span class="dr102chip" ${gear?'':'hidden'} title="${esc(_T('Snake draft before the horns: every gladiator takes their weapons and armor from the market, levels 1-3.'))}">${_T`🛡 Drafts its gear`}</span><span class="dr102chip ab" ${am==='random'||am==='draft'?'':'hidden'}>${am==='draft'?_T('🎭 Drafted ability pairs'):_T('🎭 Random ability pairs')}</span></div>`}
+  (()=>{const st=document.createElement('style');st.textContent=`.dr102chips{display:flex;flex-wrap:wrap;gap:6px}.dr102chip{display:inline-block;margin:0 0 6px;padding:2px 10px;border-radius:999px;border:1px solid #7a5a24;background:linear-gradient(135deg,#33261a,#251b13);color:var(--gold2,#e8c56a);font-size:13px}
 .dr102chip[hidden]{display:none}`;document.head.appendChild(st)})();
 }
 /* =====================================================================
