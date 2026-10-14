@@ -128,3 +128,11 @@ was healed and out of bed the same week.
 - 2: rival houses use the same rules (318 care101Cpu); check with tools/mgrsim.js (injury load, wins, treasury vs before) and report.
 - UI says it plainly: on each care tile "closes when the week ends" / "this week: rest only — treatment from next week"; the road-back
   timeline shows the weeks. Lesson/first-hour text adjusted if they promise instant cures.
+
+## K · Acta Diurna restyle (his picks 2026-10-14: 1b 2a 3a 4a) — MOCK-UP FIRST (tools/plans/mock102/acta.html), then 342-v102acta.js
+- 1b ONE page, reorganized (no page tabs): masthead → lead story → three columns (Your house · The arena + In memoriam · The empire) →
+  the fun section (Darwinius, Rabble-rousers, Overheard, In brief) → a small Classifieds corner (top 3 swords for hire → Scout, standings top 2
+  + your place → League, Sand's finest top 5) → Next week ribbon + ▶ Start next week. Fits as close to one screen as it can at 1440×900.
+- 2a lead story = YOUR house's biggest moment when anything happened to it (win, death, upset, big signing), else the biggest league/empire story.
+- 3a browse the last 12 editions (◀ ▶) — keep past papers (small, trimmed) in the world.
+- 4a papyrus with ink rules, drop caps, Roman serif headlines, sepia-engraved portraits; no emoji in headlines; stats strip only the non-zero numbers.
