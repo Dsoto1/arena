@@ -29,7 +29,7 @@ out.on=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const
   r.imgNew=imgs1.filter(i=>!i.__m101&&srcs0.has(i.getAttribute('src'))).length;r.imgs=imgs1.length;
   /* 2 · plain redraw: nothing re-created */
   const all0=qa('#mgrBody *');all0.forEach(n=>n.__m101b=1);const a0=MM101.n.added;MGR_REDRAW();await W8(300);
-  r.addedPlain=MM101.n.added-a0;r.newNodes=qa('#mgrBody *').filter(n=>!n.__m101b).length;
+  r.addedPlain=MM101.n.added-a0;{const own=(typeof MM101_OWN!=='undefined'?MM101_OWN:[]).map(c=>'.'+c).join(',');const nn=qa('#mgrBody *').filter(n=>!n.__m101b&&!(own&&n.closest(own)));r.newNodes=nn.length;r.newWhat=nn.slice(0,4).map(n=>n.tagName+'.'+String(n.className).slice(0,40)+'<'+String(n.parentNode&&n.parentNode.className).slice(0,40));}
   /* 3 · tabs and back: the rail stays */
   await tab('recruit');await tab('practice');r.railAfterTabs=!!(q('#mgrBody .rail')||q('#mgrBody .railwrap')||{}).__m101;
   /* 4 · Your ludus: a letter opened stays open; an inner scroller keeps its place */

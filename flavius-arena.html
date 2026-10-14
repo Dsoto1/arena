@@ -70210,7 +70210,7 @@ const MM101={on:(()=>{try{return localStorage.getItem('flavius_mgrmorph101off')!
 /* TWEAK: attributes that name WHO a node is — differing values are never patched into each other */
 const MM101_KEYS=['id','data-id','data-gid','data-gid84','data-yo87row','data-y99sel','data-mail','data-dk99','data-mg','data-tab','data-card','data-bid','data-key','data-lu100adv','data-c83'];
 /* TWEAK: classes of nodes that sweeps insert into kept nodes (never in a template): left in place */
-const MM101_OWN=['c73','c85n','hr99','imm88lf','fear88'];
+const MM101_OWN=['c73','c85n','hr99','imm88lf','fear88','hrchip'];
 const MM101_FIG=/s3h[0-9a-z]+/g;
 function mm101Own(n){if(!n||n.nodeType!==1||!n.classList)return false;if(n._mm101g)return true;for(const c of MM101_OWN)if(n.classList.contains(c))return true;return false}
 function mm101Same(a,b){if(a.nodeType!==b.nodeType)return false;if(a.nodeType!==1)return true;if(a.tagName!==b.tagName)return false;

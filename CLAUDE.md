@@ -1643,7 +1643,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   identity keys `MM101_KEYS` (id, data-id, data-gid, data-mg, data-mail, data-dk99 …; one-step look-ahead for rows), each node remembers its TEMPLATE
   attributes (`_p95`, like 230's morph95) so live decorations stay (rail sweep classes, 220 contrast/aria, 138 data-en84, 306 sandstone tags) and a
   <details> the player opened stays open (the template opening/closing one on purpose still wins); sweep-owned children `MM101_OWN` (.c73 .c85n .hr99
-  .imm88lf .fear88) are left in place; focused inputs, canvases and inner scrollers are kept; the modal's first paint is recorded in a wireManager
+  .imm88lf .fear88 .hrchip) are left in place; focused inputs, canvases and inner scrollers are kept; the modal's first paint is recorded in a wireManager
   wrapper. EVENT IN FLIGHT: a node holding `window.event`'s target is not removed mid-event — it stays as a hidden inert GHOST (its replacement
   before it, removed next task), so later handlers' `e.target.closest('#lu100pop')` still work as with innerHTML's detached tree; ONE ACTIVATION
   PER KEY: within one Enter/Space key event a second script click on the same Manager node is swallowed (220 + 294/298 both clicked role=button
