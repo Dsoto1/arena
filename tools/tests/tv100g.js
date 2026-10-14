@@ -115,8 +115,8 @@ await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(
 await until(()=>typeof S!=='undefined'&&S&&S.players&&S.players[0]&&S.players[0].cls==='cc_g100',30000);await pg.waitForTimeout(2500);
 const D=await pg.evaluate(async()=>{for(let i=0;i<12&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,300))}
   const p=S.players[0];const t=tokenForP(p);for(let i=0;i<30&&!(t.t93&&t93Img(t.t93));i++)await new Promise(r=>setTimeout(r,100));
-  const W=[];const di=ctx.drawImage;ctx.drawImage=function(){if(arguments.length===9)W.push(arguments[7]);return di.apply(this,arguments)};
-  try{W.length=0;drawFigureTok(t,300,300,TW*1.3);const a=W.slice(-1)[0];W.length=0;drawFigureTok(t,300,300,TW*1.0);const c=W.slice(-1)[0];return {t93:!!t.t93,a,c,TW,want:t.t93.meta[0]*TW*MINI_BASE/25.4/MINI_PXMM}}finally{ctx.drawImage=di}});
+  /* v1.01 G19 re-patches ctx.drawImage on use and calls BS101.nat: hook the native one it forwards to */const W=[];const hk=o=>function(){if(arguments.length===9)W.push(arguments[7]);return o.apply(this,arguments)};const G19=typeof bs101Patch==='function'&&typeof BS101!=='undefined';if(G19)bs101Patch();const di=G19?BS101.nat:ctx.drawImage;if(G19)BS101.nat=hk(di);else ctx.drawImage=hk(di);
+  try{W.length=0;drawFigureTok(t,300,300,TW*1.3);const a=W.slice(-1)[0];W.length=0;drawFigureTok(t,300,300,TW*1.0);const c=W.slice(-1)[0];return {t93:!!t.t93,a,c,TW,want:t.t93.meta[0]*TW*MINI_BASE/25.4/MINI_PXMM}}finally{if(G19)BS101.nat=di;else ctx.drawImage=di}});
 ok(D.t93&&D.a&&Math.abs(D.a-D.c)<0.01&&Math.abs(D.a-D.want)<0.5,'board size rule TW·MINI_BASE/(25.4·MINI_PXMM) '+JSON.stringify(D));
 if(SHOT)await pg.screenshot({path:SHOT+'/tv100g_board.png'});
 console.log('MISS',JSON.stringify(miss));if(miss.length)process.exitCode=1;console.log('ERRS',JSON.stringify(errs.slice(0,6)));await b.close()})();

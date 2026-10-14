@@ -48,7 +48,7 @@ const dm=await A.evaluate(()=>{const o=document.getElementById('onl');/* v0.89: 
   rec:o.querySelector('.db89-rec')?.textContent||'',lock:!o.querySelector('#dom82Ren'),bar:o.querySelectorAll('.rb82-band').length,toks:o.querySelectorAll('.rb82-tok').length,counts:[...o.querySelectorAll('.rb82-n')].map(x=>x.textContent),
   bandTop:o.querySelector('.rb82-band b')?.textContent||'',pat:!!o.querySelector('.pat82 svg'),aulus:ONLC.rankFor(ONL.chars.find(c=>c.name==='Aulus')).k,brutus:ONLC.rankFor(ONL.chars.find(c=>c.name==='Brutus')).k,
   barRight:(()=>{const a=o.querySelector('.rb82').getBoundingClientRect(),m=o.querySelector('.dom82-main').getBoundingClientRect();return a.left>m.left})()}});
-ok(/🏛 Domus/.test(dm.rail)&&dm.slots===4&&dm.empty===0,'Domus tab: 4 gladiator slots');ok(/Fame/.test(dm.rec)&&/Lifetime CF/.test(dm.rec)&&dm.lock,'house record + locked name');
+ok(/🏛 Domus/.test(dm.rail)&&dm.slots===4&&dm.empty===0,'Domus tab: 4 gladiator slots');ok(/Fame/.test(dm.rec)&&/Ranked/.test(dm.rec)&&/Unranked/.test(dm.rec)&&/\d+ CF/.test(dm.rec)&&dm.lock,'house record + locked name');
 ok(dm.bar===8&&/Invictus/.test(dm.bandTop)&&dm.toks===4&&dm.barRight,'rank bar on the right, the top rank at the top, four tokens (v0.83: 8 ranks)');ok(dm.counts.length===8&&dm.counts.some(t=>/[1-9]\d* living/.test(t)),'living counts by rank');
 ok(dm.aulus==='gregarius'&&dm.brutus==='veteranus','Glory ranks, never demoted');ok(dm.pat,'patron look');
 /* the draft is read the moment the edit stores it (the save clears it 600 ms later — under load the test could read after that) */

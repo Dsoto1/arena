@@ -19,7 +19,7 @@ out.mgr=await pg.evaluate(async()=>{newWorld({type:'pre',key:MGR_PRE[0].key});co
   return {ss,ok,sp,billed,spHtml,blocked,champ,tro:w.trophies.length,caseN:w.case.filter(Boolean).length,awards:w.awardShow.awards.map(a=>a.name+':'+(a.gname||a.mname)).slice(0,14),room:trophyRoomHTML().length,show:awardShowHTML().length}});
 // screenshots through the real UI
 await pg.evaluate(()=>{MGR.tab='awards';MGR.awI=99;openManager()});await pg.waitForTimeout(700);await pg.screenshot({path:'shot_awards.png'});
-await pg.evaluate(()=>{MGR.tab='trophy';$('#mgrBody').innerHTML=mgrHTML()});await pg.waitForTimeout(300);await pg.screenshot({path:'shot_troom.png'});
+await pg.evaluate(()=>{MGR.tab='trophy';if(typeof WD101!=='undefined')WD101.sub='case';$('#mgrBody').innerHTML=mgrHTML()});await pg.waitForTimeout(300);await pg.screenshot({path:'shot_troom.png'});
 await pg.click('.tslot[data-id="5"]');await pg.waitForTimeout(300);await pg.screenshot({path:'shot_troom2.png'});
 out.swap=await pg.evaluate(()=>{const b=document.querySelector('[data-mg="tput"]');if(b)b.click();return !!b});await pg.waitForTimeout(300);
 out.caseAfter=await pg.evaluate(()=>W_().case.filter(Boolean).length);

@@ -48,7 +48,7 @@ function adv101Strip(h){return String(h).replace(/<i class="star85[^"]*"[^>]*>[\
   const w=W_();if(adv101Hide(w))h=adv101Strip(h);
   const rdy=typeof recReady==='function'?recReady(g):null;const cur=MGR.recStep||(typeof recStepNow==='function'?recStepNow(g,me()):1);
   if(rdy&&cur!==3){const T=document.createElement('template');T.innerHTML=h;const b=T.content.querySelector('[data-recstep="3"]');
-    if(b){b.classList.add('rc101rdy');if(reduceMotionOn())b.classList.add('still');b.setAttribute('title',_T('He would sign at your ask — time to make the offer.'));return T.innerHTML}}}catch(e){console.error(e)}return h}}
+    if(b){b.classList.add('rc101rdy');if(reduceMotionOn())b.classList.add('still');b.setAttribute('title',sx(g,_T('He would sign at your ask — time to make the offer.'),_T('She would sign at your ask — time to make the offer.')));return T.innerHTML}}}catch(e){console.error(e)}return h}}
 
 /* ---------- M8 · bare map ---------- */
 if(typeof wd100LayerSVG==='function'){const base=wd100LayerSVG;wd100LayerSVG=function(){try{if(a101On()){const L=WD100.lay;if(!L.fans&&!L.weather&&!L.events&&!L.war)return ''}}catch(e){}return base.apply(this,arguments)}}

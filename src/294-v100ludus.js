@@ -298,7 +298,7 @@ body.lu100on #mgrPane>.lu100{display:grid;grid-template-columns:minmax(0,46fr) m
 #desk99.lu100tasks .dk99row>.ic{width:38px;height:38px;border-radius:6px;background:linear-gradient(#efe6d0,#d8c8a4);border:1px solid #9c8058;display:grid;place-items:center;font-size:19px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)}
 #desk99.lu100tasks .dk99row.k-fight>.ic{box-shadow:inset 0 0 0 2px rgba(255,255,255,.4),0 0 0 2px #c0433a55}
 #desk99.lu100tasks .dk99row>.tx{color:#3a2414;font-size:14.5px}
-#desk99.lu100tasks .dk99row>.tx b{color:#2a1708}#desk99.lu100tasks .dk99row .q{color:#6a4e30}
+#desk99.lu100tasks .dk99row>.tx b{color:#2a1708}#desk99.lu100tasks .dk99row .q{color:#4f3720}
 #desk99.lu100tasks .dk99row.open{background:rgba(255,248,230,.55);border-left-color:#a8802e}
 #desk99.lu100tasks .dk99b .btn{border-color:#7a5d2a;background:linear-gradient(#3a2a17,#2a1f17);color:#f6dd95}
 #desk99.lu100tasks .dk99row.k-fight .dk99b .btn{border-color:#8a3a2c;color:#ffd2c4;background:linear-gradient(#6a2017,#3a1210)}

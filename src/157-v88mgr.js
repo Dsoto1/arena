@@ -221,7 +221,7 @@ function court88Tiny(g,w){const n=court88Left(g,w);if(n==null)return '';return n
   if(step===2&&K.length){const sent=g.wantWk88===wkKey74();
     const pb=K.map(k=>{const [,ic,n]=want88Def(k);return `<button class="btn tksm" type="button" data-want88="${k}|${g.id}" ${sent?dis88(_T('Once a recruit a week')):''}>${_T`🎯 Speak to it: ${ic} ${esc(n)}<small>free · +${want88PitchGain(g,m,k)} interest</small>`}</button>`}).join('');
     h=h.replace('<div class="rpane">',`<div class="rpane"><div class="acts want88p">${pb}</div>`)}
-  if(step===3&&K.includes('rudis'))h=h.replace('<div id="ofMeter"',`<label class="rudis88" style="font-size:12px" title="${esc(_T('He wants a path to the rudis — his freedom. Promising it adds interest now and notes the promise on his record.'))}"><input type="checkbox" id="ofRudis88"> ${_T`🗡 Promise the rudis path (+${WANT88.gain})`}</label><div id="ofMeter"`);
+  if(step===3&&K.includes('rudis'))h=h.replace('<div id="ofMeter"',`<label class="rudis88" style="font-size:12px" title="${esc(sx(g,_T('He wants a path to the rudis — his freedom. Promising it adds interest now and notes the promise on his record.'),_T('She wants a path to the rudis — her freedom. Promising it adds interest now and notes the promise on her record.')))}"><input type="checkbox" id="ofRudis88"> ${_T`🗡 Promise the rudis path (+${WANT88.gain})`}</label><div id="ofMeter"`);
   }catch(e){console.error(e)}return h}}
 
 (()=>{const st=document.createElement('style');st.textContent=`
