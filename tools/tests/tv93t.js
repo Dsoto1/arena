@@ -74,7 +74,7 @@ for(let iter=0;iter<200;iter++){
       await pg.evaluate(id=>{const box=document.querySelector(`#mgrPane [data-lg90box="${id}"] [data-mg="team"]`);if(box){box.click();return}const e=document.querySelector(`tr[data-mg="team"][data-id="${id}"]`);e&&e.click()},id);break}
    case 'envoy':await pg.evaluate(()=>{const e=document.querySelector(`[data-mg="envoy"][data-id="${mtRivalId()}|gift"]`);e&&e.click()});break;
    case 'imp':await clk('[data-mg="tab"][data-id="imp"]');break;
-   case 'sched':await clk('[data-mg="tab"][data-id="sched"]');break;
+   case 'sched':await pg.evaluate(()=>{const b=document.querySelector('.wd101sea[data-id="sched"]')||document.querySelector('.rail [data-mg="tab"][data-id="league"]');b&&b.click()});break; /* v1.01 (317 M9): the Season tab is a button on the League banner */
    case 'endask':await clk('[data-mg="endask"]');break;
    case 'endweek':await clk('[data-mg="endweek"]');await until(()=>mtW()&&mtW().week>MTUT.w0,null,30000);break;
    case 'acta':await pg.waitForTimeout(800);await pg.evaluate(()=>{const b=document.querySelector('[data-mt="finish"]');if(b){b.click();return}const t=document.querySelector('#mgrPane [data-mg="tab"][data-id="ludus"]')||document.querySelector('[data-mg="tab"][data-id="ludus"]');t&&t.click()});await pg.waitForTimeout(1500);break;

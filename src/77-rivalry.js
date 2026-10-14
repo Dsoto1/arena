@@ -29,7 +29,7 @@ function rivalLetter(w){const pm=me();const R=w.rivalry;const foe=rivalOf(w,pm.i
   const body=foe?`<p>${_T`Next week is <b>Rivalry Week</b> — Familia, two on two. Your rival: <b>${esc(foe.ludus)}</b> (${esc(foe.name)}). Name two fighters to stand together.`}</p>
     ${el.length>=2?`<div class="acts" style="align-items:center"><select class="tin" id="rivA">${opts(el[0].id)}</select><select class="tin" id="rivB">${opts(el[1].id)}</select><button class="btn primary tksm" type="button" data-rivcommit>${_T`⚔ Name them`}</button></div>`
       :`<p class="bad">${_T`You have ${el.length} fit fighter${el.length===1?'':'s'}. Sign or heal one this week, or the house loses ${RIVAL_FAME_SHORT} fame and the editor fills your places.`}</p>`}
-    <p class="rc-sub">${_T`Name no one and the Consilium sends your best two.`}</p>`
+    ${el.length>=2?`<p class="rc-sub">${_T`Name no one and the Consilium sends your best two.`}</p>`:''}`
     :`<p>${_T`Next week is <b>Rivalry Week</b>, but the league pairs off without you — the odd house out. Rest, and watch the feuds settle.`}</p>`;
   sendLetter(w,{key:'rival-'+w.season,kind:'letter',from:_T('the Consilium'),seal:'⚔',title:foe?_T`Rivalry Week: ${foe.ludus}`:_T('Rivalry Week: a bye for us'),until:w.week,body})}
 function rivalLock(w){if(w.rivalry&&w.rivalry.abs===w.week+1)return;const P=rivalPairs(w);w.rivalry={season:w.season,abs:w.week+1,pairs:P.pairs,bye:P.bye,commit:{}};

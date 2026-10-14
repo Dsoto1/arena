@@ -122,7 +122,7 @@ function wd100Banner(k){const w=W_(),pm=me();const wk=wd100Wk(w);const L=w.night
   const T={news:[_T('World · News'),_T('The Forum Wall'),_T('What the walls of the empire say this week')],
     league:[_T('World · League'),_T('The Standings'),_T`Season ${w.season} · ${Math.max(0,12-wk)} weeks left · the top four go to the Superbus`],
     imp:[_T('World · Imperium'),_T('The Empire'),_T('Cities, closures, weather, legions, your fans')],
-    trophy:[_T('World · Trophies'),_T('The Tituli'),_T('Every honour your house has carved in bronze')],
+    trophy:[_T('World · Tituli'),_T('The Tituli'),_T('Every honour your house has carved in bronze')],
     sched:[_T('World · Season'),_T('The Calendar'),_T('Twelve weeks, twelve cities, then Roma')]}[k];
   let rt='';
   try{if(k==='news'){const n=(w.news||[]).filter(x=>x.s===w.season&&x.wk===wk).length;rt=`<span class="wd100bc"><b>${n}</b><small>${n===1?_T('new notice'):_T('new notices')}</small></span>`}
@@ -211,8 +211,7 @@ function wd100HouseCard(R){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);cons
     <div class="sq"><div class="sqh">${_T('Top gladiators')}</div>${top.length?top.map(g=>`<div class="gr">${face100(g)}<span><b>${esc(g.name)}</b> · ${CLASSES[g.cls]?esc(CLASSES[g.cls].name):''} · ${(g.rec&&g.rec.w)||0}-${Math.max(0,((g.rec&&g.rec.ev)||0)-((g.rec&&g.rec.w)||0))}</span>${wd100Grade(g,R)}</div>`).join(''):`<div class="gr"><span class="rc-sub">${_T('No fighters under contract.')}</span></div>`}</div>
     ${wd100Ledger(R,pos,Ls.length)}
     <div class="btns">${mine?`<button type="button" class="b1" data-mg="tab" data-id="me">${_T('👤 Lanista page')}</button><button type="button" class="b1" data-mg="tab" data-id="roster">${_T('🛡 Roster')}</button>`
-      :`<button type="button" class="b1${WD100.scout?' on':''}" data-wd100sc="1" aria-expanded="${WD100.scout}">${_T('🔍 Scout')}<span class="cst">${_T('fighters, form, this week')}</span></button><button type="button" class="b2" data-lg90ch="${R.id}"${why?' disabled':''} title="${esc(why||'')}">${set?_T('⚔ Challenge set'):_T('⚔ Challenge')}<span class="cst">${why&&!set?esc(why):_T('this week · purse ×2')}</span></button>
-        <button type="button" class="b1 wide" data-mg="team" data-id="${R.id}">${_T('🏛 Team screen')}</button>`}</div>
+      :`<button type="button" class="b1 wide" data-mg="team" data-id="${R.id}">${_T('🏛 Team Details')}</button>`}</div>
     ${!mine&&WD100.scout&&typeof lg90HTML==='function'?`<div class="lg90row wd100scout">${lg90HTML(R)}</div>`:''}</div>`}
 function wd100LeagueView(){const w=W_(),pm=me();const Ls=leagueSort(w.mgrs);const wk=wd100Wk(w);
   let sel=MGR.lg90&&mgrById(MGR.lg90);if(!sel)sel=pm;
@@ -369,7 +368,7 @@ function wd100SeaView(){const w=W_(),pm=me();const wk0=wd100Wk(w);const baseW=w.
       const st=bye?_T('rest'):now?((()=>{const n=typeof onCard96==='function'?onCard96():0;return n?_T`${n} entered`:_T('enter now')})()):c?`📌 ${esc((gById(c.gid)||{}).name||'')}`:riv(k)?`${_T('vs')} ${esc(rivName()||_T('TBA'))}`:_T('open');
       come.push(row(k,`<span class="c-cy">${bye?'—':esc(LOCATIONS[f.loc].n)}</span><span class="c-ev">${bye?_T('Bye'):riv(k)?_T('Rivalry')+' · '+esc(evShort(f)):esc(evShort(f))}</span><span class="c-bs">${st}</span><span class="pl2">${now?`<span class="nowt2">${_T('THIS WEEK')}</span>`:''}</span><span class="pts">${bye?'':'×'+f.purse}</span>`,now?'now':'',now?' data-mg="tab" data-id="night" role="button" tabindex="0"':''))}
     const ptsAll=msp(pm).pts;
-    lists=`<div class="wd100two"><div>${plq100(_T('Your Acta'),_T`${ptsAll} pts`)}<div class="wd100sea">${acta.join('')||`<div class="wd100sr empty"><span>${_T('No weeks fought yet this season.')}</span></div>`}</div></div>
+    lists=`<div class="wd100two"><div>${plq100(_T('My Acta'),_T`${ptsAll} pts`)}<div class="wd100sea">${typeof wd101Acta==='function'?wd101Acta(w,pm,wk0,baseW,sch):(acta.join('')||`<div class="wd100sr empty"><span>${_T('No weeks fought yet this season.')}</span></div>`)}</div></div>
       <div>${plq100(_T('Still to come'),_T('prizes at week 12'))}<div class="wd100sea">${come.join('')}</div></div></div>
       <div class="wd100two wd100bill"><div>${plq100(_T('Billing'),_T('name a fighter 3+ weeks ahead'))}<div class="wd100sea">${(()=>{const r=wd100BillRows(w,pm);return r.join('')||`<div class="wd100sr empty"><span>${_T('No weeks left to bill.')}</span></div>`})()}</div>
           <p class="wd100tba">${_T`On the night a billed fighter is entered in the biggest bout that fits: ${coinAmt87('+10')} appearance, +1 fame, and a 15% purse bonus if they win. It lapses harmlessly if they are hurt. Invitationals and the Superbus cannot be billed.`}</p></div>

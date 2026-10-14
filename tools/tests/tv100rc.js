@@ -20,10 +20,10 @@ const ev=(pg,f,a)=>pg.evaluate(f,a);
 const pg=await open(1440,900);
 const A=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const g=FA[4];await SEL(g,1);const w=W_();const r={};const q=s=>document.querySelector('#mgrBody '+s);
   const grid=q('.mgrid.rc100g');const list=q('#recTable'),card=q('.card2.rc100');r.grid=!!grid&&!!card&&card.dataset.rc100card===g.id;
-  r.cols=list&&card?[Math.round(list.getBoundingClientRect().width),Math.round(card.getBoundingClientRect().width)]:null;r.narrow=!!r.cols&&r.cols[0]<=320&&r.cols[1]>r.cols[0]*2;
+  r.cols=list&&card?[Math.round(list.getBoundingClientRect().width),Math.round(card.getBoundingClientRect().width)]:null;r.narrow=!!r.cols&&r.cols[0]<=480&&r.cols[1]>r.cols[0]*1.2; /* v1.01 (317 M5): the list column is wider on big screens */
   r.tb=!!q('.rtb85.rc1tb')&&!grid.contains(q('.rtb85'));r.board=!!q('.pipeline.rc1board')&&!grid.contains(q('.pipeline'));
   const row=q('#recTable tr[data-mg="sel"]');r.row=!!row&&!!row.querySelector('.rc1cl')&&!!row.querySelector('.odds')&&Math.round(row.getBoundingClientRect().height)<=40&&getComputedStyle(row.querySelector('.fitchip')||row).display!==undefined;
-  r.rowHidden=row?['td:nth-child(3)','td:nth-child(5)'].every(s=>{const e=row.querySelector(s);return !e||getComputedStyle(e).display==='none'}):false;
+  r.rowHidden=row?['td:nth-child(3)','td:nth-child(5)'].every(s=>{const e=row.querySelector(s);return !e||getComputedStyle(e).display!=='none'}):false; /* v1.01 (317 M5): Fit + Ask show at 1251px+ */
   /* head */
   r.por=!!card.querySelector('.rc1prof .rc1por .portrait');r.rows=card.querySelectorAll('.rc1grades .gs98 .gb98').length;r.q=card.querySelectorAll('.gs98 .gb98[data-p="0"]').length;
   r.qText=[...card.querySelectorAll('.gs98 .gb98:not(.ov98) b')].map(e=>e.textContent).join('');r.nodigit=![...card.querySelectorAll('.gs98 .gb98 b')].some(e=>/\d/.test(e.textContent));

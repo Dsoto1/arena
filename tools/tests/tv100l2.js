@@ -36,22 +36,20 @@ const C=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   r.R=R;r.txt=bd();r.badge=R>0&&M.clerk===R&&r.txt.includes(`(−${R} Clerk)`)&&r.txt.includes(`wages ${M.wages}`);
   LU100.pop='clerk';MGR_REDRAW();await W8(250);const p=document.getElementById('lu100pop');r.pop=!!p&&p.textContent.includes(`rebate −${R}`);return r});
 ok(C.lv1&&C.badge&&C.pop,'Clerk rebate in the ledger badge '+JSON.stringify(C));
-/* Ledger: the Clerk's popover + the badge from another tab */
-const L=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};document.querySelector('#lu100pop [data-mg="run"][data-id="ledger"]').click();await W8(400);
-  r.pop=MGR.run==='ledger'&&!!document.querySelector('#mgrPane .lu100panel .ledgers')&&!document.getElementById('lu100pop');
-  document.querySelector('[data-lu100panel]').click();await W8(300);MGR.tab='league';MGR_REDRAW();await W8(300);document.querySelector('.badge.ledger[data-lu2led]').click();await W8(400);
-  r.badge=MGR.tab==='ludus'&&MGR.run==='ledger'&&!!document.querySelector('#mgrPane .lu100panel .ledgers');LU100.panel=null;MGR_REDRAW();await W8(200);return r});
+/* Ledger: v1.01 (317): inside the Clerk's popover, and the badge from another tab opens that popover (nothing under the tiles) */
+const L=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};LU100.pop='clerk';MGR_REDRAW();await W8(300);r.pop=!!document.querySelector('#lu100pop .led101')&&!document.querySelector('#mgrPane .lu100panel');LU100.pop=null;
+  MGR.tab='league';MGR_REDRAW();await W8(300);document.querySelector('.badge.ledger[data-lu2led]').click();await W8(400);
+  r.badge=MGR.tab==='ludus'&&LU100.pop==='clerk'&&!!document.querySelector('#lu100pop .led101')&&!document.querySelector('#mgrPane .lu100panel');LU100.pop=null;LU100.panel=null;MGR_REDRAW();await W8(200);return r});
 ok(L.pop&&L.badge,'Ledger from the Clerk and the badge '+JSON.stringify(L));
-/* counsel */
+/* counsel: v1.01 — his counsel lives inside his popover; the head lights for a warning and darkens once read */
 const K=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};const lit=()=>!!document.querySelector('#council83 .c83p.lit[data-c83="consilium"]');
   delete w.lu2c;w.loan=null;m.coin=900;MGR_REDRAW();await W8(250);r.quiet=!lit()&&lu2Counsel(w)===null;
-  LU100.pop='consilium';MGR_REDRAW();await W8(250);r.always=!!document.getElementById('lu100pop').querySelector('[data-mg="run"][data-id="consil"]');LU100.pop=null;
+  LU100.pop='consilium';MGR_REDRAW();await W8(250);r.always=!!document.getElementById('lu100pop').querySelector('.cn101 .cons');LU100.pop=null;
   m.coin=-5;MGR_REDRAW();await W8(250);r.lit=lit();
-  LU100.pop='consilium';MGR_REDRAW();await W8(250);const p=document.getElementById('lu100pop');r.btn=!!p.querySelector('[data-mg="run"][data-id="consil"]');const rd=p.querySelector('[data-lu100read^="lu2:"]');r.rd=!!rd;rd.click();await W8(400);
-  r.panel=MGR.run==='consil'&&!!document.querySelector('#mgrPane .lu100panel')&&w.lu2c===w.week&&!lit();
-  document.querySelector('[data-lu100panel]').click();await W8(300);LU100.pop='consilium';MGR_REDRAW();await W8(250);document.querySelector('#lu100pop [data-mg="run"][data-id="consil"]').click();await W8(400);
-  r.btnGo=MGR.run==='consil'&&!!document.querySelector('#mgrPane .lu100panel');LU100.panel=null;m.coin=900;MGR_REDRAW();await W8(200);return r});
-ok(K.quiet&&K.always&&K.lit&&K.btn&&K.rd&&K.panel&&K.btnGo,'Consilium counsel: lit, read, the button '+JSON.stringify(K));
+  LU100.pop='consilium';MGR_REDRAW();await W8(250);const p=document.getElementById('lu100pop');const rd=p.querySelector('[data-lu100read^="lu2:"]');r.rd=!!rd;rd.click();await W8(400);
+  r.panel=w.lu2c===w.week&&!lit()&&LU100.pop==='consilium'&&!document.querySelector('#mgrPane .lu100panel');
+  LU100.pop=null;LU100.panel=null;m.coin=900;MGR_REDRAW();await W8(200);return r});
+ok(K.quiet&&K.always&&K.lit&&K.rd&&K.panel,'Consilium counsel: lit, read, inside his popover '+JSON.stringify(K));
 /* banners */
 const N=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};MGR.tab='roster';MGR_REDRAW();await W8(400);let h=document.querySelector('.roomhd.b73-roster');
   r.roster=!!h&&!!h.querySelector('img.lu2ban[data-sc100^="team|banner"]')&&!h.querySelector(':scope>svg')&&/roster/i.test(h.querySelector('.roomttl').textContent);

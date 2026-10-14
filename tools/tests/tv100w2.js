@@ -35,7 +35,7 @@ out.tabs=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   for(const k of ['news','league','imp','trophy','sched']){MGR.tab=k;MGR_REDRAW();await W8(250);const B=document.getElementById('mgrBody');
     o[k]={body:!!B.querySelector('.wd100body.wd100-'+k),ban:!!B.querySelector('.roomhd.b73-'+k+'.wd100ban .roomttl'),plq:B.querySelectorAll('.wd100plq').length,
       fold:!!B.querySelector('.wd100fold,details.wd100fold'),
-      kept:k==='league'?!!B.querySelector('.wd100hc .wd100led'):k==='sched'?!!B.querySelector('.wd100bill .wd100sr.bill')&&!B.querySelector('table.stable2'):k==='imp'?!!B.querySelector('#standsHubBody.wd100file .empstrip,#standsHubBody.wd100file .citytile')&&!B.querySelector('svg.impmap'):k==='news'?!!B.querySelector('.wd100arc [data-mg="arcpap"]')&&!B.querySelector('.news'):!!B.querySelector('.tcase')}}
+      kept:k==='league'?!!B.querySelector('.wd100hc .wd100led'):k==='sched'?!!B.querySelector('.wd100bill .wd100sr.bill')&&!B.querySelector('table.stable2'):k==='imp'?!!B.querySelector('#standsHubBody.wd100file .empstrip,#standsHubBody.wd100file .citytile')&&!B.querySelector('svg.impmap'):k==='news'?!!B.querySelector('.wd100arc [data-mg="arcpap"]')&&!B.querySelector('.news'):!!B.querySelector('.wd101seg')&&!B.querySelector('.tcase')}} /* v1.01 (317 M34): the glass case is its own sub-tab */
   return o});
 for(const [k,v] of Object.entries(out.tabs))ok(v.body&&v.ban&&v.kept&&!v.fold&&(k==='news'||v.plq>=1),'1 '+k+' renders in the shell (banner, body, plaque, old content moved in, no fold) '+JSON.stringify(v));
 /* 2 · rows stay on one line */
@@ -63,10 +63,9 @@ ok(out.rows.lg>=8&&out.rows.pn>=1&&out.rows.ev>=1&&out.rows.sr>=5&&!out.rows.bad
 out.hc=await pg.evaluate(async id=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));MGR.tab='league';MGR.lg90=null;MGR_REDRAW();await W8(250);const o={};
   o.mine=!!document.querySelector('#mgrBody .wd100hc:not([data-lg90box])');document.querySelector(`#mgrBody [data-wd100h="${id}"]`).click();await W8(300);
   const c=document.querySelector(`#mgrBody .wd100hc[data-lg90box="${id}"]`);o.card=!!c;o.sel=MGR.lg90===id;o.scout=!!(c&&c.querySelector('[data-wd100sc]'));o.chal=!!(c&&c.querySelector(`[data-lg90ch="${id}"]`));o.team=!!(c&&c.querySelector(`[data-mg="team"][data-id="${id}"]`));
-  o.top=c?c.querySelectorAll('.gr').length:0;c.querySelector('[data-wd100sc]').click();await W8(300);o.box=!!document.querySelector(`#mgrBody .wd100scout .lg90[data-lg90box="${id}"]`);
-  const ch=document.querySelector(`#mgrBody .wd100hc [data-lg90ch="${id}"]`);o.chDis=!!(ch&&ch.disabled);if(ch&&!ch.disabled){ch.click();await W8(300);o.set=!!(W_().chal76&&W_().chal76.mgr===id)}
+  o.top=c?c.querySelectorAll('.gr').length:0;o.box=true;o.chDis=true; /* v1.01 (317 M10): the compact card has no Scout / Challenge — Team Details only */
   const r=document.querySelector('#mgrBody .wd100side').getBoundingClientRect(),t=document.querySelector('#mgrBody .wd100lgt').getBoundingClientRect();o.right=r.left>=t.right-1;return o},out.setup.rival);
-ok(out.hc.mine&&out.hc.card&&out.hc.sel&&out.hc.scout&&out.hc.chal&&out.hc.team&&out.hc.top>=1&&out.hc.box&&out.hc.right&&(out.hc.chDis||out.hc.set),'3 house card in the right column with Scout + Challenge '+JSON.stringify(out.hc));
+ok(out.hc.mine&&out.hc.card&&out.hc.sel&&!out.hc.scout&&!out.hc.chal&&out.hc.team&&out.hc.top>=1&&out.hc.right,'3 house card in the right column, Team Details only (no Scout / Challenge) '+JSON.stringify(out.hc));
 if(SHOT)await pg.screenshot({path:path.join(SHOT,'w2_league.png')});
 /* 3b · the old full ledger's facts live in the house card (a rival's and your own) */
 out.led=await pg.evaluate(async id=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_();const o={};const names=()=>[...document.querySelectorAll('#mgrBody .wd100hc .wd100led .kv>span:first-child')].map(x=>x.textContent.trim());
