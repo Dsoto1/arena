@@ -88,6 +88,8 @@ Resources:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: flavius-arena-players
+      # v1.01 security pass S4: nobody signs up through the open SignUp API (Google federation still creates its users)
+      AdminCreateUserConfig: {AllowAdminCreateUserOnly: true}
       UsernameAttributes: [email]
       AutoVerifiedAttributes: [email]
       Schema:
@@ -193,6 +195,7 @@ Resources:
           CLIENT_ID: !Ref UserPoolClient
           DEV_NAMES: !Ref DevNames
           TESTERS: !Ref Testers
+          REQUIRE_GOOGLE: !If [HasGoogle, 'true', 'false']   # v1.01 S4: only Google sign-ins once Google is set up
   FnLogs:
     Type: AWS::Logs::LogGroup
     Properties:

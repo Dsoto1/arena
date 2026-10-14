@@ -9,6 +9,7 @@
        wrapper (shuffle = the event's seeded RNG: same seed = same lot, identical on every online client); one log line each.
    ONLINE UNCHANGED: 111-onlcore / server kits are not touched; the page-side kit builder (onlKits92) and online loadouts (giveLoadout
    while S.onl) see the OLD Damnatio armor and Amazonia's Falcata, so the page stays in step with the server.
+   v1.01 (322-v101onl): online follows the v1.0 loadouts too — bal100Old is made a plain call there and the server's kits follow (111 "v1.01").
    ===================================================================== */
 const BAL100={dam0:CLASSES.damnatio.armor.map(a=>[...a]),amaL0:CLASSES.amazonia.L};
 CLASSES.damnatio.armor=[['galea','head'],['balteus1','chest'],...CLASSES.damnatio.armor];

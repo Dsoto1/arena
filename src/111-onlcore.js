@@ -1642,4 +1642,42 @@ const ONLC=(function(){
   function after100(out,gx){if(!out||!gx)return out;if(Array.isArray(gx.dent100)&&gx.dent100.length)out.dent100=gx.dent100.slice();
     const drop=gx.gifts&&gx.gifts.drop100;if(Array.isArray(drop)&&drop.length&&Array.isArray(out.gifts)){out.gifts=out.gifts.filter(g=>!(g&&drop.includes(g.id)));out.giftDup100=drop.length}return out}
   Object.assign(C,{BAL100,AWARD_GIFT100,rkg100,after100,homeable100,homeDent100,homeRoute100})})(ONLC);
+/* ===== v1.01 ===== (workstream F; the server: the "v1.01" block at the end of routes.js; the page: 322-v101onl; docs/backend.md "v1.01"; no protocol bump —
+   a match's loadouts come from the host's opening snapshot, so v1.0 and v1.01 pages still play the same match)
+   1 · ONLINE KITS FOLLOW THE v1.0 LOADOUTS (315-v100bal): the Damnatio's class kit = Iron Helm (galea) + Belt I (balteus1) + his padding (CLASS_KITS92,
+       the shared fallback; kits92.json is rebuilt from the page's classes by tools/mkserver.js). The Amazonia's Falcata was a weapon, never in a kit:
+       her Custom recruit kit (the page's giveLoadout) is now the Axe alone. The Issued kit (ISSUE_W100) already matched (no Falcata).
+   2 · SNAPSHOT SAFETY (security pass S1, tools/plans/v101/SECURITY.md): a match opening / resync snapshot goes from one page to the others (match.open →
+       every fighter, watcher and the replay; match.snap → the one who asked). A page loads it with innerHTML (the log) and draws its strings as HTML (names,
+       colours), so a doctored snapshot could run script on every other screen and steal the sign-in. snapBad101(snap) = '' or why it is refused:
+       any string (the S JSON parsed, its keys too) carrying a script-capable tag, an inline handler (on…=), a javascript:/vbscript: URL, srcdoc or an HTML
+       data: URL, or a character entity inside a tag. inBad101(input) = the same test for one lockstep input. The page also CLEANS what it loads (322).
+   3 · RESULT TABLES (S3): tableFix101(table, seats) = cleanTable + only seats 0..seats−1, one row a seat (the first). tableFlags101(table, o) = audit flags
+       for a settled table (missing human seats, several winners outside a team event, every seat won, CF ≥ F_HIGH101) — the server logs them (AUDIT#). */
+(function(C){
+  C.CLASS_KITS92.damnatio=['galea','balteus1','wraps','legwraps'];
+  /* TWEAK: what may never ride in a snapshot or an input string */
+  const SNAP_BAD101=/<\s*\/?\s*(script|iframe|object|embed|base|meta|link|form|frame|frameset|applet|noscript|template|math|foreignobject|animate\w*|set|portal|xmp|plaintext|noembed|noframes)\b|(^|[\s"'`\/;\\])on[a-z]+\s*=|j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:|vbscript\s*:|srcdoc\s*=|data\s*:\s*text\/html|<[^>]*&#/i;
+  const F_HIGH101=120; /* TWEAK: a final CF this high in one bout is logged for review (cleanRow still allows ≤ 400) */
+  const strBad101=s=>typeof s==='string'&&SNAP_BAD101.test(s);
+  /* true when any string (or key) in x is bad; depth-limited */
+  function deepBad101(x,d){if(d>60)return false;if(typeof x==='string')return strBad101(x);if(!x||typeof x!=='object')return false;
+    if(Array.isArray(x)){for(const v of x)if(deepBad101(v,d+1))return true;return false}
+    for(const k of Object.keys(x)){if(strBad101(k)||deepBad101(x[k],d+1))return true}return false}
+  const SNAP_TXT101='That match state carries markup that is not allowed — refused.';
+  function snapBad101(snap){if(!snap||typeof snap!=='object'||Array.isArray(snap))return 'Not a match state.';
+    for(const k of Object.keys(snap)){const v=snap[k];if(strBad101(k))return SNAP_TXT101;
+      if(k==='S'&&typeof v==='string'){let o;try{o=JSON.parse(v)}catch(e){o=undefined}if(o!==undefined?deepBad101(o,0):strBad101(v))return SNAP_TXT101;continue}
+      if(deepBad101(v,0))return SNAP_TXT101}
+    return ''}
+  const inBad101=inp=>deepBad101(inp,0)?'That move carries markup that is not allowed.':'';
+  /* the reported table against the room: seats 0..seats−1, the first row of a seat wins */
+  function tableFix101(t,seats){const n=Math.max(1,Math.min(8,seats|0||8));const seen=new Set();const out=[];
+    for(const r of C.cleanTable(t)){if(r.seat<0||r.seat>=n||seen.has(r.seat))continue;seen.add(r.seat);out.push(r)}return out}
+  /* o = {team, humanSeats:[…]} → the flags worth a look (never a refusal: the table stands as agreed) */
+  function tableFlags101(t,o){o=o||{};const f=[];const rows=Array.isArray(t)?t:[];const won=rows.filter(r=>r&&r.won);
+    for(const s of o.humanSeats||[])if(!rows.some(r=>r&&r.seat===s))f.push('missing:'+s);
+    if(!o.team&&won.length>1)f.push('multi_win');if(rows.length>1&&won.length===rows.length)f.push('all_won');
+    if(rows.some(r=>r&&(r.f|0)>=F_HIGH101))f.push('f_high');return f}
+  Object.assign(C,{SNAP_BAD101,F_HIGH101,snapBad101,inBad101,deepBad101,tableFix101,tableFlags101})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

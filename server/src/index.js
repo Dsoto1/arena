@@ -9,13 +9,15 @@
    refused with 403 once 2 hours have passed since that guest id first connected (the item lives a day). Refusals carry `code` (+ extras).
    v0.89 (no protocol bump): a socket that opens or closes tells the lanista's waiting rooms (route.presence: L.off marks "reconnecting…";
    prune takes a member out after the grace — roomGrace, 60 s). */
+/* v1.01 (security pass S4): REQUIRE_GOOGLE=true (the template sets it whenever Google is configured) refuses an ID token without a Google identity —
+   Cognito's SignUp API would otherwise let anyone script unlimited accounts with the public client id. Dev stacks (DEV_NAMES) are unchanged. */
 'use strict';
 const {makeRoutes,reconnect,away,online}=require('./routes.js');const H93=require('./harden93.js');const C=require('./onlcore.js');const {verify}=require('./jwt.js');const store=require('./store.js');
 const catalog=require('./catalog.json');
 /* v0.83 tester grants: TESTERS = comma-separated sign-in e-mails (deploy parameter → Lambda env). Only a yes/no rides on the connection;
    the e-mail itself is never stored or sent. Dev stacks/tests may pass ?email= with ?dev= (dev only). */
 const testerSet=s=>new Set(String(s||'').split(',').map(x=>x.trim().toLowerCase()).filter(x=>x&&x!=='none'));
-function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd,testers='',roomGrace,limits,log}){const TESTERS=testerSet(testers);let route=null;
+function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd,testers='',roomGrace,limits,log,requireGoogle=false}){const TESTERS=testerSet(testers);let route=null;
   /* a push to a known connection: true when the socket is gone (then the account's presence is cleared) */
   /* a push that finds the socket gone clears presence AND marks the lanista away in a live match (their $disconnect may come later and find
      nothing left to clear) — so the others can drop the seat after AWAY_MS */
@@ -28,7 +30,7 @@ function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),h
         const G=await db.get('GUEST#'+gid,'GUEST');const t=now();const first=G&&G.first||t;if(t-first>C.GUEST_MS)return {statusCode:403,body:'Your two hours as a guest are up — sign in to keep watching.'};
         await db.put('GUEST#'+gid,'GUEST',{id:gid,first,conn,tz:(G&&G.tz)||'',GSI1PK:'GON',GSI1SK:t,ttl:Math.floor(first/1000)+86400});
         await db.put('CONN#'+conn,'CONN',{guest:gid,first,ttl:Math.floor(t/1000)+86400});return {statusCode:200}}
-      let sub,name,tester=false;try{if(dev&&q.dev){sub='dev-'+String(q.dev).replace(/[^a-z0-9_-]/gi,'').slice(0,40);name=null;tester=!!q.email&&TESTERS.has(String(q.email).toLowerCase())}else{const b=await verifyFn(q.token,verifyCfg);sub=b.sub;name='Lanista'; /* v0.89 L: the sign-in (Google) name is never kept */tester=!!b.email&&TESTERS.size>0&&(b.identities||[]).some(i=>i&&i.providerName==='Google')&&TESTERS.has(String(b.email).toLowerCase())}}
+      let sub,name,tester=false;try{if(dev&&q.dev){sub='dev-'+String(q.dev).replace(/[^a-z0-9_-]/gi,'').slice(0,40);name=null;tester=!!q.email&&TESTERS.has(String(q.email).toLowerCase())}else{const b=await verifyFn(q.token,verifyCfg);if(requireGoogle&&!(b.identities||[]).some(i=>i&&i.providerName==='Google'))throw new Error('Google only'); /* v1.01 S4: a token of a pool user made without Google (the open sign-up API) is refused */sub=b.sub;name='Lanista'; /* v0.89 L: the sign-in (Google) name is never kept */tester=!!b.email&&TESTERS.size>0&&(b.identities||[]).some(i=>i&&i.providerName==='Google')&&TESTERS.has(String(b.email).toLowerCase())}}
       catch(e){return {statusCode:401,body:'Sign in again.'}}
       const a=(await db.get('ACCT#'+sub,'PROFILE'))||(name||!dev?{id:sub,name:C.cleanName(name||'Lanista')||'Lanista',since:now()}:null);
       if(a){const old=a.conn,oldTab=a.tab;const tab=String(q.tab||'').replace(/[^\w-]/g,'').slice(0,24);a.conn=conn;a.tab=tab||null;a.GSI1PK='ON';a.GSI1SK=now();await db.put('ACCT#'+sub,'PROFILE',a);await reconnect(db,sub,conn);await route.presence(sub,true)
@@ -48,6 +50,6 @@ exports.handler=async ev=>{if(!LIVE){const {ApiGatewayManagementApiClient,PostTo
     const rc=ev.requestContext;const api=new ApiGatewayManagementApiClient({endpoint:`https://${rc.domainName}/${rc.stage}`});const db=store.dynamo(process.env.TABLE);
     const send=async(conn,msg)=>{try{await api.send(new PostToConnectionCommand({ConnectionId:conn,Data:Buffer.from(JSON.stringify(msg))}));return false}
       catch(e){if(e.name==='GoneException'||e.$metadata&&e.$metadata.httpStatusCode===410){await db.del('CONN#'+conn,'CONN');return true}throw e}};
-    LIVE=makeHandler({db,send,hereMs:20000,dev:process.env.DEV_NAMES==='true',roomGrace:process.env.ROOM_GRACE_MS?+process.env.ROOM_GRACE_MS:undefined,verifyCfg:{region:process.env.AWS_REGION,poolId:process.env.POOL_ID,clientId:process.env.CLIENT_ID},testers:process.env.TESTERS||''})}
+    LIVE=makeHandler({db,send,hereMs:20000,dev:process.env.DEV_NAMES==='true',roomGrace:process.env.ROOM_GRACE_MS?+process.env.ROOM_GRACE_MS:undefined,verifyCfg:{region:process.env.AWS_REGION,poolId:process.env.POOL_ID,clientId:process.env.CLIENT_ID},testers:process.env.TESTERS||'',requireGoogle:process.env.REQUIRE_GOOGLE==='true'})}
   return LIVE(ev)};
 exports.makeHandler=makeHandler;

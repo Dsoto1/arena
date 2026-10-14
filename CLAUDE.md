@@ -1455,6 +1455,12 @@ One global script; files are concatenated in order. Later "version modules" patc
   wrapper (outermost): 'me' = a crowd look tinted by his robe (house colour in Manager), 'yd<cls>' = crowd100_c_<class> (walk frames while
   lunging), 'yddoc' = the bearded look in brown; flat fallbacks rescaled into their box; figShadow89 scaled; placeholders seeded; calm = stand.
   Kill switch localStorage flavius_v101coff=1. Test `tv101d`; shots tools/plans/v101/shots/ (before_*/after_* via the scratch shot scripts, tv101d_*).
+- **v1.01 ONLINE (322-v101onl + the "v1.01" section of 111-onlcore + its block in routes.js + index.js `requireGoogle`; docs/backend.md "v1.01";
+  findings tools/plans/v101/SECURITY.md; no protocol bump):** online kits/loadouts follow the v1.0 classes (Damnatio kit Iron Helm + Belt I, no Falcata;
+  322 makes 315's `bal100Old` a plain call). SECURITY: snapshots (`match.open`/`match.snap`, `C.snapBad101` → `snap_bad`, opening written once) and moves
+  (`C.inBad101` → `in_bad`) carrying markup are refused; the page cleans every state it loads + other pages' moves (`snap101Clean`, kill switch
+  flavius_snap101off=1); result tables cleaned against the room (`tableFix101`) + `AUDIT#<match>` for odd/unverified Ranked tables (wave 2's server check
+  reads them); Cognito self sign-up off + `REQUIRE_GOOGLE` (stack update); own routes only. Tests `tonl101`, server `v101.test.js`.
 - **v1.0 ANIMATED GLADIATOR TOKENS (311-v100anim, last before 08-setup; his 3D answers 2026-10-11 + SPEED × ANIMATION a + ANIM MEMORY; look test
   tools/plans/look100/NOTES-look-anim.md; display only — never S, dice, RNG, the log or onlHash):** the 8 PRINTED classes wear rig92 3D stand-ins (production
   token + gear100/body100 bake + each class kit from t93Parts, mm100's LOOK per class) rendered ONCE by `node tools/art/anim100/make.js [cls…]` (SwiftShader,
