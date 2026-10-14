@@ -94,3 +94,16 @@ Online already returns (keep). Not for lessons, challenges keep their rules (att
 - P2 Drafts for every Play Now event (he offered the draft-rules PDF).
 - M11 Manager gear loop in step with online.
 - O2/O3/O4 Online progression (class change, ratings growth via XP, release a gladiator, XP tally screen) — mock-up first, server change.
+
+## His answers 2026-10-14 (the parked three)
+- G · P2 (1a): a Draft switch in Play Now Options for ANY event; the draft replaces each class's starting loadout — you start with only what
+  you drafted + the event's own items. Rulebook draft as already built (122/257/179 runDraft); events that draft already say so in the details.
+  Module src/playnow/338-v102draft.js, test tv102g. (His draft-rules PDF may still come — then match it.)
+- H · M11 (2a): Manager recruits sign with ONLY Issued L1 kit (272 P.iss pieces); every real piece is bought / repaired / looted / won; rivals
+  buy too (225 arm94AutoShop); prices + repair costs in step with online's (316 O1: printed repair = ceil(value/10), dented pieces, award-like
+  coin). Check with tools/mgrsim.js (no broke rivals, a player can arm a roster). Module src/manager/339-v102gear.js, SAVE_MIGRATIONS '1.02'
+  (existing careers keep what they own), test tv102h.
+- I · O2–O4 (3a, a, yes): online XP = CF earned + survival + win bonuses; each level = +1 to a rating of your choice on a level-up screen;
+  class change only at creation. Release a gladiator: gear → house shelf, Hall only if he qualifies else erased, typed confirm. Results tally on
+  return to the Online menu: coin, CF, Glory count up into bars, XP fills, level-up opens (Halo/Apex end-of-match feel). MOCK-UP FIRST
+  (tools/plans/mock102/progress.html) → his ok → server + client build.
