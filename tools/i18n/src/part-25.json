@@ -805,23 +805,23 @@
  },
  {
   "k": "Unknown request:",
-  "w": "server/src/routes.js:1713"
+  "w": "server/src/routes.js:1734"
  },
  {
   "k": "Too many requests — wait a moment.",
-  "w": "server/src/routes.js:1714"
+  "w": "server/src/routes.js:1735"
  },
  {
   "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1716"
+  "w": "server/src/routes.js:1737"
  },
  {
   "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1717"
+  "w": "server/src/routes.js:1738"
  },
  {
   "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1720"
+  "w": "server/src/routes.js:1741"
  },
  {
   "k": "The arena hit a snag — try again (ref {0}).",
@@ -1574,5 +1574,17 @@
  {
   "k": "Which match?",
   "w": "src/111-onlcore.js:1578"
+ },
+ {
+  "k": "That match state carries markup that is not allowed — refused.",
+  "w": "src/111-onlcore.js:1667"
+ },
+ {
+  "k": "Not a match state.",
+  "w": "src/111-onlcore.js:1668"
+ },
+ {
+  "k": "That move carries markup that is not allowed.",
+  "w": "src/111-onlcore.js:1673"
  }
 ]

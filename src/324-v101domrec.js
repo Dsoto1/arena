@@ -6,13 +6,13 @@
    The Ranked line carries a small ⓘ "includes earlier Custom matches played before v1.01" when the house already had bouts then (D.pre101 > 0) or
    the server predates the split (no D.split101). Fame stays beside them. Display only; Glory / Domus rank / coin / trophies are not touched.
    ===================================================================== */
-function dr101Lines(D){D=D||{};const cu=D.cu||{};const cf=n=>typeof cfAmt87==='function'?cfAmt87(n|0):`${n|0} CF`;
+function dr101Lines(D){D=D||{};const cu=D.cu||{};const cf=n=>typeof cfAmt87==='function'?cfAmt87(n|0):_T`${n|0} CF`;
   const old=!D.split101||(D.pre101|0)>0;
   const ln=(ic,nm,b,w,s,f,l,note)=>_T`<span class="dr101l"><b>${ic} ${nm}:</b> ${b} bouts · ${w} wins · ${s} survived · ${f} fallen · ${l}${note}</span>`;
   const note=old?`<i class="dr101i" tabindex="0" title="${esc2(_T('includes earlier Custom matches played before v1.01'))}">ⓘ</i>`:'';
   return `<span class="dr101">${ln('⚔',_T('Ranked'),D.bouts|0,D.wins|0,D.survived|0,D.fallen|0,cf(D.lifeCF),note)}${ln('🎭',_T('Unranked'),cu.bouts|0,cu.wins|0,cu.survived|0,cu.fallen|0,cf(cu.lifeCF),'')}</span>`}
 /* swap the record block (a flat container of spans) for the two lines, keeping Fame beside them */
-function dr101Swap(h,cls,D,fame){if(typeof h!=='string'||!D)return h;const re=new RegExp('<div class="'+cls+'">[\\s\\S]*?</div>');if(!re.test(h))return h;
+function dr101Swap(h,cls,D,fame){if(typeof h!=='string'||!D)return h;const re=new RegExp(_T('<div class="')+cls+'">[\\s\\S]*?</div>');if(!re.test(h))return h;
   return h.replace(re,()=>`<div class="${cls} dr101w">${dr101Lines(D)}${fame?`<span class="dr101f"><b>✦ ${D.fame|0}</b> ${_T('Fame')}</span>`:''}</div>`)}
 if(typeof d89Banner==='function'){const base=d89Banner;d89Banner=function(){const h=base.apply(this,arguments);try{return dr101Swap(h,'db89-rec',ONL.domus||{},true)}catch(e){return h}}}
 if(typeof l89VisitHTML==='function'){const base=l89VisitHTML;l89VisitHTML=function(){const h=base.apply(this,arguments);try{const r=V89L.visit;return dr101Swap(h,'db89-rec',r&&r.domus,true)}catch(e){return h}}}

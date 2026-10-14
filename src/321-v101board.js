@@ -40,7 +40,7 @@ const B101={off:(()=>{try{return localStorage.getItem('flavius_board101off')==='
 const dc101=()=>{try{return !!(S&&S.daily100)}catch(e){return false}};
 
 /* ---------------- G2 · one coach, Terynious Tutorialis ---------------- */
-const COACH101='Terynious Tutorialis';
+const COACH101=_T('Terynious Tutorialis');
 try{
   if(typeof MTUTOR99==='function'&&typeof TUTOR99==='function')MTUTOR99=function(){return TUTOR99()};
   const hello=TUT_STEPS.find(s=>s.id==='hello');
@@ -155,7 +155,7 @@ if(typeof ar91DecoKey==='function'){const bk=ar91DecoKey;ar91DecoKey=function(){
   return p}}
 
 /* ---------------- G16 · Lobby Browser: Join by FID to the right, quiet; the other buttons sandstone ---------------- */
-{const base=onlLobbyHTML;onlLobbyHTML=function(){let h=base.apply(this,arguments);try{if(!B101.off&&typeof h==='string'&&h.indexOf('lb100-jb')>=0)h=h.replace(/(<form class="lb100-jb"[\s\S]*?)<button type="submit" class="btn primary"/,'$1<button type="submit" class="btn tksm"')}catch(e){}return h}}
+{const base=onlLobbyHTML;onlLobbyHTML=function(){let h=base.apply(this,arguments);try{if(!B101.off&&typeof h==='string'&&h.indexOf('lb100-jb')>=0)h=h.replace(/(<form class="lb100-jb"[\s\S]*?)<button type="submit" class="btn primary"/,_T('$1<button type="submit" class="btn tksm"'))}catch(e){}return h}}
 
 /* ---------------- G18 · Play Now: Challenges = a tab; the calendar date lives in "Follow the schedule" ---------------- */
 {const base=setupBody;setupBody=function(){let h=base.apply(this,arguments);try{if(B101.off||typeof h!=='string'||h.indexOf('pn-tabs')<0)return h;

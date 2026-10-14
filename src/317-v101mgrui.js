@@ -116,7 +116,7 @@ function led101HTML(w){const row=n=>`<div class="${n.cls||''}"><span class="rc-s
     ${mine.length?`<details class="led101f"><summary class="rc-sub">✝ ${_T`The fallen`} · ${mine.length}</summary><div class="news led101l">${mine.slice(0,20).map(x=>`<div class="bad"><b>${esc(x.name)}</b>${x.age?`, ${x.age}`:''} <span class="rc-sub">${CLASSES[x.cls]?esc(CLASSES[x.cls].name):''} · ${esc(x.fate||'')} · S${x.s} W${x.wk}</span></div>`).join('')}</div></details>`:''}</div>`}
 {const base=lu100PopHTML;lu100PopHTML=function(w,pm,k){let h=base.apply(this,arguments);try{if(!a101On()||!h)return h;
   if(k==='consilium'){const c=`<div class="lu2b cn101"><div class="lu2bh">🧭 ${_T`The Consilium's counsel`}</div>${consiliumHTML()}</div>`;
-    const re=/<div class="lu2ln"><button[^>]*data-id="consil"[^>]*>[\s\S]*?<\/button><\/div>/;h=re.test(h)?h.replace(re,()=>c):h.replace('</div><div class="lu100scrim"',()=>c+'</div><div class="lu100scrim"')}
+    const re=/<div class="lu2ln"><button[^>]*data-id="consil"[^>]*>[\s\S]*?<\/button><\/div>/;h=re.test(h)?h.replace(re,()=>c):h.replace('</div><div class="lu100scrim"',()=>c+_T('</div><div class="lu100scrim"'))}
   if(k==='clerk'){const re=/<div class="lu2ln"><button[^>]*data-id="ledger"[^>]*>[\s\S]*?<\/button><\/div>/;h=h.replace(re,'');const i=h.lastIndexOf('</div><div class="lu100scrim"');if(i>0)h=h.slice(0,i)+led101HTML(w)+h.slice(i)}}catch(e){console.error(e)}return h}}
 /* the Ledger badge + the counsel's "Read it" open the popover, never a panel under the tiles */
 if(typeof lu2Panel==='function'){const base=lu2Panel;lu2Panel=function(id){if(!a101On()||(id!=='ledger'&&id!=='consil'))return base.apply(this,arguments);

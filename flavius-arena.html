@@ -68308,7 +68308,7 @@ care90HTML=function(g,w,m){const i=g.inj,war=i&&i.war;const free=bedFree76(w);co
 /* ---------- 2 · the medicus popup ---------- */
 function med101Pop(){const w=W_(),m=me();if(!w||!m)return;for(const o of document.querySelectorAll('.ask76bg'))o.remove();const bg=document.createElement('div');bg.className='veraskbg ask76bg v101mp';
   bg.innerHTML=`<div class="card2 verask" role="dialog" aria-modal="true"><b>${_T`🧑‍⚕️ Hire a house medicus`}</b><p class="rc-sub" style="margin:4px 0 8px">${_T`A weekly wage. Each skill level heals faster and adds ${CARE101.medicus} Medicus hours a week.`}</p>
-    <div class="bp87l">${medCands76(w).map((c,i)=>`<button type="button" class="btn bp87" data-v101mh="${i}" ${m.coin<c.wage?`disabled title="${esc(_T('Not enough coin'))}"`:''}><b>${esc(c.name)} · ${_T`skill ${c.skill}`}</b><small>${coinAmt87(c.wage)} ${_T`a week`} · +${CARE101.medicus*c.skill} h · ${MED_SK76[c.skill]}</small></button>`).join('')}</div>
+    <div class="bp87l">${medCands76(w).map((c,i)=>`<button type="button" class="btn bp87" data-v101mh="${i}" ${m.coin<c.wage?_T`disabled title="${esc(_T('Not enough coin'))}"`:''}><b>${esc(c.name)} · ${_T`skill ${c.skill}`}</b><small>${coinAmt87(c.wage)} ${_T`a week`} · +${CARE101.medicus*c.skill} h · ${MED_SK76[c.skill]}</small></button>`).join('')}</div>
     <div class="acts"><button type="button" class="btn" data-v101mx>${_T`Close`}</button></div></div>`;
   document.body.appendChild(bg);const done=()=>{bg.remove();document.removeEventListener('keydown',key,true)};const key=e=>{if(e.key==='Escape'){e.stopPropagation();e.preventDefault();done()}};document.addEventListener('keydown',key,true);
   bg.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-v101mh]');if(!b){if(e.target===bg||e.target.closest('[data-v101mx]'))done();return}if(b.disabled)return;done();
@@ -68376,9 +68376,9 @@ function v101Yard(R,w,pm){const pane=R.querySelector('#mgrPane');if(!pane)return
   const ros=rosterOf(pm);let g=gById(MGR.tr92);if(!g||!ros.includes(g))g=ros[0];if(!g)return;const f=gFat(g);const X=x74(w);const th=thLeft(w);const rub=X.rub.includes(g.id);const r=g.restWk===w.week;
   const care=g.ord87&&g.ord87.r==='care';const oc=typeof onCard==='function'&&onCard(g);const hurt=g.inj||(g.severed||[]).length;
   const B=[];
-  B.push(`<div class="v101rr"><button class="yd76b ${rub?'on':''}" type="button" data-bath="${g.id}" ${rub||th<1||!(f>0)?`disabled title="${esc(rub?_T('Done this week'):th<1?_T('No training hours left this week'):_T('Not tired'))}"`:''}>${_T`🛁 Rub-down`}<small>${rub?_T('✓ done this week'):_T`1 training hour`}</small></button><span>${_T`Oil and strong hands: fatigue −10 now (${f} → ${Math.max(0,f-10)}), once a week.`}</span></div>`);
+  B.push(`<div class="v101rr"><button class="yd76b ${rub?'on':''}" type="button" data-bath="${g.id}" ${rub||th<1||!(f>0)?_T`disabled title="${esc(rub?_T('Done this week'):th<1?_T('No training hours left this week'):_T('Not tired'))}"`:''}>${_T`🛁 Rub-down`}<small>${rub?_T('✓ done this week'):_T`1 training hour`}</small></button><span>${_T`Oil and strong hands: fatigue −10 now (${f} → ${Math.max(0,f-10)}), once a week.`}</span></div>`);
   if(!hurt){B.push(`<div class="v101rr"><button class="yd76b ${care?'on':''}" type="button" data-care90="${g.id}">${_T`📋 Care routine`}<small>${care?_T('✓ on · tap to stop'):_T('a standing order')}</small></button><span>${_T`Every week: a morale talk and gear care, and fatigue −${FAT_CARE90} at the week's end. Repeats until stopped.`}</span></div>`);
-    B.push(`<div class="v101rr"><button class="yd76b ${r?'on':''}" type="button" data-rest="${g.id}" ${!r&&oc?`disabled title="${esc(_T("On this week's card — withdraw from the bout on Match Week first"))}"`:''}>${_T`🛏 Rest week`}<small>${r?_T('✓ resting · tap to undo'):_T('no drills, no bouts')}</small></button><span>${_T`Sits out every bout and drill this week; fatigue −${FAT_REST} at the week's end (${f} → ${Math.max(0,f-FAT_REST)}).`}</span></div>`)}
+    B.push(`<div class="v101rr"><button class="yd76b ${r?'on':''}" type="button" data-rest="${g.id}" ${!r&&oc?_T`disabled title="${esc(_T("On this week's card — withdraw from the bout on Match Week first"))}"`:''}>${_T`🛏 Rest week`}<small>${r?_T('✓ resting · tap to undo'):_T('no drills, no bouts')}</small></button><span>${_T`Sits out every bout and drill this week; fatigue −${FAT_REST} at the week's end (${f} → ${Math.max(0,f-FAT_REST)}).`}</span></div>`)}
   else B.push(`<div class="v101rr"><span class="rc-sub">${_T`Wounded — the Infirmary treats him first.`}</span></div>`);
   doc.insertAdjacentHTML('beforeend',`<div class="v101rec2"><div class="v101oh">${_T`🛁 Recovery`}</div><div class="rc-sub">${esc(g.name)} · ${_T`fatigue ${f}`} ${typeof fatChip90==='function'?fatChip90(g):''}</div>${B.join('')}</div>`)}
 /* other treatment buttons (the gladiator card, the morale Medicus): hours + half coin, the refusal reason */
@@ -68875,7 +68875,7 @@ function led101HTML(w){const row=n=>`<div class="${n.cls||''}"><span class="rc-s
     ${mine.length?`<details class="led101f"><summary class="rc-sub">✝ ${_T`The fallen`} · ${mine.length}</summary><div class="news led101l">${mine.slice(0,20).map(x=>`<div class="bad"><b>${esc(x.name)}</b>${x.age?`, ${x.age}`:''} <span class="rc-sub">${CLASSES[x.cls]?esc(CLASSES[x.cls].name):''} · ${esc(x.fate||'')} · S${x.s} W${x.wk}</span></div>`).join('')}</div></details>`:''}</div>`}
 {const base=lu100PopHTML;lu100PopHTML=function(w,pm,k){let h=base.apply(this,arguments);try{if(!a101On()||!h)return h;
   if(k==='consilium'){const c=`<div class="lu2b cn101"><div class="lu2bh">🧭 ${_T`The Consilium's counsel`}</div>${consiliumHTML()}</div>`;
-    const re=/<div class="lu2ln"><button[^>]*data-id="consil"[^>]*>[\s\S]*?<\/button><\/div>/;h=re.test(h)?h.replace(re,()=>c):h.replace('</div><div class="lu100scrim"',()=>c+'</div><div class="lu100scrim"')}
+    const re=/<div class="lu2ln"><button[^>]*data-id="consil"[^>]*>[\s\S]*?<\/button><\/div>/;h=re.test(h)?h.replace(re,()=>c):h.replace('</div><div class="lu100scrim"',()=>c+_T('</div><div class="lu100scrim"'))}
   if(k==='clerk'){const re=/<div class="lu2ln"><button[^>]*data-id="ledger"[^>]*>[\s\S]*?<\/button><\/div>/;h=h.replace(re,'');const i=h.lastIndexOf('</div><div class="lu100scrim"');if(i>0)h=h.slice(0,i)+led101HTML(w)+h.slice(i)}}catch(e){console.error(e)}return h}}
 /* the Ledger badge + the counsel's "Read it" open the popover, never a panel under the tiles */
 if(typeof lu2Panel==='function'){const base=lu2Panel;lu2Panel=function(id){if(!a101On()||(id!=='ledger'&&id!=='consil'))return base.apply(this,arguments);
@@ -69501,7 +69501,7 @@ const B101={off:(()=>{try{return localStorage.getItem('flavius_board101off')==='
 const dc101=()=>{try{return !!(S&&S.daily100)}catch(e){return false}};
 
 /* ---------------- G2 · one coach, Terynious Tutorialis ---------------- */
-const COACH101='Terynious Tutorialis';
+const COACH101=_T('Terynious Tutorialis');
 try{
   if(typeof MTUTOR99==='function'&&typeof TUTOR99==='function')MTUTOR99=function(){return TUTOR99()};
   const hello=TUT_STEPS.find(s=>s.id==='hello');
@@ -69616,7 +69616,7 @@ if(typeof ar91DecoKey==='function'){const bk=ar91DecoKey;ar91DecoKey=function(){
   return p}}
 
 /* ---------------- G16 · Lobby Browser: Join by FID to the right, quiet; the other buttons sandstone ---------------- */
-{const base=onlLobbyHTML;onlLobbyHTML=function(){let h=base.apply(this,arguments);try{if(!B101.off&&typeof h==='string'&&h.indexOf('lb100-jb')>=0)h=h.replace(/(<form class="lb100-jb"[\s\S]*?)<button type="submit" class="btn primary"/,'$1<button type="submit" class="btn tksm"')}catch(e){}return h}}
+{const base=onlLobbyHTML;onlLobbyHTML=function(){let h=base.apply(this,arguments);try{if(!B101.off&&typeof h==='string'&&h.indexOf('lb100-jb')>=0)h=h.replace(/(<form class="lb100-jb"[\s\S]*?)<button type="submit" class="btn primary"/,_T('$1<button type="submit" class="btn tksm"'))}catch(e){}return h}}
 
 /* ---------------- G18 · Play Now: Challenges = a tab; the calendar date lives in "Follow the schedule" ---------------- */
 {const base=setupBody;setupBody=function(){let h=base.apply(this,arguments);try{if(B101.off||typeof h!=='string'||h.indexOf('pn-tabs')<0)return h;
@@ -69788,13 +69788,13 @@ try{if(typeof sd100CSS==='function'&&!B101.off){const st=document.createElement(
    The Ranked line carries a small ⓘ "includes earlier Custom matches played before v1.01" when the house already had bouts then (D.pre101 > 0) or
    the server predates the split (no D.split101). Fame stays beside them. Display only; Glory / Domus rank / coin / trophies are not touched.
    ===================================================================== */
-function dr101Lines(D){D=D||{};const cu=D.cu||{};const cf=n=>typeof cfAmt87==='function'?cfAmt87(n|0):`${n|0} CF`;
+function dr101Lines(D){D=D||{};const cu=D.cu||{};const cf=n=>typeof cfAmt87==='function'?cfAmt87(n|0):_T`${n|0} CF`;
   const old=!D.split101||(D.pre101|0)>0;
   const ln=(ic,nm,b,w,s,f,l,note)=>_T`<span class="dr101l"><b>${ic} ${nm}:</b> ${b} bouts · ${w} wins · ${s} survived · ${f} fallen · ${l}${note}</span>`;
   const note=old?`<i class="dr101i" tabindex="0" title="${esc2(_T('includes earlier Custom matches played before v1.01'))}">ⓘ</i>`:'';
   return `<span class="dr101">${ln('⚔',_T('Ranked'),D.bouts|0,D.wins|0,D.survived|0,D.fallen|0,cf(D.lifeCF),note)}${ln('🎭',_T('Unranked'),cu.bouts|0,cu.wins|0,cu.survived|0,cu.fallen|0,cf(cu.lifeCF),'')}</span>`}
 /* swap the record block (a flat container of spans) for the two lines, keeping Fame beside them */
-function dr101Swap(h,cls,D,fame){if(typeof h!=='string'||!D)return h;const re=new RegExp('<div class="'+cls+'">[\\s\\S]*?</div>');if(!re.test(h))return h;
+function dr101Swap(h,cls,D,fame){if(typeof h!=='string'||!D)return h;const re=new RegExp(_T('<div class="')+cls+'">[\\s\\S]*?</div>');if(!re.test(h))return h;
   return h.replace(re,()=>`<div class="${cls} dr101w">${dr101Lines(D)}${fame?`<span class="dr101f"><b>✦ ${D.fame|0}</b> ${_T('Fame')}</span>`:''}</div>`)}
 if(typeof d89Banner==='function'){const base=d89Banner;d89Banner=function(){const h=base.apply(this,arguments);try{return dr101Swap(h,'db89-rec',ONL.domus||{},true)}catch(e){return h}}}
 if(typeof l89VisitHTML==='function'){const base=l89VisitHTML;l89VisitHTML=function(){const h=base.apply(this,arguments);try{const r=V89L.visit;return dr101Swap(h,'db89-rec',r&&r.domus,true)}catch(e){return h}}}

@@ -1,0 +1,818 @@
+[
+ {
+  "k": "the levy passed over them — not fit to march",
+  "w": "17-manager.js:906"
+ },
+ {
+  "k": "{0} is not fit to march — the levy officer leaves empty-handed.",
+  "w": "17-manager.js:906"
+ },
+ {
+  "k": "The levy officer sees {0}'s wounds and moves on — no one is called who cannot walk.",
+  "w": "17-manager.js:906"
+ },
+ {
+  "k": "Their scouting card: fighters, form, this week's bouts. Press <b>🏛 Team Details</b> to visit the house.",
+  "w": "36-mtutor.js:87"
+ },
+ {
+  "k": "Press <b>📅 Season</b> — the schedule.",
+  "w": "36-mtutor.js:91"
+ },
+ {
+  "k": "<b>📅 Season</b> is a button on the <b>League</b> banner — open the League first.",
+  "w": "36-mtutor.js:91"
+ },
+ {
+  "k": "He wants a path to the rudis — his freedom. Promising it adds interest now and notes the promise on his record.",
+  "w": "157-v88mgr.js:224"
+ },
+ {
+  "k": "World · Tituli",
+  "w": "290-v100world.js:125"
+ },
+ {
+  "k": "🏛 Team Details",
+  "w": "290-v100world.js:214"
+ },
+ {
+  "k": "My Acta",
+  "w": "290-v100world.js:371"
+ },
+ {
+  "k": "Nobody to treat.",
+  "w": "318-v101ward.js:54"
+ },
+ {
+  "k": "Needs a bed first — put him in one.",
+  "w": "318-v101ward.js:56"
+ },
+ {
+  "k": "The wound is beyond the Medicus — it wants the surgeon.",
+  "w": "318-v101ward.js:58"
+ },
+ {
+  "k": "Nothing for the surgeon.",
+  "w": "318-v101ward.js:59"
+ },
+ {
+  "k": "No wound to steam.",
+  "w": "318-v101ward.js:60"
+ },
+ {
+  "k": "{0} has already been steamed, scraped and oiled this week.",
+  "w": "318-v101ward.js:60"
+ },
+ {
+  "k": "No wound for the temple.",
+  "w": "318-v101ward.js:61"
+ },
+ {
+  "k": "No lost limb.",
+  "w": "318-v101ward.js:62"
+ },
+ {
+  "k": "Hygeia works only on a patient in bed — put him in one first.",
+  "w": "318-v101ward.js:62"
+ },
+ {
+  "k": "Unknown treatment.",
+  "w": "318-v101ward.js:63"
+ },
+ {
+  "k": "Needs {0} Medicus hours — {1} left this week. They come back when the week ends.",
+  "w": "318-v101ward.js:65"
+ },
+ {
+  "k": "Needs {0} coin — your treasury holds {1}.",
+  "w": "318-v101ward.js:66"
+ },
+ {
+  "k": "the Blessings of Hygeia regrew {0}",
+  "w": "318-v101ward.js:70"
+ },
+ {
+  "k": "🌿 The priests of Hygeia regrow {0}'s {1} ({2} h · {3} coin){4}.",
+  "w": "318-v101ward.js:71"
+ },
+ {
+  "k": "— {0} still lost",
+  "w": "318-v101ward.js:71"
+ },
+ {
+  "k": "⚕ The Medicus clears {0}'s {1} ({2} h · {3} coin) — morale {4}.",
+  "w": "318-v101ward.js:74"
+ },
+ {
+  "k": "⚕ The Medicus puts {0} on a Health Elixir regimen ({1} h · {2} coin) — morale {3}.",
+  "w": "318-v101ward.js:74"
+ },
+ {
+  "k": "🔪 The knife slips. {0} keeps the {1} another week ({2} h · {3} coin).",
+  "w": "318-v101ward.js:75"
+ },
+ {
+  "k": "🔪 Clean work: {0}'s wound is closed — fit to fight ({1} h · {2} coin).",
+  "w": "318-v101ward.js:76"
+ },
+ {
+  "k": "🛁 Steam, oil and a strigil: {0} walks out HEALED ({1} h · {2} coin).",
+  "w": "318-v101ward.js:78"
+ },
+ {
+  "k": "🛁 A bathhouse day for {0}: a week off the healing, +4 morale ({1} h · {2} coin).",
+  "w": "318-v101ward.js:79"
+ },
+ {
+  "k": "⚡ One night in the temple of Asclepius: {0} wakes with the {1} gone ({2} h · {3} coin).",
+  "w": "318-v101ward.js:80"
+ },
+ {
+  "k": "🛏 {0} rests in bed — free, healing at full pace.",
+  "w": "318-v101ward.js:90"
+ },
+ {
+  "k": "{0} Plan for {1}: {2} — repeats every week while the hours and coin allow.",
+  "w": "318-v101ward.js:90"
+ },
+ {
+  "k": "Clears the wound now · +12 morale",
+  "w": "318-v101ward.js:93"
+ },
+ {
+  "k": "The only cure for a festering wound · 1 in 10 slips",
+  "w": "318-v101ward.js:93"
+ },
+ {
+  "k": "A week faster · +4 morale",
+  "w": "318-v101ward.js:94"
+ },
+ {
+  "k": "Heals any wound at once · +8 morale",
+  "w": "318-v101ward.js:94"
+ },
+ {
+  "k": "Regrows a lost limb",
+  "w": "318-v101ward.js:94"
+ },
+ {
+  "k": "Every treatment takes Medicus hours. 4 a week, +3 a Valetudinarium level, +2 a house-medicus skill level; they come back when the week ends.",
+  "w": "318-v101ward.js:95"
+ },
+ {
+  "k": "Medicus hours: <b>{0}</b> of {1} left this week",
+  "w": "318-v101ward.js:95"
+ },
+ {
+  "k": "· {0} of {1} Medicus hours left this week",
+  "w": "318-v101ward.js:111"
+ },
+ {
+  "k": "Every cure takes <b>Medicus hours</b> and coin. The house has <b>{0}</b> hours a week: 4, +3 for each Valetudinarium level, +2 for each skill level of a house medicus. Hours you don't use are lost when the week ends — a poor house can still heal, a rich one cannot buy more time.",
+  "w": "318-v101ward.js:112"
+ },
+ {
+  "k": "Hours",
+  "w": "318-v101ward.js:113"
+ },
+ {
+  "k": "A light wound heals by itself in a week or two",
+  "w": "318-v101ward.js:114"
+ },
+ {
+  "k": "the wound is light and he can sit out a bout",
+  "w": "318-v101ward.js:114"
+ },
+ {
+  "k": "the usual fix — back onto the card this week",
+  "w": "318-v101ward.js:116"
+ },
+ {
+  "k": "The only cure for a <b>festering</b> wound · 1 in 10 goes wrong (a week lost)",
+  "w": "318-v101ward.js:117"
+ },
+ {
+  "k": "a star must fight this week and the coin is there",
+  "w": "318-v101ward.js:118"
+ },
+ {
+  "k": "The <b>only</b> way to regrow a lost limb (a limb each time; needs a bed)",
+  "w": "318-v101ward.js:119"
+ },
+ {
+  "k": "⚔ Away at war — back {0}. Nothing to treat until then.",
+  "w": "318-v101ward.js:123"
+ },
+ {
+  "k": "🛏 In a bed — full-pace healing",
+  "w": "318-v101ward.js:124"
+ },
+ {
+  "k": "🛏 A bed first — the physicians treat a serious wound or a lost limb only in bed",
+  "w": "318-v101ward.js:124"
+ },
+ {
+  "k": "🌿 Hygeia regrows the {0} — {1} h + {2} coin a limb",
+  "w": "318-v101ward.js:125"
+ },
+ {
+  "k": "🔪 The surgeon — the wound festers ({0}/3), waiting kills",
+  "w": "318-v101ward.js:127"
+ },
+ {
+  "k": "🔪 The surgeon closes the wound — nothing else does",
+  "w": "318-v101ward.js:127"
+ },
+ {
+  "k": "⚕ The Medicus clears the wound this week",
+  "w": "318-v101ward.js:128"
+ },
+ {
+  "k": "🛏 Worn ({0}): a Rest week in the Training Yard → Recovery",
+  "w": "318-v101ward.js:130"
+ },
+ {
+  "k": "🛁 Tired ({0}): a rub-down or the Care routine in the Training Yard → Recovery",
+  "w": "318-v101ward.js:131"
+ },
+ {
+  "k": "Suggested order",
+  "w": "318-v101ward.js:133"
+ },
+ {
+  "k": "✓ Nothing to treat — fit for the sand.",
+  "w": "318-v101ward.js:133"
+ },
+ {
+  "k": "Short on hours: the bathhouse ({0} h) takes a week off instead.",
+  "w": "318-v101ward.js:136"
+ },
+ {
+  "k": "To the Training Yard",
+  "w": "318-v101ward.js:136"
+ },
+ {
+  "k": "Beds full — build the Valetudinarium for another",
+  "w": "318-v101ward.js:152"
+ },
+ {
+  "k": "🌿 Regrow {0}<small>{1} h + {2} a limb · needs a bed</small>",
+  "w": "318-v101ward.js:154"
+ },
+ {
+  "k": "Valetudinarium",
+  "w": "318-v101ward.js:157"
+ },
+ {
+  "k": "level {0}/3",
+  "w": "318-v101ward.js:157"
+ },
+ {
+  "k": "🏗 Build Valetudinarium {0}<small>{1} · +1 bed · +{2} Medicus hours a week</small>",
+  "w": "318-v101ward.js:157"
+ },
+ {
+  "k": "🧑‍⚕️ Hire a house medicus",
+  "w": "318-v101ward.js:163"
+ },
+ {
+  "k": "A weekly wage. Each skill level heals faster and adds {0} Medicus hours a week.",
+  "w": "318-v101ward.js:163"
+ },
+ {
+  "k": "skill {0}",
+  "w": "318-v101ward.js:164"
+ },
+ {
+  "k": "Wounded or missing a limb",
+  "w": "318-v101ward.js:188"
+ },
+ {
+  "k": "🩸 hurt",
+  "w": "318-v101ward.js:188"
+ },
+ {
+  "k": "🛏 beds",
+  "w": "318-v101ward.js:188"
+ },
+ {
+  "k": "Medicus hours left this week — every treatment takes some",
+  "w": "318-v101ward.js:189"
+ },
+ {
+  "k": "⏳ hours left",
+  "w": "318-v101ward.js:189"
+ },
+ {
+  "k": "A weekly wage · faster healing · more Medicus hours",
+  "w": "318-v101ward.js:192"
+ },
+ {
+  "k": "🧑‍⚕️ Hire a medicus",
+  "w": "318-v101ward.js:192"
+ },
+ {
+  "k": "Take him out of the bed",
+  "w": "318-v101ward.js:205"
+ },
+ {
+  "k": "🛏 Take out",
+  "w": "318-v101ward.js:205"
+ },
+ {
+  "k": "★ Suggested",
+  "w": "318-v101ward.js:218"
+ },
+ {
+  "k": "regrows · {0} h + {1} coin a limb · needs a bed",
+  "w": "318-v101ward.js:225"
+ },
+ {
+  "k": "Recovery is in the Training Yard",
+  "w": "318-v101ward.js:227"
+ },
+ {
+  "k": "No training hours left this week",
+  "w": "318-v101ward.js:232"
+ },
+ {
+  "k": "Not tired",
+  "w": "318-v101ward.js:232"
+ },
+ {
+  "k": "🛁 Rub-down",
+  "w": "318-v101ward.js:232"
+ },
+ {
+  "k": "✓ done this week",
+  "w": "318-v101ward.js:232"
+ },
+ {
+  "k": "Oil and strong hands: fatigue −10 now ({0} → {1}), once a week.",
+  "w": "318-v101ward.js:232"
+ },
+ {
+  "k": "📋 Care routine",
+  "w": "318-v101ward.js:233"
+ },
+ {
+  "k": "✓ on · tap to stop",
+  "w": "318-v101ward.js:233"
+ },
+ {
+  "k": "a standing order",
+  "w": "318-v101ward.js:233"
+ },
+ {
+  "k": "Every week: a morale talk and gear care, and fatigue −{0} at the week's end. Repeats until stopped.",
+  "w": "318-v101ward.js:233"
+ },
+ {
+  "k": "On this week's card — withdraw from the bout on Match Week first",
+  "w": "318-v101ward.js:234"
+ },
+ {
+  "k": "✓ resting · tap to undo",
+  "w": "318-v101ward.js:234"
+ },
+ {
+  "k": "no drills, no bouts",
+  "w": "318-v101ward.js:234"
+ },
+ {
+  "k": "Sits out every bout and drill this week; fatigue −{0} at the week's end ({1} → {2}).",
+  "w": "318-v101ward.js:234"
+ },
+ {
+  "k": "Wounded — the Infirmary treats him first.",
+  "w": "318-v101ward.js:235"
+ },
+ {
+  "k": "🛁 Recovery",
+  "w": "318-v101ward.js:236"
+ },
+ {
+  "k": "a limb",
+  "w": "318-v101ward.js:241"
+ },
+ {
+  "k": "{0} h left",
+  "w": "318-v101ward.js:241"
+ },
+ {
+  "k": "is gone from the league",
+  "w": "319-v101rules.js:42"
+ },
+ {
+  "k": "is away at war",
+  "w": "319-v101rules.js:43"
+ },
+ {
+  "k": "is in an infirmary bed",
+  "w": "319-v101rules.js:44"
+ },
+ {
+  "k": "has lost {0} — only Hygeia regrows a limb",
+  "w": "319-v101rules.js:46"
+ },
+ {
+  "k": "is hurt ({0})",
+  "w": "319-v101rules.js:47"
+ },
+ {
+  "k": "is seriously hurt",
+  "w": "319-v101rules.js:48"
+ },
+ {
+  "k": "at war",
+  "w": "319-v101rules.js:51"
+ },
+ {
+  "k": "in a bed",
+  "w": "319-v101rules.js:51"
+ },
+ {
+  "k": "lost a limb",
+  "w": "319-v101rules.js:51"
+ },
+ {
+  "k": "🛏 {0}'s rest week ends — {1}.",
+  "w": "319-v101rules.js:59"
+ },
+ {
+  "k": "he is entered",
+  "w": "319-v101rules.js:59"
+ },
+ {
+  "k": "entered",
+  "w": "319-v101rules.js:61"
+ },
+ {
+  "k": "he rests",
+  "w": "319-v101rules.js:69"
+ },
+ {
+  "k": "📋 {0} comes off the card — {1}.",
+  "w": "319-v101rules.js:78"
+ },
+ {
+  "k": "he fights",
+  "w": "319-v101rules.js:81"
+ },
+ {
+  "k": "the deal",
+  "w": "319-v101rules.js:83"
+ },
+ {
+  "k": "he cannot fight",
+  "w": "319-v101rules.js:89"
+ },
+ {
+  "k": "⚔ {0} marches to war and leaves his bed in the Infirmary.",
+  "w": "319-v101rules.js:91"
+ },
+ {
+  "k": "is resting — entering him ends the rest",
+  "w": "319-v101rules.js:99"
+ },
+ {
+  "k": "fights only in the Gambit",
+  "w": "319-v101rules.js:100"
+ },
+ {
+  "k": "is already entered in the {0}",
+  "w": "319-v101rules.js:101"
+ },
+ {
+  "k": "is entered here",
+  "w": "319-v101rules.js:102"
+ },
+ {
+  "k": "cannot enter: this bout is closed to your house after two withdrawals",
+  "w": "319-v101rules.js:103"
+ },
+ {
+  "k": "is rated {0}; the {1} takes {2}–{3}",
+  "w": "319-v101rules.js:104"
+ },
+ {
+  "k": "is too low in spirit (morale {0})",
+  "w": "319-v101rules.js:105"
+ },
+ {
+  "k": "ends the rest",
+  "w": "319-v101rules.js:114"
+ },
+ {
+  "k": "Nobody on your roster can be entered in this bout — see below",
+  "w": "319-v101rules.js:117"
+ },
+ {
+  "k": "🚫 None of your fighters fits this bout — why",
+  "w": "319-v101rules.js:122"
+ },
+ {
+  "k": "Why the others don't fit ({0})",
+  "w": "319-v101rules.js:122"
+ },
+ {
+  "k": "💰 Spares — sell",
+  "w": "319-v101rules.js:129"
+ },
+ {
+  "k": "{0} to sell · the stalls buy {1} more this week (30% of the price)",
+  "w": "319-v101rules.js:129"
+ },
+ {
+  "k": "These are pieces you already own and don't wear — the same ones as on the shelf above. Sell the duplicates for coin; nothing here is for sale to you (buy in the City Square).",
+  "w": "319-v101rules.js:129"
+ },
+ {
+  "k": "{0} fighter{1} on the roster: {2} h (up to 3 fighters 24 h · 4-6 16 h · 7-9 10 h · 10+ 6 h){3} — a full house needs fewer recruits.",
+  "w": "319-v101rules.js:136"
+ },
+ {
+  "k": "+ {0} h from the Recruiter's level",
+  "w": "319-v101rules.js:136"
+ },
+ {
+  "k": "{0} is in an infirmary bed — equip him after he has healed.",
+  "w": "319-v101rules.js:143"
+ },
+ {
+  "k": "{0} is in an infirmary bed — equip her after she has healed.",
+  "w": "319-v101rules.js:143"
+ },
+ {
+  "k": "🛏 In an infirmary bed — he cannot be equipped until he has healed.",
+  "w": "319-v101rules.js:145"
+ },
+ {
+  "k": "🛏 In an infirmary bed — she cannot be equipped until she has healed.",
+  "w": "319-v101rules.js:145"
+ },
+ {
+  "k": "🤝 On loan — he arrives with a loaner kit (a gladius and padded leg wraps). Change it as you like: loaner pieces you replace vanish, your own go back to your shelf when he returns.",
+  "w": "319-v101rules.js:147"
+ },
+ {
+  "k": "full · you may still bump a free-agent filler ({0} coin)",
+  "w": "319-v101rules.js:194"
+ },
+ {
+  "k": "Every seat is held by a rival house — a rival lanista's fighter is never bumped. Only a free-agent filler can be.",
+  "w": "319-v101rules.js:196"
+ },
+ {
+  "k": "💰 To your house: {0}",
+  "w": "319-v101rules.js:216"
+ },
+ {
+  "k": "Coin your house took from this bout: appearance fee + purse share",
+  "w": "319-v101rules.js:222"
+ },
+ {
+  "k": "💰 Your house took <b>{0}</b> from this bout (appearance fees and purse).",
+  "w": "319-v101rules.js:223"
+ },
+ {
+  "k": "<b>{0}</b> got the fight they asked for — morale {1}{2}.",
+  "w": "319-v101rules.js:235"
+ },
+ {
+  "k": "<b>{0}</b> asked to fight and sat out — morale {1}.",
+  "w": "319-v101rules.js:235"
+ },
+ {
+  "k": "⚖ What it cost and what it earned",
+  "w": "319-v101rules.js:238"
+ },
+ {
+  "k": "requests and rewards that came due at the week's end",
+  "w": "319-v101rules.js:238"
+ },
+ {
+  "k": "<b>{0}</b> — {1} things",
+  "w": "319-v101rules.js:262"
+ },
+ {
+  "k": "things",
+  "w": "319-v101rules.js:268"
+ },
+ {
+  "k": "Close ▴",
+  "w": "319-v101rules.js:269"
+ },
+ {
+  "k": "Open ▾",
+  "w": "319-v101rules.js:269"
+ },
+ {
+  "k": "Resting takes him off this week's card",
+  "w": "319-v101rules.js:290"
+ },
+ {
+  "k": "He would sign at your ask — time to make the offer.",
+  "w": "317-v101mgrui.js:51"
+ },
+ {
+  "k": "League",
+  "w": "317-v101mgrui.js:58"
+ },
+ {
+  "k": "perk point to spend",
+  "w": "317-v101mgrui.js:62"
+ },
+ {
+  "k": "perk points to spend",
+  "w": "317-v101mgrui.js:62"
+ },
+ {
+  "k": "Honours",
+  "w": "317-v101mgrui.js:75"
+ },
+ {
+  "k": "Glass case",
+  "w": "317-v101mgrui.js:75"
+ },
+ {
+  "k": "Paid to the house when it is won",
+  "w": "317-v101mgrui.js:79"
+ },
+ {
+  "k": "NEW",
+  "w": "317-v101mgrui.js:80"
+ },
+ {
+  "k": "Purse and fees this bout brought the house",
+  "w": "317-v101mgrui.js:97"
+ },
+ {
+  "k": "League points",
+  "w": "317-v101mgrui.js:97"
+ },
+ {
+  "k": "No results yet this season.",
+  "w": "317-v101mgrui.js:98"
+ },
+ {
+  "k": "<b>{0} owed</b> to {1} · {2}% interest a week, added to the debt. Nobody takes it from your treasury: you pay by hand.",
+  "w": "317-v101mgrui.js:102"
+ },
+ {
+  "k": "<b>{0} week{1} short{2}.</b>",
+  "w": "317-v101mgrui.js:103"
+ },
+ {
+  "k": "The Clerk: what you owe Sica",
+  "w": "317-v101mgrui.js:107"
+ },
+ {
+  "k": "The Clerk: Sica's patience is wearing thin",
+  "w": "317-v101mgrui.js:110"
+ },
+ {
+  "k": "Ludus ledger",
+  "w": "317-v101mgrui.js:114"
+ },
+ {
+  "k": "</div><div class=\"lu100scrim\"",
+  "w": "317-v101mgrui.js:119"
+ },
+ {
+  "k": "The Council",
+  "w": "317-v101mgrui.js:129"
+ },
+ {
+  "k": "Someone on the Council has something for you: tap the lit face",
+  "w": "317-v101mgrui.js:130"
+ },
+ {
+  "k": "{0} on the Council have something for you: tap a lit face",
+  "w": "317-v101mgrui.js:130"
+ },
+ {
+  "k": "1 perk point to spend",
+  "w": "317-v101mgrui.js:152"
+ },
+ {
+  "k": "{0} perk points to spend",
+  "w": "317-v101mgrui.js:152"
+ },
+ {
+  "k": "1 honour you have not seen yet",
+  "w": "317-v101mgrui.js:153"
+ },
+ {
+  "k": "{0} honours you have not seen yet",
+  "w": "317-v101mgrui.js:153"
+ },
+ {
+  "k": "Rating {0}",
+  "w": "320-v101win.js:41"
+ },
+ {
+  "k": "Public estimate ~{0} — scout for the truth",
+  "w": "320-v101win.js:41"
+ },
+ {
+  "k": "Their opinion of your house",
+  "w": "320-v101win.js:80"
+ },
+ {
+  "k": "~ = the public estimate · scout for the truth",
+  "w": "320-v101win.js:85"
+ },
+ {
+  "k": "Open {0}'s card",
+  "w": "320-v101win.js:91"
+ },
+ {
+  "k": "The house · how they run it",
+  "w": "320-v101win.js:100"
+ },
+ {
+  "k": "📜 Correspondence",
+  "w": "320-v101win.js:107"
+ },
+ {
+  "k": "Contracts travel with the fighters.",
+  "w": "320-v101win.js:125"
+ },
+ {
+  "k": "Pay what you owe and they warm to you.",
+  "w": "320-v101win.js:125"
+ },
+ {
+  "k": "yours",
+  "w": "320-v101win.js:139"
+ },
+ {
+  "k": "Loyalty {0}",
+  "w": "320-v101win.js:140"
+ },
+ {
+  "k": "Worth {0} a week now; takes {1}.",
+  "w": "320-v101win.js:150"
+ },
+ {
+  "k": "That match state carries markup that is not allowed — refused.",
+  "w": "322-v101onl.js:58"
+ },
+ {
+  "k": "That move carries markup that is not allowed.",
+  "w": "322-v101onl.js:59"
+ },
+ {
+  "k": "Terynious Tutorialis",
+  "w": "321-v101board.js:43"
+ },
+ {
+  "k": "The pot's offering landed on the sand at <b>{0}</b> — walk onto that tile to pick it up.",
+  "w": "321-v101board.js:52"
+ },
+ {
+  "k": "$1<button type=\"submit\" class=\"btn tksm\"",
+  "w": "321-v101board.js:158"
+ },
+ {
+  "k": "Token bases",
+  "w": "321-v101board.js:236"
+ },
+ {
+  "k": "Show token bases",
+  "w": "321-v101board.js:236"
+ },
+ {
+  "k": "The round base under each gladiator and beast. Off: they stand straight on the sand.",
+  "w": "321-v101board.js:236"
+ },
+ {
+  "k": "The tiles round you",
+  "w": "321-v101board.js:260"
+ },
+ {
+  "k": "gold: you may step here",
+  "w": "321-v101board.js:260"
+ },
+ {
+  "k": "dark: blocked",
+  "w": "321-v101board.js:260"
+ },
+ {
+  "k": "<span class=\"dr101l\"><b>{0} {1}:</b> {2} bouts · {3} wins · {4} survived · {5} fallen · {6}{7}</span>",
+  "w": "324-v101domrec.js:11"
+ },
+ {
+  "k": "includes earlier Custom matches played before v1.01",
+  "w": "324-v101domrec.js:12"
+ },
+ {
+  "k": "Unranked",
+  "w": "324-v101domrec.js:13"
+ },
+ {
+  "k": "<div class=\"",
+  "w": "324-v101domrec.js:15"
+ }
+]
