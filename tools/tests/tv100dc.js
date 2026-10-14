@@ -115,7 +115,8 @@ ok(await until(pA,()=>document.querySelectorAll('#mBody .dc100c').length===2),'t
 await pA.evaluate(()=>{openSetup(true)});ok(await until(pA,()=>document.querySelector('#mBody .pn-tabs [data-dc100pn]')&&document.querySelector('#mBody .pn100ev')),'v1.01 G18: the Challenges tab on the Play Now page');
 const order=await pA.evaluate(()=>{const t=[...document.querySelectorAll('#mBody .pn-tabs .seg button')].map(x=>x.textContent);const a=document.querySelector('#mBody .pn-tabs [data-dc100pn]'),e=document.querySelector('#mBody .pn100ev');return !document.querySelector('#mBody .dc100pn')&&t.findIndex(x=>/Tournament/.test(x))<t.findIndex(x=>/Challenges/.test(x))&&!!(a.compareDocumentPosition(e)&Node.DOCUMENT_POSITION_FOLLOWING)});ok(order,'the tab sits beside Tournament, the strip is gone');
 if(SHOT)await pA.screenshot({path:SHOT+'/playnow_1440.png'});
-await pA.click('#mBody .pn-tabs [data-dc100pn]');ok(await until(pA,()=>document.querySelectorAll('#mBody .dc100c').length===2),'the tab opens the window');
+await pA.click('#mBody .pn-tabs [data-dc100pn]');ok(await until(pA,()=>document.querySelectorAll('#dc102 .dc100c').length===2),'the tab opens the Challenges card over the Play Now page (v1.02 P3)');
+await pA.click('#dc102 .dc102back');ok(await until(pA,()=>!document.getElementById('dc102')&&document.querySelector('#mBody .pn100ev')),'Back returns to the Play Now page');
 await closeAll(pA);
 const eA=await newErr(pA);ok(!eA.length,'no new 00c errors '+JSON.stringify(eA));await pA.close();
 
