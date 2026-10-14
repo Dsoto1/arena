@@ -40,6 +40,10 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
   default model unless he says otherwise.
 
 - **OFFLOAD TO GITHUB ACTIONS (his call 2026-10-11):** regression runs go to GitHub Actions whenever possible — agents run only their own NEW test once locally (plus a build); the lead merges, then triggers `regression.yml` (workflow_dispatch, mode smart/full) on the branch and fixes from the job logs. Merge commits keep `[skip ci]` so they don't cancel a running dispatch.
+- **TESTS A BUILDER TOUCHES (his pick b, 2026-10-14):** before reporting, every builder (1) runs `node tools/smartreg.js --dry` for its own diff
+  AND greps tools/tests for every selector / data-* / visible text it changed or removed, (2) runs those tests (`node tools/smartreg.js -j 2 <names>`)
+  and updates the ones it broke ON PURPOSE (keep their intent) or fixes the game, then reports the list. At most 2 builders test at once (local load).
+  The lead merges, then ONE smart GitHub run on the combined tree catches module-meets-module failures; the full run only at release.
 
 - **VISUAL POLISH RULE (his, 2026-10-07):** preserve gameplay clarity, responsiveness, accessibility, localization, save compatibility, network
   authority and the existing desktop + mobile experiences — never improve a beauty shot while making the game harder to read or slower to play.
