@@ -30,7 +30,9 @@
      it at the start).
    • Tests run with navigator.webdriver: there the module is OFF unless localStorage flavius_v102fon=1 (many old tests
      reload pages). Kill switch localStorage flavius_v102foff=1. Stats R102.n (writes) / R102.ms (time spent). Test tv102f. */
-const R102={KEY:'flavius_v102f',MAX_MS:12*3600e3,sig:'',S:null,boot:false,booted:false,n:0,ms:0};
+/* his call 2026-10-14: straight back in ONLY on a refresh of the SAME tab (sessionStorage flavius_v102f_tab, set by this tab's autosave; a new
+   tab starts without it) — other tabs just offer the main-menu "⚔ Back to your match" row. */
+const R102={TAB:'flavius_v102f_tab',KEY:'flavius_v102f',MAX_MS:12*3600e3,sig:'',S:null,boot:false,booted:false,n:0,ms:0};
 /* TWEAK: R102.MAX_MS = how old an autosave may be and still resume at boot (12 h). */
 const R102_OFF=(()=>{try{if(localStorage.getItem('flavius_v102foff')==='1')return true;if(navigator.webdriver&&localStorage.getItem('flavius_v102fon')!=='1')return true}catch(e){return true}return false})();
 /* r102Elig — the match on screen may be autosaved/resumed (Play Now / New event / hot seat; see the header for what is left out). */
@@ -41,14 +43,14 @@ function r102Slot(){return typeof hsTable==='function'&&hsTable()&&typeof HS_SLO
 function r102Ptr(){try{const t=localStorage.getItem(R102.KEY);return t?JSON.parse(t):null}catch(e){return null}}
 /* r102Forget — this match is not to be resumed any more: drops the pointer and the r102 marker of both autosave slots (the saves
    themselves stay loadable by hand); a slot another tab holds (214 'lost') is left alone. */
-function r102Forget(){try{localStorage.removeItem(R102.KEY)}catch(e){}
+function r102Forget(){try{localStorage.removeItem(R102.KEY)}catch(e){}try{sessionStorage.removeItem(R102.TAB)}catch(e){}
   for(const k of ['auto',typeof HS_SLOT!=='undefined'?HS_SLOT:'table'])try{if(typeof TAB92!=='undefined'&&TAB92.auto[k]==='lost')continue;const sv=matchSlotGet(k);if(sv&&sv.r102){delete sv.r102;localStorage.setItem(MSAVE_KEY(k),JSON.stringify(sv))}}catch(e){}
   const row=document.getElementById('mmRes102');if(row)row.remove()}
 /* r102Write — snapshots the match into its autosave slot with the r102 marker and points the pointer at it. */
 function r102Write(kind){if(R102_OFF||!r102Elig())return false;const t0=performance.now();let ok=false;
   try{const slot=r102Slot();const snap=matchSnapshot(null);const meta={k:kind,t:Date.now(),turn:S.turnNo,rot:S.rotation,cur:S.cur,ver:typeof GAME_VER!=='undefined'?GAME_VER:''};
     snap.r102=meta;ok=matchSlotPut(slot,snap);
-    if(ok){localStorage.setItem(R102.KEY,JSON.stringify({slot,...meta,sum:snap.summary||'',name:snap.name||''}));R102.S=S}}catch(e){if(console.error)console.error(e)}
+    if(ok){localStorage.setItem(R102.KEY,JSON.stringify({slot,...meta,sum:snap.summary||'',name:snap.name||''}));try{sessionStorage.setItem(R102.TAB,'1')}catch(e){}R102.S=S}}catch(e){if(console.error)console.error(e)}
   R102.n++;R102.ms+=performance.now()-t0;return ok}
 /* r102Find — the match to resume: {slot, sv} — the pointer's slot, else the newer marked autosave ('auto' / the table's); a marked
    snapshot must be ≤ R102.MAX_MS old, of this GAME_VER and not over. The pointer only names the slot: a write the browser lost
@@ -81,7 +83,7 @@ async function r102Resume(){const f=r102Find();if(!f){r102Forget();return false}
   let ok=false;try{ok=await matchLoad(f.slot)}catch(e){if(console.error)console.error(e)}
   if(!ok)return false;try{if(typeof menuHide==='function')menuHide()}catch(e){}if(typeof MM!=='undefined')MM.fromMenu=false;return true}
 /* boot: the first menu/setup call waits while a live autosave exists */
-R102.boot=!R102_OFF&&(()=>{try{if(location.hash&&location.hash.length>1)return false;return !!r102Find()}catch(e){return false}})();
+R102.boot=!R102_OFF&&(()=>{try{if(location.hash&&location.hash.length>1)return false;if(sessionStorage.getItem('flavius_v102f_tab')!=='1')return false;return !!r102Find()}catch(e){return false}})();
 function r102BootHold(base,self,args){if(R102.booted)return null;R102.booted=true;if(!R102.boot)return null;
   setTimeout(async()=>{let ok=false;try{ok=await r102Resume()}catch(e){}if(!ok)try{base.apply(self,args)}catch(e){if(console.error)console.error(e)}},0);return true}
 {const base=menuShow;menuShow=function(){if(r102BootHold(base,this,arguments))return;const r=base.apply(this,arguments);try{r102Menu()}catch(e){}return r}}
