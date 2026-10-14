@@ -82,6 +82,8 @@ ok(g4.flag&&g4.dec,'G4 the four facings are reversed in the meta '+JSON.stringif
 await pg.evaluate(()=>{draw()});await pg.waitForTimeout(300);
 const g14=await pg.evaluate(()=>{const before=FLAG101.n;draw();return {n:FLAG101.n,fan:drawFanFlags.toString().length<30,hold:FLAG101.n>0}});
 ok(g14.fan,'G14 drawFanFlags (the floating flag) is a no-op');ok(g14.n>0&&g14.n<=16,'G14 spectators hold flags in their hands: '+g14.n);
+const g14b=await pg.evaluate(()=>{const h=flag101Holders();const ids=h.map(x=>x.sp.fav);return {n:h.length,pl:S.players.length,fans:h.every(x=>x.sp.fav!=null&&S.players.some(p=>p.id===x.sp.fav)),uniq:new Set(ids).size===ids.length,first:h.every(x=>S.spect.find(s=>!s.gone&&!s.human&&s.fav===x.sp.fav&&CR91.seen.some(e=>e.id===s.id))===x.sp)}});
+ok(g14b.n>0&&g14b.n<=g14b.pl&&g14b.fans&&g14b.uniq&&g14b.first,'G14 one flag per gladiator, carried by his first seated fan '+JSON.stringify(g14b));
 if(SHOT)await pg.screenshot({path:SHOT+'/g14.png'});
 /* G19 · the thin base + off, on a synthetic base (no pixel reads from file) */
 const g19=await pg.evaluate(()=>{const mk=()=>{const c=document.createElement('canvas');c.width=82;c.height=117;const g=c.getContext('2d');const ax=41,ay=97.6,ppm=2.6;const cy=ay-3.3*ppm,rx=12.75*ppm,ry=rx/2,T=3.5*ppm;

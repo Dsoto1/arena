@@ -1552,8 +1552,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   follows a toppled pillar's offering: names the tile, suggests the walk, waits for the pickup). G3 sandstone submenu = Back only (✕ + ESC·BACK seal hidden). G4 the 313 crowd
   sheets' four facings were mirrored → `CROWD100_META.a[k].r[row].reverse()` once at load. G5 challenges (`S.daily100`): simToEnd / seatCanToggle / rp100RecOK refused, #btnSimEnd hidden,
   seed line hidden/dropped. G8/G9 an100DrawP wrapper redraws the whole-body set (temporary sevT) while the severed set decodes; `CORPSE101` keeps the fall row's last frame
-  (drawn first in 'pieces', `drawCorpseFig` skips that tile). G14 `drawFanFlags` no-op; `flag101Draw` (after draw91) puts a vexillum (ar91Design100(section)) in the hands of up
-  to 2 fans per section on the 313 path (POSE101 from look91: seated = by the hip, cheering = raised; near stands clipped off the sand). G15 modal wrapper resets #mClose title/class
+  (drawn first in 'pieces', `drawCorpseFig` skips that tile). G14 `drawFanFlags` no-op; `flag101Draw` (after draw91) puts the gladiator's vexillum (ar91Design100 of his section) in the hands of
+  the FIRST fan seated for each gladiator (any mode, his call 2026-10-14; no floating pole flags) on the 313 path (POSE101 from look91: seated = by the hip, cheering = raised; near stands clipped off the sand). G15 modal wrapper resets #mClose title/class
   every window; the Play Now setup's ✕ = 🏛 "Main menu". G16 Lobby Browser: Join by FID right + quiet, sandstone buttons via 306's `sd100CSS`. G17 WICO75 `thr`/`both` images were
   swapped in 106 (pink double arrow = throw). G18 Challenges = `.pn-tabs` button `[data-dc100pn]`, `.calline` moved into `.pn100follow`. G19 `BS101`: a ctx.drawImage patch active
   only inside miniDraw / an100Cell / the t93 token squeezes the base wall per column to `BS101.thin` 0.85; `SETTINGS.bases101===false` (Settings → Board & pieces → Token bases)

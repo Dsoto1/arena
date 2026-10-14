@@ -16,7 +16,7 @@
    G8/G9  SEVERED LIMB: while the severed set (or its move sheet) is not decoded the figure keeps drawing the CURRENT whole-body 3D set (a
        temporary sevT in an100DrawP) instead of falling back to today's flat token / the class stand-in; it switches when the sheet is ready.
        3D CORPSES: the last frame of the fall row stays on the sand until the corpse is carted away and replaces the old flat corpse figure.
-   G14 CROWD FLAGS: no flag floating above the stands (drawFanFlags is a no-op); spectators HOLD them — up to two fans of each section's
+   G14 CROWD FLAGS: no flag floating above the stands (drawFanFlags is a no-op); the first fan seated for each gladiator HOLDS his flag (any mode) — was: up to two fans of each section's
        gladiator hold a small vexillum (the section's house flag, same colours) on the 313 sprite path: seated = planted by the hip, standing
        cheering (stand100 / cheer92 poses) = raised. Near stands are clipped off the sand (313's rule). No waving.
    G15 Play Now setup window: its ✕ is the main-menu 🏛 button (title "Main menu"); a stale "Save this career…" title from a Manager window
@@ -110,13 +110,15 @@ const POSE101=new Map();
 {const base=look91;look91=function(sp,back){const o=base.apply(this,arguments);try{if(!B101.off&&sp)POSE101.set(sp.id,{up:o.up||0,st:o.st||0})}catch(e){}return o}}
 if(typeof drawFanFlags==='function'&&!B101.off)drawFanFlags=function(){};
 const FLAG101={n:0,hold:null,hk:'',des:{},im:{}};
-/* who holds a flag: up to two fans per section (cached while the stands' makeup is the same: spectators, seats seen, camera turn) */
-function flag101Holders(){const seen=CR91&&CR91.seen;if(!seen||!S||!S.spect)return [];
-  const key=S.spect.length+'|'+seen.length+'|'+(typeof ROT89!=='undefined'?ROT89.k:0)+'|'+(S.players?S.players.length:0)+'|'+(S.turnNo||0);if(key===FLAG101.hk&&FLAG101.hold)return FLAG101.hold;
-  const list=[];const byId=new Map();for(const sp of S.spect)byId.set(sp.id,sp);
-  const per={};for(const e of seen){const sp=byId.get(e.id);if(!sp||sp.gone||sp.human||e.human)continue;const p=typeof secPlayer==='function'?secPlayer(e.sec):null;if(!p)continue;
-    const d=per[e.sec]||(per[e.sec]={p,fans:[],any:[]});(sp.fav===p.id?d.fans:d.any).push({sp,back:e.back})}
-  for(const si in per){const d=per[si];for(const h of d.fans.concat(d.any).slice(0,2))list.push({...h,si:+si})}
+/* who holds a flag (his call 2026-10-14): for every gladiator, in any mode, the FIRST fan seated for him (S.spect order) carries his flag
+   (the design of his section: house in Manager, custom banner, city/class otherwise), wherever that fan sits. Cached while the stands'
+   makeup is the same (spectators, seats seen, camera turn, favourites). */
+function flag101Holders(){const seen=CR91&&CR91.seen;if(!seen||!S||!S.spect||!S.players)return [];
+  let fk='';for(const sp of S.spect)fk+=(sp.fav==null?'-':sp.fav)+(sp.gone?'g':'')+',';
+  const key=S.spect.length+'|'+seen.length+'|'+(typeof ROT89!=='undefined'?ROT89.k:0)+'|'+S.players.length+'|'+fk;if(key===FLAG101.hk&&FLAG101.hold)return FLAG101.hold;
+  const at=new Map();for(const e of seen)if(!e.human)at.set(e.id,e);
+  const list=[];for(const p of S.players){const sp=S.spect.find(x=>!x.gone&&!x.human&&x.fav===p.id&&at.has(x.id));if(!sp)continue;
+    const si=typeof SEAT_SEC!=='undefined'?SEAT_SEC[p.id%8]:at.get(sp.id).sec;list.push({sp,back:at.get(sp.id).back,si})}
   FLAG101.hk=key;FLAG101.hold=list;return list}
 function flag101Img(si,fw,fh,dpr,now){let c=FLAG101.im[si];const w=Math.ceil(fw*dpr/4)*4,h=Math.ceil(fh*dpr/4)*4;
   if(c&&c.w===w&&c.h===h&&now-c.t<1200)return c.im;let im=null;try{let d=FLAG101.des[si];if(!d||now-d.t>1500){d=FLAG101.des[si]={d:ar91Design100(si),t:now}}
