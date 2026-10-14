@@ -71,7 +71,9 @@ const any100Why0=any100Why;
   return T.innerHTML}catch(e){console.error(e);return h}}}
 
 /* ---------- the Manager page: M3 (opening Your ludus), M7, M8, M14, M1 text ---------- */
-{const base=mgrHTML;mgrHTML=function(){try{const t=typeof MGR!=='undefined'?MGR.tab:null;if(t==='ludus'&&V102A.prev!=null&&V102A.prev!=='ludus')v102LuReset();V102A.prev=t}catch(e){}
+{const base=mgrHTML;mgrHTML=function(){try{const t=typeof MGR!=='undefined'?MGR.tab:null;const sg=typeof LU100!=='undefined'?[LU100.pop,LU100.panel,LU100.mail,LU100.openKey,typeof MGR!=='undefined'?MGR.run:''].join('|'):'';
+    /* something opened ON the switch itself (the ledger badge, a lesson step) is wanted: reset only when nothing changed since the last page */
+    if(t==='ludus'&&V102A.prev!=null&&V102A.prev!=='ludus'&&sg===V102A.sig)v102LuReset();V102A.prev=t;V102A.sig=typeof LU100!=='undefined'?[LU100.pop,LU100.panel,LU100.mail,LU100.openKey,typeof MGR!=='undefined'?MGR.run:''].join('|'):''}catch(e){}
   const h=base.apply(this,arguments);if(typeof h!=='string')return h;
   try{if(!/data-care90|v101bx|data-id="valet"|data-mg="heal"/.test(h))return h;const w=W_(),pm=me();if(!w||!pm)return h;
     const T=document.createElement('template');T.innerHTML=h;const R=T.content;

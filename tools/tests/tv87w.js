@@ -43,9 +43,9 @@ const o=await pg.evaluate(async(SEED)=>{let sd=SEED>>>0;Math.random=()=>{sd=(sd*
   r.careLine=/maim87/.test(careHTML(C))&&/this week/.test(maimLine87(C));
   /* a bed for E too (a second bed), and he regrows only ONE limb: two lost limbs are enough to stay */
   m.fac.valet=2;bedsClean76(w3);w3.beds76.push(E.id);await go(E.id);r.cotLine=!!q('.iv90care .maim87');
-  w3.mh101={wk:w3.week,u:mh101Max(m,w3)-CARE101.h.heal}; /* v1.01: hours for one limb (318) */const he=q(`.iv90care [data-mg="heal"][data-id="${E.id}"]`);if(he)he.click();else r.dbgE=JSON.stringify({n:ros.length,beds:w3.beds76,E:E.id,inBed:inBed76(E),N:bedsOf76(m),sev:E.severed,al:E.alive});await W8(400);r.oneLimb=E.severed.length===2;w3.mh101=null;await go(C.id);
+  w3.mh101={wk:w3.week,u:mh101Max(m,w3)-CARE101.h.heal}; /* v1.01: hours for one limb (318) */const he=q(`.iv90care [data-mg="heal"][data-id="${E.id}"]`);if(he)he.click();else r.dbgE=JSON.stringify({n:ros.length,beds:w3.beds76,E:E.id,inBed:inBed76(E),N:bedsOf76(m),sev:E.severed,al:E.alive});await W8(400);r.oneLimb=!!E.rg102&&E.rg102.wk===w3.week&&E.severed.length===3; /* v1.02 (332 M1): the operation is booked now, the limb is back when the week ends (keptE below checks 2 left) */w3.mh101=null;await go(C.id);
   q(`.iv90care [data-bed76="${C.id}"]`).click();await W8(400);const hb=q(`.iv90care [data-mg="heal"][data-id="${C.id}"]`);r.hyBtn=!!hb&&!hb.disabled;if(hb)hb.click();await W8(400);
-  r.regrown=C.severed.length<3;if(!r.regrown)r.dbg2=JSON.stringify({bed:inBed76(C),msg:MGR.msg,rep:W_().repair,busy:MGR.busy,cap:repCap(),coin:m.coin,hb:hb&&hb.outerHTML.slice(0,200)});
+  r.regrown=!!C.rg102&&C.rg102.wk===W_().week;if(!r.regrown)r.dbg2=JSON.stringify({bed:inBed76(C),msg:MGR.msg,rep:W_().repair,busy:MGR.busy,cap:repCap(),coin:m.coin,hb:hb&&hb.outerHTML.slice(0,200)});
   await wkEnd();r.kept=C.alive!==false&&!!C.contract&&!C.maim87;r.retired=D.alive===false&&D.retired===true;r.keptE=E.alive!==false&&!!E.contract&&!E.maim87&&E.severed.length===2;r.noNag=!weekChecklist().some(x=>x.ic==='🦿');if(!r.kept)r.dbg3=JSON.stringify({wk:W_().week,a:C.alive,c:!!C.contract,m:C.maim87,s:C.severed,inj:C.inj});
   return r},SEED);
 for(const [k,v] of Object.entries(o))if(!/^dbg/.test(k))ok(v,k);

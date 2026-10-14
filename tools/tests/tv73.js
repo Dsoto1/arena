@@ -16,7 +16,7 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   /* roster check */
   const ros=rosterOf(me());for(const g of ros.slice(1))g.contract=null;w.glads.forEach(g=>g.favd=false);r.short=weekChecklist().some(x=>!x.done&&/Short-handed/.test(x.txt));fa.favd=true;r.cleared=!weekChecklist().some(x=>!x.done&&/Short-handed/.test(x.txt));
   /* plan + compare */
-  MGR.cmp=[fa.id];MGR_REDRAW();await W8(200);r.plan=!document.querySelector('.rplan'); /* v1.01 (317 M): the recruiting plan line is gone */r.cmp=!!document.querySelector('.cmpc');
+  MGR.cmp=[fa.id];MGR_REDRAW();await W8(200);r.plan=!document.querySelector('.rplan'); /* v1.01 (317 M): the recruiting plan line is gone */r.cmp=!!document.querySelector('.cmpc,.cmp102c');
   /* Sica */
   const sm=sicaMgr(w);r.sica=!!sm&&rosterOf(sm).length===4&&rosterOf(sm).every(g=>gStats(g).str>=86);
   const bt=w.night.bouts.find(b=>b.ents.some(id=>isSicaG(gById(id))));if(bt){bt.sicaSpear=true;const c=boutCfg(bt,true);r.spear=!!c.syndSpear&&!isSicaG(gById(c.syndSpear))}else r.spear=true;

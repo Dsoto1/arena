@@ -70,7 +70,7 @@ Object.assign(o,await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeo
   HUB.focus=ai.prog84.cities[0];HUB.view='city';MGR_REDRAW();await W8(300);r.tile=!!document.querySelector('#mgrPane .pg84city')&&document.querySelector('#mgrPane .pg84city').textContent.includes(ai.ludus);
   return r}));
 await shot('pg84_map','#mgrPane svg.impmap');
-await pg.evaluate(()=>{MGR.tab='ludus';MGR.run='promote';MGR_REDRAW()});await pg.setViewportSize({width:390,height:900});await W8(500);
+await pg.evaluate(()=>{MGR.tab='ludus';MGR_REDRAW();MGR.run='promote';if(typeof LU100!=='undefined')LU100.panel='promote';MGR_REDRAW()});await pg.setViewportSize({width:390,height:900});await W8(500);
 o.phone=await pg.evaluate(()=>{const el=document.querySelector('#mgrPane #pg84wall');if(!el)return false;const r=el.getBoundingClientRect();return r.width>0&&r.right<=392&&document.documentElement.scrollWidth<=392});
 await shot('pg84_phone','#mgrPane #pg84wall');ok(o.phone,'the wall fits a phone');
 ok(o.btn&&o.setup&&o.fxFirst&&o.twoOn,'setup inline with cities + fixtures');ok(o.start&&o.wall,'campaign starts: cost, hour, painted wall');
