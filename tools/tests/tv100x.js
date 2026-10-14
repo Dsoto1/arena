@@ -132,7 +132,8 @@ out.c3=await pm.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms))
   w.lastPaper=composeWeekPaper(w,w.night,w.season);r.list=w.lastPaper.rabble.map(x=>x.line.replace(/<[^>]+>/g,''));r.realFlags=w.lastPaper.rabble.map(x=>x.real);
   MGR.tab='paper';MGR_REDRAW();await W8(700);
   let el=document.querySelector('.rab100');if(!el){try{const d=document.createElement('div');d.id='paperTest';d.innerHTML=paperHTML();document.body.appendChild(d);el=d.querySelector('.rab100')}catch(e){r.err=String(e)}}
-  r.html=!!el;r.rows=el?el.querySelectorAll('.rab100r').length:0;r.faces=el?el.querySelectorAll('.rab100f svg').length:0;r.after=el?!!el.previousElementSibling&&/🏅/.test(el.previousElementSibling.textContent):false;return r});
+  r.html=!!el;r.rows=el?el.querySelectorAll('.rab100r,.ak102rb').length:0;r.faces=el?el.querySelectorAll('.rab100f svg,.ak102fc svg').length:0;
+  /* v1.02 (342): the Acta's fun row — Rabble-rousers sits right after the Darwinius column */r.after=el?!!el.previousElementSibling&&(/🏅/.test(el.previousElementSibling.textContent)||el.previousElementSibling.classList.contains('ak102dar')):false;return r});
 ok(out.c3.n>=3&&out.c3.n<=4&&out.c3.fallback&&out.c3.again,'C3a 3-4 rabble-rousers even with no watched bout, stable per week '+JSON.stringify([out.c3.n,out.c3.fallback,out.c3.again]));
 ok(out.c3.real.length===2&&out.c3.real[0][0]==='Tiber the Loud'&&out.c3.real[0][1]===6&&out.c3.real[1][3]===2&&out.c3.real[1][4]===48,'C3b tallies snapshotted per spectator '+JSON.stringify(out.c3.real));
 ok(/Tiber the Loud hurled 6 stones/.test(out.c3.list[0])&&out.c3.realFlags[0]===1&&out.c3.realFlags[1]===1,'C3c real deeds first, one line each '+JSON.stringify(out.c3.list));
