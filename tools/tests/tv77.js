@@ -27,9 +27,13 @@ const nm=await q(()=>document.querySelector('[data-nm77pin]').dataset.nm77pin);a
 r.pin=await q(n=>nm77Pins().includes(n)&&!!document.querySelector('.nm77pins'),nm);
 await pg.click('.nm77pins [data-nm77use]');await pg.waitForTimeout(400);r.useName=await q(n=>ST.tab==='chars'&&ST.view==='edit'&&ST.draft&&ST.draft.name===n,nm);
 /* spectators, editors, invitationals, tournaments */
-await pg.click('[data-st="tab"][data-v="spect"]');await pg.waitForTimeout(400);r.spect=await q(()=>document.querySelectorAll('#studio .sp77h').length===2&&!!document.querySelector('#studio p.intro77 .qi'));
+await pg.click('[data-st="tab"][data-v="spect"]');await pg.waitForTimeout(400);r.spect=await q(()=>{const f=document.querySelector('#studio .df99.d102-spect');/* v1.02 (335): the heads are the frame's cards, the intro the header line */
+  if(f){const h=[...f.querySelectorAll('.df99card>header b')].map(b=>b.textContent).join('|');return /Personality/.test(h)&&/Look/.test(h)&&!!f.querySelector('.df99sub .qi')}
+  return document.querySelectorAll('#studio .sp77h').length===2&&!!document.querySelector('#studio p.intro77 .qi')});
 await pg.click('[data-st="tab"][data-v="sponsors"]');await pg.waitForTimeout(400);r.ed=await q(()=>!!document.querySelector('.ed77bar')||typeof creatorUnlocked==='function'&&creatorUnlocked());
-await pg.click('[data-st="tab"][data-v="specials"]');await pg.waitForTimeout(400);r.sx=await q(()=>document.querySelectorAll('#studio .sx77h').length>=4&&/① Arena/.test(document.getElementById('studio').textContent));
+await pg.click('[data-st="tab"][data-v="specials"]');await pg.waitForTimeout(400);r.sx=await q(()=>{const f=document.querySelector('#studio .df99.d102-specials');
+  if(f){const h=[...f.querySelectorAll('.df99card>header b')].map(b=>b.textContent).join('|');return f.querySelectorAll('.df99card').length>=5&&/Arena/.test(h)&&/invitation/i.test(h)&&/field/i.test(h)&&/Purse/.test(h)&&/Words/.test(h)}
+  return document.querySelectorAll('#studio .sx77h').length>=4&&/① Arena/.test(document.getElementById('studio').textContent)});
 await pg.click('[data-st="tab"][data-v="tourneys"]');await pg.waitForTimeout(400);r.tn=await q(()=>document.querySelectorAll('.tseat label.tn77you').length>=4&&/You/.test(document.querySelector('.tseat label.tn77you').textContent));
 /* phones: the sets stack over the bench */
 await pg.setViewportSize({width:420,height:900});await pg.click('[data-st="tab"][data-v="rosters"]').catch(()=>{});await q(()=>{ST.tab='rosters';studioRedraw()});await pg.waitForTimeout(400);
