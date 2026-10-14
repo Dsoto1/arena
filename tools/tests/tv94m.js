@@ -15,7 +15,7 @@ const mark=await pg.evaluate(()=>ERR92.n);
 /* ---- 1 · the migration ---- */
 const m1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));let sd=94;Math.random=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;window.travelOK=()=>true;window.travelBlock=()=>false;
   openManager();await W8(800);sd=94;newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;W_().id='ctv94m'; /* the world id comes from the clock and feeds the stalls' stock hash: fixed (and the seeded stream restarted just before) so the run is the same every time */const w=W_(),m=me();m.coin=2000;const o={};
-  const old=JSON.parse(JSON.stringify(w));old.ver='0.93';for(const g of old.glads){delete g.eq94;delete g.k94}for(const x of old.mgrs)delete x.arm94;delete old.n94;
+  const old=JSON.parse(JSON.stringify(w));old.ver='0.93';delete old.gear102; /* v1.02: an old career has no Issued-kit mark */for(const g of old.glads){delete g.eq94;delete g.k94}for(const x of old.mgrs)delete x.arm94;delete old.n94;
   const pg0=old.glads.find(g=>g.alive&&g.contract&&g.contract.mgr===m.id);pg0.kit=['mw1','elix2'];pg0.kitWk=old.week;
   migrateWorld(old);const mw=mgrMigrate(old);o.dirty=!!mw._arm94dirty;
   const con=mw.glads.filter(g=>g.alive&&g.contract);o.all=con.every(g=>g.eq94&&g.k94);
@@ -77,7 +77,7 @@ const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   o.visit=/to the Armory/.test(document.getElementById('cbar89Visit').textContent);
   const sp=H.sh.find(P=>P&&!P.iss&&!P.dmg)||H.sh[0]; /* v0.99: issued starter kits are not sellable */const c1=m.coin;const n1=H.sh.length;const sb=document.querySelector(`#citySideBody [data-arm94sell="${sp.id}"]`);if(sb)sb.click();await W8(200);o.sell=!!sb&&H.sh.length===n1-1&&m.coin>c1;
   /* v0.94 tuning: 30% back (15% damaged), three sales a week per house, then a plain refusal */
-  const T1=arm94New(w,'a','thorax');H.sh.push(T1);const c2=m.coin;const rr=arm94Sell(T1.id);o.sell30=rr.ok&&m.coin-c2===Math.floor(arm94Price('a','thorax')*0.3)&&ARM94.sellK===0.3&&ARM94.repK===0.2;
+  const T1=arm94New(w,'a','thorax');H.sh.push(T1);const c2=m.coin;const rr=arm94Sell(T1.id);o.sell30=rr.ok&&m.coin-c2===Math.floor(arm94Price('a','thorax')*0.3)&&ARM94.sellK===0.3&&ARM94.repK===(typeof GR102!=='undefined'&&GR102.on?0.1:0.2); /* v1.02: repairs a tenth */
   const D1=arm94New(w,'a','thorax');D1.dmg=1;H.sh.push(D1);const c3=m.coin;arm94Sell(D1.id);o.sell15=m.coin-c3===Math.floor(arm94Price('a','thorax')*0.15);
   const E1=arm94New(w,'a','thorax');H.sh.push(E1);const n3=H.sh.length;const c4=m.coin;const r4s=arm94Sell(E1.id);o.cap=!!r4s.no&&H.sh.length===n3&&m.coin===c4&&arm94SellLeft(m,w)===0;
   await W8(100);o.capUi=!!document.querySelector('#citySideBody [data-arm94sell][disabled]')||!document.querySelector('#citySideBody [data-arm94sell]');
@@ -114,11 +114,11 @@ ok(r5.fixed,'6 the armorer mends it for a fifth of the price');ok(r5.mkSkip&&r5.
 /* ---- 7 · a dead fighter's gear goes back to the shelf ---- */
 const r7=await pg.evaluate(()=>{const w=W_(),m=me();const B0=gById(window.__B);const B=B0&&B0.alive&&B0.eq94&&(B0.eq94.R||B0.eq94.a.length)?B0:rosterOf(m).find(g=>g.eq94&&(g.eq94.R||g.eq94.a.length)); /* the bout in 5 may have killed B */const PS=[B.eq94.R,B.eq94.L,...B.eq94.a].filter(Boolean);const ids=PS.filter(P=>P.iss!==B.id).map(P=>P.id),issued=PS.filter(P=>P.iss===B.id).map(P=>P.id); /* v0.99: the issued class kit vanishes with him */
   B.alive=false;const X={got:{R:null,L:null,a:[]},carry:false,cls:B.cls,R:null,L:null,pc:{},items:[]};arm94Settle(w,{ents:[B.id]},{g94:{[B.id]:X}});
-  const sh=arm94H(m).sh.map(P=>P.id);const o={back:ids.every(id=>sh.includes(id))&&issued.every(id=>!sh.includes(id))&&PS.length>0,gone:!B.eq94};B.alive=true;arm94EnsureG(w,B);o.noFree=!!B.eq94&&!B.eq94.R&&!B.eq94.a.length;return o});
-ok(r7.back&&r7.gone,'7 the dead man\'s own gear is back on the shelf, his issued kit is gone '+JSON.stringify(r7));ok(r7.noFree,'7 a second signing makes no gear from nothing');
+  const sh=arm94H(m).sh.map(P=>P.id);const o={back:ids.every(id=>sh.includes(id))&&issued.every(id=>!sh.includes(id))&&PS.length>0,gone:!B.eq94};B.alive=true;arm94EnsureG(w,B);o.noFree=!!B.eq94&&[B.eq94.R,B.eq94.L,...B.eq94.a].filter(Boolean).every(P=>P.iss===B.id); /* v1.02: a re-signing gets only a fresh Issued kit */return o});
+ok(r7.back&&r7.gone,'7 the dead man\'s own gear is back on the shelf, his issued kit is gone '+JSON.stringify(r7));ok(r7.noFree,'7 a second signing makes no real gear from nothing (Issued kit only)');
 /* ---- 8 · rival houses buy gear ---- */
 const r8=await pg.evaluate(async()=>{const w=W_();const o={};const R=w.mgrs.find(x=>!x.isPlayer&&!x.dead&&rosterOf(x).some(g=>g.eq94&&g.eq94.R));const g=rosterOf(R).find(g=>g.eq94&&g.eq94.R);
-  const k=g.eq94.R.k;g.eq94.R=null;arm94H(R).sh=arm94H(R).sh.filter(P=>P.t!=='w');R.coin=500;const c0=R.coin;const sp=arm94AutoShop(w,R);o.sp=sp;o.filled=!!g.eq94.R&&g.eq94.R.k===k;o.paid=sp>0&&R.coin<c0;
+  const k=g.eq94.R.k;g.eq94.R=null;arm94H(R).sh=arm94H(R).sh.filter(P=>P.t!=='w');R.coin=500;const c0=R.coin;const sp=arm94AutoShop(w,R);o.sp=sp;o.filled=!!g.eq94.R&&g.eq94.R.k===(arm94Kit(g.cls).R||k); /* v1.02: he lost his Issued weapon — the house buys the class weapon */o.paid=sp>0&&R.coin<c0;
   /* the week's end: every rival house's armed fighter loses his weapon and each house has coin; the week's own events (bouts, injuries, deaths, releases — the page's clock
      feeds the seeded stream, so which fighter survives is not fixed) may remove some of them, so "rivals shop at the week's end" = at least one of them is armed again */
   const T=[];for(const x of w.mgrs){if(x.isPlayer||x.dead)continue;x.coin=500;arm94H(x).sh=arm94H(x).sh.filter(P=>P.t!=='w');for(const f of rosterOf(x))if(f.alive&&f.eq94&&f.eq94.R){f.eq94.R=null;T.push(f)}}

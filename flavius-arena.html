@@ -50780,7 +50780,7 @@ const AR94={sel:null,drag:null,tab:'w',who:'',noClick:0};
 function arm94Price(t,k){if(t==='w'){const d=W[k];return d?(ARM94.wpn[d.lv]||ARM94.wpn[1]):0}
   if(t==='a'){const d=ARM[k];if(!d)return 0;return Math.max(4,Math.ceil((d.ap||1)*(ARM94.apC[d.lv]||ARM94.apC[1])*(d.pair?ARM94.pairK:1)))}
   return ARM94.off[k]||8}
-const arm94Fix=P=>Math.max(2,Math.ceil(arm94Price(P.t,P.k)*ARM94.repK));
+const arm94Fix=P=>ARM94.fixFn?ARM94.fixFn(P):Math.max(2,Math.ceil(arm94Price(P.t,P.k)*ARM94.repK)); /* v1.02 339-v102gear sets fixFn (a tenth of the value, at least 1) */
 /* one click mends every damaged piece of the house (the armorer's price; a quarter off at home) — City Square or the checklist */
 const arm94FixPr=c=>(typeof CITY!=='undefined'&&CITY.open&&CITY.mgr)?cityPr(c):c;
 const arm94FixTotal=pm=>arm94All(pm).filter(x=>x.P.dmg).reduce((a,x)=>a+arm94FixPr(arm94Fix(x.P)),0);
@@ -50912,7 +50912,8 @@ function arm94Settle(w,b,res){const st=arm94St(w);const mine=[];
     const pc={};for(const l of LOCS)pc[l]=((X.pc||{})[l]||[]).slice();const got=(X.got.a||[]).map(x=>x.slice());
     for(const P of E.a){const want=arm94Locs(P);const br=[];for(const l of want){const i=got.findIndex(x=>x[0]===P.k&&x[1]===l);if(i>=0){got.splice(i,1);br.push(l)}}if(!br.length)continue;
       let whole=true;for(const l of br){const i=pc[l].indexOf(P.k);if(i>=0)pc[l].splice(i,1);else whole=false}
-      if(!whole&&!P.dmg){P.dmg=1;dmg.push(P);st.dmg++}}
+      if(!whole&&!P.dmg){if(P.iss&&ARM94.issVanish){P._iss102=1;lost.push(P);st.lost++}else{P.dmg=1;dmg.push(P);st.dmg++}}}
+    if(E.a.some(P=>P._iss102))E.a=E.a.filter(P=>!P._iss102); /* v1.02: Issued armor stripped to 0 AP vanishes (online's rule) */
     for(const l of LOCS)for(const k of pc[l].slice()){const A=ARM[k];if(!A||!(A.lv>=1))continue;const i0=pc[l].indexOf(k);if(i0<0)continue;pc[l].splice(i0,1);if(bought(k)){if(A.pair){const o=({rarm:'larm',larm:'rarm',rleg:'lleg',lleg:'rleg'})[l];const j=o?pc[o].indexOf(k):-1;if(j>=0)pc[o].splice(j,1)}continue}const P=arm94New(w,'a',k);
       if(A.pair){const o={rarm:'larm',larm:'rarm',rleg:'lleg',lleg:'rleg'}[l];const j=o?pc[o].indexOf(k):-1;if(j>=0)pc[o].splice(j,1)}else if(A.slot==='arm'||A.slot==='leg')P.loc=l;
       sh.push(P);loot.push(P);st.loot++;if(m)arm94Fl(w,m,'loot',arm94Price('a',k))}
@@ -51008,7 +51009,7 @@ function arm94ShopHTML(floating){const w=CITY.w||W_(),pm=me();const li=CITY.li;c
       <small>${_T`Everything goes to your house Armory — dress your fighters here or in the Roster. Stock changes every week.`}</small></div>
     <label class="cbar89who">${_T`For`} <select id="arm94Who" class="tin"><option value="">${_T`🏛 The Armory shelf`}</option>${ros.map(g=>`<option value="${g.id}" ${who&&who.id===g.id?'selected':''}>${esc(g.name)} · ${arm94Hands(g)}</option>`).join('')}</select></label>
     ${cityHome()?`<p class="rc-sub" style="margin:4px 0">${_T`🏠 <b>Home-city prices</b> — a quarter off.`}</p>`:''}
-    ${sec('w','arms',_T`⚔️ The arms market`)}${sec('a','armor',_T`🛡 The armorer`)}<div data-cbar89sec="fix"><div class="sect">${_T`🔨 Repairs`} <span class="rc-sub">${_T`⅕ of the price`}</span></div>${dmg.length>1?`<button class="btn tksm" type="button" data-arm94fixall="1" ${pm.coin<arm94FixTotal(pm)?'disabled':''}>${_T`🔨 Repair all · ${arm94FixTotal(pm)} coin`}</button>`:''}<div class="ar94wares">${fix}</div></div>${sec('o','offer',_T`🧪 The offerings stall`)}
+    ${sec('w','arms',_T`⚔️ The arms market`)}${sec('a','armor',_T`🛡 The armorer`)}<div data-cbar89sec="fix"><div class="sect">${_T`🔨 Repairs`} <span class="rc-sub">${ARM94.fixFn?_T`a tenth of the price`:_T`⅕ of the price`}</span></div>${dmg.length>1?`<button class="btn tksm" type="button" data-arm94fixall="1" ${pm.coin<arm94FixTotal(pm)?'disabled':''}>${_T`🔨 Repair all · ${arm94FixTotal(pm)} coin`}</button>`:''}<div class="ar94wares">${fix}</div></div>${sec('o','offer',_T`🧪 The offerings stall`)}
     ${(()=>{const sh=arm94H(pm).sh;if(!sh.length)return '';const sl=arm94SellLeft(pm,w);return `<details class="ar94sell" data-cbar89sec="sell"><summary>${_T`💰 Sell from the shelf · ${sh.length}`}</summary><small class="rc-sub">${_T`${Math.round(ARM94.sellK*100)}% of the price (${Math.round(ARM94.sellK*50)}% if damaged) · at most ${ARM94.sellMax} a week — ${sl} left`}</small><div class="ar94wares">${sh.map(P=>{const pr=Math.max(1,Math.floor(arm94Price(P.t,P.k)*(P.dmg?ARM94.sellK/2:ARM94.sellK)));return `<button class="ar94ware" type="button" data-arm94sell="${P.id}" ${sl?'':'disabled'}><span class="ar94art">${arm94Art(P,34)}</span><span class="ar94wn"><b>${P.dmg?'🩹 ':''}${esc(arm94Name(P))}</b><small>${arm94Meta(P)}</small></span><em>+${coinAmt87(pr)}</em></button>`}).join('')}</div></details>`})()}
     <p class="rc-sub" style="margin:6px 0 0">${_T`A fighter carries two offerings into a bout; unused ones come home.`}</p></div>`}
 function arm94Hands(g){const E=g.eq94;if(!E)return '';const n=h=>E[h]?arm94Name(E[h]):'';const a=[n('R'),n('L')].filter(Boolean);return a.length?a.join(' + '):_T('bare hands')}
@@ -71472,6 +71473,88 @@ document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.targ
 #mmRes102{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;padding:10px 12px;margin:0 0 10px;border:2px solid var(--gold,#e8c96a);border-radius:12px;background:linear-gradient(90deg,rgba(142,42,30,.55),rgba(36,26,16,.92));text-align:left;width:100%;box-sizing:border-box}
 #mmRes102 .r102-txt{min-width:0;display:flex;flex-direction:column;gap:2px;flex:1 1 200px}#mmRes102 .r102-txt b{font:700 15px Georgia,serif;color:#f3d58a}#mmRes102 .r102-txt small{color:#d8cbb0;font-size:12.5px}
 #mmRes102 .r102-acts{display:flex;gap:6px;flex:0 0 auto}#mmRes102 .r102-acts .btn{width:auto;margin:0}`;document.head.appendChild(css)}
+/* =====================================================================
+   339-v102gear · v1.02 workstream H (his M11, pick 2a 2026-10-14) — THE MANAGER GEAR LOOP IN STEP WITH ONLINE
+   =====================================================================
+   1 · RECRUITS SIGN WITH ONLY THE ISSUED KIT: a fighter who joins a house (signed free agent, the starting rosters of a NEW career, a
+       rival's recruit) gets the house's Issued Level 1 kit — online's issueList100 (111-onlcore v1.0 server batch A): galea + wraps +
+       legwraps and the class's Level 1 weapon(s) (ISSUE_W100; a custom class: its own Level 1 weapons, else a gladius). Every piece is
+       marked Issued (P.iss = his id, 272): worth nothing, never sold, vanishes when he dies or leaves. No class loadout arrives with a
+       signing any more (225's g.k94 class kit). Each signing gets a fresh Issued kit (the last one vanished when he left).
+       The rule applies once a world carries w.gear102: new worlds get it at creation ({old:0}); careers saved before v1.02 get it from
+       SAVE_MIGRATIONS '1.02' ({old:1}) — nothing they own is taken away; only their NEXT signings come with the Issued kit.
+   2 · DENTED, A TENTH TO MEND: armor stripped to 0 AP comes home damaged (dented) as before; its repair = ceil(value/10), at least 1
+       (online 316 O1) via ARM94.fixFn (225's arm94Fix). Issued armor stripped to 0 AP VANISHES (online: Issued is never repaired);
+       weapons used up/thrown/broken stay lost (225). An Issued piece picked up off the sand never comes home as a real piece
+       (seat.gear94.iss → the snapshot's skip list, like in-bout market buys).
+   3 · HOUSES BUY: 225's arm94AutoShop (rivals each week, the mgrsim player) + an UPGRADE pass here: an Issued weapon / armor piece that
+       stands where the class kit wants a real one is replaced (shelf first, else bought) within the same budget rule; the Issued piece
+       goes back to Flavius (deleted). Empty hands are filled first across the whole roster. The mgrsim player (o.player) buys like a
+       rival: at most ARM94.rivMax a week above its reserve.
+   5 · ARMORY FUND: a NEW career's houses start with GR102.fund (0.5) × the class-kit value of their starting rosters as extra coin
+       (w.gear102.fund records it) — the class kits they no longer get, half paid in coin to buy real gear with.
+   4 ·The Manager lesson's Armory step and the first-hour Recruiting tip say it.
+   Kill switch: localStorage flavius_v102hoff=1 (nothing installed — 225/272 exactly). Test: tools/tests/tv102h.js
+   ===================================================================== */
+const GR102={on:false,mk:0,div:10,fund:0.5}; /* TWEAK fund: a NEW career's houses get this share of their starting rosters' class-kit value as coin (the Armory fund) — tuned with tools/mgrsim.js */
+try{GR102.on=localStorage.getItem('flavius_v102hoff')!=='1'}catch(e){GR102.on=true}
+if(GR102.on){
+/* the Issued kit of a class: {R,L,a:[keys]} */
+function iss102Kit(cls){let list=null;try{if(typeof ONLC!=='undefined'&&ONLC.ISSUE_W100&&ONLC.ISSUE_W100[cls])list=ONLC.issueList100(cls)}catch(e){}
+  if(!list){const C=CLASSES[cls]||{};const ws=[C.R,C.L].filter(k=>k&&W[k]&&(W[k].lv|0)<=1);list=['galea','wraps','legwraps',...(ws.length?ws:['gladius'])]}
+  const o={R:null,L:null,a:[]};for(const k of list){if(ARM[k])o.a.push(k);else if(W[k]){if(!o.R)o.R=k;else if(!o.L)o.L=k}}return o}
+const g102Rule=w=>!!(w&&(w.gear102||GR102.mk));
+function iss102Give(w,g,h){const K=iss102Kit(g.cls);const E=g.eq94={h,R:null,L:null,a:[],o:[]};const mk=(t,k)=>{const P=arm94New(w,t,k);P.iss=g.id;return P};
+  if(K.R&&!arm94HandGone(g,'R'))E.R=mk('w',K.R);if(K.L&&!arm94HandGone(g,'L'))E.L=mk('w',K.L);
+  for(const k of K.a){const A=ARM[k];const P=mk('a',k);if(!A.pair&&(A.slot==='arm'||A.slot==='leg'))P.loc=arm94DefLoc(A);if(arm94Locs(P).every(l=>arm94Gone(g,l)))continue;E.a.push(P)}
+  g.k94=1;g.k102=1}
+/* 1 · a signing: the Issued kit instead of the class loadout */
+{const base=arm94EnsureG;arm94EnsureG=function(w,g){try{if(w&&g&&g.alive&&g102Rule(w)){const h=arm94Home(g);
+    if(h&&g.eq94&&g.eq94.h!==h){arm94Strip(w,g)}
+    if(h&&!g.eq94&&!g.loanFrom){const m=arm94M(w,h);if(m){iss102Give(w,g,h);base.apply(this,arguments);return true}}}}catch(e){console.error(e)}
+  return base.apply(this,arguments)}}
+{const base=newWorld;newWorld=function(){GR102.mk++;let r;try{r=base.apply(this,arguments)}finally{GR102.mk--}try{const w=W_();if(w){if(!w.gear102)w.gear102={old:0};if(w.gear102.fund==null){w.gear102.fund=GR102.fund;for(const m of w.mgrs||[]){if(m.dead)continue;const f=g102Fund(m);if(f>0)m.coin+=f}}}}catch(e){console.error(e)}return r}}
+/* the Armory fund of a new house: GR102.fund × the class-kit value of its starting roster (coin, to buy its real gear in the City Square) */
+function g102Fund(m){let v=0;for(const g of rosterOf(m)){const K=arm94Kit(g.cls);v+=(K.R?arm94Price('w',K.R):0)+(K.L?arm94Price('w',K.L):0)+K.a.reduce((t,x)=>t+arm94Price('a',x.k),0)}return Math.round(v*GR102.fund)}
+SAVE_MIGRATIONS.push(['1.02',w=>{if(w&&!w.gear102)w.gear102=GR102.mk?{old:0}:{old:1,wk:w.week|0}}]); /* a world being created runs the migrations on its first save: not old */
+/* 2 · repairs: a tenth of the value; Issued armor stripped to 0 AP vanishes (225's settle reads ARM94.issVanish) */
+ARM94.fixFn=P=>Math.max(1,Math.ceil(arm94Price(P.t,P.k)/GR102.div));ARM94.repK=1/GR102.div;ARM94.issVanish=true;
+/* an Issued piece is never looted into a real one: the seat names its Issued keys, the snapshot skips them for every looter */
+{const base=seatFor;seatFor=function(g){const s=base.apply(this,arguments);try{if(s&&s.gear94&&g&&g.eq94){const E=g.eq94;s.gear94.iss=[E.R,E.L,...E.a].filter(P=>P&&P.iss).map(P=>P.k)}}catch(e){console.error(e)}return s}}
+{const base=arm94Snap;arm94Snap=function(){const out=base.apply(this,arguments);try{const pool=[];
+  for(const p of S.players||[]){const I=p&&p._g94&&p._g94.iss;if(!I||!I.length)continue;const have=[p.wR&&p.wR.key,p.wL&&p.wL.key,...LOCS.flatMap(l=>((p.pieces||{})[l]||[]).map(pc=>pc.key))];
+    for(const k of I){const i=have.indexOf(k);if(i>=0)have.splice(i,1);else pool.push(k)}}
+  if(pool.length)for(const id in out)out[id].mk=[...(out[id].mk||[]),...pool]}catch(e){console.error(e)}return out}}
+/* 3 · the upgrade pass: Issued pieces where the class kit wants a real one */
+function g102Upgrade(w,m,o,used){if(!w||!m||m.dead)return 0;const H=arm94H(m);const st=arm94St(w);
+  let left=o&&o.player?Math.max(0,Math.min(ARM94.rivMax-(used|0),m.coin-ARM94.playerReserve)):Math.max(0,Math.min(ARM94.rivMax-(used|0),m.coin-ARM94.rivFloor));let spent=0;
+  const drop=P=>{const i=H.sh.indexOf(P);if(i>=0)H.sh.splice(i,1)};
+  const get=(t,k)=>{const P=H.sh.find(x=>x.t===t&&x.k===k&&!x.dmg&&!x.iss);if(P)return P;const pr=arm94Price(t,k);if(!pr||pr>left||pr>m.coin)return null;
+    left-=pr;spent+=pr;m.coin-=pr;st.spent+=pr;if(!m.isPlayer)st.rivSpent+=pr;st.buy++;arm94Fl(w,m,'buy',pr);const N=arm94New(w,t,k);H.sh.push(N);return N};
+  const ros=rosterOf(m).filter(g=>g.eq94&&g.eq94.h===m.id&&!g.loanFrom&&!g.inj);
+  const n=w.night;const card=new Set(n&&n.bouts?n.bouts.flatMap(b=>b.ents||[]):[]);ros.sort((a,b)=>(card.has(b.id)?1:0)-(card.has(a.id)?1:0)||effOvr(b)-effOvr(a));
+  for(const g of ros){const E=g.eq94;const K=arm94Kit(g.cls);
+    for(const h of ['R','L']){const cur=E[h];const k=K[h];if(!cur||!cur.iss||!k||cur.k===k||!W[k]||W[k].lv>3||arm94HandGone(g,h))continue;const P=get('w',k);if(!P)continue;
+      const r=arm94Put(m,P.id,{g:g.id,z:h});if(r.ok){for(const x of r.rep||[])if(x.iss)drop(x)}}
+    for(const x of K.a){if(E.a.some(P=>P.k===x.k&&!P.dmg))continue;const z=x.loc==='pair'?'body':x.loc;const F=arm94Fit(g,{t:'a',k:x.k,loc:x.loc==='pair'?undefined:x.loc},z);
+      if(F.no||!F.rep.length||!F.rep.every(P=>P.iss))continue;const P=get('a',x.k);if(!P)continue;const r=arm94Put(m,P.id,{g:g.id,z});if(r.ok){for(const y of r.rep||[])if(y.iss)drop(y)}}}
+  return spent}
+/* empty hands first, across the whole roster (a new house has many Issued fighters wanting class pieces; a bare hand must not wait behind them) */
+function g102Hands(w,m,o){if(!w||!m||m.dead)return 0;const H=arm94H(m);const st=arm94St(w);
+  let left=o&&o.player?Math.max(0,m.coin-ARM94.playerReserve):Math.max(0,Math.min(ARM94.rivMax,m.coin-ARM94.rivFloor));let spent=0;
+  for(const g of rosterOf(m)){const E=g.eq94;if(!E||E.h!==m.id||g.loanFrom||g.inj)continue;const K=arm94Kit(g.cls);
+    for(const h of ['R','L']){if(E[h]||arm94HandGone(g,h))continue;const k=K[h];if(!k||!W[k]||W[k].lv>3)continue;
+      let P=H.sh.find(x=>x.t==='w'&&x.k===k&&!x.dmg);if(!P){const pr=arm94Price('w',k);if(!pr||pr>left||pr>m.coin)continue;left-=pr;spent+=pr;m.coin-=pr;st.spent+=pr;if(!m.isPlayer)st.rivSpent+=pr;st.buy++;arm94Fl(w,m,'buy',pr);P=arm94New(w,'w',k);H.sh.push(P)}
+      arm94Put(m,P.id,{g:g.id,z:h})}}
+  return spent}
+{const base=arm94AutoShop;arm94AutoShop=function(w,m,o={}){let pre=0;try{pre=g102Hands(w,m,o)}catch(e){console.error(e)}const mx=ARM94.rivMax,pr0=ARM94.playerReserve;ARM94.rivMax=Math.max(0,mx-pre);
+  /* the mgrsim player buys like a rival (at most rivMax a week, keeping its reserve) — every piece costs coin now */
+  if(o&&o.player&&m)ARM94.playerReserve=Math.max(pr0,m.coin-ARM94.rivMax);let r=0;
+  try{r=base.apply(this,arguments)}finally{ARM94.rivMax=mx;ARM94.playerReserve=pr0}let u=0;try{u=g102Upgrade(w,m,o,r+pre)}catch(e){console.error(e)}return pre+r+u}}
+/* 4 · the lesson and the first-hour tip say it */
+try{const a=MTUT_STEPS.find(s=>s.k==='armory');if(a)a.say=_T`<b>🛡 The Armory</b> — its own tab. A new recruit signs with only the house's <b>Issued kit</b> (padding and a Level 1 weapon, worth nothing); real gear is bought in the City Square, looted or won. Pick a fighter, then drag a weapon into a hand or armor onto the body. Weapons lost on the sand are gone; armor broken to 0 AP comes home dented — the armorer mends it for a tenth of its price.`}catch(e){console.error(e)}
+try{const t=FH100_MGR.find(s=>s.k==='g_recruit');if(t)t.say=()=>_T`<b>Recruiting.</b> Click a free agent. Your Recruiter's hours scout them, pitches win them over, then offer a contract. A new signing brings only the Issued kit — buy his real gear in the City Square.`}catch(e){console.error(e)}
+}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
