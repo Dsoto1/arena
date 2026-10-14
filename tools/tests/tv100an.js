@@ -56,14 +56,14 @@ ok(s2.walk>=2&&/^idle/.test(s2.last||''),'2b the walk row steps, then back to id
 /* ---- 3 attack + hit ---- */
 const s3=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const P=S.players[0],Q=S.players[1];
   /* the first use of an action decodes its rows (idle meanwhile): warm attack / hit / block once, then trace */
-  an100Act(P,'attack');an100Act(Q,'hit');await __samp(700);an100Act(Q,'block');await __samp(1300);AN100.trace=[];
+  for(const r of ['attack','slash','sweep','thrust']){an100Act(P,r);await __samp(300)}an100Act(Q,'hit');await __samp(700);an100Act(Q,'block');await __samp(1300);AN100.trace=[];
   /* round 1 is PvE, so the rules would not offer Q as a target: the attack is called directly (its pose is what is tested) */
   Q.r=6;Q.c=4;const src=attackSources(P)[0];const t={kind:'player',ref:Q,key:'p'+Q.id,r:Q.r,c:Q.c};let atk=false;if(src){await doAttack(P,src,t);atk=true}
   await __samp(1400);const a=__poses(P.id,AN100.trace);AN100.trace=[];
   await hurt(Q,'chest',1,{type:'env'},'Test');await __samp(900);const h=__poses(Q.id,AN100.trace);const fl=AN100.trace.some(x=>x.id===Q.id&&x.flash);AN100.trace=null;
   const bm=Object.keys(AN100.src.get('p:hero').act.bm);
-  return {atk,attack:new Set(a.filter(x=>/^attack/.test(x))).size,hit:new Set(h.filter(x=>/^(hit|block)/.test(x))).size,fl,bm,acts:AN100.stats.acts}});
-ok(s3.atk&&s3.attack>=2,'3a an attack steps the attack row '+JSON.stringify(s3));
+  return {atk,attack:new Set(a.filter(x=>/^(attack|slash|sweep|thrust|throw)/.test(x))).size,hit:new Set(h.filter(x=>/^(hit|block)/.test(x))).size,fl,bm,acts:AN100.stats.acts}});
+ok(s3.atk&&s3.attack>=2,'3a an attack steps an attack row (v1.01: slash / sweep / thrust for a blade) '+JSON.stringify(s3));
 ok(s3.hit>=2&&s3.fl,'3b a blow steps hit / block on the target, with a flash '+JSON.stringify(s3));
 ok(s3.bm.length>=1&&s3.bm.length<=3,'3c only the used action rows got decoded '+JSON.stringify(s3.bm));
 /* ---- 4 elimination: the fall row where he fell ---- */

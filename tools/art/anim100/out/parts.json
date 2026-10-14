@@ -156,10 +156,6 @@
    "wR": {
     "t": "axe",
     "k": "axe"
-   },
-   "wL": {
-    "t": "sica",
-    "k": "falcata"
    }
   },
   "cloth": "#8a4a2a"
@@ -236,7 +232,12 @@
  },
  "damnatio": {
   "gear": {
-   "helm": "circlet",
+   "head": {
+    "t": "galea"
+   },
+   "belt": {
+    "t": "balteus"
+   },
    "arm": {
     "R": {
      "wraps": 1
