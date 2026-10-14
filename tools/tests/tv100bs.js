@@ -49,8 +49,9 @@ const bd=await pg.evaluate(async(BE)=>{const W8=ms=>new Promise(r=>setTimeout(r,
   const hold=setInterval(()=>{PERF92.idle=true},20);PERF92.idle=true;await W8(400);const d1=BST100.stats.ticks;await W8(1500);const rateIdle=(BST100.stats.ticks-d1)/1.5;clearInterval(hold);PERF92.idle=false;
   return {keys:[...keys],poses:[...poses],rate,rateIdle,mode:bst100Mode(),who}},BEASTS);
 ok(bd.keys.length>=11&&bd.mode==='full','2a every beast drew its sheet cell '+JSON.stringify(bd.keys));
-ok(bd.poses.some(p=>/^idle[1-3]$/.test(p))&&bd.poses.every(p=>/^idle\d$/.test(p)),'2b standing beasts breathe (idle poses, staggered) '+JSON.stringify(bd.poses));
-ok(bd.who.all>=1.5&&bd.rate<=8,'2c idle scheduler: a few draws a second, not a frame loop ('+bd.rate+'/s '+JSON.stringify(bd.who)+')');
+/* v1.01 (G6, his note): standing beasts no longer breathe — the still cell, and the scheduler does not redraw a still board */
+ok(bd.poses.length&&bd.poses.every(p=>p==='idle0'),'2b standing beasts hold their still cell (no breathing) '+JSON.stringify(bd.poses));
+ok(bd.rate<=0.5,'2c a still board: the beast scheduler draws nothing ('+bd.rate+'/s '+JSON.stringify(bd.who)+')');
 ok(bd.rateIdle<=1,'2d idle92: the breathing waits ('+bd.rateIdle+'/s)');
 /* 3 poses */
 const po=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};const P=S.players;SPEED='normal';

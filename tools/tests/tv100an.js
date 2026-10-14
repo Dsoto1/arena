@@ -56,14 +56,14 @@ ok(s2.walk>=2&&/^idle/.test(s2.last||''),'2b the walk row steps, then back to id
 /* ---- 3 attack + hit ---- */
 const s3=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const P=S.players[0],Q=S.players[1];
   /* the first use of an action decodes its rows (idle meanwhile): warm attack / hit / block once, then trace */
-  an100Act(P,'attack');an100Act(Q,'hit');await __samp(700);an100Act(Q,'block');await __samp(1300);AN100.trace=[];
+  for(const r of ['attack','slash','sweep','thrust']){an100Act(P,r);await __samp(300)}an100Act(Q,'hit');await __samp(700);an100Act(Q,'block');await __samp(1300);AN100.trace=[];
   /* round 1 is PvE, so the rules would not offer Q as a target: the attack is called directly (its pose is what is tested) */
   Q.r=6;Q.c=4;const src=attackSources(P)[0];const t={kind:'player',ref:Q,key:'p'+Q.id,r:Q.r,c:Q.c};let atk=false;if(src){await doAttack(P,src,t);atk=true}
   await __samp(1400);const a=__poses(P.id,AN100.trace);AN100.trace=[];
   await hurt(Q,'chest',1,{type:'env'},'Test');await __samp(900);const h=__poses(Q.id,AN100.trace);const fl=AN100.trace.some(x=>x.id===Q.id&&x.flash);AN100.trace=null;
   const bm=Object.keys(AN100.src.get('p:hero').act.bm);
-  return {atk,attack:new Set(a.filter(x=>/^attack/.test(x))).size,hit:new Set(h.filter(x=>/^(hit|block)/.test(x))).size,fl,bm,acts:AN100.stats.acts}});
-ok(s3.atk&&s3.attack>=2,'3a an attack steps the attack row '+JSON.stringify(s3));
+  return {atk,attack:new Set(a.filter(x=>/^(attack|slash|sweep|thrust|throw)/.test(x))).size,hit:new Set(h.filter(x=>/^(hit|block)/.test(x))).size,fl,bm,acts:AN100.stats.acts}});
+ok(s3.atk&&s3.attack>=2,'3a an attack steps an attack row (v1.01: slash / sweep / thrust for a blade) '+JSON.stringify(s3));
 ok(s3.hit>=2&&s3.fl,'3b a blow steps hit / block on the target, with a flash '+JSON.stringify(s3));
 ok(s3.bm.length>=1&&s3.bm.length<=3,'3c only the used action rows got decoded '+JSON.stringify(s3.bm));
 /* ---- 4 elimination: the fall row where he fell ---- */
@@ -104,7 +104,8 @@ const s11=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,m
   await __samp(500);const qs=[...new Set(AN100.trace.filter(x=>x.id===Q.id&&x.src).map(x=>x.src))];
   await cut(P,'rleg');for(let i=0;i<60&&!(AN100.src.get('p:soldier:rleg')&&AN100.src.get('p:soldier:rleg').move.bm.idle&&AN100.src.get('p:soldier:rleg').move.bm.idle!==1);i++)await __samp(150);
   AN100.trace=[];P.mv=6;const free=[[5,2],[7,2],[5,1],[7,1]].find(([r,c])=>!S.players.some(x=>x.alive&&x.r===r&&x.c===c)&&!S.npcs.some(n=>n.alive&&n.r===r&&n.c===c)&&!S.pillars.some(x=>x.r===r&&x.c===c));
-  if(free){const mv=movePlayer(P,[free[0]*N+free[1]]);let dn=false;mv.then(()=>dn=true);while(!dn){draw();await W8(20)}}await __samp(600);
+  /* v1.01: the walk steps with the glide (half a stride a tile) — Slow gives the one-tile hobble time to show its frames */
+  if(free){SPEED='slow';const mv=movePlayer(P,[free[0]*N+free[1]]);let dn=false;mv.then(()=>dn=true);while(!dn){draw();await W8(20)}SPEED='normal'}await __samp(600);
   const ps=AN100.trace.filter(x=>x.id===P.id&&x.src);const pSrc=[...new Set(ps.map(x=>x.src))],pWalk=[...new Set(ps.filter(x=>/^walk/.test(x.pose)).map(x=>x.pose))];
   AN100.trace=[];await cut(Q,'rleg');await __samp(900);const two=AN100.trace.filter(x=>x.id===Q.id&&x.pose).length;AN100.trace=null;
   const files=sevKeys();
