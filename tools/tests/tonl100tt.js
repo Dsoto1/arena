@@ -140,7 +140,7 @@ for(const t1=Date.now();Date.now()-t1<40000;){const ins=await inputs().catch(()=
 const ins=await inputs();const st=p=>p.__ev(()=>({h:ONLM.hlog,r:ONLM.resyncs,acct:ONL.acct.id,log:TT100C.log.filter(x=>x.d!=null),applied:TT100C.applied,owners:ONLM.owners.map(Boolean),cpu1:S.players[1].cpu,me:ONLM.me,
   rcl:typeof ONL84!=='undefined'&&ONL84.rcl?1:0,pick:window.__tp.pick,note:window.__tp.note,txt:[...document.querySelectorAll('#log li')].map(l=>l.textContent).filter(t=>/ran out of time|hand the seat/.test(t)).length}));
 const X={A:await st(A),B:await st(B)};
-let same=0;const diff=[];for(const x of ins){const h=x.h||x.pre;if(!h)continue;for(const n of ['A','B']){if(X[n].acct===x.from)continue;const o=X[n].h['s'+x.seq];if(!o)continue;if(o===h)same++;else diff.push([n,x.seq,x.k,x.a||x.t||''])}}
+let same=0;const diff=[];for(const x of ins){const h=x.k==="modal"&&x.pre?x.pre:(x.h||x.pre);if(!h)continue;for(const n of ['A','B']){if(X[n].acct===x.from)continue;const o=X[n].h['s'+x.seq];if(!o)continue;if(o===h)same++;else diff.push([n,x.seq,x.k,x.a||x.t||''])}}
 const srvK=ins.filter(x=>x.from==='server').map(x=>x.k+(x.k==='timeout'?'#'+x.seat:'')+(x.tt?'tt':''));
 const dA=Object.fromEntries(X.A.log.map(x=>[x.d,x.v])),dB=Object.fromEntries(X.B.log.map(x=>[x.d,x.v]));const dd=Object.keys(dA).filter(k=>k in dB&&JSON.stringify(dA[k])!==JSON.stringify(dB[k]));
 const dto=ins.find(x=>x.k==='dto');

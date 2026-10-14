@@ -4483,9 +4483,21 @@ function canHarmPlayer(player, other, viaNpc = false) {
 function stat(player, k, victim = 1) {
   if (player && player.stats) player.stats[k] = (player.stats[k] || 0) + victim;
 }
-/* log — prepends an HTML line to the game log (keeps the newest 400), records it in S.logLines, and echoes it as a caption on CPU turns or for 'big' lines. TWEAK: the 400 line limit. */
+/* log — ANNOUNCES a line (v1.01 Phase B, 327-v101beat): BUS 'log' {html, cls} is the only path for log text. The DOM writer logDom
+   (below) is the FIRST subscriber, so the later log wrappers (54, 56, 60, 93, 113, 134, 139, 204, 218, 220, 233, 321) see the line
+   in #log and S.logLines exactly as before when the base returns. HEADLESS skips it all (sims stay as fast). */
 function log(html, cls = '') {
   if (HEADLESS) return;
+  BUS.emit('log', {
+    html,
+    cls
+  });
+}
+/* logDom — the DOM writer: prepends an HTML line to the game log (keeps the newest 400), records it in S.logLines, and echoes it as a
+   caption on CPU turns or for 'big' lines. TWEAK: the 400 line limit. */
+function logDom(d) {
+  const html = d.html,
+    cls = d.cls;
   const li = document.createElement('li');
   li.innerHTML = html;
   if (cls) li.className = cls;
@@ -4499,13 +4511,20 @@ function log(html, cls = '') {
   });
   if (S && S.players && cur() && cur().cpu || cls === 'big') caption(html);
 }
+BUS.on('log', logDom);
 let capTimer = null;
-/* caption — shows a short on-board caption: keeps 3 lines on Slow (2 otherwise) and clears after 5s on Slow (2.5s otherwise). TWEAK: the line counts and timings. */
+/* caption — announces a short on-board caption: BUS 'caption' {html}; captionDom is its first subscriber. */
 function caption(html) {
   if (HEADLESS) return;
+  BUS.emit('caption', {
+    html
+  });
+}
+/* captionDom — keeps 3 lines on Slow (2 otherwise) and clears after 5s on Slow (2.5s otherwise). TWEAK: the line counts and timings. */
+function captionDom(dt) {
   const el = $('#caption');
   const d = document.createElement('div');
-  d.innerHTML = html;
+  d.innerHTML = dt.html;
   el.prepend(d);
   while (el.children.length > (SPEED === 'slow' ? 3 : 2)) el.lastChild.remove();
   clearTimeout(capTimer);
@@ -4513,6 +4532,7 @@ function caption(html) {
     el.innerHTML = '';
   }, SPEED === 'slow' ? 5000 : 2500);
 }
+BUS.on('caption', captionDom);
 
 /* ---------- pathing & sight ---------- */
 /* dijkstra — shortest paths on the 13x13 grid from (sr,sc) in 8 directions; blocked tiles are skipped and a diagonal step costs 2 unless fly (then everything costs 1 and nothing blocks). Returns dist and prev arrays indexed r*N+c. TWEAK: the diagonal cost of 2. */
@@ -4940,7 +4960,7 @@ async function revealOffering(player, off, land) {
   if (off === 'spiders') {
     log(_T`Spiders pour out onto ${nm(player)}!`, 'bad');
     if (typeof hitFlash === 'function') hitFlash(player.r, player.c, 'spiders');
-    if (!HEADLESS && !S.sim) await sleep(900);
+    if (!HEADLESS && !S.sim) await beat('revealOffering', 900);
     for (const l of ['larm', 'rarm', 'rleg', 'lleg']) if (player.alive && player.hp[l] > 0) await hurt(player, l, 1, {
       type: 'env'
     }, _T('Spiders bite'), {
@@ -5982,7 +6002,7 @@ async function minervaStep(victim, attacker) {
     S.chest.c = victim.c;
   }
   log(_T`${nm(victim)} steps to ${tl(victim.r, victim.c)}.`);
-  draw();
+  paint('draw');
   await pickupAt(victim.r, victim.c);
 }
 /* the location that ends a gladiator soonest: a vital spot (head/chest) with the least HP+AP left, else the weakest limb. TWEAK: the +3 margin (a vital spot still wins if it is up to 3 points tougher than the weakest limb). */
@@ -6247,8 +6267,8 @@ async function npcWalk(npc, goals, mv) {
       npc.r = best.r;
       npc.c = best.c;
       moved = true;
-      draw();
-      await sleep(140);
+      paint('draw');
+      await beat('npcWalk', 140);
     }
     if (npc.t === 'tholo' && S.chest && S.chest.held == null && npc.r === S.chest.r && npc.c === S.chest.c) {
       S.chest.held = npc.id;
@@ -6269,8 +6289,8 @@ async function npcWalk(npc, goals, mv) {
     npc.r = r;
     npc.c = c;
     moved = true;
-    draw();
-    await sleep(140);
+    paint('draw');
+    await beat('npcWalk', 140);
   }
   if (npc.t === 'tholo' && S.chest && S.chest.held == null && npc.r === S.chest.r && npc.c === S.chest.c) {
     S.chest.held = npc.id;
@@ -6599,7 +6619,7 @@ async function payMandata(player, idx) {
   cardShow('m:' + idx, player, _T('📜 Revealed'));
   if (/applause/.test(M.r)) log(_T('The crowd offers a generous applause.'));
   await M.reward(player);
-  render();
+  paint('render');
 }
 /* declareMandata — for a Mandatum that is declared instead of tested: removes it, announces it and pays the reward. Returns false if it cannot be declared. */
 async function declareMandata(player, it) {
@@ -6822,27 +6842,27 @@ async function resolveDrawn(player, k) {
     case 'spawnLeaena':
       reveal();
       spawnNPC('lion', k === 'spawnLeo' ? _T('Leo') : _T('Leaena'));
-      draw();
-      await sleep(400);
+      paint('draw');
+      await beat('resolveDrawn', 400);
       return;
     case 'spawnTholo':
       reveal();
       spawnNPC('tholo', _T('Tholo'), S.ri < 2 ? [6, 6] : null);
-      draw();
-      await sleep(400);
+      paint('draw');
+      await beat('resolveDrawn', 400);
       return;
     case 'spawnCommodus':
       reveal();
       await spawnCommodus();
-      draw();
-      await sleep(400);
+      paint('draw');
+      await beat('resolveDrawn', 400);
       return;
   }
   if (String(k).startsWith('pair_') && typeof pairCardPlay === 'function') {
     reveal();
     await pairCardPlay(player, k);
-    draw();
-    await sleep(400);
+    paint('draw');
+    await beat('resolveDrawn', 400);
     return;
   }
   player.items.push(mkCard(k));
@@ -7636,7 +7656,7 @@ async function startEvent(config) {
   if (!HEADLESS) setTimeout(() => {
     if (S && S.evKey === config.ev) banner(ev.n, `${LOCATIONS[config.loc] ? LOCATIONS[config.loc].n + ' · ' : ''}${ev.rounds[0].n}`);
   }, 300);
-  render();
+  paint('render');
   // loadouts
   for (const p of S.players) {
     if (ev.kind === 'chariot') {
@@ -7918,7 +7938,7 @@ async function runDraft() {
       pick.by = p.id + 1;
       log(_T`${nm(p)} drafts <b>${pick.kind === 'w' ? W[pick.k].n : ARM[pick.k].n}</b>.`);
       if (pick.kind === 'w') await gainWeapon(p, pick.k);else await gainArmorPiece(p, pick.k);
-      render();
+      paint('render');
     }
     order.reverse();
   }
@@ -8241,7 +8261,7 @@ async function nextRound(why) {
     if (offs.length) log(_T`🚫 This round: <b>${offs.join(' · ')}</b>.${!cfAllowed() ? _T(' Crowd Favor still counts — it just cannot be spent.') : ''}`, 'big');
   }
   log(_T`Round ${S.ri + 1} · ${nr.n}. ${nr.zone > 1 ? _T`The zone shrinks to ${z[1] - z[0] + 1}×${z[1] - z[0] + 1}. Two turns of grace to get inside.` : ''} ${nr.pvp ? _T('PvP is allowed.') : _T('No PvP.')}`, 'hd');
-  render();
+  paint('render');
 }
 /* finalCF — a player's final CF: -5 per unrevealed Mandata Flavi; a winner adds the last round's win reward (default 15), +10 with the pelted weakness, +5 per 3 trophies, +2 per Flavian item and +15 for the Golden Eagle. Retired players score 0. TWEAK: those bonus numbers. */
 function finalCF(player, winner) {
@@ -8304,7 +8324,7 @@ async function beginTurn() {
   await flaviusTruceCheck();
   if (G !== S) return;
   if (!p.cpu) {
-    render();
+    paint('render');
     await popRule('firstTurn');
     if (p.items.some(i => i.kind === 'mf')) await popRule('mandata');
     if (G !== S) return;
@@ -8320,20 +8340,20 @@ async function beginTurn() {
     S.phase = 'action';
     p.mv = chMv(p);
     log(_T`Phase 1 · Movement: ${p.ch.mounted ? 'mounted, ' + p.mv + ' movement' : _T('on foot')} · lap ${p.ch.laps}/3.`);
-    render();
+    paint('render');
     if (p.cpu) {
-      await sleep(350);
+      await beat('beginTurn', 350);
       await cpuChariot(p);
       if (G !== S) return;
       S.busy = false;
       checkEnd();
       await settle();
       if (G !== S || S.over) return;
-      await sleep(250);
+      await beat('beginTurn', 250);
       return endTurn();
     }
     S.busy = false;
-    render();
+    paint('render');
     return;
   }
   if (p.underground) {
@@ -8341,8 +8361,8 @@ async function beginTurn() {
     for (const n of S.npcs) if (n.aggro === p.id) n.aggro = null;
     log(_T`${nm(p)} emerges from the tunnel; all aggro is shaken off.`);
   }
-  render();
-  await sleep(300);
+  paint('render');
+  await beat('beginTurn', 300);
   if (G !== S) return;
   await resolvePhase(p);
   if (G !== S) return;
@@ -8352,8 +8372,8 @@ async function beginTurn() {
   if (G !== S || S.over) return;
   if (!p.alive || p.exited) {
     S.busy = false;
-    render();
-    await sleep(400);
+    paint('render');
+    await beat('beginTurn', 400);
     return advanceTurn();
   }
   await checkEagleScore(p);
@@ -8362,11 +8382,11 @@ async function beginTurn() {
   if (G !== S || S.over) return;
   S.phase = 'choice';
   S.busy = false;
-  render();
+  paint('render');
   if (p.cpu) {
     S.busy = true;
-    render();
-    await sleep(450);
+    paint('render');
+    await beat('beginTurn', 450);
     await takeChoice(p, cpuChoice(p));
     await flushMF();
     checkEnd();
@@ -8379,23 +8399,23 @@ async function beginTurn() {
     }
     if (p.forceEnd) {
       S.busy = false;
-      await sleep(300);
+      await beat('beginTurn', 300);
       return endTurn();
     }
-    await sleep(300);
+    await beat('beginTurn', 300);
     if (isNaum()) await cpuNaum(p);else await cpuAct(p);
     if (G !== S) return;
     S.busy = false;
     checkEnd();
     await settle();
     if (G !== S || S.over) return;
-    await sleep(300);
+    await beat('beginTurn', 300);
     await endTurn();
   } else if (!canDraw()) {
     S.busy = true;
     await takeChoice(p, 'coin');
     S.busy = false;
-    render();
+    paint('render');
   }
 }
 /* takeChoice — Phase 2 then the start of Phase 3: take 2 coin or draw an arena card (the Gauntlet pays nothing), then set movement (Mercury, net, lashing, swimming) and pay class abilities. TWEAK: coin taken (2), movement cap (7), sling stone cap (6). */
@@ -8466,7 +8486,7 @@ async function takeChoice(player, which) {
   }
   player.netted = false;
   checkMandata(player);
-  render();
+  paint('render');
 }
 /* endTurn — Phase 4: -2 CF for ending outside the zone after grace (negative CF eliminates), grace countdown, 10-card hand limit, the restless crowd, history snapshot, then the next turn. TWEAK: zone penalty (2), hand limit (10), restless stone damage (2). */
 async function endTurn() {
@@ -8634,14 +8654,14 @@ async function movePlayer(player, path) {
       await chPartPickup(player);
     }
     if (isNaum()) await naumStep(player, step, or, oc);
-    draw();
+    paint('draw');
     if (spikeAt(r, c)) await hurt(player, rollLoc(player), 2, {
       type: 'env'
     }, _T('Floor spike'));
     await pickupAt(r, c);
     checkEnd();
     if (!player.alive || S.over || S.pending) break;
-    await sleep(110);
+    await beat('movePlayer', 110);
   }
 }
 /* chFootPickup — in a chariot race, takes a spare wheel or horse on this tile if the chariot is missing one. */
@@ -9130,7 +9150,7 @@ async function flaviusTruceCheck() {
           n: 'war'
         });
       } catch (e) {}
-      render();
+      paint('render');
       return;
     }
   }
@@ -9610,8 +9630,8 @@ async function cpuUseItems(player) {
     if (it.kind === 'mf') {
       if (MANDATA[it.idx].declare && rand() < .25 + P.cf / 250) {
         await declareMandata(player, it);
-        render();
-        await sleep(300);
+        paint('render');
+        await beat('cpuUseItems', 300);
       }
       continue;
     }
@@ -9701,8 +9721,8 @@ async function cpuUseItems(player) {
     if (use) {
       const ok = await useItem(player, it);
       if (ok && it.kind === 'card' && CARDS[k].q && rand() < .5) think(player, CARDS[k].q + '.', 'quote');
-      render();
-      await sleep(220);
+      paint('render');
+      await beat('cpuUseItems', 220);
     }
   }
 }
@@ -9756,8 +9776,8 @@ async function cpuMarket(player) {
     const got = typeof marketBuy75 === 'function' ? await marketBuy75(player, lv, { pref: kind }) : { kind, key: await marketRoll(player, kind, lv) }; /* v0.89: the best piece of the row, either side */
     if (got.kind === 'w' && got.key) await gainWeapon(player, got.key);else if (got.key) await gainArmorPiece(player, got.key);
     think(player, pickOne(QUOTES.market), 'think');
-    render();
-    await sleep(250);
+    paint('render');
+    await beat('cpuMarket', 250);
     if (player.coin < 12 + reserve) break;
   }
   checkMandata(player);
@@ -9862,8 +9882,8 @@ async function cpuHelpAllies(player) {
       doGift(player, q, gift, why);
       player.gifted = true;
       think(player, pickOne(QUOTES.gift), 'gift');
-      render();
-      await sleep(260);
+      paint('render');
+      await beat('cpuHelpAllies', 260);
       return;
     }
   }
@@ -10241,7 +10261,7 @@ async function cpuAct(player) {
   await cpuDiplomacy(player);
   await cpuHelpAllies(player);
   await flushMF();
-  render();
+  paint('render');
   const seen89 = new Set([player.r * N + player.c]); // v0.89 (his note): tiles stood on this turn — never step back onto one
   for (let guard = 0; guard < 18; guard++) {
     if (G !== S || !player.alive || player.exited || S.over) return;
@@ -10252,7 +10272,7 @@ async function cpuAct(player) {
     }
     if (canExit(player)) {
       doExit(player);
-      render();
+      paint('render');
       return;
     }
     {
@@ -10276,15 +10296,15 @@ async function cpuAct(player) {
       });
       if (useful.length) {
         await doLoot(player, useful.sort((a, b) => b.val - a.val)[0]);
-        render();
-        await sleep(250);
+        paint('render');
+        await beat('cpuAct', 250);
         continue;
       }
     }
     if (canOpenChest(player)) {
       await openChest(player);
-      render();
-      await sleep(250);
+      paint('render');
+      await beat('cpuAct', 250);
       continue;
     }
     if (S.evKey === 'orpheus' && S.chest && onChestTile(player) && player.keys === 0 && allLimbs(player) && !player.carrying && player.mv >= 1 && player.diff === 'hard') {
@@ -10315,8 +10335,8 @@ async function cpuAct(player) {
       await doAttack(player, fp98.src, fp98.t, {
         focusRoll: true
       });
-      render();
-      await sleep(380);
+      paint('render');
+      await beat('cpuAct', 380);
       continue;
     }
     if (best) {
@@ -10327,15 +10347,15 @@ async function cpuAct(player) {
       await doAttack(player, best.src, best.t, {
         focusRoll: focus
       });
-      render();
-      await sleep(380);
+      paint('render');
+      await beat('cpuAct', 380);
       continue;
     }
     const tac = cpuTactic(player);
     if (tac) {
       if (tac.kind === 'push') await doPush(player, tac.t);else await doTopple(player, tac.t);
-      render();
-      await sleep(380);
+      paint('render');
+      await beat('cpuAct', 380);
       continue;
     }
     // TUNNELS, used like a fighter who has read the arena's floor plan:
@@ -10352,7 +10372,7 @@ async function cpuAct(player) {
           const safe = ex.sort((a, b) => Math.min(...threats.map(target => cheb(b, target))) - Math.min(...threats.map(target => cheb(a, target))))[0];
           think(player, pickOne(QUOTES.retreat), 'think');
           await doTunnel(player, safe);
-          render();
+          paint('render');
           return;
         }
       }
@@ -10384,7 +10404,7 @@ async function cpuAct(player) {
           if (cut) {
             think(player, _T('The crowd above never sees the roads below.'), 'think');
             await doTunnel(player, cut);
-            render();
+            paint('render');
             return;
           }
         }
@@ -10428,7 +10448,7 @@ async function cpuAct(player) {
     await movePlayer(player, [k]);
     seen89.add(player.r * N + player.c);
     await checkEagleScore(player);
-    render();
+    paint('render');
   }
   if (G === S && player.alive && !player.exited && !S.over && aiSk(player, 'dodge', false)) await aiDodge(player); // Master: spare steps go to safer ground
   await flushMF();
@@ -50081,7 +50101,7 @@ drawTosses=function(){if(!S||!S.tosses||!S.tosses.length)return;const now=perfor
      window.open  {title, main?}                                           — modal() called (title = its HTML title) or a
                                                                               SCREEN_OPENERS main window (main = the opener's name)
      window.close {title, value}                                           — a modal() window resolved
-     log          {html, cls}                                              — log() (after the line went in)
+     log          {html, cls}                                              — log() itself (v1.01: 03-engine's logDom writes the line first)
      render       {}                                                       — render() returned
      draw.after   {ms}                                                     — draw() returned (all its wrappers included); ms = its time
    Not migrated: 204-v92perf's perf92Mark wrappers (render/log/modal/beginTurn/mToast/…) stay — they mark BEFORE the call at their
@@ -50129,7 +50149,8 @@ if(typeof marketBuy75==='function'){const base=marketBuy75;marketBuy75=function(
 for(const name of (typeof SCREEN_OPENERS!=='undefined'?SCREEN_OPENERS:[])){try{const base=window[name]||eval(name);if(typeof base!=='function')continue;
   const wrapped=function(){if(BUS.has('window.open'))try{BUS.emit('window.open',{title:null,main:name})}catch(e){}return base.apply(this,arguments)};
   eval(`${name}=wrapped`)}catch(e){}}
-{const base=log;log=function(html,cls){const r=base.apply(this,arguments);if(BUS.has('log'))try{BUS.emit('log',{html,cls:cls||''})}catch(e){}bus93Phase();return r}}
+/* v1.01 (327-v101beat): log() itself announces BUS 'log' (logDom is the first subscriber) — this wrapper only checks the phase now */
+{const base=log;log=function(html,cls){const r=base.apply(this,arguments);bus93Phase();return r}}
 {const base=render;render=function(){const r=base.apply(this,arguments);if(BUS.has('render'))try{BUS.emit('render',{})}catch(e){}bus93Phase();return r}}
 {const base=draw;draw=function(){if(!BUS.has('draw.after'))return base.apply(this,arguments);const t0=performance.now();const r=base.apply(this,arguments);
   try{BUS.emit('draw.after',{ms:performance.now()-t0})}catch(e){}return r}}
@@ -56186,14 +56207,14 @@ if(typeof MOCK_ROUTES!=='undefined')for(const t of Object.keys(MOCK_ROUTES)){con
    (tile / act / drop) is NOT ready on any client, the 121 stuck check does not call it "impossible", your own board clicks are not
    taken (onlmMine false outside windows — no move recorded half-way through your own turn's end), and no snapshot is cut. Windows
    (modal inputs: the hand limit, a round reward pick) still flow, so nothing waits on itself. Test: tonl98f. */
-const F98={G:null,n:0,held:0};
-function f98Busy(){return !!(S&&F98.G===S&&F98.n>0)}
-function f98Wrap(fn){return async function(){const G=S;if(F98.G!==G){F98.G=G;F98.n=0}F98.n++;
-  try{return await fn.apply(this,arguments)}finally{if(F98.G===G)F98.n=Math.max(0,F98.n-1);
-    try{if(typeof onlmOn==='function'&&onlmOn())setTimeout(onlmPump,30)}catch(e){}}}}
-endTurn=f98Wrap(endTurn);
-settle=f98Wrap(settle);
-{const base=onlmReady;onlmReady=function(inp){if(inp&&inp.k!=='modal'&&inp.k!=='void'&&inp.k!=='abandon'&&f98Busy()){F98.held++;return false}return base.apply(this,arguments)}}
+/* v1.01 (327-v101beat, Phase C): the endTurn()/settle() counters moved into the engine (ENG101, engRunning101 — part of awaiting());
+   f98Busy() reads them, F98 keeps only the 'held' count tonl98f reports. */
+const F98={held:0};
+function f98Busy(){return typeof engRunning101==='function'&&engRunning101()}
+/* a board input (tile / act / drop) applies only while the engine awaits a command (327 awaiting()); inside an endTurn()/settle() it is
+   held (F98.held) — the remote-owned window path (ONLM.pend) is 113's own */
+{const base=onlmReady;onlmReady=function(inp){if(inp&&inp.k!=='modal'&&inp.k!=='void'&&inp.k!=='abandon'){if(f98Busy()){F98.held++;return false}
+  if(!ONLM.pend&&typeof awaiting==='function'){const aw=awaiting();if(!aw||aw.k!=='command')return false}}return base.apply(this,arguments)}}
 {const base=onl80fImpossible;onl80fImpossible=function(inp){if(f98Busy()&&!ONLM.pend)return false;return base.apply(this,arguments)}}
 {const base=onlmMine;onlmMine=function(){if(f98Busy()&&!CUR_MODAL&&onlmOn())return false;return base.apply(this,arguments)}}
 {const base=onlmSettled;onlmSettled=function(){if(f98Busy())return false;return base.apply(this,arguments)}}
@@ -69887,7 +69908,7 @@ if(RP0.on){
      applies the same rule (skip the head when it cannot apply at a settled point); Phase C's `awaiting` replaces the settle wait.
    Counts (ASK.count, CMD101.used/twin) are for tests (tv101q). No save change; protocol 9 (the "v1.01 QUESTION PORT" section of 111).
    ===================================================================== */
-var ASK={n:0,now:null,prov:Object.create(null),count:Object.create(null),log:[],LOG_MAX:200};
+var ASK={n:0,now:null,prov:Object.create(null),count:Object.create(null),log:[],LOG_MAX:200,pend:new Set()};
 /* askSeat — a seat index: a fighter's place in S.players, a ticket holder's online index, else -1 */
 function askSeat(x){if(x==null)return -1;if(typeof x==='number')return x;try{if(S&&S.players){const i=S.players.indexOf(x);if(i>=0)return i}}catch(e){}return x&&x.onlIdx!=null?x.onlIdx:-1}
 /* askAuto — the headless answer (07-ui modal's HEADLESS rule): the close value, else the first enabled button (grid included) */
@@ -69902,8 +69923,12 @@ function ask(seat,kind,spec){spec=spec||{};kind=String(kind||'?');
   ASK.count[kind]=(ASK.count[kind]|0)+1;ASK.log.push({n:Q.n,kind,seat:Q.seat,ds:Q.ds,local:Q.local});if(ASK.log.length>ASK.LOG_MAX)ASK.log.shift();
   try{if(typeof BUS!=='undefined'&&BUS.has&&BUS.has('ask'))BUS.emit('ask',{kind,seat:Q.seat,ds:Q.ds,local:Q.local})}catch(e){}
   const pv=ASK.prov[kind]||ASK.prov['*'];if(pv){let v;try{v=pv(Q)}catch(e){console.error(e)}if(v!==undefined)return Promise.resolve(v)}
-  const prev=ASK.now;ASK.now=Q;
-  try{return 'opt' in spec?modal(spec.title,spec.body,spec.buttons||[],spec.opt):modal(spec.title,spec.body,spec.buttons||[])}finally{ASK.now=prev}}
+  const prev=ASK.now;ASK.now=Q;let pr;
+  try{pr='opt' in spec?modal(spec.title,spec.body,spec.buttons||[],spec.opt):modal(spec.title,spec.body,spec.buttons||[])}finally{ASK.now=prev}
+  /* v1.01 Phase C (327 awaiting): a match decision on screen is PENDING until its window answers. Never in HEADLESS (the answer is
+     already there, and no extra promise reaction may enter a sim's microtask order). */
+  if(!HEADLESS&&!Q.local&&pr&&typeof pr.then==='function'){ASK.pend.add(Q);const clr=()=>{ASK.pend.delete(Q)};pr.then(clr,clr)}
+  return pr}
 /* askW — the window form: today's modal(title, body, buttons, opt) arguments behind a seat and a kind.
    askX — the same with extra data first (from: who offers, q: the other gladiator, local: 1 …) for wrappers and providers */
 function askX(seat,kind,extra,title,body,buttons,opt){const spec={...(extra||{}),title,body,buttons:buttons||[],values:(buttons||[]).map(b=>b&&b.value)};
@@ -69924,6 +69949,62 @@ function command(seat,c){if(!c)return;CMD101.n++;
 /* every act 07-ui's dispatcher knows (uiAct) — the click and the registry run the same code */
 const UI_ACTS101=['inspect','cmddone','zpick','zdrop','vetpref','coin','card','focus','end','market','crowd','chest','chestup','chestdown','loot','trade','spear','selfbet','zora','dismount','mount','leavedoor','exit','item'];
 if(typeof uiAct==='function'){for(const k of UI_ACTS101)cmdReg(k,d=>uiAct(k,d));cmdReg('m-*',d=>uiAct(d.act,d))}
+/* =====================================================================
+   327-V101BEAT · LOG AS EVENTS + THE PRESENTATION PORT (v1.01 wave 2, Phases B and C of tools/plans/layers100/PLAN.md)
+   =====================================================================
+   PHASE B — THE LOG ANNOUNCES. log(html, cls) (03-engine) emits BUS 'log' {html, cls} and nothing else; the DOM writer logDom
+     (03-engine, subscribed at load, so FIRST) prepends the <li>, keeps 400, pushes S.logLines {turn, cls, text} and calls caption()
+     for CPU turns / 'big' lines. caption(html) emits BUS 'caption' {html}; captionDom (03-engine, first) writes #caption. The log
+     WRAPPERS (54, 56, 60, 93, 113, 134, 139, 204, 218, 220, 233, 321) still wrap log() and run in the same order: those that change
+     the html run before the base (so the BUS carries the final line), those that read #log / S.logLines run after it and find the
+     line already written (emit is synchronous). 218 no longer emits (it did after the base; 312/314 listen and read only S).
+     HEADLESS: log/caption return before the BUS (as before: no DOM, no S.logLines) — sims stay as fast.
+   PHASE C — THE PRESENTATION PORT. The rules never wait or paint by themselves:
+     beat(kind, ms)  every pause in the core (25: 03-engine revealOffering, 04-rules npcWalk/resolveDrawn, 05-flow beginTurn/movePlayer,
+                     06-ai's CPU pacing) — kind = the rule function's name. The default port IS today's sleep(ms) (02-data: SPEEDMUL,
+                     pause polling, Step's stepGate/stepWait, snap's yield, 235's Fast SLEEP_HOOK, 230's speed re-read); HEADLESS
+                     resolves at once (sleep's own Promise.resolve — the very same promise, so a sim's microtask order is unchanged).
+                     beatUse(fn) installs another port (a server / a test): fn(kind, ms) → a promise, or null to fall through.
+                     BEAT101.n / .count[kind] count the beats; BUS 'beat' {kind, ms} is announced only while someone listens.
+     paint(k)        every render()/draw() the core made (36: 04-rules 8, 05-flow 14, 06-ai 14) — k 'render' | 'draw'. It announces
+                     BUS 'state' {k}; the UI subscriber below (installed first) calls today's render()/draw() at once, so the same
+                     frames reach the screen (230/235/260 keep their own coalescing inside render/draw). HEADLESS calls render()/draw()
+                     directly (their wrappers, e.g. 319's sweep, still run in sims; no payload is built).
+     awaiting()      what the engine waits for: {k:'ask', kind, seat, ds} while a match decision is on screen (326's ASK.pend: a non-local
+                     ask() whose window has not answered), else {k:'command', seat} when the game idles for a turn action (phase
+                     choice/action/command, not busy, no endTurn()/settle() running, not over), else null.
+                     ENG101 counts the endTurn()/settle() spans per arena S (the counters 254-v98fastonl kept as F98 until v1.01):
+                     during them phase is still 'action' and S.busy false, yet the engine is NOT awaiting a command. 254 now reads
+                     engRunning101(); 113's onlmReady (via 254) refuses board inputs while it is true (tonl98f).
+   Dice, the log and S are unchanged (replay goldens: treplay101). No save change, no protocol bump. Test tv101r.
+   ===================================================================== */
+var BEAT101={n:0,count:Object.create(null),port:null};
+/* beat — one presentation pause of the rules; returns a promise (the port's, else sleep's) */
+function beat(kind,ms){BEAT101.n++;BEAT101.count[kind]=(BEAT101.count[kind]|0)+1;
+  if(!HEADLESS&&BUS.has('beat'))BUS.emit('beat',{kind,ms});
+  if(BEAT101.port){const p=BEAT101.port(kind,ms);if(p)return p}
+  return sleep(ms)}
+/* beatUse — another presentation port (fn(kind, ms) → promise | null); returns off() */
+function beatUse(fn){BEAT101.port=fn;return ()=>{if(BEAT101.port===fn)BEAT101.port=null}}
+/* paint — the rules say "the state changed, show it" */
+function paint(k){if(HEADLESS)return k==='draw'?draw():render();BUS.emit('state',{k})}
+/* the UI: the first 'state' subscriber repaints exactly as the rules used to */
+function paintUI101(d){if(d&&d.k==='draw')draw();else render()}
+BUS.on('state',paintUI101);
+
+/* ---------------- what the engine waits for ---------------- */
+var ENG101={G:null,run:0};
+function engRunning101(){return !!(S&&ENG101.G===S&&ENG101.run>0)}
+function eng101Wrap(fn){return async function(){const G=S;if(ENG101.G!==G){ENG101.G=G;ENG101.run=0}ENG101.run++;
+  try{return await fn.apply(this,arguments)}finally{if(ENG101.G===G)ENG101.run=Math.max(0,ENG101.run-1);
+    try{if(typeof onlmOn==='function'&&onlmOn())setTimeout(onlmPump,30)}catch(e){}}}}
+endTurn=eng101Wrap(endTurn);
+settle=eng101Wrap(settle);
+function awaiting(){if(!S||S.over)return null;
+  if(ASK.pend&&ASK.pend.size){let q=null;for(const x of ASK.pend)q=x;return {k:'ask',kind:q.kind,seat:q.seat,ds:q.ds}}
+  if(engRunning101()||S.busy)return null;
+  if(['choice','action','command'].includes(S.phase))return {k:'command',seat:typeof cur==='function'&&cur()?askSeat(cur()):-1};
+  return null}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

@@ -32,7 +32,7 @@
      applies the same rule (skip the head when it cannot apply at a settled point); Phase C's `awaiting` replaces the settle wait.
    Counts (ASK.count, CMD101.used/twin) are for tests (tv101q). No save change; protocol 9 (the "v1.01 QUESTION PORT" section of 111).
    ===================================================================== */
-var ASK={n:0,now:null,prov:Object.create(null),count:Object.create(null),log:[],LOG_MAX:200};
+var ASK={n:0,now:null,prov:Object.create(null),count:Object.create(null),log:[],LOG_MAX:200,pend:new Set()};
 /* askSeat — a seat index: a fighter's place in S.players, a ticket holder's online index, else -1 */
 function askSeat(x){if(x==null)return -1;if(typeof x==='number')return x;try{if(S&&S.players){const i=S.players.indexOf(x);if(i>=0)return i}}catch(e){}return x&&x.onlIdx!=null?x.onlIdx:-1}
 /* askAuto — the headless answer (07-ui modal's HEADLESS rule): the close value, else the first enabled button (grid included) */
@@ -47,8 +47,12 @@ function ask(seat,kind,spec){spec=spec||{};kind=String(kind||'?');
   ASK.count[kind]=(ASK.count[kind]|0)+1;ASK.log.push({n:Q.n,kind,seat:Q.seat,ds:Q.ds,local:Q.local});if(ASK.log.length>ASK.LOG_MAX)ASK.log.shift();
   try{if(typeof BUS!=='undefined'&&BUS.has&&BUS.has('ask'))BUS.emit('ask',{kind,seat:Q.seat,ds:Q.ds,local:Q.local})}catch(e){}
   const pv=ASK.prov[kind]||ASK.prov['*'];if(pv){let v;try{v=pv(Q)}catch(e){console.error(e)}if(v!==undefined)return Promise.resolve(v)}
-  const prev=ASK.now;ASK.now=Q;
-  try{return 'opt' in spec?modal(spec.title,spec.body,spec.buttons||[],spec.opt):modal(spec.title,spec.body,spec.buttons||[])}finally{ASK.now=prev}}
+  const prev=ASK.now;ASK.now=Q;let pr;
+  try{pr='opt' in spec?modal(spec.title,spec.body,spec.buttons||[],spec.opt):modal(spec.title,spec.body,spec.buttons||[])}finally{ASK.now=prev}
+  /* v1.01 Phase C (327 awaiting): a match decision on screen is PENDING until its window answers. Never in HEADLESS (the answer is
+     already there, and no extra promise reaction may enter a sim's microtask order). */
+  if(!HEADLESS&&!Q.local&&pr&&typeof pr.then==='function'){ASK.pend.add(Q);const clr=()=>{ASK.pend.delete(Q)};pr.then(clr,clr)}
+  return pr}
 /* askW — the window form: today's modal(title, body, buttons, opt) arguments behind a seat and a kind.
    askX — the same with extra data first (from: who offers, q: the other gladiator, local: 1 …) for wrappers and providers */
 function askX(seat,kind,extra,title,body,buttons,opt){const spec={...(extra||{}),title,body,buttons:buttons||[],values:(buttons||[]).map(b=>b&&b.value)};

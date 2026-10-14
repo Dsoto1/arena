@@ -20,7 +20,7 @@
      window.open  {title, main?}                                           — modal() called (title = its HTML title) or a
                                                                               SCREEN_OPENERS main window (main = the opener's name)
      window.close {title, value}                                           — a modal() window resolved
-     log          {html, cls}                                              — log() (after the line went in)
+     log          {html, cls}                                              — log() itself (v1.01: 03-engine's logDom writes the line first)
      render       {}                                                       — render() returned
      draw.after   {ms}                                                     — draw() returned (all its wrappers included); ms = its time
    Not migrated: 204-v92perf's perf92Mark wrappers (render/log/modal/beginTurn/mToast/…) stay — they mark BEFORE the call at their
@@ -68,7 +68,8 @@ if(typeof marketBuy75==='function'){const base=marketBuy75;marketBuy75=function(
 for(const name of (typeof SCREEN_OPENERS!=='undefined'?SCREEN_OPENERS:[])){try{const base=window[name]||eval(name);if(typeof base!=='function')continue;
   const wrapped=function(){if(BUS.has('window.open'))try{BUS.emit('window.open',{title:null,main:name})}catch(e){}return base.apply(this,arguments)};
   eval(`${name}=wrapped`)}catch(e){}}
-{const base=log;log=function(html,cls){const r=base.apply(this,arguments);if(BUS.has('log'))try{BUS.emit('log',{html,cls:cls||''})}catch(e){}bus93Phase();return r}}
+/* v1.01 (327-v101beat): log() itself announces BUS 'log' (logDom is the first subscriber) — this wrapper only checks the phase now */
+{const base=log;log=function(html,cls){const r=base.apply(this,arguments);bus93Phase();return r}}
 {const base=render;render=function(){const r=base.apply(this,arguments);if(BUS.has('render'))try{BUS.emit('render',{})}catch(e){}bus93Phase();return r}}
 {const base=draw;draw=function(){if(!BUS.has('draw.after'))return base.apply(this,arguments);const t0=performance.now();const r=base.apply(this,arguments);
   try{BUS.emit('draw.after',{ms:performance.now()-t0})}catch(e){}return r}}

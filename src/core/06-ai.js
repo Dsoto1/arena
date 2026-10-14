@@ -270,8 +270,8 @@ async function cpuUseItems(player) {
     if (it.kind === 'mf') {
       if (MANDATA[it.idx].declare && rand() < .25 + P.cf / 250) {
         await declareMandata(player, it);
-        render();
-        await sleep(300);
+        paint('render');
+        await beat('cpuUseItems', 300);
       }
       continue;
     }
@@ -361,8 +361,8 @@ async function cpuUseItems(player) {
     if (use) {
       const ok = await useItem(player, it);
       if (ok && it.kind === 'card' && CARDS[k].q && rand() < .5) think(player, CARDS[k].q + '.', 'quote');
-      render();
-      await sleep(220);
+      paint('render');
+      await beat('cpuUseItems', 220);
     }
   }
 }
@@ -416,8 +416,8 @@ async function cpuMarket(player) {
     const got = typeof marketBuy75 === 'function' ? await marketBuy75(player, lv, { pref: kind }) : { kind, key: await marketRoll(player, kind, lv) }; /* v0.89: the best piece of the row, either side */
     if (got.kind === 'w' && got.key) await gainWeapon(player, got.key);else if (got.key) await gainArmorPiece(player, got.key);
     think(player, pickOne(QUOTES.market), 'think');
-    render();
-    await sleep(250);
+    paint('render');
+    await beat('cpuMarket', 250);
     if (player.coin < 12 + reserve) break;
   }
   checkMandata(player);
@@ -522,8 +522,8 @@ async function cpuHelpAllies(player) {
       doGift(player, q, gift, why);
       player.gifted = true;
       think(player, pickOne(QUOTES.gift), 'gift');
-      render();
-      await sleep(260);
+      paint('render');
+      await beat('cpuHelpAllies', 260);
       return;
     }
   }
@@ -901,7 +901,7 @@ async function cpuAct(player) {
   await cpuDiplomacy(player);
   await cpuHelpAllies(player);
   await flushMF();
-  render();
+  paint('render');
   const seen89 = new Set([player.r * N + player.c]); // v0.89 (his note): tiles stood on this turn — never step back onto one
   for (let guard = 0; guard < 18; guard++) {
     if (G !== S || !player.alive || player.exited || S.over) return;
@@ -912,7 +912,7 @@ async function cpuAct(player) {
     }
     if (canExit(player)) {
       doExit(player);
-      render();
+      paint('render');
       return;
     }
     {
@@ -936,15 +936,15 @@ async function cpuAct(player) {
       });
       if (useful.length) {
         await doLoot(player, useful.sort((a, b) => b.val - a.val)[0]);
-        render();
-        await sleep(250);
+        paint('render');
+        await beat('cpuAct', 250);
         continue;
       }
     }
     if (canOpenChest(player)) {
       await openChest(player);
-      render();
-      await sleep(250);
+      paint('render');
+      await beat('cpuAct', 250);
       continue;
     }
     if (S.evKey === 'orpheus' && S.chest && onChestTile(player) && player.keys === 0 && allLimbs(player) && !player.carrying && player.mv >= 1 && player.diff === 'hard') {
@@ -975,8 +975,8 @@ async function cpuAct(player) {
       await doAttack(player, fp98.src, fp98.t, {
         focusRoll: true
       });
-      render();
-      await sleep(380);
+      paint('render');
+      await beat('cpuAct', 380);
       continue;
     }
     if (best) {
@@ -987,15 +987,15 @@ async function cpuAct(player) {
       await doAttack(player, best.src, best.t, {
         focusRoll: focus
       });
-      render();
-      await sleep(380);
+      paint('render');
+      await beat('cpuAct', 380);
       continue;
     }
     const tac = cpuTactic(player);
     if (tac) {
       if (tac.kind === 'push') await doPush(player, tac.t);else await doTopple(player, tac.t);
-      render();
-      await sleep(380);
+      paint('render');
+      await beat('cpuAct', 380);
       continue;
     }
     // TUNNELS, used like a fighter who has read the arena's floor plan:
@@ -1012,7 +1012,7 @@ async function cpuAct(player) {
           const safe = ex.sort((a, b) => Math.min(...threats.map(target => cheb(b, target))) - Math.min(...threats.map(target => cheb(a, target))))[0];
           think(player, pickOne(QUOTES.retreat), 'think');
           await doTunnel(player, safe);
-          render();
+          paint('render');
           return;
         }
       }
@@ -1044,7 +1044,7 @@ async function cpuAct(player) {
           if (cut) {
             think(player, _T('The crowd above never sees the roads below.'), 'think');
             await doTunnel(player, cut);
-            render();
+            paint('render');
             return;
           }
         }
@@ -1088,7 +1088,7 @@ async function cpuAct(player) {
     await movePlayer(player, [k]);
     seen89.add(player.r * N + player.c);
     await checkEagleScore(player);
-    render();
+    paint('render');
   }
   if (G === S && player.alive && !player.exited && !S.over && aiSk(player, 'dodge', false)) await aiDodge(player); // Master: spare steps go to safer ground
   await flushMF();

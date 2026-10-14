@@ -168,7 +168,7 @@ async function minervaStep(victim, attacker) {
     S.chest.c = victim.c;
   }
   log(_T`${nm(victim)} steps to ${tl(victim.r, victim.c)}.`);
-  draw();
+  paint('draw');
   await pickupAt(victim.r, victim.c);
 }
 /* the location that ends a gladiator soonest: a vital spot (head/chest) with the least HP+AP left, else the weakest limb. TWEAK: the +3 margin (a vital spot still wins if it is up to 3 points tougher than the weakest limb). */
@@ -433,8 +433,8 @@ async function npcWalk(npc, goals, mv) {
       npc.r = best.r;
       npc.c = best.c;
       moved = true;
-      draw();
-      await sleep(140);
+      paint('draw');
+      await beat('npcWalk', 140);
     }
     if (npc.t === 'tholo' && S.chest && S.chest.held == null && npc.r === S.chest.r && npc.c === S.chest.c) {
       S.chest.held = npc.id;
@@ -455,8 +455,8 @@ async function npcWalk(npc, goals, mv) {
     npc.r = r;
     npc.c = c;
     moved = true;
-    draw();
-    await sleep(140);
+    paint('draw');
+    await beat('npcWalk', 140);
   }
   if (npc.t === 'tholo' && S.chest && S.chest.held == null && npc.r === S.chest.r && npc.c === S.chest.c) {
     S.chest.held = npc.id;
@@ -785,7 +785,7 @@ async function payMandata(player, idx) {
   cardShow('m:' + idx, player, _T('📜 Revealed'));
   if (/applause/.test(M.r)) log(_T('The crowd offers a generous applause.'));
   await M.reward(player);
-  render();
+  paint('render');
 }
 /* declareMandata — for a Mandatum that is declared instead of tested: removes it, announces it and pays the reward. Returns false if it cannot be declared. */
 async function declareMandata(player, it) {
@@ -1008,27 +1008,27 @@ async function resolveDrawn(player, k) {
     case 'spawnLeaena':
       reveal();
       spawnNPC('lion', k === 'spawnLeo' ? _T('Leo') : _T('Leaena'));
-      draw();
-      await sleep(400);
+      paint('draw');
+      await beat('resolveDrawn', 400);
       return;
     case 'spawnTholo':
       reveal();
       spawnNPC('tholo', _T('Tholo'), S.ri < 2 ? [6, 6] : null);
-      draw();
-      await sleep(400);
+      paint('draw');
+      await beat('resolveDrawn', 400);
       return;
     case 'spawnCommodus':
       reveal();
       await spawnCommodus();
-      draw();
-      await sleep(400);
+      paint('draw');
+      await beat('resolveDrawn', 400);
       return;
   }
   if (String(k).startsWith('pair_') && typeof pairCardPlay === 'function') {
     reveal();
     await pairCardPlay(player, k);
-    draw();
-    await sleep(400);
+    paint('draw');
+    await beat('resolveDrawn', 400);
     return;
   }
   player.items.push(mkCard(k));

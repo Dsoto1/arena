@@ -401,7 +401,7 @@ async function startEvent(config) {
   if (!HEADLESS) setTimeout(() => {
     if (S && S.evKey === config.ev) banner(ev.n, `${LOCATIONS[config.loc] ? LOCATIONS[config.loc].n + ' · ' : ''}${ev.rounds[0].n}`);
   }, 300);
-  render();
+  paint('render');
   // loadouts
   for (const p of S.players) {
     if (ev.kind === 'chariot') {
@@ -683,7 +683,7 @@ async function runDraft() {
       pick.by = p.id + 1;
       log(_T`${nm(p)} drafts <b>${pick.kind === 'w' ? W[pick.k].n : ARM[pick.k].n}</b>.`);
       if (pick.kind === 'w') await gainWeapon(p, pick.k);else await gainArmorPiece(p, pick.k);
-      render();
+      paint('render');
     }
     order.reverse();
   }
@@ -1006,7 +1006,7 @@ async function nextRound(why) {
     if (offs.length) log(_T`🚫 This round: <b>${offs.join(' · ')}</b>.${!cfAllowed() ? _T(' Crowd Favor still counts — it just cannot be spent.') : ''}`, 'big');
   }
   log(_T`Round ${S.ri + 1} · ${nr.n}. ${nr.zone > 1 ? _T`The zone shrinks to ${z[1] - z[0] + 1}×${z[1] - z[0] + 1}. Two turns of grace to get inside.` : ''} ${nr.pvp ? _T('PvP is allowed.') : _T('No PvP.')}`, 'hd');
-  render();
+  paint('render');
 }
 /* finalCF — a player's final CF: -5 per unrevealed Mandata Flavi; a winner adds the last round's win reward (default 15), +10 with the pelted weakness, +5 per 3 trophies, +2 per Flavian item and +15 for the Golden Eagle. Retired players score 0. TWEAK: those bonus numbers. */
 function finalCF(player, winner) {
@@ -1069,7 +1069,7 @@ async function beginTurn() {
   await flaviusTruceCheck();
   if (G !== S) return;
   if (!p.cpu) {
-    render();
+    paint('render');
     await popRule('firstTurn');
     if (p.items.some(i => i.kind === 'mf')) await popRule('mandata');
     if (G !== S) return;
@@ -1085,20 +1085,20 @@ async function beginTurn() {
     S.phase = 'action';
     p.mv = chMv(p);
     log(_T`Phase 1 · Movement: ${p.ch.mounted ? 'mounted, ' + p.mv + ' movement' : _T('on foot')} · lap ${p.ch.laps}/3.`);
-    render();
+    paint('render');
     if (p.cpu) {
-      await sleep(350);
+      await beat('beginTurn', 350);
       await cpuChariot(p);
       if (G !== S) return;
       S.busy = false;
       checkEnd();
       await settle();
       if (G !== S || S.over) return;
-      await sleep(250);
+      await beat('beginTurn', 250);
       return endTurn();
     }
     S.busy = false;
-    render();
+    paint('render');
     return;
   }
   if (p.underground) {
@@ -1106,8 +1106,8 @@ async function beginTurn() {
     for (const n of S.npcs) if (n.aggro === p.id) n.aggro = null;
     log(_T`${nm(p)} emerges from the tunnel; all aggro is shaken off.`);
   }
-  render();
-  await sleep(300);
+  paint('render');
+  await beat('beginTurn', 300);
   if (G !== S) return;
   await resolvePhase(p);
   if (G !== S) return;
@@ -1117,8 +1117,8 @@ async function beginTurn() {
   if (G !== S || S.over) return;
   if (!p.alive || p.exited) {
     S.busy = false;
-    render();
-    await sleep(400);
+    paint('render');
+    await beat('beginTurn', 400);
     return advanceTurn();
   }
   await checkEagleScore(p);
@@ -1127,11 +1127,11 @@ async function beginTurn() {
   if (G !== S || S.over) return;
   S.phase = 'choice';
   S.busy = false;
-  render();
+  paint('render');
   if (p.cpu) {
     S.busy = true;
-    render();
-    await sleep(450);
+    paint('render');
+    await beat('beginTurn', 450);
     await takeChoice(p, cpuChoice(p));
     await flushMF();
     checkEnd();
@@ -1144,23 +1144,23 @@ async function beginTurn() {
     }
     if (p.forceEnd) {
       S.busy = false;
-      await sleep(300);
+      await beat('beginTurn', 300);
       return endTurn();
     }
-    await sleep(300);
+    await beat('beginTurn', 300);
     if (isNaum()) await cpuNaum(p);else await cpuAct(p);
     if (G !== S) return;
     S.busy = false;
     checkEnd();
     await settle();
     if (G !== S || S.over) return;
-    await sleep(300);
+    await beat('beginTurn', 300);
     await endTurn();
   } else if (!canDraw()) {
     S.busy = true;
     await takeChoice(p, 'coin');
     S.busy = false;
-    render();
+    paint('render');
   }
 }
 /* takeChoice — Phase 2 then the start of Phase 3: take 2 coin or draw an arena card (the Gauntlet pays nothing), then set movement (Mercury, net, lashing, swimming) and pay class abilities. TWEAK: coin taken (2), movement cap (7), sling stone cap (6). */
@@ -1231,7 +1231,7 @@ async function takeChoice(player, which) {
   }
   player.netted = false;
   checkMandata(player);
-  render();
+  paint('render');
 }
 /* endTurn — Phase 4: -2 CF for ending outside the zone after grace (negative CF eliminates), grace countdown, 10-card hand limit, the restless crowd, history snapshot, then the next turn. TWEAK: zone penalty (2), hand limit (10), restless stone damage (2). */
 async function endTurn() {
@@ -1399,14 +1399,14 @@ async function movePlayer(player, path) {
       await chPartPickup(player);
     }
     if (isNaum()) await naumStep(player, step, or, oc);
-    draw();
+    paint('draw');
     if (spikeAt(r, c)) await hurt(player, rollLoc(player), 2, {
       type: 'env'
     }, _T('Floor spike'));
     await pickupAt(r, c);
     checkEnd();
     if (!player.alive || S.over || S.pending) break;
-    await sleep(110);
+    await beat('movePlayer', 110);
   }
 }
 /* chFootPickup — in a chariot race, takes a spare wheel or horse on this tile if the chariot is missing one. */
@@ -1895,7 +1895,7 @@ async function flaviusTruceCheck() {
           n: 'war'
         });
       } catch (e) {}
-      render();
+      paint('render');
       return;
     }
   }

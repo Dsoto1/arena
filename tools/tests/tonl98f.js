@@ -44,7 +44,7 @@ let sp=false;{const t0=Date.now();let n=0;while(Date.now()-t0<240000){await driv
 /* both windows have applied every input */
 for(const t1=Date.now();Date.now()-t1<40000;){const top=await A.evaluate(async()=>{const ins=(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs;return ins.length?ins[ins.length-1].seq:0}).catch(()=>0);
   const ns=await Promise.all([A,B].map(p=>p.evaluate(()=>ONLM.next).catch(()=>0)));if(ns.every(x=>x>top))break;await drive(A);await drive(B);await A.waitForTimeout(300)}
-const inputs=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from,x.h||x.pre,x.k,x.a||'']));
+const inputs=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from,x.k==="modal"&&x.pre?x.pre:(x.h||x.pre),x.k,x.a||'']));
 const st=p=>p.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,last:ONLM.lastResync||null,acct:ONL.acct.id,sp:SPEED==='pause'&&MODAL_PAUSE?MODAL_PAUSE:SPEED,bad:typeof ONL80F!=='undefined'?ONL80F.badSkips:0,held:typeof F98!=='undefined'?F98.held:-1,turn:S&&S.turnNo}));
 const X={A:await st(A),B:await st(B)};
 let same=0,diff=[];for(const [seq,from,h,k,a] of inputs){if(!h)continue;for(const n of ['A','B']){if(X[n].acct===from)continue;const o=X[n].h['s'+seq];if(!o)continue;if(o===h)same++;else diff.push([n,seq,k,a])}}

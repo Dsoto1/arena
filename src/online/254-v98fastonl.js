@@ -11,14 +11,14 @@
    (tile / act / drop) is NOT ready on any client, the 121 stuck check does not call it "impossible", your own board clicks are not
    taken (onlmMine false outside windows — no move recorded half-way through your own turn's end), and no snapshot is cut. Windows
    (modal inputs: the hand limit, a round reward pick) still flow, so nothing waits on itself. Test: tonl98f. */
-const F98={G:null,n:0,held:0};
-function f98Busy(){return !!(S&&F98.G===S&&F98.n>0)}
-function f98Wrap(fn){return async function(){const G=S;if(F98.G!==G){F98.G=G;F98.n=0}F98.n++;
-  try{return await fn.apply(this,arguments)}finally{if(F98.G===G)F98.n=Math.max(0,F98.n-1);
-    try{if(typeof onlmOn==='function'&&onlmOn())setTimeout(onlmPump,30)}catch(e){}}}}
-endTurn=f98Wrap(endTurn);
-settle=f98Wrap(settle);
-{const base=onlmReady;onlmReady=function(inp){if(inp&&inp.k!=='modal'&&inp.k!=='void'&&inp.k!=='abandon'&&f98Busy()){F98.held++;return false}return base.apply(this,arguments)}}
+/* v1.01 (327-v101beat, Phase C): the endTurn()/settle() counters moved into the engine (ENG101, engRunning101 — part of awaiting());
+   f98Busy() reads them, F98 keeps only the 'held' count tonl98f reports. */
+const F98={held:0};
+function f98Busy(){return typeof engRunning101==='function'&&engRunning101()}
+/* a board input (tile / act / drop) applies only while the engine awaits a command (327 awaiting()); inside an endTurn()/settle() it is
+   held (F98.held) — the remote-owned window path (ONLM.pend) is 113's own */
+{const base=onlmReady;onlmReady=function(inp){if(inp&&inp.k!=='modal'&&inp.k!=='void'&&inp.k!=='abandon'){if(f98Busy()){F98.held++;return false}
+  if(!ONLM.pend&&typeof awaiting==='function'){const aw=awaiting();if(!aw||aw.k!=='command')return false}}return base.apply(this,arguments)}}
 {const base=onl80fImpossible;onl80fImpossible=function(inp){if(f98Busy()&&!ONLM.pend)return false;return base.apply(this,arguments)}}
 {const base=onlmMine;onlmMine=function(){if(f98Busy()&&!CUR_MODAL&&onlmOn())return false;return base.apply(this,arguments)}}
 {const base=onlmSettled;onlmSettled=function(){if(f98Busy())return false;return base.apply(this,arguments)}}

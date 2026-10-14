@@ -145,9 +145,21 @@ function canHarmPlayer(player, other, viaNpc = false) {
 function stat(player, k, victim = 1) {
   if (player && player.stats) player.stats[k] = (player.stats[k] || 0) + victim;
 }
-/* log — prepends an HTML line to the game log (keeps the newest 400), records it in S.logLines, and echoes it as a caption on CPU turns or for 'big' lines. TWEAK: the 400 line limit. */
+/* log — ANNOUNCES a line (v1.01 Phase B, 327-v101beat): BUS 'log' {html, cls} is the only path for log text. The DOM writer logDom
+   (below) is the FIRST subscriber, so the later log wrappers (54, 56, 60, 93, 113, 134, 139, 204, 218, 220, 233, 321) see the line
+   in #log and S.logLines exactly as before when the base returns. HEADLESS skips it all (sims stay as fast). */
 function log(html, cls = '') {
   if (HEADLESS) return;
+  BUS.emit('log', {
+    html,
+    cls
+  });
+}
+/* logDom — the DOM writer: prepends an HTML line to the game log (keeps the newest 400), records it in S.logLines, and echoes it as a
+   caption on CPU turns or for 'big' lines. TWEAK: the 400 line limit. */
+function logDom(d) {
+  const html = d.html,
+    cls = d.cls;
   const li = document.createElement('li');
   li.innerHTML = html;
   if (cls) li.className = cls;
@@ -161,13 +173,20 @@ function log(html, cls = '') {
   });
   if (S && S.players && cur() && cur().cpu || cls === 'big') caption(html);
 }
+BUS.on('log', logDom);
 let capTimer = null;
-/* caption — shows a short on-board caption: keeps 3 lines on Slow (2 otherwise) and clears after 5s on Slow (2.5s otherwise). TWEAK: the line counts and timings. */
+/* caption — announces a short on-board caption: BUS 'caption' {html}; captionDom is its first subscriber. */
 function caption(html) {
   if (HEADLESS) return;
+  BUS.emit('caption', {
+    html
+  });
+}
+/* captionDom — keeps 3 lines on Slow (2 otherwise) and clears after 5s on Slow (2.5s otherwise). TWEAK: the line counts and timings. */
+function captionDom(dt) {
   const el = $('#caption');
   const d = document.createElement('div');
-  d.innerHTML = html;
+  d.innerHTML = dt.html;
   el.prepend(d);
   while (el.children.length > (SPEED === 'slow' ? 3 : 2)) el.lastChild.remove();
   clearTimeout(capTimer);
@@ -175,6 +194,7 @@ function caption(html) {
     el.innerHTML = '';
   }, SPEED === 'slow' ? 5000 : 2500);
 }
+BUS.on('caption', captionDom);
 
 /* ---------- pathing & sight ---------- */
 /* dijkstra — shortest paths on the 13x13 grid from (sr,sc) in 8 directions; blocked tiles are skipped and a diagonal step costs 2 unless fly (then everything costs 1 and nothing blocks). Returns dist and prev arrays indexed r*N+c. TWEAK: the diagonal cost of 2. */
@@ -602,7 +622,7 @@ async function revealOffering(player, off, land) {
   if (off === 'spiders') {
     log(_T`Spiders pour out onto ${nm(player)}!`, 'bad');
     if (typeof hitFlash === 'function') hitFlash(player.r, player.c, 'spiders');
-    if (!HEADLESS && !S.sim) await sleep(900);
+    if (!HEADLESS && !S.sim) await beat('revealOffering', 900);
     for (const l of ['larm', 'rarm', 'rleg', 'lleg']) if (player.alive && player.hp[l] > 0) await hurt(player, l, 1, {
       type: 'env'
     }, _T('Spiders bite'), {
