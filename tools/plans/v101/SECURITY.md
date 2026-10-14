@@ -39,3 +39,5 @@ that deploy updates the stack).
 - Server texts: `node tools/i18n/srvtext93.js` (3 new refusal texts → `texts93.json`, `223a-v93srvtext.js`; translations follow with the release's language pass).
 
 Lead note (2026-10-14): AllowAdminCreateUserOnly was taken back out of template.yaml before release — REQUIRE_GOOGLE at $connect already refuses non-Google tokens, and the pool setting risked blocking new Google sign-ups (Cognito federation behaviour not verifiable from here). Scripted pool sign-ups stay possible but cannot connect.
+
+His call 2026-10-14 (security design question): A — a lone report may still send a dropped Ranked seat to his Fate (leaving never dodges it); revisit once the server Ranked re-check lands.
