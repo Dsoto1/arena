@@ -38,10 +38,11 @@ export const BODY8 = { res: 0.005, body: { face2: 1, headRes: 0.0022, grip: { L:
 
 const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45];   /* src/102-minis73.js */
 const MINI_PXMM = 3.143;                                     /* src/94-v72.js */
-/* v1.02 (his 9a): ONE FIXED FIGURE SIZE for every board token — the head about 55% of a pillar's drawn height (the pillar mini stands
-   1.27 tiles above its base point; the figure's head top (3.2 mm base + 32.5 mm × scale) × cos 30° at the board's 0.8-tile base rule).
-   Never changed by weapons, armor or pose: long weapons are angled instead (fitTile) and only a weapon may reach past the tile. */
-export const FIG_SCALE = 0.69;
+/* v1.02 (his 9a, then his call after seeing 55%): ONE FIXED FIGURE SIZE for every board token — the bare head about 80% of a pillar's
+   drawn height (the pillar mini stands 1.27 tiles above its base point; the figure's head top (3.2 mm base + 32.5 mm × scale) × cos 30° at
+   the board's 0.8-tile base rule). Never changed by weapons, armor or pose: long weapons are angled instead (fitTile) and only a weapon may
+   reach past the tile. */
+export const FIG_SCALE = 1.0;
 const D2R = Math.PI / 180;
 
 /* the key a bake must carry to be worn on a body built with these options */
@@ -171,10 +172,10 @@ export async function createToken(opts = {}) {
     if (!best.a) { restore(); return null; }
     put(best.a); return { a: best.a, k: 1, f: best.f, hw: best.hw, dn: best.dn, restore };
   }
-  /* fitTile: f is always 1 (the figure keeps FIG_SCALE); hw / dn = the body's reach; shaft = the angle given to long weapons */
+  /* fitTile: f is always 1 (the figure keeps FIG_SCALE); hw / dn = the body's reach (held things left out); shaft = the angle given to long weapons */
   function fitTile(s) {
     const s0 = o.scale || 1; B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true);
-    const sh = s.shaft !== false ? shaftFit(s) : null; const skip = new Set(shaftList()); const r = reach(s.el, skip);
+    const sh = s.shaft !== false ? shaftFit(s) : null; const skip = new Set(held.filter(m => m.parent)); const r = reach(s.el, skip);   /* what the hands hold (weapons, shields, the net) may reach past */
     return { f: 1, hw: +r.hw.toFixed(4), dn: +r.dn.toFixed(4), shaft: sh ? { a: sh.a, k: 1, wf: +sh.f.toFixed(4) } : null,
       restore: () => { if (sh) sh.restore(); B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true); } };
   }

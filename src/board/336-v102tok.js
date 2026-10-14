@@ -2,13 +2,15 @@
    336-v102tok.js — v1.02 workstream E · 3D tokens (his v1.01 notes, answer 9a)
    =====================================================================
    D2 ONE FIXED FIGURE SIZE. Every 3D gladiator token (Studio characters 222/t93, online pictures 226/t94, the printed classes' animated
-     sheets 311/anim100, and what this device renders for them) is made at ONE figure scale: tools/art/rig92/game.js FIG_SCALE 0.69 —
-     the head about 55% of a pillar's drawn height on the board (the pillar mini stands 1.27 tiles above its base point; helmets and
-     crests add a little). The figure never shrinks for weapons, armor or pose any more (game.js fitTile: f is always 1); a long weapon
-     that would reach past the tile is ANGLED about the grip (≤ 60°) and only the weapon may still reach past. The base stays 0.8 tile
-     (the minis' board rule TW·MINI_BASE/(25.4·MINI_PXMM) is unchanged — the sheets carry the new size). Stored Studio tokens re-convert
-     once (T93_VER 3), this device's animated renders once (ANIM100_LIB VER 3); the printed sheets were re-rendered by
-     tools/art/anim100/make.js (+ `sev`). Beasts and the TTS minis fallback keep their own sizes (their bases are baked in).
+     sheets 311/anim100, and what this device renders for them) is made at ONE figure scale: tools/art/rig92/game.js FIG_SCALE 1.0 —
+     the bare head about 80% of a pillar's drawn height (his call after seeing 55%; the pillar mini stands 1.27 tiles above its base point;
+     helmets and crests add a little). The figure never shrinks for weapons, armor or pose (game.js fitTile: f is always 1); a long weapon
+     that would reach past the tile is ANGLED about the grip (≤ 60°) and what the hands hold (weapons, shields, the net) may still reach
+     past. The base stays 0.8 tile (the minis' board rule TW·MINI_BASE/(25.4·MINI_PXMM) is unchanged — the sheets carry the size). Stored
+     Studio tokens re-convert once (T93_VER 4), this device's animated renders once (ANIM100_LIB VER 4); the printed sheets were re-rendered
+     by tools/art/anim100/make.js (+ `sev`). BEASTS (his 1a) re-rendered by tools/art/anim100b/make.js with figure-only factors in
+     tools/plans/look100 (beast5_rig.js SIZE102, beast5_hum.js k102; bases unchanged): on the board lions + bears ≈ 0.8 of the bare
+     gladiator, wolves ≈ 0.58, snakes ≈ 0.4, Zora on her chunk ≈ 0.65, Tholo ≈ 1.12, Commodus ≈ 1.15. The TTS minis fallback keeps its size.
    D1 THE GRIP in the 3D poser (#t93m): a ⚔ Weapon tab — per hand that holds something, Turn (about the grip, ±180°) and Slide (along
      it, ±150 mm), ◀ ▶ nudges, ↺ per hand. Stored in the pose JSON as g:{R:[turn,slide],L:[…]} (game.js api.grip / setGrip / holds;
      the pose stays ≤ 600 B), so every render of the sheet uses it — the Studio sheet, the online picture, and the animated sets this

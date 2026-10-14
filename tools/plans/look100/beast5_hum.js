@@ -173,7 +173,9 @@ window.LOOK100.humanoid3 = async function (key, o = {}) {
     extra.push(K.shellFrom('tun4_' + key, (p, g) => { if (g === GI.T) return Math.min(p[1] - 0.68, 1.47 - p[1], 0.03); if (g === GI.LL || g === GI.LR) return Math.min(p[1] - 0.64, 0.03); return -1; },
       (p) => { const f = Math.sin(p[0] * 60 + p[1] * 22) * 0.5 + 0.5; return [0.82 + 0.18 * f, 0.82 + 0.18 * f, 0.82 + 0.18 * f]; }, 0.011, { mat: m })); }
   if (H.kit) extra.push(...H.kit(B));
-  B.group.scale.set(...H.sc); B.group.updateMatrixWorld(true);
+  /* v1.02 (his 1a): Commodus and Tholo about a head taller than the 80%-of-a-pillar gladiator (figure only; the base is apart) */
+  const k102 = { tholo: 0.968, commodus: 0.945 }[key] || 1;
+  B.group.scale.set(...H.sc.map(v => v * k102)); B.group.updateMatrixWorld(true);
   const cloth = new Cloth(B, H.cloth);
   const rows = [X.GLAD_ROWS[0], X.GLAD_ROWS[1], X.GLAD_ROWS[2], X.GLAD_ROWS[4], X.FALL_ROWS[0]];
   let fr = rows.flatMap(([k, fs]) => fs.map((s, i) => ({ k: k === 'fall' ? 'die' : k, i, s }))); if (o.only) fr = fr.filter(x => o.only.includes(x.k + x.i));
