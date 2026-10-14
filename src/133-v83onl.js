@@ -34,7 +34,7 @@ ONL83.regNamed=function(defs){for(const d0 of defs||[]){const d=ONLC.cleanNamed(
 {const base=mkPlayer;mkPlayer=function(i,seat){const p=base.apply(this,arguments);
   try{if(seat&&seat.onl&&seat.onl.gear&&!seat.cpu){p._kit83={gear:seat.onl.gear.slice(),offer:(seat.onl.offer||[]).slice()};if((seat.onl.named||[]).length)p._nw83=seat.onl.named.map(d=>({...d}))}}catch(e){console.error(e)}return p}}
 {const base=giveLoadout;giveLoadout=function(p){const r=base.apply(this,arguments);
-  try{if(p&&p._onlKit)for(const k of p._onlKit){if(!/^nw_/.test(k)||!W[k])continue;const w=mkW(k);if(!p.wR)p.wR=w;else if(!p.wL&&!p.wR.both&&!w.both)p.wL=w;else p.wR=w}}catch(e){console.error(e)}return r}}
+  try{if(p&&p._onlKit)for(const k of p._onlKit){if(!/^nw_/.test(k)||!W[k])continue;const w=mkW(k);if(!p.wR)p.wR=w;else if(!p.wL)p.wL=w;else p.wR=w}}catch(e){console.error(e)}return r}}
 {const base=onlmLoad;onlmLoad=function(){const r=base.apply(this,arguments);try{if(S&&S.players)for(const p of S.players)if(p._nw83)ONL83.regNamed(p._nw83)}catch(e){}return r}}
 
 /* ---------------- offerings brought: cf1/cf2 are played from the hand (the printed ones resolve on reveal) ---------------- */

@@ -113,7 +113,7 @@ function d89Bar(){const out=[];const sh=d89Shelf();for(const it of sh.gear||[]){
 const d89Base=I=>I?(I.named?(I.w||{}).base:I.base)||'':'';
 /* the hands a list of bought weapons ends in (as 112's giveLoadout: the class kit first, then each bought one) */
 function d89Hands(cls,list,pc){const CK=CLASSES[cls]||{};let R=CK.R&&W[CK.R]?{k:CK.R,kit:true}:null,L=CK.L&&W[CK.L]?{k:CK.L,kit:true}:null;
-  for(const it of list){const b=pc(it);if(!b)continue;const x={k:b,it};if(!R)R=x;else if(!L&&!(W[R.k]||{}).both)L=x;else R=x}return {R,L}}
+  for(const it of list){const b=pc(it);if(!b)continue;const x={k:b,it};if(!R)R=x;else if(!L)L=x;else R=x}return {R,L}}
 /* what putting x on ch means: the list he would wear, what comes off, where it goes */
 function d89Plan(ch,x,hand){const cat=d89Cat();const eq=ONLC.equipOf(ch).filter(y=>y!==x.it);const I=x.I;
   const H={...ch,gear:[...(ch.gear||[]).filter(y=>y!==x.it),x.it],pcs:{...(ch.pcs||{}),...((x.h&&x.h.pcs)||{})}};

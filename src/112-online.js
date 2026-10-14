@@ -315,7 +315,7 @@ function onlSeatStands(onl){if(!onl.stands||!onl.stands.length||!S.spect||EV().n
   const cat=onlCatalog();const LOC={head:['head'],chest:['chest'],belt:['chest'],arm:['rarm','larm'],leg:['rleg','lleg']};
   for(const k of p._onlKit){const it=cat[k];if(!it)continue;
     if(it.kind==='a'){const sl=(ARM[k]||{}).slot;for(const loc of LOC[sl]||[sl])if(p.pieces&&p.pieces[loc]&&equipPiece(p,k,loc))break}
-    else if(it.kind==='w'){const w=mkW(k);if(!p.wR)p.wR=w;else if(!p.wL&&!p.wR.both)p.wL=w;else p.wR=w;try{marketPull(k)}catch(e){}}}
+    else if(it.kind==='w'){const w=mkW(k);if(!p.wR)p.wR=w;else if(!p.wL)p.wL=w;else p.wR=w;try{marketPull(k)}catch(e){}}}
   return r}}
 {const base=gameOver;gameOver=async function(winners,reason){const on=S&&S.onl;const r=await base.apply(this,arguments);try{if(on&&ONL.live&&!ONL.live.reported)await onlReport(winners)}catch(e){console.error(e)}return r}}
 function onlRow(p,winners){const LR=S.lastResult||{};const row=(LR.rows||[]).find(x=>x.id===p.id)||{};const won=(winners||[]).some(w=>(w&&w.id)===p.id);
