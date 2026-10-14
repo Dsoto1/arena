@@ -1560,6 +1560,19 @@ One global script; files are concatenated in order. Later "version modules" patc
   floods the base away from its outline (`bs101Off`, needs readable pixels — https / data: sheets; file:// keeps the thin base). G20 `Z101`: 294's one big settle draw is split
   into one stale layer per frame (`Z100.force` + budget, `z100Moving` held true for the rest); zoom stays online. G21 `emote` rate limit (EM101: ≤3 per 0.9 s, queue ≤10, 90–260 ms apart;
   `sp.human` immediate). G22 Minerva's step window gets `.m101` (SVG of the 3×3 round the victim in the board's own projection, lit tiles = the step buttons). Test `tv101e`.
+- **v1.01 ZOOM PRE-BAKED WHILE IDLE (330-v101zoom2, his pick 3a; + 331-v101lbref his 2a; display only):** the other zoom level (zoomed ↔ unzoomed,
+  at the camera target `zb101Target`) is painted in advance into a SECOND SLOT of each cache and swapped in by key: stone layers `ZB101.alt[name]`
+  beside AR91.L (208 reference frames reused by geometry, `ZB101.refMap`), 260's zoomed tiles kept while unzoomed (Z99.key no longer forgotten) +
+  pre-baked (so 294's ease scales them instead of 169 direct tiles a frame), 235's unzoomed tiles `ZB101.t96`, 194's wear `ZB101.wear` (`zb101WearKey`
+  mirrors 194's key — keep in step); the 1 < z ≤ 1.001 ease frames paint the tiles at z = 1 (no 235 rebuild each way). Idle only: requestIdleCallback
+  after a draw, nobody touching the page `quietMs`, no CPU acting unless paused, no window, no ease, visible, NOT idle92; never HEADLESS/sims/naumachia/
+  chariot/designer/pen/duel lean-in/pinch. Slices ≤ `budget` 8 ms: layers + tiles in clipped horizontal BANDS sized from the last band; tiles painted
+  through 07-ui's const ctx POINTED at the offscreen canvas (`zb101Point`: own-property forwarders, deleted after; off-band tiles skip fill/stroke/
+  drawShipTile). Bands differ from one paint only by edge anti-aliasing (<0.6% px, ≤24 levels; `ZB101.whole` = exact). `ZB101.maxPx` caps the second
+  slots. MEASURED (tools/perf95/zoombake.js, http, paused Democritus + 48 spectators, A/B in one page): zoom IN worst draw 83–94 → 13–36 ms, sum of
+  draws over 2.2 s 938–971 → 171–198 ms; zoom OUT 37–63 → 11–37 ms; pinch to 1.3 unchanged (no target to guess); slices median ~7 ms, p90 ~9.
+  Kill switch localStorage flavius_zoombake101off=1. 331: Lobby Browser ↻ Refresh (234 `[data-lb96r]`) = `.sd100.lb101r` sandstone (306 sd100CSS,
+  secondary, s). Test `tv101z`.
 - **v1.01 REPLAY HARNESS (wave 2 Foundations phase 0; 325-v101replay0 = test probe, only with localStorage flavius_replay0=1):** `node tools/replay/record.js`
   (re-record goldens with `--update` ONLY after a deliberate rule/AI change) / `node tools/replay/check.js` (first divergence: turn hash, log line, online input seq);
   15 goldens in tools/replay/golden (11 printed events all-CPU, 3 scripted human, 1 two-window online mock); suite test `treplay101` (kill limit 1500 s). The harness
