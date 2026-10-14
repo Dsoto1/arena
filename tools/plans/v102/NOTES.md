@@ -77,7 +77,7 @@ The class designer + Beasts, Cohorts, Tokens, Tournament, Invitationals, Editors
 (262/247: larger tabs, font, the validator/checks panel, the same frame). Re-home controls (keep ids / data-* / handlers), like 262 did.
 
 ## E · 3D tokens (src/board/336-v102tok.js + tools/art/rig92 + anim100 re-render, test tv102e)
-- D2 (9a) ONE fixed figure size all game, ~55% of a pillar's height on the board; never shrinks for weapons/armor/pose (retire the
+- D2 (9a; his follow-up 2026-10-14: 80% of a pillar, beasts re-rendered in proportion — 1a) ONE fixed figure size all game, ~80% of a pillar's height on the board; never shrinks for weapons/armor/pose (retire the
   per-render shrink: game.js reach/fitTile/shaftFit scale-down). Long weapons are ANGLED (shaftFit rotation) and only the weapon may reach
   past the tile. Studio tokens (222/t93), online pictures (226), printed anim100 sheets (re-render with tools/art/anim100/make.js in the
   background, sev sets too) and minis all at that size. Watch the tok93.js 260 KB cap (tv100g).
