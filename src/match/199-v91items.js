@@ -38,14 +38,7 @@ apUp=async function(player,n){const locs=LOCS.filter(l=>player.hp[l]>0&&player.a
    :await askW(player,'apUpLoc',_T`AP Upgrade (+${n})`,`<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`,locs.map(l=>{const P=pc(l);
       return {label:`${P?`<span class="apu91">${armSideArt91(P.key,l,92)}</span>`:''}${LOCN[l]}`,sub:_T`${P?esc(P.n||ARM[P.key]&&ARM[P.key].n||'')+' · ':''}AP ${player.ap[l]} → ${Math.min(7,player.ap[l]+n)}`,value:l}}).concat([{label:_T('Cancel'),value:null}]));
   if(!loc)return false;player.ap[loc]=Math.min(7,player.ap[loc]+n);log(_T`${nm(player)} reinforces ${LOCN[loc]} to ${player.ap[loc]} AP.`);return true};
-{const base=useItem;useItem=async function(player,it){
-  const el=it&&((it.kind==='offer'&&(it.key==='elix2'||it.key==='elix4'))||(it.kind==='card'&&(it.key==='elixir2'||it.key==='elixir4')));
-  if(el){const n=it.kind==='offer'?(it.key==='elix2'?2:4):(CARDS[it.key].hp|0);DIST91.cancel=true;let ok=false;try{ok=await distributeHP(player,n,_T('a Health Elixir'))}finally{DIST91.cancel=false}
-    if(!ok)return false;player.items=player.items.filter(x=>x!==it);if(it.kind==='card'){cardShow('c:'+it.key,player,_T('📣 Declared'));stat(player,'cardsPlayed')}return true}
-  const mk=it&&it.kind==='offer'&&/^m[wa][123]$/.test(it.key||'');
-  if(mk){const kind=it.key[1],lv=+it.key[2];const key=await marketRoll(player,kind,lv,{free:1});if(!key)return false;
-    if(kind==='w')await gainWeapon(player,key);else await gainArmorPiece(player,key);player.items=player.items.filter(x=>x!==it);return true}
-  return base.apply(this,arguments)}}
+/* (v1.01: the elixir and free-market-roll useItem wrapper moved into 328-v101fx's table — families heal / freeRoll, same code) */
 {const st=document.createElement('style');st.textContent='#mBtns .apu91{float:left;margin:0 10px 0 0;width:64px;height:92px;overflow:hidden;border-radius:6px}#mBtns .apu91 svg.side91{width:64px!important;height:92px!important;max-width:none!important}';document.head.appendChild(st)}
 /* armSideArt91 — ONE armor piece exactly as worn on location l (his note: a set is split into one piece per side, each faced to its side):
    the avatar's own drawing of it (art, crop, mirror) cropped to the piece, as a standalone svg. Falls back to the card art. */

@@ -31,12 +31,12 @@
 /* ---------- 1. the hunters ---------- */
 const HUNT90={on:true,sameKind:false,seq:0,live:null,map:new WeakMap()}; /* TWEAK: on = the v0.90 rule; sameKind = lions may hunt lions */
 /* hunter90 — a beast that hunts the closest living thing (Tholo, Leo, Leaena) */
-const hunter90=n=>!!(n&&(n.t==='tholo'||n.t==='lion'));
+const hunter90=n=>!!(n&&fx101Beast(n.t).hunt); /* v1.01: the beast table (328): Tholo, the lions */
 /* closestThing90 — the hunter's prey: {kind:'player'|'npc',ref,d} or null (ties: gladiators first, from S.cur on) */
 function closestThing90(n){let best=null,bd=1e9;
   for(let i=0;i<S.players.length;i++){const q=S.players[(S.cur+i)%S.players.length];if(!q||!q.alive||q.underground||q.exited)continue;
     const d=cheb(n,q);if(d<bd){bd=d;best={kind:'player',ref:q,d}}}
-  for(const m of S.npcs){if(!m||m===n||!m.alive||m.t==='zora')continue;if(!HUNT90.sameKind&&m.t===n.t)continue;
+  for(const m of S.npcs){if(!m||m===n||!m.alive||!fx101Beast(m.t).prey)continue;if(!HUNT90.sameKind&&m.t===n.t)continue;
     const d=cheb(n,m);if(d<bd){bd=d;best={kind:'npc',ref:m,d}}}
   return best}
 {const base=resolvePhase;resolvePhase=async function(player){const keep=HUNT90.live;HUNT90.live=player;HUNT90.seq++;
@@ -72,12 +72,12 @@ async function huntBeast90(npc,m){const st=npcStats(npc);
   const coin=((NPCT[m.t]&&NPCT[m.t].coin)||0)+(m.hoard||0);
   hurtNPC(m,dmg,null,_T`${nm(npc)}${st.state&&st.state!=='Initial'?' ('+st.state+')':''} attacks ${diceHtml(hits)} ${h}×${st.ap} = ${dmg}`,null,npc);
   if(!m.alive){HUNT90.kills=(HUNT90.kills||0)+1;
-    if(npc.t==='tholo'&&coin>0){npc.hoard=(npc.hoard||0)+coin;if(m.hoard)m.hoard=0;log(_T`Tholo hoards ${coinAmt87(coin)} from the kill.`)}}
+    if(fx101Beast(npc.t).hoard&&coin>0){npc.hoard=(npc.hoard||0)+coin;if(m.hoard)m.hoard=0;log(_T`Tholo hoards ${coinAmt87(coin)} from the kill.`)}}
   /* v0.91 (his rule, NPC vs NPC): a beast that survives the strike counter-attacks AT ONCE — its own 2 hit dice × its attack power, if the hunter is in its reach */
   else if(npc.alive){const ms=npcStats(m);if(cheb(npc,m)<=Math.max(1,ms.rng||1)){const ch=rollHits(2);const cd=cnt(ch)*ms.ap;fxLine(m,npc,'#ffa04a');if(!cd)fx(npc.r,npc.c,'miss','#b8b0a4');
     const coin2=((NPCT[npc.t]&&NPCT[npc.t].coin)||0)+(npc.hoard||0);
     hurtNPC(npc,cd,null,_T`${nm(m)} counter-attacks ${diceHtml(ch)} ${cnt(ch)}×${ms.ap} = ${cd}`,null,m);
-    if(!npc.alive){HUNT90.kills=(HUNT90.kills||0)+1;if(m.t==='tholo'&&coin2>0){m.hoard=(m.hoard||0)+coin2;if(npc.hoard)npc.hoard=0;log(_T`Tholo hoards ${coinAmt87(coin2)} from the kill.`)}}}}}
+    if(!npc.alive){HUNT90.kills=(HUNT90.kills||0)+1;if(fx101Beast(m.t).hoard&&coin2>0){m.hoard=(m.hoard||0)+coin2;if(npc.hoard)npc.hoard=0;log(_T`Tholo hoards ${coinAmt87(coin2)} from the kill.`)}}}}}
 
 /* ---------- 2. the Crowd Favor tile ---------- */
 /* crowdCan90 — can the Crowd Favor window sell this player anything right now? */

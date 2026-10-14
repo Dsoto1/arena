@@ -136,10 +136,7 @@ function cn82Card(n){const T=NPCT['cn_'+n.id]||npcType(n);
   try{if(n&&T&&T.unique82&&!tame){(S.spawnedOnce=S.spawnedOnce||{})[target]=1;uniqueOut82(target)}}catch(e){}
   try{if(n&&!HEADLESS&&S&&!S.sim&&S.phase!=='setup')beastShow82(n)}catch(e){console.error(e)}
   return n}}
-{const base=resolveDrawn;resolveDrawn=async function(player,k){if(typeof k==='string'&&k.startsWith('spawn_cn_')){const C=CARDS[k];const t='cn_'+k.slice(9);
-    cardShow('c:'+k,player,_T('🂠 Drawn'));if(!C||!NPCT[t]){log(_T`${nm(player)} draws a beast card for a beast that is no longer in the pens.`);return}
-    log(_T`${nm(player)} reveals <b>${esc(C.n)}</b>: ${esc(C.d)}`,'big');spawnNPC(t,C.n,null);draw();await sleep(400);return}
-  return base.apply(this,arguments)}}
+/* (v1.01: the spawn_cn_<id> resolveDrawn wrapper moved into 328-v101fx's table — bespoke handler spawnCustom, same code) */
 {const base=cardHTML;cardHTML=function(ref,size='md',extra=''){if(typeof ref==='string'&&ref.startsWith('c:spawn_cn_')){const t='cn_'+ref.slice(11);
     if(NPCT[t])return `<span class="cimg ${size} nc82arena" style="aspect-ratio:600/866" role="img" aria-label="${_T`${esc((CARDS[ref.slice(2)]||{}).n||'beast')} (arena card)`}" data-card="${ref}" ${extra}>${nc82Front(nc82Spec(t))}</span>`}
   return base.apply(this,arguments)}}

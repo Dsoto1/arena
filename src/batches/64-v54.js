@@ -28,13 +28,7 @@ function piaKeyFor(id){if(hasPrintedPia(id))return 'pia_'+id;const key='pia_cc_'
     const bottom=S.deck[0]==='endgame'?S.deck.shift():null;S.deck=S.deck.filter(k=>!(CARDS[k]&&CARDS[k].cls));
     const ids=[...new Set(S.players.map(piaIdentity))];for(const id of ids){const k=piaKeyFor(id);S.deck.splice(Math.floor(rand()*(S.deck.length+1)),0,k)}
     if(bottom)S.deck.unshift(bottom)}}catch(e){console.error(e)}return r}}
-/* drawing one: pay the gladiator of that class (by identity, so characters count as their class) */
-{const baseDrawn=resolveDrawn;resolveDrawn=async function(player,k){const C=CARDS[k];if(!C||!C.cls)return baseDrawn.apply(this,arguments);
-  const id=C.cls;const L=piaLabel(id);cardShow('c:'+k,player,_T('🂠 Drawn'));log(_T`${nm(player)} reveals <b>${C.n}</b>: ${C.d}`);
-  const tgt=activePlayers().find(q=>piaIdentity(q)===id);
-  if(!tgt){log(_T`No ${esc(L.name)} is in the arena. The Piaculum is discarded.`);return}
-  if(tgt===player){let tot=0;for(const q of activePlayers())if(q!==player){const v=Math.min(2,q.coin);q.coin-=v;coinLog(q,-v,'cards');tot+=v}player.coin+=tot;coinLog(player,tot,'cards');log(_T`Everyone pays the ${esc(L.name)}: ${nm(player)} collects ${coinAmt87(tot)}.`)}
-  else{const v=Math.min(2,player.coin);player.coin-=v;coinLog(player,-v,'cards');tgt.coin+=v;coinLog(tgt,v,'cards');log(_T`${nm(player)} pays ${nm(tgt)} ${coinAmt87(v)}.`)}}}
+/* (v1.01: the Piaculum resolveDrawn wrapper moved into 328-v101fx's table — handler piaculum, same code; fx101Row sends every card with C.cls there) */
 /* the drawn card: the printed Piaculum art, with the first line re-lettered — the class name in its colour.
    Built as layered HTML over the printed card (no canvas), so it works from any origin. */
 {const baseCard=cardHTML;cardHTML=function(ref,size='md',extra=''){if(ref&&String(ref).startsWith('c:pia_cc_')){const C=CARDS[ref.slice(2)];const L=piaLabel(C?C.cls:'');

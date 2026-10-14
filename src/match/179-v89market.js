@@ -71,14 +71,7 @@ marketBuy75=async function(player,lv,opt={}){mktFix75();opt=opt||{};const sides=
 CARDS.mchoice.d89=_T('Now: take any one weapon left in the market (level 1, 2 or 3), free.');
 if(!/Now:/.test(CARDS.mchoice.d))CARDS.mchoice.d=CARDS.mchoice.d+' '+CARDS.mchoice.d89;
 const mchoiceHas89=()=>{try{mktFix75();return rowOpts89([1,2,3],['w']).length>0}catch(e){return false}};
-{const base=useItem;useItem=async function(player,it){if(!it||it.kind!=='card'||it.key!=='mchoice')return base.apply(this,arguments);
-  if(!armsAttached(player).length||!mchoiceHas89()){
-    if(!player.cpu)await askW(player,'marketNone',CARDS.mchoice.n,`<p>${!armsAttached(player).length?_T('You have no arm left to hold a weapon.'):_T('No weapon is left in the market.')}</p>`,[{label:'OK',value:1}]);
-    return false}
-  player.items=player.items.filter(x=>x!==it);cardShow('c:mchoice',player,_T('📣 Declared'));stat(player,'cardsPlayed');
-  log(_T`${nm(player)} declares Choose: a free weapon from the market.`);
-  const r=await pick89(player,[1,2,3],['w'],{title:_T('Choose · a free weapon')});if(r&&r.key)await gainWeapon(player,r.key);
-  return true}}
+/* (v1.01: the Choose card's useItem wrapper moved into 328-v101fx's table — bespoke handler mchoice, same code) */
 /* CPUs play it like a free-weapon offering: whenever they have an arm and the market still has a weapon */
 {const base=cpuUseItems;cpuUseItems=async function(player){try{const it=(player.items||[]).find(x=>x.kind==='card'&&x.key==='mchoice');
     if(it&&player.cpu&&!S.over&&armsAttached(player).length&&mchoiceHas89()){await useItem(player,it);render()}}catch(e){console.error(e)}

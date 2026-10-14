@@ -38,10 +38,7 @@ ONL83.regNamed=function(defs){for(const d0 of defs||[]){const d=ONLC.cleanNamed(
 {const base=onlmLoad;onlmLoad=function(){const r=base.apply(this,arguments);try{if(S&&S.players)for(const p of S.players)if(p._nw83)ONL83.regNamed(p._nw83)}catch(e){}return r}}
 
 /* ---------------- offerings brought: cf1/cf2 are played from the hand (the printed ones resolve on reveal) ---------------- */
-{const base=useItem;useItem=async function(player,it){if(it&&it.kind==='offer'&&(it.key==='cf1'||it.key==='cf2')){
-    /* v0.99: a no-CF round blocks spending only; the offering still earns */
-    const v=it.key==='cf1'?1:2;cfWhy('offerings');player.cf+=v;log(_T`${nm(player)} offers to the crowd: <b>${cfAmt87('+'+(v))}</b>.`);player.items=player.items.filter(x=>x!==it);return true}
-  return base.apply(this,arguments)}}
+/* (v1.01: the carried-in CF offerings' useItem wrapper moved into 328-v101fx's table — family crowdCF, same code) */
 
 /* ---------------- the uniques and the armor-piercing affix (deterministic engine hooks) ---------------- */
 const onl83Held=(p,uq)=>!!p&&['R','L'].some(a=>p['w'+a]&&p['w'+a].uq===uq);

@@ -616,53 +616,9 @@ async function checkEagleScore(player) {
 }
 
 /* ================= OFFERINGS & POTS ================= */
-/* revealOffering — resolves a revealed offering: spiders bite each limb for 1, a curse deals d6 to a random location, cf1/cf2 give CF (not to noBlessCF), anything else lands on the land tile (or the player's tile if a pillar) and is picked up. */
+/* revealOffering — resolves a revealed offering. v1.01: instant ones (spiders, curse, CF) are rows in 328-v101fx's table (fx101Reveal); anything else lands on the land tile (or the player's tile if a pillar) and is picked up. */
 async function revealOffering(player, off, land) {
-  const O = OFFER[off];
-  if (off === 'spiders') {
-    log(_T`Spiders pour out onto ${nm(player)}!`, 'bad');
-    if (typeof hitFlash === 'function') hitFlash(player.r, player.c, 'spiders');
-    if (!HEADLESS && !S.sim) await beat('revealOffering', 900);
-    for (const l of ['larm', 'rarm', 'rleg', 'lleg']) if (player.alive && player.hp[l] > 0) await hurt(player, l, 1, {
-      type: 'env'
-    }, _T('Spiders bite'), {
-      noShield: 1,
-      noCards: 1
-    });
-    return;
-  }
-  if (off === 'curse') {
-    const r = d6(),
-      l = rollLoc(player);
-    log(_T`A Curse Tablet! ${nm(player)} rolls ${r}.`, 'bad');
-    await hurt(player, l, r, {
-      type: 'env'
-    }, _T('The curse strikes'), {
-      noShield: 1,
-      noCards: 1
-    });
-    return;
-  }
-  if (off === 'cf1' || off === 'cf2') {
-    const v = off === 'cf1' ? 1 : 2;
-    if (weak(player, 'noBlessCF')) {
-      log(_T`The crowd cheers, but ${nm(player)} gains no CF from Blessings.`);
-    } else {
-      player.cf += v;
-      log(_T`${nm(player)} gains ${cfAmt87(v)} from the crowd.`);
-    }
-    return;
-  }
-  let [r, c] = land;
-  r = clamp(r, 0, N - 1);
-  c = clamp(c, 0, N - 1);
-  if (pillarAt(r, c)) {
-    r = player.r;
-    c = player.c;
-  }
-  placeFloor('offer', off, r, c);
-  log(_T`An offering spills onto ${tl(r, c)}: <b>${O.n}</b> (${O.s}).`);
-  await pickupAt(r, c);
+  return fx101Reveal(player, off, land);
 }
 /* breakPot — breaks one pot (or all) on a pillar: each gives +2 coin, +1 CF (none for noBlessCF) and reveals its offering. TWEAK: the 2 coin and 1 CF. */
 async function breakPot(pillar, player, land, all = false) {
@@ -995,7 +951,7 @@ function eliminate(victim, source) {
     } else {
       cfWhy(_T('slain by a beast'));
       victim.cf -= 5;
-      if (source.n.t === 'tholo') {
+      if (fx101Beast(source.n.t).hoard) {
         source.n.hoard += pl.coin;
         pl.coin = 0;
       }
@@ -1067,7 +1023,7 @@ function hurtNPC(npc, damage, player, prefix, weapon = null, byNpc = null) {
       const saved = S.players[npc.aggro];
       if (saved && saved.alive) bumpRel(saved, player, 12, _T`slew ${npc.name}`);
     }
-    if (npc.t === 'tholo' && S.chest && S.chest.held === npc.id) {
+    if (fx101Beast(npc.t).chest && S.chest && S.chest.held === npc.id) {
       S.chest.held = null;
       S.chest.r = npc.r;
       S.chest.c = npc.c;
