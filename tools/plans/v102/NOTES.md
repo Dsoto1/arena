@@ -107,3 +107,8 @@ Online already returns (keep). Not for lessons, challenges keep their rules (att
   class change only at creation. Release a gladiator: gear → house shelf, Hall only if he qualifies else erased, typed confirm. Results tally on
   return to the Online menu: coin, CF, Glory count up into bars, XP fills, level-up opens (Halo/Apex end-of-match feel). MOCK-UP FIRST
   (tools/plans/mock102/progress.html) → his ok → server + client build.
+- I answers (2026-10-14, tools/plans/mock102/NOTES-progress.md numbering): 1 = asked to COMBINE the old auto growth and levels (pending: A or B
+  below) · 2a no respec · 3a cap + laurel · 4a online stays 50–99 · 5a released counts in the Domus rank only if Hall-worthy · 6c everyone starts
+  at level 1 (ratings kept) · 7a Custom half XP ≤300/day · 8a tally after every match fought, once, any device · 9a level shown everywhere ·
+  10a released gear → house shelf · 11a Hall plaque "Released" + his idea: "🗡 Grant the rudis" for 100 coin = he is freed as if he took the
+  Rudis, always honoured with a plaque · 12a nothing to undo.
