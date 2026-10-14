@@ -1,12 +1,12 @@
 /* v1.02 E 336-v102tok — 3D TOKENS: D2 one fixed figure size (rig92 FIG_SCALE; no shrink for weapons / armor / pose; long weapons angled about
-   the grip, only the weapon may reach past the tile; the drawn head about 55% of a pillar on the board for every printed class's animated
+   the grip, only the weapon may reach past the tile; the bare head about 80% of a pillar (his call; was 55%) on the board for every printed class's animated
    sheet; stored Studio tokens and this device's animated sets re-render once); D1 the grip in the poser (⚔ Weapon tab: turn about the grip
    and slide along it, per hand, in the pose JSON ≤ 600 B, used by the sheet); tok93.js under its 260 KB cap; no new errors. SHOT=dir. */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
 (async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const SHOT=process.env.SHOT||'';
 const ROOT=path.dirname(path.resolve(process.argv[2]));
 const ttxt=fs.readFileSync(path.join(ROOT,'assets/tok93.js'),'utf8');
-ok(ttxt.length<=260000&&/FIG_SCALE\s*=\s*0\.\d+/.test(ttxt)&&/function applyGrip/.test(ttxt),'tok93.js: fixed figure scale + grip, under the 260 KB cap '+ttxt.length);
+ok(ttxt.length<=260000&&/FIG_SCALE\s*=\s*[\d.]+/.test(ttxt)&&/function applyGrip/.test(ttxt),'tok93.js: fixed figure scale + grip, under the 260 KB cap '+ttxt.length);
 const pg=await b.newPage({viewport:{width:1440,height:950}});await pg.route(/fonts\.g/,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
 await pg.goto('file://'+path.resolve(process.argv[2]),{timeout:120000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:120000});
@@ -23,9 +23,9 @@ const F=await pg.evaluate(async()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null)
       if(f.f!==1||Math.abs(sc-S0)>1e-6||f.hw>row.lim+0.03||f.dn>row.lim/2+0.03)out.push(row)}
     await new Promise(r=>setTimeout(r,0))}
   api.apply({gear:{},pose:api.presets[0][2]});
-  return {S0,n:rows.length,out:out.slice(0,6),nOut:out.length,shafts:shafts.length,shaftEx:shafts.slice(0,4),worstBody:rows.reduce((a,r)=>Math.max(a,r.hw/r.lim,2*r.dn/r.lim),0)}});
+  return {S0,n:rows.length,out:out.slice(0,6),nOut:out.length,outK:out.map(r=>r.k+"/"+r.pk),shafts:shafts.length,shaftEx:shafts.slice(0,4),worstBody:rows.reduce((a,r)=>Math.max(a,r.hw/r.lim,2*r.dn/r.lim),0)}});
 console.log('FIT',JSON.stringify(F));
-ok(Math.abs(F.S0-0.69)<1e-6&&F.n>=200,'the token is built at the fixed figure scale '+JSON.stringify({S0:F.S0,n:F.n}));
+ok(Math.abs(F.S0-1.0)<1e-6&&F.n>=200,'the token is built at the fixed figure scale '+JSON.stringify({S0:F.S0,n:F.n}));
 ok(F.nOut===0,'no kit × preset changes the figure size; its body stays inside the tile '+JSON.stringify(F.out));
 ok(F.shafts>0,'long weapons are angled instead '+JSON.stringify(F.shaftEx));
 /* the real sheet: same figure scale with and without the gear (anchor-to-feet unchanged), the spear may reach past the tile */
@@ -50,7 +50,7 @@ const G=await pg.evaluate(async()=>{const api=T93.api;const g={wR:{t:'sword',k:'
   return {h,turnMoved:d(t0,t1),gripStay:d(g0,g1),slide:d(g1,g2),g:big.g,len:pj.length,back,again,cleared,diff:u0!==u1,lp:lp.length}});
 console.log('GRIP',JSON.stringify(G));
 ok(G.h.R==='gladius'&&G.h.L==='shield','holds: gladius right, shield left '+JSON.stringify(G.h));
-ok(G.turnMoved>0.05&&G.gripStay<0.002&&Math.abs(G.slide-0.04*0.69)<0.004,'turn swings the blade about the grip, slide moves it along '+JSON.stringify({t:G.turnMoved,g:G.gripStay,s:G.slide}));
+ok(G.turnMoved>0.05&&G.gripStay<0.002&&Math.abs(G.slide-0.04*1.0)<0.004,'turn swings the blade about the grip, slide moves it along '+JSON.stringify({t:G.turnMoved,g:G.gripStay,s:G.slide}));
 ok(JSON.stringify(G.g)==='{"R":[60,40],"L":[-30,20]}'&&G.len<=600&&G.lp<=600,'the grip rides in the pose JSON (≤ 600 B, even the longest pose) '+JSON.stringify({g:G.g,len:G.len,lp:G.lp}));
 ok(G.diff&&JSON.stringify(G.again)==='{"R":[60,40],"L":[-30,20]}'&&JSON.stringify(G.cleared)==='{}','the sheet uses it; it round-trips; a pose without one clears it '+JSON.stringify({diff:G.diff,again:G.again,cleared:G.cleared}));
 if(SHOT){const H=await pg.evaluate(()=>{const api=T93.api;const g={wR:{t:'spear',k:'hasta'},wL:{t:'scutum',k:'scutum'}};const out=[];
@@ -77,12 +77,12 @@ console.log('POSER',JSON.stringify(U));
 ok(ui&&U.shown&&U.hands.includes('R'),'the ⚔ Weapon tab lists the hands that hold something '+JSON.stringify({ui,shown:U.shown,hands:U.hands}));
 ok(JSON.stringify(U.g.R)==='[45,20]'&&U.out==='45°'&&JSON.stringify(U.undone.R)==='[45,10]','sliders and nudges set the grip; undo steps back '+JSON.stringify({g:U.g,out:U.out,undone:U.undone}));
 let gp={};try{gp=JSON.parse(U.pose||'{}').g||{}}catch(e){}
-ok(U.saved&&JSON.stringify(gp.R)==='[45,20]'&&U.v===3&&(U.pose||'').length<=600,'Save stores the grip in the token pose (T93_VER 3) '+JSON.stringify({saved:U.saved,g:gp,v:U.v,meta:U.meta}));
+ok(U.saved&&JSON.stringify(gp.R)==='[45,20]'&&U.v===4&&(U.pose||'').length<=600,'Save stores the grip in the token pose (T93_VER 4) '+JSON.stringify({saved:U.saved,g:gp,v:U.v,meta:U.meta}));
 /* the animated sets this device renders for that token carry the grip (own cache key) */
 const K=await pg.evaluate(()=>{const c=CUSTOM.chars.find(x=>x.id==='v102e');const t=c.tok93;const p=an100Parts({cls:'cc_v102e'},t);const q=an100Parts({cls:'cc_v102e'},t);
   const plain=Object.assign({},t,{pose:'{"v":1}'});const r=an100Parts({cls:'cc_v102e'},plain);
   return {grip:p&&p.grip,same:p===q,key:an100DevKey(p)!==an100DevKey(r),ver:AN100L.VER}});
-ok(K.grip&&JSON.stringify(K.grip.R)==='[45,20]'&&K.same&&K.key&&K.ver===3,'device-rendered animated sets carry the grip (own key; ANIM100_LIB VER 3) '+JSON.stringify(K));
+ok(K.grip&&JSON.stringify(K.grip.R)==='[45,20]'&&K.same&&K.key&&K.ver===4,'device-rendered animated sets carry the grip (own key; ANIM100_LIB VER 4) '+JSON.stringify(K));
 /* 4. the board: the drawn head (bare body, the fixed scale) about 55% of the pillar mini; every printed class's animated sheet re-rendered at
       that scale (meta v 3) — a soldier / hero (helmet, no weapon over the head) a little over half a pillar */
 const P=await pg.evaluate(async()=>{const TWx=56;const pil=MINI_A.pillar[1]*(TWx*MINI_BASE/25.4/MINI_PXMM*Math.min(1,TWx*MINI_FIT/(30*TWx*MINI_BASE/25.4))*MINI_PILLAR*MINI_PILLAR75);const out={},v={};
@@ -90,9 +90,21 @@ const P=await pg.evaluate(async()=>{const TWx=56;const pil=MINI_A.pillar[1]*(TWx
   const api=await t93Load();api.apply({look:{},gear:{},pose:api.presets[0][2]});const s=await api.sheetAsync({pxmm:2.6});const body=+(s.meta[3]*TWx*MINI_BASE/25.4/2.6/pil).toFixed(3);
   return {pil:+(pil/TWx).toFixed(3),body,out,v}});
 console.log('HEIGHT',JSON.stringify(P));
-ok(Math.abs(P.pil-1.27)<0.01&&P.body>=0.5&&P.body<=0.6,'the bare figure stands about 55% of a pillar on the board '+JSON.stringify({pil:P.pil,body:P.body}));
-ok(Object.keys(P.v).length===8&&Object.values(P.v).every(x=>x===3),'every printed class sheet was re-rendered at the fixed scale (meta v 3) '+JSON.stringify(P.v));
-ok(P.out.soldier>=0.55&&P.out.soldier<=0.7&&P.out.hero>=0.55&&P.out.hero<=0.7,'soldier / hero sheets a little over half a pillar '+JSON.stringify(P.out));
+ok(Math.abs(P.pil-1.27)<0.01&&P.body>=0.76&&P.body<=0.84,'the bare figure stands about 80% of a pillar on the board (his call) '+JSON.stringify({pil:P.pil,body:P.body}));
+ok(Object.keys(P.v).length===8&&Object.values(P.v).every(x=>x===4),'every printed class sheet was re-rendered at the fixed scale (meta v 4) '+JSON.stringify(P.v));
+ok(P.out.soldier>=0.78&&P.out.soldier<=0.95&&P.out.hero>=0.78&&P.out.hero<=0.95,'soldier / hero sheets (helmets) about 80–95% of a pillar '+JSON.stringify(P.out));
+/* 5. his 1a: the beasts in proportion to that gladiator (top above the base point, figure only — bases keep their tile sizes) */
+const BH=await pg.evaluate(()=>{const keep=TW;TW=56;const per=TW*MINI_BASE/25.4;const o={};
+  for(const k in BEAST100_META){const M=BEAST100_META[k];if(!M.iw||!M.base)continue;o[k]=M.iw[3]*bst100Scale(M)+BST100_BASE_MM*per}TW=keep;return o});
+const gl=P.body*P.pil*56,rel={};for(const k in BH)rel[k]=+(BH[k]/gl).toFixed(2);console.log('BEASTS',JSON.stringify(rel));
+/* the cell tops (meta) include tails, wings and the walk frames, so they only guard the render: measured on the board (idle, front, TW 56,
+   bare gladiator 57 px) the lions and bears stand ~0.8 of him, wolves ~0.58, snakes ~0.4, Zora ~0.65, Tholo ~1.12, Commodus ~1.15 */
+const near=(k,v)=>Math.abs(rel[k]-v)<=v*0.12;
+ok(near('leo',1.45)&&near('leaena',1.24)&&near('ursa',1.11)&&near('brutum',1.11),'lions + bears re-rendered at their v1.02 size '+JSON.stringify(rel));
+ok(near('valencia',0.68)&&near('moechus',0.68)&&near('glykon',0.56)&&near('arenosus',0.56)&&near('zora',1.11),'wolves, snakes and Zora scaled to match '+JSON.stringify(rel));
+ok(near('tholo',1.26)&&near('commodus',1.28)&&rel.tholo>1&&rel.commodus>1,'Commodus and Tholo taller than the gladiator '+JSON.stringify(rel));
+const BB=await pg.evaluate(()=>({leo:BEAST100_META.leo.base,ursa:BEAST100_META.ursa.base,tholo:BEAST100_META.tholo.base,leoPx:BEAST100_META.leo.px,tholoPx:BEAST100_META.tholo.px}));
+ok(JSON.stringify(BB)==='{"leo":[72,42],"ursa":[75,47],"tholo":[25.4,25.4],"leoPx":1.5889,"tholoPx":3.143}','the bases keep their tile sizes (only the figures changed) '+JSON.stringify(BB));
 const E=await pg.evaluate(m=>typeof errNew92==='function'?errNew92(m):[],mark).catch(()=>[]);
 ok(!E.length,'no new errors '+JSON.stringify(E).slice(0,300));
 console.log('MISS',JSON.stringify(miss));if(miss.length)process.exitCode=1;console.log('ERRS',JSON.stringify(errs.slice(0,6)));await b.close()})();

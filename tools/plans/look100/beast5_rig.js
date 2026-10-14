@@ -499,6 +499,10 @@ const enc = (c, q = 0.8) => { const u = c.toDataURL('image/webp', q); return { u
 /* round 2 board rule (his 2c + 3a): long bases capped at 1.1 tile but the FIGURE drawn +30% (round bases: +15% like the gladiators);
    each sheet is rendered at the size it is drawn at zoom ×2 (tile 104 px): long base → 1.1·104/long mm, round → 0.8·104/25.4 ≈ the minis' 3.143 */
 const DRAWN = (b) => b[0] > 30 ? 1.1 * 104 / b[0] : PXMM;
+/* v1.02 (his 1a, with the gladiators at 80% of a pillar — tools/art/rig92 FIG_SCALE 1.0): the beasts' FIGURE sizes against that gladiator
+   (the bases are drawn apart and keep their tile sizes): lion, lioness + bears about 0.8 of his height (a full-height lion
+   would hang half a tile past its long base), wolves 0.6, snakes 0.4, Zora on her chunk 0.65. Multiplies sc only. */
+const SIZE102 = { leo: 1.607, leaena: 1.694, ursa: 1.658, brutum: 1.658, valencia: 0.771, moechus: 0.771, glykon: 1.067, arenosus: 1.067, zora: 1.078 };   /* measured on the board (idle, front): lions + bears ~0.8 of the bare gladiator, wolves 0.6, snakes 0.4, Zora 0.65 */
 export const BEASTS = {
   leo: { sp: 'lion', base: [72, 42], rim: '#3a1a18', box: 150, ty: 16, sc: 1.15 * 1.3, split: [['leo', /^(idle|walk)/], ['leo_act', /^(attack|hit|die)/]] }, leaena: { sp: 'lioness', base: [72, 42], rim: '#3a1a18', box: 146, ty: 16, sc: 1.15 * 1.3 },
   ursa: { sp: 'bear', base: [75, 47], rim: '#7b2c17', box: 150, ty: 19, sc: 1.3 }, brutum: { sp: 'bear', base: [75, 47], rim: '#7b2c17', box: 150, ty: 19, sc: 1.3 },
@@ -518,7 +522,7 @@ window.BEAST300 = {
     if (opt.only) frames = frames.filter(f => opt.only.includes(f.n));
     if (opt.h) h = opt.h;
     if (opt.diag) frames = frames.filter(f => f.n === 'idle0');
-    const r = await sheet(build, frames, { split: opt.diag || opt.only ? null : B.split, base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: B.sc, pxmm: opt.diag ? 6 / (B.sc || 1) * 1.2 : (B.base ? DRAWN(B.base) : PXMM) });
+    const r = await sheet(build, frames, { split: opt.diag || opt.only ? null : B.split, base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: (B.sc || 1) * (SIZE102[key] || 1), pxmm: opt.diag ? 6 / (B.sc || 1) * 1.2 : (B.base ? DRAWN(B.base) : PXMM) });
     window.BSHEET = window.BSHEET || {}; BSHEET[key] = r;
     const parts = r.parts.map(p => { const e = enc(p.canvas); return { name: p.name, meta: p.meta, rows: p.rows, kb: +(e.bytes / 1024).toFixed(1), webp: e.url, decodedMB: +(p.meta[0] * p.meta[1] * 4 * 8 * p.rows.length / 1048576).toFixed(2) }; });
     const w8 = enc(r.canvas); const idleWalk = frames.filter(f => /^(idle|walk)/.test(f.n)).length;

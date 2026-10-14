@@ -6,60 +6,60 @@
   "decodedMB": 1.07,
   "ms": 5641
  },
- "totalKB": 3958,
+ "totalKB": 4604,
  "leo": {
-  "kb": 468.6,
-  "decodedMB": 22.89,
-  "ms": 36281
+  "kb": 711.8,
+  "decodedMB": 34.87,
+  "ms": 59405
  },
  "leaena": {
-  "kb": 366.2,
-  "decodedMB": 12.12,
-  "ms": 20934
+  "kb": 597.3,
+  "decodedMB": 29.56,
+  "ms": 30059
  },
  "ursa": {
-  "kb": 342.6,
-  "decodedMB": 9.55,
-  "ms": 30688
+  "kb": 495.7,
+  "decodedMB": 20.95,
+  "ms": 43120
  },
  "brutum": {
-  "kb": 319.1,
-  "decodedMB": 9.55,
-  "ms": 25756
+  "kb": 453,
+  "decodedMB": 20.95,
+  "ms": 56613
  },
  "valencia": {
-  "kb": 298.9,
-  "decodedMB": 11.04,
-  "ms": 15818
+  "kb": 248.2,
+  "decodedMB": 7.1,
+  "ms": 22804
  },
  "moechus": {
-  "kb": 221.7,
-  "decodedMB": 11.04,
-  "ms": 16702
+  "kb": 196,
+  "decodedMB": 7.1,
+  "ms": 26126
  },
  "glykon": {
-  "kb": 234.6,
-  "decodedMB": 5.05,
-  "ms": 11476
+  "kb": 245.5,
+  "decodedMB": 5.44,
+  "ms": 16000
  },
  "arenosus": {
-  "kb": 230.3,
-  "decodedMB": 5.05,
-  "ms": 12819
+  "kb": 241.6,
+  "decodedMB": 5.44,
+  "ms": 23239
  },
  "zora": {
-  "kb": 312.7,
-  "decodedMB": 9.9,
-  "ms": 37959
+  "kb": 319.1,
+  "decodedMB": 11.2,
+  "ms": 56611
  },
  "tholo": {
-  "kb": 560.7,
-  "decodedMB": 25.02,
-  "ms": 708680
+  "kb": 523.8,
+  "decodedMB": 23.06,
+  "ms": 906749
  },
  "commodus": {
-  "kb": 568.1,
-  "decodedMB": 20.47,
-  "ms": 1206183
+  "kb": 537.7,
+  "decodedMB": 18.04,
+  "ms": 927204
  }
 }
