@@ -38,6 +38,10 @@ export const BODY8 = { res: 0.005, body: { face2: 1, headRes: 0.0022, grip: { L:
 
 const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45];   /* src/102-minis73.js */
 const MINI_PXMM = 3.143;                                     /* src/94-v72.js */
+/* v1.02 (his 9a): ONE FIXED FIGURE SIZE for every board token — the head about 55% of a pillar's drawn height (the pillar mini stands
+   1.27 tiles above its base point; the figure's head top (3.2 mm base + 32.5 mm × scale) × cos 30° at the board's 0.8-tile base rule).
+   Never changed by weapons, armor or pose: long weapons are angled instead (fitTile) and only a weapon may reach past the tile. */
+export const FIG_SCALE = 0.69;
 const D2R = Math.PI / 180;
 
 /* the key a bake must carry to be worn on a body built with these options */
@@ -45,7 +49,7 @@ export const bodyKey8 = (o) => 'b8|' + JSON.stringify({ res: o.res, body: o.body
 
 export async function createToken(opts = {}) {
   /* v1.0 defaults: the figure +15% on the 0.8-tile base, the painted pass, the painted face, fists that close round a hilt */
-  const o = Object.assign({ res: BODY8.res, slice: 14, scale: 1.15, paint: 1, body: BODY8.body }, opts);
+  const o = Object.assign({ res: BODY8.res, slice: 14, scale: FIG_SCALE, paint: 1, body: BODY8.body }, opts);
   /* the pre-baked printed pieces (window.GEAR100 from assets/gear100.js; opts.gear8 = null switches them off) */
   let BK = null, bakeWhy = '';
   { const GD = o.gear8 !== undefined ? o.gear8 : (typeof window !== 'undefined' ? window.GEAR100 : null);
@@ -131,11 +135,11 @@ export async function createToken(opts = {}) {
     });
     return { hw, dn, n, tileHalf: TILE_HALF };
   }
-  /* v1.0 (his 2b): A LONG SHAFT NEVER SHRINKS THE FIGURE BELOW ~70%. When the fit would fall under SHAFT.min, the held weapons (not the bow,
-     lyre or shields) are first RAISED toward the diagonal about the grip (15° steps, ≤ 60°), then their visible length is SHORTENED about
-     the grip (≥ 0.6) — the first try that keeps SHAFT.min wins, else the best one. Display only: the pose and the hand stay as they are, the
-     weapons are put back after the render (restore()). The body's own reach is measured once; each try re-measures only the weapons. */
-  const SHAFT = { min: 0.72, tries: [[15, 1], [30, 1], [45, 1], [45, 0.85], [45, 0.72], [45, 0.6], [60, 0.72], [60, 0.6]] };
+  /* v1.02 (his 9a): THE FIGURE NEVER SHRINKS. When a held weapon (not the bow, lyre or shields; the trident's net gathers in a little)
+     reaches past the tile, it is ANGLED toward the diagonal about the grip (15° steps, ≤ 60°) — the first angle that brings it inside wins,
+     else the angle that spills least; only the weapon may still reach past. Display only: the pose and the hand stay, restore() puts the
+     weapons back. The body's own reach is measured once; each try re-measures only the weapons. */
+  const SHAFT = { tries: [15, 30, 45, 60] };
   const fOf = (s, hw, dn) => { const pad = ((s.outlinePx || 0.85) + 1.0) / (s.pxmm * MM_PER_M), BH = BASE_H * Math.cos(s.el * D2R); let f = 1;
     if (hw > TILE_HALF - pad) f = Math.min(f, (TILE_HALF - pad) / hw);
     if (dn > TILE_HALF / 2 - pad && dn + BH > 1e-6) f = Math.min(f, (TILE_HALF / 2 - pad + BH) / (dn + BH));
@@ -147,31 +151,31 @@ export async function createToken(opts = {}) {
       for (const y of MINI_YAW) { const c = Math.cos(y * D2R), s2 = Math.sin(y * D2R), xs = v.x * c + v.z * s2, zs = -v.x * s2 + v.z * c; if (Math.abs(xs) > out.hw) out.hw = Math.abs(xs); const d = zs * se - (v.y + BASE_H) * ce; if (d > out.dn) out.dn = d; } }
     return out;
   }
-  function shaftFit(s, r0) {
+  function shaftFit(s) {
     const ws = shaftList(); if (!ws.length) return null;
     const keep = ws.map(m => [m, m.quaternion.clone(), m.scale.clone()]);
-    const put = (a, k) => { for (const [m, q0, s0] of keep) { m.quaternion.copy(q0); m.scale.copy(s0); m.updateMatrixWorld(true);
-      if (m.name === 'net') { m.scale.copy(s0).multiplyScalar((1 - a / 150) * k); m.updateMatrixWorld(true); continue; }   /* the net gathers in: smaller, never turned */
+    const put = (a) => { for (const [m, q0, s0] of keep) { m.quaternion.copy(q0); m.scale.copy(s0); m.updateMatrixWorld(true);
+      if (m.name === 'net') { m.scale.copy(s0).multiplyScalar(1 - a / 150); m.updateMatrixWorld(true); continue; }
       if (a) { const pq = new THREE.Quaternion(); m.parent.getWorldQuaternion(pq); const gq = new THREE.Quaternion(); B.group.getWorldQuaternion(gq);
         const toG = gq.clone().invert().multiply(pq);   /* bone → figure space */
         const d = new THREE.Vector3(0, 1, 0).applyQuaternion(toG.clone().multiply(q0)).normalize(), up = new THREE.Vector3(0, d.y < -0.3 ? -1 : 1, 0);
         const ang = Math.min(a * D2R, Math.acos(Math.max(-1, Math.min(1, d.dot(up))))); const ax = new THREE.Vector3().crossVectors(d, up);
         if (ax.lengthSq() > 1e-8 && ang > 1e-3) { const rq = new THREE.Quaternion().setFromAxisAngle(ax.normalize(), ang); m.quaternion.copy(toG.clone().invert().multiply(rq).multiply(toG).multiply(q0)); } }
-      m.scale.set(s0.x, s0.y * k, s0.z);
       const ink = m.userData.ink; if (ink) { ink.quaternion.copy(m.quaternion); ink.scale.copy(m.scale); ink.updateMatrixWorld(true); } m.updateMatrixWorld(true); } };
-    const skip = new Set(ws); const body = reach(s.el, skip); const fBody = fOf(s, body.hw, body.dn);
-    let best = null;
-    for (const [a, k] of SHAFT.tries) { put(a, k); const r = ws.reduce((o2, m) => meshReach(m, s.el, o2), { hw: body.hw, dn: body.dn }); const f = fOf(s, r.hw, r.dn);
-      if (!best || f > best.f + 1e-4) best = { a, k, f, hw: r.hw, dn: r.dn }; if (f >= SHAFT.min) break; }
-    put(best.a, best.k);
-    return { a: best.a, k: best.k, f: best.f, hw: best.hw, dn: best.dn, fBody, restore: () => { for (const [m, q0, s0] of keep) { m.quaternion.copy(q0); m.scale.copy(s0); const ink = m.userData.ink; if (ink) { ink.quaternion.copy(q0); ink.scale.copy(s0); } } } };
+    const restore = () => { for (const [m, q0, s0] of keep) { m.quaternion.copy(q0); m.scale.copy(s0); const ink = m.userData.ink; if (ink) { ink.quaternion.copy(q0); ink.scale.copy(s0); } } };
+    const meas = () => ws.reduce((o2, m) => meshReach(m, s.el, o2), { hw: 0, dn: -1e9 });
+    let r = meas(); if (fOf(s, r.hw, r.dn) >= 0.999) { restore(); return null; }
+    let best = { a: 0, f: fOf(s, r.hw, r.dn), hw: r.hw, dn: r.dn };
+    for (const a of SHAFT.tries) { put(a); r = meas(); const f = fOf(s, r.hw, r.dn);
+      if (f > best.f + 1e-4) best = { a, f, hw: r.hw, dn: r.dn }; if (f >= 0.999) break; }
+    if (!best.a) { restore(); return null; }
+    put(best.a); return { a: best.a, k: 1, f: best.f, hw: best.hw, dn: best.dn, restore };
   }
+  /* fitTile: f is always 1 (the figure keeps FIG_SCALE); hw / dn = the body's reach; shaft = the angle given to long weapons */
   function fitTile(s) {
     const s0 = o.scale || 1; B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true);
-    let r = reach(s.el); let f = fOf(s, r.hw, r.dn), sh = null;
-    if (f < SHAFT.min && s.shaft !== false) { sh = shaftFit(s, r); if (sh && sh.a + (1 - sh.k) > 0 && sh.f > f) { f = sh.f; r = { hw: sh.hw, dn: sh.dn }; } else if (sh) { sh.restore(); sh = null; } }
-    if (f < 0.999) { B.group.scale.setScalar(s0 * f); B.group.updateMatrixWorld(true); }
-    return { f: +f.toFixed(4), hw: +r.hw.toFixed(4), dn: +r.dn.toFixed(4), shaft: sh ? { a: sh.a, k: sh.k, fBody: +sh.fBody.toFixed(4) } : null,
+    const sh = s.shaft !== false ? shaftFit(s) : null; const skip = new Set(shaftList()); const r = reach(s.el, skip);
+    return { f: 1, hw: +r.hw.toFixed(4), dn: +r.dn.toFixed(4), shaft: sh ? { a: sh.a, k: 1, wf: +sh.f.toFixed(4) } : null,
       restore: () => { if (sh) sh.restore(); B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true); } };
   }
   /* the minis' sheet: 8 yaw cells in one row, transparent, cropped round the anchor; meta like MINI8 */
@@ -217,6 +221,29 @@ export async function createToken(opts = {}) {
   /* ---------- look + gear + pose ---------- */
   let lookKey = '', gearKey = '';
   let sculpt8 = null, last8 = [], held = [], heldKey = '';
+  /* v1.02 D1: THE GRIP — per hand [turn °, slide mm]: what the hand holds turns about its grip (a blade in its own plane, a strapped
+     shield spins on the forearm) and slides along its length. Pose JSON g:{R:[a,s],L:[a,s]} (written while something is held). */
+  let grip = {};
+  const GRIP = { a: 180, s: 150, strap: 0.12 };
+  const gripClean = (g) => { const r = {}; for (const sd of ['R', 'L']) { const v = g && g[sd]; if (!Array.isArray(v)) continue;
+    const a = Math.max(-GRIP.a, Math.min(GRIP.a, Math.round(+v[0] || 0))), sl = Math.max(-GRIP.s, Math.min(GRIP.s, Math.round(+v[1] || 0))); if (a || sl) r[sd] = [a, sl]; } return r; };
+  const gOf = (p) => { try { const x = typeof p === 'string' ? JSON.parse(p) : p; return x && x.g; } catch (e) { return undefined; } };
+  const heldOn = (sd) => held.filter(m => !(m.userData && m.userData.raw) && m.parent === rig.bones['w' + sd]);
+  function applyGrip() {
+    for (const sd of ['R', 'L']) {
+      const ms = heldOn(sd); if (!ms.length) continue;
+      for (const m of ms) if (!m.userData.g102) m.userData.g102 = { p: m.position.clone(), q: m.quaternion.clone() };
+      const main = ms.find(m => m.userData.w4) || ms.find(m => Array.isArray(m.material)) || ms[0], b0 = main.userData.g102, sh = !main.userData.w4;
+      const [a, sl] = grip[sd] || [0, 0];
+      const R = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1).applyQuaternion(b0.q).normalize(), a * D2R);
+      const along = new THREE.Vector3(0, 1, 0).applyQuaternion(R.clone().multiply(b0.q)).multiplyScalar(sl / 1000);
+      for (const m of ms) { const g0 = m.userData.g102; const strap = sh && g0.p.distanceTo(b0.p) > GRIP.strap;   /* a shield's forearm strap stays on the arm */
+        m.quaternion.copy(strap ? g0.q : R.clone().multiply(g0.q)); m.position.copy(strap ? g0.p : g0.p.clone().sub(b0.p).applyQuaternion(R).add(b0.p).add(along));
+        const ink = m.userData.ink; if (ink && ink.parent !== m) { ink.position.copy(m.position); ink.quaternion.copy(m.quaternion); } m.updateMatrixWorld(true); }
+    }
+  }
+  const holds = () => { const o2 = {}; for (const sd of ['R', 'L']) { const ms = heldOn(sd); const w = ms.find(m => m.userData.w4); o2[sd] = w ? w.userData.w4.k : ms.length ? 'shield' : null; } return o2; };
+  const withG = (str) => { if (!heldOn('R').length && !heldOn('L').length) return str; const x = JSON.parse(str); x.g = gripClean(grip); return JSON.stringify(x); };
   function apply(a = {}) {
     if (a.look || a.gear) {
       const lk = Object.assign({}, a.look || {}, { noHarness: !!(a.gear && a.gear.chest) }); const k = JSON.stringify(lk);
@@ -230,7 +257,9 @@ export async function createToken(opts = {}) {
         last8 = sp.list.map(it => it.k + (BK && BK.kind(it.k) === 'l' ? it.sd || '' : ''));
         const hk = JSON.stringify([a.gear && a.gear.wR, a.gear && a.gear.wL]); if (hk !== heldKey) { killWeapons(B, held); held = mountWeapons(B, a.gear || {}); heldKey = hk; } }
     }
-    if (a.pose) setPose(a.pose);
+    if (a.pose) { if (gOf(a.pose) === undefined) grip = {}; setPose(a.pose); }
+    if (a.grip !== undefined) grip = gripClean(a.grip);
+    applyGrip();
   }
   /* THE ARMED STAND (his picks: sword 15° out of the fist, straight wrist, the elbow takes the angle; the scutum upright on the forearm):
      the default 'stand' pose for what this gear holds — the plain stand when the hands are empty. The live pose is restored. */
@@ -240,9 +269,9 @@ export async function createToken(opts = {}) {
     try { setPose(poseToJSON(resolveSpec(rig, stanceFor(g)))); const A = armedSpec(rig, g); setPose(poseToJSON(resolveSpec(rig, A.spec))); armedFinish(rig, align, A.fr); return poseToJSON(readPose(rig, pinsNow())); }
     finally { setPose(keep); }
   }
-  function setPose(p) { pose = poseFromJSON(p); applyPose(rig, pose); }
+  function setPose(p) { pose = poseFromJSON(p); applyPose(rig, pose); const g = gOf(p); if (g !== undefined) grip = gripClean(g); applyGrip(); }
   const pinsNow = () => { const f = {}; for (const s of ['L', 'R']) if (pose.f && pose.f[s]) f[s] = pose.f[s]; return f; };
-  const poseJSON = () => poseToJSON(readPose(rig, pinsNow()));
+  const poseJSON = () => withG(poseToJSON(readPose(rig, pinsNow())));
 
   /* ---------- v0.99 joint tools (eulers in degrees, XYZ, as in the pose JSON) ---------- */
   const LIMB = { arm: ['s', 'e', 'w'], leg: ['h', 'k', 'a'], spine: ['pe', 'sp', 'ch', 'ne', 'he'] };
@@ -276,8 +305,8 @@ export async function createToken(opts = {}) {
   function thumb(json, px = 72, o = {}) {
     const snap = { pose: JSON.parse(JSON.stringify(pose)), b: JOINTS.map(J => rig.bones[J.k].quaternion.clone()), p: rig.bones.pe.position.clone() };
     try {
-      setPose(json); const ss = 2, S = px * ss, ppm = S / (o.span || 2.35);
-      const cam = orthoCam(S, Math.round(S * (o.tall || 1.15)), ppm, o.el == null ? 14 : o.el, new THREE.Vector3(0, 0.98, 0)); lightFor(cam); B.setOutline(1.1 * ss / ppm);
+      setPose(json); const FR = FRAME(), ss = 2, S = px * ss, ppm = S / ((o.span || 2.35) * FR);
+      const cam = orthoCam(S, Math.round(S * (o.tall || 1.15)), ppm, o.el == null ? 14 : o.el, new THREE.Vector3(0, 0.98 * FR, 0)); lightFor(cam); B.setOutline(1.1 * ss / ppm);
       const H = Math.round(S * (o.tall || 1.15)); const r = renderer(S, H);
       hideHandles(() => { turn.rotation.y = (o.yaw == null ? 25 : o.yaw) * D2R; turn.updateMatrixWorld(true); r.render(scene, cam); });
       turn.rotation.y = 0; turn.updateMatrixWorld(true); return halve(grab(r, S, H));
@@ -286,6 +315,9 @@ export async function createToken(opts = {}) {
     }
   }
 
+  /* v1.02: the figure's scale (FIG_SCALE) — the editor's handles ride a group scaled like the body, its view and the preset pictures
+     are framed for it (FRAME = against the v1.0 1.15 the framings were made for) */
+  const SC = () => B.group.scale.x || 1, FRAME = () => SC() / 1.15;
   /* ---------- the editor: joints dragged on a 2D canvas ---------- */
   function editor(cv, onChange, eo = {}) {
     const ctx = cv.getContext('2d');
@@ -316,7 +348,7 @@ export async function createToken(opts = {}) {
     let cam = null;
     function render() {
       const w = cv.width, h = cv.height; if (!w || !h) return;
-      const ppm = h / 2.6 * view.zoom; cam = orthoCam(w, h, ppm, view.el, new THREE.Vector3(0, 0.93, 0)); lightFor(cam); B.setOutline(1.6 / ppm);
+      const FR = FRAME(), ppm = h / (2.6 * FR) * view.zoom; cam = orthoCam(w, h, ppm, view.el, new THREE.Vector3(0, 0.93 * FR, 0)); lightFor(cam); B.setOutline(1.6 / ppm); handles.scale.setScalar(SC());
       turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); place(); lightHot();
       const r = renderer(w, h); r.render(scene, cam); ctx.clearRect(0, 0, w, h); ctx.drawImage(r.domElement, 0, 0, w, h, 0, 0, w, h);
       if (sel && eo.gizmo !== false) gizmo(w, h);
@@ -332,9 +364,9 @@ export async function createToken(opts = {}) {
       const qxy = qx.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), e.y));
       const ax = [new THREE.Vector3(1, 0, 0).applyQuaternion(pq), new THREE.Vector3(0, 1, 0).applyQuaternion(qx), new THREE.Vector3(0, 0, 1).applyQuaternion(qxy)];
       const tq = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), view.yaw * D2R);
-      const c = jointPos(rig, sel).applyQuaternion(tq);
+      const c = jointPos(rig, sel).multiplyScalar(SC()).applyQuaternion(tq);
       const px = (v) => { const p = v.clone().project(cam); return [(p.x + 1) / 2 * w, (1 - p.y) / 2 * h]; };
-      const R = 0.11 * (sel === 'pe' ? 1.35 : 1);
+      const R = 0.11 * FRAME() * (sel === 'pe' ? 1.35 : 1);
       ctx.save(); ctx.lineCap = 'round';
       const order = [0, 1, 2].filter(i => i !== axis).concat([axis]);
       for (const i of order) {
@@ -349,7 +381,7 @@ export async function createToken(opts = {}) {
     }
     let raf = 0; const later = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; render(); }); };
     const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let drag = null;
-    const toSpace = () => { turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); return turn.matrixWorld.clone().invert(); };
+    const toSpace = () => { turn.rotation.y = view.yaw * D2R; handles.scale.setScalar(SC()); turn.updateMatrixWorld(true); return handles.matrixWorld.clone().invert(); };   /* world → figure space */
     const pick = (e) => { const b = cv.getBoundingClientRect(); ndc.set((e.clientX - b.left) / b.width * 2 - 1, -(e.clientY - b.top) / b.height * 2 + 1); ray.setFromCamera(ndc, cam); };
     const down = (e) => {
       if (!cam || (e.button != null && e.button > 0)) return; pick(e); toSpace(); place(); handles.updateMatrixWorld(true);
@@ -358,7 +390,7 @@ export async function createToken(opts = {}) {
       if (!hit) { drag = { k: null, x: e.clientX, y: e.clientY }; return; }
       const k = hit.object.userData.k, kind = hit.object.userData.kind, p0 = hit.object.getWorldPosition(new THREE.Vector3());
       const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(cam.getWorldDirection(new THREE.Vector3()).negate(), p0);
-      if (k[0] === 'a') plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, ANKLE_H, 0));
+      if (k[0] === 'a') plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, ANKLE_H * SC(), 0));
       drag = { k, kind, plane, x: e.clientX, y: e.clientY, pe0: rig.bones.pe.position.clone(), p0: p0.clone().applyMatrix4(toSpace()) };
       if (k !== sel) { sel = k; if (eo.onSelect) eo.onSelect(k); }
       turn.rotation.y = 0; turn.updateMatrixWorld(true); e.preventDefault(); later();
@@ -398,8 +430,8 @@ export async function createToken(opts = {}) {
       select(k) { sel = k && JK[k] ? k : null; later(); }, selected: () => sel, axis(i) { if (i != null) { axis = Math.max(0, Math.min(2, i | 0)); later(); } return axis; },
       /* v0.98: the lit joint (hover or drag) and a joint's place on the canvas in CSS pixels (tests, hints) */
       hot: () => (drag && drag.k) || hot,
-      screenOf(k) { if (!cam) return null; turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); place(); const m = HD.find(x => x.userData.k === k); if (!m) return null;
-        const v = m.position.clone().applyMatrix4(turn.matrixWorld).project(cam); turn.rotation.y = 0; turn.updateMatrixWorld(true); const b = cv.getBoundingClientRect();
+      screenOf(k) { if (!cam) return null; turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); place(); const m = HD.find(x => x.userData.k === k); if (!m) return null; handles.updateMatrixWorld(true);
+        const v = m.position.clone().applyMatrix4(handles.matrixWorld).project(cam); turn.rotation.y = 0; turn.updateMatrixWorld(true); const b = cv.getBoundingClientRect();
         return { x: b.left + (v.x + 1) / 2 * b.width, y: b.top + (1 - v.y) / 2 * b.height }; },
       destroy() { cv.removeEventListener('pointerleave', leave); cv.removeEventListener('pointerdown', down); cv.removeEventListener('pointermove', move); cv.removeEventListener('pointerup', up); cv.removeEventListener('pointercancel', up); cv.removeEventListener('wheel', wheel);
         if (raf) cancelAnimationFrame(raf); turn.remove(handles); handles.traverse(x => { if (x.geometry) x.geometry.dispose(); if (x.material) x.material.dispose(); }); handles = null; },
@@ -451,7 +483,7 @@ export async function createToken(opts = {}) {
     baked: BK ? { keys: BK.keys.length, bytes: BK.bytes, ms: BK.ms } : null, bakeWhy, bodyBaked: core ? { verts: core.nv, bytes: core.bytes, ms: core.ms.load } : null, bodyWhy, bodyKey: bodyKey8(o), shieldCheck: () => shieldCheck(B, turn, held), wrists: () => ({ L: wristBend(rig, 'L'), R: wristBend(rig, 'R') }), elbows: () => { const rows = elbowCheck(rig, turn, MINI_YAW); return { rows, bowOk: bowOk(rows), anatOk: rows.every(r => (r.L.bend < 0.03 || r.L.anat > 0) && (r.R.bend < 0.03 || r.R.anat > 0)) }; }, clash: () => armClash(rig, turn, MINI_YAW),
     reach, fitTile: (so) => { const f = fitTile(Object.assign({ el: 30, pxmm: MINI_PXMM, outlinePx: 0.85 }, so || {})); const out = { f: f.f, hw: f.hw, dn: f.dn, shaft: f.shaft, tileHalf: TILE_HALF };
       if (so && so.keep) out.restore = f.restore; else f.restore(); return out; },
-    apply, setPose, pose: poseJSON, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },
+    apply, setPose, pose: poseJSON, grip: () => gripClean(grip), holds, setGrip(sd, v) { const g = gripClean(grip); if (sd && typeof sd === 'object') Object.assign(g, sd); else g[sd] = v; grip = gripClean(g); applyGrip(); }, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },
     dispose() { gear.clear(); killWeapons(B, held); held = []; if (R) { R.dispose(); R.forceContextLoss(); R = null; } },
   };
 }

@@ -59,7 +59,7 @@ function pack(cells, q) { const W = cells.reduce((s, x) => s + x.c.width + 1, 0)
 
 /* ---------------- gladiators: the production token ---------------- */
 let TOK = null, REND = null;
-async function tok() { if (!TOK) TOK = await createToken({}); return TOK; }
+async function tok() { if (!TOK) TOK = await createToken({ scale: 1.15 }); return TOK; }   /* v1.02: the v1.0 figure size (the board tokens moved to FIG_SCALE) */
 function renderer(w, h) { if (!REND) { REND = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); REND.outputColorSpace = THREE.SRGBColorSpace; REND.setClearColor(0x000000, 0); REND.setPixelRatio(1); }
   REND.setSize(w, h, false); return REND; }
 /* render cells [name, yaw, spec|'@preset'] of the token as it is dressed now, at pxmm (×2 supersampled) */

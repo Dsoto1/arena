@@ -217,7 +217,7 @@ async function renderFig(name, o = {}) {
 }
 
 window.CREW96 = {
-  async init(res = 0.005) { TOK = await createToken({ res }); B = TOK._dbg.B; GM = B.mats.gm; const { turn } = TOK._dbg; turn.children[0].visible = false; PROPS = new THREE.Group(); turn.add(PROPS); return B.stats; },
+  async init(res = 0.005) { TOK = await createToken({ res, scale: 1.15 }); B = TOK._dbg.B; GM = B.mats.gm; const { turn } = TOK._dbg; turn.children[0].visible = false; PROPS = new THREE.Group(); turn.add(PROPS); return B.stats; },
   renderFig, FIGS: Object.keys(FIGS),
 };
 window.CREW96_READY = true;

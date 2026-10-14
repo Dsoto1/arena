@@ -12,7 +12,9 @@
    display only); no elbow bends the wrong way in any kit × preset; the archer (armed stand + Aim): bow arm nearly straight with a slight
    outward bend, the draw elbow back and out at shoulder height behind the head, in all 8 facings.
    v1.0 (his Aim note: the draw arm went through his body): the draw hand at the cheek, forearm within 35° of the arrow, and NO ARM through
-   the torso / neck / head (armClash) in every kit × preset × 8 facings. */
+   the torso / neck / head (armClash) in every kit × preset × 8 facings.
+   v1.02 (336-v102tok, his 9a): ONE fixed figure size — fitTile never shrinks (f 1); the body stays inside the tile, a long weapon is angled
+   and may still reach past; tokens re-convert once on T93_VER 3. */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
 (async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const SHOT=process.env.SHOT||'';
 const ROOT=path.dirname(path.resolve(process.argv[2]));
@@ -38,7 +40,7 @@ await pg.evaluate(async()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);await l
   await Store.put('customChars',c.id,c);await loadCustoms();
   window.__puts=0;const P=Store.put.bind(Store);Store.put=function(col,i){if(col==='customChars'&&i==='g100')window.__puts++;return P.apply(Store,arguments)};
   window.__g0=!!window.GEAR100;window.__t0=performance.now();openStudio('chars')});
-const conv=await until(()=>{const c=CUSTOM.chars.find(x=>x.id==='g100');return c&&c.tok93&&c.tok93.v===2&&c.tok93.sheet&&c.tok93.sheet.length>2000});
+const conv=await until(()=>{const c=CUSTOM.chars.find(x=>x.id==='g100');return c&&c.tok93&&c.tok93.v===T93_VER&&c.tok93.sheet&&c.tok93.sheet.length>2000});
 const A=await pg.evaluate(async()=>{const ms=Math.round(performance.now()-window.__t0);await new Promise(r=>setTimeout(r,600));const c=CUSTOM.chars.find(x=>x.id==='g100'),t=c.tok93||{},api=T93.api||{};
   const plain=api.presets&&JSON.parse(JSON.stringify(api.presets.map(p=>p[0])));const gear=t93Parts(c).gear;
   return {ms,buildMs:T93.buildMs,sheetMs:T93.ms.slice(-1)[0],g0:window.__g0,g:!!window.GEAR100,gearMs:G100.ms,baked:api.baked,why:api.bakeWhy,sculpted:api.sculpted&&api.sculpted(),
@@ -50,7 +52,7 @@ console.log('CONVERT',JSON.stringify({ms:A.ms,buildMs:A.buildMs,sheetMs:A.sheetM
 ok(A.body&&A.body.verts>=15000&&!A.bodyWhy&&A.stats&&A.stats.ms&&A.stats.ms.core!=null&&A.stats.ms.weights==null,'the body is worn from the bake (no field, no weights on the device) '+JSON.stringify({body:A.body,why:A.bodyWhy,ms:A.stats&&A.stats.ms}));
 ok(conv&&!A.g0&&A.g&&A.baked&&A.baked.keys>=30&&!A.why,'the bake loads on demand and is worn '+JSON.stringify({conv,g0:A.g0,g:A.g,baked:A.baked,why:A.why}));
 ok(['centurion','balteus','wrapsL','wrapsR','legwrapsUL','legwrapsUR'].every(k=>(A.sculpted||[]).includes(k)),'soldier kit = the sculpted printed pieces '+JSON.stringify(A.sculpted));
-ok(A.puts===1&&A.v===2&&A.h===A.hNow&&A.pk==='stand','re-converted once on T93_VER 2 '+JSON.stringify({puts:A.puts,v:A.v,pk:A.pk}));
+ok(A.puts===1&&A.v===3&&A.h===A.hNow&&A.pk==='stand','re-converted once on T93_VER 3 (v1.02: the fixed figure size) '+JSON.stringify({puts:A.puts,v:A.v,pk:A.pk}));
 ok(A.armed&&A.pose.length<=600&&A.wr&&A.wr.k==='gladius','the armed stand with his gladius '+JSON.stringify({armed:A.armed,pose:A.pose.length,wr:A.wr}));
 ok(A.cloth==='#7a1c14','loincloth per printed class '+A.cloth);
 ok(M.length===4&&M[0]>=50&&M[0]<=240&&M[1]>=90&&M[1]<=240&&Math.abs(M[2]-M[0]/2)<=2&&M[3]>M[1]*0.6&&M[3]<M[1]&&A.webp&&A.len<=120000,'sheet bounds '+JSON.stringify({M,len:A.len}));
@@ -85,18 +87,18 @@ const FIT=await pg.evaluate(async()=>{const api=T93.api;const kits=[['max load',
   for(const k of ['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio']){const c=blankChar();charFromClass(c,k);c.classRef='cls:'+k;kits.push([k,t93Parts(c).gear,t93Parts(c).look])}
   const rows=[],anatBad=[],clashBad=[];let worst=null,minF=1,base0=api.baseG.scale.x,shafts=0;
   for(const [k,g,look] of kits){api.apply({look:look||{},gear:g});const stand=api.standFor(g);
-    for(const [pk,,pj] of api.presets){api.apply({pose:pk==='stand'?stand:pj});const f=api.fitTile({keep:true});const r=api.reach();f.restore();
+    for(const [pk,,pj] of api.presets){api.apply({pose:pk==='stand'?stand:pj});const f=api.fitTile({keep:true});const r=api.reach();f.restore();   /* v1.02: f.hw / f.dn = the body (a weapon may reach past) */
       const el=api.elbows();if(!el.anatOk)anatBad.push(k+'/'+pk);const cl=api.clash();if(!cl.ok)clashBad.push(k+'/'+pk+' '+JSON.stringify(cl.worst));if(f.shaft)shafts++;
-      const row={k,pk,f:f.f,sh:f.shaft&&[f.shaft.a,f.shaft.k],hw:+r.hw.toFixed(4),dn:+r.dn.toFixed(4),lim:+(r.tileHalf).toFixed(4)};rows.push(row);if(f.f<minF){minF=f.f;worst=row}}
+      const row={k,pk,f:f.f,sh:f.shaft&&[f.shaft.a,f.shaft.k],hw:f.hw,dn:f.dn,lim:+(r.tileHalf).toFixed(4)};rows.push(row);if(f.f<minF){minF=f.f;worst=row}}
     await new Promise(r=>setTimeout(r,0))}
   const bad=rows.filter(r=>r.hw>r.lim+1e-4||r.dn>r.lim/2+1e-4);const small=rows.filter(r=>r.k!=='max load'&&r.f<0.7),maxMin=Math.min(...rows.filter(r=>r.k==='max load').map(r=>r.f));
   const perPose={};for(const r of rows.filter(r=>r.k!=='max load'))perPose[r.pk]=Math.min(perPose[r.pk]==null?1:perPose[r.pk],r.f);
   return {n:rows.length,bad:bad.slice(0,5),small:small.slice(0,6),maxMin,anatBad,clashBad,shafts,perPose,minF,worst,base:api.baseG.scale.x===base0&&base0===1,
     spill:rows.filter(r=>r.f<0.999).length,kits:kits.length,presets:api.presets.length,stands:Object.fromEntries(rows.filter(r=>r.pk==='stand').map(r=>[r.k,r.f]))}});
 console.log('FIT',JSON.stringify({n:FIT.n,spill:FIT.spill,shafts:FIT.shafts,minF:FIT.minF,worst:FIT.worst,stands:FIT.stands}));console.log('PERPOSE',JSON.stringify(FIT.perPose));
-ok(FIT.n===FIT.kits*FIT.presets&&FIT.kits===9&&FIT.presets>=20&&!FIT.bad.length&&FIT.base&&FIT.minF>=0.6,'best fit: every class kit + max load × every preset inside the tile, base untouched '+JSON.stringify({n:FIT.n,bad:FIT.bad,minF:FIT.minF,base:FIT.base}));
+ok(FIT.n===FIT.kits*FIT.presets&&FIT.kits===9&&FIT.presets>=20&&!FIT.bad.length&&FIT.base&&FIT.minF===1,'v1.02 one size: every class kit + max load × every preset — the body inside the tile at the fixed scale (f 1), base untouched '+JSON.stringify({n:FIT.n,bad:FIT.bad,minF:FIT.minF,base:FIT.base}));
 /* his 2b: no pose shrinks a figure below 70% — a long shaft is raised toward the diagonal / shortened instead (display only) */
-ok(!FIT.small.length&&FIT.shafts>0&&FIT.maxMin>=0.6,'every printed class kit × every preset keeps ≥70% of its size (long shafts raised/shortened); the max load (scutum, no shaft) ≥60% '+JSON.stringify({small:FIT.small,maxMin:FIT.maxMin,shafts:FIT.shafts}));
+ok(!FIT.small.length&&FIT.shafts>0&&FIT.maxMin===1,'v1.02: no kit × preset shrinks the figure (long shafts are angled instead) '+JSON.stringify({small:FIT.small,maxMin:FIT.maxMin,shafts:FIT.shafts}));
 /* every elbow bends the natural way (the upper arm's own hinge) in every kit × preset × facing */
 ok(!FIT.anatBad.length,'no elbow bent the wrong way '+JSON.stringify(FIT.anatBad.slice(0,6)));
 /* his Aim note: no arm goes through the body — upper arm / forearm / hand of both arms vs chest, belly, neck, head (armClash), every kit × preset × 8 facings */
@@ -107,7 +109,7 @@ ok(Object.keys(FIT.stands).length===9&&Object.values(FIT.stands).every(f=>f>=0.7
 const PX=await pg.evaluate(async()=>{const api=T93.api;const out=[];const g={head:{t:'murmillo'},chest:{t:'thorax'},belt:{t:'balteus'},arm:{R:{upper:{t:'galerus'},lower:{t:'bracers'}},L:{upper:{t:'manica'},wraps:1}},leg:{L:{upper:{t:'thighplate'},lower:{t:'cnemis'}},R:{upper:{t:'thighplate'},lower:{t:'ocrea'}}},wR:{t:'sword',k:'gladius'},wL:{t:'scutum',k:'scutum'}};
   for(const [gg,pk] of [[g,'lunge'],[{wR:{t:'spear',k:'hasta'}},'throw']]){api.apply({gear:gg,pose:api.presets.find(p=>p[0]===pk)[2]});const s=await api.sheetAsync();out.push(Object.assign({pk},s.tile,{meta:s.meta}))}
   api.apply({gear:{},pose:api.presets[0][2]});return out});
-ok(PX.every(t=>t.half<=t.limH+0.5&&t.below<=t.limD+0.5&&Math.abs(t.limH-49.9)<0.2),'real sheets inside the tile (px) '+JSON.stringify(PX));
+ok(PX[0].half<=PX[0].limH+0.5&&PX[0].below<=PX[0].limD+0.5&&PX.every(t=>t.f===1&&Math.abs(t.limH-49.9)<0.2),'real sheets: the max load inside the tile (px), no sheet shrinks the figure (a spear may reach past) '+JSON.stringify(PX));
 if(SHOT)await pg.screenshot({path:SHOT+'/tv100g_studio.png'});
 /* 3. the board: the minis' size rule whatever height a caller asks */
 await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,500));menuHide();
