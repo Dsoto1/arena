@@ -11,10 +11,10 @@ const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   fa.inj=wound();mine.inj=wound();o.faReq=injReq(fa.inj);
   
   for(let i=0;i<w.night.bouts.length;i++)if(!w.night.bouts[i].done)await runBoutSim(i);w.pend=[];if(w.special)w.special.done=true;
-  fa.inj=wound();mine.inj=wound();o.wk0=w.week;
+  fa.inj=wound();const faW=fa.inj;mine.inj=wound();o.wk0=w.week;
   try{o.ended=await Promise.race([endWeek(),W8(60000)])}catch(e){o.err=String(e)}o.wk1=w.week;
   await W8(300);while(CUR_MODAL){CUR_MODAL.done(null);await W8(200)}
-  o.faHealed=fa.alive&&!fa.inj;o.faHist=JSON.stringify(fa.hist||'').includes('physician');
+  /* the original wound must be closed; a random free agent may be put into a bout during the week and take a NEW wound (v1.03: once in CI) */o.faHealed=fa.alive&&fa.inj!==faW;o.faNew=!!fa.inj;o.faHist=JSON.stringify(fa.hist||'').includes('physician');
   o.mineFesters=!!(mine.inj&&mine.inj.neglect>=1);return o});
 ok(r.have,'a free agent and a fighter of mine');ok(r.faReq==='surgeon','the wound needs the surgeon');
 ok(r.faHealed,'free agent healed at the week end '+JSON.stringify(r));ok(r.faHist,'history line names the city physician');
