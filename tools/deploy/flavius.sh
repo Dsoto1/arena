@@ -25,7 +25,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=2
+FSH_VER=3
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -266,6 +266,8 @@ cmd_beta(){ gh_token; local br="${1:-}"
   clear_cdn "/play-beta/*"; rm -rf "$SRC"
   local dom; dom=$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text 2>/dev/null || echo "?")
   say "Beta ready:  https://$dom/play-beta/index.html"
+  local code; code=$(curl -s -L -m 20 -o /dev/null -w '%{http_code}' "https://$dom/play-beta/index.html?x=$RANDOM" || true)
+  [ "$code" = 200 ] && ok "it answers (200)" || printf '\033[1;31m✗ the beta address answers %s — send Claude this line\033[0m\n' "$code"
   echo "  · its own saves (a different address): to try your careers there, Saves → Backups → Export on the live game, Import on the beta"
   echo "  · Online sign-in only works on flaviusrule.com — test online on the live game"
   echo "  · when it is good, tell Claude: the release branch is made, then  bash flavius.sh release"; }
