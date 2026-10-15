@@ -26,3 +26,14 @@ N10a build time = the new level in weeks, one project at a time, on the banner
 N11a beast corpse models on the sand (cleared by the crew) + HIS ADD: only the new 3D models shown — no switch back to the old token on damage / severed limbs — unless Settings says otherwise
 N12a one sun upper left, silhouette shadows cast lower right, pillars cast long; Off + Light board paths; ≤16 ms frame
 N11 add-on: a — never fall back to the old token: 2+ lost limbs rendered on the device, the plain 3D class set while a render/load is pending; Settings "Token style: 3D always / classic" brings the old ones back.
+
+## Round 2 (2026-10-15)
+X1a over-cap careers: nobody released; no signing/borrowing until under the cap; desk "Over the cap 23/12" + Release/Lend/Trade; wages above the cap +25%
+X2 running loans finish on the old terms · X3 mgrsim 3 seasons before/after, numbers to him before release · X4 lessons + first hour updated · X5 rivals on the same rules
+E1a trade bundles (2+ for 1, counter-offer letters) · E2a league awards in the off-season → Tituli · E4a contract renewals at the off-season (raises, bench-time asks to leave)
+E3b AGE + RETIREMENT, his twist: prime ranges differ per gladiator; very rare "Tom Brady" = 20+ seasons at peak; very rare meteor = better than that but a 2-season window;
+    scoutable: see when a gladiator is in top form / in his prime (design questions asked)
+E5a shadows on everything (beasts, pillars, pots, chest, rubble), night = away from the rim torches
+E6a sharp pieces everywhere, NOT only zoomed — blurry edges in classic view too
+E7 section-switch button shows "1 switch left" / used (incl. online ticket holders)
+E8a Superbus week end to end (regal card, trophy banner, entrants letter the week before, podium → off-season) + HIS ADD: an extra bye week right before the Superbus
