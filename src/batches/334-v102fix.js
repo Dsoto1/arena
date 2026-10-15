@@ -118,7 +118,11 @@ function g6Proc(im,M,me,face,row){
       return [cx+k*(A[0][0]*Math.cos(t)+A[0][1]*Math.sin(t)),cy+oy+k*(A[1][0]*Math.cos(t)+A[1][1]*Math.sin(t))]};
     /* wall / rim samples only where the empty background lies just outside (the beast never covers those) */
     const out=(p,q)=>{const vx=p[0]-cx,vy=p[1]-(cy+q),l=Math.hypot(vx,vy)||1,X=Math.round(p[0]+vx/l*3),Y=Math.round(p[1]+vy/l*3);return X<0||Y<0||X>=W||Y>=H||d[(Y*W+X)*4+3]<30};
-    for(let i=0;i<24;i++){const t=i*Math.PI/12;let p=pt(t,0.9,0);smp(top,p[0],p[1]);p=pt(t,1,T*0.55);if(out(p,T*0.55))smp(wall,p[0],p[1]);p=pt(t,0.985,0);if(out(p,0))smp(wall,p[0],p[1])}
+    /* the wall / rim: walk IN from the empty background along the oval's normal to the first solid pixel and take the one just inside it (the figure scale / sheet may move the oval by a pixel or two, so no fixed ring radius) */
+    const solid=(x,y)=>{x=Math.round(x);y=Math.round(y);return x>=0&&y>=0&&x<W&&y<H&&d[(y*W+x)*4+3]>200};
+    const empty=(x,y)=>{x=Math.round(x);y=Math.round(y);return x<0||y<0||x>=W||y>=H||d[(y*W+x)*4+3]<30};
+    const edgeIn=(t,oy)=>{let q=pt(t,1.25,oy);if(!empty(q[0],q[1]))return null;for(let k=1.25;k>=0.75;k-=0.01){q=pt(t,k,oy);if(solid(q[0],q[1])){const n=pt(t,k-0.03,oy);return solid(n[0],n[1])?n:null}}return null};
+    for(let i=0;i<24;i++){const t=i*Math.PI/12;let p=pt(t,0.9,0);smp(top,p[0],p[1]);p=edgeIn(t,T*0.55);if(p)smp(wall,p[0],p[1]);p=edgeIn(t,0);if(p)smp(wall,p[0],p[1])}
     const med=L=>{const m=[0,1,2].map(ch=>L.map(p=>p[ch]).sort((a,b)=>a-b)[L.length>>1]);return L.filter(p=>(p[0]-m[0])**2+(p[1]-m[1])**2+(p[2]-m[2])**2<=60*60)};
     const topG=top.filter(p=>Math.max(p[0],p[1],p[2])-Math.min(p[0],p[1],p[2])<=56&&(p[0]*3+p[1]*6+p[2])/10>=95);const tp=topG.length>=3?med(topG):[],wl=wall.length>=3?med(wall):[];
     /* the colours learned on this sheet's other cells back this one up (the base's wood and rim are the same in every cell) */
