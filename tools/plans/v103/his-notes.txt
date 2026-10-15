@@ -1,0 +1,114 @@
+      GENERAL:
+      -i prefer the (x) or home button to be square instead of round.
+      -spectators, i think they should only be able to switch sections once a match. hopefully this
+      would alleviate them all moving to one section by end of a match, i would like to see them
+      distributed around the entire arena and not all packed into one section.
+      -the market action bar button should be disabled in round 3 if no cf can be spent in round 3 for
+      that event(like classic)
+      -when i start a play now challenge, it ashes the arena before taking me to the popup for event
+      details(behind that is the main menu). when i click enter arena, it takes me to main menu and
+      doesnt load.
+      -if a player wants to abandon a daily/weekly challenge, we should let them know what it means
+      for the score/attempts if they were to leave.
+      MANAGER MODE:
+      -week 1 season 3, i am seeing a week 13? week in review and it doesnt even mention our win.
+      We really need an o -season recap that summarizes all that came in and out of the team, the
+        nances, etc.
+      -by start of season 3 i already have most of my advisors level 5
+      -maybe we need an ‘o -season’ after the superbus to help the transition into the next season
+      instead of immediately going into the next season week 1. what could we do for this?
+      -when i won the superbus by season 2, my house was a C, my fame was legendary(5 laurels), i
+      have over 1200 in the trasury and only -31/wk, with a record of 10-22. What are your thoughts
+      on this progression?
+      -the match week card for the Flavius Superbus should be more regal and celebrational, if that
+      make sense. We could also update the nav bar to say ‘Superbus Week’. mine says Match
+      Week 4, not sure why it would say 4 since there is only the superbus to do.
+      -recruiting; feeling like with this many hours, di erent options should cost me more. There
+      should be balance of the slow grind of recruiting a larger group vs dumping a lot into 1-2
+      recruits and this should scale based several factors.
+      -roster list, i feel like showing bout 1 ghter at the top of the list gives perception he is our
+      number 1 guy. We need to blend this idea better.
+      -how does a loaned player look on the ‘books’. do i pay their wage but also earn coin from the
+      loan? I was thinking it could be a loan contract where they pay a lump sum to borrow the
+      player under the same contract terms. if they perform well enough for them maybe that triggers
+      a full trade/contract buyout of the player to their team once the loan completes.
+      -rivalry week, i should not be able to enter the other events. I was able to enter a random on
+      my team which broke the rivalry pairings. i withdrew from the match and it was lled by a free
+      agent not the original teammate. if we prevent other bouts from being entered we should be
+      good. Also, are we sure special events and invitationals don’t land on rivalry week? if so we
+      need to prevent that.
+      -i was just able to o er all 25 recruits on my board an o er and they all took it immediately. We
+      need to restrict o ers if we are already at our roster max. the ‘dance’ we play with recruits
+      should be like shing, sometimes we hook them in and other times, we lose them to another
+        sher or we scare them o or don’t o er the right incentives.
+      -roster size should be limited/scaled by some factors/levels of advisors/buildings/facilities. we
+      should also cap roster size to 15. That allows 4 starters, 11 bench/extras. The cap size can
+      really focus more on the bench/extras, as teams should be able to have at least 3-4 starter and
+      0-1 bench spots available(starting out in a new career). same for recruiting board, i also had
+      like 25 recruits being actively scouted. We need some balance and limitations/caps set by
+      lanista/advisor/building levels.
+      -Roster, instead of a large 3 card row to set starters, maybe there is easier way to integrate this
+      into the main list view of the roster(we should be allowed to set 4 starters; the rst team so-to-
+      speak; 4 bench/second-team), the rest are just rostered/loaned and can be moved up if not
+      loaned. Help me make sense of this.
+-roster; when i click on a gladiator, i really only want the information on the right side to be
+about that gladiator. all other aspects of the roster management should be build around the list/
+large card view.
+-should not be able to loan or be loaned an injured ghter
+-roster; there is a list of my ghters, but also a list of the bench and loans. They both seem
+similar and that list seems like we can incorporate it into the main list itself and restructure the
+layout respectively.(if the main function of the bench and loan list is to promote to starter or nd
+a team to loan to, we should nd better way to blend the two). Maybe the loan list is
+separated? also the “Keeping Him” section at the bottom is hard to nd/forgotten, how can we
+better integrate those features, if they are even needed still. overall we need a slight rework of
+the roster page including the tabula. the list for bench and loans seems to take up prime real
+estate and that entire right side should be all the information the selected gladiator(the top can
+still be the 3 starters).
+-roster, i should be able to sort my list of ghters, i have over 20 and want to see them sorted
+by ovr, or by wage, record, etc.
+-when i look in armory, i see 3 starters highlighted but when i click anyone else, it goes away
+and i no longer can see where the starters are.
+-i am still getting requests for players on my team and they are sending me nothing in return.
+-if i have a gladiator who is hurt and i need to treat them in the in rmary, i see they have a ‘hurt’
+label. would be nice to know which have received any treatment for the week.
+-the top bar that shows basic win loss record should re ect the new record format
+-when vulsos cart comes, maybe we should use an advisor vs a bar at the bottom of my ludus,
+and elsewhere. We can have it direct the user to the recruiting board
+-top bar i think we can remove “N Fighters” since i dont think that number should matter if the
+team is good and winning. it can always be seen on the nav bar too.
+-i still feel like recruiting is too easy or simple. i do one 1hr scouting action and go straight to
+the trial bout to get all their ratings immediately and give them an o er since i have so many
+hours. I have 23 rostered gladiators, as i was easily able to sign multiple a week. Maybe we
+should make the user wait until the following week to see who is ready to sign(after putting in
+recruiting hours on them in the previous one)?
+-as my team grows i am unable to keep up with impending in rmary care. i can easily sign
+them and put them into an event, but if i have a week that puts all 3-4 into the in rmary, my
+next i tend to struggle, as i want to be in the events, but my bench and beyond just dont have
+the skill to survive. This ends up making my roster of 10+
+-i feel like the advisors faces are too small for that size of a card(which may be too big). maybe
+we could increase the size of those faces and make better use of that empty space. we can
+enlarge the cards above it to let them breath and compact the advisor card slightly.
+-manager mode>my ludus>armory and promote tile locations can be swapped. The promote
+and upgrade school popups should have more too them, maybe artistic tiles to associate to
+each selection, same way we have for recruiting/scouting, etc. It would be nice to see what the
+current ‘building’ looks like and the upgrade tile showing what it could look like(only enable the
+build buttons if can a ord it)
+-manager mode, upgrading any buildings should take N weeks to complete based on the level
+instead of being instantaneous.
+CREATOR STUDIO:
+-all tabs under gear need the new tab look and layout same as other designers.
+3D Tokens:
+-Bears & Lions are too large i think. bears need scale down, lions are thicc, wolves too.
+-tholo still has a base when i toggle them o ; makes me think commodus and other human
+beast npcs would too.
+-beast corpse models
+-when i have a severed limb and want to use a tunnel but its disabled, let the user know they
+cannot use it due to missing a limb.
+-if not already, when Telemachus is drawn and does not allow attacking, we should inform the
+user that when they hover over their available attacks.
+-for these thinner bases, we may also need thinner lines for the class/team color detail on the
+edge of the bases.
+- i think we need to improve the shadows, they look like just circles or ovals and light source is
+directly above them. how can we make the lighting more dynamic?
+-notice how many recruits i have?! thats wild!
+The edges of the gladiator when zoomed in, look blurry, why is that? can we x this?
