@@ -25,3 +25,4 @@ N9a swap Armory/Promote tiles; bigger advisor faces, compact council card; Promo
 N10a build time = the new level in weeks, one project at a time, on the banner
 N11a beast corpse models on the sand (cleared by the crew) + HIS ADD: only the new 3D models shown — no switch back to the old token on damage / severed limbs — unless Settings says otherwise
 N12a one sun upper left, silhouette shadows cast lower right, pillars cast long; Off + Light board paths; ≤16 ms frame
+N11 add-on: a — never fall back to the old token: 2+ lost limbs rendered on the device, the plain 3D class set while a render/load is pending; Settings "Token style: 3D always / classic" brings the old ones back.
