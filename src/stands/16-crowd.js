@@ -413,6 +413,7 @@ function crowdStart(){
     if(sp.fav!=null){const want=secOf(S.players[sp.fav]);const full=S.spect.filter(o=>o!==sp&&o.sec===want&&o._seated).length>=Math.max(2,Math.ceil(S.spect.length/10));sp.sec=full?SECTIONS.findIndex((x,i)=>i!==want&&x.q===SECTIONS[want].q):want;sp._seated=1;
       // opening wager: arriving fans back their favorite with 2 CF at the opening line
       const o=(()=>{try{return oddsTable(true).find(x=>x.ps.some(q=>q.id===sp.fav))}catch(e){return null}})();sp.bet={pid:sp.fav,amt:2,odds:o?+o.odds.toFixed(2):2};if(!S.sim&&!HEADLESS)sp.bet.bid=betRec({src:'event',ev:S.seed,dayOff:0,min:660+Math.floor(Math.random()*150),city:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',who:sp.name,kind:'spectator',on:_T`${S.players[sp.fav].name} to win`,stake:2,odds:sp.bet.odds,cur:'CF'})}}
+  try{sw103Spread()}catch(e){}
   try{spectWagers()}catch(e){}
   const fans=S.spect.filter(s=>!s.human&&s.fav!=null),neu=S.spect.filter(s=>!s.human&&s.fav==null);
   log(_T`${S.spect.length}K spectators take their seats in the stands: ${fans.length}K arrive as fans, ${neu.length}K still to be won over. Open the crowd panel for every name.`);
@@ -548,9 +549,9 @@ async function spectatorsAct(){
       s.cf-=2;await spectStone(s,tgt);continue}
     // move to the section facing their grudge or favorite
     const want=grudge&&grudge.alive&&!grudge.exited?grudge:fav;const wq=want?quadOf(want):0;
-    if(want&&wq&&wq!==q&&s.cf>=3+thrift+2&&rand()<(s.temper==='fickle'?.6:s.temper==='hothead'?.4:.2)*crowdA()){
-      const opts=SECTIONS.map((x,i)=>i).filter(i=>SECTIONS[i].q===wq);const to=opts.includes(secOf(want))?secOf(want):pickOne(opts);
-      s.cf-=3;slog(_T`<b>${esc(s.name)}</b> moves to ${SECTIONS[to].n} (${want===grudge?_T('hunting'):_T('following')} ${esc(want.name)}).`);s.sec=to;/* v0.96: seat switches live under Stands only */emote(s,'🚶','');}
+    if(want&&wq&&wq!==q&&s.cf>=3+thrift+2&&!sw103Block(s)&&rand()<(s.temper==='fickle'?.6:s.temper==='hothead'?.4:.2)*crowdA()){
+      const opts=SECTIONS.map((x,i)=>i).filter(i=>SECTIONS[i].q===wq);const to=sw103Dest(opts,want)??(opts.includes(secOf(want))?secOf(want):pickOne(opts));
+      s.sw103=1;s.cf-=3;slog(_T`<b>${esc(s.name)}</b> moves to ${SECTIONS[to].n} (${want===grudge?_T('hunting'):_T('following')} ${esc(want.name)}).`);s.sec=to;/* v0.96: seat switches live under Stands only */emote(s,'🚶','');}
   }
 }
 /* spectStone — a spectator's stone: 1 hit die, 1 damage to a rolled location; a stone that finishes a gladiator collects all their CF. */
@@ -572,14 +573,14 @@ async function humanSpectatorTurn(me){
     const opts=[
       ...foes.map(p=>({label:_T`Throw a stone at ${p.name}`,sub:_T`${cfAmt87(2)} · 1 hit die, 1 damage to a rolled location${p.cf>0?_T` · finish them and you take their ${cfAmt87(p.cf)}`:''}`,value:'stone:'+p.id,disabled:me.cf<2})),
       ...inQ.map(p=>({label:_T`Throw an offering to ${p.name}`,sub:_T`${cfAmt87(8)} · a random offering from the Blessings bag`,value:'offer:'+p.id,disabled:me.cf<8})),
-      {label:_T('Change section'),sub:_T`${cfAmt87(3)} · move to another stand`,value:'move',disabled:me.cf<3},
+      {label:_T('Change section'),sub:sw103Sub(me,_T`${cfAmt87(3)} · move to another stand`),value:'move',disabled:me.cf<3||sw103Block(me)},
       {label:_T('Chant “Tholo!”'),sub:tholoOK?_T`every quadrant has a spectator with ${cfAmt87(3)}: each pays 3`:bossSpent(_T('Tholo'))?_T('Tholo has already entered this event — once per event'):_T`needs a spectator with ${cfAmt87(3)} in every quadrant`,value:'tholo',disabled:!tholoOK},
       {label:_T('Watch this rotation'),value:'pass',primary:1}];
     const v=await askW(me,'standsUpkeep',_T`Spectator upkeep · you have ${cfAmt87(me.cf)}`,`<p>${_T`${me.fav!=null&&S.players[me.fav]?_T`📣 You cheer for <b>${esc(S.players[me.fav].name)}</b>. `:''}<b>One action per upkeep.</b> You sit in <b>${SECTIONS[me.sec].n}</b> (Q${q}), the section of ${secPlayer(me.sec)?nm(secPlayer(me.sec)):_T('no gladiator')}. You can only reach gladiators standing in Q${q}: ${inQ.length?inQ.map(nm).join(', '):_T('nobody right now')}.`}</p>${hint(_T`Spectators earn ${cfAmt87(1)} per turn rotation. A stone that eliminates a gladiator hands you all of their CF.`)}`,opts);
     if(!v||v==='pass')return;
     if(v.startsWith('stone:')){me.cf-=2;const q9=S.players[+v.slice(6)];if(typeof spectHelpCheck==='function')spectHelpCheck('stone',q9);await spectStone(me,q9);render();return}
     if(v.startsWith('offer:')){me.cf-=8;const p=S.players[+v.slice(6)];if(typeof spectHelpCheck==='function')spectHelpCheck('offer',p);const off=drawOffer();p.items.push(mkOffer(off));stat(p,'spectOffers');stat(p,'spectVal',OFFER_VAL[off]||4);log(_T`You throw ${nm(p)} an offering from the stands: <b>${OFFER[off].n}</b> (${OFFER[off].s}).`);render();return}
-    if(v==='move'){const to=typeof seatMapPick==='function'?await seatMapPick(_T`Change section · ${cfAmt87(3)}`,_T`Pick a new stand. Its gladiator earns ${cfAmt87(1)} from you every turn.`,{disabled:i=>i===me.sec}):null;if(to!=null){me.cf-=3;me.sec=to;slog(_T`You move to ${SECTIONS[to].n}.`);render();return}continue}
+    if(v==='move'){const to=typeof seatMapPick==='function'?await seatMapPick(_T`Change section · ${cfAmt87(3)}`,_T`Pick a new stand. Its gladiator earns ${cfAmt87(1)} from you every turn.`,{disabled:i=>i===me.sec}):null;if(to!=null){me.cf-=3;me.sec=to;me.sw103=1;slog(_T`You move to ${SECTIONS[to].n}.`);render();return}continue}
     if(v==='tholo'){const payers={};for(const s of S.spect)if(!s.gone&&s.cf>=3){const k=SECTIONS[s.sec].q;if(!payers[k]||s.human)payers[k]=s}for(const s of Object.values(payers))s.cf-=3;log(_T('The stands take up your chant: “Tholo! Tholo!”'),'big');spawnNPC('tholo',_T('Tholo'),S.ri<2?[6,6]:null);crowdReact('boss',{n:'Tholo'});render();return}
   }
 }

@@ -102,7 +102,7 @@ function st82Popup(d){st82PopClose();const s=(S.spect||[]).find(x=>x.onlIdx===d.
   o.innerHTML=`<div class="st82hd">${_T`🎟 Your turn in the stands`} <span class="st82t" id="st82T">20s</span></div>
     <div class="st82sub">${_T`${esc(s.name)} · <b>${cfAmt87(s.cf)}</b> · ${esc(SECTIONS[s.sec].n)} (Q${q}) · one action · only you see this`}</div>
     <div class="st82list">${rows}</div>
-    <div class="st82mv"><select class="tin" id="st82Sec" ${s.cf<3?'disabled':''}>${secs}</select><button type="button" class="btn tksm" id="st82Move" ${s.cf<3?'disabled':''}>${_T`🚶 Change section · ${cfAmt87(3)}`}</button></div>
+    <div class="st82mv"><select class="tin" id="st82Sec" ${s.cf<3||sw103Block(s)?'disabled':''}>${secs}</select><button type="button" class="btn tksm" id="st82Move" ${s.cf<3||sw103Block(s)?'disabled':''}>${_T`🚶 Change section · ${cfAmt87(3)}`}</button><small class="sw103n">${sw103Note(s)}</small></div>
     <div class="st82msg rc-sub">${inQ.length?_T('Stones and offerings are locked to the tile you pick.'):_T`No gladiator stands in Q${q} — cheer, chant or move.`}</div>`;
   document.body.appendChild(o);const bw=document.getElementById('st82Wait');if(bw)bw.hidden=true;
   o.addEventListener('click',e=>{const b=e.target.closest('[data-st82]');if(b&&!b.disabled){st82Pick(d,JSON.parse(b.dataset.st82));return}
@@ -124,8 +124,8 @@ async function st82Apply(inp){const picks=(inp.picks||[]).slice().sort((a,b)=>a.
         if(q&&!q.underground){q.items.push(mkOffer(off));stat(q,'spectOffers');stat(q,'spectVal',OFFER_VAL[off]||4);log(_T`${me?_T('You throw'):_T`${who} throws`} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s}) — ${nm(q)} catches it.`);slog(_T`<b>${esc(s.name)}</b> pays ${cfAmt87(8)}: an offering lands at ${esc(q.name)}'s feet — ${O.n}.`,'big')}
         else if(inB(r,c)){placeFloor('offer',off,r,c);const n=npcAt(r,c);log(_T`${me?_T('You throw'):_T`${who} throws`} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s})${n?_T` — it lies under ${nm(n)}`:typeof spikeAt==='function'&&spikeAt(r,c)?_T(' — it falls into the spikes'):_T(' — it lies on the sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s offering lands on ${tl(r,c)}.`)}
         try{fx(r,c,'✦','#f0cf7d',{big:1})}catch(e){}}
-      else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(s.cf<3){slog(_T`${who} cannot afford to change section (${cfAmt87(3)}).`);continue}
-        s.cf-=3;slog(_T`${me?_T('You move'):_T`${who} moves`} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
+      else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(sw103Block(s)){slog(_T`${who} already switched section this match.`);continue}if(s.cf<3){slog(_T`${who} cannot afford to change section (${cfAmt87(3)}).`);continue}
+        s.sw103=1;s.cf-=3;slog(_T`${me?_T('You move'):_T`${who} moves`} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
       else if(a==='cheer'){const p=S.players[pick.v|0];if(!p||!p.alive||p.exited)continue;s.fav=p.id;s.favCls=p.cls;emote(s,'📣','');log(_T`${me?_T('You cheer'):_T`${who} cheers`} for ${nm(p)}.`);slog(_T`<b>${esc(s.name)}</b> cheers for ${esc(p.name)}.`)}
       else if(a==='tholo')chant.push(s)}
     finally{ONLM.specName=prev}}

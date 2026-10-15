@@ -97,9 +97,9 @@ function sec96Sync(){let b=document.getElementById('btnSec96');const box=documen
   b.disabled=me.cf<3||used||SEC96.busy;b.title=used?_T('Once a rotation — you already moved this rotation.'):me.cf<3?_T('Not enough Crowd Favor (3 CF).'):_T('Move to another stand. Its gladiator earns 1 CF from you every turn.')}
 BUS.on('render',()=>{try{sec96Sync()}catch(e){}});
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('#btnSec96');if(!b||b.disabled||SEC96.busy||CUR_MODAL)return;
-  const me=sec96Me();if(!me||me.cf<3||typeof seatMapPick!=='function')return;SEC96.busy=true;sec96Sync();
+  const me=sec96Me();if(!me||me.cf<3||sw103Block(me)||typeof seatMapPick!=='function')return;SEC96.busy=true;sec96Sync();
   try{const G=S;const to=await seatMapPick(_T`Change section · ${cfAmt87(3)}`,_T`Pick a new stand. Its gladiator earns ${cfAmt87(1)} from you every turn.`,{disabled:i=>i===me.sec});
-    if(to!=null&&G===S&&!S.over&&me.cf>=3){me.cf-=3;me.sec=to;me._sec96=S.rotation;slog(_T`You move to ${SECTIONS[to].n}.`);try{emote(me,'🚶','')}catch(e){}}}
+    if(to!=null&&G===S&&!S.over&&me.cf>=3&&!sw103Block(me)){me.cf-=3;me.sec=to;me._sec96=S.rotation;me.sw103=1;slog(_T`You move to ${SECTIONS[to].n}.`);try{emote(me,'🚶','')}catch(e){}}}
   catch(err){console.error(err)}finally{SEC96.busy=false;try{render()}catch(e){}}});
 
 /* ---------------- 8 · at most 3 stones hit one gladiator a turn ---------------- */

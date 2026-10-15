@@ -86,7 +86,7 @@ await closeAll(pg);
 const stud={};
 for(const [k,fn] of [['settings',"openSettings()"],['hub',"savesHub76('matches')"],['rules',"showRules()"],['gen',"modal('Hello','<p>x</p>',[{label:'OK',value:1}],{close:null})"]]){
   await pg.evaluate(f=>{(0,eval)(f)},fn);await W(pg,1800);stud[k]=await cs();await shot(pg,'closer_'+k);await closeAll(pg)}
-for(const [k,v] of Object.entries(stud))ok(/radial-gradient/.test(v.bg)&&v.bd==='0px'&&v.col==='rgb(74, 46, 20)'&&v.br.indexOf('50%')>=0,'G4 '+k+' ✕ is the stone stud '+JSON.stringify(v));
+for(const [k,v] of Object.entries(stud))ok(/radial-gradient/.test(v.bg)&&v.bd==='0px'&&v.col==='rgb(74, 46, 20)'&&v.br==='9px','G4 '+k+' ✕ is the stone stud (square since v1.03) '+JSON.stringify(v));
 await pg.evaluate(()=>{openHall()});await W(pg,1500);const hl=await cs();ok(/saveq/.test(hl.cls)&&/url|linear/.test(hl.bg),'G4 Annals closer = sandstone slab '+JSON.stringify(hl));await closeAll(pg);
 
 /* ---- G1 / G2 · saves ---- */

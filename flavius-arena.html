@@ -17252,6 +17252,7 @@ function crowdStart(){
     if(sp.fav!=null){const want=secOf(S.players[sp.fav]);const full=S.spect.filter(o=>o!==sp&&o.sec===want&&o._seated).length>=Math.max(2,Math.ceil(S.spect.length/10));sp.sec=full?SECTIONS.findIndex((x,i)=>i!==want&&x.q===SECTIONS[want].q):want;sp._seated=1;
       // opening wager: arriving fans back their favorite with 2 CF at the opening line
       const o=(()=>{try{return oddsTable(true).find(x=>x.ps.some(q=>q.id===sp.fav))}catch(e){return null}})();sp.bet={pid:sp.fav,amt:2,odds:o?+o.odds.toFixed(2):2};if(!S.sim&&!HEADLESS)sp.bet.bid=betRec({src:'event',ev:S.seed,dayOff:0,min:660+Math.floor(Math.random()*150),city:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',who:sp.name,kind:'spectator',on:_T`${S.players[sp.fav].name} to win`,stake:2,odds:sp.bet.odds,cur:'CF'})}}
+  try{sw103Spread()}catch(e){}
   try{spectWagers()}catch(e){}
   const fans=S.spect.filter(s=>!s.human&&s.fav!=null),neu=S.spect.filter(s=>!s.human&&s.fav==null);
   log(_T`${S.spect.length}K spectators take their seats in the stands: ${fans.length}K arrive as fans, ${neu.length}K still to be won over. Open the crowd panel for every name.`);
@@ -17387,9 +17388,9 @@ async function spectatorsAct(){
       s.cf-=2;await spectStone(s,tgt);continue}
     // move to the section facing their grudge or favorite
     const want=grudge&&grudge.alive&&!grudge.exited?grudge:fav;const wq=want?quadOf(want):0;
-    if(want&&wq&&wq!==q&&s.cf>=3+thrift+2&&rand()<(s.temper==='fickle'?.6:s.temper==='hothead'?.4:.2)*crowdA()){
-      const opts=SECTIONS.map((x,i)=>i).filter(i=>SECTIONS[i].q===wq);const to=opts.includes(secOf(want))?secOf(want):pickOne(opts);
-      s.cf-=3;slog(_T`<b>${esc(s.name)}</b> moves to ${SECTIONS[to].n} (${want===grudge?_T('hunting'):_T('following')} ${esc(want.name)}).`);s.sec=to;/* v0.96: seat switches live under Stands only */emote(s,'🚶','');}
+    if(want&&wq&&wq!==q&&s.cf>=3+thrift+2&&!sw103Block(s)&&rand()<(s.temper==='fickle'?.6:s.temper==='hothead'?.4:.2)*crowdA()){
+      const opts=SECTIONS.map((x,i)=>i).filter(i=>SECTIONS[i].q===wq);const to=sw103Dest(opts,want)??(opts.includes(secOf(want))?secOf(want):pickOne(opts));
+      s.sw103=1;s.cf-=3;slog(_T`<b>${esc(s.name)}</b> moves to ${SECTIONS[to].n} (${want===grudge?_T('hunting'):_T('following')} ${esc(want.name)}).`);s.sec=to;/* v0.96: seat switches live under Stands only */emote(s,'🚶','');}
   }
 }
 /* spectStone — a spectator's stone: 1 hit die, 1 damage to a rolled location; a stone that finishes a gladiator collects all their CF. */
@@ -17411,14 +17412,14 @@ async function humanSpectatorTurn(me){
     const opts=[
       ...foes.map(p=>({label:_T`Throw a stone at ${p.name}`,sub:_T`${cfAmt87(2)} · 1 hit die, 1 damage to a rolled location${p.cf>0?_T` · finish them and you take their ${cfAmt87(p.cf)}`:''}`,value:'stone:'+p.id,disabled:me.cf<2})),
       ...inQ.map(p=>({label:_T`Throw an offering to ${p.name}`,sub:_T`${cfAmt87(8)} · a random offering from the Blessings bag`,value:'offer:'+p.id,disabled:me.cf<8})),
-      {label:_T('Change section'),sub:_T`${cfAmt87(3)} · move to another stand`,value:'move',disabled:me.cf<3},
+      {label:_T('Change section'),sub:sw103Sub(me,_T`${cfAmt87(3)} · move to another stand`),value:'move',disabled:me.cf<3||sw103Block(me)},
       {label:_T('Chant “Tholo!”'),sub:tholoOK?_T`every quadrant has a spectator with ${cfAmt87(3)}: each pays 3`:bossSpent(_T('Tholo'))?_T('Tholo has already entered this event — once per event'):_T`needs a spectator with ${cfAmt87(3)} in every quadrant`,value:'tholo',disabled:!tholoOK},
       {label:_T('Watch this rotation'),value:'pass',primary:1}];
     const v=await askW(me,'standsUpkeep',_T`Spectator upkeep · you have ${cfAmt87(me.cf)}`,`<p>${_T`${me.fav!=null&&S.players[me.fav]?_T`📣 You cheer for <b>${esc(S.players[me.fav].name)}</b>. `:''}<b>One action per upkeep.</b> You sit in <b>${SECTIONS[me.sec].n}</b> (Q${q}), the section of ${secPlayer(me.sec)?nm(secPlayer(me.sec)):_T('no gladiator')}. You can only reach gladiators standing in Q${q}: ${inQ.length?inQ.map(nm).join(', '):_T('nobody right now')}.`}</p>${hint(_T`Spectators earn ${cfAmt87(1)} per turn rotation. A stone that eliminates a gladiator hands you all of their CF.`)}`,opts);
     if(!v||v==='pass')return;
     if(v.startsWith('stone:')){me.cf-=2;const q9=S.players[+v.slice(6)];if(typeof spectHelpCheck==='function')spectHelpCheck('stone',q9);await spectStone(me,q9);render();return}
     if(v.startsWith('offer:')){me.cf-=8;const p=S.players[+v.slice(6)];if(typeof spectHelpCheck==='function')spectHelpCheck('offer',p);const off=drawOffer();p.items.push(mkOffer(off));stat(p,'spectOffers');stat(p,'spectVal',OFFER_VAL[off]||4);log(_T`You throw ${nm(p)} an offering from the stands: <b>${OFFER[off].n}</b> (${OFFER[off].s}).`);render();return}
-    if(v==='move'){const to=typeof seatMapPick==='function'?await seatMapPick(_T`Change section · ${cfAmt87(3)}`,_T`Pick a new stand. Its gladiator earns ${cfAmt87(1)} from you every turn.`,{disabled:i=>i===me.sec}):null;if(to!=null){me.cf-=3;me.sec=to;slog(_T`You move to ${SECTIONS[to].n}.`);render();return}continue}
+    if(v==='move'){const to=typeof seatMapPick==='function'?await seatMapPick(_T`Change section · ${cfAmt87(3)}`,_T`Pick a new stand. Its gladiator earns ${cfAmt87(1)} from you every turn.`,{disabled:i=>i===me.sec}):null;if(to!=null){me.cf-=3;me.sec=to;me.sw103=1;slog(_T`You move to ${SECTIONS[to].n}.`);render();return}continue}
     if(v==='tholo'){const payers={};for(const s of S.spect)if(!s.gone&&s.cf>=3){const k=SECTIONS[s.sec].q;if(!payers[k]||s.human)payers[k]=s}for(const s of Object.values(payers))s.cf-=3;log(_T('The stands take up your chant: “Tholo! Tholo!”'),'big');spawnNPC('tholo',_T('Tholo'),S.ri<2?[6,6]:null);crowdReact('boss',{n:'Tholo'});render();return}
   }
 }
@@ -28101,7 +28102,7 @@ function turnSweep(){if(HEADLESS)return;for(const id of ['cardShow','bubbles']){
   base.call(this,f,label);const t1=MM.launchedAt;if(t1===t0)return;
   setTimeout(()=>{if(MM.launchedAt!==t1||!MM.launchPending)return;MM.launchedAt=t1+1; /* the built-in watchdog stands down; this one waits */
     const t2=Date.now();const w=()=>{if(MM.launchPending&&Date.now()-t2<15000)return setTimeout(w,100);
-      const m=$('#mainMenu');if(!m||!m.hidden||!$('#modal').hidden||!$('#mReturn').hidden||CUR_MODAL)return;if(typeof CITY!=='undefined'&&CITY.open)return;if(S&&!S.over&&S.phase!=='setup')return;if(typeof START89!=='undefined'&&START89>0)return; /* v0.89: an event still starting up (drafts) */
+      const m=$('#mainMenu');if(!m||!m.hidden||!$('#modal').hidden||!$('#mReturn').hidden||CUR_MODAL)return;if(typeof CITY!=='undefined'&&CITY.open)return;if(S&&!S.over&&S.phase!=='setup')return;if(Date.now()-(MM.goAt||0)<15000)return; /* v1.03: the horns / a challenge's Enter just sounded (344 dc103Stamp) */if(typeof START89!=='undefined'&&START89>0)return; /* v0.89: an event still starting up (drafts) */
       MM.fromMenu=false;menuShow()};w()},2900)}}
 /* ---------- THE LUDUS CUT (rulebook tie-break, as Virgilante set it): the top two by CF go to the duel; a tie at the cut is
    broken by the most coin, and if still tied, the tied gladiators roll a d12 against each other until one is higher. ---------- */
@@ -37100,7 +37101,7 @@ function st82Popup(d){st82PopClose();const s=(S.spect||[]).find(x=>x.onlIdx===d.
   o.innerHTML=`<div class="st82hd">${_T`🎟 Your turn in the stands`} <span class="st82t" id="st82T">20s</span></div>
     <div class="st82sub">${_T`${esc(s.name)} · <b>${cfAmt87(s.cf)}</b> · ${esc(SECTIONS[s.sec].n)} (Q${q}) · one action · only you see this`}</div>
     <div class="st82list">${rows}</div>
-    <div class="st82mv"><select class="tin" id="st82Sec" ${s.cf<3?'disabled':''}>${secs}</select><button type="button" class="btn tksm" id="st82Move" ${s.cf<3?'disabled':''}>${_T`🚶 Change section · ${cfAmt87(3)}`}</button></div>
+    <div class="st82mv"><select class="tin" id="st82Sec" ${s.cf<3||sw103Block(s)?'disabled':''}>${secs}</select><button type="button" class="btn tksm" id="st82Move" ${s.cf<3||sw103Block(s)?'disabled':''}>${_T`🚶 Change section · ${cfAmt87(3)}`}</button><small class="sw103n">${sw103Note(s)}</small></div>
     <div class="st82msg rc-sub">${inQ.length?_T('Stones and offerings are locked to the tile you pick.'):_T`No gladiator stands in Q${q} — cheer, chant or move.`}</div>`;
   document.body.appendChild(o);const bw=document.getElementById('st82Wait');if(bw)bw.hidden=true;
   o.addEventListener('click',e=>{const b=e.target.closest('[data-st82]');if(b&&!b.disabled){st82Pick(d,JSON.parse(b.dataset.st82));return}
@@ -37122,8 +37123,8 @@ async function st82Apply(inp){const picks=(inp.picks||[]).slice().sort((a,b)=>a.
         if(q&&!q.underground){q.items.push(mkOffer(off));stat(q,'spectOffers');stat(q,'spectVal',OFFER_VAL[off]||4);log(_T`${me?_T('You throw'):_T`${who} throws`} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s}) — ${nm(q)} catches it.`);slog(_T`<b>${esc(s.name)}</b> pays ${cfAmt87(8)}: an offering lands at ${esc(q.name)}'s feet — ${O.n}.`,'big')}
         else if(inB(r,c)){placeFloor('offer',off,r,c);const n=npcAt(r,c);log(_T`${me?_T('You throw'):_T`${who} throws`} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s})${n?_T` — it lies under ${nm(n)}`:typeof spikeAt==='function'&&spikeAt(r,c)?_T(' — it falls into the spikes'):_T(' — it lies on the sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s offering lands on ${tl(r,c)}.`)}
         try{fx(r,c,'✦','#f0cf7d',{big:1})}catch(e){}}
-      else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(s.cf<3){slog(_T`${who} cannot afford to change section (${cfAmt87(3)}).`);continue}
-        s.cf-=3;slog(_T`${me?_T('You move'):_T`${who} moves`} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
+      else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(sw103Block(s)){slog(_T`${who} already switched section this match.`);continue}if(s.cf<3){slog(_T`${who} cannot afford to change section (${cfAmt87(3)}).`);continue}
+        s.sw103=1;s.cf-=3;slog(_T`${me?_T('You move'):_T`${who} moves`} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
       else if(a==='cheer'){const p=S.players[pick.v|0];if(!p||!p.alive||p.exited)continue;s.fav=p.id;s.favCls=p.cls;emote(s,'📣','');log(_T`${me?_T('You cheer'):_T`${who} cheers`} for ${nm(p)}.`);slog(_T`<b>${esc(s.name)}</b> cheers for ${esc(p.name)}.`)}
       else if(a==='tholo')chant.push(s)}
     finally{ONLM.specName=prev}}
@@ -52733,9 +52734,9 @@ function sec96Sync(){let b=document.getElementById('btnSec96');const box=documen
   b.disabled=me.cf<3||used||SEC96.busy;b.title=used?_T('Once a rotation — you already moved this rotation.'):me.cf<3?_T('Not enough Crowd Favor (3 CF).'):_T('Move to another stand. Its gladiator earns 1 CF from you every turn.')}
 BUS.on('render',()=>{try{sec96Sync()}catch(e){}});
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('#btnSec96');if(!b||b.disabled||SEC96.busy||CUR_MODAL)return;
-  const me=sec96Me();if(!me||me.cf<3||typeof seatMapPick!=='function')return;SEC96.busy=true;sec96Sync();
+  const me=sec96Me();if(!me||me.cf<3||sw103Block(me)||typeof seatMapPick!=='function')return;SEC96.busy=true;sec96Sync();
   try{const G=S;const to=await seatMapPick(_T`Change section · ${cfAmt87(3)}`,_T`Pick a new stand. Its gladiator earns ${cfAmt87(1)} from you every turn.`,{disabled:i=>i===me.sec});
-    if(to!=null&&G===S&&!S.over&&me.cf>=3){me.cf-=3;me.sec=to;me._sec96=S.rotation;slog(_T`You move to ${SECTIONS[to].n}.`);try{emote(me,'🚶','')}catch(e){}}}
+    if(to!=null&&G===S&&!S.over&&me.cf>=3&&!sw103Block(me)){me.cf-=3;me.sec=to;me._sec96=S.rotation;me.sw103=1;slog(_T`You move to ${SECTIONS[to].n}.`);try{emote(me,'🚶','')}catch(e){}}}
   catch(err){console.error(err)}finally{SEC96.busy=false;try{render()}catch(e){}}});
 
 /* ---------------- 8 · at most 3 stones hit one gladiator a turn ---------------- */
@@ -72643,6 +72644,97 @@ function loan102Pickers(root){const w=W_(),pm=me();if(!w||!pm)return;const full=
 {const base=mgrHTML;mgrHTML=function(){const h=base.apply(this,arguments);try{if(typeof h!=='string'||!/data-m47(lend|borrow)/.test(h))return h;const t=document.createElement('template');t.innerHTML=h;loan102Pickers(t.content);
   const d=document.createElement('div');d.appendChild(t.content);return d.innerHTML}catch(e){console.error(e)}return h}}
 }
+/* =====================================================================
+   344-V103GEN · v1.03 — his v1.02 notes, GENERAL items (fixes + small changes). Kill switch: localStorage flavius_v103aoff=1 (every rule below
+   goes back to the old behaviour; the square-corner CSS too).
+   G1  the ✕ / 🏛 buttons of windows and submenus (.mclose, #mClose, Settings' .s98-x, the Ludus popover's .lu100x, Challenges' .dc102x) are SQUARE
+       (rounded-corner square, 9 px) — same size, same sandstone / stone look. The pill "Save and exit" (.mclose.saveq) keeps its shape.
+   G2  Market (and Crowd Favor's reason tip) in a round that forbids CF: `rndCF103()` = RD().cf is false. 236-v96deals does it for events whose EVERY
+       round forbids CF (noCF96); this generalises it to the current round (Classic's Duel): the action bar's Market is disabled, its tile says
+       "No CF this round" and the tip says why. Replaces nothing (adds to 236); a no-CF whole event is still 236's text.
+   G3  🔴 starting a challenge (310 dc100Begin): ROOT CAUSE — mmLaunch's 3 s watchdog (08-setup) brings the main menu back when "nothing took the
+       screen"; the Challenges window opened through mmLaunch, and the gap between its close and startEvent's first line (the click → `await
+       modal` → menuHide → dc100Begin) is exactly "nothing on screen" (no window, no S in play, START89 still 0, no goAt — the horns click in
+       56-v52 stamps MM.goAt, a challenge's Enter did not). On a slower machine / a quick Enter inside 3 s the watchdog called menuShow(): the menu sat
+       behind the briefing and Enter (which ends the opening window) left it over the live match. Fix: a capture click on [data-dc100go] stamps
+       MM.goAt + clears MM.fromMenu (what the horns do), and dc100Begin stamps them too (a refused weekly start un-stamps). 72-v59's own 2.9 s watchdog got the same goAt guard (small direct edit).
+   G4  abandoning a challenge (abandonAsk: the 🏛 menu and New event) asks in ONE centred popup (ask76) what it costs: daily = the only scored attempt is
+       spent (practice: nothing lost); weekly = the attempt is counted, N of 3 attempts left. Cancel keeps playing. REPLACES 08-setup's
+       "Leave the arena? / Abandon this event?" window for challenges (no summoned fighters, no Ludus records there); Save & leave is not offered.
+   N1a spectators switch section ONCE a match: the flag `s.sw103` lives on the spectator (in S, so snapshots and online clients agree). Checked by:
+       16-crowd's CPU move (`!sw103Block(s)` BEFORE its rand() — the dice only skip for a spectator who already switched), the human upkeep window's
+       Change section, 232's #btnSec96 (replaces its once-a-rotation `_sec96` rule), 128's online ticket-holder window (apply refuses a second move,
+       identically on every client). CPU moves land in the LEAST crowded section facing the target (`sw103Dest`, was always the favourite's). The crowd
+       starts spread: `sw103Spread()` (called from crowdStart before the seat log) moves NEUTRAL spectators from sections above ceil(n/8) to the emptiest
+       one — deterministic, no dice. Rule change → treplay101 goldens need a deliberate re-record.
+   E7  "1 switch left" / "Switched" on #btnSec96 (data-sw103 + CSS), in the Stands tab (`.sw103s`), in the human spectator's upkeep option and in the
+       online ticket holder's window (`.sw103n`).
+   ===================================================================== */
+const V103A={off:(()=>{try{return localStorage.getItem('flavius_v103aoff')==='1'}catch(e){return false}})()};
+
+/* ---------- N1a / E7 · one section switch a match ---------- */
+function sw103Block(s){return !V103A.off&&!!s&&!!s.sw103}
+function sw103Note(s){return V103A.off?'':sw103Block(s)?_T('Switched'):_T('1 switch left')}
+function sw103Sub(s,base){return sw103Block(s)?_T('Switched — one switch a match'):V103A.off?base:`${base} · ${_T('1 switch left')}`}
+function sw103Me(){try{if(!S||S.over||!S.spect)return null;const mine=S.onl&&typeof ONLM!=='undefined'?ONLM.me:null;
+  return S.spect.find(s=>s.human&&!s.gone&&(!S.onl||s.onlIdx===mine))||null}catch(e){return null}}
+/* where a CPU spectator goes: the least crowded section facing the target (ties → the favourite's own) */
+function sw103Dest(opts,want){if(V103A.off||!S||!S.spect)return undefined;const n=i=>S.spect.filter(x=>!x.gone&&x.sec===i).length;let best=null;
+  for(const i of opts){if(best===null||n(i)<n(best)||(n(i)===n(best)&&i===secOf(want)))best=i}return best===null?undefined:best}
+/* the crowd starts spread over the eight sections: neutrals leave any section above ceil(n/8) for the emptiest one */
+function sw103Spread(){if(V103A.off||!S||!S.spect)return;const L=S.spect.filter(s=>!s.gone);const cap=Math.max(1,Math.ceil(L.length/SECTIONS.length));
+  const cnt=SECTIONS.map((x,i)=>L.filter(s=>s.sec===i).length);
+  for(let k=L.length-1;k>=0;k--){const s=L[k];if(s.human||s.fav!=null||cnt[s.sec]<=cap)continue;
+    let t=0;for(let i=1;i<cnt.length;i++)if(cnt[i]<cnt[t])t=i;
+    if(cnt[t]>=cap||t===s.sec)continue;cnt[s.sec]--;cnt[t]++;s.sec=t}}
+/* #btnSec96 (232): once a match, with the words on the button */
+{const base=sec96Sync;sec96Sync=function(){const r=base.apply(this,arguments);try{if(V103A.off)return r;const b=document.getElementById('btnSec96'),me=sec96Me();
+  if(!b||!me){if(b)b.removeAttribute('data-sw103');return r}
+  const used=sw103Block(me);b.dataset.sw103=sw103Note(me);
+  b.disabled=me.cf<3||used||SEC96.busy;
+  b.title=used?_T('Spectators switch section once a match — you already did.'):me.cf<3?_T('Not enough Crowd Favor (3 CF).'):_T('Move to another stand — once a match. Its gladiator earns 1 CF from you every turn.')}catch(e){}return r}}
+/* the Stands tab: a line for the human spectator */
+{const base=standsDrawerHTML;standsDrawerHTML=function(opt){const h=base.apply(this,arguments);try{if(V103A.off||(opt&&opt.chronOnly))return h;const me=sw103Me();
+  if(!me||typeof h!=='string')return h;
+  return `<p class="rc-sub sw103s" data-sw103s="${sw103Block(me)?'used':'left'}">${_T('🚶 Section switch')}: <b>${esc(sw103Note(me))}</b></p>`+h}catch(e){return h}}}
+
+/* ---------- G2 · Market in a round that forbids CF ---------- */
+function rndCF103(){try{if(!S||!S.players||S.phase==='setup'||S.over)return false;const r=RD();return !!r&&!r.cf}catch(e){return false}}
+const noCFRound103=()=>_T`Crowd Favor can't be spent in this round, so nothing can be bought at the Market.`;
+function rndCFBar103(){try{if(V103A.off||!rndCF103()||(typeof noCF96==='function'&&noCF96()))return; /* a whole no-CF event keeps 236's words */ const A=document.getElementById('actions');if(!A)return;const reason=_T('No CF this round'),tip=noCFRound103();
+  for(const b of A.querySelectorAll('[data-act="market"],[data-act="crowd"]')){const lab=b.querySelector('.l96');const l=((lab&&lab.textContent)||'').trim();const mk=b.dataset.act==='market';
+    if(mk){b.disabled=true;b.classList.add('off90','nocf96')}
+    if(!mk&&!b.disabled)continue; /* Crowd: 07-ui already disables it (CF only) — only the reason; the spear stays */
+    b.dataset.tip=tip;b.dataset.nocf103='1';b.setAttribute('aria-label',(l||b.textContent.trim())+' — '+reason);
+    const c=b.querySelector('.c96');if(c&&mk)c.textContent=reason;
+    if(mk&&!c&&b.closest('.k96')){const i=document.createElement('i');i.className='c96';i.textContent=reason;(lab||b).after(i)}}}catch(e){}}
+{const base=render;render=function(){const r=base.apply(this,arguments);rndCFBar103();return r}}
+
+/* ---------- G3 · a challenge's start never lets the menu watchdog in ---------- */
+function dc103Stamp(){try{if(V103A.off||typeof MM==='undefined')return;MM.goAt=Date.now();MM.fromMenu=false}catch(e){}}
+document.addEventListener('click',e=>{try{const b=e.target&&e.target.closest&&e.target.closest('[data-dc100go]');if(b&&!b.disabled)dc103Stamp()}catch(err){}},true);
+if(typeof dc100Begin==='function'){const base=dc100Begin;dc100Begin=function(){dc103Stamp();let r;try{r=base.apply(this,arguments)}catch(e){try{MM.goAt=0}catch(x){}throw e}
+  if(r===false&&!V103A.off){try{MM.goAt=0}catch(x){}}return r}}
+
+/* ---------- G4 · leaving a challenge says what it costs ---------- */
+function dc103Cost(){const D=S.daily100;const R=(()=>{try{return dc100Rec(dc100Load(),D.kind,D.key)}catch(e){return null}})();
+  if(D.kind==='w'){const left=dc100Left('w',R);return `<p style="margin:0 0 6px">${_T`This attempt is already counted. Leaving now scores nothing, and the best of your attempts is what counts.`}</p><p style="margin:0"><b>${left===1?_T('1 of 3 attempts left this week'):_T`${left} of 3 attempts left this week`}</b></p>`}
+  if(D.att===1)return `<p style="margin:0 0 6px">${_T`Today's attempt is already counted — it is the only one that scores. Leaving now earns no score and no medal.`}</p><p style="margin:0" class="rc-sub">${_T`You can still play it again as practice.`}</p>`;
+  return `<p style="margin:0">${_T`This is practice, so nothing is lost by leaving. Your first attempt today already counts.`}</p>`}
+{const base=abandonAsk;abandonAsk=async function(ctx){
+  try{if(!V103A.off&&!HEADLESS&&S&&S.daily100&&!S.over&&typeof ask76==='function'){
+    const ok=await ask76(_T('Leave the challenge?'),dc103Cost(),_T('Abandon the challenge'),_T('Keep playing'));
+    if(!ok)return 'keep';
+    try{if(typeof R102!=='undefined'&&R102&&S===R102.S&&typeof r102Forget==='function')r102Forget()}catch(e){}
+    return 'abandon'}}catch(e){console.error(e)}
+  return base.apply(this,arguments)}}
+
+/* ---------- G1 · square close / home buttons ---------- */
+if(!V103A.off){const st=document.createElement('style');st.id='v103a-css';
+st.textContent=`.mclose:not(.saveq),#mClose:not(.saveq),#modal:has(#s98) #mClose,#modal:has(#tac98) #mClose,#modal.sand100 #mClose,.s98-x,.lu100x,.dc102x{border-radius:9px!important}
+#btnSec96[data-sw103]::after{content:" · " attr(data-sw103);font-size:.86em;opacity:.85}
+.sw103s{margin:2px 0 8px}.sw103n{display:block;margin-top:4px;color:var(--muted);font-size:12px}`;
+document.head.appendChild(st)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
