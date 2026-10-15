@@ -21,7 +21,7 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
   const r=await pg.evaluate(async({strat,run,SEASONS,GEAR,GEARM,ANYM})=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));
     ARM94.disabled=GEAR;if(/^rk\d+$/.test(GEARM))ARM94.repK=1/+GEARM.slice(2);if(GEARM==='old'){ARM94.repK=1/3;ARM94.sellK=0.4;ARM94.sellMax=999;ARM94.mkHome=true}newWorld({type:'pre',key:MGR_PRE[run%MGR_PRE.length].key});MGR.view=null;const w=W_(),m=me();
     const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;const rivals=()=>w.mgrs.filter(x=>!x.isPlayer&&!x.dead);
-    const start={mine:avg(rosterOf(m).map(effOvr)),riv:avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))};let nCard=0,bare=0,miss=0,sev=0,injuries=0,lost=0,c6=null,c12=null,c24=null,minCoin=1e9,collapsed=0;const n0=rosterOf(m).length;
+    const start={mine:avg(rosterOf(m).map(effOvr)),riv:avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))};let injWk=0,rivInjWk=0,nCard=0,bare=0,miss=0,sev=0,injuries=0,lost=0,c6=null,c12=null,c24=null,minCoin=1e9,collapsed=0;const n0=rosterOf(m).length;
     const weeks=SEASONS*12;
     for(let k=0;k<weeks;k++){
       const yard=strat!=='base';const ros=()=>rosterOf(m);
@@ -35,7 +35,9 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       for(const g of ros())if(g.morale<45&&m.coin>25){m.coin-=5;g.morale=Math.min(100,g.morale+8)} /* an attentive lanista: a feast for the low-spirited (same for every strategy) */
       for(const g of ros())if(g.contract&&g.contract.weeks<=2&&g.morale>=35){g.contract.weeks=Math.max(0,g.contract.weeks)+8;g.contract.wage=Math.max(g.contract.wage,askWage(g));g.contract.expired=0}
       /* care */
-      for(const g of ros())if(g.inj&&!g.inj.war){const req=injReq(g.inj);if(req==='surgeon'&&m.coin>=SURGEON+20){m.coin-=SURGEON;delete g.inj}else if(req!=='surgeon'&&m.coin>=MEDICUS+20){m.coin-=MEDICUS;delete g.inj}}
+      for(const g of ros())if(g.inj&&!g.inj.war){const req=injReq(g.inj);
+        if(typeof care101Do==='function'&&typeof V101B!=='undefined'&&V101B.on){if(m.coin>=(req==='surgeon'?SURGEON:MEDICUS)/2+20)care101Do(g,req==='surgeon'?'surgeon':'medic',{auto:1})} /* v1.02: the game's own care rules (Medicus hours, half coin; 341 books the cure to the week's end) */
+        else if(req==='surgeon'&&m.coin>=SURGEON+20){m.coin-=SURGEON;delete g.inj}else if(req!=='surgeon'&&m.coin>=MEDICUS+20){m.coin-=MEDICUS;delete g.inj}}
       /* v0.94 the Armory: an attentive lanista keeps his fighters armed (repairs, empty hands, missing class pieces) — the rivals' own shopping rule */
       if(typeof arm94AutoShop==='function')arm94AutoShop(w,m,{player:true});
       /* the yard */
@@ -57,6 +59,7 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
         const K=arm94Kit(g.cls);miss+=Math.max(0,K.a.length-g.eq94.a.filter(P=>!P.dmg).length)}}}
       if(w.special&&!w.special.done&&typeof specAutoRun==='function'){try{await specAutoRun()}catch(e){}}
       const inj0=ros().filter(g=>g.inj).length;
+      injWk+=ros().filter(g=>g.inj&&!g.inj.war).length;{const RV=rivals();if(RV.length)rivInjWk+=RV.reduce((t,x)=>t+rosterOf(x).filter(g=>g.inj&&!g.inj.war).length,0)/RV.length} /* v1.02: fighter-weeks hurt at entry time */
       for(let i=0;i<w.night.bouts.length;i++)if(!w.night.bouts[i].done){try{await runBoutSim(i)}catch(e){}}
       let guard=0;while((w.pend||[]).length&&guard++<30){const P=w.pend[0];const g=gById(P.gid);try{if(P.t==='thumb')settlePending(0,null,{d6:1+Math.floor(Math.random()*6),d12:1+Math.floor(Math.random()*12)});else if(P.t==='blood')settlePending(0,'let');else settlePending(0,'stay')}catch(e){w.pend.shift()}}
       const alive0=ros().length;let ok=true;try{ok=await endWeek()}catch(e){ok=false}if(ok===false)break;
@@ -64,7 +67,7 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       const wk=k+1;if(wk===6)c6=m.coin;if(wk===12)c12=m.coin;if(wk===24)c24=m.coin;minCoin=Math.min(minCoin,m.coin);
       if(m.dead||w.dead||(!ros().length&&m.coin<0)){collapsed=wk;break}}
     const table=w.mgrs.filter(x=>!x.dead).map(x=>({p:x.isPlayer,wins:x.wins||0})).sort((a,b)=>b.wins-a.wins);
-    return {strat,run,wins:m.wins||0,rank:table.findIndex(x=>x.p)+1,wage:rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0),houses:table.length,mine:+avg(rosterOf(m).map(effOvr)).toFixed(1),riv:+avg(rivals().flatMap(x=>rosterOf(x).map(effOvr))).toFixed(1),
+    return {strat,run,injWk,rivInjWk:+rivInjWk.toFixed(1),rivWins:+avg(rivals().map(x=>x.wins||0)).toFixed(1),wins:m.wins||0,rank:table.findIndex(x=>x.p)+1,wage:rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0),houses:table.length,mine:+avg(rosterOf(m).map(effOvr)).toFixed(1),riv:+avg(rivals().flatMap(x=>rosterOf(x).map(effOvr))).toFixed(1),
       gain:+(avg(rosterOf(m).map(effOvr))-start.mine).toFixed(1),rivGain:+(avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))-start.riv).toFixed(1),coin:m.coin,c6,c12,c24,minCoin,collapsed,fighters:rosterOf(m).length,n0,injuries,lost,weeks:w.week,rivLv:typeof advLvM==="function"?+avg(rivals().map(x=>advLvM(x,"recruiter"))).toFixed(2):0,rivCoin:Math.round(avg(rivals().map(x=>x.coin))),deaths:w.glads.filter(g=>!g.alive&&!g.retired&&g.debut).length,nCard,bare,miss,sev:rosterOf(m).reduce((a,g)=>a+(g.severed||[]).length,0),gear:typeof arm94Stats==='function'?arm94Stats(w):null,rivMin:Math.min(...rivals().map(x=>x.coin)),rivBroke:rivals().filter(x=>x.coin<30).length,shelf:avg(w.mgrs.filter(x=>!x.dead).map(x=>(x.arm94?x.arm94.sh.length:0)))}},{strat,run,SEASONS,GEAR,GEARM,ANYM:process.env.ANY100||''});
   rows.push(r);process.stderr.write(JSON.stringify(r)+'\n')}
 const by={};for(const r of rows)(by[r.strat]=by[r.strat]||[]).push(r);const A=(a,k)=>(a.reduce((s,x)=>s+x[k],0)/a.length).toFixed(1);
@@ -76,4 +79,5 @@ for(const r of rows)if(r.gear)console.log('gear',r.strat,r.run,JSON.stringify(r.
  for(const [s2,a] of Object.entries(by)){for(const side of ['p','r']){const f=k=>(a.reduce((t,x)=>t+(((x.gear&&x.gear.fl&&x.gear.fl[side])||{})[k]||0),0)/a.length).toFixed(0);
    console.log(`${s2.padEnd(9)} ${side} ${keys.map(f).join(' ')}  ${A(a,'wins')} ${A(a,'deaths')} ${A(a,'coin')} ${A(a,'rivMin')} ${A(a,'rivBroke')} ${A(a,'shelf')}`)}}}
 for(const [s2,a] of Object.entries(by))console.log(`${s2} rival avg Recruiter level ${A(a,'rivLv')}`);
+for(const [s2,a] of Object.entries(by))console.log(`${s2} injury weeks (fighter-weeks hurt at entry): player ${A(a,'injWk')} · per rival house ${A(a,'rivInjWk')} · rival wins/house ${A(a,'rivWins')}`); /* v1.02 (341) */
 if(errs.length)console.log('page errors:',errs.slice(0,3));await b.close()})();

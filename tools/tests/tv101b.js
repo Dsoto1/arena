@@ -23,7 +23,7 @@ out.inf=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   r.max4=mh101Max(pm,w)===4&&mh101Left(w,pm)===4;pm.fac.valet=1;r.max7=mh101Max(pm,w)===7;pm.fac.valet=0;
   /* banner */
   const st=q('#mgrPane .roomhd .v101st');r.banStats=!!st&&st.querySelectorAll('.v101b').length===4&&/4\/4/.test(st.textContent)&&/0\/1/.test(st.textContent)&&/\b2\b/.test(st.querySelector('.v101b b').textContent);
-  r.banMed=!!q('#mgrPane [data-v101med]');r.why=!!q('.roomhd .v101bx [data-cure90]')||!!q('.roomhd [data-cure90]');r.banHyg=!!q('#mgrPane .v102inf .hyg87 [data-m48="hygeia"]');
+  r.banMed=!!q('.roomhd .v101bx [data-v101med], .v102inf [data-v101med]') /* v1.02 M8: above the patient list */;r.why=!!q('.roomhd .v101bx [data-cure90]')||!!q('.roomhd [data-cure90]');r.banHyg=!!q('.roomhd .v101bx .hyg87 [data-m48="hygeia"], .v102inf .hyg87 [data-m48="hygeia"]');
   r.noTop=!q('#mgrPane .wd76top');r.noClear=!qa('#mgrPane .sect').some(s=>/Cleared for the sand/.test(s.textContent))&&!q('#mgrPane .clearstrip');
   r.freshOpen=!!q('#mgrPane details.iv90more[open]');
   /* no recovery buttons in the infirmary */
@@ -32,7 +32,7 @@ out.inf=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   r.ord=qa('#mgrPane .v101ord .v101os').length>=3&&!!q('#mgrPane .v101ord .v101os.rec');r.star=!!q('#mgrPane .iv90care .v101rec .v101star');
   r.build=!!q('#mgrPane .iv90care [data-mg="build"][data-id="valet"]');
   /* medicus hire popup */
-  q('#mgrPane [data-v101med]').click();await W8(300);const mh=q('.v101mp [data-v101mh="1"]');r.medPop=!!mh;if(mh)mh.click();await W8(500);
+  q('[data-v101med]').click();await W8(300);const mh=q('.v101mp [data-v101mh="1"]');r.medPop=!!mh;if(mh)mh.click();await W8(500);
   r.medHired=!!w.medicus76&&mh101Max(pm,w)===4+2*w.medicus76.skill;const mx=mh101Max(pm,w);
   /* bed → Take out on the row */
   const bed=q(`#mgrPane .iv90care [data-bed76="${A.id}"]`);r.bedBtn=!!bed;if(bed)bed.click();await W8(500);r.inBed=inBed76(A);
@@ -44,16 +44,15 @@ out.inf=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   r.hoursLine=!!q('#mgrPane .v101hl');
   /* Hygeia in bed: 3 h + 10 coin */
   const c0=pm.coin,h0=mh101Left(w,pm);const hy=q(`#mgrPane [data-mg="heal"][data-id="${A.id}"]`);r.hyBtn=!!hy&&!hy.dataset.dis;if(hy)hy.click();await W8(500);
- /* v1.02 (332 M1): Hygeia's operation is booked; the limb is back when the week ends */
-  r.hyDone=!!A.rg102&&A.rg102.wk===w.week&&pm.coin===c0-care101Coin('heal')&&mh101Left(w,pm)===h0-3;r.toast=/Hygeia/.test((q('#mToast')||{}).textContent||'');
+  r.hyDone=(!A.severed.length||!!A.rg102) /* v1.02 M1: the limb is booked, back when the week ends */&&pm.coin===c0-care101Coin('heal')&&mh101Left(w,pm)===h0-3;r.toast=/Hygeia/.test((q('#mToast')||{}).textContent||'');
   /* B: the Medicus on the bench, half coin + 2 h */
   MGR.inf90=B.id;MGR_REDRAW();await W8(400);const c1=pm.coin,h1=mh101Left(w,pm);const md=q(`#mgrPane [data-mg="medic"][data-id="${B.id}"]`);r.mdBtn=!!md&&!md.dataset.dis;if(md)md.click();await W8(500);
-  r.mdDone=!B.inj&&pm.coin===c1-5&&mh101Left(w,pm)===h1-2&&MGR.v101fx&&MGR.v101fx.k==='medic';
+  r.mdDone=(!B.inj||!!B.inj.bk102) /* v1.02 (341): the Medicus is booked — the wound closes when the week ends */&&pm.coin===c1-5&&mh101Left(w,pm)===h1-2&&MGR.v101fx&&MGR.v101fx.k==='medic';
   /* out of hours: refused with a reason, nothing paid */
   const C=ros[1];w.mh101={wk:w.week,u:mx};C.inj={until:w.week+2,label:'a twisted ankle',pen:1};MGR.inf90=C.id;MGR_REDRAW();await W8(400);const c2=pm.coin;const md2=q(`#mgrPane [data-mg="medic"][data-id="${C.id}"]`);
   r.refTile=!!md2&&/Medicus hours/.test(md2.dataset.dis||'');if(md2)md2.click();await W8(500);r.refused=!!C.inj&&pm.coin===c2&&/Medicus hours/.test((q('#mToast')||{}).textContent||'');
   /* a bed plan at the week's turn spends hours */
-  w.mh101=null;A.inj={until:w.week+3,label:'a torn shoulder',pen:2};A.inj.plan87='medic';const h2=mh101Left(w,pm),c3=pm.coin;const msg=planRun87(A,w,pm);r.plan=!!msg&&!A.inj&&mh101Left(w,pm)===h2-2&&pm.coin===c3-5;
+  w.mh101=null;A.inj={until:w.week+3,label:'a torn shoulder',pen:2,wk102:w.week-1 /* v1.02 (341): last week's wound (a fresh serious one rests its first week) */};A.inj.plan87='medic';const h2=mh101Left(w,pm),c3=pm.coin;const msg=planRun87(A,w,pm);r.plan=!!msg&&(!A.inj||!!A.inj.bk102)&&mh101Left(w,pm)===h2-2&&pm.coin===c3-5;
   /* the care guide speaks hours */
   r.guide=/Medicus hours/.test(careGuideHTML(null));
   /* rivals: same hours (no medicus), half coin, then wait */
@@ -65,7 +64,7 @@ ok(out.inf.cpu==='5,5,-1','rivals hours '+out.inf.cpu);
 
 /* the roster card's Medicus button shows hours */
 await go(pg,'roster');
-out.ro=await ev(pg,()=>{const b=document.querySelector(`#mgrPane [data-mg="medic"]`);return b?/\d h\s*·/.test(b.textContent||"")||b.outerHTML.slice(0,400):"none"});ok(out.ro===true||out.ro==='none','roster medic button hours '+out.ro);
+out.ro=await ev(pg,()=>{const b=document.querySelector(`#mgrPane [data-mg="medic"]:not(.plantile)`) /* v1.02 (341): a booked wound still shows its care tile */;return b?/ h · /.test((b.querySelector("small")||{}).textContent||"")||b.outerHTML.slice(0,400):"none"});ok(out.ro===true||out.ro==='none','roster medic button hours '+out.ro);
 
 /* TRAINING YARD: Recovery */
 await go(pg,'practice');
