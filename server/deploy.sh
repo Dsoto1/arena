@@ -4,6 +4,7 @@
 #   GOOGLE_ID=xxx GOOGLE_SECRET=yyy sh deploy.sh you@example.com     with Google sign-in
 # Optional: TESTERS='a@gmail.com,b@gmail.com' (online testers, see README), VERIFY_MODE=log|off (the Ranked verifier, docs/backend.md; left out = the stack keeps its setting), STACK (default flavius-arena), REGION (default us-east-1), BUDGET (default 10), AUTH_PREFIX, DEV=true (test stack only)
 set -e
+export AWS_PAGER=""
 # pasted values can carry invisible characters (a carriage return, a tab, a space): strip them all
 clean(){ printf '%s' "$1" | tr -d '\r\n\t '; }
 EMAIL=$(clean "$1"); [ -n "$EMAIL" ] || { echo "usage: sh deploy.sh you@example.com"; exit 1; }
@@ -40,7 +41,7 @@ aws cloudformation package --region "$REGION" --template-file template.yaml --s3
 # the Google secret: only sent when given; otherwise an existing stack keeps the one it already holds (CloudFormation keeps a
 # parameter that is not overridden), so updates need no secret. A first deploy (no stack yet) still needs it.
 GSEC=""; if [ -n "$GOOGLE_SECRET" ]; then GSEC="GoogleClientSecret=$GOOGLE_SECRET"; elif [ -z "$ST" ] || [ "$ST" = "None" ]; then GSEC="GoogleClientSecret=none"; fi
-aws cloudformation deploy --region "$REGION" --template-file packaged.yaml --stack-name "$STACK" --capabilities CAPABILITY_IAM \
+aws cloudformation deploy --region "$REGION" --template-file packaged.yaml --stack-name "$STACK" --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset \
   --parameter-overrides AlertEmail="$EMAIL" MonthlyBudgetUSD="${BUDGET:-10}" GoogleClientId="${GOOGLE_ID:-none}" $GSEC \
     AuthDomainPrefix="${AUTH_PREFIX:-flaviusrule-arena}" DevNames="${DEV:-false}" CustomAuthDomain="$AUTH_DOMAIN" HostedZoneId="$ZONE" CustomAuthStage="$AUTH_STAGE" $TP $VP
 aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].Outputs" --output table

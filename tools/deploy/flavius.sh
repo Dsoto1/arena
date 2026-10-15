@@ -31,6 +31,8 @@ GOOGLE_ID="158703920017-qiaafniuvh2asr988n18sudlk7hkdcd4.apps.googleusercontent.
 SITE="https://flaviusrule.com"
 CONF="$HOME/.flavius.conf"
 export AWS_DEFAULT_REGION="$REGION"
+# never page AWS output: CloudShell's pager waited at a ":" prompt after the server deploy, so the game/site steps never ran
+export AWS_PAGER=""
 
 say(){ printf '\n\033[1;33m== %s\033[0m\n' "$*"; }
 ok(){ printf '\033[1;32m✓ %s\033[0m\n' "$*"; }
@@ -95,14 +97,14 @@ cmd_server(){ need_zip "${1:-}"; local email=""
   [ -f "$CONF" ] && . "$CONF"; email="${ALERT_EMAIL:-}"
   if [ -z "$email" ]; then read -r -p "Budget alert e-mail (asked once, kept in ~/.flavius.conf): " email; email=$(printf '%s' "$email" | tr -d '\r\n\t '); printf 'ALERT_EMAIL=%q\n' "$email" > "$CONF"; fi
   say "Server: $1"; cd "$HOME"; run unzip -oq "$1"; [ "${DRY:-}" = 1 ] || [ -f "$HOME/server/deploy.sh" ] || die "The zip did not contain server/deploy.sh"
-  server_dir "$HOME/server" "$email"; }
+  server_dir "$HOME/server" "$email"; [ "${DRY:-}" = 1 ] || [ "$CMD" = release ] || cmd_status; }
 server_dir(){ local sd="$1" email="$2"
   # the Google secret stays in the server once set: only asked when you want to change it (NEW_SECRET=1 bash flavius.sh …)
   local sec=""; if [ "${NEW_SECRET:-}" = 1 ]; then printf 'Paste the NEW Google client SECRET (nothing shows), then Enter: '; read -r -s sec; echo; sec=$(printf '%s' "$sec" | tr -d '\r\n\t ')
     [ ${#sec} -ge 20 ] || die "That secret is ${#sec} characters — expected about 35. Run again."; ok "new secret read (${#sec} characters)"
   else ok "Google secret: keeping the one the server already has (NEW_SECRET=1 to change it)"; fi
   [ "${DRY:-}" = 1 ] || cd "$sd"; AUTH_DOMAIN="${AUTH_DOMAIN:-${LOGIN_DOMAIN:-none}}" AUTH_STAGE="${AUTH_STAGE:-${LOGIN_STAGE:-cert}}" GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
-  unset sec; [ "${DRY:-}" = 1 ] || cmd_status; }
+  unset sec; ok "server deployed"; }
 
 # the own sign-in address: run once → certificate; run again 15+ minutes later → the address goes live and the game switches to it
 conf_set(){ touch "$CONF"; grep -v "^$1=" "$CONF" > "$CONF.tmp" || true; printf '%s=%q\n' "$1" "$2" >> "$CONF.tmp"; mv "$CONF.tmp" "$CONF"; }
@@ -218,7 +220,7 @@ cmd_gitrelease(){ local want="${1:-}"; gh_token
   if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
   if [ $dosrv = 1 ]; then local email="${ALERT_EMAIL:-}"
     if [ -z "$email" ]; then read -r -p "Budget alert e-mail (asked once, kept in ~/.flavius.conf): " email; email=$(printf '%s' "$email" | tr -d '\r\n\t '); conf_set ALERT_EMAIL "$email"; fi
-    say "Server (from the release)"; server_dir "$SRC/server" "$email"; [ "${DRY:-}" = 1 ] || conf_set SERVER_HASH "$sh"; cd "$HOME"; fi
+    say "Server (from the release)"; server_dir "$SRC/server" "$email"; [ "${DRY:-}" = 1 ] || conf_set SERVER_HASH "$sh"; cd "$HOME"; say "Server done — now the game, the download and the site"; fi
   local P; P=$(mktemp -d "$HOME/.flavius-XXXX"); mkdir -p "$P/play"; cp "$SRC/flavius-arena.html" "$P/play/index.html"; cp "$SRC/version.json" "$P/play/"
   [ -f "$SRC/tools/deploy/arena_shot.webp" ] && cp "$SRC/tools/deploy/arena_shot.webp" "$P/play/"; cp -r "$SRC/assets" "$P/play/assets"
   say "The standalone download (built here from the release)"; (cd "$SRC" && python3 tools/mkshare.py "$v" | tail -1 && rm -f share/flavius-rule-arena.zip && cd share && zip -q -9 flavius-rule-arena.zip "flavius-rule-arena-v$v.html") || die "building the download failed"
