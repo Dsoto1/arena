@@ -1,0 +1,32 @@
+# Checks the scripts that only ever run in his CloudShell (flavius.sh, server/deploy.sh) — bugs there used to show up only at deploy time.
+name: deploy-scripts
+on:
+  push:
+    paths: ['tools/deploy/flavius.sh', 'server/deploy.sh', '.github/workflows/deploycheck.yml']
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - name: syntax
+        run: bash -n tools/deploy/flavius.sh && sh -n server/deploy.sh
+      - name: shellcheck (errors)
+        run: shellcheck -S error tools/deploy/flavius.sh server/deploy.sh
+      - name: guards
+        run: |
+          set -e
+          grep -q '^export AWS_PAGER=""' tools/deploy/flavius.sh || { echo "flavius.sh must export AWS_PAGER=\"\" (the pager hung the release)"; exit 1; }
+          grep -q '^export AWS_PAGER=""' server/deploy.sh || { echo "deploy.sh must export AWS_PAGER=\"\""; exit 1; }
+          grep -q -- '--no-fail-on-empty-changeset' server/deploy.sh || { echo "deploy.sh: an unchanged stack must not fail the release"; exit 1; }
+          grep -qE '^FSH_VER=[0-9]+' tools/deploy/flavius.sh || { echo "flavius.sh needs FSH_VER (raise it with every change)"; exit 1; }
+      - name: FSH_VER raised when flavius.sh changed
+        run: |
+          prev=$(git show HEAD~1:tools/deploy/flavius.sh 2>/dev/null | sed -n 's/^FSH_VER=\([0-9]*\).*/\1/p' | head -1)
+          now=$(sed -n 's/^FSH_VER=\([0-9]*\).*/\1/p' tools/deploy/flavius.sh | head -1)
+          if [ -n "$prev" ] && ! git diff --quiet HEAD~1 -- tools/deploy/flavius.sh && [ "$now" -le "$prev" ]; then echo "flavius.sh changed but FSH_VER stayed $now — raise it, or his CloudShell keeps the old script"; exit 1; fi
+          echo "FSH_VER $prev -> $now"
+      - name: help + dry status prints
+        run: bash tools/deploy/flavius.sh | grep -q 'flavius.sh release'

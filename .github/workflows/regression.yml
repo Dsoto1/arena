@@ -4,8 +4,8 @@
 name: regression
 on:
   push:
-    branches: ['claude/**', 'main']
-    paths-ignore: ['CLAUDE.md', 'docs/**', 'tools/art/**', 'tools/plans/**', 'share/**', 'tools/regstate.json', 'tools/regmap.json', 'tools/reg.txt', 'site/**']
+    branches: ['claude/**']   # main + release/vX.YY only ever receive commits that already passed here
+    paths-ignore: ['CLAUDE.md', 'docs/**', 'tools/deploy/**', '.github/workflows/deploycheck.yml', 'tools/art/**', 'tools/plans/**', 'share/**', 'tools/regstate.json', 'tools/regmap.json', 'tools/reg.txt', 'site/**']
   workflow_dispatch:
     inputs:
       mode:

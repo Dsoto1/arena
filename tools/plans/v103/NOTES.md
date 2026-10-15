@@ -43,3 +43,11 @@ E3 kinds: he wants MORE THAN 3 (less disparity; "half as good TB12s") → propos
 A1a every fighter gets an age + curve at the first off-season, nobody fades before a season passed · A2 rarity depends on the new kinds · A3a a retired great may stay as Doctore/Barracks master (advisor lv 3) · A4a Manager only
 A5 HIS IDEA: move one in-season bye to sit directly before the Superbus → byes 4 & 12, rivalry week moves 12 → 11 (rival lock letter 11 → 10); season stays 12 weeks; from the next season in running careers
 E3 kinds: a — Meteor 1/100 (2 seasons, +8, steep) · Blazer 1/10 (3–4, +4, fast) · Common ~3/4 (4–6) · Steady 1/10 (8–12, slow) · Ageless 1/150 (15–25, very slow); per-fighter spread, late bloomers; scouting names the kind (rough read = long / short bright)
+
+## RELEASE SPLIT (his ok 2026-10-15: "lets try it your way")
+- **v1.03 = fixes + small changes:** G1–G4, M1–M9, T1–T6 (T1 re-render), S1, E7 (switch button), N8 (Vulso letter), N1a (switch once a match),
+  N9a tiles swap + bigger advisor faces (popup art → v1.04), M2 Superbus Week name + regal card. Played on the beta first.
+- **v1.04 = the Manager season rework:** N2a off-season + E2a awards + E4a renewals + E8a Superbus week end to end + A5 byes 4 & 12 / rivalry 11 ·
+  N3a fame + Superbus entry + advisor pace · N4a recruiting · N5 roster (cap, 4+4, list, order) + X1a · N6a loans + X2 · E1a trade bundles ·
+  N7a Medicus queue · N9a popup art · N10a build weeks · E3 age + five career kinds (A1a A3a A4a) · X3 mgrsim report · X4 lessons · X5 rivals.
+- **v1.05 = board visuals:** N11a beast bodies + always 3D · N12a + E5a shadows · E6a sharp pieces everywhere (if T6 does not already cover it).

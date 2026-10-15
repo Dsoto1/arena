@@ -45,7 +45,7 @@ python3 -c "from PIL import Image;im=Image.open('share/arena_shot.png').convert(
 echo "share/arena_shot.webp → the game zip's play/arena_shot.webp (flavius.sh game uploads it; play.html shows it)"
 cp share/arena_shot.webp tools/deploy/arena_shot.webp   # committed: flavius.sh release fetches it from GitHub
 # v0.95: the standalone is built by flavius.sh in CloudShell (mkshare from GitHub); zips are only a fallback → off unless SHARE=1
-if [ "${SHARE:-0}" != "1" ]; then printf '\nREADY v%s — next: update CLAUDE.md, COMMIT + PUSH, wait for the GitHub regression to go green, then he runs bash flavius.sh release (SHARE=1 builds the standalone + zips here).\n' "$V"; exit 0; fi
+if [ "${SHARE:-0}" != "1" ]; then printf '\nREADY v%s — next: COMMIT with [full] + PUSH, wait for the GitHub regression to go green, then he runs bash flavius.sh beta and plays it; on his ok push release/v%s + main and he runs bash flavius.sh release (CLAUDE.md §6).\n' "$V" "$V"; exit 0; fi
 step "5 share build"
 python3 tools/mkshare.py "$V" | tail -1
 mkdir -p /tmp/sharetest39 && cp "share/flavius-rule-arena-v$V.html" /tmp/sharetest39/

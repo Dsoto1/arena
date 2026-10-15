@@ -1,8 +1,8 @@
 #!/bin/bash
 # flavius.sh — one helper for every Flavius Rule deployment, run in AWS CloudShell (us-east-1).
 #
-#   bash flavius.sh release [0.91]                          EVERYTHING, straight from GitHub (no uploads): the newest release on the
-#                                                           repo (or the version named) → server (only when it changed) → game →
+#   bash flavius.sh release [1.02]                          EVERYTHING, straight from GitHub (no uploads): the newest release branch
+#                                                           release/vX.YY on the repo (or the version named = a rollback) → server (only when it changed) → game →
 #                                                           download → status. The GitHub token is asked once (hidden), kept in
 #                                                           ~/.flavius.conf. If zips WERE uploaded here, they are used instead:
 #                                                           server zip → game zip → site zip → privacy.html (each only if present) → status
@@ -16,12 +16,16 @@
 #   bash flavius.sh login                                  the own sign-in address login.flaviusrule.com, in two runs 15 min apart
 #                                                           (1st: certificate · 2nd: the address + play/online.json); later server
 #                                                           deploys keep it on by themselves (remembered in ~/.flavius.conf)
+#   bash flavius.sh beta [branch]                          the work in progress → a PRIVATE test copy (its own address, its own saves):
+#                                                           page + assets only, never the server, the download or the site
 #   bash flavius.sh status                                 what is live: game version, server, sign-in, styles
 #
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
 # Nothing is ever deleted from the bucket. DRY=1 bash flavius.sh … prints the commands instead of running them.
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
+# this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
+FSH_VER=2
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -188,6 +192,10 @@ gh_token(){ [ -f "$CONF" ] && . "$CONF"; if [ -z "${GH_TOKEN:-}" ]; then
 gh_api(){ curl -fsS -m 20 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$REPO/$1"; }
 # the branch carrying the release: the version asked for, else the highest version.json among the branches
 gh_pick(){ local want="${1:-}" b v best="" bestv="0"; local list; list=$(gh_api "branches?per_page=100" | python3 -c "import json,sys;[print(x['name']) for x in json.load(sys.stdin)]") || die "GitHub refused the token (or the repo is not reachable). Make a new token and run: GH_TOKEN= bash flavius.sh release"
+  # from v1.02 every release is a branch release/vX.YY (made when the release is pushed): the newest one, or the one asked for (a rollback)
+  local rl; rl=$(printf '%s\n' $list | sed -n 's|^release/v\([0-9.]*\)$|\1|p' | sort -t. -k1,1n -k2,2n | tr '\n' ' ')
+  if [ -n "$rl" ]; then if [ -n "$want" ]; then printf '%s\n' $rl | grep -qx "$want" || die "No release v$want on GitHub (releases there: $rl)"; echo "release/v$want $want"; return; fi
+    local last; last=$(printf '%s\n' $rl | tail -1); echo "release/v$last $last"; return; fi
   for b in $list; do v=$(curl -fsS -m 20 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/$REPO/contents/version.json?ref=$b" 2>/dev/null | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p' || true)
     [ -n "$v" ] || continue; if [ -n "$want" ]; then [ "$v" = "$want" ] && { echo "$b $v"; return; }; continue; fi
     if python3 -c "import sys;a,b=sys.argv[1:];sys.exit(0 if tuple(map(int,a.split('.')))>tuple(map(int,b.split('.'))) else 1)" "$v" "$bestv"; then best="$b"; bestv="$v"; fi; done
@@ -200,6 +208,9 @@ free_space(){ rm -rf "$HOME/.npm/_cacache" "$HOME/.cache/pip" "$HOME/server/node
   ls -t "$HOME"/flavius-done/*.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
   local av; av=$(df -Pm "$HOME" | awk 'NR==2{print $4}'); ok "free space in your home: ${av:-?} MB"
   [ "${av:-999}" -ge 250 ] || die "Only ${av} MB free in your home (a release needs ~250 MB). See what is big: du -sh ~/* ~/.[!.]* | sort -h | tail"; }
+fsh_ver(){ sed -n 's/^FSH_VER=\([0-9]*\).*/\1/p' "$1" | head -1; }
+# swap in the release's flavius.sh only when it is newer than this one
+fsh_newer(){ local a b; a=$(fsh_ver "$1"); b=$(fsh_ver "$0"); [ "${a:-0}" -gt "${b:-0}" ]; }
 cmd_clean(){ rm -rf "$SRC" "$HOME"/.flavius-????; free_space; }
 cmd_gitrelease(){ local want="${1:-}"; gh_token
   local br v; if [ -n "${FLAVIUS_SRC_OK:-}" ] && [ -d "$SRC/.git" ]; then br=$(git -C "$SRC" rev-parse --abbrev-ref HEAD); v=$(sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p' "$SRC/version.json")
@@ -212,7 +223,7 @@ cmd_gitrelease(){ local want="${1:-}"; gh_token
     git -C "$SRC" -c http.extraHeader="$gauth" sparse-checkout set assets server site tools/deploy tools/node || die "git sparse checkout failed (disk full? run: bash flavius.sh clean)"
     ok "fetched $(git -C "$SRC" log -1 --format='%h · %cd' --date=format:'%Y-%m-%d %H:%M')"
     # the release carries the newest flavius.sh: when it differs from this one, swap it in and run again (so the steps never change)
-    if ! cmp -s "$SRC/tools/deploy/flavius.sh" "$0"; then cp "$SRC/tools/deploy/flavius.sh" "$0"; ok "flavius.sh updated from the release — continuing with the new one"; FLAVIUS_SRC_OK=1 exec bash "$0" release "$want"; fi; fi
+    if fsh_newer "$SRC/tools/deploy/flavius.sh"; then cp "$SRC/tools/deploy/flavius.sh" "$0"; ok "flavius.sh updated from the release — continuing with the new one"; FLAVIUS_SRC_OK=1 exec bash "$0" release "$want"; fi; fi
   [ -f "$CONF" ] && . "$CONF"; local sh; sh=$(srv_hash "$SRC"); local live; live=$(curl -s -m 10 "$SITE/play/version.json?x=$RANDOM" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p')
   local dosrv=0; [ "$sh" != "${SERVER_HASH:-}" ] && dosrv=1
   say "Release plan (from GitHub, $br)"; echo "  1 server   : $([ $dosrv = 1 ] && echo "deploy — its code or the game's rules changed since the last server deploy from here (the Ranked verifier replays with this build)" || echo 'unchanged — skipped')"
@@ -225,7 +236,8 @@ cmd_gitrelease(){ local want="${1:-}"; gh_token
   [ -f "$SRC/tools/deploy/arena_shot.webp" ] && cp "$SRC/tools/deploy/arena_shot.webp" "$P/play/"; cp -r "$SRC/assets" "$P/play/assets"
   say "The standalone download (built here from the release)"; (cd "$SRC" && python3 tools/mkshare.py "$v" | tail -1 && rm -f share/flavius-rule-arena.zip && cd share && zip -q -9 flavius-rule-arena.zip "flavius-rule-arena-v$v.html") || die "building the download failed"
   cp "$SRC/share/flavius-rule-arena.zip" "$P/play/flavius-rule-arena.zip"
-  game_dir "$P/play"; rm -rf "$P" "$SRC/share"; site_git "$SRC/site"; cmd_status; }
+  game_dir "$P/play"; rm -rf "$P" "$SRC/share"; site_git "$SRC/site"; cmd_status
+  say "Release v$v done: server $([ $dosrv = 1 ] && echo deployed || echo unchanged) · game ✓ · download ✓ · site ✓"; }
 # the public site pages from the release's site/ folder (in git since 2026-10-11) — only when they changed since the last site deploy from here
 site_hash(){ (cd "$1" && find . -type f -not -name 'README*' | sort | xargs cat | sha256sum | cut -c1-16); }
 site_git(){ local d="$1"; [ -f "$d/index.html" ] || return 0; [ -f "$CONF" ] && . "$CONF"; local h; h=$(site_hash "$d")
@@ -236,6 +248,28 @@ site_git(){ local d="$1"; [ -f "$d/index.html" ] || return 0; [ -f "$CONF" ] && 
     run aws s3 rm "s3://$BUCKET/$f" --only-show-errors || true; done < "$d/REMOVED.txt"; fi
   ok "site synced"; clear_cdn "/*"; [ "${DRY:-}" = 1 ] || conf_set SITE_HASH "$h"; }
 
+# ---- beta: the work in progress on its OWN address (CloudFront's own domain = another origin → its own saves, never the players')
+cmd_beta(){ gh_token; local br="${1:-}"
+  if [ -z "$br" ]; then say "Looking for the newest work branch"; local b d best="" bestd=""
+    for b in $(gh_api "branches?per_page=100" | python3 -c "import json,sys;[print(x['name']) for x in json.load(sys.stdin)]"); do case "$b" in main|release/*) continue;; esac
+      d=$(gh_api "commits/$b" | python3 -c "import json,sys;print(json.load(sys.stdin)['commit']['committer']['date'])" 2>/dev/null || true); [ -n "$d" ] || continue
+      [[ "$d" > "$bestd" ]] && { best="$b"; bestd="$d"; }; done; br="$best"; [ -n "$br" ] || die "No work branch found."; fi
+  ok "beta from $br"; rm -rf "$SRC" "$HOME"/.flavius-????; free_space
+  local gauth; gauth="Authorization: Basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+  git -c http.extraHeader="$gauth" clone -q --depth 1 --filter=blob:none --sparse --branch "$br" "https://github.com/$REPO.git" "$SRC" || die "git clone failed"
+  git -C "$SRC" -c http.extraHeader="$gauth" sparse-checkout set assets || die "git sparse checkout failed (disk full? run: bash flavius.sh clean)"
+  ok "fetched $(git -C "$SRC" log -1 --format='%h · %cd' --date=format:'%Y-%m-%d %H:%M')"
+  say "Beta: page + assets → play-beta/ (the live game, the server and the site are not touched)"
+  run aws s3 sync "$SRC/assets" "s3://$BUCKET/play-beta/assets/" --only-show-errors
+  put "$SRC/flavius-arena.html" "play-beta/index.html"; put "$SRC/version.json" "play-beta/version.json"
+  run aws s3 cp "s3://$BUCKET/play/online.json" "s3://$BUCKET/play-beta/online.json" --cache-control no-cache --only-show-errors || true
+  clear_cdn "/play-beta/*"; rm -rf "$SRC"
+  local dom; dom=$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text 2>/dev/null || echo "?")
+  say "Beta ready:  https://$dom/play-beta/index.html"
+  echo "  · its own saves (a different address): to try your careers there, Saves → Backups → Export on the live game, Import on the beta"
+  echo "  · Online sign-in only works on flaviusrule.com — test online on the live game"
+  echo "  · when it is good, tell Claude: the release branch is made, then  bash flavius.sh release"; }
+
 # one command per release: the newest server zip, game zip, site zip and privacy.html found here, in the safe order
 cmd_release(){ local here; here=$(pwd)
   local srv gam dl sit pri; srv=$(ls -t "$here"/flavius-server-*.zip 2>/dev/null | head -1 || true); gam=$(ls -t "$here"/flavius-site-update-*.zip 2>/dev/null | head -1 || true)
@@ -243,7 +277,7 @@ cmd_release(){ local here; here=$(pwd)
   # the game zip carries the newest flavius.sh: when it differs from this one, swap it in and run again (so the steps never change)
   if [ -n "$gam" ] && [ -z "${FLAVIUS_UPDATED:-}" ] && unzip -l "$gam" flavius.sh >/dev/null 2>&1; then
     local t; t=$(mktemp); unzip -p "$gam" flavius.sh > "$t"
-    if ! cmp -s "$t" "$0"; then cp "$t" "$0"; rm -f "$t"; ok "flavius.sh updated from the game zip — continuing with the new one"; FLAVIUS_UPDATED=1 exec bash "$0" release; fi; rm -f "$t"; fi
+    if fsh_newer "$t"; then cp "$t" "$0"; rm -f "$t"; ok "flavius.sh updated from the game zip — continuing with the new one"; FLAVIUS_UPDATED=1 exec bash "$0" release; fi; rm -f "$t"; fi
   sit=$(ls -t "$here"/flavius-site-v*.zip 2>/dev/null | head -1 || true)
   pri=""; [ -f "$here/privacy.html" ] && pri="$here/privacy.html"
   # no zips here = a GitHub release; a privacy.html lying here never blocks it (it goes up after, then is filed away)
@@ -262,6 +296,6 @@ cmd_release(){ local here; here=$(pwd)
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;; clean) cmd_clean;;
-  *) sed -n '2,23p' "$0" | sed 's/^# \{0,1\}//';;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;; beta) cmd_beta "$@";; clean) cmd_clean;;
+  *) sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//';;
 esac
