@@ -51,3 +51,14 @@ E3 kinds: a — Meteor 1/100 (2 seasons, +8, steep) · Blazer 1/10 (3–4, +4, f
   N3a fame + Superbus entry + advisor pace · N4a recruiting · N5 roster (cap, 4+4, list, order) + X1a · N6a loans + X2 · E1a trade bundles ·
   N7a Medicus queue · N9a popup art · N10a build weeks · E3 age + five career kinds (A1a A3a A4a) · X3 mgrsim report · X4 lessons · X5 rivals.
 - **v1.05 = board visuals:** N11a beast bodies + always 3D · N12a + E5a shadows · E6a sharp pieces everywhere (if T6 does not already cover it).
+
+## His beta notes (2026-10-15, v1.03 beta) — sorted, NOTHING built yet (waiting for go)
+FIXES for v1.03 before it ships:
+ B1 the net animation still shows a blue circle under the netted piece — drop it (the net itself is enough)
+ B2 weekly challenge: 4 beasts aggro'd at once at the start — this week's weekly has the "wild" twist (beasts' aggro on you) + "nomarket"; working as built → question
+ B3 challenge with the market closed (nomarket twist): Crowd Favor still let him unlock the market with CF — did nothing; must be refused/hidden
+ B4 Manager mode submenu shows the Play Now Challenges entry — remove it there
+ B5 Play Now: the 🎲 random-event die is not centred in its button
+ B6 Infirmary rail oval counts wounds, not fighters — count gladiators needing treatment; one leaves the count when fully treated
+NEW (v1.04): SUPERBUS AS PLAYOFFS — top 4 houses by league points get a playoff bye (2 per bracket side); the other 8 houses play round 1 as two Classic
+ 4-player events; top 2 of each go on to face the bye houses (two semifinal events); top 2 of each semifinal meet in the final. Replaces the "top 4 seated in the final".
