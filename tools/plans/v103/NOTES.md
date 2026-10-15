@@ -42,3 +42,4 @@ E8a Superbus week end to end (regal card, trophy banner, entrants letter the wee
 E3 kinds: he wants MORE THAN 3 (less disparity; "half as good TB12s") → proposed 5: Common, Steady (half Ageless), Blazer (half Meteor), Ageless, Meteor — odds pending his ok
 A1a every fighter gets an age + curve at the first off-season, nobody fades before a season passed · A2 rarity depends on the new kinds · A3a a retired great may stay as Doctore/Barracks master (advisor lv 3) · A4a Manager only
 A5 HIS IDEA: move one in-season bye to sit directly before the Superbus → byes 4 & 12, rivalry week moves 12 → 11 (rival lock letter 11 → 10); season stays 12 weeks; from the next season in running careers
+E3 kinds: a — Meteor 1/100 (2 seasons, +8, steep) · Blazer 1/10 (3–4, +4, fast) · Common ~3/4 (4–6) · Steady 1/10 (8–12, slow) · Ageless 1/150 (15–25, very slow); per-fighter spread, late bloomers; scouting names the kind (rough read = long / short bright)
