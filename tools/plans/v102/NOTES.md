@@ -150,3 +150,4 @@ was healed and out of bed the same week.
   read-only, "As printed then", back to this week) · 4a (the fighter's own face99 portrait through the sepia/hatch filter) · 5a (opens after End
   the week as today). The ▶ Start next week button GOES: the week has already turned when the paper prints; it only led to Your ludus (the
   rail does that). Keep the Next week ribbon as information.
+- I · level pace (his answer 2026-10-15): keep the built curve (PROG102: a level ~every bout early, ~2.3 late; ~level 95 after 150 Ranked bouts).
