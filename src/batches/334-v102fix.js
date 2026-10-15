@@ -166,7 +166,8 @@ if(!V102C.off&&typeof bst100Cell==='function'){const base=bst100Cell;bst100Cell=
     const f=face||0,pc=g6Proc(im,M,me,f,row);if(!pc)return base.apply(this,arguments);
     const s=bst100Scale(M),cc=g6Scaled(pc,me,s,f,row,im.src.slice(-70)+'|'+f+'|'+row);
     ctx.save();if(opt&&opt.dim)ctx.globalAlpha*=opt.dim;if(opt&&opt.alpha!=null)ctx.globalAlpha*=opt.alpha;if(opt&&opt.filter)ctx.filter=opt.filter;
-    ctx.drawImage(cc,x-me[2]*s,y-me[3]*s,me[0]*s,me[1]*s);ctx.restore();
+    if(!(typeof sh103Blit==='function'&&sh103Blit(cc,x-me[2]*s,y-me[3]*s,me[0]*s,me[1]*s,x,y)))ctx.drawImage(cc,x-me[2]*s,y-me[3]*s,me[0]*s,me[1]*s);ctx.restore();   /* v1.03 T6 (346) */
+    
     BST100.stats.cells++;return y-M.iw[3]*s}catch(e){console.error(e);return base.apply(this,arguments)}}}
 
 /* ---------- the look ---------- */

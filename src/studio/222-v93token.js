@@ -125,7 +125,8 @@ const t93Tag=(o,t)=>{const r={...o};Object.defineProperty(r,'t93',{value:t,enume
     if(opt&&opt.dim)ctx.globalAlpha=opt.dim;if(opt&&opt.filter)ctx.filter=opt.filter;
     ctx.drawImage(im,(i||0)*M[0],0,M[0],M[1],x-M[2]*s,by-M[3]*s,M[0]*s,M[1]*s);
     /* the seat's colour on the base rim (the board ring hides under the round base) */
-    const pc=MINI_CUR&&MINI_CUR.color&&!(opt&&opt.filter);if(pc){const k=s*MINI_PXMM,rx=12.75*k;ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=Math.max(1.5,2.3*k);ctx.beginPath();ctx.ellipse(x,by-1.35*k,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}
+    const pc=MINI_CUR&&MINI_CUR.color&&!(opt&&opt.filter);if(pc){const k=s*MINI_PXMM,rx=12.75*k;const R3=typeof rim103==='function'?rim103(k):{w:Math.max(1.5,2.3*k),dy:1.35*k};   /* v1.03 T3 (346) */
+      if(R3){ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=R3.w;ctx.beginPath();ctx.ellipse(x,by-R3.dy,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}}
     ctx.restore();T93.drawn=(T93.drawn||0)+1;
     const top=by-M[3]*s+M[1]*s*0.05;try{TOP83=top}catch(e){}return top}catch(e){console.error(e);return base.apply(this,arguments)}}}
 /* every HTML figure of the character */

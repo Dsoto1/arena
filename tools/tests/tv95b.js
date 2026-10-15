@@ -1,6 +1,8 @@
 /* v0.95 part B: Creator Studio + Play Now (228-v95studio) — roster-set find, live character card, class legs/Tasset, armor fit sides + mirror + save,
    beast token letter, cohort card, pelted + allies, weapon icons/shield, sculptor lock/colour/snap, ratings panel, Stands fold, Your characters */
-const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:1000}});await pg.route(/fonts\./,r=>r.abort());{const _c=pg.click.bind(pg);pg.click=async(sel,o)=>{try{await tab103(pg,sel)}catch(e){}return _c(sel,o)}}const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+/* v1.03 S1: the Gear designers are in 335's tabbed frame — open the tab that holds a control first */
+const tab103=(pg,sel)=>pg.evaluate(s=>{const e=document.querySelector(s);const p=e&&e.closest('.df99pane');if(p){const b=document.querySelector('[data-df99t="'+p.dataset.df99p+'"]');if(b)b.click()}},sel);
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_armfit_on','1')});
 await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});await pg.waitForTimeout(1500);
 const r={};const q=(s,a)=>pg.evaluate(s,a);const W=ms=>pg.waitForTimeout(ms);

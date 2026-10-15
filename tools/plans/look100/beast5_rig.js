@@ -479,7 +479,7 @@ async function sheet(build, frames, o) {
   REND.setSize(S, S, false);
   const anc = new THREE.Vector3(0, 0, 0).project(cam); const AX = (anc.x * 0.5 + 0.5) * S / ss, AY = (-anc.y * 0.5 + 0.5) * S / ss;
   const cells = [], JR = [], st = { sculpt: 0, render: 0, tris: 0, verts: 0 };
-  for (const f of frames) { const q0 = performance.now(); const prims = build(f); const r = meshOf(prims, o.h); MESH.scale.setScalar(o.sc || 1); INK.scale.setScalar(o.sc || 1); MESH.geometry.dispose(); MESH.geometry = r.geo; INK.geometry = r.geo; st.tris = Math.max(st.tris, r.tris); st.verts = Math.max(st.verts, r.verts);
+  for (const f of frames) { const q0 = performance.now(); const prims = build(f); const r = meshOf(prims, o.h); MESH.scale.setScalar(o.sc || 1); INK.scale.setScalar(o.sc || 1); if (o.sx) { MESH.scale.x *= o.sx; INK.scale.x *= o.sx; } MESH.geometry.dispose(); MESH.geometry = r.geo; INK.geometry = r.geo; st.tris = Math.max(st.tris, r.tris); st.verts = Math.max(st.verts, r.verts);
     const q1 = performance.now(); st.sculpt += q1 - q0; const row = []; const jl = JL.slice(); const jrow = [];
     for (const yaw of MINI_YAW) { const Y = new THREE.Vector3(0, 1, 0); jrow.push(jl.map(j => { const v = new THREE.Vector3(...j.p).multiplyScalar(o.sc || 1).applyAxisAngle(Y, yaw * D2R).project(cam); return { n: j.n, par: j.par, cat: j.cat, x: +((v.x * 0.5 + 0.5) * S / ss - AX).toFixed(1), y: +((-v.y * 0.5 + 0.5) * S / ss - AY).toFixed(1) }; })); } JR.push(jrow);
     for (const yaw of MINI_YAW) { TURN.rotation.y = yaw * D2R; TURN.updateMatrixWorld(true); REND.render(SCENE, cam); let c = document.createElement('canvas'); c.width = S; c.height = S; c.getContext('2d').drawImage(REND.domElement, 0, 0);
@@ -503,6 +503,11 @@ const DRAWN = (b) => b[0] > 30 ? 1.1 * 104 / b[0] : PXMM;
    (the bases are drawn apart and keep their tile sizes): lion, lioness + bears about 0.8 of his height (a full-height lion
    would hang half a tile past its long base), wolves 0.6, snakes 0.4, Zora on her chunk 0.65. Multiplies sc only. */
 const SIZE102 = { leo: 1.607, leaena: 1.694, ursa: 1.658, brutum: 1.658, valencia: 0.771, moechus: 0.771, glykon: 1.067, arenosus: 1.067, zora: 1.078 };   /* measured on the board (idle, front): lions + bears ~0.8 of the bare gladiator, wolves 0.6, snakes 0.4, Zora 0.65 */
+/* v1.03 (his T1, 2026-10-15: "bears & lions are too large, lions are thicc, wolves too"): figure factors ON TOP of SIZE102 (bases unchanged)
+   — bears ×0.8 and lions ×0.82 (≈0.65 of the bare gladiator), wolves ×0.88 (≈0.5); SLIM103 squeezes the lions' WIDTH (the mesh's local x:
+   body, mane, legs apart) so they read slimmer, not just smaller. Multiplies sc / MESH.scale.x only. */
+const SIZE103 = { leo: 0.82, leaena: 0.82, ursa: 0.8, brutum: 0.8, valencia: 0.88, moechus: 0.88 };
+const SLIM103 = { leo: 0.8, leaena: 0.84 };
 export const BEASTS = {
   leo: { sp: 'lion', base: [72, 42], rim: '#3a1a18', box: 150, ty: 16, sc: 1.15 * 1.3, split: [['leo', /^(idle|walk)/], ['leo_act', /^(attack|hit|die)/]] }, leaena: { sp: 'lioness', base: [72, 42], rim: '#3a1a18', box: 146, ty: 16, sc: 1.15 * 1.3 },
   ursa: { sp: 'bear', base: [75, 47], rim: '#7b2c17', box: 150, ty: 19, sc: 1.3 }, brutum: { sp: 'bear', base: [75, 47], rim: '#7b2c17', box: 150, ty: 19, sc: 1.3 },
@@ -522,7 +527,7 @@ window.BEAST300 = {
     if (opt.only) frames = frames.filter(f => opt.only.includes(f.n));
     if (opt.h) h = opt.h;
     if (opt.diag) frames = frames.filter(f => f.n === 'idle0');
-    const r = await sheet(build, frames, { split: opt.diag || opt.only ? null : B.split, base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: (B.sc || 1) * (SIZE102[key] || 1), pxmm: opt.diag ? 6 / (B.sc || 1) * 1.2 : (B.base ? DRAWN(B.base) : PXMM) });
+    const r = await sheet(build, frames, { split: opt.diag || opt.only ? null : B.split, base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: (B.sc || 1) * (SIZE102[key] || 1) * (SIZE103[key] || 1), sx: SLIM103[key] || 1, pxmm: opt.diag ? 6 / (B.sc || 1) * 1.2 : (B.base ? DRAWN(B.base) : PXMM) });
     window.BSHEET = window.BSHEET || {}; BSHEET[key] = r;
     const parts = r.parts.map(p => { const e = enc(p.canvas); return { name: p.name, meta: p.meta, rows: p.rows, kb: +(e.bytes / 1024).toFixed(1), webp: e.url, decodedMB: +(p.meta[0] * p.meta[1] * 4 * 8 * p.rows.length / 1048576).toFixed(2) }; });
     const w8 = enc(r.canvas); const idleWalk = frames.filter(f => /^(idle|walk)/.test(f.n)).length;

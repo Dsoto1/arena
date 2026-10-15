@@ -100,7 +100,8 @@ const gl=P.body*P.pil*56,rel={};for(const k in BH)rel[k]=+(BH[k]/gl).toFixed(2);
 /* the cell tops (meta) include tails, wings and the walk frames, so they only guard the render: measured on the board (idle, front, TW 56,
    bare gladiator 57 px) the lions and bears stand ~0.8 of him, wolves ~0.58, snakes ~0.4, Zora ~0.65, Tholo ~1.12, Commodus ~1.15 */
 const near=(k,v)=>Math.abs(rel[k]-v)<=v*0.12;
-ok(near('leo',1.45)&&near('leaena',1.24)&&near('ursa',1.11)&&near('brutum',1.11),'lions + bears re-rendered at their v1.02 size '+JSON.stringify(rel));
+/* v1.03 T1 (346, his note: too large, lions too thick): bears ×0.8, lions ×0.82 → re-rendered (v1.02 values were 1.45 / 1.24 / 1.11) */
+ok(near('leo',1.21)&&near('leaena',1.03)&&near('ursa',0.92)&&near('brutum',0.92),'lions + bears re-rendered at their v1.03 size '+JSON.stringify(rel));
 ok(near('valencia',0.68)&&near('moechus',0.68)&&near('glykon',0.56)&&near('arenosus',0.56)&&near('zora',1.11),'wolves, snakes and Zora scaled to match '+JSON.stringify(rel));
 ok(near('tholo',1.26)&&near('commodus',1.28)&&rel.tholo>1&&rel.commodus>1,'Commodus and Tholo taller than the gladiator '+JSON.stringify(rel));
 const BB=await pg.evaluate(()=>({leo:BEAST100_META.leo.base,ursa:BEAST100_META.ursa.base,tholo:BEAST100_META.tholo.base,leoPx:BEAST100_META.leo.px,tholoPx:BEAST100_META.tholo.px}));

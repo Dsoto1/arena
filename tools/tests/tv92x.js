@@ -32,6 +32,9 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));wh
   r.x0=ST.ca.x92[1].x;r.y0=ST.ca.x92[1].y;return r});
 ok(o.a.chest&&o.a.chest.btns===9+5&&!o.a.chest.arm,'a chest piece: no arm-only extras '+JSON.stringify(o.a.chest));ok(o.a.tray,'a tray shown');ok(o.a.btns===11,'a eleven kinds');ok(o.a.n===11&&o.a.kinds===11,'a every kind added');ok(o.a.drawn===11,'a drawn in the tray');ok(o.a.inPiece===11,'a drawn in the piece preview');ok(o.a.inMock===11,'a drawn on the mock-up');
 /* b: drag the selected extra on the tray preview */
+/* v1.03 S1: the Gear designers are in 335's tabbed frame — open the tab that holds a control first */
+const tab103=(pg,sel)=>pg.evaluate(s=>{const e=document.querySelector(s);const p=e&&e.closest('.df99pane');if(p){const b=document.querySelector('[data-df99t="'+p.dataset.df99p+'"]');if(b)b.click()}},sel);
+await tab103(pg,'#x92Prev');await pg.waitForTimeout(200);
 await pg.evaluate(()=>{document.querySelector('#x92Prev').scrollIntoView({block:'center'})});await pg.waitForTimeout(200);
 const bb=await pg.evaluate(()=>{const ring=[...document.querySelectorAll('#x92Prev [data-x92i="1"]')][0];const r=ring.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,pw:document.querySelector('#x92Prev svg').getBoundingClientRect().width}});
 await pg.mouse.move(bb.x,bb.y);await pg.mouse.down();await pg.mouse.move(bb.x+bb.pw*0.1,bb.y+bb.pw*0.1,{steps:5});await pg.mouse.up();await pg.waitForTimeout(200);

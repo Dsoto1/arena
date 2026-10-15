@@ -1576,3 +1576,15 @@ their bullet at the END of the "Systems" list below (the release that ships them
   and 128's `st82Apply` (online, same on every client); CPU moves go to the least crowded section facing the target (`sw103Dest`); `sw103Spread()` (crowdStart, before the seat log) spreads
   NEUTRAL spectators over ceil(n/8) a section, no dice. E7 words "1 switch left" / "Switched" (`sw103Note`): `#btnSec96[data-sw103]` (CSS ::after), the Stands tab `.sw103s`, the upkeep
   option, the online window `.sw103n`. Rule change → the treplay101 goldens need a deliberate re-record (tools/replay/record.js --update).
+- **v1.03 3D TOKENS + STUDIO GEAR (346-v103board, last before 08-setup; his T1–T6, S1; display only; kill switch localStorage flavius_v103coff=1; test `tv103c`):** T1 bears ×0.8, lions ×0.82 and
+  narrower (`SLIM103` squeezes the mesh's local x: Leo 0.8, Leaena 0.84), wolves ×0.88 — tools/plans/look100/beast5_rig.js `SIZE103`/`SLIM103` (sheet() takes `o.sx`), sheets re-rendered by
+  tools/art/anim100b/make.js (assets only). T2 bases off: `B103_HUM` (Tholo, Commodus) → `b103Proc` (334's g6Geom; wall band + rim ink cut whole, top flooded only along smooth top colour,
+  pockets that stay in the oval; fallback = wall only), `B103_WALL` (snakes) → 334's g6Proc + the rim band cleared (`b103Wall`), the rest keep 334's G6; sculpted figures (custom
+  humanoids / beasts, sculpt tokens) drawn from a figureSVG without its base ellipses (`_nb103` spec twin via tokenImg / sc3dCanvas wrappers while drawFigureTok runs, `NB103.in`). T3
+  `rim103(k)` = the seat-colour arc on 311/222 base rims (small edits there): thin base → 0.6 width on the squeezed wall, bases off → none. T4 `tun103Why(p)` on the disabled Tunnel /
+  its placeholder (tip, aria-label, small): missing a limb · no key · carrying the chest · no tunnel beside you · no exit. T5 Telemachus: `atk103Apply` puts 210's atk92Why on every
+  attack control + the group header (259 covered only the weapon buttons). T6 MEASURED: printed sheets 2.6 px/mm vs drawn TW·0.8/25.4 px/mm × device ratio = 0.68× at 1440×900/1× but
+  1.36× zoomed or on a 2× screen; the pre-scaled cell (3% steps) was drawn again at w·s at fractional positions (second resample every frame), and 312/334 beast cells ignored the device
+  ratio. `sh103Blit` (311/312/334 small edits) draws a pre-scaled cell at its own size on whole device pixels (anchor kept); 312's bst100CellCanvas + 334's g6Scaled made at the device
+  ratio; up-scaled cells (> `V103C.sharpMin` 1.05) get a 3×3 unsharp mask once (`sh103Sharpen`, ≤ `sharpMax` 2 a frame, not while TW changes; needs readable pixels). S1 Weapons /
+  Armor / Trophies join 335's designer frame (D102_SPEC.gear getter by ST.gearSub + .trophies; removed from 247's ST98_ON); Insignia keeps 304a's own bench.

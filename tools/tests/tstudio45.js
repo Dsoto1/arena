@@ -1,4 +1,6 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+/* v1.03 S1: the Gear designers are in 335's tabbed frame — open the tab that holds a control first */
+const tab103=(pg,sel)=>pg.evaluate(s=>{const e=document.querySelector(s);const p=e&&e.closest('.df99pane');if(p){const b=document.querySelector('[data-df99t="'+p.dataset.df99p+'"]');if(b)b.click()}},sel);
 const ctx=await b.newContext({viewport:{width:1500,height:1000}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});const pg=await ctx.newPage();await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
@@ -15,7 +17,7 @@ o.gear=await pg.evaluate(()=>({tab:ST.tab,sub:ST.gearSub,picks:document.querySel
 /* v0.76: system armor is shown as examples only (no copy button) — load the printed piece directly */
 await pg.evaluate(()=>caFromSystem(ST.ca,'musculata'));await pg.waitForTimeout(300);o.fromsys=await pg.evaluate(()=>({n:ST.ca.name,ap:ST.ca.ap,slot:ST.ca.slot,shape:ST.ca.shape,base:ST.ca.base}));
 // sculpt: add circle, cut it
-await pg.click('[data-scb="add"][data-k="a"][data-v="circle"]');await pg.waitForTimeout(300);
+await tab103(pg,'[data-scb="add"][data-k="a"][data-v="circle"]');await pg.waitForTimeout(200);await pg.click('[data-scb="add"][data-k="a"][data-v="circle"]');await pg.waitForTimeout(300);
 await pg.click('[data-scb="cut"][data-k="a"]');await pg.waitForTimeout(300);
 o.cut=await pg.evaluate(()=>({cut:ST.ca.layers[0].cut,mask:!!document.querySelector('#caPiece mask'),undo:!document.querySelector('[data-scb="undo"]').disabled}));
 await pg.screenshot({path:'st_armor.png'});

@@ -6,36 +6,36 @@
   "decodedMB": 1.07,
   "ms": 5641
  },
- "totalKB": 4604,
+ "totalKB": 4147,
  "leo": {
-  "kb": 711.8,
-  "decodedMB": 34.87,
-  "ms": 59405
+  "kb": 570,
+  "decodedMB": 29.57,
+  "ms": 23389
  },
  "leaena": {
-  "kb": 597.3,
-  "decodedMB": 29.56,
-  "ms": 30059
+  "kb": 468.8,
+  "decodedMB": 22.31,
+  "ms": 14517
  },
  "ursa": {
-  "kb": 495.7,
-  "decodedMB": 20.95,
-  "ms": 43120
+  "kb": 417.4,
+  "decodedMB": 14.22,
+  "ms": 19168
  },
  "brutum": {
-  "kb": 453,
-  "decodedMB": 20.95,
-  "ms": 56613
+  "kb": 384.2,
+  "decodedMB": 14.22,
+  "ms": 17354
  },
  "valencia": {
-  "kb": 248.2,
-  "decodedMB": 7.1,
-  "ms": 22804
+  "kb": 221.7,
+  "decodedMB": 5.82,
+  "ms": 11123
  },
  "moechus": {
-  "kb": 196,
-  "decodedMB": 7.1,
-  "ms": 26126
+  "kb": 182.2,
+  "decodedMB": 5.82,
+  "ms": 9875
  },
  "glykon": {
   "kb": 245.5,
