@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.01**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v1.02**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -1995,6 +1995,13 @@ share copy — the site download play/flavius-rule-arena.zip.)
   question port 326 (protocol 9), log + pauses 327, effects as data 328, rules in Node (tools/node), Ranked verification Lambda (log only, VERIFY#/AUDIT#,
   build pinning 329), Manager morph 330; pickFavorite no longer sorts with rand() (cross-browser desync). Server + full stack update (new VerifyFn) —
   flavius.sh release deploys it. Site play.html "New in vX" now written by release.sh (tools/sitewhatsnew.js).
+
+- **v1.02** his v1.01 notes answered (tools/plans/v102/NOTES.md, workstreams A–L): Manager fixes 332 (+ M21 starters in gold, M22 lent-out list), Manager
+  changes 333 (podium league points, recruiting costs, the Council simplified, File away), UI fixes 334, Studio designer frame 335, 3D tokens 80% of a
+  pillar + weapon grip in the poser 336 (beasts re-rendered in proportion, lions 0.8), resume after refresh on the same tab 337, Play Now drafts +
+  ability pairs 338, Manager gear loop (issued kit, dented, repair ⅒, +100 starting treasury) 339, online progression (XP, levels, tally, release,
+  rudis; server) 340, care timing 341, Acta Diurna 342, loans cap 4 + market + Clerk advice 343. Builders now run the tests their change reaches
+  (standing rule). Server changed — flavius.sh release deploys it.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
