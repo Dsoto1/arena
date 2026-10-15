@@ -37,3 +37,8 @@ E5a shadows on everything (beasts, pillars, pots, chest, rubble), night = away f
 E6a sharp pieces everywhere, NOT only zoomed — blurry edges in classic view too
 E7 section-switch button shows "1 switch left" / used (incl. online ticket holders)
 E8a Superbus week end to end (regal card, trophy banner, entrants letter the week before, podium → off-season) + HIS ADD: an extra bye week right before the Superbus
+
+## Round 3 (2026-10-15)
+E3 kinds: he wants MORE THAN 3 (less disparity; "half as good TB12s") → proposed 5: Common, Steady (half Ageless), Blazer (half Meteor), Ageless, Meteor — odds pending his ok
+A1a every fighter gets an age + curve at the first off-season, nobody fades before a season passed · A2 rarity depends on the new kinds · A3a a retired great may stay as Doctore/Barracks master (advisor lv 3) · A4a Manager only
+A5 HIS IDEA: move one in-season bye to sit directly before the Superbus → byes 4 & 12, rivalry week moves 12 → 11 (rival lock letter 11 → 10); season stays 12 weeks; from the next season in running careers
