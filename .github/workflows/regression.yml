@@ -37,7 +37,7 @@ jobs:
           INPUT_MODE: ${{ github.event.inputs.mode }}
           COMMIT_MSG: ${{ github.event.head_commit.message }}
           NODE_PATH: /tmp/ci/node_modules
-        run: node tools/ci/plan.js
+        run: node tools/ci/testlist.js && node tools/ci/plan.js   # testlist: every test file must be in runreg DEFAULT
   test:
     needs: plan
     if: needs.plan.outputs.mode != 'skip'
