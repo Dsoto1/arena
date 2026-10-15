@@ -72769,7 +72769,7 @@ function loanReq103(o){const w=W_();const m=mgrById(o.mid),g=gById(o.gid);if(!m|
 
 /* ---------------- M6 · Armory: the starters keep their gold ---------------- */
 function arm103Gold(h){return h.replace(/class="ar94g ?(on)?" data-ar94g="([^"]+)"/g,(m,on,id)=>{const g=typeof gById==='function'?gById(id):null;const sl=g&&g.slot95;
-  return sl>=1&&sl<=3?`class="ar94g${on?' on':''} st102" data-ar94g="${id}" data-st102="${['I','II','III'][sl-1]}"`:m})}
+  return sl>=1&&sl<=3?_T`class="ar94g${on?' on':''} st102" data-ar94g="${id}" data-st102="${['I','II','III'][sl-1]}"`:m})}
 if(typeof arm94HTML==='function'){const base=arm94HTML;arm94HTML=function(){let h=base.apply(this,arguments);try{if(V103B.on&&typeof h==='string')h=arm103Gold(h)}catch(e){console.error(e)}return h}}
 
 /* ---------------- M8 · Infirmary: who had care this week ---------------- */

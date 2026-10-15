@@ -141,7 +141,7 @@ const g22b=await pg.evaluate(async()=>{await window.__mv;const v=S.players[0];re
 ok(g22b.moved,'G22 clicking a lit tile steps there '+JSON.stringify(g22b));
 /* ---- G20 · zoom: the settle is spread over frames ---- */
 await pg.evaluate(async()=>{while(CUR_MODAL){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,150))}SPEED='pause';render();draw()});await pg.waitForTimeout(800);
-const g20a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const raf=()=>new Promise(r=>requestAnimationFrame(r));Z101.stats.slices=0;Z101.stats.loops=0;
+const g20a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const raf=()=>new Promise(r=>requestAnimationFrame(r));ZB101.on=false;/* v1.01 330 pre-bakes the other zoom level while idle, so nothing is stale; G20 tests the un-baked settle */Z101.stats.slices=0;Z101.stats.loops=0;
   const mx=[];for(const on of [false,true,false,true]){Z101.on=on;const ds=[];const d0=draw;draw=function(){const t=performance.now();const r=d0.apply(this,arguments);ds.push(performance.now()-t);return r};
     document.getElementById('btnZoom').click();for(let i=0;i<45;i++)await raf();await W8(900);draw=d0;mx.push([on,Math.round(Math.max(...ds)),ds.length]);
     document.getElementById('btnZoom').click();await W8(1200)}
