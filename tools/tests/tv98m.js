@@ -21,7 +21,7 @@ await pg.evaluate(()=>{calLag=()=>3;window.__p=catchUpWeeks()});await W(250);awa
 const r1e=await pg.evaluate(async()=>{calLag=()=>1;const b0=endWeek;endWeek=async()=>{throw new Error('boom98')};let thrown=false;try{await catchUpWeeks()}catch(e){thrown=true}endWeek=b0;return {thrown,gone:!document.getElementById('cu98')}});
 ok(r1e.thrown&&r1e.gone,'1 overlay removed on error '+JSON.stringify(r1e));
 /* ---- 2 · Vulso's cart ---- */
-const r2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};m.coin=3000;MGR.tab='ludus';
+const r2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};m.coin=3000;MGR.tab='recruit';
   const lot=[];for(let i=0;i<3;i++){const g=genGlad({ovr:40});g.woe='test';g.auction=1;g.price=5;w.glads.push(g);lot.push(g.id)}w.cart={wk:w.week,ids:lot};
   MGR_REDRAW();await W8(400);const click=id=>{const bt=document.querySelector(`[data-m48="cartbuy"][data-id="${id}"]`);if(bt)bt.click();return !!bt};
   o.b1=click(lot[0]);await W8(300);o.b2=click(lot[1]);await W8(300);o.btnLeft=document.querySelectorAll('[data-m48="cartbuy"]').length;o.note=(document.querySelector('.cart98left')||{}).textContent||'';o.bought=w.cart.bought;
