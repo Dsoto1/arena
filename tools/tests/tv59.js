@@ -1,7 +1,7 @@
 /* v0.59: Credits (D.Soto) + Prototype tab, the main-menu mute, Zora's mini, the turn sweep, Naumachia by the rulebook (layout, deck, boarding, water pinwheel), Chariot Racing (snake draft with chariot cards, tokens on the chariot), Rivalry Week (byes 4 & 11, week-11 letter, three-bout card + background rivalries) */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 await pg.click('#mainMenu [data-proto]');await pg.waitForFunction(()=>!!document.querySelector('#protoBox h2')&&document.querySelectorAll('#protoBox .crl a').length>0,null,{timeout:30000}).catch(()=>{});await pg.waitForTimeout(200);
 o.cred=await pg.evaluate(()=>({h:document.querySelector('#protoBox h2').textContent,links:document.querySelectorAll('#protoBox .crl a').length,qr:!!document.querySelector('#protoBox .crqr')}));
@@ -20,7 +20,7 @@ o.arena=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide()
   return {zora:!!z,zm,c0,c1:old&&old.isConnected?1:0}});
 ok(o.arena.zora&&o.arena.zm,'zora mini');ok(o.arena.c0>=1&&o.arena.c1===0,'turn sweep');
 o.naum=await pg.evaluate(async()=>{S&&(S.over=true);startEvent({ev:'naumachia',loc:6,seats:['soldier','hero','slave','royalty','venatore','amazonia'].map((c,i)=>({cls:c,cpu:true,team:'T'+(i%3)})),opts:{spect:0}});
-  await new Promise(r=>setTimeout(r,600));const p=S.players[0];const sv=[p.r,p.c];const oth=S.players.filter(q=>q!==p).map(q=>[q,q.r,q.c]);oth.forEach(([q],i)=>{q.r=12;q.c=8+i});
+  /* the board is read once Naumachia is set up (ships, water, six players) — a fixed 600 ms was too short under load */{const t0=Date.now();while(Date.now()-t0<30000&&!(S&&S.ships&&S.ships.length&&S.waterTok&&S.players.length===6))await new Promise(r=>setTimeout(r,100));await new Promise(r=>setTimeout(r,200))}const p=S.players[0];const sv=[p.r,p.c];const oth=S.players.filter(q=>q!==p).map(q=>[q,q.r,q.c]);oth.forEach(([q],i)=>{q.r=12;q.c=8+i});
   p.r=0;p.c=0;let R=reach(p);const corner=[...R.tiles.keys()].filter(k=>shipAt(Math.floor(k/N),k%N)&&R.tiles.get(k)<=2).length;
   p.r=0;p.c=3;R=reach(p);const board=[...R.tiles.keys()].filter(k=>shipAt(Math.floor(k/N),k%N)&&R.tiles.get(k)<=2).length;[p.r,p.c]=sv;oth.forEach(([q,r,c])=>{q.r=r;q.c=c});
   return {tiles:S.ships.map(s=>s.tiles.size),wt:S.waterTok.map(t=>t.r+','+t.c).includes('0,7'),starts:S.players.every(q=>nTerr(q.start[0],q.start[1])==='ship'),corner,board,boxes:S.ships.every(s=>s.box&&s.board)}});
