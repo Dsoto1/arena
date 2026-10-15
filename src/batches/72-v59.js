@@ -44,7 +44,7 @@ function turnSweep(){if(HEADLESS)return;for(const id of ['cardShow','bubbles']){
   base.call(this,f,label);const t1=MM.launchedAt;if(t1===t0)return;
   setTimeout(()=>{if(MM.launchedAt!==t1||!MM.launchPending)return;MM.launchedAt=t1+1; /* the built-in watchdog stands down; this one waits */
     const t2=Date.now();const w=()=>{if(MM.launchPending&&Date.now()-t2<15000)return setTimeout(w,100);
-      const m=$('#mainMenu');if(!m||!m.hidden||!$('#modal').hidden||!$('#mReturn').hidden||CUR_MODAL)return;if(typeof CITY!=='undefined'&&CITY.open)return;if(S&&!S.over&&S.phase!=='setup')return;if(typeof START89!=='undefined'&&START89>0)return; /* v0.89: an event still starting up (drafts) */
+      const m=$('#mainMenu');if(!m||!m.hidden||!$('#modal').hidden||!$('#mReturn').hidden||CUR_MODAL)return;if(typeof CITY!=='undefined'&&CITY.open)return;if(S&&!S.over&&S.phase!=='setup')return;if(Date.now()-(MM.goAt||0)<15000)return; /* v1.03: the horns / a challenge's Enter just sounded (344 dc103Stamp) */if(typeof START89!=='undefined'&&START89>0)return; /* v0.89: an event still starting up (drafts) */
       MM.fromMenu=false;menuShow()};w()},2900)}}
 /* ---------- THE LUDUS CUT (rulebook tie-break, as Virgilante set it): the top two by CF go to the duel; a tie at the cut is
    broken by the most coin, and if still tied, the tied gladiators roll a d12 against each other until one is higher. ---------- */
