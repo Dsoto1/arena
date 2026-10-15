@@ -24,7 +24,7 @@ ok(B.w54>=Math.round(B.shown*1.5),'M2 raster width '+JSON.stringify(B));
 /* M3 + M4 + M20 · recruiting card */
 const C=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};MGR.tab='recruit';MGR_REDRAW();await W8(700);
   const fa=freeAgents();let g=fa.find(x=>wants88(x).includes('rudis'))||fa[0];MGR.sel=g.id;g.scout=2;MGR.recStep=3;
-  let seen=0,bad=0;for(const x of fa.filter(y=>wants88(y).includes('rudis'))){x.scout=2;MGR.sel=x.id;MGR.recStep=3;const hx=detailHTML(x);if(/id="ofRudis88"/.test(hx)){seen++;if(!/title="He wants a path to the rudis/.test(hx))bad++}}o.rudis=!bad;o.rudisSeen=seen;MGR.sel=g.id;MGR.recStep=3;const h=detailHTML(g);
+  let seen=0,bad=0;for(const x of fa.filter(y=>wants88(y).includes('rudis'))){x.scout=2;MGR.sel=x.id;MGR.recStep=3;const hx=detailHTML(x);if(/id="ofRudis88"/.test(hx)){seen++;if(!/title="(He|She) wants a path to the rudis/.test(hx))bad++}}o.rudis=!bad;o.rudisSeen=seen;MGR.sel=g.id;MGR.recStep=3;const h=detailHTML(g);
   w.startDiff='normal';for(const a of council83(w))if(a.k==='recruiter')a.lv=3; /* v1.02 (333 M6): ★ from Recruiter level 3 */MGR.recStep=1;const h1=detailHTML(g);o.starN=/star85|adv74/.test(h1);
   w.startDiff='hard';for(const a of council83(w))a.lv=1;MGR.recStep=1;const h2=detailHTML(g);o.starH=/star85|adv74/.test(h2);o.advNull=recAdvice74(g,m,1)===null;
   for(const a of council83(w))if(a.k==='recruiter')a.lv=REC98.lvMax;const h3=detailHTML(g);o.starTop=/star85|adv74/.test(h3)||recAdvice74(g,m,1)!==null;

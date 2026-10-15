@@ -8,7 +8,7 @@ await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=
 await pg.goto('file://'+page);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const R=await pg.evaluate(async()=>{while(CUR_MODAL)CUR_MODAL.done(null);menuHide();const o={};
   o.damArm=CLASSES.damnatio.armor.map(a=>a.join(':'));o.amaL=CLASSES.amazonia.L||null;o.amaR=CLASSES.amazonia.R;
-  o.kitDam=JSON.stringify(onlKits92().damnatio);o.kitDamOld=JSON.stringify(ONLC.kitFromArmor92(BAL100.dam0,onlCatalog()));
+  o.kitDam=JSON.stringify(onlKits92().damnatio);o.kitDamOld=JSON.stringify(ONLC.kitFromArmor92(CLASSES.damnatio.armor,onlCatalog()));/* v1.01 322: online kits follow the v1.0 classes (was BAL100.dam0, the pre-v1.0 armor) */
   const seats=l=>l.map((c,j)=>({cls:c,cpu:true,diff:'fighter',team:'P'+(j+1)}));
   const base={opts:{...CFG.opts,spect:0}};
   const go=async cfg=>{startEvent(cfg);for(let i=0;i<80;i++){await new Promise(r=>setTimeout(r,50));if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);else if(S&&S.phase!=='setup'&&i>3)break}SPEED='pause'};
@@ -30,7 +30,7 @@ console.log(JSON.stringify(R));
 ok(R.damArm.slice(0,2).join()==='galea:head,balteus1:chest','Damnatio loadout galea+balteus1');ok(R.hasHelm&&R.belt,'Damnatio wears helm + belt at start');
 ok(R.pelt[1]===0&&R.pelt[3]===0&&R.pelt[2]===1&&R.pelt[4]===1,'pelted on even rotations only '+JSON.stringify(R.pelt));
 ok(R.amaL===null&&R.amaR==='axe'&&!R.amaWL,'Amazonia has no falcata');
-ok(R.kitDam===R.kitDamOld,'online Damnatio kit unchanged');
+ok(R.kitDam===R.kitDamOld,'online Damnatio kit follows the v1.0 class (Iron Helm + Belt I)');
 const U=a=>new Set(a).size;ok(U(R.ch)>1,'chariot order varies');ok(U(R.or)>1,'orpheus corners vary');ok(U(R.eg.map(x=>x.slice(0,2)))>1,'eagle first team varies');
 ok(R.ch[2]===R.ch2&&R.or[2]===R.or2&&R.eg[2]===R.eg2,'same seed, same lot');
 console.log('ERRS',JSON.stringify(errs));if(miss.length)console.log('FAIL',miss);await b.close();process.exit(miss.length||errs.length?1:0)})();
