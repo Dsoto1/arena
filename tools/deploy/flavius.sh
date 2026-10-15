@@ -18,6 +18,7 @@
 #                                                           deploys keep it on by themselves (remembered in ~/.flavius.conf)
 #   bash flavius.sh beta [branch]                          the work in progress → a PRIVATE test copy (its own address, its own saves):
 #                                                           page + assets only, never the server, the download or the site
+#   bash flavius.sh update                                 this script itself, from the newest work branch on GitHub (beta does it too)
 #   bash flavius.sh status                                 what is live: game version, server, sign-in, styles
 #
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
@@ -25,7 +26,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=3
+FSH_VER=4
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -248,6 +249,14 @@ site_git(){ local d="$1"; [ -f "$d/index.html" ] || return 0; [ -f "$CONF" ] && 
     run aws s3 rm "s3://$BUCKET/$f" --only-show-errors || true; done < "$d/REMOVED.txt"; fi
   ok "site synced"; clear_cdn "/*"; [ "${DRY:-}" = 1 ] || conf_set SITE_HASH "$h"; }
 
+# ---- update: only this script, from the newest work branch (never older than the one running)
+cmd_update(){ gh_token; local b d best="" bestd=""
+  for b in $(gh_api "branches?per_page=100" | python3 -c "import json,sys;[print(x['name']) for x in json.load(sys.stdin)]"); do case "$b" in release/*) continue;; esac
+    d=$(gh_api "commits/$b" | python3 -c "import json,sys;print(json.load(sys.stdin)['commit']['committer']['date'])" 2>/dev/null || true); [ -n "$d" ] || continue
+    [[ "$d" > "$bestd" ]] && { best="$b"; bestd="$d"; }; done; [ -n "$best" ] || die "No branch found."
+  local t; t=$(mktemp); curl -fsS -m 20 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/$REPO/contents/tools/deploy/flavius.sh?ref=$best" -o "$t" || die "download failed"
+  if fsh_newer "$t"; then cp "$t" "$0"; ok "flavius.sh updated to version $(fsh_ver "$0") (from $best)"; else ok "flavius.sh is already the newest (version $(fsh_ver "$0"))"; fi; rm -f "$t"; }
+
 # ---- beta: the work in progress on its OWN address (CloudFront's own domain = another origin → its own saves, never the players')
 cmd_beta(){ gh_token; local br="${1:-}"
   if [ -z "$br" ]; then say "Looking for the newest work branch"; local b d best="" bestd=""
@@ -259,6 +268,7 @@ cmd_beta(){ gh_token; local br="${1:-}"
   git -c http.extraHeader="$gauth" clone -q --depth 1 --filter=blob:none --sparse --branch "$br" "https://github.com/$REPO.git" "$SRC" || die "git clone failed"
   git -C "$SRC" -c http.extraHeader="$gauth" sparse-checkout set assets || die "git sparse checkout failed (disk full? run: bash flavius.sh clean)"
   ok "fetched $(git -C "$SRC" log -1 --format='%h · %cd' --date=format:'%Y-%m-%d %H:%M')"
+  if [ -z "${FLAVIUS_BETA_OK:-}" ] && fsh_newer "$SRC/tools/deploy/flavius.sh"; then cp "$SRC/tools/deploy/flavius.sh" "$0"; ok "flavius.sh updated — continuing with the new one"; FLAVIUS_BETA_OK=1 exec bash "$0" beta "$br"; fi
   say "Beta: page + assets → play-beta/ (the live game, the server and the site are not touched)"
   run aws s3 sync "$SRC/assets" "s3://$BUCKET/play-beta/assets/" --only-show-errors
   put "$SRC/flavius-arena.html" "play-beta/index.html"; put "$SRC/version.json" "play-beta/version.json"
@@ -298,6 +308,6 @@ cmd_release(){ local here; here=$(pwd)
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;; beta) cmd_beta "$@";; clean) cmd_clean;;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;; beta) cmd_beta "$@";; update) cmd_update;; clean) cmd_clean;;
   *) sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//';;
 esac
