@@ -93,7 +93,7 @@ out.bus=await pg.evaluate(async()=>{const W8=TL93.W8;const r={};const got={};con
   const hp=B.hit.find(h=>!h.npc);ok(hp&&hp.t===B.pName&&hp.loc==='chest'&&hp.amount===1&&hp.before&&hp.after&&hp.before.hp+hp.before.ap-1===hp.after.hp+hp.after.ap,'hit payload '+JSON.stringify(B.hit));
   ok(B.hit.filter(h=>h.npc).length<=1&&B.hit.filter(h=>!h.npc).length===1,'one hit per hurt '+B.hit.length);
   ok(B.elim.length===1&&B.elim[0].v===B.vName&&B.elim[0].by===B.pName&&B.elim[0].type==='player','elim once '+JSON.stringify(B.elim));
-  ok(B.save&&B.save.length===1&&B.save[0].kind==='match'&&B.save[0].slot==='t93'&&B.save[0].ok===true,'save '+JSON.stringify(B.save));
+  {const sv=(B.save||[]).filter(x=>x.slot!=='auto');/* v1.02 337: the resume autosave writes the 'auto' slot while the match plays */ok(sv.length===1&&sv[0].kind==='match'&&sv[0].slot==='t93'&&sv[0].ok===true,'save '+JSON.stringify(B.save))}
   ok(B.win[0]===1&&B.win[1].length===1&&B.win[1][0]===7,'window open/close '+JSON.stringify(B.win));
   ok(B.mkt&&B.mkt.length===1&&B.mkt[0].lv===1&&B.mkt[0].free===true,'market.buy '+JSON.stringify(B.mkt));
   ok(B.emitNs<200,'an emit nobody hears costs '+B.emitNs+' ns')}
