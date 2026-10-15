@@ -89,7 +89,7 @@ if(turn){add(await sweep('arena'));await shot(P,'arena');const t0=await P.evalua
 out.b.names=await P.evaluate(()=>{const s=[...document.querySelectorAll('.gt84')];const re=new RegExp('^(?:'+gt84Re().source+')$');return {n:s.length,eng:s.every(x=>re.test(x.textContent.trim())),bad:s.filter(x=>!re.test(x.textContent.trim())).slice(0,5).map(x=>x.textContent)}});
 await P.evaluate(()=>{S.over=true});await closeAll();
 LG('Settings');/* Settings */
-out.b.set=await step('settings',async()=>{await P.evaluate(()=>{menuHide();openSettings()});await P.waitForSelector('select[data-lang84],[data-lang91]',{timeout:60000}).catch(()=>{});await P.waitForTimeout(500);add(await sweep('settings'));await shot(P,'settings')});
+out.b.set=await step('settings',async()=>{await P.evaluate(()=>{menuHide();openSettings()});await P.waitForSelector('select[data-lang84],[data-lang91],[data-ldd98]',{state:'attached',timeout:60000}).catch(()=>{});await P.waitForTimeout(500);add(await sweep('settings'));await shot(P,'settings')});
 out.b.sel=await P.evaluate(()=>{const s=document.querySelector('select[data-lang84]');return s?{v:s.value,opts:[...s.options].map(o=>o.value)}:null});
 await closeAll();
 LG('Rules');/* Rules & strategy */
