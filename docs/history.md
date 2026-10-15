@@ -237,3 +237,8 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   rudis; server) 340, care timing 341, Acta Diurna 342, loans cap 4 + market + Clerk advice 343. Builders now run the tests their change reaches
   (standing rule). Server changed — flavius.sh release deploys it.
 
+- **v1.03** fixes from his v1.02 notes (tools/plans/v103/NOTES.md, the first SMALL release + first beta): general 344 (square close buttons, Market
+  closed in a no-CF round, challenge start + abandon warning, one section switch per spectator — goldens re-recorded), Manager 345 (Superbus Week +
+  review, rivalry week locked, roster cap 15, loan asks shown as loans, Treated ✓, Vulso via the Recruiter, tiles), board 346 (smaller beasts re-rendered,
+  bases off everywhere, thinner rings, tunnel/Telemachus reasons, sharper cells, Gear designers in the frame). Pipeline: CLAUDE.md split into docs/,
+  release/vX.YY branches + main, flavius.sh beta, deploy-script CI, testlist CI (six tests that never ran now run), flaky tests hardened. No server change.

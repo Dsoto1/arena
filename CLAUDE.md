@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.02** (live). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.03** (v1.02 live). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -199,7 +199,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 
 ## 7. Version history (newest three; all: docs/history.md)
   house (316, server). Version history tab "91–1.0" (187 hist90Num = major×100 + minor). Server changed — flavius.sh release deploys it.
-
 - **v1.01** steadier and tidier (his PDF notes M1–M45 + G1–G22, answers 1a–10a): Manager UI 317, Infirmary loop + Medicus hours 318, Manager rules 319,
   windows + city 320, board 321 (first fan of each gladiator holds his flag, his call 2026-10-14), online kits + security 322, 3D attack variety / walk /
   projectiles 323, two Domus records 324; zoom pre-baked while idle 330-v101zoom2, sandstone Lobby ↻ 331; FOUNDATIONS: replay harness 325, src/ by topic,
@@ -214,3 +213,8 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   rudis; server) 340, care timing 341, Acta Diurna 342, loans cap 4 + market + Clerk advice 343. Builders now run the tests their change reaches
   (standing rule). Server changed — flavius.sh release deploys it.
 
+- **v1.03** fixes from his v1.02 notes (tools/plans/v103/NOTES.md, the first SMALL release + first beta): general 344 (square close buttons, Market
+  closed in a no-CF round, challenge start + abandon warning, one section switch per spectator — goldens re-recorded), Manager 345 (Superbus Week +
+  review, rivalry week locked, roster cap 15, loan asks shown as loans, Treated ✓, Vulso via the Recruiter, tiles), board 346 (smaller beasts re-rendered,
+  bases off everywhere, thinner rings, tunnel/Telemachus reasons, sharper cells, Gear designers in the frame). Pipeline: CLAUDE.md split into docs/,
+  release/vX.YY branches + main, flavius.sh beta, deploy-script CI, testlist CI (six tests that never ran now run), flaky tests hardened. No server change.
