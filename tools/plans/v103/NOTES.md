@@ -62,3 +62,6 @@ FIXES for v1.03 before it ships:
  B6 Infirmary rail oval counts wounds, not fighters — count gladiators needing treatment; one leaves the count when fully treated
 NEW (v1.04): SUPERBUS AS PLAYOFFS — top 4 houses by league points get a playoff bye (2 per bracket side); the other 8 houses play round 1 as two Classic
  4-player events; top 2 of each go on to face the bye houses (two semifinal events); top 2 of each semifinal meet in the final. Replaces the "top 4 seated in the final".
+His answers (2026-10-15): B2a (keep Wild, announce it). SUPERBUS PLAYOFFS (v1.04): 1a top 2 by the event's own ranking · 2a one gladiator per house per round,
+ chosen each round · 3a prize grows each round survived, champion gets the Superbus · 4a knocked-out houses can watch + bet · a BRACKET view during the playoff
+ weeks AND before them (late season: projected seeds from the live standings — "if the season ended today")
