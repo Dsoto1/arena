@@ -39,7 +39,7 @@ if(!process.env.ONLY||process.env.ONLY.includes('A')){const {ctx,pg}=await mk();
   const O=await logLines(pg);
   /* back to the saved point, then a refresh */
   await pg.evaluate(k=>{localStorage.setItem('flavius_v102f',k.p);localStorage.setItem('flavius_match_auto',k.s)},keep);await W0(400);
-  await pg.reload();await pg.waitForFunction(()=>typeof S!=='undefined'&&S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup',null,{timeout:90000}).catch(dbg(pg,'R1'));
+  await pg.reload({waitUntil:'domcontentloaded'});await pg.waitForFunction(()=>typeof S!=='undefined'&&S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup',null,{timeout:90000}).catch(dbg(pg,'R1'));
   out.a4=await pg.evaluate(()=>({boot:R102.boot,menu:!document.getElementById('mainMenu').hidden,turn:S.turnNo,setup:!!document.getElementById('setupBody')}));
   ok(out.a4.boot&&!out.a4.menu&&!out.a4.setup,'A4 the refresh went straight back into the match, no main menu '+JSON.stringify(out.a4));
   ok(await until(pg,t=>S.turnNo>=t+4,T),'A5 the resumed match plays on');await pg.evaluate(()=>{SPEED='pause'});await W0(300);
@@ -47,7 +47,7 @@ if(!process.env.ONLY||process.env.ONLY.includes('A')){const {ctx,pg}=await mk();
   /* a real refresh while a CPU acts */
   await pg.evaluate(()=>{SPEED='normal'});ok(await until(pg,()=>cur()&&cur().cpu&&S.busy&&S.phase!=='resolve'),'A7 a CPU is acting');
   const P7=await pg.evaluate(()=>JSON.parse(localStorage.getItem('flavius_v102f')));
-  await pg.reload();await pg.waitForFunction(()=>typeof S!=='undefined'&&S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup',null,{timeout:90000}).catch(dbg(pg,'R2'));
+  await pg.reload({waitUntil:'domcontentloaded'});await pg.waitForFunction(()=>typeof S!=='undefined'&&S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup',null,{timeout:90000}).catch(dbg(pg,'R2'));
   out.a8=await pg.evaluate(()=>({turn:S.turnNo,cur:S.cur,menu:!document.getElementById('mainMenu').hidden}));
   ok(P7&&P7.k==='bt'&&out.a8.cur===P7.cur&&!out.a8.menu,'A8 refreshed mid CPU turn: back at that turn '+JSON.stringify({P7:P7&&{k:P7.k,turn:P7.turn,cur:P7.cur},a8:out.a8}));
   ok(await until(pg,t=>S.turnNo>t+1,out.a8.turn),'A9 and it carries on');
@@ -59,7 +59,7 @@ if(!process.env.ONLY||process.env.ONLY.includes('A')){const {ctx,pg}=await mk();
   out.a12=await pg.evaluate(()=>({row:!!document.getElementById('mmRes102'),ptr:localStorage.getItem('flavius_v102f'),find:!!r102Find()}));ok(!out.a12.row&&!out.a12.ptr&&!out.a12.find,'A12 ✕ forgets it '+JSON.stringify(out.a12));
   /* kill switch: the old boot */
   await pg.evaluate(()=>{SPEED='fast';menuHide()});await W0(1500);await pg.evaluate(()=>{localStorage.setItem('flavius_v102foff','1')});
-  await pg.reload();await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:30000});
+  await pg.reload({waitUntil:'domcontentloaded'});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:30000});
   out.a13=await pg.evaluate(()=>({off:R102_OFF,live:!!(S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup'),menu:!document.getElementById('mainMenu').hidden}));
   ok(out.a13.off&&!out.a13.live&&out.a13.menu,'A13 kill switch: the main menu as before '+JSON.stringify(out.a13));
   await ctx.close()}
@@ -75,7 +75,7 @@ if(!process.env.ONLY||process.env.ONLY.includes('B')){const {ctx,pg}=await mk();
   await pg.evaluate(()=>uiAct('end',{}));ok(await toIdle(),'B3 uninterrupted: back to the human');await pg.evaluate(()=>{SPEED='pause'});
   const O=await logLines(pg);
   await pg.evaluate(k=>{localStorage.setItem('flavius_v102f',k.p);localStorage.setItem('flavius_match_auto',k.s)},keep);await W0(400);
-  await pg.reload();await pg.waitForFunction(()=>typeof S!=='undefined'&&S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup',null,{timeout:90000}).catch(dbg(pg,'R3'));
+  await pg.reload({waitUntil:'domcontentloaded'});await pg.waitForFunction(()=>typeof S!=='undefined'&&S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup',null,{timeout:90000}).catch(dbg(pg,'R3'));
   await pg.addScriptTag({content:'window.humanIdle='+humanIdle.toString()});
   ok(await until(pg,()=>humanIdle(),null,15000),'B4 resumed on the human\'s move');
   out.b5=await pg.evaluate(()=>{const p=cur();return {sig:[S.turnNo,S.cur,p.r,p.c,p.mv,p.coin,p.cf,RNG.s].join('|'),phase:S.phase,menu:!document.getElementById('mainMenu').hidden}});
@@ -85,7 +85,7 @@ if(!process.env.ONLY||process.env.ONLY.includes('B')){const {ctx,pg}=await mk();
   /* a finished event never resumes */
   await pg.evaluate(()=>{gameOver([cur()],'test')});await W0(1500);
   out.b8=await pg.evaluate(()=>({ptr:localStorage.getItem('flavius_v102f'),mark:!!(matchSlotGet('auto')||{}).r102,find:!!r102Find()}));ok(!out.b8.ptr&&!out.b8.mark&&!out.b8.find,'B8 game over: pointer and marker gone '+JSON.stringify(out.b8));
-  await pg.reload();await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:30000});
+  await pg.reload({waitUntil:'domcontentloaded'});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:30000});
   out.b9=await pg.evaluate(()=>({live:!!(S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup'),menu:!document.getElementById('mainMenu').hidden,row:!!document.getElementById('mmRes102')}));
   ok(!out.b9.live&&out.b9.menu&&!out.b9.row,'B9 a finished event does not resume '+JSON.stringify(out.b9));
   await ctx.close()}
@@ -100,9 +100,25 @@ if(!process.env.ONLY||process.env.ONLY.includes('C')){const {ctx,pg}=await mk();
   ok(live,'C1 the hot-seat table is on a human move');await W0(1500);
   const keep=await pg.evaluate(()=>{const p=cur();return {ptr:JSON.parse(localStorage.getItem('flavius_v102f')||'null'),sv:!!localStorage.getItem('flavius_match_table'),sig:[S.turnNo,S.cur,p.r,p.c,p.mv,RNG.s].join('|')}});
   ok(keep.ptr&&keep.ptr.slot==='table'&&keep.sv,'C2 the table\'s own autosave slot '+JSON.stringify(keep.ptr));
-  await pg.reload();await pg.waitForFunction(()=>typeof S!=='undefined'&&S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup',null,{timeout:90000}).catch(dbg(pg,'C'));await W0(800);
+  await pg.reload({waitUntil:'domcontentloaded'});await pg.waitForFunction(()=>typeof S!=='undefined'&&S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup',null,{timeout:90000}).catch(dbg(pg,'C'));await W0(800);
   out.c3=await pg.evaluate(()=>{const p=cur();return {hs:!!S.hotseat,cfg:!!CFG.hotseat,sig:[S.turnNo,S.cur,p.r,p.c,p.mv,RNG.s].join('|'),menu:!document.getElementById('mainMenu').hidden}});
   ok(out.c3.hs&&out.c3.cfg&&out.c3.sig===keep.sig&&!out.c3.menu,'C3 the table resumes in hot-seat mode where it was '+JSON.stringify({was:keep.sig,now:out.c3}));
+  await ctx.close()}
+
+/* ================= D · a NEW tab does not auto-resume ================= */
+if(!process.env.ONLY||process.env.ONLY.includes('D')){const {ctx,pg}=await mk();
+  await start(pg,7703,['hero','soldier','venatore','veteranus'].map(c=>({cls:c,cpu:true})),'fast');
+  ok(await until(pg,()=>S&&S.turnNo>=4),'D1 the CPUs played some turns');
+  await pg.evaluate(()=>{SPEED='pause'});await W0(500);
+  ok(await pg.evaluate(()=>!!r102Find()&&sessionStorage.getItem('flavius_v102f_tab')==='1'),'D2 autosave + this tab\'s marker are set');
+  const p2=await ctx.newPage();p2.on('pageerror',e=>errs.push(e.message));await p2.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+  await p2.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+  await p2.goto(URL,{waitUntil:'domcontentloaded'});await p2.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await W0(1500);
+  out.d3=await p2.evaluate(()=>({boot:R102.boot,marker:sessionStorage.getItem('flavius_v102f_tab'),live:!!(S&&S.players&&S.players.length&&!S.over&&S.phase!=='setup'),menu:!document.getElementById('mainMenu').hidden,row:!!document.getElementById('mmRes102')}));
+  ok(!out.d3.boot&&!out.d3.marker&&!out.d3.live&&out.d3.menu&&out.d3.row,'D3 a new tab: main menu up, not resumed, Back row shown '+JSON.stringify(out.d3));
+  await pg.close();/* the first tab goes away so the save is free for this one */
+  await p2.click('#mmRes102 [data-r102="back"]');
+  ok(await until(p2,()=>S&&!S.over&&document.getElementById('mainMenu').hidden&&S.players.length&&S.phase!=='setup',null,30000),'D4 clicking Back resumes the match in the new tab');
   await ctx.close()}
 
 for(const d of dirs)try{fs.rmSync(d,{recursive:true,force:true})}catch(e){}console.log(JSON.stringify(out));console.log('ERRS',JSON.stringify(errs));console.log('MISS',JSON.stringify(miss));process.exit(errs.length||miss.length?1:0)})();
