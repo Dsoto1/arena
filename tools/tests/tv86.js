@@ -17,8 +17,10 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+pageName;
 const T0=Date.now();const LG=(...a)=>{if(process.env.DBG)console.error('['+((Date.now()-T0)/1000|0)+'s]',...a)};const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
 const mk=async(locale,init,arg)=>{const ctx=await b.newContext({viewport:{width:1300,height:900},locale});await ctx.route(/fonts\./,r=>r.abort());
-  await ctx.addInitScript(init||(()=>{}),arg);await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});return ctx};
-const open=async(ctx,n)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});await p.waitForTimeout(2400);return p};
+  await ctx.addInitScript(init||(()=>{}),arg);await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');
+    /* a fixed Math.random stream (per page load): the walk's counts of leftover English / cut-off texts depend on random names, letters and seats (18 to 42 leftover lines between identical runs), so the ceilings were met by luck; with one stream every run walks the same screens */
+    let a=0x86a5c3e1;Math.random=()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}});return ctx};
+const open=async(ctx,n)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});/* the page's own readiness (menu or first window up, boot loaders done), not a fixed 2.4 s — under load the menu comes later and a click on it found nothing */await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:90000}).catch(()=>{});await p.waitForTimeout(400);return p};
 const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`v86_${WL}_${n}.png`)})};
 
 LG('── A');/* ── A · first run on a Spanish browser ── */
@@ -71,7 +73,7 @@ out.b.menu=await P.evaluate(()=>({LANG,html:document.documentElement.lang,txt:do
 add(await sweep('menu'));await shot(P,'menu');
 LG('Play Now');/* Play Now → a turn */
 const step=async(n,fn)=>{try{await fn();return true}catch(e){errs.push('B step '+n+': '+e.message.split('\n')[0]);return false}};
-out.b.play=await step('play',async()=>{await P.click('#mainMenu [data-mm="play"]');await P.waitForTimeout(1200);add(await sweep('playnow-menu'));await P.click('[data-mi="0"]');await P.waitForTimeout(1800);add(await sweep('setup'));await shot(P,'setup');await P.click('#goBtn')});
+out.b.play=await step('play',async()=>{await P.waitForFunction(()=>{const m=document.getElementById('mainMenu');return !!m&&!m.hidden&&!!document.querySelector('#mainMenu [data-mm="play"]')},null,{timeout:60000}).catch(()=>{});await P.click('#mainMenu [data-mm="play"]',{timeout:60000});await P.waitForSelector('#modal [data-mi="0"]',{timeout:60000});await P.waitForTimeout(500);add(await sweep('playnow-menu'));await P.click('[data-mi="0"]');await P.waitForSelector('#goBtn',{timeout:60000});await P.waitForTimeout(800);add(await sweep('setup'));await shot(P,'setup');await P.click('#goBtn',{timeout:60000})});
 let turn=false;for(let i=0,T_=Date.now();Date.now()-T_<90000&&!turn;i++){await P.waitForTimeout(500);const st=await P.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
   if(st.m){if(i===2)add(await sweep('briefing'));await P.evaluate(()=>{const b=document.querySelector('#mBtns button.primary')||document.querySelector('#mBtns button');if(b)b.click()})}else if(st.h==='choice')turn=true}
 out.b.turn=turn;
@@ -87,7 +89,7 @@ if(turn){add(await sweep('arena'));await shot(P,'arena');const t0=await P.evalua
 out.b.names=await P.evaluate(()=>{const s=[...document.querySelectorAll('.gt84')];const re=new RegExp('^(?:'+gt84Re().source+')$');return {n:s.length,eng:s.every(x=>re.test(x.textContent.trim())),bad:s.filter(x=>!re.test(x.textContent.trim())).slice(0,5).map(x=>x.textContent)}});
 await P.evaluate(()=>{S.over=true});await closeAll();
 LG('Settings');/* Settings */
-out.b.set=await step('settings',async()=>{await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);add(await sweep('settings'));await shot(P,'settings')});
+out.b.set=await step('settings',async()=>{await P.evaluate(()=>{menuHide();openSettings()});await P.waitForSelector('select[data-lang84],[data-lang91]',{timeout:60000}).catch(()=>{});await P.waitForTimeout(500);add(await sweep('settings'));await shot(P,'settings')});
 out.b.sel=await P.evaluate(()=>{const s=document.querySelector('select[data-lang84]');return s?{v:s.value,opts:[...s.options].map(o=>o.value)}:null});
 await closeAll();
 LG('Rules');/* Rules & strategy */

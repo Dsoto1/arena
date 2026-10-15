@@ -93,7 +93,9 @@ const settle=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,
   out.mgr=M;ok(M.n.length===3&&!M.n[0]&&M.n[1]&&!M.n[2],'5 only the 2nd bout is at night '+M.n);
   ok(M.cards.length===3&&!M.cards[0]&&M.cards[1]&&!M.cards[2],'5 the 🌙 tag on the 2nd card only '+M.cards);ok(/🌙/.test(M.tag),'5 tag reads 🌙 '+M.tag);
   const city=async done0=>pg.evaluate(async d0=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_();w.night.bouts[0].done=d0;w.night.bouts[1].done=false;w.night.hornsLock=null;
-    if(CITY.open)closeCity(()=>{});await W8(300);openCitySquare(w.night.loc,{prematch:true});await W8(2200);
+    if(CITY.open)closeCity(()=>{});await W8(300);CITY.shown100=0;openCitySquare(w.night.loc,{prematch:true});
+    /* the square opens under a cover (279) and is revealed once its figures decoded (≤1.8 s on the page's clock, far longer in wall time under load): wait for the reveal itself, not a fixed 2.2 s, then a few painted frames */
+    for(let t0=Date.now();Date.now()-t0<30000&&!(CITY.open&&!CITY.warm100&&CITY.shown100);)await W8(100);await W8(600);
     const g=CITY.c2,c=CITY.cv;const d=g.getImageData(0,0,c.width,Math.round(c.height*0.6)).data;let l=0,bl=0,r=0,n=0;for(let i=0;i<d.length;i+=16){l+=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];r+=d[i];bl+=d[i+2];n++}
     return {dusk:!!CB89.dusk91,lum:l/n,br:bl/Math.max(1,r)}},done0);
   const day=await city(false);if(SHOT)await pg.screenshot({path:path.join(SHOT,'tv91n_city_day.png')});
