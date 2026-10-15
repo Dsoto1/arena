@@ -14,7 +14,7 @@ const p=await page(false);const mark=await p.evaluate(()=>ERR92.n);
 const r=await p.evaluate(()=>{const w=W_(),m=me();const o={};const ISS=new Set(['galea','wraps','legwraps']);
   const issOnly=g=>{const E=g.eq94;if(!E)return false;const all=[E.R,E.L,...E.a].filter(Boolean);return all.length>0&&all.every(P=>P.iss===g.id)&&E.a.every(P=>ISS.has(P.k))&&[E.R,E.L].filter(Boolean).every(P=>(W[P.k].lv|0)<=1)};
   /* 1 */
-  const con=w.glads.filter(g=>g.alive&&g.contract);o.n=con.length;o.newAll=con.every(issOnly);o.flag=!!w.gear102&&w.gear102.old===0&&w.gear102.fund===GR102.fund&&g102Fund(m)>0;o.rivals=w.mgrs.filter(x=>!x.isPlayer&&!x.dead).every(x=>rosterOf(x).every(issOnly));
+  const con=w.glads.filter(g=>g.alive&&g.contract);o.n=con.length;o.newAll=con.every(issOnly);o.flag=!!w.gear102&&w.gear102.old===0&&w.gear102.start===GR102.start;o.rivals=w.mgrs.filter(x=>!x.isPlayer&&!x.dead).every(x=>rosterOf(x).every(issOnly));
   /* 2 */
   const A=freeAgents().filter(g=>!g.inj).sort((a,b)=>effOvr(b)-effOvr(a))[0];m.coin=2000;signGlad(A,askWage(A),12,0,false);arm94Ensure(w);o.sign=issOnly(A);o.signKit=JSON.stringify([A.eq94.R&&A.eq94.R.k,A.eq94.L&&A.eq94.L.k,A.eq94.a.map(P=>P.k)]);
   /* 3 · dented return + the repair price */
@@ -49,6 +49,8 @@ ok(r.n>0&&r.newAll&&r.flag,'1 a new career wears only the Issued kit');ok(r.riva
 ok(r.dent&&r.keepWraps,'3 a real piece stripped comes home dented');ok(r.issVanish,'3 Issued armor stripped vanishes');ok(r.fixPrice&&r.fixW,'3 repair = a tenth of the value '+JSON.stringify(r.fixVal));
 ok(r.repair,'3 Repair all charges the tenth');ok(r.lootSkip,'3 an Issued piece picked up is not looted');ok(r.rivUp===true,'4 a rival replaces an Issued weapon '+JSON.stringify(r.rivInfo));ok(r.poor,'4 a rival at the floor buys nothing');
 ok(r.oldFlag&&r.oldSame,'5 an old career is marked and keeps what it owns');ok(r.oldSign===true,'5 an old career\'s next signing gets the Issued kit');ok(r.lesson&&r.fh,'6 lesson + first-hour text');
+const st=await p.evaluate(()=>{const s0=GR102.start;GR102.start=0;newWorld({type:'pre',key:MGR_PRE[1].key});const c0=me().coin;GR102.start=77;newWorld({type:'pre',key:MGR_PRE[1].key});const c1=me().coin;GR102.start=s0;return {c0,c1}});
+ok(st.c1-st.c0===77,'1 a new career starts with GR102.start more coin '+JSON.stringify(st));
 const e1=await p.evaluate(m=>ERR92.n-m,mark);ok(e1===0,'no new error-log entries ('+e1+')');
 /* 7 · kill switch */
 const q=await page(true);const k=await q.evaluate(()=>{const w=W_();const con=w.glads.filter(g=>g.alive&&g.contract&&g.eq94);const K=g=>arm94Kit(g.cls);

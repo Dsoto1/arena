@@ -16,12 +16,12 @@
        stands where the class kit wants a real one is replaced (shelf first, else bought) within the same budget rule; the Issued piece
        goes back to Flavius (deleted). Empty hands are filled first across the whole roster. The mgrsim player (o.player) buys like a
        rival: at most ARM94.rivMax a week above its reserve.
-   5 · ARMORY FUND: a NEW career's houses start with GR102.fund (0.5) × the class-kit value of their starting rosters as extra coin
-       (w.gear102.fund records it) — the class kits they no longer get, half paid in coin to buy real gear with.
+   5 · STARTING TREASURY (his answer 2026-10-14): a NEW career's houses start with GR102.start more coin (plain treasury coin, "just enough
+       to get started"; w.gear102.start records it) — later gear is paid by wins and podiums. Tuned with tools/mgrsim.js (collapse rate).
    4 ·The Manager lesson's Armory step and the first-hour Recruiting tip say it.
    Kill switch: localStorage flavius_v102hoff=1 (nothing installed — 225/272 exactly). Test: tools/tests/tv102h.js
    ===================================================================== */
-const GR102={on:false,mk:0,div:10,fund:0.5}; /* TWEAK fund: a NEW career's houses get this share of their starting rosters' class-kit value as coin (the Armory fund) — tuned with tools/mgrsim.js */
+const GR102={on:false,mk:0,div:10,start:100}; /* TWEAK start: extra starting coin for every house of a NEW career — the smallest that keeps mgrsim collapses near the pre-v1.02 rate */
 try{GR102.on=localStorage.getItem('flavius_v102hoff')!=='1'}catch(e){GR102.on=true}
 if(GR102.on){
 /* the Issued kit of a class: {R,L,a:[keys]} */
@@ -38,9 +38,7 @@ function iss102Give(w,g,h){const K=iss102Kit(g.cls);const E=g.eq94={h,R:null,L:n
     if(h&&g.eq94&&g.eq94.h!==h){arm94Strip(w,g)}
     if(h&&!g.eq94&&!g.loanFrom){const m=arm94M(w,h);if(m){iss102Give(w,g,h);base.apply(this,arguments);return true}}}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}
-{const base=newWorld;newWorld=function(){GR102.mk++;let r;try{r=base.apply(this,arguments)}finally{GR102.mk--}try{const w=W_();if(w){if(!w.gear102)w.gear102={old:0};if(w.gear102.fund==null){w.gear102.fund=GR102.fund;for(const m of w.mgrs||[]){if(m.dead)continue;const f=g102Fund(m);if(f>0)m.coin+=f}}}}catch(e){console.error(e)}return r}}
-/* the Armory fund of a new house: GR102.fund × the class-kit value of its starting roster (coin, to buy its real gear in the City Square) */
-function g102Fund(m){let v=0;for(const g of rosterOf(m)){const K=arm94Kit(g.cls);v+=(K.R?arm94Price('w',K.R):0)+(K.L?arm94Price('w',K.L):0)+K.a.reduce((t,x)=>t+arm94Price('a',x.k),0)}return Math.round(v*GR102.fund)}
+{const base=newWorld;newWorld=function(){GR102.mk++;let r;try{r=base.apply(this,arguments)}finally{GR102.mk--}try{const w=W_();if(w){if(!w.gear102)w.gear102={old:0};if(w.gear102.start==null){w.gear102.start=GR102.start;for(const m of w.mgrs||[])if(!m.dead)m.coin+=GR102.start}}}catch(e){console.error(e)}return r}}
 SAVE_MIGRATIONS.push(['1.02',w=>{if(w&&!w.gear102)w.gear102=GR102.mk?{old:0}:{old:1,wk:w.week|0}}]); /* a world being created runs the migrations on its first save: not old */
 /* 2 · repairs: a tenth of the value; Issued armor stripped to 0 AP vanishes (225's settle reads ARM94.issVanish) */
 ARM94.fixFn=P=>Math.max(1,Math.ceil(arm94Price(P.t,P.k)/GR102.div));ARM94.repK=1/GR102.div;ARM94.issVanish=true;
