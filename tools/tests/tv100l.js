@@ -31,7 +31,7 @@ const A=await ev(pg,()=>{const q=s=>document.querySelector(s);const ban=q('.room
     lit:[...document.querySelectorAll('.lu100t.k-adv .c83p.lit')].map(x=>x.dataset.c83),cnt:(q('.lu100t.k-adv .cnt')||{}).textContent||'',doc:document.documentElement.scrollWidth<=1440}});
 ok(A.ban&&A.card,'banner + Match Week card '+JSON.stringify(A));ok(A.chips&&A.dots[0].includes('fresh')&&A.dots[1].includes('tired')&&A.dots[2].includes('worn'),'bout chips: face, name, fatigue dot');
 ok(A.rows===A.todo&&A.rows>=3&&A.hd&&new RegExp('^\\d+/\\d+$').test(A.prog),'parchment = the desk rows');ok(A.pinned,'parchment pinned to the tiles');
-ok(A.tiles.join()==='tab:roster,run:promote,run:fac,tab:armory,null:','five tiles '+A.tiles);ok(A.sc===4,'scene art on the four tiles');ok(A.drawerHidden&&A.letters&&A.old,'letters in the closed drawer, old council/dash gone');
+ok(A.tiles.join()==='tab:roster,tab:armory,run:fac,run:promote,null:','five tiles (v1.03 N9a: Armory and Promote swapped) '+A.tiles);ok(A.sc===4,'scene art on the four tiles');ok(A.drawerHidden&&A.letters&&A.old,'letters in the closed drawer, old council/dash gone');
 ok(A.fz===6&&A.lit.includes('clerk')&&/lit/.test(A.cnt),'bronze frieze, the clerk lit');ok(A.doc,'no sideways scroll');
 /* the drawer */
 const M=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const d=document.querySelector('#desk99');document.querySelector('[data-lu100mail="1"]').click();await W8(100);const shown=getComputedStyle(d.querySelector('.lu100mail')).display!=='none';

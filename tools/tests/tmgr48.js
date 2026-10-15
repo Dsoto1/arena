@@ -17,10 +17,10 @@ o.practice=await pg.evaluate(()=>{const w=W_(),pm=me();const g=rosterOf(pm)[0];c
 o.empty=await pg.evaluate(()=>{const w=W_(),pm=me();const mine=rosterOf(pm);mine.forEach(g=>{g.contract=null});w.offers=[];w.cartSpell=0;
   w.mgrs.filter(m=>!m.isPlayer).forEach(m=>{m.opin=m.opin||{};});const orig=opinionOf;opinionOf=m=>({v:60});emptyBarracksWeek(w,pm);opinionOf=orig;
   const off=(w.offers||[]).find(x=>x.kind==='loanin');MGR.tab='ludus';MGR_REDRAW();const pane=document.getElementById('mgrPane').innerHTML;
-  const r={offer:!!off,letter:/A letter from/.test(pane),cart:/Vulso's cart/.test(pane),lots:(w.cart||{ids:[]}).ids.length};
+  const r={offer:!!off,letter:/A letter from/.test(pane),cart:(()=>{MGR.tab='recruit';MGR_REDRAW();const t=/Vulso's cart/.test(document.getElementById('mgrPane').innerHTML);MGR.tab='ludus';MGR_REDRAW();return t})()&&!/class="card2 offerbox cartbox"/.test(pane),lots:(w.cart||{ids:[]}).ids.length};
   if(off){document.querySelector('[data-m48="loaninyes"]').click();const g=gById(off.gid);r.borrowed=g.contract.mgr===pm.id&&!!g.loanFrom&&g.loanFrom.dire===1;
     MGR.tab='roster';MGR_REDRAW();r.loansCard=!!document.querySelector('.loans');
-    const cid=w.cart.ids[0];pm.coin+=50;MGR.tab='ludus';MGR_REDRAW();document.querySelector(`[data-m48="cartbuy"][data-id="${cid}"]`).click();r.bought=gById(cid).contract&&gById(cid).contract.mgr===pm.id;
+    const cid=w.cart.ids[0];pm.coin+=50;MGR.tab='recruit';MGR_REDRAW();document.querySelector(`[data-m48="cartbuy"][data-id="${cid}"]`).click();r.bought=gById(cid).contract&&gById(cid).contract.mgr===pm.id;
     r.returned=g.contract.mgr===off.mid&&!g.loanFrom;
     /* death while on loan */
     const h=w.glads.find(x=>x.alive&&x.contract&&!mgrById(x.contract.mgr).isPlayer&&!isRival(mgrById(x.contract.mgr)));const owner=mgrById(h.contract.mgr);borrowFrom(h,owner,3,4);const c0=pm.coin,o0=owner.coin;h.alive=false;h.contract=null;loansWeek(w,pm);r.deathFee=[c0-pm.coin,owner.coin-o0]}
