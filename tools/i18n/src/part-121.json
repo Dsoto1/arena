@@ -1,0 +1,342 @@
+[
+ {
+  "k": "Fixes from your v1.02 notes",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: Superbus Week with its own card and review, rivalry week locked, a roster cap of 15, loan asks shown as loans, Vulso writes through your Recruiter",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Spectators switch section once a match and start spread around the stands",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Beasts smaller and slimmer, bases gone from every figure when turned off, sharper pieces",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Challenges start properly and warn before you leave, square close buttons, Market closed in a round without CF, tunnel and Telemachus say why, Gear designers in the new frame",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "🛒 <b>Vulso's cart</b> rattles up to your gate: three lots off the auction block, no road to pay. Your Recruiter has written.",
+  "w": "50-v48.js:47"
+ },
+ {
+  "k": "{0} already switched section this match.",
+  "w": "128-v82stands.js:127"
+ },
+ {
+  "k": "The cup comes home: {0} won it for {1}.",
+  "w": "345-v103mgr.js:47"
+ },
+ {
+  "k": "{0} carried the colours of {1} and fell short of the crown.",
+  "w": "345-v103mgr.js:47"
+ },
+ {
+  "k": "{0} had no fighter on the sand.",
+  "w": "345-v103mgr.js:47"
+ },
+ {
+  "k": "{0} WINS THE FLAVIUS SUPERBUS",
+  "w": "345-v103mgr.js:48"
+ },
+ {
+  "k": "The Flavius Superbus · Roma",
+  "w": "345-v103mgr.js:48"
+ },
+ {
+  "k": "{0}{1} takes the crown with {2}.",
+  "w": "345-v103mgr.js:49"
+ },
+ {
+  "k": "Before a roaring Roma, the four finalists took the sand: {0}. <b>{1}</b>{2} was the last standing{3}. {4}",
+  "w": "345-v103mgr.js:50"
+ },
+ {
+  "k": "⚔ Rivalry Week: the card is the rivalry pairings — nobody can be added, swapped or withdrawn, and no other event can be entered this week.",
+  "w": "345-v103mgr.js:63"
+ },
+ {
+  "k": "Over the cap: {0} / {1} fighters under contract. Release, lend or trade some before you sign anyone.",
+  "w": "345-v103mgr.js:76"
+ },
+ {
+  "k": "Your ludus is full: {0} of {1} fighters under contract. Release, lend or trade one first.",
+  "w": "345-v103mgr.js:76"
+ },
+ {
+  "k": "🤝 {0} is hurt — an injured fighter cannot be borrowed.",
+  "w": "345-v103mgr.js:81"
+ },
+ {
+  "k": "🤝 {0} is hurt — an injured fighter cannot be lent out.",
+  "w": "345-v103mgr.js:82"
+ },
+ {
+  "k": "Over the cap: that trade brings {0} fighters for one and your ludus holds {1} / {2}.",
+  "w": "345-v103mgr.js:83"
+ },
+ {
+  "k": "released by {0} — the house was over its roster cap",
+  "w": "345-v103mgr.js:92"
+ },
+ {
+  "k": "<b>Over the cap: {0} / {1}</b> fighters under contract — nobody new can sign until you release, lend or trade some.",
+  "w": "345-v103mgr.js:94"
+ },
+ {
+  "k": "Open the Roster",
+  "w": "345-v103mgr.js:94"
+ },
+ {
+  "k": "📨 A loan request from {0} {1}",
+  "w": "345-v103mgr.js:102"
+ },
+ {
+  "k": "They want to borrow",
+  "w": "345-v103mgr.js:103"
+ },
+ {
+  "k": "for {0} weeks, then he comes home",
+  "w": "345-v103mgr.js:104"
+ },
+ {
+  "k": "The Recruiter: Vulso's cart is at the gate",
+  "w": "345-v103mgr.js:115"
+ },
+ {
+  "k": "Vulso's cart has rattled up to your gate with three lots off the auction block: cheap, rough, and no road to pay. You may take two of them, this week or next.",
+  "w": "345-v103mgr.js:116"
+ },
+ {
+  "k": "Go to the Recruiting board",
+  "w": "345-v103mgr.js:116"
+ },
+ {
+  "k": "The Flavius Superbus is on this week",
+  "w": "345-v103mgr.js:136"
+ },
+ {
+  "k": "🏛 Superbus Week",
+  "w": "345-v103mgr.js:137"
+ },
+ {
+  "k": "🏛 Superbus Week · the finale of season {0}, by invitation",
+  "w": "345-v103mgr.js:138"
+ },
+ {
+  "k": "Superbus Week",
+  "w": "345-v103mgr.js:140"
+ },
+ {
+  "k": "SUPERBUS WEEK",
+  "w": "345-v103mgr.js:142"
+ },
+ {
+  "k": "The Flavius Superbus · Roma · the crown of season {0}",
+  "w": "345-v103mgr.js:142"
+ },
+ {
+  "k": "Had care this week",
+  "w": "345-v103mgr.js:147"
+ },
+ {
+  "k": "Treated ✓",
+  "w": "345-v103mgr.js:147"
+ },
+ {
+  "k": "Superbus Week in review · season {0}",
+  "w": "345-v103mgr.js:151"
+ },
+ {
+  "k": "Your <b>{0}</b> won it: {1}, +{2} fame and the Superbus Cup.",
+  "w": "345-v103mgr.js:153"
+ },
+ {
+  "k": "Your <b>{0}</b> fought for the house and fell short of the crown.",
+  "w": "345-v103mgr.js:153"
+ },
+ {
+  "k": "Your house had no fighter on the sand.",
+  "w": "345-v103mgr.js:153"
+ },
+ {
+  "k": "<b>{0}</b>{1} takes the crown ({2}).",
+  "w": "345-v103mgr.js:155"
+ },
+ {
+  "k": "Entrants",
+  "w": "345-v103mgr.js:155"
+ },
+ {
+  "k": "Switched",
+  "w": "344-v103gen.js:31"
+ },
+ {
+  "k": "1 switch left",
+  "w": "344-v103gen.js:31"
+ },
+ {
+  "k": "Switched — one switch a match",
+  "w": "344-v103gen.js:32"
+ },
+ {
+  "k": "Spectators switch section once a match — you already did.",
+  "w": "344-v103gen.js:49"
+ },
+ {
+  "k": "Move to another stand — once a match. Its gladiator earns 1 CF from you every turn.",
+  "w": "344-v103gen.js:49"
+ },
+ {
+  "k": "🚶 Section switch",
+  "w": "344-v103gen.js:53"
+ },
+ {
+  "k": "Crowd Favor can't be spent in this round, so nothing can be bought at the Market.",
+  "w": "344-v103gen.js:57"
+ },
+ {
+  "k": "No CF this round",
+  "w": "344-v103gen.js:58"
+ },
+ {
+  "k": "This attempt is already counted. Leaving now scores nothing, and the best of your attempts is what counts.",
+  "w": "344-v103gen.js:75"
+ },
+ {
+  "k": "1 of 3 attempts left this week",
+  "w": "344-v103gen.js:75"
+ },
+ {
+  "k": "{0} of 3 attempts left this week",
+  "w": "344-v103gen.js:75"
+ },
+ {
+  "k": "Today's attempt is already counted — it is the only one that scores. Leaving now earns no score and no medal.",
+  "w": "344-v103gen.js:76"
+ },
+ {
+  "k": "You can still play it again as practice.",
+  "w": "344-v103gen.js:76"
+ },
+ {
+  "k": "This is practice, so nothing is lost by leaving. Your first attempt today already counts.",
+  "w": "344-v103gen.js:77"
+ },
+ {
+  "k": "Leave the challenge?",
+  "w": "344-v103gen.js:80"
+ },
+ {
+  "k": "Abandon the challenge",
+  "w": "344-v103gen.js:80"
+ },
+ {
+  "k": "Your class never uses the tunnels",
+  "w": "346-v103board.js:162"
+ },
+ {
+  "k": "Can’t crawl through — missing a limb",
+  "w": "346-v103board.js:163"
+ },
+ {
+  "k": "Can’t take the Arena Chest down a tunnel",
+  "w": "346-v103board.js:164"
+ },
+ {
+  "k": "Needs an Arena Key",
+  "w": "346-v103board.js:165"
+ },
+ {
+  "k": "Stand next to an open tunnel",
+  "w": "346-v103board.js:166"
+ },
+ {
+  "k": "No free exit to surface at",
+  "w": "346-v103board.js:167"
+ },
+ {
+  "k": "⚔ Weapon designer",
+  "w": "346-v103board.js:182"
+ },
+ {
+  "k": "New weapon",
+  "w": "346-v103board.js:182"
+ },
+ {
+  "k": "name · level · colours",
+  "w": "346-v103board.js:185"
+ },
+ {
+  "k": "Card icons",
+  "w": "346-v103board.js:186"
+ },
+ {
+  "k": "attack · range · abilities",
+  "w": "346-v103board.js:186"
+ },
+ {
+  "k": "⚔ The weapon",
+  "w": "346-v103board.js:187"
+ },
+ {
+  "k": "📜 Your weapons · {0}",
+  "w": "346-v103board.js:187"
+ },
+ {
+  "k": "🛡 Armor designer",
+  "w": "346-v103board.js:189"
+ },
+ {
+  "k": "New armor",
+  "w": "346-v103board.js:189"
+ },
+ {
+  "k": "✨ Extras",
+  "w": "346-v103board.js:191"
+ },
+ {
+  "k": "📶 Level",
+  "w": "346-v103board.js:191"
+ },
+ {
+  "k": "name · equip point · level",
+  "w": "346-v103board.js:192"
+ },
+ {
+  "k": "crests · studs · wear",
+  "w": "346-v103board.js:193"
+ },
+ {
+  "k": "🛡 The piece",
+  "w": "346-v103board.js:194"
+ },
+ {
+  "k": "📜 Your armor · {0}",
+  "w": "346-v103board.js:194"
+ },
+ {
+  "k": "🏆 Trophy designer",
+  "w": "346-v103board.js:196"
+ },
+ {
+  "k": "New trophy",
+  "w": "346-v103board.js:196"
+ },
+ {
+  "k": "name · material · rewards",
+  "w": "346-v103board.js:199"
+ },
+ {
+  "k": "📜 Your trophies · {0}",
+  "w": "346-v103board.js:200"
+ },
+ {
+  "k": "arena · v1.03",
+  "w": "01-head.html"
+ }
+]
