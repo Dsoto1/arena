@@ -1,0 +1,27 @@
+# v1.03 — his v1.02 notes (102notes.pdf, 2026-10-15)
+
+## Fixes (straight into the build)
+G1 square ✕/🏛 · G2 Market disabled in a no-CF round 3 (+why) · G3 🔴 challenge start: briefing over the menu, Enter → menu, nothing loads
+G4 abandoning a challenge says what it costs (attempt counted, daily's scored attempt spent, weekly attempts left)
+M1 "Week 13" review in season 3 without the Superbus win · M2 "Superbus Week" on rail/banner (not Match Week 4) + regal Superbus card
+M3 🔴 rivalry week: no other bouts enterable (broke pairings, withdraw filled by a free agent); no specials/invitationals that week
+M4 🔴 no offers past the roster cap (25 recruits all signed at once) · M5 no lending/borrowing injured fighters
+M6 Armory starters' gold border stays when another fighter is selected · M7 🔴 trade requests that give nothing
+M8 Infirmary "Treated ✓" this week · M9 top bar: new record format, drop "N fighters"
+T1 bears/lions/wolves smaller, lions slimmer (re-render) · T2 Tholo (+Commodus, custom humanoids) base shown with bases off
+T3 thinner class/team ring on thin bases · T4 disabled tunnel says "missing a limb" · T5 Telemachus: attack hover says why
+T6 blurry gladiator edges zoomed (measure: sheet drawn at board size then scaled) · S1 Gear designers get the new tab look
+
+## Features — his answers
+N1a spectators switch section once a match (CPU crowd too), crowd spread at the start
+N2a one off-season week after the Superbus: Season in Review letter (in/out, finances, record, titles, fallen, band-ups); contracts expire/renew, buildings finish, recruiting open, no bouts
+N3a fame follows results (scaled by win rate, drifts down after a losing season; Superbus seats top houses by league points) · N3(advisors)a each level needs more, ~one a season
+N4a recruiting: fewer hours, rising cost per extra action on one recruit a week, offers answered NEXT week, refusals / rival signings / lowball scares, trial needs 2+ earlier actions on an earlier week; board cap 6 + Recruiter level
+N5 cap a (start 8 → 15 via Barracks + Barracks master) · starters a (4 First team + 4 Second team, rest Rostered, Lent out apart) · layout a (one sortable list: tier, name, OVR, W-L, wage, fatigue, weeks; group headers; ⋯/drag; right side = selected gladiator only, Keeping him inside the tabula) · order a (OVR within group, bout chip)
+N6a loan contract: lump sum + wage under his terms; 2+ wins on loan → borrower may offer a buy-out at the end
+N7a Medicus queue: one click treats in order with this week's hours; warning before Match Week when healthy starters can't fill bouts
+N8 Vulso's cart = a Recruiter letter with "Go to the Recruiting board"; bottom bar removed (no objection)
+N9a swap Armory/Promote tiles; bigger advisor faces, compact council card; Promote/Upgrade School popups with art tiles, current + next-level look, Build only if affordable; one illustration per building, richer per level
+N10a build time = the new level in weeks, one project at a time, on the banner
+N11a beast corpse models on the sand (cleared by the crew) + HIS ADD: only the new 3D models shown — no switch back to the old token on damage / severed limbs — unless Settings says otherwise
+N12a one sun upper left, silhouette shadows cast lower right, pillars cast long; Off + Light board paths; ≤16 ms frame
