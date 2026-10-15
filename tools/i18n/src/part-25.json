@@ -804,24 +804,40 @@
   "w": "server/src/routes.js:1692"
  },
  {
+  "k": "Finish or leave your room or match first.",
+  "w": "server/src/routes.js:1765"
+ },
+ {
+  "k": "The treasury needs {0} coin to grant the rudis.",
+  "w": "server/src/routes.js:1777"
+ },
+ {
+  "k": "{0} receives the rudis — freed. The Hall of the Fallen keeps the name.",
+  "w": "server/src/routes.js:1789"
+ },
+ {
+  "k": "{0} leaves the sand, released. The Hall of the Fallen keeps the name.",
+  "w": "server/src/routes.js:1789"
+ },
+ {
   "k": "Unknown request:",
-  "w": "server/src/routes.js:1753"
+  "w": "server/src/routes.js:1805"
  },
  {
   "k": "Too many requests — wait a moment.",
-  "w": "server/src/routes.js:1754"
+  "w": "server/src/routes.js:1806"
  },
  {
   "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1756"
+  "w": "server/src/routes.js:1808"
  },
  {
   "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1757"
+  "w": "server/src/routes.js:1809"
  },
  {
   "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1760"
+  "w": "server/src/routes.js:1812"
  },
  {
   "k": "The arena hit a snag — try again (ref {0}).",
@@ -1586,5 +1602,33 @@
  {
   "k": "That move carries markup that is not allowed.",
   "w": "src/online/111-onlcore.js:1673"
+ },
+ {
+  "k": "The class is set when a gladiator is raised — it never changes.",
+  "w": "src/online/111-onlcore.js:1729"
+ },
+ {
+  "k": "Pick one of the five ratings.",
+  "w": "src/online/111-onlcore.js:1763"
+ },
+ {
+  "k": "No point to spend — he earns one each level.",
+  "w": "src/online/111-onlcore.js:1764"
+ },
+ {
+  "k": "That rating is at {0} — pick another.",
+  "w": "src/online/111-onlcore.js:1764"
+ },
+ {
+  "k": "Type {0} to confirm.",
+  "w": "src/online/111-onlcore.js:1774"
+ },
+ {
+  "k": "Rudiarius — freed · Lv {0}{1}",
+  "w": "src/online/111-onlcore.js:1783"
+ },
+ {
+  "k": "Released · Lv {0}{1}{2}",
+  "w": "src/online/111-onlcore.js:1783"
  }
 ]

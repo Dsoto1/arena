@@ -16,7 +16,7 @@
    Kill switch localStorage flavius_v102ioff=1 → no tally, no level-up screen, no Domus changes (the mock still follows the shared rules).
    ===================================================================== */
 const P102={off:(()=>{try{return localStorage.getItem('flavius_v102ioff')==='1'}catch(e){return false}})(),shown:{},run:0,skip:false,tl:null,lu:null,rel:null};
-const P102_BANDS={spd:[[76,'+1 movement'],[96,'+2 movement']],str:[[76,'+1 damage'],[87,'+2 damage'],[96,'+3 damage']],lck:[[76,'+1 coin a turn'],[96,'+2 coin a turn']],
+const P102_BANDS={spd:[[76,'+1 movement'],[96,'+2 movement']],str:[[76,'+1 damage'],[87,'+2 damage'],[96,'+3 damage']],lck:[[76,_T('+1 coin a turn')],[96,_T('+2 coin a turn')]],
   cha:[[76,'+1 CF a turn'],[96,'+2 CF a turn']],int:[[65,'Apprentice mind'],[76,'Fighter mind'],[86,'Veteran mind'],[96,'Master mind']]}; /* i18n:skip — translated where shown */
 const p102Calm=()=>{try{return (typeof reduceMotion==='function'&&!!reduceMotion())||(typeof SETTINGS!=='undefined'&&SETTINGS.anim88==='off')}catch(e){return false}};
 const p102Roman=n=>{n=n|0;if(n<=0)return '0';const R=[[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let s='';for(const [v,l] of R)while(n>=v){s+=l;n-=v}return s};
@@ -57,9 +57,9 @@ if(!P102.off&&typeof d89Memo==='function'){const base=d89Memo;d89Memo=function()
 function p102MenuOff(){const m=document.getElementById('p102menu');if(m)m.remove()}
 function p102Menu(btn){p102MenuOff();const id=btn.dataset.v;const ch=p102Char(id);if(!ch)return;const busy=p102Busy(id);const act=ONL.char&&ONL.char.id===id;const why=busy?_T('In a room or a live match — after it is over'):'';
   const m=document.createElement('div');m.id='p102menu';m.setAttribute('role','menu');
-  m.innerHTML=`${act?'':`<button type="button" role="menuitem" data-p102="act" data-v="${esc2(id)}" ${busy?`disabled title="${esc2(why)}"`:''}>${_T`⭐ Make active`}</button>`}
-    <button type="button" role="menuitem" data-p102="rel" data-v="${esc2(id)}" ${busy?`disabled title="${esc2(why)}"`:''}>${_T`🕊 Release…`}</button>
-    <button type="button" role="menuitem" data-p102="rudis" data-v="${esc2(id)}" ${busy?`disabled title="${esc2(why)}"`:''}>${_T`🗡 Grant the rudis… · ${ONLC.RUDIS102} coin`}</button>${busy?`<small>${esc2(why)}</small>`:''}`;
+  m.innerHTML=`${act?'':`<button type="button" role="menuitem" data-p102="act" data-v="${esc2(id)}" ${busy?_T`disabled title="${esc2(why)}"`:''}>${_T`⭐ Make active`}</button>`}
+    <button type="button" role="menuitem" data-p102="rel" data-v="${esc2(id)}" ${busy?_T`disabled title="${esc2(why)}"`:''}>${_T`🕊 Release…`}</button>
+    <button type="button" role="menuitem" data-p102="rudis" data-v="${esc2(id)}" ${busy?_T`disabled title="${esc2(why)}"`:''}>${_T`🗡 Grant the rudis… · ${ONLC.RUDIS102} coin`}</button>${busy?`<small>${esc2(why)}</small>`:''}`;
   document.body.appendChild(m);const r=btn.getBoundingClientRect();const w=m.offsetWidth,hh=m.offsetHeight;m.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w))+'px';
   m.style.top=(r.bottom+hh+8>innerHeight?Math.max(8,r.top-hh-4):r.bottom+4)+'px';const f=m.querySelector('button:not(:disabled)');if(f)f.focus()}
 function p102ShelfList(ch){const out=[],gone=[];for(const it of ch.gear||[]){const I=typeof ONL83!=='undefined'&&ONL83.piece?ONL83.piece(ch,it):null;const n=(I&&I.n)||(W[ONLC.itemBase(it)]||ARM[ONLC.itemBase(it)]||{}).n||ONLC.itemBase(it);

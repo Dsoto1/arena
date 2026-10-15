@@ -1,0 +1,1666 @@
+[
+ {
+  "k": "(the omens advised rest)",
+  "w": "17-manager.js:635"
+ },
+ {
+  "k": "Season {0} ends. Top of the table: <b>{1}</b> ({2}, {3} points, {4}).",
+  "w": "17-manager.js:721"
+ },
+ {
+  "k": "your advisors' word this week",
+  "w": "17-manager.js:1216"
+ },
+ {
+  "k": "{0} points · {1}",
+  "w": "22-trophies.js:169"
+ },
+ {
+  "k": "A hurt fighter cannot be entered. Call the <b>Medicus</b> for {0} — it lifts their spirits, and in this lesson it clears the wound at once (in your own career a cure closes the wound when the week ends).",
+  "w": "36-mtutor.js:52"
+ },
+ {
+  "k": "<span><b>{0}</b>this season · of {1}</span><span><b>{2}</b>points</span><span><b>{3}</b>season podiums</span>",
+  "w": "47-mgr47.js:57"
+ },
+ {
+  "k": "Consilium's report for {0}: hold our fighters back",
+  "w": "66-mgr55.js:90"
+ },
+ {
+  "k": "All told the stands will be about <b>{0}%</b> on a normal week and the crowd's temper <b>{1}</b>{2}. Thin gates and a sour crowd mean poor ticket sales, little Crowd Favor and a hostile verdict. <b>We advise you to enter no one this week.</b> The decision is yours.",
+  "w": "66-mgr55.js:91"
+ },
+ {
+  "k": "{0} · {1} pts · season {2} · fame {3}",
+  "w": "185-v90week.js:76"
+ },
+ {
+  "k": "Rudis granted",
+  "w": "206-v92econ.js:128"
+ },
+ {
+  "k": "a tenth of the price",
+  "w": "225-v94armory.js:286"
+ },
+ {
+  "k": "League points are earned per bout your fighters take part in: 1st place scores 3 points, 2nd 2, 3rd 1, anything else 0 — and a podium counts only if the fighter survived the bout. Ties in the table go to the better win rate, then to fame. The top four houses at week 12 are invited to the Flavius Superbus.",
+  "w": "231-v96mgr.js:101"
+ },
+ {
+  "k": "This season's podiums (1st · 2nd · 3rd, survived) and bouts",
+  "w": "231-v96mgr.js:112"
+ },
+ {
+  "k": "two rough grades",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "Luck + the two weakest reads",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "Podiums",
+  "w": "290-v100world.js:226"
+ },
+ {
+  "k": "Consilium's report",
+  "w": "294-v100ludus.js:201"
+ },
+ {
+  "k": "the treasury is in debt",
+  "w": "297-v100ludus2.js:40"
+ },
+ {
+  "k": "coin for less than 3 weeks of wages",
+  "w": "297-v100ludus2.js:41"
+ },
+ {
+  "k": "a loan payment is due",
+  "w": "297-v100ludus2.js:42"
+ },
+ {
+  "k": "a rival challenge is waiting",
+  "w": "297-v100ludus2.js:44"
+ },
+ {
+  "k": "One limb a week — {0}'s operation is booked; the limb is back when this week ends.",
+  "w": "318-v101ward.js:63"
+ },
+ {
+  "k": "booked the Blessings of Hygeia for {0}",
+  "w": "318-v101ward.js:72"
+ },
+ {
+  "k": "🌿 The priests of Hygeia operate on {0}'s {1} ({2} h · {3} coin) — the limb is back when the week ends, then fatigue +20.",
+  "w": "318-v101ward.js:73"
+ },
+ {
+  "k": "the {0} grew back — fatigue +20 from the operation",
+  "w": "332-v102mgrfix.js:26"
+ },
+ {
+  "k": "🌿 <b>{0}</b>'s {1} has grown back — he is worn from the operation (+20 fatigue).",
+  "w": "332-v102mgrfix.js:26"
+ },
+ {
+  "k": "A special fixture — it cannot be billed. Enter it on Match Week.",
+  "w": "332-v102mgrfix.js:43"
+ },
+ {
+  "k": "An invitational — it cannot be billed here. Answer the invitation (Invitations list).",
+  "w": "332-v102mgrfix.js:44"
+ },
+ {
+  "k": "by invitation only",
+  "w": "332-v102mgrfix.js:48"
+ },
+ {
+  "k": "The entry fee is {0} coin — the treasury holds {1}.",
+  "w": "332-v102mgrfix.js:55"
+ },
+ {
+  "k": "can’t pay",
+  "w": "332-v102mgrfix.js:56"
+ },
+ {
+  "k": "🛏 in bed",
+  "w": "332-v102mgrfix.js:64"
+ },
+ {
+  "k": "💤 resting",
+  "w": "332-v102mgrfix.js:64"
+ },
+ {
+  "k": "In an infirmary bed — cannot be entered.",
+  "w": "332-v102mgrfix.js:64"
+ },
+ {
+  "k": "Resting this week — entering ends the rest.",
+  "w": "332-v102mgrfix.js:64"
+ },
+ {
+  "k": "— 🛏 in bed",
+  "w": "332-v102mgrfix.js:69"
+ },
+ {
+  "k": "on · 2 of the Training Yard's hours a week, no drills · tap to stop",
+  "w": "332-v102mgrfix.js:82"
+ },
+ {
+  "k": "2 of the Training Yard's hours a week, no drills · fatigue −{0}",
+  "w": "332-v102mgrfix.js:82"
+ },
+ {
+  "k": "A standing order: 2 of the Training Yard’s hours a week, no drills.",
+  "w": "332-v102mgrfix.js:82"
+ },
+ {
+  "k": "one limb a week, back when the week ends · +20 fatigue after",
+  "w": "332-v102mgrfix.js:83"
+ },
+ {
+  "k": "Treasury too low",
+  "w": "332-v102mgrfix.js:87"
+ },
+ {
+  "k": "2 of the Training Yard's hours a week, no drills",
+  "w": "332-v102mgrfix.js:89"
+ },
+ {
+  "k": "class=\"ar94g{0} st102\" data-ar94g=\"{1}\" data-st102=\"{2}\"",
+  "w": "332-v102mgrfix.js:108"
+ },
+ {
+  "k": "lent out",
+  "w": "332-v102mgrfix.js:115"
+ },
+ {
+  "k": "🤝 On loan",
+  "w": "332-v102mgrfix.js:116"
+ },
+ {
+  "k": "🎭 Class designer",
+  "w": "335-v102studio.js:67"
+ },
+ {
+  "k": "New class",
+  "w": "335-v102studio.js:67"
+ },
+ {
+  "k": "📜 Start from a printed class",
+  "w": "335-v102studio.js:69"
+ },
+ {
+  "k": "copies its loadout",
+  "w": "335-v102studio.js:69"
+ },
+ {
+  "k": "name · ability · weakness",
+  "w": "335-v102studio.js:70"
+ },
+ {
+  "k": "Weapons & armor",
+  "w": "335-v102studio.js:70"
+ },
+ {
+  "k": "hands · head to legs",
+  "w": "335-v102studio.js:70"
+ },
+ {
+  "k": "Purse & hand",
+  "w": "335-v102studio.js:71"
+ },
+ {
+  "k": "coin · keys · CF · items",
+  "w": "335-v102studio.js:71"
+ },
+ {
+  "k": "who fights this way",
+  "w": "335-v102studio.js:71"
+ },
+ {
+  "k": "📜 Your classes · {0}",
+  "w": "335-v102studio.js:72"
+ },
+ {
+  "k": "Budget {0}/{1}",
+  "w": "335-v102studio.js:74"
+ },
+ {
+  "k": "Sandbox · {0} points",
+  "w": "335-v102studio.js:74"
+ },
+ {
+  "k": "Over budget ({0}/{1})",
+  "w": "335-v102studio.js:74"
+ },
+ {
+  "k": "🐾 Beast designer",
+  "w": "335-v102studio.js:75"
+ },
+ {
+  "k": "📊 Stats",
+  "w": "335-v102studio.js:77"
+ },
+ {
+  "k": "🎲 Behaviour states",
+  "w": "335-v102studio.js:77"
+ },
+ {
+  "k": "how it fights as it bleeds",
+  "w": "335-v102studio.js:77"
+ },
+ {
+  "k": "🃏 Its card",
+  "w": "335-v102studio.js:77"
+ },
+ {
+  "k": "front and back",
+  "w": "335-v102studio.js:77"
+ },
+ {
+  "k": "the figure on the sand",
+  "w": "335-v102studio.js:78"
+ },
+ {
+  "k": "kind · name · stats",
+  "w": "335-v102studio.js:79"
+ },
+ {
+  "k": "Behaviour",
+  "w": "335-v102studio.js:79"
+ },
+ {
+  "k": "zone · states",
+  "w": "335-v102studio.js:79"
+ },
+ {
+  "k": "face · token · round",
+  "w": "335-v102studio.js:80"
+ },
+ {
+  "k": "🐾 The beast",
+  "w": "335-v102studio.js:81"
+ },
+ {
+  "k": "📜 Your beasts · {0}",
+  "w": "335-v102studio.js:81"
+ },
+ {
+  "k": "Kind",
+  "w": "335-v102studio.js:82"
+ },
+ {
+  "k": "🤝 Cohort designer",
+  "w": "335-v102studio.js:83"
+ },
+ {
+  "k": "New cohort",
+  "w": "335-v102studio.js:83"
+ },
+ {
+  "k": "👥 The pair",
+  "w": "335-v102studio.js:84"
+ },
+ {
+  "k": "📜 Words",
+  "w": "335-v102studio.js:84"
+ },
+ {
+  "k": "The cohort",
+  "w": "335-v102studio.js:85"
+ },
+ {
+  "k": "name · bond · members",
+  "w": "335-v102studio.js:85"
+ },
+ {
+  "k": "📜 Your cohorts · {0}",
+  "w": "335-v102studio.js:86"
+ },
+ {
+  "k": "Members {0}/2",
+  "w": "335-v102studio.js:87"
+ },
+ {
+  "k": "🗿 Token designer",
+  "w": "335-v102studio.js:88"
+ },
+ {
+  "k": "🙂 Face & hair",
+  "w": "335-v102studio.js:89"
+ },
+ {
+  "k": "🎨 Colours & size",
+  "w": "335-v102studio.js:89"
+ },
+ {
+  "k": "🎯 The token you are editing",
+  "w": "335-v102studio.js:90"
+ },
+ {
+  "k": "pick a figure, a character, a beast or a library token",
+  "w": "335-v102studio.js:90"
+ },
+ {
+  "k": "Figure",
+  "w": "335-v102studio.js:91"
+ },
+ {
+  "k": "body · gear",
+  "w": "335-v102studio.js:91"
+ },
+ {
+  "k": "Face & colours",
+  "w": "335-v102studio.js:91"
+ },
+ {
+  "k": "head · paint · size",
+  "w": "335-v102studio.js:91"
+ },
+ {
+  "k": "shapes on the preview",
+  "w": "335-v102studio.js:92"
+ },
+ {
+  "k": "States & lineup",
+  "w": "335-v102studio.js:92"
+ },
+ {
+  "k": "battle states · all figures",
+  "w": "335-v102studio.js:92"
+ },
+ {
+  "k": "🧍 Body & gear",
+  "w": "335-v102studio.js:93"
+ },
+ {
+  "k": "Editing: {0}",
+  "w": "335-v102studio.js:93"
+ },
+ {
+  "k": "🏆 Tournament designer",
+  "w": "335-v102studio.js:94"
+ },
+ {
+  "k": "New tournament",
+  "w": "335-v102studio.js:94"
+ },
+ {
+  "k": "🏟 Events & prizes",
+  "w": "335-v102studio.js:96"
+ },
+ {
+  "k": "⚔ Invited opponents",
+  "w": "335-v102studio.js:96"
+ },
+ {
+  "k": "name · events · prizes",
+  "w": "335-v102studio.js:97"
+ },
+ {
+  "k": "The bracket",
+  "w": "335-v102studio.js:97"
+ },
+ {
+  "k": "opponents · first round",
+  "w": "335-v102studio.js:97"
+ },
+ {
+  "k": "📜 Your tournaments · {0}",
+  "w": "335-v102studio.js:98"
+ },
+ {
+  "k": "{0} of {1} seats chosen",
+  "w": "335-v102studio.js:99"
+ },
+ {
+  "k": "⭐ Invitational designer",
+  "w": "335-v102studio.js:100"
+ },
+ {
+  "k": "New invitational",
+  "w": "335-v102studio.js:100"
+ },
+ {
+  "k": "✉ The invitation",
+  "w": "335-v102studio.js:102"
+ },
+ {
+  "k": "👥 The field",
+  "w": "335-v102studio.js:102"
+ },
+ {
+  "k": "💰 Purse & fame",
+  "w": "335-v102studio.js:102"
+ },
+ {
+  "k": "🏟 Arena & trophy",
+  "w": "335-v102studio.js:103"
+ },
+ {
+  "k": "The invitation",
+  "w": "335-v102studio.js:104"
+ },
+ {
+  "k": "arena · trophy · name",
+  "w": "335-v102studio.js:104"
+ },
+ {
+  "k": "Field & purse",
+  "w": "335-v102studio.js:104"
+ },
+ {
+  "k": "who comes · what it pays",
+  "w": "335-v102studio.js:104"
+ },
+ {
+  "k": "Words",
+  "w": "335-v102studio.js:105"
+ },
+ {
+  "k": "the invitation's text",
+  "w": "335-v102studio.js:105"
+ },
+ {
+  "k": "📜 Your invitationals · {0}",
+  "w": "335-v102studio.js:106"
+ },
+ {
+  "k": "🎭 Editor designer",
+  "w": "335-v102studio.js:108"
+ },
+ {
+  "k": "New editor",
+  "w": "335-v102studio.js:108"
+ },
+ {
+  "k": "🧥 Robe & colours",
+  "w": "335-v102studio.js:110"
+ },
+ {
+  "k": "🗣 Voice",
+  "w": "335-v102studio.js:110"
+ },
+ {
+  "k": "Identity & voice",
+  "w": "335-v102studio.js:111"
+ },
+ {
+  "k": "name · title · catchphrases",
+  "w": "335-v102studio.js:111"
+ },
+ {
+  "k": "skin · hair · jewelry",
+  "w": "335-v102studio.js:111"
+ },
+ {
+  "k": "Robe & box",
+  "w": "335-v102studio.js:112"
+ },
+ {
+  "k": "colours · the frame",
+  "w": "335-v102studio.js:112"
+ },
+ {
+  "k": "📜 Your editors · {0}",
+  "w": "335-v102studio.js:113"
+ },
+ {
+  "k": "👥 Spectator designer",
+  "w": "335-v102studio.js:115"
+ },
+ {
+  "k": "New regular",
+  "w": "335-v102studio.js:115"
+ },
+ {
+  "k": "👤 Look",
+  "w": "335-v102studio.js:117"
+ },
+ {
+  "k": "Who",
+  "w": "335-v102studio.js:118"
+ },
+ {
+  "k": "name · taste · temper",
+  "w": "335-v102studio.js:118"
+ },
+ {
+  "k": "face · clothes",
+  "w": "335-v102studio.js:118"
+ },
+ {
+  "k": "📜 Your regulars",
+  "w": "335-v102studio.js:119"
+ },
+ {
+  "k": "🥇{0} 🥈{1} 🥉{2} · {3} bouts",
+  "w": "333-v102mgr.js:44"
+ },
+ {
+  "k": "Podiums this season (fighter survived): {0} first, {1} second, {2} third · {3} bouts",
+  "w": "333-v102mgr.js:45"
+ },
+ {
+  "k": "· {0} bouts",
+  "w": "333-v102mgr.js:46"
+ },
+ {
+  "k": "A trial bout comes after a cheaper look at him: ask around, watch him train or share a cup first.",
+  "w": "333-v102mgr.js:75"
+ },
+ {
+  "k": "A trial bout comes after a cheaper look at her: ask around, watch her train or share a cup first.",
+  "w": "333-v102mgr.js:75"
+ },
+ {
+  "k": "👥 The {0} purse is shared by the winners who walked off the sand, by Crowd Favor earned: {1}.",
+  "w": "333-v102mgr.js:106"
+ },
+ {
+  "k": "coin for {0} week{1} of wages",
+  "w": "333-v102mgr.js:111"
+ },
+ {
+  "k": "<b>Consilium's report</b> — {0}",
+  "w": "333-v102mgr.js:118"
+ },
+ {
+  "k": "Hear him",
+  "w": "333-v102mgr.js:118"
+ },
+ {
+  "k": "Consilium's report: this cannot wait",
+  "w": "333-v102mgr.js:122"
+ },
+ {
+  "k": "Lanista — before anything else this week:",
+  "w": "333-v102mgr.js:123"
+ },
+ {
+  "k": "Enter fighters on Match Week, mind the wages and pay what is due. Every week in the red costs the house.",
+  "w": "333-v102mgr.js:123"
+ },
+ {
+  "k": "{0} of {1} levels",
+  "w": "333-v102mgr.js:142"
+ },
+ {
+  "k": "{0}: home city",
+  "w": "333-v102mgr.js:152"
+ },
+ {
+  "k": "asks {0}/wk",
+  "w": "333-v102mgr.js:155"
+ },
+ {
+  "k": "interest {0}{1}",
+  "w": "333-v102mgr.js:155"
+ },
+ {
+  "k": "File away ✓",
+  "w": "333-v102mgr.js:162"
+ },
+ {
+  "k": "★ Your recruiter: the best value for the coin on the market",
+  "w": "333-v102mgr.js:183"
+ },
+ {
+  "k": "This gladiator holds nothing: give him a weapon or a shield in the designer first.",
+  "w": "336-v102tok.js:42"
+ },
+ {
+  "k": "Turn what each hand holds about its grip, or slide it along — the eight facings and the board use it.",
+  "w": "336-v102tok.js:43"
+ },
+ {
+  "k": "a shield: turns in its own plane, slides along the forearm",
+  "w": "336-v102tok.js:43"
+ },
+ {
+  "k": "Slide",
+  "w": "336-v102tok.js:44"
+ },
+ {
+  "k": "↺ Hand",
+  "w": "336-v102tok.js:45"
+ },
+ {
+  "k": "⚔ Weapon",
+  "w": "336-v102tok.js:54"
+ },
+ {
+  "k": "⚔ Your match is waiting",
+  "w": "337-v102resume.js:97"
+ },
+ {
+  "k": "hot seat",
+  "w": "337-v102resume.js:97"
+ },
+ {
+  "k": "Forget this match",
+  "w": "337-v102resume.js:98"
+ },
+ {
+  "k": "That match can no longer be resumed.",
+  "w": "337-v102resume.js:101"
+ },
+ {
+  "k": "Back to the sand…",
+  "w": "337-v102resume.js:102"
+ },
+ {
+  "k": "No class abilities in this event",
+  "w": "338-v102draft.js:44"
+ },
+ {
+  "k": "no weakness",
+  "w": "338-v102draft.js:52"
+ },
+ {
+  "k": "{0} takes the {1} pair: <b>{2}</b> ({3}) · {4}.",
+  "w": "338-v102draft.js:58"
+ },
+ {
+  "k": "weakness <b>{0}</b>",
+  "w": "338-v102draft.js:58"
+ },
+ {
+  "k": "Ability pairs are dealt at random.",
+  "w": "338-v102draft.js:65"
+ },
+ {
+  "k": "Ability draft: each gladiator chooses one of three ability pairs.",
+  "w": "338-v102draft.js:66"
+ },
+ {
+  "k": "Ability draft · {0}",
+  "w": "338-v102draft.js:70"
+ },
+ {
+  "k": "Choose one ability pair. A class's weakness always comes with its ability; some abilities come alone.",
+  "w": "338-v102draft.js:70"
+ },
+ {
+  "k": "weakness: {0}",
+  "w": "338-v102draft.js:71"
+ },
+ {
+  "k": "Draft rules: every gladiator drafts their gear — no class weapons or armor.",
+  "w": "338-v102draft.js:83"
+ },
+ {
+  "k": "Drafts its gear",
+  "w": "338-v102draft.js:96"
+ },
+ {
+  "k": "Chariot Racing drafts its chariot",
+  "w": "338-v102draft.js:96"
+ },
+ {
+  "k": "Every gladiator starts with only what they draft (snake draft, levels 1-3) — no class weapons or armor. Coin, keys, CF and items stay.",
+  "w": "338-v102draft.js:97"
+ },
+ {
+  "k": "Draft the gear",
+  "w": "338-v102draft.js:98"
+ },
+ {
+  "k": "A pair = a printed class's ability with its own weakness (some abilities have none).",
+  "w": "338-v102draft.js:100"
+ },
+ {
+  "k": "Class's own",
+  "w": "338-v102draft.js:100"
+ },
+ {
+  "k": "Random pair",
+  "w": "338-v102draft.js:100"
+ },
+ {
+  "k": "Draft a pair",
+  "w": "338-v102draft.js:100"
+ },
+ {
+  "k": "Ability pair ({0}): {1} · {2}.",
+  "w": "338-v102draft.js:111"
+ },
+ {
+  "k": "Random ability pairs",
+  "w": "338-v102draft.js:120"
+ },
+ {
+  "k": "Drafted ability pairs",
+  "w": "338-v102draft.js:120"
+ },
+ {
+  "k": "Each gladiator fights with a printed class's ability and that class's own weakness — or none, when the class has no weakness.",
+  "w": "338-v102draft.js:120"
+ },
+ {
+  "k": "No class weapons or armor: every gladiator starts with what they drafted.",
+  "w": "338-v102draft.js:121"
+ },
+ {
+  "k": "Every gladiator drafts their weapons and armor before the horns.",
+  "w": "338-v102draft.js:121"
+ },
+ {
+  "k": "Snake draft before the horns: every gladiator takes their weapons and armor from the market, levels 1-3.",
+  "w": "338-v102draft.js:128"
+ },
+ {
+  "k": "🛡 Drafts its gear",
+  "w": "338-v102draft.js:128"
+ },
+ {
+  "k": "🎭 Drafted ability pairs",
+  "w": "338-v102draft.js:128"
+ },
+ {
+  "k": "🎭 Random ability pairs",
+  "w": "338-v102draft.js:128"
+ },
+ {
+  "k": "<b>🛡 The Armory</b> — its own tab. A new recruit signs with only the house's <b>Issued kit</b> (padding and a Level 1 weapon, worth nothing); real gear is bought in the City Square, looted or won. Pick a fighter, then drag a weapon into a hand or armor onto the body. Weapons lost on the sand are gone; armor broken to 0 AP comes home dented — the armorer mends it for a tenth of its price.",
+  "w": "339-v102gear.js:78"
+ },
+ {
+  "k": "<b>Recruiting.</b> Click a free agent. Your Recruiter's hours scout them, pitches win them over, then offer a contract. A new signing brings only the Issued kit — buy his real gear in the City Square.",
+  "w": "339-v102gear.js:79"
+ },
+ {
+  "k": "+1 coin a turn",
+  "w": "340-v102prog.js:19"
+ },
+ {
+  "k": "+2 coin a turn",
+  "w": "340-v102prog.js:19"
+ },
+ {
+  "k": "Level {0} · {1} point(s) to place",
+  "w": "340-v102prog.js:26"
+ },
+ {
+  "k": "🌿 Level {0} — the laurel · {1} XP",
+  "w": "340-v102prog.js:34"
+ },
+ {
+  "k": "{0} / {1} XP to level {2}",
+  "w": "340-v102prog.js:34"
+ },
+ {
+  "k": "Experience",
+  "w": "340-v102prog.js:36"
+ },
+ {
+  "k": "＋{0} point{1} · spend",
+  "w": "340-v102prog.js:37"
+ },
+ {
+  "k": "Chosen when he was raised — it never changes",
+  "w": "340-v102prog.js:39"
+ },
+ {
+  "k": "🔒 class set at creation",
+  "w": "340-v102prog.js:39"
+ },
+ {
+  "k": "More for {0}",
+  "w": "340-v102prog.js:44"
+ },
+ {
+  "k": "🔒 The class is set when a gladiator is raised — it never changes.",
+  "w": "340-v102prog.js:47"
+ },
+ {
+  "k": "🗡 freed with the rudis",
+  "w": "340-v102prog.js:52"
+ },
+ {
+  "k": "🕊 released",
+  "w": "340-v102prog.js:52"
+ },
+ {
+  "k": "In a room or a live match — after it is over",
+  "w": "340-v102prog.js:58"
+ },
+ {
+  "k": "⭐ Make active",
+  "w": "340-v102prog.js:60"
+ },
+ {
+  "k": "🕊 Release…",
+  "w": "340-v102prog.js:61"
+ },
+ {
+  "k": "🗡 Grant the rudis… · {0} coin",
+  "w": "340-v102prog.js:62"
+ },
+ {
+  "k": "⏳ In a room or a live match — release him after it is over.",
+  "w": "340-v102prog.js:67"
+ },
+ {
+  "k": "{0} · {1} · Lv {2} · {3} bouts, {4} survived, {5} wins · {6} lifetime CF",
+  "w": "340-v102prog.js:69"
+ },
+ {
+  "k": "Rudiarius — freed",
+  "w": "340-v102prog.js:70"
+ },
+ {
+  "k": "He takes the wooden sword and walks out a free man. The Hall of the Fallen keeps his name with honour, and the level picks he made.",
+  "w": "340-v102prog.js:70"
+ },
+ {
+  "k": "The Hall of the Fallen",
+  "w": "340-v102prog.js:71"
+ },
+ {
+  "k": "He was great: his plaque reads “Released”, with the level picks he made. He counts in the Domus rank like the fallen.",
+  "w": "340-v102prog.js:71"
+ },
+ {
+  "k": "Damnatio memoriae",
+  "w": "340-v102prog.js:72"
+ },
+ {
+  "k": "He is not great enough for the Hall. His name is erased: no Hall plaque, nothing in the Domus rank.",
+  "w": "340-v102prog.js:72"
+ },
+ {
+  "k": "Grant {0} the rudis?",
+  "w": "340-v102prog.js:74"
+ },
+ {
+  "k": "Release {0}?",
+  "w": "340-v102prog.js:74"
+ },
+ {
+  "k": "To the house shelf",
+  "w": "340-v102prog.js:75"
+ },
+ {
+  "k": "Nothing — he carries no gear.",
+  "w": "340-v102prog.js:75"
+ },
+ {
+  "k": "{0} — Issued, it vanishes",
+  "w": "340-v102prog.js:75"
+ },
+ {
+  "k": "What else happens",
+  "w": "340-v102prog.js:76"
+ },
+ {
+  "k": "🪙 {0} coin from the house treasury (it holds {1})",
+  "w": "340-v102prog.js:76"
+ },
+ {
+  "k": "🔓 His slot is free for a new gladiator",
+  "w": "340-v102prog.js:76"
+ },
+ {
+  "k": "📜 The house record keeps his bouts",
+  "w": "340-v102prog.js:76"
+ },
+ {
+  "k": "⚔ Not a death: no Fate, nobody loots him",
+  "w": "340-v102prog.js:76"
+ },
+ {
+  "k": "↺ <b>Cannot be undone</b>",
+  "w": "340-v102prog.js:76"
+ },
+ {
+  "k": "Type <b>{0}</b> to confirm",
+  "w": "340-v102prog.js:77"
+ },
+ {
+  "k": "his name",
+  "w": "340-v102prog.js:77"
+ },
+ {
+  "k": "The treasury needs {0} coin to grant the rudis.",
+  "w": "340-v102prog.js:78"
+ },
+ {
+  "k": "Keep him",
+  "w": "340-v102prog.js:79"
+ },
+ {
+  "k": "🗡 Grant the rudis · {0}",
+  "w": "340-v102prog.js:80"
+ },
+ {
+  "k": "Release him",
+  "w": "340-v102prog.js:80"
+ },
+ {
+  "k": "🗡 {0} takes the rudis — freed. The Hall keeps his name.",
+  "w": "340-v102prog.js:86"
+ },
+ {
+  "k": "🕊 {0} is released. The Hall keeps his name.",
+  "w": "340-v102prog.js:86"
+ },
+ {
+  "k": "🕊 {0} is released — his gear waits on the house shelf.",
+  "w": "340-v102prog.js:86"
+ },
+ {
+  "k": "(only when a CPU plays his seat)",
+  "w": "340-v102prog.js:90"
+ },
+ {
+  "k": "At {0} — the top.",
+  "w": "340-v102prog.js:91"
+ },
+ {
+  "k": "<b>{0} → {1}:</b> {2} — at once",
+  "w": "340-v102prog.js:92"
+ },
+ {
+  "k": "{0} → {1}. {2} more to <b>{3}</b> at {4}",
+  "w": "340-v102prog.js:93"
+ },
+ {
+  "k": "{0} → {1}. Top band reached.",
+  "w": "340-v102prog.js:93"
+ },
+ {
+  "k": "LEVEL {0} · {1}",
+  "w": "340-v102prog.js:102"
+ },
+ {
+  "k": "<b>+1 to one rating</b> for each point. Choose where he grows — a rating that reaches a band gains its edge on the sand at once.",
+  "w": "340-v102prog.js:103"
+ },
+ {
+  "k": "No point waits — he earns one each level.",
+  "w": "340-v102prog.js:103"
+ },
+ {
+  "k": "1 point to spend",
+  "w": "340-v102prog.js:105"
+ },
+ {
+  "k": "{0} points to spend",
+  "w": "340-v102prog.js:105"
+ },
+ {
+  "k": "{0} +1",
+  "w": "340-v102prog.js:105"
+ },
+ {
+  "k": "Pick a rating.",
+  "w": "340-v102prog.js:105"
+ },
+ {
+  "k": "it waits on the Domus",
+  "w": "340-v102prog.js:106"
+ },
+ {
+  "k": "Train it",
+  "w": "340-v102prog.js:107"
+ },
+ {
+  "k": "<b>Speed</b> 76 / 96 → +1 / +2 movement · <b>Strength</b> 76 / 87 / 96 → +1 / +2 / +3 damage · <b>Luck</b> 76 / 96 → +1 / +2 coin a turn · <b>Charisma</b> 76 / 96 → +1 / +2 CF a turn · <b>Intelligence</b> only when a CPU plays his seat: Apprentice 65 · Fighter 76 · Veteran 86 · Master 96. Online ratings run 50–99.",
+  "w": "340-v102prog.js:108"
+ },
+ {
+  "k": "💪 {0}: {1} +1",
+  "w": "340-v102prog.js:114"
+ },
+ {
+  "k": "RANKED",
+  "w": "340-v102prog.js:121"
+ },
+ {
+  "k": "CUSTOM",
+  "w": "340-v102prog.js:121"
+ },
+ {
+  "k": "He fell",
+  "w": "340-v102prog.js:122"
+ },
+ {
+  "k": "Victoria",
+  "w": "340-v102prog.js:122"
+ },
+ {
+  "k": "He lives",
+  "w": "340-v102prog.js:122"
+ },
+ {
+  "k": "Bout done",
+  "w": "340-v102prog.js:122"
+ },
+ {
+  "k": "{0} CF at the end — the Fate was against him",
+  "w": "340-v102prog.js:123"
+ },
+ {
+  "k": "He won — he walks out of the Porta Sanavivaria",
+  "w": "340-v102prog.js:123"
+ },
+ {
+  "k": "He survived the sand",
+  "w": "340-v102prog.js:123"
+ },
+ {
+  "k": "A friendly bout — no coin, no Fate",
+  "w": "340-v102prog.js:123"
+ },
+ {
+  "k": "Take him away. Next!",
+  "w": "340-v102prog.js:124"
+ },
+ {
+  "k": "Rome will remember that one — until supper.",
+  "w": "340-v102prog.js:124"
+ },
+ {
+  "k": "Alive. I suppose that counts for something.",
+  "w": "340-v102prog.js:124"
+ },
+ {
+  "k": "A practice bout. My lions are bored.",
+  "w": "340-v102prog.js:124"
+ },
+ {
+  "k": "{0} fell",
+  "w": "340-v102prog.js:125"
+ },
+ {
+  "k": "The Hall of the Fallen keeps his name.",
+  "w": "340-v102prog.js:125"
+ },
+ {
+  "k": "He is forgotten — damnatio memoriae.",
+  "w": "340-v102prog.js:125"
+ },
+ {
+  "k": "his CF at the end",
+  "w": "340-v102prog.js:126"
+ },
+ {
+  "k": "his CF at the end — up to 40 counts for XP",
+  "w": "340-v102prog.js:127"
+ },
+ {
+  "k": "to the house treasury",
+  "w": "340-v102prog.js:128"
+ },
+ {
+  "k": "Custom bout — no coin is paid",
+  "w": "340-v102prog.js:128"
+ },
+ {
+  "k": "his rank: {0}",
+  "w": "340-v102prog.js:129"
+ },
+ {
+  "k": "LEVEL UP",
+  "w": "340-v102prog.js:130"
+ },
+ {
+  "k": "▶ Replay the tally",
+  "w": "340-v102prog.js:136"
+ },
+ {
+  "k": "Click anywhere to skip to the end",
+  "w": "340-v102prog.js:136"
+ },
+ {
+  "k": "<b>40</b> count for XP",
+  "w": "340-v102prog.js:147"
+ },
+ {
+  "k": "treasury <b>{0}</b>",
+  "w": "340-v102prog.js:150"
+ },
+ {
+  "k": "<b>{0}</b> · {1} at {2}",
+  "w": "340-v102prog.js:155"
+ },
+ {
+  "k": "<b>{0}</b> · the highest rank",
+  "w": "340-v102prog.js:155"
+ },
+ {
+  "k": "RANK UP · {0}",
+  "w": "340-v102prog.js:156"
+ },
+ {
+  "k": "the laurel — XP keeps counting",
+  "w": "340-v102prog.js:161"
+ },
+ {
+  "k": "survived <b>+20</b>",
+  "w": "340-v102prog.js:168"
+ },
+ {
+  "k": "won <b>+15</b>",
+  "w": "340-v102prog.js:168"
+ },
+ {
+  "k": "table × <b>{0}</b>",
+  "w": "340-v102prog.js:168"
+ },
+ {
+  "k": "Custom × <b>0.5</b>",
+  "w": "340-v102prog.js:168"
+ },
+ {
+  "k": "Custom cap: 300 XP a day",
+  "w": "340-v102prog.js:169"
+ },
+ {
+  "k": "level {0} → <b>{1}</b>",
+  "w": "340-v102prog.js:169"
+ },
+ {
+  "k": "<b>+{0}</b> point{1} to place",
+  "w": "340-v102prog.js:169"
+ },
+ {
+  "k": "{0} <b>+1</b> (his weakest)",
+  "w": "340-v102prog.js:170"
+ },
+ {
+  "k": "The class is set when a gladiator is raised — it never changes.",
+  "w": "340-v102prog.js:235"
+ },
+ {
+  "k": "Finish or leave your room or match first.",
+  "w": "340-v102prog.js:237"
+ },
+ {
+  "k": "{0} receives the rudis — freed.",
+  "w": "340-v102prog.js:247"
+ },
+ {
+  "k": "{0} leaves the sand, released.",
+  "w": "340-v102prog.js:247"
+ },
+ {
+  "k": "Hygeia's Blessing",
+  "w": "341-v102care.js:38"
+ },
+ {
+  "k": "Booked for next week — {0}'s wound closes when next week ends.",
+  "w": "341-v102care.js:42"
+ },
+ {
+  "k": "Booked — {0}'s wound closes when this week ends.",
+  "w": "341-v102care.js:42"
+ },
+ {
+  "k": "This week: rest only — the wound is fresh. Treatment from next week.",
+  "w": "341-v102care.js:43"
+ },
+ {
+  "k": "🛁 Steam, oil and a strigil for {0}: the wound closes when the week ends ({1} h · {2} coin).",
+  "w": "341-v102care.js:48"
+ },
+ {
+  "k": "booked {0} for {1}",
+  "w": "341-v102care.js:51"
+ },
+ {
+  "k": "· then +{0}–{1} fatigue for the recovery",
+  "w": "341-v102care.js:52"
+ },
+ {
+  "k": "· then +{0} fatigue",
+  "w": "341-v102care.js:52"
+ },
+ {
+  "k": "{0} {1} booked for {2}'s {3} ({4} h · {5} coin) — the wound closes when the week ends, fit next week{6}. Morale {7}.",
+  "w": "341-v102care.js:54"
+ },
+ {
+  "k": "🔪 The knife slipped: <b>{0}</b> keeps the {1} another week.",
+  "w": "341-v102care.js:73"
+ },
+ {
+  "k": "{0} closed ({1}) — recovery fatigue +{2}",
+  "w": "341-v102care.js:76"
+ },
+ {
+  "k": "{0} closed ({1})",
+  "w": "341-v102care.js:76"
+ },
+ {
+  "k": "⚕ <b>{0}</b>'s {1} has closed — fit to fight, worn from the recovery (+{2} fatigue).",
+  "w": "341-v102care.js:77"
+ },
+ {
+  "k": "⚕ <b>{0}</b>'s {1} has closed — fit to fight.",
+  "w": "341-v102care.js:77"
+ },
+ {
+  "k": "a limb grew back — fatigue +{0} from the operation",
+  "w": "341-v102care.js:78"
+ },
+ {
+  "k": "🌿 Hygeia's priests have done their work — the wounds close when the week ends (a fresh serious wound when next week ends).",
+  "w": "341-v102care.js:88"
+ },
+ {
+  "k": "✓ Booked: {0} next week — the wound closes when next week ends.",
+  "w": "341-v102care.js:94"
+ },
+ {
+  "k": "✓ Booked: {0} — the wound closes when the week ends.",
+  "w": "341-v102care.js:94"
+ },
+ {
+  "k": "treatment",
+  "w": "341-v102care.js:95"
+ },
+ {
+  "k": "back · tired",
+  "w": "341-v102care.js:95"
+ },
+ {
+  "k": "fit",
+  "w": "341-v102care.js:95"
+ },
+ {
+  "k": "This week: rest only — treatment from next week.",
+  "w": "341-v102care.js:96"
+ },
+ {
+  "k": "A cure booked now closes the wound when the week ends.",
+  "w": "341-v102care.js:97"
+ },
+ {
+  "k": "The road back",
+  "w": "341-v102care.js:98"
+ },
+ {
+  "k": "this week: rest only — treatment from next week",
+  "w": "341-v102care.js:106"
+ },
+ {
+  "k": "closes when the week ends",
+  "w": "341-v102care.js:106"
+ },
+ {
+  "k": "Closes the wound when the week ends · +12 morale",
+  "w": "341-v102care.js:109"
+ },
+ {
+  "k": "Closes any wound when the week ends · +8 morale",
+  "w": "341-v102care.js:109"
+ },
+ {
+  "k": "Closes muscle-grade wounds <b>when the week ends</b> · +12 morale · once a week each",
+  "w": "341-v102care.js:110"
+ },
+ {
+  "k": "the usual fix — fit next week",
+  "w": "341-v102care.js:110"
+ },
+ {
+  "k": "Closes <b>any</b> wound when the week ends, no mishap · +8 morale",
+  "w": "341-v102care.js:111"
+ },
+ {
+  "k": "a surgeon wound you cannot risk on the knife",
+  "w": "341-v102care.js:111"
+ },
+ {
+  "k": "⚕ Book the Medicus — the wound closes when the week ends",
+  "w": "341-v102care.js:112"
+ },
+ {
+  "k": "Every cure is <b>booked</b>: the wound closes when the week ends, he is fit next week. A <b>serious</b> wound rests its first week (no treatment), is treated the next, and he comes back tired (+{0}–{1} fatigue) — a rub-down or the Care routine in the Training Yard takes it down.",
+  "w": "341-v102care.js:115"
+ },
+ {
+  "k": "<b>{0}</b> won the {1} ({2}), {3} CF",
+  "w": "342-v102acta.js:42"
+ },
+ {
+  "k": "<b>{0}</b> {1} in the {2} ({3})",
+  "w": "342-v102acta.js:42"
+ },
+ {
+  "k": "<b>{0}</b> fought in the {1} ({2})",
+  "w": "342-v102acta.js:42"
+ },
+ {
+  "k": "<b>{0}</b> ({1}) took the {2}, {3}, {4} CF",
+  "w": "342-v102acta.js:49"
+ },
+ {
+  "k": "free sword",
+  "w": "342-v102acta.js:49"
+ },
+ {
+  "k": "<b>{0}</b> signed — {1} weeks at {2} a week",
+  "w": "342-v102acta.js:50"
+ },
+ {
+  "k": "Your house · the season",
+  "w": "342-v102acta.js:58"
+ },
+ {
+  "k": "Your house · in memoriam",
+  "w": "342-v102acta.js:61"
+ },
+ {
+  "k": "{0} of {1} died this week — {2}.",
+  "w": "342-v102acta.js:61"
+ },
+ {
+  "k": "The sand keeps what it is given. <b>{0}</b>, {1}{2}{3}, fought for {4} for the last time this week. The record left behind: {5} bouts, {6} wins, {7} kills. The house drapes its gate in black.",
+  "w": "342-v102acta.js:62"
+ },
+ {
+  "k": ", fame {0}",
+  "w": "342-v102acta.js:62"
+ },
+ {
+  "k": "{0} bouts · {1} wins",
+  "w": "342-v102acta.js:63"
+ },
+ {
+  "k": "{0} SIGNS {1}",
+  "w": "342-v102acta.js:64"
+ },
+ {
+  "k": "Your house · a signing",
+  "w": "342-v102acta.js:64"
+ },
+ {
+  "k": "{0}, {1} of {2}, joins {3} for {4} weeks.",
+  "w": "342-v102acta.js:65"
+ },
+ {
+  "k": "The criers had it by noon: <b>{0}</b> has put his mark on a contract with {1} at {2} a week. The touts rate him {3} and expect to see him on a card before long. Rival lanistae are said to be counting what they offered.",
+  "w": "342-v102acta.js:66"
+ },
+ {
+  "k": "Grade",
+  "w": "342-v102acta.js:67"
+ },
+ {
+  "k": "{0} weeks",
+  "w": "342-v102acta.js:67"
+ },
+ {
+  "k": "Turns",
+  "w": "342-v102acta.js:69"
+ },
+ {
+  "k": "Before a full house at {0}, <b>{1}</b> of {2} took the {3} with {4} Crowd Favor{5}. The purse of {6} goes to the house.",
+  "w": "342-v102acta.js:70"
+ },
+ {
+  "k": "Upset",
+  "w": "342-v102acta.js:71"
+ },
+ {
+  "k": "rated {0} beat {1}",
+  "w": "342-v102acta.js:71"
+ },
+ {
+  "k": "{0} FELLS THE FAVOURITE AT {1}",
+  "w": "342-v102acta.js:72"
+ },
+ {
+  "k": "{0} at {1} · your house",
+  "w": "342-v102acta.js:72"
+ },
+ {
+  "k": "Rated {0}, {1} beat a field led by {2} ({3}) in the {4}.",
+  "w": "342-v102acta.js:73"
+ },
+ {
+  "k": "Nobody in the upper tiers had money on him. {0} will not hear the end of it.",
+  "w": "342-v102acta.js:74"
+ },
+ {
+  "k": "The league · the card",
+  "w": "342-v102acta.js:80"
+ },
+ {
+  "k": "In memoriam",
+  "w": "342-v102acta.js:80"
+ },
+ {
+  "k": "The empire · {0}",
+  "w": "342-v102acta.js:82"
+ },
+ {
+  "k": "The league",
+  "w": "342-v102acta.js:82"
+ },
+ {
+  "k": "· aged {0}",
+  "w": "342-v102acta.js:111"
+ },
+ {
+  "k": "{0} bouts · {1} wins · {2} kills",
+  "w": "342-v102acta.js:111"
+ },
+ {
+  "k": "WON",
+  "w": "342-v102acta.js:127"
+ },
+ {
+  "k": "LOST",
+  "w": "342-v102acta.js:127"
+ },
+ {
+  "k": "{0} did not fight this week.",
+  "w": "342-v102acta.js:128"
+ },
+ {
+  "k": "From the Training Yard",
+  "w": "342-v102acta.js:130"
+ },
+ {
+  "k": "An older edition: the house page was not kept.",
+  "w": "342-v102acta.js:132"
+ },
+ {
+  "k": "No other bouts this week.",
+  "w": "342-v102acta.js:133"
+ },
+ {
+  "k": "In Memoriam",
+  "w": "342-v102acta.js:134"
+ },
+ {
+  "k": "No one fell this week. The sand is patient.",
+  "w": "342-v102acta.js:135"
+ },
+ {
+  "k": "the crowds {0}",
+  "w": "342-v102acta.js:137"
+ },
+ {
+  "k": "A quiet week in the provinces.",
+  "w": "342-v102acta.js:138"
+ },
+ {
+  "k": "Open the dossier",
+  "w": "342-v102acta.js:140"
+ },
+ {
+  "k": "NEXT WEEK",
+  "w": "342-v102acta.js:142"
+ },
+ {
+  "k": "AS PRINTED THEN",
+  "w": "342-v102acta.js:142"
+ },
+ {
+  "k": "The Grand Games",
+  "w": "342-v102acta.js:142"
+ },
+ {
+  "k": "A bye across the league — no bouts anywhere. Rest, train and recruit.",
+  "w": "342-v102acta.js:143"
+ },
+ {
+  "k": "to be announced",
+  "w": "342-v102acta.js:143"
+ },
+ {
+  "k": "Bad blood: {0}",
+  "w": "342-v102acta.js:143"
+ },
+ {
+  "k": "Back to this week ▶",
+  "w": "342-v102acta.js:144"
+ },
+ {
+  "k": "Older edition",
+  "w": "342-v102acta.js:146"
+ },
+ {
+  "k": "edition {0} of {1} kept · up to {2}",
+  "w": "342-v102acta.js:146"
+ },
+ {
+  "k": "Newer edition",
+  "w": "342-v102acta.js:146"
+ },
+ {
+  "k": "Season {0} · Week {1} of XII · nailed to the forum wall at {2}",
+  "w": "342-v102acta.js:148"
+ },
+ {
+  "k": "THE GRAND GAMES",
+  "w": "342-v102acta.js:148"
+ },
+ {
+  "k": "PRICE II SESTERTII",
+  "w": "342-v102acta.js:149"
+ },
+ {
+  "k": "Omen: {0}",
+  "w": "342-v102acta.js:149"
+ },
+ {
+  "k": "in purses",
+  "w": "342-v102acta.js:150"
+ },
+ {
+  "k": "top Crowd Favor",
+  "w": "342-v102acta.js:150"
+ },
+ {
+  "k": "empire events",
+  "w": "342-v102acta.js:150"
+ },
+ {
+  "k": "Your House",
+  "w": "342-v102acta.js:153"
+ },
+ {
+  "k": "The Arena",
+  "w": "342-v102acta.js:154"
+ },
+ {
+  "k": "the rest of the card at {0}",
+  "w": "342-v102acta.js:154"
+ },
+ {
+  "k": "news from the provinces",
+  "w": "342-v102acta.js:155"
+ },
+ {
+  "k": "The Darwinius Awards",
+  "w": "342-v102acta.js:158"
+ },
+ {
+  "k": "Rabble-Rousers",
+  "w": "342-v102acta.js:159"
+ },
+ {
+  "k": "of the week",
+  "w": "342-v102acta.js:159"
+ },
+ {
+  "k": "Overheard",
+  "w": "342-v102acta.js:160"
+ },
+ {
+  "k": "In Brief",
+  "w": "342-v102acta.js:161"
+ },
+ {
+  "k": "Classifieds",
+  "w": "342-v102acta.js:162"
+ },
+ {
+  "k": "SWORDS FOR HIRE",
+  "w": "342-v102acta.js:163"
+ },
+ {
+  "k": "Scout ▸",
+  "w": "342-v102acta.js:163"
+ },
+ {
+  "k": "THE LEAGUE",
+  "w": "342-v102acta.js:165"
+ },
+ {
+  "k": "League ▸",
+  "w": "342-v102acta.js:165"
+ },
+ {
+  "k": "THE SAND’S FINEST",
+  "w": "342-v102acta.js:167"
+ },
+ {
+  "k": "The <b>Acta Diurna</b> — the week's gazette: your house, the arena, the empire and the league's best. When you have read it, open <b>Your ludus</b> to finish this lesson.",
+  "w": "342-v102acta.js:195"
+ },
+ {
+  "k": "Four of your fighters are already out on loan — the most a house lends at once.",
+  "w": "343-v102loans.js:26"
+ },
+ {
+  "k": "{0} already has four fighters out on loan.",
+  "w": "343-v102loans.js:41"
+ },
+ {
+  "k": "<b>{0}</b> is market-worthy this week — <b>{1}</b> offers {2} a week{3}",
+  "w": "343-v102loans.js:59"
+ },
+ {
+  "k": "· the best price of the next {0} weeks",
+  "w": "343-v102loans.js:59"
+ },
+ {
+  "k": "· better still: week {0}, {1} at {2}",
+  "w": "343-v102loans.js:59"
+ },
+ {
+  "k": "Three weeks on loan; {0} pays his wage. He fights for them, not for you.",
+  "w": "343-v102loans.js:60"
+ },
+ {
+  "k": "Lend for 3 weeks",
+  "w": "343-v102loans.js:60"
+ },
+ {
+  "k": "🤝 4 out on loan",
+  "w": "343-v102loans.js:68"
+ },
+ {
+  "k": "{0} · {1}/wk · 3 wk",
+  "w": "343-v102loans.js:69"
+ }
+]
