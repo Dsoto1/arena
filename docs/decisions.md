@@ -720,3 +720,6 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   game's event art. Naumachia: a random team goes first (seeded shuffle in 05-flow); teammates still play back to back.
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).
 
+- Decided 2026-10-16 (v1.04, his s1a s2a c1a): Superbus playoffs keep the flat seeding (seeds 1–4 rest one round, top 2 of each bout go on).
+  Playoff weeks with no bout pay a house its FULL wages back — REPLACED: "half wages back" (59's bye rule) for playoff weeks; ordinary byes keep half.
+  The First-team reserve may be lent out; only Bout I–III starters are locked.

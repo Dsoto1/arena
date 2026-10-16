@@ -12,3 +12,9 @@ His answers (2026-10-16): 1a (rub-down, Care routine and Rest week all move) · 
  Hygeia, beds, Asclepius) | ♨ Baths (bathhouse, rub-down in the oiling room 1 h, Care routine 1 h/wk, Rest week 0 h on a "bench" plate); opens on the tab
  that fits the fighter; every plate shows hours + effect ("−20 fatigue", "fit week 6 → 5"). Bottom: the week's tabula (booked care, hours used/left, the
  Medicus's ★ suggested order). REPLACES: the Training Yard's Recovery section (yard keeps only training) and the separate bathhouse block.
+
+## R2 · his answers to the X3 sim report (2026-10-16): s1a s2a c1a
+- s1a: playoff seeding stays as built (seeds 1–4 rest a round; any house can win; no extra edge for top seeds).
+- s2a: a house with no bout in a playoff week gets its FULL wages back from the Senate (348; was half). REPLACES the half refund (59's bye rule) for playoff weeks.
+- c1a: the First-team reserve (350, tm104 'A', not in Bouts I–III) can be lent out; only the three bout starters are locked.
+- Still open: advisor pace (one level a season; should each level also cost more?).

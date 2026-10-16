@@ -73214,7 +73214,7 @@ if(V103E.on){const css=document.createElement('style');css.textContent=`
        TIME: the three playoff weeks are FROZEN weeks at absolute week 11 (a season stays 12 calendar weeks, every %12 formula untouched).
        Ending a playoff week runs the whole endWeek chain for week 11 (wages, injuries, training, care, the Acta, the review), then rewinds
        w.week to 11, shifts injuries one week on and frees the once-a-week keys (…Wk, clocks, plans) so the next playoff week starts fresh.
-       A house with no bout in a playoff week gets half its wages back from the Senate (59's bye rule).
+       A house with no bout in a playoff week gets its wages back from the Senate (his s2a, 2026-10-16; was half, 59's bye rule).
        After the final the chain is let through to the real week 12 = THE OFF-SEASON WEEK. The season itself still ends with week 12's end.
    BRACKET VIEW: an overlay (#po104br) from the League banner, the Match Week banner and the playoff card; from week 9 it shows the projected
        seeds "if the season ended today", during the playoffs the real bracket with places and who went through.
@@ -73351,9 +73351,9 @@ function po104Next(w){if(!cal104New(w)||!w.night||w.dead)return '';const ph=po10
   let r;try{r=await base.apply(this,arguments)}finally{V104A.inHold=false;BYE_WKS.splice(0,BYE_WKS.length,...save)}
   if(r===false)return r;
   try{if(ending)po104Settle(w,P,ending,true);
-    /* 59's bye rule: a house with no bout this playoff week gets half its wages back from the Senate */
-    if(ending){const inB=new Set(n.bouts.flatMap(b=>b.po104?b.po104.k:[]));for(const m of w.mgrs.filter(x=>!x.dead&&!inB.has('m:'+x.id))){const back=Math.round(rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0)/2);if(!back)continue;m.coin+=back;
-      if(m.isPlayer&&typeof tnews==='function')tnews(_T`🏛 No Superbus bout for your house this week: the Senate pays half your wages, ${coinAmt87('+'+back)}.`)}}
+    /* a house with no bout this playoff week gets its full wages back from the Senate (his s2a; was half, 59's bye rule) */
+    if(ending){const inB=new Set(n.bouts.flatMap(b=>b.po104?b.po104.k:[]));for(const m of w.mgrs.filter(x=>!x.dead&&!inB.has('m:'+x.id))){const back=Math.round(rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0));if(!back)continue;m.coin+=back;
+      if(m.isPlayer&&typeof tnews==='function')tnews(_T`🏛 No Superbus bout for your house this week: the Senate pays your wages, ${coinAmt87('+'+back)}.`)}}
     if(w.review){w.review.po104=ending||'r11';w.review.po104s=P.s}
     if(nx==='off'){po104OffStart(w,P)}
     else{po104Rewind(w);po104Night(w,P,nx);P.phase=nx;po104Letter(w,P,nx)}
