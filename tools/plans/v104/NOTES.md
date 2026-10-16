@@ -150,3 +150,9 @@ FEATURES (v1.05, own release):
   severe losses), free limb regrowth for any limb lost, does NOT count toward league points or lifetime records; its own trophy handed to
   the winning house and passed on to each new winner (a la the Stanley Cup). The off-season LEADS INTO the festival. o2a mock-up first ·
   o3a its own release v1.06 (after v1.05 Match Week).
+- N4 Winter festival, his answers (2026-10-16): w1a Superbus-shaped knockout (one fighter per house, 4-house bouts, top 2 on) · w2a every house
+  invited, optional, sitting out costs nothing · w3a a travelling cup, engraved list in the Hall, permanent replica after 3 wins — NAME: "THE
+  WINTER CLASSIC" · the FINALE = a FESTIVAL SATURNALIA (10-meta FEST_KINDS saturnalia: +4 coin between events) of three events: Carmina
+  (Fescennina), a chariot race (no PvP), a Classic Democritus. All fighters under clemency, free limb regrowth, no league points, no
+  lifetime records. Extra houses: 12 houses = the Superbus shape exactly; empty seats → invited free agents (the Superbus rule); Sica's
+  Syndicate only as a wildcard in an empty seat (asked: seeding).
