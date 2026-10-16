@@ -122,3 +122,8 @@ FEATURES (v1.05, own release):
 - B20 Infirmary row chips: "Treated ✓" / "Rested ✓" (345-v103mgr's Treated ✓, 351's Rested ✓) read as finished, but the care completes at the
   week's end. Wording while booked: "Receiving treatment" / "Resting" (no ✓); a ✓ only on the report after the week turns. REPLACES the
   v1.03 "Treated ✓" chip text.
+- x1a (2026-10-16): lanista perk points from ONE "Renown" bar (wins, podiums, playoff rounds, sold-out crowds, kept pledges, fighters
+  improving, good signings; levels give points; the bar lists the sources) — REPLACES the free +1 a week and the scattered +1s (17-manager
+  perkPend). Advisors, buildings, gladiators keep their own growth. v1.05 or later.
+- B21 Superbus bracket (348 #po104br): hard to find; bland; not laid out as a playoff tree; Superbus Week / the off-season should show it and
+  past seasons' results stay viewable.
