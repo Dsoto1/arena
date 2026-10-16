@@ -54,7 +54,8 @@ const sweep=async(where)=>P.evaluate(where=>{
     /* plain ASCII words only: a pseudo word carries accents */
     const ws=u.toLowerCase().match(/[a-z']+/g)||[];const en=ws.filter(x=>EN.has(x)).length;
     if(en>=2)left.set(t.slice(0,90),(left.get(t.slice(0,90))||0)+1)}
-  const cut=[...document.querySelectorAll('button,.btn,.chip,.badge,.tabs button,.mtabs button,[data-tab],.ptpill')].filter(el=>vis(el)&&getComputedStyle(el).overflow!=='visible'&&(el.scrollWidth>el.clientWidth+2)).slice(0,30).map(el=>el.textContent.replace(/\s+/g,' ').trim().slice(0,40));
+  /* .sr93 = the screen-reader-only controls (1 px, clipped on purpose, e.g. "Read the board (I)"): not cut-off text */
+  const cut=[...document.querySelectorAll('button,.btn,.chip,.badge,.tabs button,.mtabs button,[data-tab],.ptpill')].filter(el=>vis(el)&&!el.closest('.sr93')&&getComputedStyle(el).overflow!=='visible'&&(el.scrollWidth>el.clientWidth+2)).slice(0,30).map(el=>el.textContent.replace(/\s+/g,' ').trim().slice(0,40));
   return {where,tot,left:[...left.keys()],cut}},where);
 const C={left:[],cut:[],tot:0,where:{}};const add=r=>{C.tot+=r.tot;C.where[r.where]=(C.where[r.where]||0)+r.left.length;for(const x of r.left)C.left.push(r.where+' | '+x);for(const x of r.cut)C.cut.push(r.where+' | '+x)};
 const closeAll=async()=>{for(let i=0;i<6;i++){const m=await P.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;await P.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await P.waitForTimeout(350)}};

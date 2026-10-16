@@ -14,7 +14,9 @@ const REAL=fs.existsSync(path.join(path.dirname(path.resolve(process.argv[2])),'
 const STUB=REAL?null:{l:'ja',d:{'Attack':'攻撃','Settings':'設定','Manager mode':'マネージャーモード','Play Now':'すぐ遊ぶ'},s:[]};
 const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
 const mk=async(locale)=>{const ctx=await b.newContext({viewport:{width:1300,height:900},locale});await ctx.route(/fonts\./,r=>r.abort());
-  await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+  await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');
+    /* remember what the game wrote as the language (sessionStorage survives the reload) */
+    const si=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='flavius_lang'){try{sessionStorage.setItem('__langw',v)}catch(e){}}return si.apply(this,arguments)}});
   await ctx.addInitScript(st=>{if(st&&localStorage.getItem('flavius_lang')==='ja'&&!window.LANG_PACK)window.LANG_PACK=st},STUB);return ctx};
 const ready=p=>p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:25000}).catch(()=>p.waitForTimeout(2400));
 const open=async(ctx,n)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await ready(p);return p};
@@ -25,6 +27,11 @@ const ctx=await mk('ja-JP');const P=await open(ctx,'A');
 out.ask=await P.waitForSelector('#lang86ask',{timeout:10000}).then(()=>P.evaluate(()=>({t:document.getElementById('lang86ask').innerText,LANG}))).catch(()=>null);
 ok(out.ask&&out.ask.LANG==='en'&&/日本語でプレイしますか/.test(out.ask.t)&&/はい、日本語で/.test(out.ask.t),'A: Japanese browser asked in Japanese '+JSON.stringify(out.ask));
 if(out.ask){await Promise.all([P.waitForNavigation({timeout:15000}).catch(()=>null),P.click('#lang86ask [data-lang86yes]')]);await ready(P)}
+/* headless Chromium sometimes drops localStorage across an immediate reload of a file:// page (seen ~1 in 8 with the game's writes logged and nothing removing them):
+   the game must have WRITTEN the language; if the browser lost it, put it back and reload once, so B still checks the Japanese page */
+if(out.ask){const wr=await P.evaluate(()=>({w:sessionStorage.getItem('__langw'),had:localStorage.getItem('flavius_lang')}));
+  ok(wr.w==='ja','A: "はい" saved the language '+JSON.stringify(wr));
+  if(wr.w==='ja'&&!wr.had){await Promise.all([P.waitForNavigation({timeout:15000}).catch(()=>null),P.evaluate(()=>{localStorage.setItem('flavius_lang','ja');localStorage.setItem('flavius_langask86','1');location.reload()})]);await ready(P)}}
 
 /* ── B · Japanese ── */
 out.b=await P.evaluate(()=>{const cs=getComputedStyle(document.documentElement),bs=getComputedStyle(document.body);
