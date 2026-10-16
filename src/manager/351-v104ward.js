@@ -378,7 +378,7 @@ function w104Page(R,w,pm){const pane=R.querySelector('#mgrPane');if(!pane)return
 document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-w104t]');if(!b||!b.closest('#mgrBody'))return;e.preventDefault();e.stopPropagation();MGR.w104t=b.dataset.w104t;if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
 /* the care guide: the hours and the Baths */
 if(typeof careGuideHTML==='function'){const base=careGuideHTML;careGuideHTML=function(){const h=base.apply(this,arguments);try{const w=w104Live();if(!w||typeof h!=='string')return h;const pm=me();
-  const add=`<p class="rc-sub w104cg" style="margin:4px 0">${_T`<b>${mh101Max(pm,w)}</b> Medicus hours this week: ${CARE101.base+W104.med} a week, +${CARE101.valet} for each Valetudinarium level, +${CARE101.medicus} for each skill level of a house medicus. ♨ THE BATHS take weariness down from the same hours: a rub-down ${W104.rub} h (−10 fatigue now), the Care routine ${W104.care} h a week (−${FAT_CARE90} when each week ends), a Rest week 0 h (no bouts, −${FAT_REST}).`}</p>`;
+  const add=`<p class="rc-sub w104cg" style="margin:4px 0">${_T`<b>${mh101Max(pm,w)}</b> Medicus hours this week: ${CARE101.base+W104.med} a week, +${CARE101.valet} for each Valetudinarium level, +${CARE101.medicus} for each skill level of a Capsarius. ♨ THE BATHS take weariness down from the same hours: a rub-down ${W104.rub} h (−10 fatigue now), the Care routine ${W104.care} h a week (−${FAT_CARE90} when each week ends), a Rest week 0 h (no bouts, −${FAT_REST}).`}</p>`;
   return h.replace(/(<\/summary>)/,`$1${add}`)}catch(e){return h}}}
 try{if(typeof ROUT87_SUB!=='undefined')ROUT87_SUB.care=_T('1 Medicus hour a week, in the Infirmary’s Baths')}catch(e){}
 

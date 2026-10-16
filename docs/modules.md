@@ -1636,3 +1636,10 @@ their bullet at the END of the "Systems" list below (the release that ships them
   (348) finishes all in the off-season; ludusClick 'build' wrapper says so; banner chip `.bp104c`; Upgrade School = lu102FacHTML wrapper tiles `.bp104t` (NOW → NEXT art
   `bp104Art`: rec100 murals / scene100 with level filters .bp104l0–3, Build disabled with the reason unless affordable + builders free, weeks to build); 297's lu2Row
   disabled while a project runs; Promote = promoteCardHTML wrapper art tiles (.pr104g/.pr104t). No save change.
+- **354-v104fixw** (manager, v1.04 beta fixes B12 B13 B18 B20; kill switch `flavius_v104woff=1`; test tv104g): B12 the Yard's 🗣 Care button is gone (y92Card wrapper strips `data-y92care`;
+  the Baths' Care routine replaces it); B13 the Doctore's name/stars/summary in the Yard banner (`.v104dc`), his Intensity + Time = the top row of the week's plan (the old `.y92doc`
+  node moved into `.rm100plan .rm100wax`, class `.v104top`; the yard is two columns, `.v104y`), his hours lock (week plan `P.doclk`) with a card's drill that needs more than his
+  hour-less level (y92LockIn wrapper) and with Lock in all (window-capture guard; also `P.reglk` locks the Intensity) — up yes, down no; locked drill tiles say what unlocks them
+  (`y104Need`, `.v104unl`); B18 the hired house medicus is the CAPSARIUS (texts in 108/318/345/351), a staff slot in the Infirmary banner (`.v104cap`, face from `cap104Look`, candidates
+  carry a stored `face`), his hours a gold `.k104cp` segment on the hours bar, the hire popup `cap104Pop` (three `.v104ct` tiles, `data-v101mh` kept, window-capture takes `[data-v101med]`
+  because 318's opener is block-scoped), the list's small hire button gone; B20 row chips "Receiving treatment" / "Resting" (no ✓; 345's text changed too). No save change.
