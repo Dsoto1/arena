@@ -4,7 +4,7 @@ await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=
 await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.a=await pg.evaluate(async()=>{openManager();await new Promise(r=>setTimeout(r,600));newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_();
-  w.week=w.week+(11-wkOf(w.week));makeNight();MGR.tab='ludus';MGR_REDRAW();const btn=document.querySelector('[data-rivcommit]');if(btn)btn.click();
+  w.week=w.week+(10-wkOf(w.week));makeNight(); /* v1.04: letter week 10, Rivalry Week 11 */MGR.tab='ludus';MGR_REDRAW();const btn=document.querySelector('[data-rivcommit]');if(btn)btn.click();
   w.week++;makeNight();const meId=me().id;const isMine=id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===meId};
   const bi=w.night.bouts.findIndex(b=>b.rivalry&&b.ents.filter(isMine).length>=2);
   if(bi<0)return {err:'no bout'};const bt=w.night.bouts[bi];const mine=bt.ents.filter(isMine);

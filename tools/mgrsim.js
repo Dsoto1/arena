@@ -23,8 +23,8 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
     const LN={earn:0,ent:0,fee:0,feeN:0,feeMax:0,good:0};if(/^rk\d+$/.test(GEARM))ARM94.repK=1/+GEARM.slice(2);if(GEARM==='old'){ARM94.repK=1/3;ARM94.sellK=0.4;ARM94.sellMax=999;ARM94.mkHome=true}newWorld({type:'pre',key:MGR_PRE[run%MGR_PRE.length].key});MGR.view=null;const w=W_(),m=me();
     const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;const rivals=()=>w.mgrs.filter(x=>!x.isPlayer&&!x.dead);
     const start={mine:avg(rosterOf(m).map(effOvr)),riv:avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))};const CR={s:w.season,n:0,rows:[]};let injWk=0,rivInjWk=0,nCard=0,bare=0,miss=0,sev=0,injuries=0,lost=0,c6=null,c12=null,c24=null,minCoin=1e9,collapsed=0;const n0=rosterOf(m).length;
-    const weeks=SEASONS*12;
-    for(let k=0;k<weeks;k++){
+    const weeks=SEASONS*12;const wk0=w.week;const SB=[]; /* v1.04 (348): the playoff weeks are frozen (w.week stays 11) — the loop runs until SEASONS*12 calendar weeks have passed */
+    for(let k=0;k<weeks+SEASONS*6&&w.week<wk0+weeks;k++){
       const yard=strat!=='base';const ros=()=>rosterOf(m);
       /* signings */
       if(strat==='cheap'&&wkOf(w.week)<=3){for(const g of freeAgents().filter(g=>askWage(g)<=12&&(g.pot||effOvr(g))>=60).sort((a,b)=>(b.pot||0)-(a.pot||0))){if(ros().length>=12)break;
@@ -46,7 +46,7 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       if(yard){const P=thPlan(w);let left=thLeft(w);for(const g of ros().filter(g=>!g.inj).sort((a,b)=>(gFat(a))-(gFat(b)))){if(gFat(g)>60){g.restWk=w.week;continue}
           for(const k2 of ['str','spd']){const h=Math.min(2,left);if(h<=0)break;P.g[g.id]=P.g[g.id]||{};P.g[g.id][k2]=(P.g[g.id][k2]||0)+h;left-=h}}}
       /* entries: my best fit fighter into each bout it fits */
-      const used=new Set();for(const bo of w.night.bouts){if(bo.done)continue;const T=TIERS[bo.tier];
+      const used=new Set();for(const bo of w.night.bouts){if(bo.done||bo.po104)continue;const T=TIERS[bo.tier];
         const g=ros().filter(g=>!g.inj&&g.morale>15&&!used.has(g.id)&&!bo.ents.includes(g.id)&&effOvr(g)>=T.lo-4&&effOvr(g)<=T.hi+2).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(!g)continue;
         const out=bo.ents.map(gById).filter(x=>x&&!x.contract).sort((x,y)=>effOvr(x)-effOvr(y))[0];if(!out)continue;bo.ents[bo.ents.indexOf(out.id)]=g.id;used.add(g.id)}
       /* v1.0 ENTER ANY EVENT (296-v100any): ANY100=off → no specials (the old week); ANY100=play → the scripted lanista also books every special with
@@ -71,10 +71,11 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       injuries+=Math.max(0,ros().filter(g=>g.inj).length-inj0);lost+=Math.max(0,alive0-ros().length);
       if(w.season!==CR.s){const al=w.glads.filter(g=>g.alive);const R=(w.c104rev&&w.c104rev.n!==CR.n?w.c104rev:null);if(R)CR.n=R.n;const ph={rise:0,prime:0,fade:0};if(typeof c104Phase==='function')for(const g of al)ph[c104Phase(g).ph]++;
         CR.rows.push({s:CR.s,alive:al.length,age:+avg(al.map(gAge)).toFixed(1),min:Math.min(...al.map(gAge)),max:Math.max(...al.map(gAge)),over33:al.filter(g=>gAge(g)>=33).length,ret:R?R.ret.length:0,mine:R?R.ret.filter(x=>x.mine).length:0,great:R?R.ret.filter(x=>x.great).length:0,retAge:R&&R.ret.length?+avg(R.ret.map(x=>x.age)).toFixed(1):0,fame:R?R.fame.length:0,ph,myFame:m.fame});CR.s=w.season} /* v1.04 (349): careers per season */
-      const wk=k+1;if(wk===6)c6=m.coin;if(wk===12)c12=m.coin;if(wk===24)c24=m.coin;minCoin=Math.min(minCoin,m.coin);
+      if(typeof OFF104!=='undefined'&&OFF104.active(w)&&w.po104&&!SB.some(x=>x.s===w.po104.s)){const P=w.po104,mk='m:'+m.id;SB.push({s:P.s,seed:P.seeds.indexOf(mk)+1,reach:po104Reach(P,mk),champ:(po104M(P.champ)||{}).ludus||P.champ,champSeed:P.seeds.indexOf(P.champ)+1})}
+      const wk=w.week-wk0;if(wk===6&&c6==null)c6=m.coin;if(wk===12&&c12==null)c12=m.coin;if(wk===24&&c24==null)c24=m.coin;minCoin=Math.min(minCoin,m.coin);
       if(m.dead||w.dead||(!ros().length&&m.coin<0)){collapsed=wk;break}}
     const table=w.mgrs.filter(x=>!x.dead).map(x=>({p:x.isPlayer,wins:x.wins||0})).sort((a,b)=>b.wins-a.wins);
-    return {careers:CR.rows,strat,run,injWk,rivInjWk:+rivInjWk.toFixed(1),rivWins:+avg(rivals().map(x=>x.wins||0)).toFixed(1),wins:m.wins||0,rank:table.findIndex(x=>x.p)+1,wage:rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0),houses:table.length,mine:+avg(rosterOf(m).map(effOvr)).toFixed(1),riv:+avg(rivals().flatMap(x=>rosterOf(x).map(effOvr))).toFixed(1),
+    return {careers:CR.rows,strat,run,sb:SB,injWk,rivInjWk:+rivInjWk.toFixed(1),rivWins:+avg(rivals().map(x=>x.wins||0)).toFixed(1),wins:m.wins||0,rank:table.findIndex(x=>x.p)+1,wage:rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0),houses:table.length,mine:+avg(rosterOf(m).map(effOvr)).toFixed(1),riv:+avg(rivals().flatMap(x=>rosterOf(x).map(effOvr))).toFixed(1),
       gain:+(avg(rosterOf(m).map(effOvr))-start.mine).toFixed(1),rivGain:+(avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))-start.riv).toFixed(1),coin:m.coin,c6,c12,c24,minCoin,collapsed,fighters:rosterOf(m).length,n0,injuries,lost,weeks:w.week,rivLv:typeof advLvM==="function"?+avg(rivals().map(x=>advLvM(x,"recruiter"))).toFixed(2):0,rivCoin:Math.round(avg(rivals().map(x=>x.coin))),deaths:w.glads.filter(g=>!g.alive&&!g.retired&&g.debut).length,nCard,bare,miss,sev:rosterOf(m).reduce((a,g)=>a+(g.severed||[]).length,0),gear:typeof arm94Stats==='function'?arm94Stats(w):null,rivMin:Math.min(...rivals().map(x=>x.coin)),rivBroke:rivals().filter(x=>x.coin<30).length,shelf:avg(w.mgrs.filter(x=>!x.dead).map(x=>(x.arm94?x.arm94.sh.length:0))),loan:{earnPerBout:LN.ent?+(LN.earn/LN.ent).toFixed(1):0,fee:LN.feeN?+(LN.fee/LN.feeN).toFixed(1):0,feeMax:LN.feeMax,good:LN.good,benchWeeks:LN.feeN}}},{strat,run,SEASONS,GEAR,GEARM,ANYM:process.env.ANY100||'',G102:process.env.GEAR102?JSON.parse(process.env.GEAR102):null});
   rows.push(r);process.stderr.write(JSON.stringify(r)+'\n')}
 const by={};for(const r of rows)(by[r.strat]=by[r.strat]||[]).push(r);const A=(a,k)=>(a.reduce((s,x)=>s+x[k],0)/a.length).toFixed(1);
@@ -89,4 +90,5 @@ for(const [s2,a] of Object.entries(by))console.log(`${s2} rival avg Recruiter le
 for(const [s2,a] of Object.entries(by))console.log(`${s2} injury weeks (fighter-weeks hurt at entry): player ${A(a,'injWk')} · per rival house ${A(a,'rivInjWk')} · rival wins/house ${A(a,'rivWins')}`); /* v1.02 (341) */
 for(const [s2,a] of Object.entries(by)){const L=a.map(x=>x.loan).filter(x=>x&&x.benchWeeks);if(L.length)console.log(`${s2} loans: a starter earns ${(a.reduce((t,x)=>t+((x.loan||{}).earnPerBout||0),0)/a.length).toFixed(1)} coin a bout for the house · a bench fighter's best loan fee ${(L.reduce((t,x)=>t+x.fee,0)/L.length).toFixed(1)}/wk (max ${Math.max(...L.map(x=>x.feeMax))}) · good-market bench weeks ${(L.reduce((t,x)=>t+x.good,0)/L.length).toFixed(1)} of ${(L.reduce((t,x)=>t+x.benchWeeks,0)/L.length).toFixed(1)}`)}
 for(const r of rows)for(const c of r.careers||[])console.log(`careers ${r.strat} run ${r.run} season ${c.s}: ${c.alive} alive · age avg ${c.age} (${c.min}-${c.max}) · 33+ ${c.over33} · retired ${c.ret} (yours ${c.mine}, greats ${c.great}, avg age ${c.retAge}) · houses drifting ${c.fame} · rising/prime/fading ${c.ph.rise}/${c.ph.prime}/${c.ph.fade} · your fame ${c.myFame}`); /* v1.04 (349) */
+for(const [s2,a] of Object.entries(by)){const L=a.flatMap(x=>x.sb||[]);if(L.length)console.log(`${s2} Superbus playoffs (v1.04): ${L.length} season(s) · your house seeded ${(L.reduce((t,x)=>t+x.seed,0)/L.length).toFixed(1)} on average · reached the semis ${L.filter(x=>/sf|fin|champ/.test(x.reach)).length} · the final ${L.filter(x=>/fin|champ/.test(x.reach)).length} · won ${L.filter(x=>x.reach==='champ').length} · champions' seeds ${L.map(x=>x.champSeed).join(',')}`)}
 if(errs.length)console.log('page errors:',errs.slice(0,3));await b.close()})();

@@ -13,7 +13,8 @@
      partner a CPU), watch, or sim it. The card keeps three bouts (yours + the two hottest rivalries); every other pairing
      is a background bout, settled at the week's end from the pairs' ratings (rivalBackground) and reported in the Acta. The winning house gains fame; the Acta reports.
    ===================================================================== */
-const RIVAL_WK=12,RIVAL_FAME_SHORT=8,RIVAL_FAME_WIN=4; /* TWEAK */
+let RIVAL_WK=12; /* v1.04 (348): a let — the new calendar moves Rivalry Week to week 11 per career (cal104Sync) */
+const RIVAL_FAME_SHORT=8,RIVAL_FAME_WIN=4; /* TWEAK */
 BYE_WKS.splice(0,BYE_WKS.length,4,11);
 {const base=seasonSchedule;seasonSchedule=function(season){const fx=base.apply(this,arguments);try{const f=fx[RIVAL_WK-1];if(f&&!f.rivalry){f.ev='familia';f.rivalry=1;f.purse=Math.max(f.purse||1,1.5)}}catch(e){}return fx}}
 function rivalHeat(a,b){return ((a.rivals||{})[b.id]||0)+((b.rivals||{})[a.id]||0)+(a.isPlayer?(b.rivalry||0):0)+(b.isPlayer?(a.rivalry||0):0)}
