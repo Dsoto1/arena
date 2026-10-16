@@ -104,3 +104,6 @@ FEATURES (v1.05, own release):
   Footwork/Iron Lv1, Showman 2, Blood and Sand 3, Veteran 4, Parade 5) LOCK as soon as a fighter's card locks with a drill that needs that
   level, and always with Lock in all; after that they can go up, never down, that week (closes today's gap: add hours → pick a drill →
   take the hours back). A locked drill tile says how to unlock it: "🔒 Lv 2 · 2 more hours with <Doctore>, or Yard II".
+- B17 The Recruiter's "A bargain: <name>" letter (138-v84 recruiter84) stays after that fighter is signed. Fix: it files itself once he is
+  signed, an offer to him is out, or he signs elsewhere; same rule for the other council letters that point at one fighter or one action
+  (goes with B10: a letter stays only while it still asks for something valid).
