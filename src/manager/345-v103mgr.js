@@ -144,7 +144,7 @@ function a103Post(h){const w=W_();const pm=me();if(!w||!pm||w.dead||MGR.view||ty
   if(riv103(w)){const why=rivWhy103();for(const b of QA(RIV103_SEL)){b.classList.add('off');b.setAttribute('aria-disabled','true');b.dataset.dis=why;any=true}}
   {const why=cap103Why();if(why)for(const b of QA('[data-mg="offer"],[data-mg="poach"],[data-m48="cartbuy"]')){b.classList.add('off');b.setAttribute('aria-disabled','true');b.dataset.dis=why;any=true}}
   /* M8 */
-  for(const r of QA('.iv90row[data-inf90]')){const g=gById(r.dataset.inf90);if(trt103(g,w)&&!r.querySelector('.trt103')){r.classList.add('t103');const s=document.createElement('span');s.className='trt103';s.title=_T('Had care this week');s.textContent=_T('Treated ✓');r.appendChild(s);any=true}}
+  for(const r of QA('.iv90row[data-inf90]')){const g=gById(r.dataset.inf90);if(trt103(g,w)&&!r.querySelector('.trt103')){r.classList.add('t103');const s=document.createElement('span');s.className='trt103';s.title=_T('Had care this week');s.textContent=_T('Receiving treatment');r.appendChild(s);any=true}}
   /* N9a swap Armory / Promote */
   {const tl=Q('.lu100tiles');if(tl){const a=tl.querySelector('.lu100t.k-armory'),p=tl.querySelector('.lu100t.k-promote');if(a&&p){const ph=document.createComment('');p.before(ph);a.before(p);ph.replaceWith(a);any=true}}}
   /* M1 the review of the Superbus week */

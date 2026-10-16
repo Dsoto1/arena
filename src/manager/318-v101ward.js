@@ -16,7 +16,7 @@
       • RIVALS: 23-ludus (Medicus / surgeon) and 17-manager endWeek (Hygeia) now call care101Cpu(m,k) — same hours (no house
         medicus) + half coin; -1 = no hours left this week (the wound waits; a rival regrows as many limbs as its hours allow).
    2. BANNER (M15): the Valetudinarium banner shows 🩸 hurt · 🛏 beds used/total · ⏳ hours left/max · coin; the house medicus
-      (hired: name, skill, wage, Let go = 108's data-med76="fire"; else 🧑‍⚕️ Hire a medicus → a centred popup with this week's
+      (hired: name, skill, wage, Let go = 108's data-med76="fire"; else 🧑‍⚕️ Hire a Capsarius → a centred popup with this week's
       three candidates) and Hygeia's Blessing (149's .hyg87, data-m48) sit in the banner. The .wd76top strip below is removed.
    3. RECOVERY → THE TRAINING YARD (M31): rub-down (data-bath, 105), Care routine (data-care90, 183) and Rest week (data-rest, 85)
       leave the infirmary and become a "🛁 Recovery" block on the Doctore's side of the yard (for the fighter in the dossier),
@@ -111,7 +111,7 @@ planRun87=function(g,w,m){const i=g.inj;if(!i||i.war||!inBed76(g))return '';cons
 /* ---------- the care guide ---------- */
 careGuideHTML=function(need){const w=W_(),m=me();const L=mh101Left(w,m),M=mh101Max(m,w);const hl=k=>need===k?' class="hl"':'';const row=(k,ic,n,does,when)=>`<tr${hl(k==='medic'?'medicus':k)}><td>${ic} ${n}</td><td>${k?CARE101.h[k]+' h':'—'}</td><td>${k?coinAmt87(care101Coin(k)):_T('free')}</td><td>${does}</td><td>${when}</td></tr>`;
   return `<details class="careguide"><summary>${_T`Which cure should I use?`} <span class="rc-sub">${_T`· ${L} of ${M} Medicus hours left this week`}</span></summary>
-    <p class="rc-sub" style="margin:4px 0">${_T`Every cure takes <b>Medicus hours</b> and coin. The house has <b>${M}</b> hours a week: 4, +3 for each Valetudinarium level, +2 for each skill level of a house medicus. Hours you don't use are lost when the week ends — a poor house can still heal, a rich one cannot buy more time.`}</p>
+    <p class="rc-sub" style="margin:4px 0">${_T`Every cure takes <b>Medicus hours</b> and coin. The house has <b>${M}</b> hours a week: 4, +3 for each Valetudinarium level, +2 for each skill level of a Capsarius. Hours you don't use are lost when the week ends — a poor house can still heal, a rich one cannot buy more time.`}</p>
     <table class="tally compact"><tr><th>${_T`Cure`}</th><th>${_T`Hours`}</th><th>${_T`Cost`}</th><th>${_T`What it does`}</th><th>${_T`Use it when`}</th></tr>
      ${row(null,'💤',_T('Rest'),_T('A light wound heals by itself in a week or two'),_T('the wound is light and he can sit out a bout'))}
      ${row('bath','🛁',_T('Bathhouse'),_T('One week faster on any wound · +4 morale'),_T('cheap help while you wait; stacks with rest'))}
@@ -162,13 +162,13 @@ care90HTML=function(g,w,m){const i=g.inj,war=i&&i.war;const free=bedFree76(w);co
 
 /* ---------- 2 · the medicus popup ---------- */
 function med101Pop(){const w=W_(),m=me();if(!w||!m)return;for(const o of document.querySelectorAll('.ask76bg'))o.remove();const bg=document.createElement('div');bg.className='veraskbg ask76bg v101mp';
-  bg.innerHTML=`<div class="card2 verask" role="dialog" aria-modal="true"><b>${_T`🧑‍⚕️ Hire a house medicus`}</b><p class="rc-sub" style="margin:4px 0 8px">${_T`A weekly wage. Each skill level heals faster and adds ${CARE101.medicus} Medicus hours a week.`}</p>
+  bg.innerHTML=`<div class="card2 verask" role="dialog" aria-modal="true"><b>${_T`🧑‍⚕️ Hire a Capsarius`}</b><p class="rc-sub" style="margin:4px 0 8px">${_T`A weekly wage. Each skill level heals faster and adds ${CARE101.medicus} Medicus hours a week.`}</p>
     <div class="bp87l">${medCands76(w).map((c,i)=>`<button type="button" class="btn bp87" data-v101mh="${i}" ${m.coin<c.wage?_T`disabled title="${esc(_T('Not enough coin'))}"`:''}><b>${esc(c.name)} · ${_T`skill ${c.skill}`}</b><small>${coinAmt87(c.wage)} ${_T`a week`} · +${CARE101.medicus*c.skill} h · ${MED_SK76[c.skill]}</small></button>`).join('')}</div>
     <div class="acts"><button type="button" class="btn" data-v101mx>${_T`Close`}</button></div></div>`;
   document.body.appendChild(bg);const done=()=>{bg.remove();document.removeEventListener('keydown',key,true)};const key=e=>{if(e.key==='Escape'){e.stopPropagation();e.preventDefault();done()}};document.addEventListener('keydown',key,true);
   bg.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-v101mh]');if(!b){if(e.target===bg||e.target.closest('[data-v101mx]'))done();return}if(b.disabled)return;done();
     const w2=W_();if(typeof roadLocked76==='function'&&roadLocked76(w2)){mToast(_T`🛣 On the road — the Infirmary reopens when the week ends.`);return}const c=medCands76(w2)[+b.dataset.v101mh];if(!c)return;w2.medicus76={...c};
-    const t=_T`🧑‍⚕️ <b>${esc(c.name)}</b> joins your house as medicus (skill ${c.skill}, ${coinAmt87(c.wage)} a week).`;tnews(t,'big');saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW();mToast(t)})}
+    const t=_T`🧑‍⚕️ <b>${esc(c.name)}</b> joins your house as Capsarius (skill ${c.skill}, ${coinAmt87(c.wage)} a week).`;tnews(t,'big');saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW();mToast(t)})}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-v101med]');if(!b||!b.closest('#mgrBody'))return;e.preventDefault();e.stopPropagation();med101Pop()},true);
 
 /* ---------- 6 · the pictures ---------- */
@@ -191,7 +191,7 @@ function v101Ward(R,w,pm){const pane=R.querySelector('#mgrPane');if(!pane)return
       <div class="v101b${L?'':' hot'}" title="${esc(_T('Medicus hours left this week — every treatment takes some'))}"><b>${L}/${M}</b><span>${_T`⏳ hours left`}</span></div><div class="v101b"><b>${coinAmt87(pm.coin)}</b><span>${_T`treasury`}</span></div>`;
     const side=document.createElement('div');side.className='v101bx';const Md=w.medicus76;
     side.innerHTML=Md?`<span class="v101med" title="${esc(MED_SK76[Md.skill]||'')}">${_T`🧑‍⚕️ <b>${esc(Md.name)}</b> · skill ${Md.skill} · ${coinAmt87(Md.wage)}/wk`} <button class="btn tksm" type="button" data-med76="fire">${_T`Let go`}</button></span>`
-      :`<button class="btn tksm v101med" type="button" data-v101med title="${esc(_T('A weekly wage · faster healing · more Medicus hours'))}">${_T`🧑‍⚕️ Hire a medicus`}</button>`;
+      :`<button class="btn tksm v101med" type="button" data-v101med title="${esc(_T('A weekly wage · faster healing · more Medicus hours'))}">${_T`🧑‍⚕️ Hire a Capsarius`}</button>`;
     const hy=hd.querySelector('.hyg87');if(hy){hy.classList.add('v101hy');side.appendChild(hy)}
     if(!hd.querySelector('[data-cure90]'))side.insertAdjacentHTML('afterbegin',`<button type="button" class="iv90why v101why" data-cure90 title="${esc(_T('Which cure should I use?'))}">ⓘ ${_T`Which cure?`}</button>`);
     if(hd.classList.contains('rm100ban')){hd.appendChild(st);hd.appendChild(side);hd.classList.add('v101ban')}

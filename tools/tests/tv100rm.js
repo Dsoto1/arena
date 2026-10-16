@@ -47,7 +47,7 @@ await go(pg,'practice');
 out.yd=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const q=s=>document.querySelector(s);const r={};const pm=me(),w=W_();const ros=rosterOf(pm);
   r.room=!!q('#mgrPane .rm100.rm100-yard');r.ban=!!q('.roomhd.rm100ban .rm100adv');r.rows=document.querySelectorAll('.rm100list .rm100lr[data-y99sel]').length===ros.length;
   r.cards=document.querySelectorAll('#mgrBody .y92c').length===ros.length&&document.querySelectorAll('.rm100dos .rm100yc .y92c').length===1;
-  r.doc=!!q('.rm100y1 .y92doc.rm100doc .y92face')&&!!q('.y92doc [data-mg="regime"]');r.plan=!!q('.rm100plan .rm100wax [data-y92all]')&&!!q('.rm100plan [data-y92same]');
+  r.doc=!!q('.roomhd .v104dc')&&!!q('.rm100plan .rm100wax .y92doc.rm100doc [data-mg="regime"]'); /* v1.04 B13: the Doctore's face + summary are in the banner, Intensity + Time the plan's top row */r.plan=!!q('.rm100plan .rm100wax [data-y92all]')&&!!q('.rm100plan [data-y92same]');
   r.plates=document.querySelectorAll('.rm100drills .rm100plt').length===6;r.trials=document.querySelectorAll('.y92trials.rm100tri .y92t .rm100fr').length===3&&document.querySelectorAll('.y92trials [data-yb76]').length>=3;
   /* pick a fighter from the list */
   const g=ros.find(x=>x.id!==MGR.tr92&&!y92Lock(x))||ros[0];q(`.rm100list [data-y99sel="${g.id}"]`).click();await W8(400);r.sel=MGR.tr92===g.id&&!!q(`.rm100yc .y92c[data-y92c="${g.id}"]`);

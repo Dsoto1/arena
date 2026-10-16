@@ -41,10 +41,10 @@ const A=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms)
   r.k3pre=document.querySelectorAll(`[data-y92pre^="${k3.id}|"]`).length;
   /* the regime lives in the Doctore panel */
   r.regDoc=document.querySelectorAll('.y92doc [data-mg="regime"]').length;r.regElse=document.querySelectorAll('#mgrBody [data-mg="regime"]').length;
-  r.docFace=!!q('.y92doc .y92face svg');r.docLv=/level \d/.test(q('.y92doc').textContent);
+  r.docFace=!!q('.roomhd .rm100rd svg');r.docLv=/level \d/.test((q('.roomhd .v104dc')||{}).textContent||''); /* v1.04 B13: face + level sit in the Yard banner */
   q('.y92doc [data-mg="regime"][data-id="std"]').click();await W8(200);r.train=w.train;
   /* Care: 1 h, morale + gear */
-  const hc=thLeft(w),mo=k3.morale;q(`[data-y92care="${k3.id}"]`).click();await W8(150);r.careCost=hc-thLeft(w);r.careMor=k3.morale-mo;r.careGear=k3.gear74===w.season+':'+w.week;
+  r.noCare=document.querySelectorAll('[data-y92care]').length===0; /* v1.04 B12: the Yard's Care is gone (the Baths' Care routine replaces it) */
   /* the trials strip: framed cards and a working spar */
   r.trials=document.querySelectorAll('.y92trials .y92t').length;r.trialAttrs=[...document.querySelectorAll('.y92trials [data-yb76]')].map(x=>x.dataset.yb76.split(':')[0]);
   r.cardBouts=document.querySelectorAll('.y92c [data-yb76^="spar"],.y92c [data-yb76^="exh"],.y92c [data-yb76^="pen"]').length;
@@ -73,7 +73,7 @@ ok(A.afterMore==='{"int":1}'&&A.cap3b,'more after a lock, cap still 3 '+A.afterM
 ok(A.preNow>=2&&/"foot"/.test(A.pre)&&A.preCost===2&&A.preCapStill===3&&A.preLocked,'doctore drill after a lock, outside the cap '+JSON.stringify({n:A.preNow,pre:A.pre,cost:A.preCost,cap:A.preCapStill,lk:A.preLocked}));
 ok(A.k3pre===0,'no drill for a fighter with nothing locked');
 ok(A.regDoc===4&&A.regElse===4&&A.docFace&&A.docLv&&A.train==='std','regime in the Doctore panel '+JSON.stringify({d:A.regDoc,e:A.regElse,f:A.docFace,t:A.train}));
-ok(A.careCost===1&&A.careMor===5&&A.careGear,'Care costs 1 h '+JSON.stringify({c:A.careCost,m:A.careMor,g:A.careGear}));
+ok(A.noCare,'no 🗣 Care button on the Yard cards (v1.04 B12)');
 ok(A.trials===3&&A.trialAttrs.join()==='spar,exh,pen'&&A.cardBouts===0,'trials strip '+A.trialAttrs.join());
 ok(A.sparPanel&&A.spar&&A.boutDone,'a spar from the strip '+JSON.stringify({p:A.sparPanel,s:A.spar,d:A.boutDone}));
 ok(A.adv&&A.diff.every(d=>d<=0.05)&&A.gained,'applied == preview '+JSON.stringify({pre:A.pre2,after:A.after,diff:A.diff}));

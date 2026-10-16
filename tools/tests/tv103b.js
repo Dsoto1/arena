@@ -1,6 +1,6 @@
 /* tv103b — v1.03 MANAGER (345-v103mgr): M1 the Superbus review + Acta (no "Week 13"), M2 Superbus Week rail/banner/card (no oval "4"), M3 Rivalry Week closed,
    M4 roster cap 15 (offers, poach, borrow, trade, rivals, over-cap desk row), M5 no lending/borrowing injured, M6 Armory starters stay gold, M7 trade/loan
-   requests always give something, M8 Infirmary "Treated ✓", M9 header record + no "N fighters", N8 Vulso's cart = Recruiter letter, N9a tiles swapped + bigger
+   requests always give something, M8 Infirmary "Receiving treatment" (v1.04 B20: no ✓ while booked), M9 header record + no "N fighters", N8 Vulso's cart = Recruiter letter, N9a tiles swapped + bigger
    council faces; kill switch flavius_v103boff=1 restores the old behaviour. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const out={};
 const open=async(off)=>{const pg=await b.newPage({viewport:{width:1440,height:900}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
@@ -85,7 +85,7 @@ ok(out.m6.before>=3&&out.m6.after>=3&&out.m6.sel&&out.m6.num,'M6 '+JSON.stringif
 out.m8=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),pm=me();const r={};const ros=rosterOf(pm).filter(g=>!g.loanFrom);ros.forEach(g=>{g.inj=null;g.severed=[]});
   const A=ros[0],B=ros[1];A.inj={until:w.week+3,label:'a cut',pen:3};B.inj={until:w.week+3,label:'a bruise',pen:2};A.medWk=w.week;
   MGR.tab='infirm';MGR.inf90=A.id;MGR_REDRAW();await W8(900);const ra=document.querySelector(`.iv90row[data-inf90="${A.id}"],.w104row[data-inf90="${A.id}"]`) /* v1.04: 351's rows */,rb=document.querySelector(`.iv90row[data-inf90="${B.id}"],.w104row[data-inf90="${B.id}"]`);
-  r.a=!!ra&&!!ra.querySelector('.trt103')&&/Treated ✓/.test(ra.textContent);r.b=!!rb&&!rb.querySelector('.trt103');A.inj=null;B.inj=null;A.medWk=null;return r});
+  r.a=!!ra&&!!ra.querySelector('.trt103')&&/Receiving treatment/.test(ra.textContent)&&!/✓/.test(ra.textContent);r.b=!!rb&&!rb.querySelector('.trt103');A.inj=null;B.inj=null;A.medWk=null;return r});
 ok(out.m8.a&&out.m8.b,'M8 '+JSON.stringify(out.m8));
 
 /* ---- N8 Vulso's cart ---- */
