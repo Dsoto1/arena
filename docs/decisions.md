@@ -726,3 +726,9 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - Decided 2026-10-16 (v1.04): advisors rise at most one level a season (349 adv98Up); no extra cost per level for now.
 - Decided 2026-10-16 (v1.04 beta 2, his h2a): recruiting's wooing actions (pitch, private note, gift, visit/feast) cost the RECRUITER's hours
   and follow the +1 h-per-repeat rule (351); coin costs stay. Builds on v0.87's "lanista hours removed" (still removed — no lanista pool).
+- Decided 2026-10-16 (v1.05, his b27a): wooing hours = pitch 1 h, note 1 h, gift 2 h, feast 4 h (+1 h per repeat on the same recruit that
+  week); the 8 h per-recruit cap stays on scouting only.
+- Decided 2026-10-16 (v1.05, his picks for Match Week, N2 mw2 1–9, s1a–s3a, r1a r2a, mw1, x1a): "Your read" REPLACES "Your scouts"; one Watch
+  button REPLACES the separate Spectate; the stake lives in the Bet button (REPLACES the full-width "Your stake" row); Recruiting locks with
+  the Yard + Infirmary once the house sets off; set-off reminders REPLACE the End-the-week confirm's wounded/hours questions; the Renown bar
+  REPLACES the free +1 perk point a week and the scattered +1s (17-manager perkPend).
