@@ -181,3 +181,6 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
   that week; coin costs stay; every recruiting button shows its hours. Keeping him (own fighters) stays as it is (coin / weekly limits).- B28 Your ludus checklist (88-v68): "No drills set for the week" shows when the Doctore's Intensity (w.train regime) is None, even after
   the week's plan is LOCKED IN. Fix: the item is done once the Training Yard plan is locked (Lock in all, or every fit fighter's card
   locked); a plan locked with Intensity None counts as a choice. Only an unplanned / unlocked yard keeps the task.
+- B29 Play Now action row (B3 follow-up, his screenshot): 🎲 Random event · Begin Event · 🏛 Home look disjointed (gap before Home, the
+  dice on a dark box). Fix: one tight row, small equal gaps, all three the same height; the 🎲 gets the same sandstone tile as 🏛 Home
+  (306-v100sand look), Begin Event between them.
