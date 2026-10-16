@@ -192,3 +192,7 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
   near a pillar, arena edge). 356's floor pass skips pieces it thinks are moving (fl104Moving: PUSH100, beast walks, an100Glide) and
   those draw inline as before; the active piece may fall into that path (turn animation / idle / just moved) or the base wall + ring are
   drawn by the 3D figure itself (311). Find which path draws it there and put the active ring under the figure in every case.
+- B32 Board (beta 2 screenshot, goes with B31): a WHITE indicator / arrow also draws over the token (a gladiator on a blue seat ring next
+  to a pillar, near the wall letters). Audit every mark painted on or around a piece's cell AFTER the figure (turn/selection markers,
+  white tile outlines, chevrons, target marks, the seat disc's light rim) and move floor marks under the figure; markers meant to float
+  ABOVE a piece (turn arrow over the head) stay above the head, never across the body.
