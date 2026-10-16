@@ -32,3 +32,22 @@ His answers (2026-10-16): 1a (rub-down, Care routine and Rest week all move) · 
 - B2 screenshot (received 2026-10-16, 2000 px wide window): the scribble marks the EMPTY GAP between the name and the tier column — the
   name column stretches to fill the list. Fix: the name column sized to its content (with a sensible max + ellipsis), tier/OVR/W–L/wage/
   fatigue/weeks/⋯ packed after it, and the list column narrower so the selected-gladiator side gets the room.
+
+## Beta 1 · his notes, part 2 (2026-10-16) — sorted, not built
+FIXES (v1.04):
+- B4 League > Standings during Superbus week: the records are wiped (looks like the next season started early); past seasons not viewable (→ N1).
+- B5 never saw the off-season: simmed the Superbus (not a participant), awards, Acta, then straight to S2 W1; a Rivalry Week letter and the
+  "week 12 in review" letter were still there. LEAD'S READ: every symptom (not a participant, rivalry letter, week-12 review, no off-season)
+  is the OLD calendar — a career started on the v1.03 beta is switched by SAVE_MIGRATIONS '1.04' at its NEXT season (cal104 = season 2),
+  so its season 1 ran the v1.03 Superbus. To confirm with him; then a letter when a career switches ("from next season: playoffs …").
+- B6 Roster: drop the First/Second/Rostered + Bout I–III/Reserve buttons under the portrait; keep them in ⋯; show the player how to set teams.
+- B7 Recruiting: the list ends too short — extend it to the bottom of "Where he stands".
+- B8 Promote the ludus popup: the old font → the current one; use the coin icon.
+- B9 Armory: an item from Spares equipped on a gladiator still listed as a spare to sell.
+- B10 Letters/tasks from the previous season stay unread (Rivalry Week, week 12 in review) — clear them at the new season unless still valid.
+- B11 Vulso's cart: let the player dismiss it.
+FEATURES (v1.05, own release):
+- N1 past seasons in the League (tables, Superbus bracket, awards per season).
+- N2 Match Week rework: bout cards turn into result cards as each bout ends; the separate "🏁 Match Week results" block (17 nightres)
+  folds into them; "This week at <city>" (296 any100wk) and the End-the-week confirm placement rethought. Lead's proposal sent 2026-10-16.
+- Bracket view: already exists (#po104br — League banner, Match Week banner, playoff card; projected seeds from week 9) on the NEW calendar.
