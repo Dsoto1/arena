@@ -107,3 +107,11 @@ FEATURES (v1.05, own release):
 - B17 The Recruiter's "A bargain: <name>" letter (138-v84 recruiter84) stays after that fighter is signed. Fix: it files itself once he is
   signed, an offer to him is out, or he signs elsewhere; same rule for the other council letters that point at one fighter or one action
   (goes with B10: a letter stays only while it still asks for something valid).
+- B18 Medicus hire, his answers m1a m2a m3a (2026-10-16): the hired house medicus (108-v76 w.medicus76; +2 Medicus h per skill point,
+  limb help at skill 3+, may be lured away) is renamed CAPSARIUS (no clash with the Council's Medicus whose face is in the banner) —
+  REPLACES the name "house medicus"; a STAFF SLOT in the Infirmary banner beside the Medicus face (empty: "Capsarius · empty · +2–6 h a week ·
+  Hire"; hired: face, name, skill stars, wage with the coin icon, his hours as their own colour on the hours bar, Let go) — REPLACES the small
+  button at the top of the patient list (332 M8); the hire popup in the newer picker style (three candidate tiles: portrait, stars, wage +
+  coin, effect chips, Hire; square close). v1.04.
+- B19 (asked) Roster: an "Injured" group above Lent out for fighters who cannot fight (bed, missing limb, hurt — 319 M13 already bars them
+  from every card), auto-filled by the reserve then the Second team.
