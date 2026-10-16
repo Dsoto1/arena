@@ -30,8 +30,14 @@ ok(cd.some(x=>x[0]==='recruit')&&cd.some(x=>x[0]==='infirm'&&x[1]==='✓'),'F1 t
 ok(cd.every(x=>x[2]>=-1&&x[2]<=4),'F1 desktop: every rail chip at the right edge '+JSON.stringify(cd));
 
 /* ---- N1: play season 1 out (playoffs, off-season) into season 2 ---- */
-for(let g=0;g<30;g++){const st=await ev(pg,()=>{const w=W_();return [w.season,w.week,OFF104.phase(w),(w.pend||[]).length,!!(w.special&&!w.special.done),!!CUR_MODAL]});console.log('wk',JSON.stringify(st));if(st[0]!==1)break;
-  const ok=await Promise.race([ev(pg,()=>PW()),new Promise(r=>setTimeout(()=>r("TIMEOUT"),240000))]);if(ok==='TIMEOUT'){console.log('PW TIMEOUT at',JSON.stringify(st));break}if(!ok)break}
+/* forge the last week of season 1: a finished playoff (champion), a table, awards; then the real rollover (endWeek) archives it */
+out.s0=await ev(pg,async()=>{const w=W_(),pm=me();for(const g of rosterOf(pm)){g.inj=null;g.contract.weeks=Math.max(g.contract.weeks,30)}
+  w.mgrs.forEach((m,i)=>{const s=msp(m,1);s.pts=40-i*3;s.w=12-i;s.b=14;s.ev=14});
+  const P=po104New(w);P.sf=[{k:[P.seeds[0],P.seeds[3]],adv:[P.seeds[0]],pl:null},{k:[P.seeds[1],P.seeds[2]],adv:[P.seeds[1]],pl:null}];P.fin={k:[P.seeds[0],P.seeds[1]],pl:null};P.champ=P.seeds[0];P.phase='off';P.paid={r1:1,sf:1,fin:1};w.po104=P;
+  w.night.po104='off';w.week=12;w.awardHist=[{season:1,awards:[{name:'Aureus Gladius',who:'A',ludus:'L',stat:'x'},{name:'Tiro Laurel',who:'B',ludus:'M',stat:'y'},{name:'Iron Thumb',who:'C',ludus:'N',stat:'z'}]}];
+  return [w.season,OFF104.phase(w)]});
+ok(out.s0[0]===1&&out.s0[1]==='off','forged: season 1, off-season phase '+JSON.stringify(out.s0));
+out.rk=await ev(pg,()=>PW(true));ok(out.rk!==false,'the real rollover ran '+out.rk);
 out.s1=await ev(pg,async()=>{const w=W_();const r={};
   r.season=w.season;r.po=!!(w.seasons105&&w.seasons105[1]&&w.seasons105[1].po&&w.seasons105[1].po.champ);r.champ=r.po?w.seasons105[1].po.champ:null;return r});
 ok(out.s1.season===2&&out.s1.po,'N1 season rolled over and its bracket was archived '+JSON.stringify(out.s1));
@@ -53,7 +59,9 @@ ok(out.pick.back&&out.pick.nr,'N1 back to now; an unarchived season says not rec
 
 /* ---- F1 on a phone ---- */
 await pg.close();const p2=await open(false,{width:390,height:844});await mgr(p2);
+await p2.evaluate(async()=>{for(const g of rosterOf(me()))g.inj=null;MGR.tab='ludus';MGR_REDRAW();await W8(1500)});
 out.chipsP=await p2.evaluate(chipJS);
+ok(out.chipsP.some(x=>x[0]==='recruit'&&/ h$/.test(x[1]))&&out.chipsP.some(x=>x[0]==='infirm'&&x[1]==='✓'),'F1 390 px: the Recruiting hours chip and the Infirmary tick are on the rail '+JSON.stringify(out.chipsP));
 ok(out.chipsP.length&&out.chipsP.every(x=>x[2]>=-1&&x[2]<=4),'F1 390 px: every rail chip at the right edge '+JSON.stringify(out.chipsP));
 console.log(JSON.stringify(out,null,1).slice(0,3000));
 console.log('ERRS',JSON.stringify(errs));if(miss.length){console.log('MISS',JSON.stringify(miss,null,1));await b.close();process.exit(1)}
