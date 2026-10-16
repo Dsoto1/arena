@@ -157,4 +157,11 @@ FEATURES (v1.05, own release):
   lifetime records. Extra houses: 12 houses = the Superbus shape exactly; empty seats → invited free agents (the Superbus rule); Sica's
   Syndicate only as a wildcard in an empty seat (asked: seeding).
 - N4 w4a: the Winter Classic winner gets the Cup + a small purse + morale and loyalty for the whole house + Renown (once x1a exists).
-  Still open: w5 seeding (table / random draw / reverse table).
+  w5a (2026-10-16): seeded by the season's final league table, like the Superbus.
+
+## Beta 1 fixes — BUILD (his go 2026-10-16)
+Four builders, one module each (after 351 in build.sh), each with its own test:
+- 352-v104fixr (roster): B1 B2 B6 B19            · test tv104e
+- 353-v104fixl (ludus, recruiting, letters, popups): B5 B7 B8 B9 B10 B11 B14 B15 B16 B17 · test tv104f
+- 354-v104fixw (Infirmary + Training Yard): B12 B13 B18 B20 · test tv104g
+- 355-v104fixs (Superbus + off-season + Play Now): B22 B21 B23 B24 B4 B3 · test tv104h
