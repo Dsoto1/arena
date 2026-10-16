@@ -31,6 +31,8 @@ ok(out.hdr.noFighters&&out.hdr.podium&&out.hdr.noOld,'M9 header '+JSON.stringify
 
 /* ---- M4 + M5 + M7 + N8 + M6 + M8 ---- */
 out.cap=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),pm=me();const r={};
+  /* v1.04 (350): the cap grows with the Barracks + the Barracks master (cap104) — at the top it is the hard cap 15 this test checks */
+  pm.fac=pm.fac||{};pm.fac.barracks=3;{const a=council83(w).find(x=>x.k==='barracks');if(a)a.lv=5}
   const add=(m,n)=>{for(let i=0;i<n;i++){const g=genGlad({ovr:50+i});g.contract={mgr:m.id,wage:3,weeks:20,since:w.week};g.alive=true;w.glads.push(g)}};
   const n0=rosterOf(pm).length;add(pm,Math.max(0,MGR_CAP103-1-n0));r.n14=rosterOf(pm).length;
   const fa=freeAgents().find(g=>!g.inj)||(()=>{const g=genGlad({ovr:60});w.glads.push(g);return g})();
@@ -42,7 +44,7 @@ out.cap=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   const ob=document.querySelector('#mgrBody [data-mg="offer"]');r.btnDis=!!ob&&!!ob.dataset.dis&&/full/.test(ob.dataset.dis);
   const h0=w.hours;const bt=document.createElement('button');bt.dataset.mg='offer';bt.dataset.id=fa.id;document.querySelector('#mgrBody').appendChild(bt);bt.click();bt.remove();await W8(200);r.noHour=w.hours===h0&&!fa.contract;
   /* borrow refused at the cap, an injured fighter is never lent or borrowed */
-  const lender=w.mgrs.find(m=>!m.isPlayer&&!m.sica&&!isRival(m))||w.mgrs.find(m=>!m.isPlayer&&!m.sica);const X=rosterOf(lender).find(g=>!g.inj&&!g.loanFrom);const gb=X?borrowFrom(X,lender,5,3):'none';r.borrowCap=X?gb===false&&!X.loanFrom:true;
+  const lender=w.mgrs.find(m=>!m.isPlayer&&!m.sica&&!isRival(m))||w.mgrs.find(m=>!m.isPlayer&&!m.sica);lender.fame=100;lender.fac=lender.fac||{};lender.fac.barracks=3;const X=rosterOf(lender).find(g=>!g.inj&&!g.loanFrom);const gb=X?borrowFrom(X,lender,5,3):'none';r.borrowCap=X?gb===false&&!X.loanFrom:true;
   const mine=rosterOf(pm).find(g=>!g.loanFrom);mine.inj={until:w.week+3,label:'a cut',pen:3};r.lendInj=lendTo(mine,lender,5,3)===false&&!mine.loanFrom;mine.inj=null;
   /* over the cap: a career above it keeps everyone; the desk says so */
   add(pm,2);r.n17=rosterOf(pm).length;const row=weekChecklist().find(x=>x.ic==='👥');r.desk=!!row&&/Over the cap: 17 \/ 15/.test(row.txt.replace(/<[^>]*>/g,''));

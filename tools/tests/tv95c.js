@@ -16,26 +16,31 @@ await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));let sd
 const r8=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};const R=rosterOf(m);
   o.n=R.length;o.starters=R.filter(g=>g.slot95).length;o.slots=R.filter(g=>g.slot95).map(g=>g.slot95).sort().join('');o.flag=R.every(g=>!!g.bench===!g.slot95);
   o.filled=R.filter(g=>g.slot95).every(g=>w.night.bouts[g.slot95-1].ents.includes(g.id));o.sbye=sbyeOK76(w)[0]===true&&(w.night.auto95||[]).length===3;
-  MGR.tab='roster';MGR_REDRAW();await W8(500);o.chart=document.querySelectorAll('.depth .st95slot').length===3&&!document.querySelector('.depth .dcol84');
-  o.rows=document.querySelectorAll('.st95list tr[data-mg="lsel"], .rm100list .rm100lr[data-mg="lsel"]').length===R.length; /* v1.0: 298's list rows */o.promo=document.querySelectorAll('.st95list [data-st95="promo"]').length;
-  /* four more fit fighters: a fourth cannot start */
+  /* v1.04 (350): the roster page is one list in groups (First team 4 = Bouts I–III + a reserve · Second team 4 · Rostered); the moves live in
+     each row's ⋯ menu and the selected fighter's team control ([data-r104a="team|id|slot"]) — REPLACES the slot tablets + Promote/Bench buttons */
+  const menu=async id=>{document.querySelector(`[data-r104m="${id}"]`).click();await W8(250);return document.querySelector('.r104pop')};
+  const act=async (id,k,slot)=>{const p=await menu(id);const bt=p&&p.querySelector(`[data-r104a="${k}|${id}${slot!=null?'|'+slot:''}"]`);if(!bt||bt.disabled){r104Close();return false}bt.click();await W8(350);return true};
+  MGR.tab='roster';MGR_REDRAW();await W8(500);o.chart=!!document.querySelector('.r104g[data-r104g="A"]')&&!document.querySelector('.depth .dcol84');
+  o.rows=document.querySelectorAll('.st95list tr[data-mg="lsel"], .rm100list .rm100lr[data-mg="lsel"]').length===R.length; /* v1.0: 298's list rows */o.promo=document.querySelectorAll('.rm100list [data-r104m]').length;
+  /* three more fit fighters: the First team holds four (three bouts + the reserve), a fifth is refused */
   for(let i=0;i<3;i++){const g=genGlad({ovr:60+i});g.contract={mgr:m.id,wage:5,weeks:8,since:1};w.glads.push(g)}MGR_REDRAW();await W8(400);
-  const nb=document.querySelector('.st95list [data-st95="promo"]:not([aria-disabled="true"])');o.fourthDisabled=!nb&&document.querySelectorAll('.st95list [data-st95="promo"][aria-disabled="true"]').length>=1;
-  const extra=rosterOf(m).find(g=>!g.slot95);const bt=document.querySelector(`.st95list [data-st95="promo"][data-id="${extra.id}"]`);bt.click();await W8(300);o.stillThree=rosterOf(m).filter(g=>g.slot95).length===3;
-  /* bench one, promote the extra: lands in the freed slot and is put on that bout's card */
-  const s1=rosterOf(m).find(g=>g.slot95===2);const freed=s1.slot95;document.querySelector(`.st95list [data-st95="bench"][data-id="${s1.id}"]`).click();await W8(300);o.benched=!s1.slot95&&s1.bench===true;
-  document.querySelector(`.st95list [data-st95="promo"][data-id="${extra.id}"]`).click();await W8(300);o.promoted=extra.slot95>0&&!extra.bench;o.onCard=w.night.bouts[extra.slot95-1].ents.includes(extra.id);
-  /* the slot select swaps: choose s1 for the extra's slot */
-  const sl=document.querySelector(`select[data-st95slot="${extra.slot95}"]`);o.hasSel=!!sl;sl.value=s1.id;sl.dispatchEvent(new Event('change',{bubbles:true}));await W8(400);
-  o.swapped=s1.slot95>0&&!extra.slot95&&w.night.bouts[s1.slot95-1].ents.includes(s1.id)&&!w.night.bouts.some(b=>b.ents.includes(extra.id)&&b!==w.night.bouts[s1.slot95-1]&&false);
+  for(const g of rosterOf(m))if(team104(g)!=='A'&&c104Pool(w,m).filter(x=>team104(x)==='A').length<4)tm104Move(g.id,'A');MGR_REDRAW();await W8(300);
+  const extra=rosterOf(m).find(g=>team104(g)!=='A');o.fourthDisabled=!(await act(extra.id,'A'));o.stillThree=rosterOf(m).filter(g=>g.slot95).length===3;
+  /* bench one (Second team), promote the extra: lands in the freed slot and is put on that bout's card */
+  const s1=rosterOf(m).find(g=>g.slot95===2);await act(s1.id,'B');o.benched=!s1.slot95&&s1.bench===true&&team104(s1)==='B';
+  const res=rosterOf(m).find(g=>team104(g)==='A'&&!g.slot95);if(res)await act(res.id,'R');
+  await act(extra.id,'A');o.promoted=extra.slot95>0&&!extra.bench;o.onCard=!!extra.slot95&&w.night.bouts[extra.slot95-1].ents.includes(extra.id);
+  /* a bout from the menu swaps: the reserve takes the extra's bout, the extra becomes the reserve */
+  const rv=rosterOf(m).find(g=>team104(g)!=='A'&&!g.inj);if(rv)await act(rv.id,'A');const slot=extra.slot95;o.hasSel=!!rv&&team104(rv)==='A'&&!rv.slot95;
+  if(o.hasSel){await act(rv.id,'A',slot);o.swapped=rv.slot95===slot&&!extra.slot95&&team104(extra)==='A'&&w.night.bouts[slot-1].ents.includes(rv.id)}
   /* Match Week lets the manager put any fit fighter in (no starters-only filter) */
   /* Match Week: vacate the undercard, a benched fighter can be entered (no starters-only filter) */
   const ben=genGlad({ovr:50});ben.contract={mgr:m.id,wage:5,weeks:8,since:1};w.glads.push(ben);st95Ensure(w,m);const b0=w.night.bouts[0];const mine=b0.ents.map(gById).find(x=>x&&x.contract&&x.contract.mgr===m.id);if(mine)st95Out(b0,mine.id);
   MGR.tab='night';MGR_REDRAW();await W8(500);o.mwPicker=!!document.querySelector(`#ent0 option[value="${ben.id}"]`);
   return o});
 ok(r8.starters===3&&r8.slots==='123'&&r8.flag,'8 three starters, one per bout, g.bench follows '+JSON.stringify(r8));ok(r8.filled,'8 Match Week is filled from the starters');ok(r8.sbye,'8 an auto-filled card does not block sitting a week out');
-ok(r8.chart&&r8.rows&&r8.promo>=1,'8 slots + list rows with Promote, no depth columns');ok(r8.fourthDisabled&&r8.stillThree,'8 a fourth starter is refused');
-ok(r8.benched&&r8.promoted&&r8.onCard,'8 bench / promote into the freed slot, put on its bout');ok(r8.hasSel&&r8.swapped,'8 the slot select swaps starters');ok(r8.mwPicker,'8 Match Week picker lists fit fighters');
+ok(r8.chart&&r8.rows&&r8.promo>=1,'8 First team group + list rows with the ⋯ menu, no depth columns');ok(r8.fourthDisabled&&r8.stillThree,'8 a fifth First-team fighter is refused, three bouts');
+ok(r8.benched&&r8.promoted&&r8.onCard,'8 bench / promote into the freed slot, put on its bout');ok(r8.hasSel&&r8.swapped,'8 a bout from the menu swaps starters '+JSON.stringify(r8));ok(r8.mwPicker,'8 Match Week picker lists fit fighters');
 if(SHOT){await pg.evaluate(()=>{MGR.tab='roster';MGR_REDRAW()});await W(500);await pg.screenshot({path:SHOT+'/tv95c_roster.png'})}
 /* ---- 8b · migration + weekly perk ---- */
 const r8b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};

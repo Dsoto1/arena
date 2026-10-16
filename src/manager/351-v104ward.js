@@ -92,7 +92,7 @@ if(typeof cityFav==='function'){const base=cityFav;cityFav=function(gid){try{con
 
 /* ---------- offers on the table ---------- */
 function of104Of(w,g){return w&&g&&w.of104&&w.of104[g.id]||null}
-function of104Room(w){const m=me();const cap=typeof cap104==='function'?cap104(m):typeof MGR_CAP103!=='undefined'?MGR_CAP103:99;const n=typeof cap103N==='function'?cap103N():rosterOf(m).length;
+function of104Room(w){const m=me();const cap=typeof cap104==='function'?cap104(m):typeof MGR_CAP103!=='undefined'?MGR_CAP103:99;const n=typeof cap104N==='function'?cap104N(m):typeof cap103N==='function'?cap103N():rosterOf(m).length;
   return cap-n-Object.keys(w.of104||{}).length}
 function of104Scared(w,g){const m=me();const s=g&&g.sc104&&g.sc104[m.id];return s!=null&&s>=w.week?s:null}
 function of104Terms(g){try{if(typeof rc100Terms==='function')return rc100Terms(g)}catch(e){}const d=id=>document.getElementById(id);const ask=askWage(g);

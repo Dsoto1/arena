@@ -63,7 +63,7 @@ const run=async(mode)=>{const vp=mode==='p'?{width:390,height:844}:{width:844,he
   await P.evaluate(()=>{S.over=true});
   /* 5 · Manager */
   await P.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(1000);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;me().coin=2000;MGR_REDRAW();await W8(600)});
-  for(const [n,t,sels] of [['ludus','ludus',['#mBody .endwk']],['recruit','recruit',['#mBody .r85st']],['yard','practice',[]],['infirm','infirm',[]],['night','night',[]],['roster','roster',['#mBody .st95act .btn, #mBody .rm100st .st95sa .btn']],['perks','me',[]]]){
+  for(const [n,t,sels] of [['ludus','ludus',['#mBody .endwk']],['recruit','recruit',['#mBody .r85st']],['yard','practice',[]],['infirm','infirm',[]],['night','night',[]],['roster','roster',['#mBody .st95act .btn, #mBody .rm100st .st95sa .btn, #mBody .r104m' /* v1.04 (350): the row's ⋯ menu */]],['perks','me',[]]]){
     await P.evaluate(t=>{MGR.tab=t;MGR_REDRAW()},t);await W(700);await check('mgr_'+n,['#mClose',...sels])}
   ok(await P.evaluate(()=>{MGR.tab='ludus';MGR_REDRAW();return !!document.querySelector('#mBody #council83')}),mode+' Your ludus shows the council card');
   const mr=await P.evaluate(()=>{const r=document.querySelector('#mBody .railwrap>.tabrow');if(!r)return null;const b=r.getBoundingClientRect();return {h:Math.round(b.height),bottom:Math.round(b.bottom),ih:innerHeight,heads:[...r.querySelectorAll('.railhd')].filter(h=>getComputedStyle(h).display!=='none').length}});

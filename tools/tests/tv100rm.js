@@ -3,7 +3,7 @@
    moved nodes: ROSTER select a fighter, 🪑 Bench from a starter tablet, ⭐ Promote + Lend… from Bench & loans, the contract's Renew /
    Release are there; TRAINING YARD select from the list, + a session, 🔒 Lock in, a drill plate, the week's plan + Lock in all, three
    trial plates; INFIRMARY the marble statue (lost limb masked, wound spot), care plates, 🛏 Put in bed and a cure (Asclepius); the kill
-   switch flavius_rooms100off=1 gives the old rooms; 390 px: one column, no sideways scroll; no new 00c errors. */
+   switch flavius_rooms100off=1 gives the old rooms; 390 px: one column, no sideways scroll; no new 00c errors. v1.04 (350): the roster list is in groups (First / Second team / Rostered / Lent out) with a ⋯ menu, no tablets or Bench & loans, Keeping him folds inside the tabula. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const out={};
 const open=async(W,H,off)=>{const pg=await b.newPage({viewport:{width:W,height:H}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
   await pg.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_v104doff','1') /* v1.04: 351-v104ward replaces this layout / these rules — tv104d covers them */;if(o)localStorage.setItem('flavius_rooms100off','1')},off?1:0);
@@ -22,21 +22,23 @@ const pg=await open(1440,900);
 await go(pg,'roster');
 out.ro=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const q=s=>document.querySelector(s);const r={};const pm=me(),w=W_();const ros=rosterOf(pm);
   r.on=document.body.classList.contains('rm100on');r.room=!!q('#mgrPane .rm100.rm100-roster');r.ban=!!q('.roomhd.rm100ban .rm100adv')&&!!q('.roomhd.rm100ban .roomttl');
-  r.rows=document.querySelectorAll('.rm100list .rm100lr[data-mg="lsel"]').length===ros.length;r.cols=document.querySelectorAll('.rm100list .rm100lh.ros>span').length===8;
-  r.tablets=document.querySelectorAll('.depth.rm100stt>.st95slot.rm100st[data-slot95]').length===3;
-  r.panels=['.rm100pp','.rm100rat .ratgrid','.rm100pers','.rm100bench','.rm100con.rm100tab .rm100wax','.rm100keep','.rm100more'].every(s=>!!q('.rm100dos '+s));
+  r.rows=document.querySelectorAll('.rm100list .rm100lr[data-mg="lsel"]').length===ros.length;/* v1.04 (350): one list in groups with 10 columns, the bout chips replace the starter tablets, Bench & loans is gone, Keeping him folds inside the tabula */
+  r.cols=document.querySelectorAll('.rm100list .rm100lh.r104h>*').length===10;
+  r.tablets=document.querySelectorAll('.rm100list .r104g[data-r104g="A"] .r104c.s').length>=3&&!q('.rm100stt');
+  r.panels=['.rm100pp','.rm100rat .ratgrid','.rm100pers','.rm100con.rm100tab .rm100wax','.rm100con .r104keep .rm100keep','.rm100more'].every(s=>!!q('.rm100dos '+s))&&!q('.rm100bench');
   r.oldGone=!q('.st95wrap')&&!q('.st95list table.tally');
   /* select another fighter */
   const g2=ros.find(x=>x.id!==MGR.lsel);q(`.rm100list [data-mg="lsel"][data-id="${g2.id}"]`).click();await W8(400);r.sel=MGR.lsel===g2.id&&q('.rm100pp .rm100pn').textContent.includes(g2.name)&&!!q(`.rm100list .rm100lr.on[data-id="${g2.id}"]`);
   r.contract=!!q(`.rm100con [data-mg="extend"][data-id="${g2.id}"]`)&&!!q(`.rm100con [data-mg="release"][data-id="${g2.id}"]`)&&!!q(`.rm100keep [data-mg="meal"][data-id="${g2.id}"]`);
   /* bench a starter from its tablet, promote him back from Bench & loans */
   st95Ensure(w,pm);const st=ros.find(x=>x.slot95);r.hadStarter=!!st;
-  if(st){const bb=q(`.rm100st [data-st95="bench"][data-id="${st.id}"]`);r.benchBtn=!!bb;if(bb)bb.click();await W8(400);r.benched=!st.slot95;
-    const pb=q(`.rm100bench [data-st95="promo"][data-id="${st.id}"]`);r.promoBtn=!!pb;if(pb)pb.click();await W8(400);r.promoted=!!st.slot95}
+  /* v1.04 (350): bench / promote from the row's ⋯ menu */
+  if(st){q(`[data-r104m="${st.id}"]`).click();await W8(250);const bb=q(`.r104pop [data-r104a="B|${st.id}"]`);r.benchBtn=!!bb;if(bb)bb.click();await W8(400);r.benched=!st.slot95;
+    q(`[data-r104m="${st.id}"]`).click();await W8(250);const pb=q(`.r104pop [data-r104a="A|${st.id}"]`);r.promoBtn=!!pb&&!pb.disabled;if(pb)pb.click();await W8(400);r.promoted=!!st.slot95}
   /* lend a benched fighter */
   const bench=ros.find(x=>!x.slot95&&!x.inj);r.hasBench=!!bench;
-  if(bench){const s=q(`.rm100bench select[data-m47lend="${bench.id}"]`)||q(`.rm100con select[data-m47lend="${bench.id}"]`);r.lendSel=!!s;
-    if(s&&s.options.length>1){s.value=s.options[1].value;s.dispatchEvent(new Event('change',{bubbles:true}));await W8(500);r.lent=!!bench.contract&&bench.contract.mgr!==pm.id&&!!q('.rm100list .rm100lr.lent')}else r.lent='nolender'}
+  if(bench){q(`.rm100list [data-mg="lsel"][data-id="${bench.id}"]`).click();await W8(400);const s=q(`.rm100con select[data-m47lend="${bench.id}"]`);r.lendSel=!!s||!!q('.rm100con .rm100tb .rm100tbtn[disabled]');
+    if(s&&s.options.length>1&&me().coin>=0){s.value=s.options[1].value;s.dispatchEvent(new Event('change',{bubbles:true}));await W8(500);r.lent=!!bench.contract&&bench.contract.mgr!==pm.id&&!!q('.rm100list .rm100lr.lent')}else r.lent='nolender'}
   return r});
 for(const k of ['on','room','ban','rows','cols','tablets','panels','oldGone','sel','contract','hadStarter','benchBtn','benched','promoBtn','promoted','hasBench','lendSel'])ok(out.ro[k],'roster '+k);
 ok(out.ro.lent===true||out.ro.lent==='nolender','roster lend');
