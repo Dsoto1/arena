@@ -134,3 +134,7 @@ FEATURES (v1.05, own release):
 - B21 add-on (2026-10-16): with the bracket shown open on the page, REMOVE the extra bracket buttons on that same screen (he saw two on the
   Match Week page above the bouts: the banner's and the playoff card's). A bracket button stays only where the bracket itself is not shown
   (e.g. the League banner before the Superbus tab exists / weeks 9–11 projection).
+- B22 BUG (rules): he could enter his own gladiator into the Superbus final / a playoff bout his house is not in. 348 promises "no entering /
+  withdrawing" for sb104 bouts — some picker still offers it (check 296 any100 "Enter a fighter ▾", the specials picker, 17's classic bout
+  picker, 350's ⋯ "bout" menu, drag to a bout). Fix: a sb104 bout takes only the houses the bracket put in it (one fighter each, chosen on
+  the playoff card); every other entry path refuses it with the reason ("Your house is out of the Superbus" / "not in this round"). Test it.
