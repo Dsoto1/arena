@@ -31,9 +31,11 @@
    3. THE MEDICUS QUEUE (N7a): ⚕ Treat in order ([data-mq104]) books the suggested next step (a bed, Hygeia, the surgeon, the Medicus, or
       the bathhouse when short) for every wounded fighter, festering first, then starters, then by rating, while this week's hours allow.
       MATCH WEEK WARNING: when fewer healthy starters than bouts (mq104Warn) — on the Infirmary tabula, Your ludus and Match Week.
-   4. BUILDINGS TAKE WEEKS (N10a) — REPLACES 23's instant build ("one project a week"): level N takes N weeks (m.bp104 {k,l,s,end}), one
+   4. BUILDINGS TAKE WEEKS (N10a) — REPLACES 23's instant build ("one project a week"): level N takes N weeks (m.bp104 {k,l,s,n weeks left,end}), one
       project at a time for every house (facBuild wrapper; m.facWk is kept on the running week so every "builders are busy" check holds);
       it finishes when its last week ends (endWeek wrapper) and every running project finishes in the off-season week (OFF104.on, 348).
+      348's FROZEN playoff weeks (OFF104.frozen: w.week stays put) count as weeks too: a week of work comes off, offers are answered, the
+      Medicus hours and the recovery week start fresh (w.rc104 / w.mh101 reset, Care routines paid again); rivals' offers count turns (w.t104).
       On the Your-ludus banner, in the Upgrade School popup and on the Valetudinarium plate.
       POPUPS WITH ART (N9a): Upgrade School (333's lu102FacHTML) = a tile per building: the building NOW and its NEXT level from existing
       art (rec100 murals / scene100), richer per level (CSS: plot → sepia → full → gilt), Build only when affordable and the builders are
@@ -135,7 +137,7 @@ function of104Answer(w,wk0){const m=me();if(!w.of104||!m)return;const P=w.of104;
     of104Letter(w,g,'✍',_T`${g.name} signs`,_T`<b>${esc(g.name)}</b> accepts: ${o.wage}/wk for ${o.weeks} weeks${o.bonus?_T`, ${o.bonus} bonus`:''}. Welcome him to the house.`)}}
 /* rivals: a signing becomes an offer, answered next week */
 {const base=cpuLeagueWeek;cpuLeagueWeek=function(){const w=w104Live();if(!w)return base.apply(this,arguments);const P=w.ro104=w.ro104||{};const m=me();
-  try{for(const [gid,o] of Object.entries(P)){if(o.wk>=w.week)continue;delete P[gid];const g=gById(gid),R=mgrById(o.mid);if(!g||!R||R.dead||g.contract||g.alive===false)continue;
+  try{for(const [gid,o] of Object.entries(P)){if((o.t!=null?o.t:o.wk)>=(o.t!=null?(w.t104||0):w.week))continue;delete P[gid];const g=gById(gid),R=mgrById(o.mid);if(!g||!R||R.dead||g.contract||g.alive===false)continue;
       if(rosterOf(R).length>=(typeof cap104==='function'?cap104(R):15))continue;
       const mine=w.of104&&w.of104[gid];if(mine&&mine.wage+mine.bonus/Math.max(1,mine.weeks)>=o.wage)continue; /* your better offer is heard first */
       if(w104U(`ro104:${w.id}:${gid}:${w.week}`)>.8&&interestOf(g,R)<60){if(g.favd)tnews(_T`🎣 ${esc(g.name)} turned down ${esc(R.ludus)}.`);continue}
@@ -145,7 +147,7 @@ function of104Answer(w,wk0){const m=me();if(!w.of104||!m)return;const P=w.of104;
   const r=base.apply(this,arguments);
   try{const idx=w.news.indexOf(top);const added=idx>0?w.news.slice(0,idx):[];
     for(const [id,un] of free){const g=gById(id);if(!g||!g.contract||g.contract.since!==w.week)continue;const R=mgrById(g.contract.mgr);if(!R||R.isPlayer)continue;
-      P[id]={mid:R.id,wage:g.contract.wage,weeks:g.contract.weeks,wk:w.week};g.contract=null;g.unsigned=un;
+      P[id]={mid:R.id,wage:g.contract.wage,weeks:g.contract.weeks,wk:w.week,t:w.t104||0};g.contract=null;g.unsigned=un;
       const nm=`<b>${esc(g.name)}</b>`;for(const n of added)if(n.text&&n.text.includes(nm)&&n.text.includes(esc(R.ludus))&&!n.text.includes('—')){const i=w.news.indexOf(n);if(i>=0)w.news.splice(i,1)}
       if(R.log&&R.log[0]&&String(R.log[0].txt||'').includes(g.name))R.log.shift();
       if(g.favd)tnews(_T`⚖ ${esc(R.ludus)} has made <b>${esc(g.name)}</b> an offer — he answers next week. Beat it with yours.`)}}catch(e){console.error(e)}
@@ -176,23 +178,29 @@ window.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target
 /* the week's end: an unpaid Care routine gives no −20 (183's endWeek), the new week's routines are paid; buildings; offers */
 {const base=endWeek;endWeek=async function(){const w=W_();const L=w104Live();const wk0=w&&w.week;const off=[];
   if(L){try{const m=me();for(const g of rosterOf(m))if(g.ord87&&g.ord87.r==='care'&&!g.inj&&!rc104Cared(w,g)){off.push([g,g.ord87]);g.ord87={...g.ord87,r:'off'}}}catch(e){console.error(e)}}
+  /* 348's frozen playoff weeks: endWeek runs while w.week stays put — still a week of real time (buildings, offers, fresh hours) */
+  let fz=false;try{fz=!!(L&&typeof OFF104!=='undefined'&&OFF104.frozen&&OFF104.frozen(w))}catch(e){}
   let r;try{r=await base.apply(this,arguments)}finally{for(const [g,o] of off)g.ord87=o}
-  try{const w2=W_();if(L&&w2&&w2===w&&w2.week!==wk0){for(const [g] of off)if(g.alive!==false)ord87Apply(w2,g);bp104Week(w2,wk0);of104Answer(w2,wk0);bd104Sync(w2);saveWorld()}}catch(e){console.error(e)}
+  try{const w2=W_();const turned=w2&&w2===w&&(w2.week!==wk0||(fz&&r!==false));if(L&&turned){w2.t104=(w2.t104||0)+1;
+    if(w2.week===wk0){w2.rc104=null;w2.mh101=null;for(const g of rosterOf(me()))if(g.ord87&&g.ord87.r==='care'&&!g.inj&&g.alive!==false)ord87Apply(w2,g)}
+    else for(const [g] of off)if(g.alive!==false)ord87Apply(w2,g);
+    bp104Week(w2);of104Answer(w2,wk0);bd104Sync(w2);saveWorld()}}catch(e){console.error(e)}
   return r}}
 
 /* ============================== 4 · BUILDINGS TAKE WEEKS ============================== */
 const BP104_RN=['I','II','III'];
-function bp104Of(m){return m&&m.bp104||null}
-function bp104Left(m,w){const b=bp104Of(m);return b?Math.max(1,b.end-w.week+1):0}
+/* b.n = the weeks of work left (one comes off at every week's end — the frozen playoff weeks too); b.end = the week it is ready, from b.n */
+function bp104Of(m){const b=m&&m.bp104||null;if(!b)return null;try{const w=W_();if(b.n==null)b.n=Math.max(1,(b.end||w.week)-w.week+1);b.end=w.week+b.n-1}catch(e){}return b}
+function bp104Left(m,w){const b=bp104Of(m);return b?Math.max(1,b.n):0}
 function bp104Line(m,w){const b=bp104Of(m);if(!b||!FAC[b.k])return '';const n=bp104Left(m,w);return _T`🏗 ${esc(_T(FAC[b.k].n))} ${BP104_RN[b.l-1]} · ready when ${esc(wkName(b.end))} ends${n>1?_T` (${n} weeks)`:''}`}
 function bp104Done(m,w,quiet){const b=bp104Of(m);if(!b)return;delete m.bp104;m.fac=m.fac||{};if((m.fac[b.k]||0)<b.l)m.fac[b.k]=b.l;const F=FAC[b.k];if(!F)return;
   try{mlog(m,_T`🏗 finished the ${F.n} ${BP104_RN[b.l-1]} — ${F.fx(b.l)}`)}catch(e){}
   if(m.isPlayer){tnews(_T`🏗 The ${esc(_T(F.n))} ${BP104_RN[b.l-1]} is finished — ${F.fx(b.l)}. Ludus grade ${ludusGrade(m)}.`,'big');mnews(_T`🏗 <b>${esc(m.ludus)}</b> (you) completes the ${esc(_T(F.n))} ${BP104_RN[b.l-1]}. Ludus grade ${ludusGrade(m)}.`)}
   else if(!quiet)mnews(_T`🏗 <b>${esc(m.ludus)}</b> completes the ${esc(_T(F.n))} ${BP104_RN[b.l-1]}. Ludus grade ${ludusGrade(m)}.`)}
-function bp104Week(w,wk0){for(const m of w.mgrs||[]){const b=bp104Of(m);if(!b)continue;if(b.end<=wk0)bp104Done(m,w,true);else m.facWk=w.week}}
+function bp104Week(w){for(const m of w.mgrs||[]){const b=m.bp104;if(!b)continue;if(b.n==null)b.n=Math.max(1,(b.end||0)-w.week+2);b.n--;if(b.n<=0)bp104Done(m,w,true);else{m.facWk=w.week;bp104Of(m)}}}
 {const base=facBuild;facBuild=function(mgr,facKey,quiet){const w=w104Live();if(!w||!W104.build)return base.apply(this,arguments);if(!mgr)return false;
   if(bp104Of(mgr))return false;const l=facLvl(mgr,facKey);if(l>=3||!FAC[facKey])return false;const cost=FAC_COST[l];if((mgr.coin||0)<cost)return false;
-  mgr.coin-=cost;mgr.facWk=w.week;mgr.bp104={k:facKey,l:l+1,s:w.week,end:w.week+l};
+  mgr.coin-=cost;mgr.facWk=w.week;mgr.bp104={k:facKey,l:l+1,s:w.week,n:l+1,end:w.week+l};
   try{mlog(mgr,_T`🏗 began the ${FAC[facKey].n} ${BP104_RN[l]} (${cost} coin, ${l+1} week${l?'s':''})`)}catch(e){}return true}}
 {const base=ludusClick;ludusClick=async function(action,id,btn,ctx){const w=w104Live();if(!w||action!=='build'||!W104.build)return base.apply(this,arguments);const pm=me();const {say}=ctx;
   const b=bp104Of(pm);if(b){say(_T`Your builders are on the ${esc(_T(FAC[b.k].n))} ${BP104_RN[b.l-1]} — ready when ${esc(wkName(b.end))} ends. One project at a time.`);return true}

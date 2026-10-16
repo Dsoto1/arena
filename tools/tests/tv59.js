@@ -1,4 +1,4 @@
-/* v0.59: Credits (D.Soto) + Prototype tab, the main-menu mute, Zora's mini, the turn sweep, Naumachia by the rulebook (layout, deck, boarding, water pinwheel), Chariot Racing (snake draft with chariot cards, tokens on the chariot), Rivalry Week (byes 4 & 11, week-11 letter, three-bout card + background rivalries) */
+/* v0.59: Credits (D.Soto) + Prototype tab, the main-menu mute, Zora's mini, the turn sweep, Naumachia by the rulebook (layout, deck, boarding, water pinwheel), Chariot Racing (snake draft with chariot cards, tokens on the chariot), Rivalry Week (v1.04: byes 4 & 12, week-10 letter, week 11, three-bout card + background rivalries) */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
 await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
@@ -31,10 +31,10 @@ o.ch=await pg.evaluate(async()=>{S&&(S.over=true);startEvent({ev:'chariot',loc:7
   return {uniq:new Set(arts).size===arts.length,named:S.players.every(p=>p.ch&&CH_CARDS59.some(c=>c[1]===p.ch.name)),drop:had?CH_DROPS.length>0:true,img:typeof chTok==='function'}});
 ok(o.ch.uniq&&o.ch.named&&o.ch.drop&&o.ch.img,'chariot');
 o.riv=await pg.evaluate(async()=>{S&&(S.over=true);openManager();await new Promise(r=>setTimeout(r,600));newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_();
-  w.week=w.week+(11-wkOf(w.week));makeNight();const lock=!!(w.rivalry&&w.rivalry.abs===w.week+1);MGR.tab='ludus';MGR_REDRAW();const btn=document.querySelector('[data-rivcommit]');if(btn)btn.click();
+  w.week=w.week+(10-wkOf(w.week));makeNight(); /* v1.04 (348): the lock + letter at week 10, Rivalry Week 11 */const lock=!!(w.rivalry&&w.rivalry.abs===w.week+1);MGR.tab='ludus';MGR_REDRAW();const btn=document.querySelector('[data-rivcommit]');if(btn)btn.click();
   const commit=(w.rivalry.commit[me().id]||[]).length;w.week++;makeNight();const bouts=w.night.bouts.map(b=>b.ev+':'+b.ents.length+':'+!!b.rivalry);
   for(let i=0;i<w.night.bouts.length;i++)await runBoutSim(i);w.pend=[];await endWeek();
   const bg=(w.news||[]).filter(x=>/Rivalry Week:/.test(x.text)).length,cardWins=(w.news||[]).filter(x=>/wins the rivalry/.test(x.text)).length,news=bg+cardWins;
-  return {byes:BYE_WKS.join(','),fx:fixtureFor(1,12).ev,lock,commit,bouts,news,bg,cardWins,pairs:w.rivalry.pairs.length}});
-ok(o.riv.byes==='4,11'&&o.riv.fx==='familia'&&o.riv.lock&&o.riv.commit===2&&o.riv.bouts.length===3&&o.riv.bouts.every(x=>x==='familia:4:true')&&o.riv.bg===o.riv.pairs-3&&o.riv.cardWins<=3,'rivalry');
+  return {byes:BYE_WKS.join(','),fx:fixtureFor(1,11).ev,lock,commit,bouts,news,bg,cardWins,pairs:w.rivalry.pairs.length}});
+ok(o.riv.byes==='4,12'&&o.riv.fx==='familia'&&o.riv.lock&&o.riv.commit===2&&o.riv.bouts.length===3&&o.riv.bouts.every(x=>x==='familia:4:true')&&o.riv.bg===o.riv.pairs-3&&o.riv.cardWins<=3,'rivalry');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length)process.exit(1)})();

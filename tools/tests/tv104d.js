@@ -60,6 +60,8 @@ const bld=await ev(pg,async()=>{const q=s=>document.querySelector(s);const r={};
   const R=w.mgrs.find(m=>!m.isPlayer&&!m.dead);R.coin=5000;R.fac=R.fac||{};R.fac.yard=0;delete R.bp104;R.facWk=null;r.rival=facBuild(R,'yard',true)&&!!R.bp104&&facLvl(R,'yard')===0&&!facBuild(R,'stands',true);
   const wk0=w.week;await J_END();r.mid=W_().week===wk0+1&&facLvl(pm,'barracks')===1&&!!pm.bp104&&pm.facWk===W_().week&&facLvl(R,'yard')===1;
   await J_END();r.done=facLvl(pm,'barracks')===2&&!pm.bp104;
+  /* a frozen playoff week (w.week stays put) still takes a week off the work */
+  {const R2=w.mgrs.find(m=>!m.isPlayer&&!m.dead&&m!==R);R2.coin=5000;R2.fac=R2.fac||{};R2.fac.stands=1;delete R2.bp104;facBuild(R2,'stands',true);const wk=W_().week;bp104Week(W_());const half=!!R2.bp104&&R2.bp104.n===1;bp104Week(W_());r.frozen=half&&!R2.bp104&&facLvl(R2,'stands')===2&&W_().week===wk}
   pm.coin=10;pm.facWk=null;await GO('ludus');q('.k-school').click();await W8(400);const sb=q('.lu102fac [data-mg="build"][data-id="stables"]');r.poor=!!sb&&sb.disabled&&!!q('.lu102fac .bp104why');
   q('[data-lu102fac="0"]')&&q('[data-lu102fac="0"]').click();await W8(300);
   q('[data-mg="run"][data-id="promote"]').click();await W8(500);r.promote=document.querySelectorAll('.pr104g .pr104t .pr104a img').length>=3;
