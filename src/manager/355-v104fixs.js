@@ -78,7 +78,7 @@ function sb104Tree(w,compact){const P0=po104P(w);const proj=!P0||P0.phase==='pre
   const ph=t=>`<div class="v104e ph"><span class="sd"></span><span class="fl"></span><b>${t}</b><span class="pl"></span></div>`;
   const box=(t,sub,keys,o,phs,cls)=>`<div class="po104b v104b${cls?' '+cls:''}"><div class="v104bt">${t}${sub?`<small>${sub}</small>`:''}</div>${(keys||[]).map(k=>row(k,o)).join('')}${(phs||[]).map(ph).join('')}</div>`;
   const AB=i=>i?'B':'A',SI=i=>i?'II':'I';
-  const r1=P.r1.map((x,i)=>{const pl=x.pl||po104Live(w,P,'r1',i);return box(_T`Round 1 · Bout ${AB(i)}`,_T`seeds ${PO104_R1[i].map(j=>j+1).join('·')}`,x.k,{adv:x.adv||top2(pl),pl})});
+  const r1=P.r1.map((x,i)=>{const pl=x.pl||po104Live(w,P,'r1',i);return box(_T`Bout ${AB(i)} · seeds ${PO104_R1[i].map(j=>j+1).join('·')}`,'',x.k,{adv:x.adv||top2(pl),pl})});
   const sf=[0,1].map(i=>{if(P.sf){const x=P.sf[i];const pl=x.pl||po104Live(w,P,'sf',i);return box(_T`Semifinal ${SI(i)}`,'',x.k,{adv:x.adv||top2(pl),pl})}
     return box(_T`Semifinal ${SI(i)}`,'',[P.seeds[i?1:0],P.seeds[i?2:3]],{},[_T`Bout ${AB(i)} · 1st`,_T`Bout ${AB(i)} · 2nd`])});
   const fpl=P.fin?(P.fin.pl||po104Live(w,P,'fin',0)):null;
