@@ -26,7 +26,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=4
+FSH_VER=5
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -240,7 +240,7 @@ cmd_gitrelease(){ local want="${1:-}"; gh_token
   game_dir "$P/play"; rm -rf "$P" "$SRC/share"; site_git "$SRC/site"; cmd_status
   say "Release v$v done: server $([ $dosrv = 1 ] && echo deployed || echo unchanged) · game ✓ · download ✓ · site ✓"; }
 # the public site pages from the release's site/ folder (in git since 2026-10-11) — only when they changed since the last site deploy from here
-site_hash(){ (cd "$1" && find . -type f -not -name 'README*' | sort | xargs cat | sha256sum | cut -c1-16); }
+site_hash(){ (cd "$1" && find . -type f -not -name 'README*' -print0 | sort -z | xargs -0 cat | sha256sum | cut -c1-16); }
 site_git(){ local d="$1"; [ -f "$d/index.html" ] || return 0; [ -f "$CONF" ] && . "$CONF"; local h; h=$(site_hash "$d")
   [ "$h" = "${SITE_HASH:-}" ] && { ok "site pages unchanged — skipped"; return 0; }
   say "Website pages (from the release; play/ and FlaviusSiteMedia/ are left alone)"
