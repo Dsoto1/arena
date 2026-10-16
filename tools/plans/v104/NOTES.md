@@ -169,3 +169,9 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
   is drawn after the figure). Fix: every floor mark (seat/active ring, shadow disc, highlight) is drawn in the floor pass BEFORE any figure,
   so a figure always stands in front of ground marks. Must keep tv91r / tv92p draw cost, Reduce motion, 3D + 2D tokens. → fifth builder
   356-v104fixb (board) after the first pair.
+
+## Beta 2 · his notes (2026-10-16)
+- B26 Roster (352 B2): the rows' grid now packs to its content (name fit-content + the columns) but the list BOX keeps its column width
+  (minmax(440px, min(540px,46%))), so an empty strip is left right of the ⋯ column (his screenshot, 1 fighter). Fix: the list box sizes to
+  its rows (fit-content, with the 440 px floor for the narrow layout only) and the selected-gladiator side takes the rest; header + group
+  rows span the same width.
