@@ -1,0 +1,510 @@
+[
+ {
+  "k": "What you know of him, against the bookmaker: from walking the sand at the arena gate, your recruiting dossier, or watching him fight. A fighter whose chance beats the public odds is a VALUE bet; one the public overrates is a TRAP.",
+  "w": "17-manager.js:1305"
+ },
+ {
+  "k": "Your read",
+  "w": "17-manager.js:1305"
+ },
+ {
+  "k": "<span class=\"rc-sub\" title=\"Walk the sand at the arena gate, watch him fight, or scout him in Recruiting to read him here\">no read yet</span>",
+  "w": "17-manager.js:1307"
+ },
+ {
+  "k": "Match Week, clearer",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: Match Week laid out anew — a slim city banner with your week at the right, bout cards that turn into results, the stake inside the Bet button, one Watch button, and what changed shown once in the week summary",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Your read: walk the sand at the arena gate or watch a bout live to read every fighter on the card; value and trap marked on the odds",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "The week moves forward: Recruiting, the Yard and the Infirmary close when you set off, with a reminder before you go",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Renown: one bar for the lanista — wins, podiums, playoff rounds, full houses, kept pledges and good signings earn perk points",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "The League keeps every season: pick one to see its table, Superbus bracket and awards",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Rail counts and hours sit at the right edge; player names readable in every colour",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Spend your perk point: a <b>perk</b> from one of the three trees (each says what it does), or <b>hone a trait</b> recruits grade you on. Renown from wins, kept pledges and good signings earns more.",
+  "w": "36-mtutor.js:58"
+ },
+ {
+  "k": "walked the sand",
+  "w": "361-v105read.js:33"
+ },
+ {
+  "k": "watched him fight",
+  "w": "361-v105read.js:33"
+ },
+ {
+  "k": "your recruiting dossier",
+  "w": "361-v105read.js:33"
+ },
+ {
+  "k": "A rough read",
+  "w": "361-v105read.js:34"
+ },
+ {
+  "k": "Read",
+  "w": "361-v105read.js:34"
+ },
+ {
+  "k": "🗺 Your doctores read {0} fighters on the card — the Your read column fills in.",
+  "w": "361-v105read.js:47"
+ },
+ {
+  "k": "Not recorded.",
+  "w": "362-v105league.js:28"
+ },
+ {
+  "k": "Superbus place",
+  "w": "362-v105league.js:31"
+ },
+ {
+  "k": "Champion: <b>{0}</b>. The bracket was not recorded.",
+  "w": "362-v105league.js:36"
+ },
+ {
+  "k": "📊 Season {0} · final table",
+  "w": "362-v105league.js:40"
+ },
+ {
+  "k": "{0} · now",
+  "w": "362-v105league.js:42"
+ },
+ {
+  "k": "Pledges kept",
+  "w": "363-v105renown.js:14"
+ },
+ {
+  "k": "Fighters improving",
+  "w": "363-v105renown.js:14"
+ },
+ {
+  "k": "Exhibitions",
+  "w": "363-v105renown.js:14"
+ },
+ {
+  "k": "Signings",
+  "w": "363-v105renown.js:14"
+ },
+ {
+  "k": "Full houses",
+  "w": "363-v105renown.js:14"
+ },
+ {
+  "k": "Podium",
+  "w": "363-v105renown.js:14"
+ },
+ {
+  "k": "⚜ <b>Renown {0}</b>: your name carries further. +{1} perk point{2}.",
+  "w": "363-v105renown.js:21"
+ },
+ {
+  "k": "Renown",
+  "w": "363-v105renown.js:39"
+ },
+ {
+  "k": "next level +1 point",
+  "w": "363-v105renown.js:39"
+ },
+ {
+  "k": "This season",
+  "w": "363-v105renown.js:41"
+ },
+ {
+  "k": "Earned from wins, podiums, the Superbus, full houses, kept pledges, improving fighters and good signings.",
+  "w": "363-v105renown.js:41"
+ },
+ {
+  "k": "{0}[style^=\"color:{1}\"],{2}[style^=\"color: {3}\"]",
+  "w": "364-v105contrast.js:13"
+ },
+ {
+  "k": "🤝 <b>{0}</b> of the Recruiter's hours unspent",
+  "w": "360-v105mw.js:31"
+ },
+ {
+  "k": "Semifinal II",
+  "w": "360-v105mw.js:32"
+ },
+ {
+  "k": "Semifinal I",
+  "w": "360-v105mw.js:32"
+ },
+ {
+  "k": "Bout B",
+  "w": "360-v105mw.js:32"
+ },
+ {
+  "k": "Bout A",
+  "w": "360-v105mw.js:32"
+ },
+ {
+  "k": "🩹 {0}",
+  "w": "360-v105mw.js:48"
+ },
+ {
+  "k": "🩸 A lost limb",
+  "w": "360-v105mw.js:48"
+ },
+ {
+  "k": "HP",
+  "w": "360-v105mw.js:49"
+ },
+ {
+  "k": "None of yours in this bout",
+  "w": "360-v105mw.js:55"
+ },
+ {
+  "k": "Called off.",
+  "w": "360-v105mw.js:60"
+ },
+ {
+  "k": "YOURS",
+  "w": "360-v105mw.js:65"
+ },
+ {
+  "k": "{0} turns",
+  "w": "360-v105mw.js:68"
+ },
+ {
+  "k": "🏟 {0} in the stands",
+  "w": "360-v105mw.js:68"
+ },
+ {
+  "k": "Your house took <b>{0}</b>",
+  "w": "360-v105mw.js:68"
+ },
+ {
+  "k": "A verdict waits on your fighter",
+  "w": "360-v105mw.js:71"
+ },
+ {
+  "k": "Fought · your house {0}{1}",
+  "w": "360-v105mw.js:71"
+ },
+ {
+  "k": "Fought",
+  "w": "360-v105mw.js:71"
+ },
+ {
+  "k": "🏆 Won by {0}",
+  "w": "360-v105mw.js:72"
+ },
+ {
+  "k": "No winner",
+  "w": "360-v105mw.js:72"
+ },
+ {
+  "k": "your read",
+  "w": "360-v105mw.js:75"
+ },
+ {
+  "k": "Your read: from walking the sand, your recruiting dossier, or watching him fight. Value: your chance beats the odds. Trap: it falls short.",
+  "w": "360-v105mw.js:86"
+ },
+ {
+  "k": "⚔ Rival",
+  "w": "360-v105mw.js:92"
+ },
+ {
+  "k": "Walk the sand at the arena gate, scout him in Recruiting or watch him fight to read him",
+  "w": "360-v105mw.js:94"
+ },
+ {
+  "k": "no read",
+  "w": "360-v105mw.js:94"
+ },
+ {
+  "k": "Bet {0}",
+  "w": "360-v105mw.js:98"
+ },
+ {
+  "k": "Your chance beats the odds: they pay too much.",
+  "w": "360-v105mw.js:99"
+ },
+ {
+  "k": "▲ value",
+  "w": "360-v105mw.js:99"
+ },
+ {
+  "k": "The public flatters him: the odds pay too little.",
+  "w": "360-v105mw.js:100"
+ },
+ {
+  "k": "▼ trap",
+  "w": "360-v105mw.js:100"
+ },
+ {
+  "k": "★ best value",
+  "w": "360-v105mw.js:101"
+ },
+ {
+  "k": "👁 Watch<small>{0} · a seat in the stands</small>",
+  "w": "360-v105mw.js:106"
+ },
+ {
+  "k": "fixed",
+  "w": "360-v105mw.js:113"
+ },
+ {
+  "k": "Entered",
+  "w": "360-v105mw.js:123"
+ },
+ {
+  "k": "Fees",
+  "w": "360-v105mw.js:123"
+ },
+ {
+  "k": "Your take",
+  "w": "360-v105mw.js:123"
+ },
+ {
+  "k": "Verdicts",
+  "w": "360-v105mw.js:124"
+ },
+ {
+  "k": "{0} waiting",
+  "w": "360-v105mw.js:124"
+ },
+ {
+  "k": "{0} of {1} fought · next: {2}",
+  "w": "360-v105mw.js:127"
+ },
+ {
+  "k": "All fought.",
+  "w": "360-v105mw.js:127"
+ },
+ {
+  "k": "Every bout is fought.",
+  "w": "360-v105mw.js:128"
+ },
+ {
+  "k": "Settle {0} verdict{1} first.",
+  "w": "360-v105mw.js:129"
+ },
+ {
+  "k": "End the week simulates the {0} bout{1} left.",
+  "w": "360-v105mw.js:130"
+ },
+ {
+  "k": "Ready: wages are paid and the house goes home.",
+  "w": "360-v105mw.js:130"
+ },
+ {
+  "k": "Ready: wages are paid.",
+  "w": "360-v105mw.js:130"
+ },
+ {
+  "k": "Your week",
+  "w": "360-v105mw.js:131"
+ },
+ {
+  "k": "Your week at {0}",
+  "w": "360-v105mw.js:131"
+ },
+ {
+  "k": "🛣 Set off for {0}",
+  "w": "360-v105mw.js:133"
+ },
+ {
+  "k": "the Yard, the Infirmary and Recruiting shut until the week ends",
+  "w": "360-v105mw.js:133"
+ },
+ {
+  "k": "Simulate the rest",
+  "w": "360-v105mw.js:134"
+ },
+ {
+  "k": "End the week",
+  "w": "360-v105mw.js:134"
+ },
+ {
+  "k": "your house in {0}",
+  "w": "360-v105mw.js:141"
+ },
+ {
+  "k": "not seeded",
+  "w": "360-v105mw.js:142"
+ },
+ {
+  "k": "rests this round",
+  "w": "360-v105mw.js:142"
+ },
+ {
+  "k": "out",
+  "w": "360-v105mw.js:142"
+ },
+ {
+  "k": "To the bracket",
+  "w": "360-v105mw.js:143"
+ },
+ {
+  "k": "🏛 Superbus · {0}",
+  "w": "360-v105mw.js:143"
+ },
+ {
+  "k": "· seed #{0}",
+  "w": "360-v105mw.js:143"
+ },
+ {
+  "k": "Close this bout",
+  "w": "360-v105mw.js:169"
+ },
+ {
+  "k": "Open this bout",
+  "w": "360-v105mw.js:169"
+ },
+ {
+  "k": "🛣 From {0} · the trip paid by {1}",
+  "w": "360-v105mw.js:184"
+ },
+ {
+  "k": "🛣 On the road from {0} · trip {1}",
+  "w": "360-v105mw.js:184"
+ },
+ {
+  "k": "🛣 Booked for {0} from {1} · trip {2}",
+  "w": "360-v105mw.js:184"
+ },
+ {
+  "k": "🏠 Home sand",
+  "w": "360-v105mw.js:185"
+ },
+ {
+  "k": "attendance and purses up",
+  "w": "360-v105mw.js:186"
+ },
+ {
+  "k": "attendance and purses down",
+  "w": "360-v105mw.js:186"
+ },
+ {
+  "k": "The Grand Games: purses ×1.6",
+  "w": "360-v105mw.js:187"
+ },
+ {
+  "k": "🔒 Yard, Infirmary and Recruiting shut until the week ends",
+  "w": "360-v105mw.js:188"
+ },
+ {
+  "k": "📊 The table: still {0}{1}",
+  "w": "360-v105mw.js:200"
+ },
+ {
+  "k": "📊 The table: {0} → <b>{1}</b>",
+  "w": "360-v105mw.js:200"
+ },
+ {
+  "k": "{0} {1}: rating {2} → <b>{3}</b>",
+  "w": "360-v105mw.js:201"
+ },
+ {
+  "k": "🩹 {0}: {1} · out {2} week{3}",
+  "w": "360-v105mw.js:202"
+ },
+ {
+  "k": "Week {0} · what changed",
+  "w": "360-v105mw.js:203"
+ },
+ {
+  "k": "No change in the table, nobody hurt.",
+  "w": "360-v105mw.js:203"
+ },
+ {
+  "k": "🛣 Set off for {0}?",
+  "w": "360-v105mw.js:214"
+ },
+ {
+  "k": "Once the house sets off for <b>{0}</b>, the Training Yard, the Infirmary and Recruiting are shut until the week ends.",
+  "w": "360-v105mw.js:214"
+ },
+ {
+  "k": "Still undone:",
+  "w": "360-v105mw.js:214"
+ },
+ {
+  "k": "🛣 Set off",
+  "w": "360-v105mw.js:214"
+ },
+ {
+  "k": "🛣 {0} sets off for {1}.",
+  "w": "360-v105mw.js:216"
+ },
+ {
+  "k": "🛣 On the road to {0} — Recruiting reopens when the week ends.",
+  "w": "360-v105mw.js:220"
+ },
+ {
+  "k": "🛣 The house sets off for <b>{0}</b>.",
+  "w": "360-v105mw.js:240"
+ },
+ {
+  "k": "Verdicts are waiting on Match Week — settle them, then end the week.",
+  "w": "360-v105mw.js:251"
+ },
+ {
+  "k": "The treasury is empty.",
+  "w": "360-v105mw.js:256"
+ },
+ {
+  "k": "Your bet",
+  "w": "360-v105mw.js:257"
+ },
+ {
+  "k": "Bet on <b>{0}</b> · {1}×",
+  "w": "360-v105mw.js:259"
+ },
+ {
+  "k": "Lower the stake by 5",
+  "w": "360-v105mw.js:260"
+ },
+ {
+  "k": "Raise the stake by 5",
+  "w": "360-v105mw.js:260"
+ },
+ {
+  "k": "pays {0} if he wins",
+  "w": "360-v105mw.js:262"
+ },
+ {
+  "k": "· at most {0} at these odds",
+  "w": "360-v105mw.js:262"
+ },
+ {
+  "k": "Place bet",
+  "w": "360-v105mw.js:263"
+ },
+ {
+  "k": "⚡ Simulated first: {0}",
+  "w": "360-v105mw.js:281"
+ },
+ {
+  "k": "🛣 <b>On the road to {0}.</b> Recruiting is shut until the week ends — offers already made still get their answer.",
+  "w": "360-v105mw.js:288"
+ },
+ {
+  "k": "🛣 Away",
+  "w": "360-v105mw.js:289"
+ },
+ {
+  "k": "arena · v1.05",
+  "w": "01-head.html"
+ }
+]
