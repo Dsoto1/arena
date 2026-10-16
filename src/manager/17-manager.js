@@ -449,6 +449,8 @@ function boutCfg(bout,watch,fightGid=null){ // fightGid: hand that fighter's rei
   return {ev:bout.ev,loc:w.night.loc,seats,truceSeats:ts,opts:{mods:true,mandata:true,optOffers:true,eaglePot:true,spect:watch?'auto':0},mgrTier:bout.tier,omen:w.night.omen||null,mgrWorldId:w.id,mgrCtx:{cid:w.id,week:w.week,bout:w.night.bouts.indexOf(bout),name:me().name}};
 }
 /* runBoutSim — simulates a bout off-screen and applies the result. */
+/* perkGain105 — every lanista perk-point grant goes through here (src: week win pledge train exhib); 363-v105renown wraps it. */
+function perkGain105(m,src){m.perkPend=(m.perkPend||0)+1}
 async function runBoutSim(boutIdx){
   const w=W_(),b=w.night.bouts[boutIdx];if(b.done)return;
   const res=await simEvent(boutCfg(b,false));if(res&&!res.error)applyBout(boutIdx,res);else{mnews(_T`The ${TIERS[b.tier].n} was called off (${esc(res&&res.error||_T('no result'))}).`,'bad');b.done=true}
@@ -517,14 +519,14 @@ function applyBout(boutIdx,res,opt={}){
   // rivalry: beating another lanista's fighter (worse: killing one) is remembered — by EVERY ludus involved.
   // m.rivalry stays the feud aimed at YOU (it drives poaching and spite bets); m.rivals[<mgrId>] is the wider
   // web of grudges between stables, shown in the League's Rivals column.
-  {const meId=me().id;const myWin=[...wins].some(gid=>{const g2=gById(gid);return g2&&g2.contract&&g2.contract.mgr===meId});if(myWin)me().perkPend=(me().perkPend||0)+1; // a win teaches the lanista too
+  {const meId=me().id;const myWin=[...wins].some(gid=>{const g2=gById(gid);return g2&&g2.contract&&g2.contract.mgr===meId});if(myWin)perkGain105(me(),'win'); // a win teaches the lanista too
    const winMgrs=[...new Set([...wins].map(gid=>{const g=gById(gid);return g&&g.contract?g.contract.mgr:null}).filter(Boolean))].map(mgrById).filter(Boolean);
    for(const mw of winMgrs)for(const gid of b.ents){const g=gById(gid);if(!g||!g.contract||g.contract.mgr===mw.id)continue;const m2=mgrById(g.contract.mgr);if(!m2)continue;
      const heat=(wins.has(gid)?0:5)+(g.alive?0:10);if(!heat)continue;
      if(mw.id===meId&&!m2.isPlayer){if(!wins.has(gid))bumpRival(m2,5);if(!g.alive)bumpRival(m2,10,_T`${esc(g.name)} died against your fighter`)}
      m2.rivals=m2.rivals||{};m2.rivals[mw.id]=clamp(Math.round((m2.rivals[mw.id]||0)+heat),0,100);}}
   // a pledge kept: the promised main event, delivered
-  if(b.tier==='main')for(const gid of b.ents){const g=gById(gid);if(g&&g.pledge&&g.contract&&g.contract.mgr===g.pledge.mgr){const m2=mgrById(g.pledge.mgr);g.morale=clamp(g.morale+10,0,100);if(m2){m2.kept=(m2.kept||0)+1;if(m2.isPlayer)m2.perkPend=(m2.perkPend||0)+1}delete g.pledge;mnews(_T`${esc(g.name)} got the main event ${m2&&m2.isPlayer?_T('you'):m2?m2.name:''} promised. Word kept; the barracks notice.`,'big')}}
+  if(b.tier==='main')for(const gid of b.ents){const g=gById(gid);if(g&&g.pledge&&g.contract&&g.contract.mgr===g.pledge.mgr){const m2=mgrById(g.pledge.mgr);g.morale=clamp(g.morale+10,0,100);if(m2){m2.kept=(m2.kept||0)+1;if(m2.isPlayer)perkGain105(m2,'pledge')}delete g.pledge;mnews(_T`${esc(g.name)} got the main event ${m2&&m2.isPlayer?_T('you'):m2?m2.name:''} promised. Word kept; the barracks notice.`,'big')}}
   // bets placed from the ludus before the bout (v0.67: a wager on a fighter no longer on the card is void — the stake comes back)
   for(const bt of [...b.bets])if(!b.ents.includes(bt.gid))voidBets(b,bt.gid);
   for(const bt of b.bets){const won=wins.has(bt.gid);const P=betPay(bt.stake,bt.odds);const pay=won?P.net:0;betSettle(bt.bid,won,pay);me().coin+=pay;me().betNet=(me().betNet||0)+pay-bt.stake;if(won&&P.tax)me().taxPaid=(me().taxPaid||0)+P.tax;lines.push(_T`Your bet on ${esc(gById(bt.gid)?.name||'?')}: ${won?`<b>+${pay}</b>${P.tax?` <span class="rc-sub">${_T`(${P.tax} to the Emperor's tenth)`}</span>`:''}`:'lost '+bt.stake}`)}
@@ -636,7 +638,7 @@ async function endWeek(){
    }
    if(w.lastTraining.length){const up=w.lastTraining.filter(x=>/\+\d rating/.test(x.txt)).length;
      tnews(_T`Training (${R.n}${w.lastTraining.some(x=>/personal trainer/.test(x.txt))?_T(' + personal trainers'):''}): ${up} improved, ${w.lastTraining.filter(x=>/injured/.test(x.txt)).length} injured.`);
-     if(up>=2)pm.perkPend=(pm.perkPend||0)+1}}
+     if(up>=2)perkGain105(pm,'train')}}
   // ---- MORS OMNIBUS: very rarely the world simply takes someone — no bout required ----
   for(const g of w.glads.filter(g=>g.alive&&!g.sotonium)){if(Math.random()>=0.0035*RL(w,'rand'))continue;
     const why=pickOne([_T('a winter fever'),_T('a tavern knife over a bookie\u2019s debt'),_T('an angry spectator with a roof tile'),_T('a practice bout that went a hand too deep'),_T('the levy — marched off to war and never seen again'),_T('bad oysters at a victory feast'),_T('a rival\u2019s hired blade in an alley')]);
@@ -738,7 +740,7 @@ async function endWeek(){
   for(const g of w.glads)if(g.src==='custom'&&!g.alive&&!g._cSynced&&typeof CUSTOM!=='undefined'){g._cSynced=1;const c=CUSTOM.chars.find(z=>z.id===g.srcId);
     if(c&&(!c.status||c.status==='active')){c.status=g.freed2?'freed':'fallen';c.rolls=false;c.fell={date:new Date().toISOString().slice(0,10),fate:g.freed2?_T('took the rudis'):(w.grave.find(x=>x.name===g.name)||{}).fate||_T('died in the league'),at:w.mgrs.find(x=>x.isPlayer).ludus};Store.put('customChars',c.id,c).catch(()=>{})}}
   // the lanista's own schooling: this week's lessons become next week's perk points
-  pm.perkPend=(pm.perkPend||0)+1; // living another week teaches something
+  perkGain105(pm,'week'); /* living another week teaches something */
   pm.perkPts=(pm.perkPts||0)+pm.perkPend;pm.perkLast=pm.perkPend;pm.perkPend=0;
   const doneNight=w.night,doneSeason=w.season-(w.week%12===0?1:0);
   {const ws=w.weekStart||{coin:pm.coin,fame:pm.fame,wins:pm.wins,bouts:pm.bouts};const res=[];
@@ -1409,7 +1411,7 @@ function exhibApply(res,ctx){
   for(const id of ctx.theirs){const x=gById(id);if(x){x.scout=3;ghist(x,_T`exhibition against ${esc(m.ludus)}'s ${esc(g.name)}`)}}
   const lines=[];
   if(g.ovr<g.pot&&Math.random()<(.3+(lasted?.15:0)+m.p.discipline/500)){g.ovr++;lines.push(_T`${esc(g.name)} learns from it: +1 rating`)}
-  g.morale=clamp(g.morale+(lasted?5:1),0,100);m.perkPend=(m.perkPend||0)+1;
+  g.morale=clamp(g.morale+(lasted?5:1),0,100);perkGain105(m,'exhib');
   if(Math.random()<.06&&!g.inj){g.inj={until:w.week+1,label:_T('a sparring bruise that will not quit'),pen:2};lines.push(_T`${esc(g.name)} picks up ${g.inj.label}`)}
   opp.rivalry=Math.max(0,(opp.rivalry||0)-4);opp.rivals=opp.rivals||{};if(opp.rivals[m.id])opp.rivals[m.id]=Math.max(0,opp.rivals[m.id]-4);
   ghist(g,_T`exhibition against ${esc(opp.ludus)} — ${row.won?_T('last one standing when it was called'):lasted?_T('still standing when it was called'):_T('pulled by the doctors')}`);
