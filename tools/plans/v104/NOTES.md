@@ -184,3 +184,7 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
 - B29 Play Now action row (B3 follow-up, his screenshot): 🎲 Random event · Begin Event · 🏛 Home look disjointed (gap before Home, the
   dice on a dark box). Fix: one tight row, small equal gaps, all three the same height; the 🎲 gets the same sandstone tile as 🏛 Home
   (306-v100sand look), Begin Event between them.
+- B30 Infirmary (beta 2): treating a severed limb (Hygeia's regrowth, 318 'heal' / rg102 — needs a bed, completes at the week's end) books
+  TWO ward plates from one click, and "🛏 Take out" (data-unbed76) still works while that bed-bound treatment is booked. Fix: one click books
+  only the treatment clicked (show which plates it uses); while a booked treatment needs the bed, Take out is disabled with the reason
+  ("Hygeia's regrowth needs him in bed until the week ends"); to free him, cancel the booking on its plate (hours + coin refunded).
