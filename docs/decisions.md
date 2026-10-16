@@ -724,3 +724,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   Playoff weeks with no bout pay a house its FULL wages back — REPLACED: "half wages back" (59's bye rule) for playoff weeks; ordinary byes keep half.
   The First-team reserve may be lent out; only Bout I–III starters are locked.
 - Decided 2026-10-16 (v1.04): advisors rise at most one level a season (349 adv98Up); no extra cost per level for now.
+- Decided 2026-10-16 (v1.04 beta 2, his h2a): recruiting's wooing actions (pitch, private note, gift, visit/feast) cost the RECRUITER's hours
+  and follow the +1 h-per-repeat rule (351); coin costs stay. Builds on v0.87's "lanista hours removed" (still removed — no lanista pool).
