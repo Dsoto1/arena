@@ -202,3 +202,11 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
   week-11 "playoffs open" letter (that one stays). Rival-free careers / Sica: no letter when the house can't be seeded.
 - B34 the remaining bracket button (Match Week banner weeks 9–11 / League 🏛 Superbus) gets the REGAL look of the bracket popup it opens
   (laurel, gold-on-crimson like 345's .sb103c Superbus card, the Cup icon) instead of a plain small button.
+- B35 Match Week during the playoffs (his screenshot, Roma, Round 1, his house out):
+  (a) the bracket is pushed to the RIGHT half with a large empty area on the left, and its last column is CUT OFF ("CHAM…", "THE",
+      "cham…") — lay the tree out across the full width (title + legend line above it, not beside it), columns evenly spread, nothing
+      clipped; at narrow widths its own box scrolls;
+  (b) box titles wrap badly ("Round I · Bout / A" with "seeds 5·8·9·12" squeezed beside) — one line: "Bout A · seeds 5·8·9·12";
+  (c) the banner's day tabs read "Superbus → Superbus" (two identical chips) — name them by the round and day ("Round 1 · Bout A", "Bout B")
+      or show one "Superbus · Round 1" chip;
+  (d) the "Your stake" row is the old full-width one on playoff bouts too (N2 moves it into the Bet button in v1.05 — leave for v1.05).
