@@ -70,7 +70,7 @@ function truceWho(p){const C=CLASSES[p.cls]||{};const col=C.color||p.color||'#cc
 function truceViewer(){if(!S||!S.players)return null;const c=cur();if(c&&!c.cpu)return c;const hs=S.players.filter(p=>!p.cpu&&p.alive);return hs.length===1?hs[0]:null}
 {const base=drawPlayer;drawPlayer=function(player){const r=base.apply(this,arguments);
   try{const v=truceViewer();if(v&&v!==player&&player.alive&&!player.exited&&inTruce(v,player)){const m=center(player.r,player.c);
-    ctx.save();ctx.setLineDash([5,4]);ctx.strokeStyle=v.color||'#fff';ctx.lineWidth=2;ell(m.x,m.y+TW*0.03,TW*0.42,TW*0.21);ctx.stroke();ctx.setLineDash([]);
+    ctx.save();if(!(typeof fl104Has==='function'&&fl104Has(player,128))){ctx.setLineDash([5,4]);ctx.strokeStyle=v.color||'#fff';ctx.lineWidth=2;ell(m.x,m.y+TW*0.03,TW*0.42,TW*0.21);ctx.stroke();ctx.setLineDash([])}/* v1.04 B32: 359 paints the ring under the figure */
     const y=m.y-TW*1.55;ctx.fillStyle='rgba(255,255,255,.92)';ctx.beginPath();ctx.arc(m.x+TW*0.28,y,TW*0.15,0,Math.PI*2);ctx.fill();ctx.strokeStyle=v.color||'#888';ctx.lineWidth=1.5;ctx.stroke();
     ctx.font=`${Math.round(TW*0.19)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🕊',m.x+TW*0.28,y+1);ctx.restore()}}catch(e){}
   return r}}

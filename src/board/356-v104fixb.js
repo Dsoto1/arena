@@ -51,7 +51,8 @@ function floor104(alphaFor){if(FL104.off||HEADLESS||!S||typeof ctx==='undefined'
   try{if(typeof isChariot==='function'&&isChariot())return;
     const ev=EV(),teams=!!(ev&&(ev.teams||ev.coop)),curP=S.over?null:S.players[S.cur];
     ctx.save();
-    if(!DRAW_EMPTY)for(const p of S.players){if(!p.alive||p.exited||p.underground||p._onlSc||p._onlTok)continue;if(swimming(p)||(p.ch&&p.ch.mounted))continue;if(fl104Moving(p,false))continue;
+    if(!DRAW_EMPTY)for(const p of S.players){if(!p.alive||p.exited||p.underground||p._onlSc||p._onlTok)continue;if(swimming(p)||(p.ch&&p.ch.mounted))continue;let mo=null;if(fl104Moving(p,false)){mo=typeof fl104Offs==='function'?fl104Offs(p,false):null;if(!mo)continue} /* v1.04 B31 (359): a moving piece's marks go under it too, shifted by its own offset */
+      if(mo){ctx.save();ctx.translate(mo.dx,mo.dy)}
       const m=center(p.r,p.c);ctx.globalAlpha=alphaFor?alphaFor('player',p.r,p.c):1;let bits=0;
       const sk=standeeKeyCls(p.cls),useFig=wantFigure(hasCustomToken(p.cls)),fig=useFig?tokenImg(tokenForP(p)):sk&&standeesOn()&&standeeImg(sk);
       const rim=fig?fl104RimAbs(p):null,hasRim=!!rim;
@@ -65,13 +66,14 @@ function floor104(alphaFor){if(FL104.off||HEADLESS||!S||typeof ctx==='undefined'
         else fl104Ring(m.x,m.y+TW*0.03,TW*0.3,TW*0.15,p.color,3);
         if(teams)fl104Ring(m.x,m.y+TW*0.03,TW*0.36,TW*0.18,teamColor(p.team),1.5);bits|=2;
         bits|=fl104Shadow(p,m)}
+      if(mo)ctx.restore();
       if(bits){FL104.done.set(p,bits);n++}}
-    if(!DRAW_EMPTY)for(const q of S.npcs){if(!q.alive||q.out||q.t==='zora')continue;if(fl104Moving(q,true))continue;
-      const m=center(q.r,q.c),T=NPCT[q.t];if(!T)continue;ctx.globalAlpha=alphaFor?alphaFor('npc',q.r,q.c):1;let bits=0;
+    if(!DRAW_EMPTY)for(const q of S.npcs){if(!q.alive||q.out||q.t==='zora')continue;let mo=null;if(fl104Moving(q,true)){mo=typeof fl104Offs==='function'?fl104Offs(q,true):null;if(!mo)continue}
+      const m=center(q.r,q.c),T=NPCT[q.t];if(!T)continue;if(mo){ctx.save();ctx.translate(mo.dx,mo.dy)}ctx.globalAlpha=alphaFor?alphaFor('npc',q.r,q.c):1;let bits=0;
       const big=['tholo','lion','bear','commodus'].includes(q.t)||T.custom&&T.hp>=12,rx=TW*(big?0.27:0.22);
       if(q.tamedBy!=null&&S.players[q.tamedBy]){fl104Ring(m.x,m.y,rx*1.35,rx*0.68,S.players[q.tamedBy].color,2.5);bits|=4}
       if(q.alive&&npcStats(q).state==='Raged'){fl104Ring(m.x,m.y,rx*1.25,rx*0.62,'rgba(230,70,50,.85)',2);bits|=8}
-      bits|=fl104Shadow(q,m);if(bits){FL104.done.set(q,bits);n++}}
+      bits|=fl104Shadow(q,m);if(mo)ctx.restore();if(bits){FL104.done.set(q,bits);n++}}
     ctx.restore()}
   catch(e){console.error(e);FL104.done.clear()}
   finally{FL104.st.pieces+=n;FL104.st.ms+=performance.now()-t0;FL104.st.last={n,done:FL104.done.size}}}

@@ -2064,7 +2064,7 @@ function draw() {
         ctx.stroke();
         ctx.setLineDash([]);
       }
-      for (const [k, h] of HL) if (h.t === 'atk' || h.t === 'rete' || h.t === 'catk') {
+      for (const [k, h] of HL) if ((h.t === 'atk' || h.t === 'rete' || h.t === 'catk') && !(typeof fl104HlDone === 'function' && fl104HlDone(k))) { /* v1.04 B32: 359's floor pass already drew a ring under a piece */
         const r = Math.floor(k / N),
           c = k % N,
           m = center(r, c);
