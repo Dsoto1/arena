@@ -40,7 +40,7 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   w.night.god76=null;w.night.loc=away;w.night.travel=null;MGR_REDRAW();await W8(300);const th0=thMax();q('[data-sbye76]').click();await W8(400);q('[data-ask76="1"]').click();await W8(400);
   r.sbye=!!w.night.selfBye&&thMax()===th0+TH_BYE&&weekMoney().gate===0;
   /* C · leaving: the warning, the lock, then a road event */
-  w.night.selfBye=false;w.sbye76=null;w.night.travel=null;MGR_REDRAW();await W8(300);q('[data-mg="travelpay"]').click();await W8(500);r.warn=/Before you leave/.test((q('.ask76bg')||{}).textContent||'');
+  w.night.selfBye=false;w.sbye76=null;w.night.travel=null;MGR_REDRAW();await W8(300);q('[data-mg="travelpay"]').click();await W8(500);r.warn=/Before you leave|Set off for/.test((q('.ask76bg')||{}).textContent||'');
   const rnd=Math.random;Math.random=()=>0.1;q('[data-ask76="1"]').click();await W8(900);Math.random=rnd;r.locked=roadLocked76(w);
   if(q('.ask76bg'))q('[data-ask76="1"]').click();await W8(300);r.road=!!(w.night.travel.road76&&w.night.travel.road76.txt);
   MGR.tab='practice';MGR.yd87='all';MGR_REDRAW();await W8(300);const reg0=w.train;const rb=q('[data-mg="regime"]:not(.on)');if(rb)rb.click();await W8(200);r.lockYard=!!q('.lock76')&&w.train===reg0;

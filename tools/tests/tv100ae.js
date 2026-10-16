@@ -1,4 +1,5 @@
-/* v1.0 (296-v100any) MANAGER — ENTER ANY EVENT: the week's headline specials sit on Match Week on top of Bouts I–III (the special fixture
+/* v1.05: 360 folds the This-week panel into the Match Week cards (selectors :is(#any100wk,.mw105list)).
+ v1.0 (296-v100any) MANAGER — ENTER ANY EVENT: the week's headline specials sit on Match Week on top of Bouts I–III (the special fixture
    leaves the Main event), rivals enter early and leave seats open; entering a special pays an entry fee and moves the fighter off his bout,
    withdrawing refunds it and puts him back; team events offer partners (yours / hired free agent / the editor's pick); a restricted special
    greys ineligible fighters with the reason; travelling fills every empty seat of every bout and special; ★ chips in the banner tracker;
@@ -31,7 +32,7 @@ const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
       const sp2=n.bouts.filter(any100Sp);if(sp2.length>1&&new Set(sp2.map(b=>b.any100.day)).size<sp2.length)seen.__clash=1}
     w1.week=w0;n.bouts=keep.bouts;n.any100=keep.any;n.fx=keep.fx;
     o.pool={gauntlet:!!seen.gauntlet,commodus:!!seen.commodus,moved:!!seen.__moved,clash:!!seen.__clash,days:sd.size,evs:Object.keys(seen).length}}
-  o.panel=!!document.querySelector('#any100wk');o.rows=document.querySelectorAll('#any100wk .a1ev').length;o.nb=n.bouts.length;
+  o.panel=!!document.querySelector(':is(#any100wk,.mw105list)');o.rows=document.querySelectorAll(':is(#any100wk,.mw105list) .a1ev').length;o.nb=n.bouts.length;
   o.star=document.querySelectorAll('.roomstat.bt85w .bt85.bt100s').length;
   /* restriction frequency: about every third week */
   {let k=0;const w0=w.week;for(let x=1;x<=60;x++){w.week=x;if(any100Hash(w,'rx')%ANY100.every===0)k++}w.week=w0;o.rxN=k}
@@ -44,13 +45,13 @@ const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   const ros=rosterOf(m).filter(g=>!g.inj&&!g.lanista);let g1=ros.find(g=>any100Cur(w,g.id)&&!any100Cur(w,g.id).b.any100);
   if(!g1){g1=ros[0];const c=n.bouts[0];const fa=c.ents.find(id=>!gById(id).contract);c.ents[c.ents.indexOf(fa)]=g1.id}
   const from=any100Cur(w,g1.id).i;const c0=m.coin;
-  document.querySelector(`#any100wk [data-any100="pick|${si}"]`).click();await W8(300);o.pk=!!document.querySelector('#any100pk .any100pk');
+  document.querySelector(`:is(#any100wk,.mw105list) [data-any100="pick|${si}"]`).click();await W8(300);o.pk=!!document.querySelector('#any100pk .any100pk');
   document.querySelector(`#any100pk [data-any100="sel|${g1.id}"]`).click();await W8(200);
   document.querySelector('#any100pk [data-any100="ok"]').click();await W8(400);
   o.enter={in:n.bouts[si].ents.includes(g1.id),fee:c0-m.coin,left:!n.bouts[from].ents.includes(g1.id),open:n.bouts[from].ents.length===boutSize(n.bouts[from])-1,
-    once:n.bouts.filter(b=>b.ents.includes(g1.id)).length,gone:!document.querySelector('#any100pk'),shown:!!document.querySelector(`#any100wk [data-a1i="${si}"] .a1ent`)};
+    once:n.bouts.filter(b=>b.ents.includes(g1.id)).length,gone:!document.querySelector('#any100pk'),shown:!!document.querySelector(`:is(#any100wk,.mw105list) [data-a1i="${si}"] .a1ent`)};
   /* 2 · withdraw before travel: refund + back on his bout */
-  document.querySelector(`#any100wk [data-any100="drop|${si}"]`).click();await W8(400);
+  document.querySelector(`:is(#any100wk,.mw105list) [data-any100="drop|${si}"]`).click();await W8(400);
   o.drop={coin:m.coin===c0,back:n.bouts[from].ents.includes(g1.id),out:!n.bouts[si].ents.includes(g1.id)};
   /* 3 · team partner options */
   const g2=ros.find(g=>g.id!==g1.id)||g1;any100Open(ti);ANY100.pk.gid=g1.id;any100PtDefault();any100PickDraw();await W8(200);
@@ -65,12 +66,12 @@ const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   const lo0=ros.find(g=>effOvr(g)<70);n.bouts[si].any100.rx={k:lo0?'hi':'lo'};MGR_REDRAW();await W8(300);const low=lo0||ros.find(g=>effOvr(g)>61);
   if(low){any100Open(si);await W8(200);const row=document.querySelector(`#any100pk [data-any100="sel|${low.id}"]`);o.rx={grey:row&&row.classList.contains('no')};row.click();await W8(200);
     o.rx.why=!!document.querySelector('#any100pk .a1why');o.rx.book=any100Book(si,low.id,null).ok;any100Close()}else o.rx={grey:true,why:true,book:false,none:1};
-  o.rx.chip=!!document.querySelector(`#any100wk [data-a1i="${si}"] .a1rx`);n.bouts[si].any100.rx=null;
+  o.rx.chip=!!document.querySelector(`:is(#any100wk,.mw105list) [data-a1i="${si}"] .a1rx`);n.bouts[si].any100.rx=null;
   /* 5 · enter again, then travel: every empty seat on every bout and special is filled */
   any100Book(si,g1.id,null);any100Book(ti,g2.id,{k:'ed'});
   const t=travelState(w);if(t&&!t.paid){m.coin+=t.cost;travelClick('travelpay')}else any100FillAll(w);MGR_REDRAW();await W8(400);
   o.full={flag:!!(n.any100&&n.any100.full),all:n.bouts.every(b=>b.ents.length===boutSize(b)),teams:(()=>{const b=n.bouts[ti];return b.ents.every((id,i)=>any100SideOf(b,id)===(i%2?'B':'A'))})(),
-    note:/full card is set/.test(document.querySelector('#any100wk .a1ft').textContent)};
+    note:/full card is set/.test(document.querySelector(':is(#any100wk,.mw105list) .a1ft').textContent)};
   /* after the full card: no refund (two clicks), seat goes back to a free agent */
   o.star2=document.querySelectorAll('.roomstat.bt85w .bt85.bt100s').length;
   /* 6 · play the card in order; the solo special is won by our fighter (a fixed bout nobody catches) */
@@ -107,7 +108,7 @@ await p2.goto('file://'+process.argv[2]);await p2.waitForFunction(()=>window.FLA
 const P=await p2.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);
   newWorld({type:'pre',key:MGR_PRE[0].key});W_().welc99=1;MGR.view=null;MGR.tab='night';MGR_REDRAW();await W8(900);const o={};
   const ov=el=>{if(!el)return 'none';const bad=[...el.querySelectorAll('*')].filter(x=>{const r=x.getBoundingClientRect();return r.width&&r.right>innerWidth+1}).map(x=>x.className||x.tagName);return bad.slice(0,3)};
-  const wk=document.querySelector('#any100wk');o.wk=!!wk;o.ov=ov(wk);o.sw=document.documentElement.scrollWidth<=innerWidth+1;
+  const wk=document.querySelector(':is(#any100wk,.mw105list)');o.wk=!!wk;o.ov=ov(wk);o.sw=document.documentElement.scrollWidth<=innerWidth+1;
   const si=W_().night.bouts.findIndex(b=>any100Sp(b));any100Open(si);await W8(300);o.pk=ov(document.querySelector('#any100pk'));any100Close();return o});
 ok(P.wk&&Array.isArray(P.ov)&&!P.ov.length&&P.sw,'390: week card fits '+JSON.stringify(P));ok(Array.isArray(P.pk)&&!P.pk.length,'390: picker fits '+JSON.stringify(P.pk));await p2.close()}
 console.log(miss.length?'FAIL\n'+miss.join('\n'):'PASS');console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
