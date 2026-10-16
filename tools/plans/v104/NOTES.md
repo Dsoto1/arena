@@ -29,3 +29,6 @@ His answers (2026-10-16): 1a (rub-down, Care routine and Rest week all move) · 
   (meal, word, family tickets, bonus, raise, promise), tray open by default. B2 — he sent a screenshot (did not reach the session; ask again
   when building). B3 — it is the HOME button/icon in Play Now (not the 🎲): align + scale it to sit with Begin event.
 - Still testing; collect further notes here, build on his go.
+- B2 screenshot (received 2026-10-16, 2000 px wide window): the scribble marks the EMPTY GAP between the name and the tier column — the
+  name column stretches to fill the list. Fix: the name column sized to its content (with a sensible max + ellipsis), tier/OVR/W–L/wage/
+  fatigue/weeks/⋯ packed after it, and the list column narrower so the selected-gladiator side gets the room.
