@@ -16,7 +16,7 @@ await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}cat
 /* A: custom seat is a CPU, seated last */
 const A=await pg.evaluate(async()=>{SPEED='fast';PICKS.length=0;EXTRA=null;
   startEvent({ev:'ludus',loc:3,seats:[{cls:'soldier',cpu:true},{cls:'slave',cpu:true},{cls:'royalty',cpu:true},{cls:'cc_t98c',cpu:true}],opts:{spect:0}});
-  let last=-1,still=0;for(let i=0;i<300&&still<20;i++){still=PICKS.length===last&&PICKS.length>0?still+1:0;last=PICKS.length;if(CUR_MODAL&&!document.querySelector('#mBody .mk88'))CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await new Promise(r=>setTimeout(r,100))}
+  /* picks stop for 5 s = the draft is over (slow CI machines pause > 2 s between CPU picks) */let last=-1,still=0;for(let i=0;i<600&&still<50;i++){still=PICKS.length===last&&PICKS.length>0?still+1:0;last=PICKS.length;if(CUR_MODAL&&!document.querySelector('#mBody .mk88'))CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await new Promise(r=>setTimeout(r,100))}
   await new Promise(r=>setTimeout(r,400));
   const pl=S.players;return {extra:EXTRA,n:PICKS.length,bySeat:[0,1,2,3].map(i=>PICKS.filter(x=>x.who===i).length),custom:PICKS.filter(x=>/^c[wa]_t98|^ca_t98|^cw_t98/.test(x.k)),
     held:pl.map(p=>[p.wR&&p.wR.key,p.wL&&p.wL.key]),order:PICKS.slice(0,4).map(x=>x.who),drafted:pl.every(p=>p.drafted)}});
