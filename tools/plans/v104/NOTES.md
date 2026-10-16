@@ -18,3 +18,10 @@ His answers (2026-10-16): 1a (rub-down, Care routine and Rest week all move) · 
 - s2a: a house with no bout in a playoff week gets its FULL wages back from the Senate (348; was half). REPLACES the half refund (59's bye rule) for playoff weeks.
 - c1a: the First-team reserve (350, tm104 'A', not in Bouts I–III) can be lent out; only the three bout starters are locked.
 - Advisor pace (his answer 2026-10-16): one level a season is enough for now; no extra cost per level.
+
+## Beta 1 · his notes (2026-10-16) — fixes into v1.04 (not built until his go)
+- B1 Manager · Keeping him: only 6 options (the 7th/8th wrap to a new row); keep the best; the tray EXPANDED by default.
+  Found: 8 plates today — meal, private word, family tickets, bonus, raise, promise, Personal trainer (doctore), Medicus.
+  Personal trainer duplicates the Training Yard's "⚒ Own doctore"; Medicus duplicates the Infirmary.
+- B2 Manager · the roster list view is slightly too wide.
+- B3 Play Now · the random-event 🎲 button aligned + scaled to sit with Begin event.
