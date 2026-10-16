@@ -661,7 +661,7 @@ async function endWeek(){
   cpuLeagueWeek();if(typeof devWeek==='function')devWeek();if(typeof aiLanistaWeek==='function')aiLanistaWeek();if(typeof facWeek==='function')facWeek();
   // ---- AGE AND THE ARC OF A CAREER (v0.15) ----
   // The old hang up the sword: past 34, every year (and low spirits) makes walking away likelier.
-  for(const g of w.glads.filter(g=>g.alive&&gAge(g)>=35&&!g.sotonium)){
+  for(const g of w.glads.filter(g=>g.alive&&gAge(g)>=35&&!g.sotonium&&!(typeof c104Live==='function'&&c104Live(w)))){ /* v1.04: 349 retires at the season turn instead */
     if(Math.random()<Math.min(0.45,0.018*(gAge(g)-34))+(g.morale<40?.05:0)){
       const m2=g.contract?mgrById(g.contract.mgr):null;ghist(g,_T`hung up the sword at ${gAge(g)}`);g.alive=false;g.retired=true;if(m2)g.contract=null;
       mnews(_T`<b>${esc(g.name)}</b>, ${gAge(g)}, hangs up the sword after ${g.rec.ev} event${g.rec.ev===1?'':'s'} and ${g.rec.w} win${g.rec.w===1?'':'s'}. The barracks drink to an old sand-hand.`,m2&&m2.isPlayer?'bad':'');
