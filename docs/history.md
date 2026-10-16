@@ -242,3 +242,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   review, rivalry week locked, roster cap 15, loan asks shown as loans, Treated ✓, Vulso via the Recruiter, tiles), board 346 (smaller beasts re-rendered,
   bases off everywhere, thinner rings, tunnel/Telemachus reasons, sharper cells, Gear designers in the frame). Pipeline: CLAUDE.md split into docs/,
   release/vX.YY branches + main, flavius.sh beta, deploy-script CI, testlist CI (six tests that never ran now run), flaky tests hardened. No server change.
+
+- **v1.04** the Manager season rework (tools/plans/v104/NOTES.md, three betas): season shape 348 (byes 4 & 12, Rivalry Week 11, the Superbus
+  playoffs: projected bracket from week 9, seeds 1–4 rest a round, final in week 12), careers 349 (ages 18–30, five career kinds, peaks and fades),
+  roster 350 (cap, starters, layout), Infirmary + Recovery back in the ward with Medicus hours 351; beta fixes: roster 352, ludus + letters 353,
+  Infirmary/Yard + Capsarius 354, Superbus entry guards + one bracket 355, board floor marks under the figures 356 + 359, wooing on the
+  Recruiter's hours + ward/yard/letter fixes 357, Play Now row + regal bracket button + playoff Match Week 358. flavius.sh 7 (beta self-update).
+  No server change.

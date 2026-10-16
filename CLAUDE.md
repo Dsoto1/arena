@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.03** (v1.02 live). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.04** (release/v1.04 shipped 2026-10-16). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -180,7 +180,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -198,14 +198,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-  house (316, server). Version history tab "91–1.0" (187 hist90Num = major×100 + minor). Server changed — flavius.sh release deploys it.
-- **v1.01** steadier and tidier (his PDF notes M1–M45 + G1–G22, answers 1a–10a): Manager UI 317, Infirmary loop + Medicus hours 318, Manager rules 319,
-  windows + city 320, board 321 (first fan of each gladiator holds his flag, his call 2026-10-14), online kits + security 322, 3D attack variety / walk /
-  projectiles 323, two Domus records 324; zoom pre-baked while idle 330-v101zoom2, sandstone Lobby ↻ 331; FOUNDATIONS: replay harness 325, src/ by topic,
-  question port 326 (protocol 9), log + pauses 327, effects as data 328, rules in Node (tools/node), Ranked verification Lambda (log only, VERIFY#/AUDIT#,
-  build pinning 329), Manager morph 330; pickFavorite no longer sorts with rand() (cross-browser desync). Server + full stack update (new VerifyFn) —
-  flavius.sh release deploys it. Site play.html "New in vX" now written by release.sh (tools/sitewhatsnew.js).
-
 - **v1.02** his v1.01 notes answered (tools/plans/v102/NOTES.md, workstreams A–L): Manager fixes 332 (+ M21 starters in gold, M22 lent-out list), Manager
   changes 333 (podium league points, recruiting costs, the Council simplified, File away), UI fixes 334, Studio designer frame 335, 3D tokens 80% of a
   pillar + weapon grip in the poser 336 (beasts re-rendered in proportion, lions 0.8), resume after refresh on the same tab 337, Play Now drafts +
@@ -218,3 +210,10 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   review, rivalry week locked, roster cap 15, loan asks shown as loans, Treated ✓, Vulso via the Recruiter, tiles), board 346 (smaller beasts re-rendered,
   bases off everywhere, thinner rings, tunnel/Telemachus reasons, sharper cells, Gear designers in the frame). Pipeline: CLAUDE.md split into docs/,
   release/vX.YY branches + main, flavius.sh beta, deploy-script CI, testlist CI (six tests that never ran now run), flaky tests hardened. No server change.
+
+- **v1.04** the Manager season rework (tools/plans/v104/NOTES.md, three betas): season shape 348 (byes 4 & 12, Rivalry Week 11, the Superbus
+  playoffs: projected bracket from week 9, seeds 1–4 rest a round, final in week 12), careers 349 (ages 18–30, five career kinds, peaks and fades),
+  roster 350 (cap, starters, layout), Infirmary + Recovery back in the ward with Medicus hours 351; beta fixes: roster 352, ludus + letters 353,
+  Infirmary/Yard + Capsarius 354, Superbus entry guards + one bracket 355, board floor marks under the figures 356 + 359, wooing on the
+  Recruiter's hours + ward/yard/letter fixes 357, Play Now row + regal bracket button + playoff Match Week 358. flavius.sh 7 (beta self-update).
+  No server change.
