@@ -116,7 +116,7 @@ const R2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
     o.m24.noMoreBorrow=true}
   /* ---- M27 · a full special keeps a filler seat ---- */
   {const sps=n.bouts.map((b,i)=>[b,i]).filter(([b])=>any100Sp(b));sps.forEach(([b])=>{b.any100.rx=null});o.m27={n:sps.length};
-    any100FillAll(w);MGR.tab='night';MGR_REDRAW();await W8(500);o.m27.note=/bump a free-agent filler/.test((document.querySelector('#any100wk')||{}).textContent||'');const allFillers=sps.every(([b])=>b.ents.some(id=>{const g=gById(id);return g&&!g.contract}));o.m27.filler=allFillers;
+    any100FillAll(w);MGR.tab='night';MGR_REDRAW();await W8(500);o.m27.note=/bump a free-agent filler/.test((document.querySelector('#any100wk')||document.querySelector('.mw105list')||{}).textContent||'');const allFillers=sps.every(([b])=>b.ents.some(id=>{const g=gById(id);return g&&!g.contract}));o.m27.filler=allFillers;
     const [sb,si]=sps.find(([b])=>!any100Team(b))||sps[0];const g=ros0.find(x=>!r101Block(x)&&!any100Why(w,sb,x));
     const fee=sb.any100.fee;const c0=m.coin;const rivBefore=sb.ents.filter(id=>{const q=gById(id);return q&&q.contract&&!r101Mine(q)}).slice();
     const r=any100Enter(w,si,g.id,{mgr:m,move:true});o.m27.enter={ok:r.ok,why:r.why||'',fee:c0-m.coin===fee,in:sb.ents.includes(g.id),rivalsKept:rivBefore.every(id=>sb.ents.includes(id)),size:sb.ents.length===boutSize(sb)};
@@ -127,7 +127,7 @@ const R2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   /* ---- M28 · results coin ---- */
   {n.bouts.forEach(b=>{b.rig=null});const c0=m.coin;w.pend=[];const seq=any100Seq(n);for(const i of seq){if(!n.bouts[i].done)await runBoutSim(i)}w.pend=[];
     const hs=n.bouts.filter(b=>b.res&&b.res.house101);o.m28={bouts:hs.length,tot:hs.reduce((a,b)=>a+b.res.house101.tot,0),lines:n.bouts.some(b=>b.res&&b.res.lines.some(l=>/To your house/.test(l)))};
-    MGR.tab='night';MGR_REDRAW();await W8(600);o.m28.cells=document.querySelectorAll('#nightRes .h101').length;o.m28.txt=document.querySelectorAll('#nightRes .h101t').length;
+    MGR.tab='night';MGR_REDRAW();await W8(600);o.m28.cells=document.querySelectorAll('#nightRes .h101,.mw105res .h101').length;o.m28.txt=document.querySelectorAll('#nightRes .h101t,.mw105res .h101t').length; /* v1.05: the results fold into the bout cards (360) */
     o.m28.sum=hs.every(b=>Object.values(b.res.house101.by).reduce((a,v)=>a+v,0)===b.res.house101.tot)}
   /* ---- M37 · the request goes with the week, the review lists it ---- */
   {const f=ros0.find(x=>!x.inj);f.wantFight={week:w.week};f.lastBout=null;const dn=n.bouts.map(b=>b.done);n.bouts.forEach(b=>b.done=false);MGR.tab='ludus';MGR_REDRAW();await W8(500);

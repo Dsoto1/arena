@@ -15,7 +15,7 @@ const RUN=`(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MO
   const ov=()=>{const d=document.documentElement;const B=document.getElementById('mgrBody');return {doc:d.scrollWidth-d.clientWidth,body:B?B.scrollWidth-B.clientWidth:0}};o.ov={};
   /* 1 · the travel strip: home → host */
   const host=LOCATIONS[w.night.loc].n;o.away=m.city!==host;
-  MGR.tab='night';MGR_REDRAW();await W8(300);const tr=document.querySelector('#mgrBody .strip96 .mi100tr');o.strip=!!tr;
+  MGR.tab='night';MGR_REDRAW();await W8(300);const tr=document.querySelector('#mgrBody .strip96 .mi100tr,#mgrBody .mw105ban .mi100tr') /* v1.05: in the banner (360) */;o.strip=!!tr;
   o.stripHost=!!tr&&!!tr.querySelector('.k-host')&&(tr.querySelector('svg').getAttribute('aria-label')||'').includes(host);o.stripRoute=!!tr&&!!tr.querySelector('path');o.ov.night=ov();
   /* 2 · a world letter names a city */
   sendLetter(w,{key:'consil-'+w.week,from:'the Consilium',seal:'🏛',title:'Counsel for Capua: hold our fighters back',body:'<p>Riots in Capua.</p>'});

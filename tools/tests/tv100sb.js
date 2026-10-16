@@ -62,9 +62,9 @@ await pg.evaluate(()=>{for(let i=0;i<3&&CUR_MODAL;i++)CUR_MODAL.done(CUR_MODAL.c
 await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));menuHide();openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_();w.welc99=1;
   for(let k=0;k<5&&CUR_MODAL;k++){CUR_MODAL.done(null);await W8(200)}menuHide();openManager('night');await W8(1000);MGR.view=null;MGR.tab='night';MGR_REDRAW();await W8(600)});
 await until(pg,()=>document.querySelector('#mgrBody [data-mg="endask"]'));
-const M=await pg.evaluate(()=>({end:__slab(document.querySelector('#mgrBody .tabrow [data-mg="endask"]')),sim:__slab(document.querySelector('#mgrBody [data-mg="simall"]'))}));
+const M=await pg.evaluate(()=>({end:__slab(document.querySelector('#mgrBody .tabrow [data-mg="endask"]')),sim:__slab(document.querySelector('#mgrBody [data-mg="simall"]')),box:!!document.querySelector('#mgrBody .mw105wk [data-mg="simall"]')}));
 ok(M.end&&/svg|gradient/.test(M.end.bg)&&M.end.h>=40,'Manager ⏭ End the week = slab '+JSON.stringify(M.end));
-ok(M.sim&&/linear-gradient/.test(M.sim.bfbg)&&M.sim.h>=40,'⚡ Simulate Match Week = porphyry slab '+JSON.stringify(M.sim));
+ok(M.box /* v1.05: Simulate the rest is a plain button in the Your week box (his mock-up, 360) */||(M.sim&&/linear-gradient/.test(M.sim.bfbg)&&M.sim.h>=40),'⚡ Simulate Match Week = porphyry slab '+JSON.stringify(M.sim));
 await shot(pg,'manager_1440');
 await pg.evaluate(()=>{for(let i=0;i<3&&CUR_MODAL;i++)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null)});await pg.waitForTimeout(600);
 /* ---- 6 · Online room (mock): ▶ Start = porphyry m, Close lobby = carbon ---- */

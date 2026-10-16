@@ -1,0 +1,127 @@
+/* tv105a — v1.05 Match Week rework (360-v105mw): N2 layout (slim banner with day tabs + "Your week at <city>" box without the treasury, bout cards that
+   turn into result cards, #nightRes folded, fee shown once), B35d stake in the Bet button (window: 5·10·25·50, Place bet → 17's bet), picks 1 (HP/fatigue/
+   morale on the row), 2 (the next bout opens itself), 3 (what changed only in the week's summary), 4 (one Watch button), 5 (rival chip), 6 (value/trap + best
+   value from yourRead105), 7 (greyed buttons say why), 8 (Superbus spot in the banner), 9 (phone cards); "Your read" column; mw1 (set off = reminders window,
+   Recruiting locks on the road, the End-the-week confirm names only the bouts it simulates); kill switch flavius_v105aoff=1. */
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const out={};
+const open=async(off,vw)=>{const pg=await b.newPage({viewport:vw||{width:1440,height:1000}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+  await pg.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');if(o)localStorage.setItem('flavius_v105aoff','1')},off?1:0);
+  await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});return pg};
+const mgr=async pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();for(let i=0;i<40&&typeof newWorld!=='function';i++)await W8(100);await W8(500);
+    newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_(),pm=me();w.welc99=1;pm.coin=9000;w.train='off';w.tplan=null;w.pend=[];
+    for(let k=0;k<5&&CUR_MODAL;k++){CUR_MODAL.done(null);await W8(200)}
+    window.W8=W8;window.ENS=async()=>{const el=document.querySelector('#mgrBody');if(!el||!el.offsetParent){menuHide();openManager(MGR.tab||'ludus');await W8(900)}};
+    window.NIGHT=async()=>{await ENS();MGR.tab='night';MGR.confirmEnd=false;MGR_REDRAW();await W8(700)};
+    window.SIMS=async()=>{const w=W_();for(let k=0;k<w.night.bouts.length;k++)if(!w.night.bouts[k].done)await runBoutSim(k)};
+    window.PW=async(keep,pre)=>{const w=W_(),pm=me();if(!keep)for(const g of rosterOf(pm)){g.inj=null;g.contract.weeks=Math.max(g.contract.weeks,30)}
+      if(w.special&&!w.special.done)await specAutoRun();await SIMS();if(pre)pre();
+      let guard=0;while((w.pend||[]).length&&guard++<30){const P=w.pend[0];try{if(P.t==='thumb')settlePending(0,null,{d6:6,d12:12});else if(P.t==='blood')settlePending(0,'let');else if(P.t==='levy')settlePending(0,'march');else settlePending(0,'stay')}catch(e){w.pend.shift()}}
+      const hold=setInterval(()=>{if(CUR_MODAL)CUR_MODAL.done(null)},150);let rr;try{rr=await endWeek()}finally{clearInterval(hold)}await W8(150);return rr};
+    window.RM_MARK=typeof ERR92!=='undefined'?ERR92.n:0;menuHide();openManager('ludus');await W8(600);MGR.view=null});
+const ev=async(pg,f,a)=>{try{return await pg.evaluate(f,a)}catch(e){console.log('EVAL FAIL',String(e.message||e).slice(0,500));console.log(JSON.stringify(out,null,1).slice(0,6000));await b.close();process.exit(1)}};
+
+const pg=await open(false);await mgr(pg);
+/* an away week with fighters on the card (the road paid, not yet set off) */
+out.prep=await ev(pg,async()=>{const w=W_();let g=0;const away=()=>{const t=travelState(w);return t&&t.cost>0&&t.paid&&!t.gone&&!w.night.bye&&!w.night.selfBye&&w.night.bouts.some(b=>b.ents.some(id=>{const x=gById(id);return x&&x.contract&&x.contract.mgr===me().id}))};
+  while(!away()&&g++<6)await PW();w.pend=[];await NIGHT();return {away:away(),wk:wkOf(w.week),need:mw105NeedOff(w)}});
+ok(out.prep.away&&out.prep.need,'an away week, not set off '+JSON.stringify(out.prep));
+
+/* ---- N2 layout ---- */
+out.l=await ev(pg,()=>{const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];const w=W_();const n=w.night;const ban=q('#mgrBody .roomhd.b73-night.mw105ban');const box=q('.mw105ban .mw105wk');
+  const arts=qa('#mgrBody .mw105list > article.mw105b');const open=arts.filter(a=>a.classList.contains('open'));const nx=mw105Seq(n).find(i=>!n.bouts[i].done);
+  const ob=open[0]&&open[0].querySelector('.mw105bd');
+  return {ban:!!ban,box:!!box,boxTxt:box?box.textContent:'',city:box?box.querySelector('.mw105wh b').textContent:'',tabsIn:qa('.mw105ban [data-bt85]').length,arts:arts.length,bouts:n.bouts.length,
+    open:open.map(a=>+a.dataset.mw105b),nx,stake:qa('#mgrBody .bstake').length,res:!!q('#nightRes'),any:!!q('#any100wk'),purseTile:ob?ob.querySelectorAll('.bstat.purse').length:-1,
+    feeTiles:ob?[...ob.querySelectorAll('.bstat')].filter(x=>/fee/i.test(x.textContent)).length:-1,read:ob?[...ob.querySelectorAll('th')].map(x=>x.textContent.trim()):[],
+    watch:ob?ob.querySelectorAll('[data-mg="watch"],[data-mg="spect"]').length:-1,stakeIn:!!(ob&&ob.querySelector('input[type="hidden"][id^="mgStake"]')),
+    cond:qa('.mw105b.mine .a1ev .mw105c').length,mineArts:qa('.mw105b.mine').length,hidden:arts.filter(a=>!a.classList.contains('open')).every(a=>a.querySelector('.mw105bd').hidden),
+    banH:ban?ban.getBoundingClientRect().height:0,off:!!q('.mw105wk [data-mw105="off"]'),pageX:document.documentElement.scrollWidth>window.innerWidth+1}});
+ok(out.l.ban&&out.l.box&&!/Treasury|treasury/.test(out.l.boxTxt)&&/ at /.test(out.l.city)&&out.l.tabsIn>=3,'N2 banner + Your week box without the treasury, day tabs in the banner '+JSON.stringify(out.l));
+ok(out.l.arts===out.l.bouts&&out.l.open.length===1&&out.l.open[0]===out.l.nx&&out.l.hidden,'one card per bout, the next bout open, the rest closed '+JSON.stringify(out.l));
+ok(out.l.stake===0&&out.l.stakeIn,'B35d no full-width stake row '+JSON.stringify(out.l));
+ok(!out.l.res&&!out.l.any,'#nightRes / #any100wk folded into the cards '+JSON.stringify(out.l));
+ok(out.l.purseTile===0&&out.l.feeTiles===0,'purse + fee shown once (on the row) '+JSON.stringify(out.l));
+ok(out.l.read.includes('Your read')&&!out.l.read.includes('Your scouts'),'"Your read" column '+JSON.stringify(out.l.read));
+ok(out.l.watch===1,'pick 4: one Watch button '+JSON.stringify(out.l));
+ok(out.l.mineArts>0&&out.l.cond===out.l.mineArts,'pick 1: HP / fatigue / morale on your rows '+JSON.stringify(out.l));
+ok(out.l.off&&!out.l.pageX,'Set off button, no page scroll '+JSON.stringify(out.l));
+
+/* ---- picks 5 + 6: rival chip, the read with value / trap ---- */
+out.r=await ev(pg,async()=>{const w=W_(),n=w.night;const i=mw105Seq(n).find(k=>!n.bouts[k].done);const b=n.bouts[i];const m=me();
+  const riv=b.ents.map(gById).find(g=>g&&g.contract&&g.contract.mgr!==m.id);const rm=riv&&mgrById(riv.contract.mgr);if(rm)rm.rivalry=60;
+  const bk=boutProbs(b,'book');const lo=b.ents.findIndex((id,k)=>bk[k]<0.5);const tid=b.ents[lo];const hid=b.ents.find((id,k)=>k!==lo&&bk[k]>0.15);
+  window.yourRead105=g=>g.id===tid?{est:0.9,lo:0.8,hi:0.95,rough:true,src:'sand'}:g.id===hid?{est:0.01,rough:false,src:'dossier'}:null;await NIGHT();
+  const ob=document.querySelector('.mw105b.open .mw105bd');const r={rv:ob.querySelectorAll('.mw105rv').length,val:ob.querySelectorAll('.mw105vb.good').length,trap:ob.querySelectorAll('.mw105vb.bad').length,best:ob.querySelectorAll('.mw105bv').length,
+    rough:[...ob.querySelectorAll('.mw105rd.rough')].map(x=>x.textContent),none:[...ob.querySelectorAll('td')].filter(x=>x.textContent.trim()==='no read').length};
+  delete window.yourRead105;await NIGHT();r.after=document.querySelectorAll('.mw105b.open .mw105bv').length;return r});
+ok(out.r.rv>=1,'pick 5: rival chip '+JSON.stringify(out.r));
+ok(out.r.val===1&&out.r.trap===1&&out.r.best===1&&out.r.rough[0]==='~90%'&&out.r.none>=1,'pick 6: value / trap / best value from yourRead105, rough read, no read '+JSON.stringify(out.r));
+ok(out.r.after===0,'pick 6: no read API = no best-value badge '+JSON.stringify(out.r));
+
+/* ---- B35d: the stake window ---- */
+const bet=pg.locator('.mw105b.open tr.me [data-mg="bet"]').first();await bet.click();await pg.waitForTimeout(250);
+out.pop=await ev(pg,()=>{const p=document.querySelector('.mw105pop');return p?{q:[...p.querySelectorAll('[data-mw105q]')].map(x=>x.textContent),txt:p.textContent}:null});
+ok(out.pop&&out.pop.q.join(',')==='5,10,25,50'&&/pays/.test(out.pop.txt)&&/Place bet/.test(out.pop.txt),'B35d stake window '+JSON.stringify(out.pop));
+await pg.click('.mw105pop [data-mw105q="25"]');await pg.click('.mw105pop [data-mw105p="5"]');
+out.pv=await ev(pg,()=>document.querySelector('.mw105pop output').textContent);
+await pg.click('.mw105pop [data-mw105go]');await pg.waitForTimeout(400);
+out.bet=await ev(pg,()=>{const w=W_(),n=w.night;const i=mw105Seq(n).find(k=>!n.bouts[k].done);const bb=n.bouts[i].bets;return {bets:bb.map(x=>x.stake),pop:!!document.querySelector('.mw105pop'),lab:[...document.querySelectorAll('.mw105b.open .mw105on')].map(x=>x.textContent)}});
+ok(out.pv==='30'&&out.bet.bets.length===1&&out.bet.bets[0]===30&&!out.bet.pop&&out.bet.lab[0]==='Bet 30','B35d Place bet → 30 on him, the button says so '+JSON.stringify([out.pv,out.bet]));
+await bet.click().catch(()=>{});await pg.waitForTimeout(150);await pg.keyboard.press('Escape');out.esc=await ev(pg,()=>!document.querySelector('.mw105pop'));ok(out.esc,'Escape closes the window');
+
+/* ---- mw1: set off from the open bout's Simulate ---- */
+await pg.click('.mw105b.open [data-mg="sim"]');await pg.waitForTimeout(400);
+out.ask=await ev(pg,()=>{const a=document.querySelector('.ask76bg');return a?{t:a.textContent,li:a.querySelectorAll('li').length}:null});
+ok(out.ask&&/Set off/.test(out.ask.t)&&/Recruiting/.test(out.ask.t)&&out.ask.li>=1,'mw1 the set-off window lists what is undone '+JSON.stringify(out.ask));
+await pg.click('.ask76bg [data-ask76="1"]');await pg.waitForTimeout(2500);
+out.go=await ev(pg,async()=>{await ENS();if(MGR.tab!=='night')await NIGHT();const w=W_(),n=w.night;const S=mw105Seq(n);const done=S.filter(i=>n.bouts[i].done);const nx=S.find(i=>!n.bouts[i].done);
+  const open=[...document.querySelectorAll('.mw105b.open')].map(a=>+a.dataset.mw105b);const a0=document.querySelector(`.mw105b[data-mw105b="${done[0]}"]`);
+  return {gone:!!n.travel.gone,locked:roadLocked76(w),done,open,nx,res:!!(a0&&a0.querySelector('.mw105res .mw105pod li')),tag:a0?a0.querySelector('.mw105rt')?.textContent:'',chip:[...document.querySelectorAll('.mw105chip')].map(x=>x.textContent).join('|'),sum:!!document.querySelector('.mw105sum')}});
+ok(out.go.gone&&out.go.locked&&out.go.done.length===1,'mw1 confirmed: the house set off, the bout ran '+JSON.stringify(out.go));
+ok(out.go.res&&/Won by|No winner/.test(out.go.tag)&&out.go.open.includes(out.go.done[0])&&out.go.open.includes(out.go.nx),'the card turned into its result, the next bout opened itself '+JSON.stringify(out.go));
+ok(/Recruiting shut/.test(out.go.chip)&&!out.go.sum,'banner: road lock chip; no "what changed" until all are fought '+JSON.stringify(out.go));
+
+/* ---- mw1: Recruiting locks on the road ---- */
+out.rec=await ev(pg,async()=>{const w=W_();MGR.tab='recruit';MGR_REDRAW();await W8(700);const h0=rec99Left(w);const a=document.querySelector('#mgrPane [data-rec98a]');const note=!!document.querySelector('#mgrPane .mw105rl');
+  const dis=a?!!a.dataset.dis:false;if(a)a.click();await W8(400);const h1=rec99Left(w);const chip=(document.querySelector('.mtabs [data-id="recruit"] .hr99')||{}).textContent;return {note,dis,h0,h1,chip,has:!!a}});
+ok(out.rec.note&&out.rec.has&&out.rec.dis&&out.rec.h0===out.rec.h1,'mw1 Recruiting shut on the road (note, reasons, no hours spent) '+JSON.stringify(out.rec));
+
+/* ---- mw1: End the week with bouts left names them; no ludus reminders ---- */
+out.end=await ev(pg,async()=>{await NIGHT();const w=W_();w.pend=[];w.hours=5;MGR_REDRAW();await W8(400);const e=document.querySelector('.mw105wk [data-mw105="end"]');const dis=!!(e&&e.dataset.dis);e.click();await W8(600);
+  const c=document.querySelector('.endconfirm');return {dis,c:!!c,sim:c?(c.querySelector('.mw105sim')||{}).textContent:'',skip:c?!!c.querySelector('.skiplist'):null,hrs:c?/You still have/.test(c.textContent):null,wk:w.week}});
+ok(!out.end.dis&&out.end.c&&/Simulated first/.test(out.end.sim)&&out.end.skip===false&&out.end.hrs===false,'mw1 the End-the-week confirm names only the bouts it simulates '+JSON.stringify(out.end));
+await pg.click('.endconfirm [data-mg="endweek"]');await pg.waitForTimeout(500);
+out.end2=await ev(pg,async()=>{const w=W_();for(let i=0;i<60&&(MGR.busy||w.night.bouts.some(b=>!b.done));i++)await W8(250);await W8(800);
+  const n=w.night;return {wk:w.week,allDone:n.bouts.every(b=>b.done),pend:(w.pend||[]).length,tab:MGR.tab}});
+ok(out.end2.wk>out.end.wk||(out.end2.pend>0&&out.end2.tab!=='paper'),'End the week simulated the rest, then ended (or stopped on a verdict) '+JSON.stringify(out.end2));
+
+/* ---- pick 3 + 7: a fought week ---- */
+out.wk=await ev(pg,async()=>{const w=W_();let g=0;const fresh=()=>w.night&&!w.night.bye&&w.night.bouts.length&&!w.night.bouts.some(b=>b.done);while(!fresh()&&g++<4)await PW();
+  await SIMS();await NIGHT();const sm=document.querySelector('.mw105sum');const pend=(w.pend||[]).length;const e=document.querySelector('.mw105wk [data-mw105="end"]');
+  return {sum:!!sm,sumTxt:sm?sm.textContent:'',arts:document.querySelectorAll('.mw105b.done .mw105res').length,n:w.night.bouts.length,pend,endDis:e?e.dataset.dis||'':'',note:(document.querySelector('.mw105nt')||{}).textContent,
+    why:[...document.querySelectorAll('.mw105list [data-dis]')].every(x=>x.querySelector('.mw105y'))}});
+ok(out.wk.sum&&/what changed/.test(out.wk.sumTxt)&&out.wk.arts===out.wk.n,'pick 3: what changed once all are fought; every card a result '+JSON.stringify(out.wk));
+ok(!out.wk.pend||(/Settle/.test(out.wk.endDis)&&/Settle/.test(out.wk.note)),'pick 7: End the week says why '+JSON.stringify(out.wk));
+ok(out.wk.why,'pick 7: every greyed button in the cards shows its reason '+JSON.stringify(out.wk));
+
+/* ---- pick 9: phone ---- */
+out.ph=await ev(pg,async()=>{await PW();await NIGHT();return 1});
+await pg.setViewportSize({width:390,height:900});await pg.waitForTimeout(700);
+out.ph=await ev(pg,()=>{const tr=[...document.querySelectorAll('.mw105b.open table.mw105tb tr')].filter(x=>!x.querySelector('th'));const box=document.querySelector('.mw105wk');const ban=document.querySelector('.mw105ban');
+  return {rows:tr.length,grid:tr.length?getComputedStyle(tr[0]).display:'',lab:tr.length?getComputedStyle(tr[0].children[2],'::before').content:'',boxW:box?box.getBoundingClientRect().width:0,banW:ban?ban.getBoundingClientRect().width:0,pageX:document.documentElement.scrollWidth>window.innerWidth+1}});
+ok(out.ph.rows>0&&out.ph.grid==='grid'&&out.ph.lab!=='none'&&!out.ph.pageX&&out.ph.boxW>out.ph.banW*0.8,'pick 9: phone betting cards, box full width, no page scroll '+JSON.stringify(out.ph));
+await pg.setViewportSize({width:1440,height:1000});
+
+/* ---- pick 8: a Superbus week (your house seed #1, semifinal) + B35d there ---- */
+out.po=await ev(pg,async()=>{const w=W_();let g=0;while(wkOf(w.week)<9&&g++<12)if(!await PW())break;await PW();await PW();await SIMS();msp(me()).pts=9999;await PW();await PW();
+  await NIGHT();const c=document.querySelector('.mw105ban .mw105po');return {ph:OFF104.phase(w),chip:c?c.textContent:'',br:c?c.dataset.mw105:'',btns:document.querySelectorAll('#mgrBody [data-po104="bracket"]').length,stake:document.querySelectorAll('#mgrBody .bstake').length,arts:document.querySelectorAll('.mw105b').length,n:w.night.bouts.length,tree:!!document.querySelector('#mgrBody .v104top')}});
+ok(out.po.ph==='sf'&&/seed #1/.test(out.po.chip)&&/Semifinal/.test(out.po.chip)&&out.po.br==='tree'&&out.po.btns===0,'pick 8: the Superbus spot in the banner '+JSON.stringify(out.po));
+ok(out.po.stake===0&&out.po.arts===out.po.n&&out.po.tree,'B35d playoff bouts: no stake row; cards; the bracket tree stays '+JSON.stringify(out.po));
+
+/* ---- kill switch ---- */
+const off=await open(true);await mgr(off);
+out.off=await ev(off,async()=>{await NIGHT();return {ban:document.querySelectorAll('.mw105ban').length,stake:document.querySelectorAll('#mgrBody .bstake').length,wk:!!document.querySelector('#any100wk'),need:mw105NeedOff(W_())}});
+ok(out.off.ban===0&&out.off.stake>0&&out.off.wk&&!out.off.need,'kill switch flavius_v105aoff=1 '+JSON.stringify(out.off));
+ok(!(await pg.evaluate(()=>typeof errNew92==='function'?errNew92(window.RM_MARK||0).length:0)),'no new 00c errors');
+console.log('ERRS',JSON.stringify(errs));if(miss.length){console.log('MISS',JSON.stringify(miss,null,1));await b.close();process.exit(1)}
+console.log('OK tv105a');await b.close();process.exit(errs.length?1:0)})();
