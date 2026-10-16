@@ -138,3 +138,11 @@ FEATURES (v1.05, own release):
   withdrawing" for sb104 bouts — some picker still offers it (check 296 any100 "Enter a fighter ▾", the specials picker, 17's classic bout
   picker, 350's ⋯ "bout" menu, drag to a bout). Fix: a sb104 bout takes only the houses the bracket put in it (one fighter each, chosen on
   the playoff card); every other entry path refuses it with the reason ("Your house is out of the Superbus" / "not in this round"). Test it.
+- B23 the off-season is easy to miss: the Acta Diurna opens first and covers it. v1.04 fix: the off-season page opens FIRST (the Acta after,
+  or as its own tab on that page).
+- B24 Acta Diurna after the final reads "week 11, edition 12 of 12" — 348's frozen playoff weeks keep w.week at 11. Fix the masthead:
+  name the playoff editions ("Superbus · Round 1 / Semifinals / Final") and the off-season edition, not "week 11".
+- N4 (his idea, 2026-10-16) THE OFF-SEASON as a formal end of the season — today: a few summaries + the renewals list, and season N+1
+  starts at once. Lead's proposal sent: "Winter quarters" (Hiberna) + Saturnalia, a stepper of rooms that gathers the season-level systems
+  (awards night, the Quaestor's accounts, Council review + advisor promotion, Renown/perks, facilities, personnel/contracts/rudis, the
+  winter market of tirones, a winter training camp, next season's schedule + goals) and takes that busywork OUT of the weekly tasks/letters.
