@@ -12141,7 +12141,7 @@ function draw() {
         ctx.stroke();
         ctx.setLineDash([]);
       }
-      for (const [k, h] of HL) if (h.t === 'atk' || h.t === 'rete' || h.t === 'catk') {
+      for (const [k, h] of HL) if ((h.t === 'atk' || h.t === 'rete' || h.t === 'catk') && !(typeof fl104HlDone === 'function' && fl104HlDone(k))) { /* v1.04 B32: 359's floor pass already drew a ring under a piece */
         const r = Math.floor(k / N),
           c = k % N,
           m = center(r, c);
@@ -28482,7 +28482,7 @@ function truceWho(p){const C=CLASSES[p.cls]||{};const col=C.color||p.color||'#cc
 function truceViewer(){if(!S||!S.players)return null;const c=cur();if(c&&!c.cpu)return c;const hs=S.players.filter(p=>!p.cpu&&p.alive);return hs.length===1?hs[0]:null}
 {const base=drawPlayer;drawPlayer=function(player){const r=base.apply(this,arguments);
   try{const v=truceViewer();if(v&&v!==player&&player.alive&&!player.exited&&inTruce(v,player)){const m=center(player.r,player.c);
-    ctx.save();ctx.setLineDash([5,4]);ctx.strokeStyle=v.color||'#fff';ctx.lineWidth=2;ell(m.x,m.y+TW*0.03,TW*0.42,TW*0.21);ctx.stroke();ctx.setLineDash([]);
+    ctx.save();if(!(typeof fl104Has==='function'&&fl104Has(player,128))){ctx.setLineDash([5,4]);ctx.strokeStyle=v.color||'#fff';ctx.lineWidth=2;ell(m.x,m.y+TW*0.03,TW*0.42,TW*0.21);ctx.stroke();ctx.setLineDash([])}/* v1.04 B32: 359 paints the ring under the figure */
     const y=m.y-TW*1.55;ctx.fillStyle='rgba(255,255,255,.92)';ctx.beginPath();ctx.arc(m.x+TW*0.28,y,TW*0.15,0,Math.PI*2);ctx.fill();ctx.strokeStyle=v.color||'#888';ctx.lineWidth=1.5;ctx.stroke();
     ctx.font=`${Math.round(TW*0.19)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🕊',m.x+TW*0.28,y+1);ctx.restore()}}catch(e){}
   return r}}
@@ -75247,7 +75247,8 @@ function floor104(alphaFor){if(FL104.off||HEADLESS||!S||typeof ctx==='undefined'
   try{if(typeof isChariot==='function'&&isChariot())return;
     const ev=EV(),teams=!!(ev&&(ev.teams||ev.coop)),curP=S.over?null:S.players[S.cur];
     ctx.save();
-    if(!DRAW_EMPTY)for(const p of S.players){if(!p.alive||p.exited||p.underground||p._onlSc||p._onlTok)continue;if(swimming(p)||(p.ch&&p.ch.mounted))continue;if(fl104Moving(p,false))continue;
+    if(!DRAW_EMPTY)for(const p of S.players){if(!p.alive||p.exited||p.underground||p._onlSc||p._onlTok)continue;if(swimming(p)||(p.ch&&p.ch.mounted))continue;let mo=null;if(fl104Moving(p,false)){mo=typeof fl104Offs==='function'?fl104Offs(p,false):null;if(!mo)continue} /* v1.04 B31 (359): a moving piece's marks go under it too, shifted by its own offset */
+      if(mo){ctx.save();ctx.translate(mo.dx,mo.dy)}
       const m=center(p.r,p.c);ctx.globalAlpha=alphaFor?alphaFor('player',p.r,p.c):1;let bits=0;
       const sk=standeeKeyCls(p.cls),useFig=wantFigure(hasCustomToken(p.cls)),fig=useFig?tokenImg(tokenForP(p)):sk&&standeesOn()&&standeeImg(sk);
       const rim=fig?fl104RimAbs(p):null,hasRim=!!rim;
@@ -75261,17 +75262,74 @@ function floor104(alphaFor){if(FL104.off||HEADLESS||!S||typeof ctx==='undefined'
         else fl104Ring(m.x,m.y+TW*0.03,TW*0.3,TW*0.15,p.color,3);
         if(teams)fl104Ring(m.x,m.y+TW*0.03,TW*0.36,TW*0.18,teamColor(p.team),1.5);bits|=2;
         bits|=fl104Shadow(p,m)}
+      if(mo)ctx.restore();
       if(bits){FL104.done.set(p,bits);n++}}
-    if(!DRAW_EMPTY)for(const q of S.npcs){if(!q.alive||q.out||q.t==='zora')continue;if(fl104Moving(q,true))continue;
-      const m=center(q.r,q.c),T=NPCT[q.t];if(!T)continue;ctx.globalAlpha=alphaFor?alphaFor('npc',q.r,q.c):1;let bits=0;
+    if(!DRAW_EMPTY)for(const q of S.npcs){if(!q.alive||q.out||q.t==='zora')continue;let mo=null;if(fl104Moving(q,true)){mo=typeof fl104Offs==='function'?fl104Offs(q,true):null;if(!mo)continue}
+      const m=center(q.r,q.c),T=NPCT[q.t];if(!T)continue;if(mo){ctx.save();ctx.translate(mo.dx,mo.dy)}ctx.globalAlpha=alphaFor?alphaFor('npc',q.r,q.c):1;let bits=0;
       const big=['tholo','lion','bear','commodus'].includes(q.t)||T.custom&&T.hp>=12,rx=TW*(big?0.27:0.22);
       if(q.tamedBy!=null&&S.players[q.tamedBy]){fl104Ring(m.x,m.y,rx*1.35,rx*0.68,S.players[q.tamedBy].color,2.5);bits|=4}
       if(q.alive&&npcStats(q).state==='Raged'){fl104Ring(m.x,m.y,rx*1.25,rx*0.62,'rgba(230,70,50,.85)',2);bits|=8}
-      bits|=fl104Shadow(q,m);if(bits){FL104.done.set(q,bits);n++}}
+      bits|=fl104Shadow(q,m);if(mo)ctx.restore();if(bits){FL104.done.set(q,bits);n++}}
     ctx.restore()}
   catch(e){console.error(e);FL104.done.clear()}
   finally{FL104.st.pieces+=n;FL104.st.ms+=performance.now()-t0;FL104.st.last={n,done:FL104.done.size}}}
 function floor104End(){FL104.active=false;FL104.done.clear()}
+/* =====================================================================
+   359-v104fixb2.js — v1.04 beta-2 fixes B31 + B32 (B25 follow-up): ground marks still painted OVER a figure. Kill switch:
+   localStorage flavius_v104b2off=1 (back to 356's pass as shipped in beta 1). Test: tv104l.
+   B31 ROOT CAUSE: 356's floor pass skipped every piece it judged "moving" (fl104Moving: a glide between tiles 311/an100Glide, a shove 294/PUSH100,
+   a beast's walk). Such a piece drew everything inline as in v1.03 — including 311/222's seat-colour rim ARC, drawn after the figure (over the
+   shins), and the gold turn ring beside it. The active piece is the one that walks, so the beta showed the gold ring/rim band over it.
+     FIX: the pass now paints a moving piece's marks too — shifted by the piece's own screen offset (`fl104Offs`: the glide's A→B delta, the shove's
+     dx/dy), under every figure. The drawers then skip them as for a still piece (fl104Has), so there is no inline arc left to cross the legs.
+   B32 ROOT CAUSE: other marks painted around a piece's cell AFTER its figure:
+     • the attack / net / catk target rings (TB.ring, 'overlays' layer) over the target's shins,
+     • the Guide's suggestion-tile ring (29-guide, 'overlays' layer),
+     • the truce dashed ring (78-v60 wrapper, after the figure).
+     FIX: when a piece stands on that tile the same ring is painted in the floor pass, before any figure (bit 128 = the truce ring; the overlay
+     loop / drawSugTile skip what the pass drew: `fl104HlDone`, the drawSugTile wrapper). A ring on an empty tile stays in 'overlays'. Rings that
+     belong ABOVE a piece stay above it: the pennant, the truce dove badge, the netted / eagle marks, stuck arrows. The colour-blind letter (82-access)
+     is an on-body identifier by design and is left alone.
+   Cost: a handful of ellipses, no layer, no drawImage, no ctx wrapper. Reduce motion / Animations Off: nothing here animates (a still board has no
+   offsets). Deterministic: offsets come from the same glide/shove state the drawers read.
+   ===================================================================== */
+const B2104={off:(()=>{try{return localStorage.getItem('flavius_v104b2off')==='1'}catch(e){return false}})(),hl:new Set(),stamp:-1,sug:-1,inFloor:false};
+/* fl104Offs — the screen offset a moving piece is drawn at (null = unknown: leave it to its own drawers) */
+function fl104Offs(p,isNpc){if(B2104.off||FL104.off)return null;try{let dx=0,dy=0;
+  if(typeof PUSH100!=='undefined'&&(PUSH100.live.has(p)||PUSH100.wob.has(p))){const o=typeof push100At==='function'?push100At(p):null;if(o){dx=o.dx;dy=o.dy}}
+  else if(!isNpc&&typeof AN100!=='undefined'&&AN100.on&&typeof an100On==='function'&&an100On()&&typeof an100Glide==='function'){const g=an100Glide(p);
+    if(g){const A=center(g.r,g.c),B=center(p.r,p.c);dx=A.x-B.x;dy=A.y-B.y}}
+  return {dx,dy}}catch(e){return null}}
+/* fl104HlDone — did the floor pass already paint this highlight's target ring (the overlay loop skips it)? */
+function fl104HlDone(k){return !B2104.off&&B2104.stamp===FL104.st.passes&&B2104.hl.has(k)}
+function b2Piece(r,c){if(!S)return null;for(const p of S.players)if(p.alive&&!p.exited&&!p.underground&&p.r===r&&p.c===c)return p;
+  for(const q of S.npcs)if(q.alive&&!q.out&&q.t!=='zora'&&q.r===r&&q.c===c)return q;return null}
+/* the pass's extras: target rings, the suggestion ring, the truce ring */
+function b2Extra(alphaFor){const ev=EV();ctx.save();
+  try{
+    for(const [k,h] of HL){if(h.t!=='atk'&&h.t!=='rete'&&h.t!=='catk')continue;const r=Math.floor(k/N),c=k%N,who=b2Piece(r,c);if(!who)continue;
+      const m=center(r,c);let rx=TW*0.36;const isP=S.players.includes(who);
+      if(isP){const rm=typeof fl104RimAbs==='function'?fl104RimAbs(who):null;if(rm)rx=Math.max(rx,rm.rx+rm.w+3.5)}else rx=Math.max(rx,TW*0.4);
+      ctx.globalAlpha=1;ctx.strokeStyle=h.t==='rete'?'#62d0c0':TB.ring;ctx.lineWidth=2.5;ell(m.x,m.y,rx,rx*0.5);ctx.stroke();B2104.hl.add(k)}
+    if(S.sugTile&&!S.over&&typeof drawSugTile==='function'&&b2Piece(S.sugTile.r,S.sugTile.c)){B2104.inFloor=true;try{drawSugTile()}finally{B2104.inFloor=false}B2104.sug=FL104.st.passes}
+    if(typeof truceViewer==='function'&&typeof inTruce==='function'){const v=truceViewer();
+      if(v)for(const p of S.players){if(v===p||!p.alive||p.exited||p.underground||!inTruce(v,p))continue;
+        const mo=fl104Moving(p,false)?fl104Offs(p,false):null;if(fl104Moving(p,false)&&!mo)continue;const m=center(p.r,p.c);
+        ctx.save();if(mo)ctx.translate(mo.dx,mo.dy);ctx.globalAlpha=alphaFor?alphaFor('player',p.r,p.c):1;ctx.setLineDash([5,4]);ctx.strokeStyle=v.color||'#fff';ctx.lineWidth=2;
+        let rx=TW*0.42;const rm=typeof fl104RimAbs==='function'?fl104RimAbs(p):null;if(rm)rx=Math.max(rx,rm.rx+rm.w+4);
+        ell(m.x,m.y+TW*0.03,rx,rx*0.5);ctx.stroke();ctx.restore();FL104.done.set(p,(FL104.done.get(p)||0)|128)}}
+  }catch(e){console.error(e)}
+  ctx.restore()}
+{const base=floor104;floor104=function(alphaFor){B2104.hl.clear();B2104.stamp=-1;B2104.sug=-1;const r=base.apply(this,arguments);
+  if(B2104.off||FL104.off||HEADLESS||!S||!FL104.active)return r;
+  try{if(typeof isChariot==='function'&&isChariot())return r;B2104.stamp=FL104.st.passes;b2Extra(alphaFor)}catch(e){console.error(e)}return r}}
+/* the Guide's suggestion ring: painted in the pass when a piece stands on the tile; the overlays call then does nothing (its redraw timer is kept) */
+{const base=drawSugTile;drawSugTile=function(){if(B2104.off||B2104.inFloor)return base.apply(this,arguments);
+  if(B2104.sug===FL104.st.passes&&B2104.sug>=0){try{if(typeof GUIDE!=='undefined'&&!GUIDE.raf&&S&&S.sugTile)GUIDE.raf=requestAnimationFrame(()=>{GUIDE.raf=0;try{if(S&&S.sugTile)draw()}catch(e){}})}catch(e){}return}
+  return base.apply(this,arguments)}}
+/* the records are CELL-RELATIVE (356), so they stay valid after the piece stepped to another tile: the first frame of a move paints the same
+   rim / shadow under the figure instead of falling back to the inline arc (356 dropped them when the tile changed) */
+{const base=fl104Abs;fl104Abs=function(p,r){if(B2104.off)return base.apply(this,arguments);if(!r||!r.ok)return null;const m=center(p.r,p.c);return {x:m.x+r.dx*TW,y:m.y+r.dy*TW}}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

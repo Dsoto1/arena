@@ -3,7 +3,7 @@
    before the first piece is drawn and paints the marks (FL104.st); (2) the rim's front arc (the thing drawn after the figure) is no longer drawn
    for a still piece, and is with the kill switch; (3) no shadow disc is drawn inside the figure drawers once the pass painted it (one disc per piece
    per frame); (4) the order inside a frame: every ring/disc stroke is recorded before the first figure drawImage of a still piece; (5) a moving
-   piece (glide) still draws its marks inline; (6) Reduce motion / Animations Off keep working; (7) kill switch = v1.03 order; (8) draw cost kept. */
+   piece (glide): since 359 (B31) the pass paints its marks too, shifted by the glide offset; (6) Reduce motion / Animations Off keep working; (7) kill switch = v1.03 order; (8) draw cost kept. */
 const http=require('http'),fs=require('fs'),path=require('path');
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
@@ -56,7 +56,7 @@ ok(px.rim&&px.gold===0,'4b no gold ring pixel on the figure column above the fee
 /* ---- 5 · a gliding piece draws inline ---- */
 const gl=await pg.evaluate(async()=>{const p=S.players[1];const bef=FL104.st.pieces;const o=fl104Moving;fl104Moving=(q,n)=>q===p||o(q,n);let r1;const log=[];const o2=drawPlayer;drawPlayer=function(q){if(q===p)log.push(fl104Has(q,2)||fl104Has(q,64)?'skipped':'inline');return o2.apply(this,arguments)};
   try{draw()}finally{fl104Moving=o;drawPlayer=o2}return {log}});
-ok(gl.log[0]==='inline','5a a moving piece is left to its own drawers '+JSON.stringify(gl));
+ok(gl.log[0]==='skipped','5a a moving piece'+"'"+'s marks are painted by the pass too (359, B31): its drawer skips them '+JSON.stringify(gl));
 
 /* ---- 6 · Reduce motion / Animations Off ---- */
 await pg.evaluate(()=>{SETTINGS.anim88='off';SETTINGS.reduceMotion=true;draw()});const B=await probe(pg);
