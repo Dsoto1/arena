@@ -26,7 +26,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=6
+FSH_VER=7
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -209,7 +209,7 @@ free_space(){ rm -rf "$HOME/.npm/_cacache" "$HOME/.cache/pip" "$HOME/server/node
   ls -t "$HOME"/flavius-done/*.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
   local av; av=$(df -Pm "$HOME" | awk 'NR==2{print $4}'); ok "free space in your home: ${av:-?} MB"
   [ "${av:-999}" -ge 250 ] || die "Only ${av} MB free in your home (a release needs ~250 MB). See what is big: du -sh ~/* ~/.[!.]* | sort -h | tail"; }
-fsh_ver(){ sed -n 's/^FSH_VER=\([0-9]*\).*/\1/p' "$1" | head -1; }
+fsh_ver(){ [ -f "$1" ] || { echo 0; return 0; }; sed -n 's/^FSH_VER=\([0-9]*\).*/\1/p' "$1" | head -1; }
 # swap in the release's flavius.sh only when it is newer than this one
 fsh_newer(){ local a b; a=$(fsh_ver "$1"); b=$(fsh_ver "$0"); [ "${a:-0}" -gt "${b:-0}" ]; }
 cmd_clean(){ rm -rf "$SRC" "$HOME"/.flavius-????; free_space; }
@@ -267,7 +267,7 @@ cmd_beta(){ gh_token; local br="${1:-}"
   ok "beta from $br"; rm -rf "$SRC" "$HOME"/.flavius-????; free_space
   local gauth; gauth="Authorization: Basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
   git -c http.extraHeader="$gauth" clone -q --depth 1 --filter=blob:none --sparse --branch "$br" "https://github.com/$REPO.git" "$SRC" || die "git clone failed"
-  git -C "$SRC" -c http.extraHeader="$gauth" sparse-checkout set assets || die "git sparse checkout failed (disk full? run: bash flavius.sh clean)"
+  git -C "$SRC" -c http.extraHeader="$gauth" sparse-checkout set assets tools/deploy || die "git sparse checkout failed (disk full? run: bash flavius.sh clean)"
   ok "fetched $(git -C "$SRC" log -1 --format='%h · %cd' --date=format:'%Y-%m-%d %H:%M')"
   if [ -z "${FLAVIUS_BETA_OK:-}" ] && fsh_newer "$SRC/tools/deploy/flavius.sh"; then cp "$SRC/tools/deploy/flavius.sh" "$0"; ok "flavius.sh updated — continuing with the new one"; FLAVIUS_BETA_OK=1 exec bash "$0" beta "$br"; fi
   say "Beta: page + assets → play-beta/ (the live game, the server and the site are not touched)"
