@@ -98,3 +98,5 @@ FEATURES (v1.05, own release):
   the card keeps the "offer made · answer next week" info (terms + Withdraw), every time it is drawn.
 - B15 Vulso's cart (goes with B11): once the 2 fighters the cart allows are taken, the cart closes by itself and its task/to-do line and
   rail count clear too.
+- B16 Your ludus (the week's to-do / tasks): the "Week N in review" report (202-v91ludus details.rev91, on the desk 270-v99desk) always
+  starts COLLAPSED; the player opens it.
