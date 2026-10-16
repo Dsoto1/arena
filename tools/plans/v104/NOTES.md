@@ -188,3 +188,7 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
   TWO ward plates from one click, and "🛏 Take out" (data-unbed76) still works while that bed-bound treatment is booked. Fix: one click books
   only the treatment clicked (show which plates it uses); while a booked treatment needs the bed, Take out is disabled with the reason
   ("Hygeia's regrowth needs him in bed until the week ends"); to free him, cancel the booking on its plate (hours + coin refunded).
+- B31 Board (beta 2 screenshot, B25 follow-up): the player-in-turn gold ring still shows OVER the active 3D mini (a gladiator on a base,
+  near a pillar, arena edge). 356's floor pass skips pieces it thinks are moving (fl104Moving: PUSH100, beast walks, an100Glide) and
+  those draw inline as before; the active piece may fall into that path (turn animation / idle / just moved) or the base wall + ring are
+  drawn by the 3D figure itself (311). Find which path draws it there and put the active ring under the figure in every case.
