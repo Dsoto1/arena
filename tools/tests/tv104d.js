@@ -89,7 +89,9 @@ const rec=await ev(pg,async()=>{const r={};const w=W_(),pm=me();for(const g of w
   const h=fa[1];h.favd=true;h.interest[pm.id]=99;const ask=askWage(h);let s=of104Send(w,h,{wage:Math.ceil(ask*1.6),weeks:10,bonus:0});r.sent=s.ok&&!h.contract&&!!w.of104[h.id];
   const l=fa[2];l.favd=true;s=of104Send(w,l,{wage:Math.max(1,Math.floor(ask*0.3)),weeks:8,bonus:0});r.sentLow=s.ok;r.dup=!of104Send(w,h,{wage:ask,weeks:8}).ok;
   await GO('recruit');MGR.sel=h.id;MGR.recStep=3;await GO('recruit');r.ui=!!document.querySelector('.pipeline .bd104')&&!!document.querySelector('.pipeline .of104c');
-  const wk0=w.week;await J_END();const m=me();r.signed=!!h.contract&&h.contract.mgr===m.id;r.scared=!l.contract&&!!(l.sc104&&l.sc104[m.id]>=W_().week);r.letter=(W_().letters||[]).some(x=>/^of104_/.test(x.key));
+  /* the yes/no-time roll hashes the world id: pin it so a generous offer to a keen recruit always signs (the roll has its own unit check) */
+  const pm0=W104.of.pMin;W104.of.pMin=1;
+  const wk0=w.week;await J_END();W104.of.pMin=pm0;const m=me();r.signed=!!h.contract&&h.contract.mgr===m.id;r.scared=!l.contract&&!!(l.sc104&&l.sc104[m.id]>=W_().week);r.letter=(W_().letters||[]).some(x=>/^of104_/.test(x.key));
   r.scaredNo=!of104Send(W_(),l,{wage:askWage(l)*2,weeks:8}).ok;
   /* trial after two looks in an earlier week */
   const t=rec98Can(g,'trial');r.trialOk=t[0]||!/earlier/.test(t[1]||'');
