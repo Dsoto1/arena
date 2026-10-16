@@ -211,3 +211,12 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
   (c) the banner's day tabs read "Superbus → Superbus" (two identical chips) — name them by the round and day ("Round 1 · Bout A", "Bout B")
       or show one "Superbus · Round 1" chip;
   (d) the "Your stake" row is the old full-width one on playoff bouts too (N2 moves it into the Bet button in v1.05 — leave for v1.05).
+
+### Beta-2 fixes built (2026-10-16): 357-v104fixm (B26 B27 B28 B30 B33, tv104j) · 358-v104fixp (B29 B34 B35a-c, tv104k) · 359-v104fixb2 (B31 B32, tv104l)
+- B27 base hours = the old coin-era costs: pitch 1 h, note 1 h, gift 2 h, feast 4 h (+1 h each further action on the same recruit that week,
+  scouting and wooing share the count). The 8 h per-recruit cap is NOT applied to wooing. (open: his figures?)
+- B30 the double booking did not reproduce (one Hygeia click = 3 h + 10 coin once; the lit plates are Bed + Hygeia); built: a double click
+  books once, Take out disabled with the reason, cancel on the Hygeia plate refunds and frees the bed.
+- B31 cause: a piece mid-step (glide / shove) skipped 356's floor pass and drew its rings inline at its own depth; now drawn in the pass
+  shifted by its offset. B32: target rings, the Guide's suggestion ring and the truce ring now draw under a piece standing on the tile;
+  his white mark was not reproduced — recheck on beta 3.
