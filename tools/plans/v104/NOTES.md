@@ -68,3 +68,9 @@ FEATURES (v1.05, own release):
   "A private word" (+3 morale). Lead's proposal: remove the Yard's Care (REPLACED by the Care routine in the Baths).
 - B13 the Doctore panel (Volero Asper: level, stars, drills +10%, Yard 0/3, hours with him 0/4; Intensity None/Light/Normal/Hard; Time ±;
   Study the card) → into the Yard banner? and his hours must be LOCKED IN like the fighters' sessions (today P.doc is free to change).
+- His answers (2026-10-16): B12a a (remove the Yard's 🗣 Care; the Baths' Care routine replaces it) · B13a a (Doctore face + summary in the
+  Yard banner; Intensity + Time as the top row of this week's plan; locked by Lock in all) · B13b a (v1.04) · b5: may have been an older
+  career — he starts a fresh one to test.
+- mw1 (his principle): THE WEEK MOVES FORWARD. The first part of the week is all the lanista work (recruit, train, treat, deals); Match Week is
+  only the bouts — nothing back at the ludus. Once the house sets off, Recruiting locks too (with the Yard + Infirmary). v1.05 with N2.
+- N2 mock-up v2 wanted: NOT a new idea — the information Match Week already shows, laid out more elegantly, visually pleasing and easier to read.
