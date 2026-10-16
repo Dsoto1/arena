@@ -165,3 +165,7 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
 - 353-v104fixl (ludus, recruiting, letters, popups): B5 B7 B8 B9 B10 B11 B14 B15 B16 B17 · test tv104f
 - 354-v104fixw (Infirmary + Training Yard): B12 B13 B18 B20 · test tv104g
 - 355-v104fixs (Superbus + off-season + Play Now): B22 B21 B23 B24 B4 B3 · test tv104h
+- B25 Board (his screenshot 2026-10-16): the gold active ring / seat disc under a mini paints OVER the figure's feet and legs (its front arc
+  is drawn after the figure). Fix: every floor mark (seat/active ring, shadow disc, highlight) is drawn in the floor pass BEFORE any figure,
+  so a figure always stands in front of ground marks. Must keep tv91r / tv92p draw cost, Reduce motion, 3D + 2D tokens. → fifth builder
+  356-v104fixb (board) after the first pair.
