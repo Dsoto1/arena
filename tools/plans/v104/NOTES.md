@@ -156,3 +156,5 @@ FEATURES (v1.05, own release):
   (Fescennina), a chariot race (no PvP), a Classic Democritus. All fighters under clemency, free limb regrowth, no league points, no
   lifetime records. Extra houses: 12 houses = the Superbus shape exactly; empty seats → invited free agents (the Superbus rule); Sica's
   Syndicate only as a wildcard in an empty seat (asked: seeding).
+- N4 w4a: the Winter Classic winner gets the Cup + a small purse + morale and loyalty for the whole house + Renown (once x1a exists).
+  Still open: w5 seeding (table / random draw / reverse table).
