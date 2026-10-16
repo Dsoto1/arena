@@ -175,3 +175,7 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
   (minmax(440px, min(540px,46%))), so an empty strip is left right of the ⋯ column (his screenshot, 1 fighter). Fix: the list box sizes to
   its rows (fit-content, with the 440 px floor for the narrow layout only) and the selected-gladiator side takes the rest; header + group
   rows span the same width.
+- B27 Recruiting hours, his answer h1a (2026-10-16): keep the two pools (Recruiter's hours: scouting, trial; the lanista's own hours: pitch
+  1 h, private note 1 h, gift 2 h + coin, visit 4 h, Keeping him) but every recruiting button shows its cost AND which pool pays
+  ("1 h · yours" / "2 h · Recruiter"); 351's +1 h for each further action on the same recruit that week now also covers pitches, notes,
+  gifts and visits (it covered only the Recruiter's actions).
