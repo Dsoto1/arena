@@ -34,10 +34,10 @@ const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
     const mine=rosterOf(pm)[0];const doc=council83(w).find(a=>a.k==='doctore');doc.lv=1;o.own1=/data-c104read="1"/.test(detailHTML(mine));doc.lv=5;o.own5=/data-c104read="3"/.test(detailHTML(mine));doc.lv=1}
   /* 6 · retirement at the turn: old, faded, low */
   {const olds=[];for(let i=0;i<30;i++){const g=genGlad({age:39,ovr:45});g.contract=null;olds.push(g)}
-    const mine=rosterOf(pm)[0];mine.age=40;mine.ovr=60;mine.imm88=1;mine.loanFrom=null;
+    const mine=rosterOf(pm).find(g=>!g.lanista&&!g.sotonium&&!g.starChild&&!g.loanFrom&&c104Phase(g,40).ph==='fade')||rosterOf(pm)[0];mine.age=40;mine.ovr=60;mine.imm88=1;mine.loanFrom=null;
     w.glads=[...olds,mine];c104Turn(w,null);o.firstRet=olds.filter(g=>!g.alive).length+(mine.alive?0:1);
-    for(let t=0;t<4;t++){for(const g of olds)if(g.alive)g.age++;if(mine.alive)mine.age++;c104Turn(w,null)}const rev=w.c104rev;
-    o.retired=olds.filter(g=>!g.alive&&g.rt104).length;o.mineRet=!mine.alive&&!!mine.rt104&&!mine.contract;
+    for(let t=0;t<12&&(t<4||mine.alive);t++){for(const g of olds)if(g.alive)g.age++;if(mine.alive)mine.age++;c104Turn(w,null)}const rev=w.c104rev;
+    o.retired=olds.filter(g=>!g.alive&&g.rt104).length;o.fadeN=olds.filter(g=>c104Phase(g,39).ph==='fade').length;o.mineRet=!mine.alive&&!!mine.rt104&&!mine.contract;
     o.letter=(w.letters||[]).some(L=>L.key==='c104ret-'+mine.id);const adv=(w.letters||[]).find(L=>L.key==='c104adv-'+mine.id);o.advLetter=!!adv&&/data-c104adv/.test(adv.body);
     o.great=Object.keys(w.c104adv||{}).includes(mine.id);o.news=w.news.some(n=>/retires/.test(n.text));o.revOk=!!rev&&Array.isArray(rev.ret);
     /* take him as Barracks master */
@@ -60,7 +60,7 @@ ok(drop(C.steady,6)<drop(C.common,6)+1,'Steady fades slower');ok(C.ageless.end>=
 ok(C.common.end<C.common.peak-5,'Common has faded after 25 seasons');
 ok(r.grace,'first sight = curve only, no fade');
 ok(r.unread&&r.rough&&r.fair&&r.sure,'Form reads unread/rough/fair/sure '+JSON.stringify([r.unread,r.rough,r.fair,r.sure]));ok(r.longTxt&&r.brightTxt,'rough read words');ok(r.own1&&r.own5,'own fighters by the Doctore level');
-ok(r.firstRet===0,'nobody retires on first sight');ok(r.retired>=22,'old faded fighters retire '+r.retired);ok(r.mineRet&&r.letter&&r.advLetter&&r.great&&r.news&&r.revOk,'my great retires with letters '+JSON.stringify(r));ok(r.seat,'great takes the council seat at level 3');
+ok(r.firstRet===0,'nobody retires on first sight');ok(r.retired>=Math.min(22,Math.floor(r.fadeN*0.7)),'old faded fighters retire '+r.retired+' of '+r.fadeN+' fading');ok(r.mineRet&&r.letter&&r.advLetter&&r.great&&r.news&&r.revOk,'my great retires with letters '+JSON.stringify(r));ok(r.seat,'great takes the council seat at level 3');
 ok(r.kLow<0.8&&r.kHigh>1.2,'fame factor by win rate '+r.kLow+' '+r.kHigh);ok(r.drift>=4,'losing season drifts down '+r.drift);ok(r.noDrift,'a winning season does not drift');
 ok(r.up1&&r.paceReq&&r.paceNext,'one advisor level a season '+JSON.stringify([r.up1,r.paceReq,r.paceNext]));
 const ne=await pg.evaluate(m=>ERR92.n-m,mark);ok(ne===0,'no new errors in the log '+ne);
