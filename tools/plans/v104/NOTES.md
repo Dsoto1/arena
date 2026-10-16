@@ -100,3 +100,7 @@ FEATURES (v1.05, own release):
   rail count clear too.
 - B16 Your ludus (the week's to-do / tasks): the "Week N in review" report (202-v91ludus details.rev91, on the desk 270-v99desk) always
   starts COLLAPSED; the player opens it.
+- B13 detail, his answers d1a d2a (2026-10-16): the Doctore's hours (213 P.doc; level = 1 + Yard level + ½ per hour, max 6; drills
+  Footwork/Iron Lv1, Showman 2, Blood and Sand 3, Veteran 4, Parade 5) LOCK as soon as a fighter's card locks with a drill that needs that
+  level, and always with Lock in all; after that they can go up, never down, that week (closes today's gap: add hours → pick a drill →
+  take the hours back). A locked drill tile says how to unlock it: "🔒 Lv 2 · 2 more hours with <Doctore>, or Yard II".
