@@ -123,7 +123,7 @@ function bst100Piece(base,self,args){const n=typeof MINI_CUR!=='undefined'?MINI_
   let face=0;try{face=miniFace(n,k)}catch(e){}
   const M=BEAST100_META[k];const m=center(n.r,n.c);const x=m.x,y=m.y-(n.t==='zora'&&typeof pillarAt==='function'&&pillarAt(n.r,n.c)?TW*1.05:0);
   let opt={};for(const a of args)if(a&&typeof a==='object'&&!Array.isArray(a)&&('filter' in a||'dim' in a))opt=a;
-  if(M.base){ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=Math.min(M.base[0]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55;ell(x+2,y+3,rw,rw*(M.base[1]/M.base[0])*0.75);ctx.fill();ctx.restore()}
+  if(M.base){ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=Math.min(M.base[0]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55;fl104Sh(x+2,y+3,rw,rw*(M.base[1]/M.base[0])*0.75);ctx.restore()}
   const t0=performance.now();const top=bst100Cell(k,face,pose,x,y,opt);BST100.stats.ms+=performance.now()-t0;
   if(top==null)return base.apply(self,args);
   BST100.last.set(n.id,{k,pose:pose.name,face,x,y,g:!!A.g});if(BST100.trace)BST100.trace.push({id:n.id,pose:pose.name,x,y,t:now});return top}

@@ -121,12 +121,12 @@ const t93Tag=(o,t)=>{const r={...o};Object.defineProperty(r,'t93',{value:t,enume
 {const base=drawFigureTok;drawFigureTok=function(sp,x,y,h,opt={}){const t=sp&&sp.t93;if(!t||typeof ctx==='undefined')return base.apply(this,arguments);
   const im=t93Img(t);if(!im)return base.apply(this,arguments);
   try{const M=t.meta,s=(h/1.3)*MINI_BASE/25.4/MINI_PXMM,by=y-h*0.015;const i=MINI_CUR&&typeof miniFace==='function'?miniFace(MINI_CUR,'t93'):0;
-    ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=(h/1.3)*MINI_BASE*0.55;ell(x+2,by+3,rw,rw*0.5);ctx.fill();
+    ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=(h/1.3)*MINI_BASE*0.55;fl104Sh(x+2,by+3,rw,rw*0.5);
     if(opt&&opt.dim)ctx.globalAlpha=opt.dim;if(opt&&opt.filter)ctx.filter=opt.filter;
     ctx.drawImage(im,(i||0)*M[0],0,M[0],M[1],x-M[2]*s,by-M[3]*s,M[0]*s,M[1]*s);
     /* the seat's colour on the base rim (the board ring hides under the round base) */
     const pc=MINI_CUR&&MINI_CUR.color&&!(opt&&opt.filter);if(pc){const k=s*MINI_PXMM,rx=12.75*k;const R3=typeof rim103==='function'?rim103(k):{w:Math.max(1.5,2.3*k),dy:1.35*k};   /* v1.03 T3 (346) */
-      if(R3){ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=R3.w;ctx.beginPath();ctx.ellipse(x,by-R3.dy,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}}
+      if(R3&&!fl104Rim(x,by,rx,R3.w)){ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=R3.w;ctx.beginPath();ctx.ellipse(x,by-R3.dy,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}}
     ctx.restore();T93.drawn=(T93.drawn||0)+1;
     const top=by-M[3]*s+M[1]*s*0.05;try{TOP83=top}catch(e){}return top}catch(e){console.error(e);return base.apply(this,arguments)}}}
 /* every HTML figure of the character */

@@ -18,5 +18,5 @@ function miniFace(p,k){if(!p)return 0;if(p._fr==null){p._fr=p.r;p._fc=p.c;p._fac
 {const base=drawNPC;drawNPC=function(n){MINI_CUR=n;try{return base.apply(this,arguments)}finally{MINI_CUR=null}}}
 {const base=miniDraw;miniDraw=function(k,x,y,opt={}){const M=MINI8[k];const im=M&&MINI_CUR?mini8Img(k):null;if(!im||!MINI_A[k])return base.apply(this,arguments);
   const i=miniFace(MINI_CUR,k);const s=miniScale(k);const a=MINI_A[k];
-  ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=Math.min(a[2]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55;ell(x+2,y+3,rw,rw*0.5);ctx.fill();
+  ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=Math.min(a[2]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55;fl104Sh(x+2,y+3,rw,rw*0.5);
   if(opt.dim)ctx.globalAlpha=opt.dim;if(opt.filter)ctx.filter=opt.filter;ctx.drawImage(im,i*M[0],0,M[0],M[1],x-M[2]*s,y-M[3]*s,M[0]*s,M[1]*s);ctx.restore();return y-M[3]*s}}

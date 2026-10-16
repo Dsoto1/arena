@@ -2040,7 +2040,12 @@ function draw() {
           ctx.globalAlpha = 1;
         }
       });
-      objs.sort((a, b) => a.d - b.d).forEach(o => o.f());
+      if (typeof floor104 === 'function') floor104(alphaFor); /* v1.04 B25: every floor mark before any figure (356) */
+      try {
+        objs.sort((a, b) => a.d - b.d).forEach(o => o.f());
+      } finally {
+        if (typeof floor104End === 'function') floor104End();
+      }
     }],
     ['overlays', () => {
       // aggro tethers: each wild NPC points at its single aggro target
@@ -2184,7 +2189,7 @@ function drawNPC(npc) {
   const big = ['tholo', 'lion', 'bear', 'commodus'].includes(npc.t) || T.custom && T.hp >= 12;
   const rx = TW * (big ? 0.27 : 0.22),
     h = TW * (big ? 0.34 : 0.24);
-  if (npc.tamedBy != null) {
+  if (npc.tamedBy != null && !fl104Has(npc, 4)) {
     const o = S.players[npc.tamedBy];
     ctx.strokeStyle = o.color;
     ctx.lineWidth = 2.5;
@@ -2193,7 +2198,7 @@ function drawNPC(npc) {
   }
   if (npc.t === 'zora' && pillarAt(npc.r, npc.c)) m.y -= TW * 1.05;
   const st = npcStats(npc);
-  if (npc.alive && st.state === 'Raged') {
+  if (npc.alive && st.state === 'Raged' && !fl104Has(npc, 8)) {
     ctx.strokeStyle = 'rgba(230,70,50,.85)';
     ctx.lineWidth = 2;
     ell(m.x, m.y, rx * 1.25, rx * 0.62);
@@ -2270,7 +2275,7 @@ function drawPlayer(player) {
     h = TW * 0.55;
   if (player.ch && player.ch.mounted && !(typeof chRideTok === 'function' && chRideTok(player, m))) drawWheel(m.x, m.y, player.color); // v0.64: rides on the chariot token
   if (isNaum() && player.onDoor != null) {}
-  if (S.players[S.cur] === player && !S.over) {
+  if (S.players[S.cur] === player && !S.over && !fl104Has(player, 1)) { /* v1.04 B25: 356's floor pass already drew it */
     ctx.strokeStyle = '#f0cf7d';
     ctx.lineWidth = 2.5;
     ell(m.x, m.y, TW * 0.4, TW * 0.2);
@@ -2281,15 +2286,17 @@ function drawPlayer(player) {
     const sh = sk ? standeeSize(sk) : TW * 1.25;
     const useFig = wantFigure(hasCustomToken(player.cls));
     if (useFig ? tokenImg(tokenForP(player)) : sk && standeesOn() && standeeImg(sk)) {
-      ctx.strokeStyle = player.color;
-      ctx.lineWidth = 3;
-      ell(m.x, m.y + TW * 0.03, TW * 0.3, TW * 0.15);
-      ctx.stroke();
-      if (EV().teams || EV().coop) {
-        ctx.strokeStyle = teamColor(player.team);
-        ctx.lineWidth = 1.5;
-        ell(m.x, m.y + TW * 0.03, TW * 0.36, TW * 0.18);
+      if (!fl104Has(player, 2)) { /* v1.04 B25: 356's floor pass draws the seat / team rings before every figure */
+        ctx.strokeStyle = player.color;
+        ctx.lineWidth = 3;
+        ell(m.x, m.y + TW * 0.03, TW * 0.3, TW * 0.15);
         ctx.stroke();
+        if (EV().teams || EV().coop) {
+          ctx.strokeStyle = teamColor(player.team);
+          ctx.lineWidth = 1.5;
+          ell(m.x, m.y + TW * 0.03, TW * 0.36, TW * 0.18);
+          ctx.stroke();
+        }
       }
       /* drawMe — draws the figure or standee and returns its top y. */
       const drawMe = () => useFig ? drawFigureTok(tokenForP(player), m.x, m.y + TW * 0.02, TW * 1.3) : drawStandee(sk, m.x, m.y + TW * 0.04, sh);

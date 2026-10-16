@@ -12117,7 +12117,12 @@ function draw() {
           ctx.globalAlpha = 1;
         }
       });
-      objs.sort((a, b) => a.d - b.d).forEach(o => o.f());
+      if (typeof floor104 === 'function') floor104(alphaFor); /* v1.04 B25: every floor mark before any figure (356) */
+      try {
+        objs.sort((a, b) => a.d - b.d).forEach(o => o.f());
+      } finally {
+        if (typeof floor104End === 'function') floor104End();
+      }
     }],
     ['overlays', () => {
       // aggro tethers: each wild NPC points at its single aggro target
@@ -12261,7 +12266,7 @@ function drawNPC(npc) {
   const big = ['tholo', 'lion', 'bear', 'commodus'].includes(npc.t) || T.custom && T.hp >= 12;
   const rx = TW * (big ? 0.27 : 0.22),
     h = TW * (big ? 0.34 : 0.24);
-  if (npc.tamedBy != null) {
+  if (npc.tamedBy != null && !fl104Has(npc, 4)) {
     const o = S.players[npc.tamedBy];
     ctx.strokeStyle = o.color;
     ctx.lineWidth = 2.5;
@@ -12270,7 +12275,7 @@ function drawNPC(npc) {
   }
   if (npc.t === 'zora' && pillarAt(npc.r, npc.c)) m.y -= TW * 1.05;
   const st = npcStats(npc);
-  if (npc.alive && st.state === 'Raged') {
+  if (npc.alive && st.state === 'Raged' && !fl104Has(npc, 8)) {
     ctx.strokeStyle = 'rgba(230,70,50,.85)';
     ctx.lineWidth = 2;
     ell(m.x, m.y, rx * 1.25, rx * 0.62);
@@ -12347,7 +12352,7 @@ function drawPlayer(player) {
     h = TW * 0.55;
   if (player.ch && player.ch.mounted && !(typeof chRideTok === 'function' && chRideTok(player, m))) drawWheel(m.x, m.y, player.color); // v0.64: rides on the chariot token
   if (isNaum() && player.onDoor != null) {}
-  if (S.players[S.cur] === player && !S.over) {
+  if (S.players[S.cur] === player && !S.over && !fl104Has(player, 1)) { /* v1.04 B25: 356's floor pass already drew it */
     ctx.strokeStyle = '#f0cf7d';
     ctx.lineWidth = 2.5;
     ell(m.x, m.y, TW * 0.4, TW * 0.2);
@@ -12358,15 +12363,17 @@ function drawPlayer(player) {
     const sh = sk ? standeeSize(sk) : TW * 1.25;
     const useFig = wantFigure(hasCustomToken(player.cls));
     if (useFig ? tokenImg(tokenForP(player)) : sk && standeesOn() && standeeImg(sk)) {
-      ctx.strokeStyle = player.color;
-      ctx.lineWidth = 3;
-      ell(m.x, m.y + TW * 0.03, TW * 0.3, TW * 0.15);
-      ctx.stroke();
-      if (EV().teams || EV().coop) {
-        ctx.strokeStyle = teamColor(player.team);
-        ctx.lineWidth = 1.5;
-        ell(m.x, m.y + TW * 0.03, TW * 0.36, TW * 0.18);
+      if (!fl104Has(player, 2)) { /* v1.04 B25: 356's floor pass draws the seat / team rings before every figure */
+        ctx.strokeStyle = player.color;
+        ctx.lineWidth = 3;
+        ell(m.x, m.y + TW * 0.03, TW * 0.3, TW * 0.15);
         ctx.stroke();
+        if (EV().teams || EV().coop) {
+          ctx.strokeStyle = teamColor(player.team);
+          ctx.lineWidth = 1.5;
+          ell(m.x, m.y + TW * 0.03, TW * 0.36, TW * 0.18);
+          ctx.stroke();
+        }
       }
       /* drawMe — draws the figure or standee and returns its top y. */
       const drawMe = () => useFig ? drawFigureTok(tokenForP(player), m.x, m.y + TW * 0.02, TW * 1.3) : drawStandee(sk, m.x, m.y + TW * 0.04, sh);
@@ -29904,7 +29911,7 @@ if(!MINI_ORIG.zoraMini&&STANDEE_SRC.zoraMini)MINI_ORIG.zoraMini=STANDEE_SRC.zora
 function miniScale(k){const a=MINI_A[k];const p=TW*MINI_BASE/25.4;const fit=Math.min(1,TW*MINI_FIT/(a[2]*p));return p/MINI_PXMM*fit*(k==='pillar'?MINI_PILLAR:1)}
 /* miniDraw — draws mini k with its base centred on (x,y); returns the top y or null */
 function miniDraw(k,x,y,opt={}){const im=miniImg(k),a=MINI_A[k];if(!im||!a)return null;const s=miniScale(k);
-  ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=a[2]*TW*MINI_BASE/25.4*Math.min(1,TW*MINI_FIT/(a[2]*TW*MINI_BASE/25.4))*0.55;ell(x+2,y+3,rw,rw*0.5);ctx.fill();
+  ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=a[2]*TW*MINI_BASE/25.4*Math.min(1,TW*MINI_FIT/(a[2]*TW*MINI_BASE/25.4))*0.55;fl104Sh(x+2,y+3,rw,rw*0.5);
   if(opt.dim)ctx.globalAlpha=opt.dim;if(opt.filter)ctx.filter=opt.filter;ctx.drawImage(im,x-a[0]*s,y-a[1]*s,im.naturalWidth*s,im.naturalHeight*s);ctx.restore();return y-a[1]*s}
 {const base=drawStandee;drawStandee=function(k,x,y,h,opt={}){const mk=miniKey(k);if(miniOn()&&MINI_A[mk]){const t=miniDraw(mk,x,y-TW*0.04,opt);if(t!=null)return t}return base.apply(this,arguments)}}
 {const base=standeeSize;standeeSize=function(k){const mk=miniKey(k);if(miniOn()&&MINI_A[mk]){const im=miniImg(mk);if(im)return im.naturalHeight*miniScale(mk)}return base.apply(this,arguments)}}
@@ -30486,7 +30493,7 @@ function miniFace(p,k){if(!p)return 0;if(p._fr==null){p._fr=p.r;p._fc=p.c;p._fac
 {const base=drawNPC;drawNPC=function(n){MINI_CUR=n;try{return base.apply(this,arguments)}finally{MINI_CUR=null}}}
 {const base=miniDraw;miniDraw=function(k,x,y,opt={}){const M=MINI8[k];const im=M&&MINI_CUR?mini8Img(k):null;if(!im||!MINI_A[k])return base.apply(this,arguments);
   const i=miniFace(MINI_CUR,k);const s=miniScale(k);const a=MINI_A[k];
-  ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=Math.min(a[2]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55;ell(x+2,y+3,rw,rw*0.5);ctx.fill();
+  ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=Math.min(a[2]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55;fl104Sh(x+2,y+3,rw,rw*0.5);
   if(opt.dim)ctx.globalAlpha=opt.dim;if(opt.filter)ctx.filter=opt.filter;ctx.drawImage(im,i*M[0],0,M[0],M[1],x-M[2]*s,y-M[3]*s,M[0]*s,M[1]*s);ctx.restore();return y-M[3]*s}}
 /* =====================================================================
    103-V74 · v0.74 — the printed classes and armor to Virgilante's cards (decided with him)
@@ -50037,12 +50044,12 @@ const t93Tag=(o,t)=>{const r={...o};Object.defineProperty(r,'t93',{value:t,enume
 {const base=drawFigureTok;drawFigureTok=function(sp,x,y,h,opt={}){const t=sp&&sp.t93;if(!t||typeof ctx==='undefined')return base.apply(this,arguments);
   const im=t93Img(t);if(!im)return base.apply(this,arguments);
   try{const M=t.meta,s=(h/1.3)*MINI_BASE/25.4/MINI_PXMM,by=y-h*0.015;const i=MINI_CUR&&typeof miniFace==='function'?miniFace(MINI_CUR,'t93'):0;
-    ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=(h/1.3)*MINI_BASE*0.55;ell(x+2,by+3,rw,rw*0.5);ctx.fill();
+    ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=(h/1.3)*MINI_BASE*0.55;fl104Sh(x+2,by+3,rw,rw*0.5);
     if(opt&&opt.dim)ctx.globalAlpha=opt.dim;if(opt&&opt.filter)ctx.filter=opt.filter;
     ctx.drawImage(im,(i||0)*M[0],0,M[0],M[1],x-M[2]*s,by-M[3]*s,M[0]*s,M[1]*s);
     /* the seat's colour on the base rim (the board ring hides under the round base) */
     const pc=MINI_CUR&&MINI_CUR.color&&!(opt&&opt.filter);if(pc){const k=s*MINI_PXMM,rx=12.75*k;const R3=typeof rim103==='function'?rim103(k):{w:Math.max(1.5,2.3*k),dy:1.35*k};   /* v1.03 T3 (346) */
-      if(R3){ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=R3.w;ctx.beginPath();ctx.ellipse(x,by-R3.dy,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}}
+      if(R3&&!fl104Rim(x,by,rx,R3.w)){ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=R3.w;ctx.beginPath();ctx.ellipse(x,by-R3.dy,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}}
     ctx.restore();T93.drawn=(T93.drawn||0)+1;
     const top=by-M[3]*s+M[1]*s*0.05;try{TOP83=top}catch(e){}return top}catch(e){console.error(e);return base.apply(this,arguments)}}}
 /* every HTML figure of the character */
@@ -51459,7 +51466,7 @@ const lsSet95=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 /* ---------- 2 team rings ---------- */
 const TEAMDASH95={A:[],B:[9,5],C:[2,5],D:[10,4,2,4]};
 {const base=drawPlayer;drawPlayer=function(player){
-  try{if(player&&S&&EV()&&(EV().teams||EV().coop)&&player.team){const m=center(player.r,player.c);const col=teamColor(player.team);
+  try{if(player&&S&&EV()&&(EV().teams||EV().coop)&&player.team&&!fl104Has(player,32)){const m=center(player.r,player.c);const col=teamColor(player.team);
     const cvd=(SETTINGS.cvdMode||'off')!=='off'||!!SETTINGS.cvd;
     ctx.save();ctx.translate(0,swimming(player)?TW*0.02:0);
     ctx.fillStyle=col;ctx.globalAlpha=0.2;ell(m.x,m.y+TW*0.03,TW*0.42,TW*0.21);ctx.fill();ctx.globalAlpha=0.95;
@@ -66967,13 +66974,13 @@ function an100CellCanvas(im,key0,fx,sy,w,h,s){try{let id=AN100CCID.get(im);if(!i
 function an100Cell(src,P,face,x,y,opt){let o=an100Bm(src,P.set,P.name),row=src[P.set].meta.rows[P.name][P.i];
   if(!o&&P.set==='act'){o=an100Bm(src,'move','idle');P={set:'move',name:'idle',i:0};row=src.move.meta.rows.idle[0]}   /* the action decodes: idle meanwhile */
   if(!o||!row)return null;const [ry,w,h,ax,ay]=row;const im=o.bm||o.whole,sy=ry-o.y0;
-  const s=TW*MINI_BASE/25.4/src[P.set].meta.pxmm;ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=TW*MINI_BASE*0.55;ell(x+2,y+3,rw,rw*0.5);ctx.fill();
+  const s=TW*MINI_BASE/25.4/src[P.set].meta.pxmm;ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=TW*MINI_BASE*0.55;fl104Sh(x+2,y+3,rw,rw*0.5);
   if(opt&&opt.dim)ctx.globalAlpha=opt.dim;if(opt&&opt.filter)ctx.filter=opt.filter;
   const dx=x-ax*s,dy=y-ay*s,cc=an100CellCanvas(im,P.set+P.name+P.i,(face||0)*w,sy,w,h,s),cell=()=>cc?((typeof sh103Blit==='function'&&sh103Blit(cc,dx,dy,w*s,h*s,x,y))||ctx.drawImage(cc,dx,dy,w*s,h*s)):ctx.drawImage(im,(face||0)*w,sy,w,h,dx,dy,w*s,h*s);cell();   /* v1.03 T6: 346's sh103Blit = native size on the device grid */
   if(opt&&opt.flash){ctx.globalCompositeOperation='lighter';ctx.globalAlpha=opt.flash;cell();ctx.globalCompositeOperation='source-over'}
   /* the seat's colour on the base rim, like 222's 3D tokens */
   const pc=AN100.cur&&AN100.cur.color&&!(opt&&opt.filter);if(pc){const k=TW*MINI_BASE/25.4,rx=12.75*k;const R3=typeof rim103==='function'?rim103(k):{w:Math.max(1.5,2.3*k),dy:1.35*k};   /* v1.03 T3: 346 thins it on the thin base, none without a base */
-    if(R3){ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=R3.w;ctx.beginPath();ctx.ellipse(x,y-R3.dy,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}}
+    if(R3&&!fl104Rim(x,y,rx,R3.w)){ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=R3.w;ctx.beginPath();ctx.ellipse(x,y-R3.dy,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}}
   ctx.restore();AN100.stats.cells++;return dy+h*s*0.05}
 /* an100DrawP — the stand-in of the gladiator being drawn (AN100.cur); null = let today's token draw */
 function an100DrawP(sp,x,y,opt){const p=AN100.cur;if(!p||typeof ctx==='undefined')return null;const s0=an100St(p);const sev=s0.sevT&&an100Now()<s0.sevT;
@@ -67291,7 +67298,7 @@ function bst100Piece(base,self,args){const n=typeof MINI_CUR!=='undefined'?MINI_
   let face=0;try{face=miniFace(n,k)}catch(e){}
   const M=BEAST100_META[k];const m=center(n.r,n.c);const x=m.x,y=m.y-(n.t==='zora'&&typeof pillarAt==='function'&&pillarAt(n.r,n.c)?TW*1.05:0);
   let opt={};for(const a of args)if(a&&typeof a==='object'&&!Array.isArray(a)&&('filter' in a||'dim' in a))opt=a;
-  if(M.base){ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=Math.min(M.base[0]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55;ell(x+2,y+3,rw,rw*(M.base[1]/M.base[0])*0.75);ctx.fill();ctx.restore()}
+  if(M.base){ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=Math.min(M.base[0]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55;fl104Sh(x+2,y+3,rw,rw*(M.base[1]/M.base[0])*0.75);ctx.restore()}
   const t0=performance.now();const top=bst100Cell(k,face,pose,x,y,opt);BST100.stats.ms+=performance.now()-t0;
   if(top==null)return base.apply(self,args);
   BST100.last.set(n.id,{k,pose:pose.name,face,x,y,g:!!A.g});if(BST100.trace)BST100.trace.push({id:n.id,pose:pose.name,x,y,t:now});return top}
@@ -75187,6 +75194,77 @@ const V104S_NX={r1:'sf',sf:'fin',fin:'off'};
 `;document.head.appendChild(st)}
 V104S.why=sb104Why;V104S.tree=sb104Tree;
 }
+/* =====================================================================
+   356-v104fixb.js — v1.04 beta fix B25 (his screenshot): the gold active-turn ring, the seat ring, the dark shadow disc and the seat colour on the
+   base rim painted OVER a figure's feet and lower legs (the rim's front arc was drawn after the figure; a piece in front drew its rings over the
+   feet of the piece behind it). Kill switch: localStorage flavius_v104boff=1 (everything goes back to v1.03). Test: tv104i.
+   THE FLOOR PASS: the 'pieces' layer (07-ui) now calls `floor104(alphaFor)` once BEFORE its depth-sorted figures and `floor104End()` after. For
+   every still piece (not gliding / pushed / walking / swimming / mounted) the pass paints, in this order, at the piece's own see-through opacity:
+     • 227's team ring (bit 32) · the gold ring on whoever's turn it is (1) · the seat ring + 07's thin team ring (2) · a tamed beast's ring (4) ·
+       a Raged beast's ring (8) · the shadow disc (64).
+     • The seat colour on the base rim (311 / 222: an arc drawn after the figure, over its feet) is now a full ring OUTSIDE the base's wall on the
+       floor (bit 16): the arc is skipped (`fl104Rim`) and the gold ring steps out beyond it. Pieces without a base keep 07's seat ring (moved here).
+   The drawers of 07 / 227 skip a mark the pass drew (`fl104Has(piece,bit)`); a piece the pass skipped (moving) draws everything inline as before.
+   SHADOW DISCS live inside the figure drawers (311 / 312 / 222 / 102 / 94): they call `fl104Sh` instead of drawing; it records the disc per piece,
+   and when the floor pass painted the same disc this frame (recorded one frame earlier at the same place) the in-cell draw is skipped — a moved
+   figure paints its disc inline for that one frame, then the pass takes over. No new layer, no extra drawImage, a handful of ellipses.
+   Reduce motion / Animations Off: nothing here animates (static marks). `FL104.st` = {passes, pieces, ms, last}. */
+const FL104={off:(()=>{try{return localStorage.getItem('flavius_v104boff')==='1'}catch(e){return false}})(),done:new Map(),sh:new WeakMap(),rim:new WeakMap(),active:false,st:{passes:0,pieces:0,ms:0,last:null}};
+
+/* fl104Has — did the floor pass already paint this mark of this piece in the frame being drawn? */
+function fl104Has(p,bit){if(!FL104.active)return false;const d=FL104.done.get(p);return !!(d&&(d&bit))}
+/* fl104Rim — a figure drawer's seat-colour rim arc: records the base (centre, radius, width) for the pass; true = skip the arc (the ring is on the floor) */
+function fl104Rim(x,y,rx,w){if(FL104.off)return false;const p=typeof MINI_CUR!=='undefined'?MINI_CUR:null;if(!p)return false;
+  let r=FL104.rim.get(p);if(!r){r={};FL104.rim.set(p,r)}
+  r.x=x;r.y=y;r.rx=rx;r.w=w;r.tw=TW;r.ox=OX;r.oy=OY;r.pr=p.r;r.pc=p.c;return fl104Has(p,16)}
+/* fl104Sh — a figure drawer's shadow disc (fillStyle already set by the caller) */
+function fl104Sh(x,y,rx,ry){const p=FL104.off||typeof MINI_CUR==='undefined'?null:MINI_CUR;
+  if(p&&FL104.active){let r=FL104.sh.get(p);if(!r){r={};FL104.sh.set(p,r)}
+    const fs=ctx.fillStyle,same=r.ok&&Math.abs(r.x-x)<0.6&&Math.abs(r.y-y)<0.6&&Math.abs(r.rx-rx)<0.6&&Math.abs(r.ry-ry)<0.6&&r.fs===fs&&r.tw===TW&&r.ox===OX&&r.oy===OY&&r.pr===p.r&&r.pc===p.c;
+    r.x=x;r.y=y;r.rx=rx;r.ry=ry;r.fs=fs;r.tw=TW;r.ox=OX;r.oy=OY;r.pr=p.r;r.pc=p.c;r.ok=true;
+    if(same&&fl104Has(p,64))return}
+  ell(x,y,rx,ry);ctx.fill()}
+
+/* a piece the pass leaves to its own drawers: it is moving (glide, shove, walk), swimming, mounted, or not a board figure */
+function fl104Moving(p,isNpc){try{
+  if(typeof PUSH100!=='undefined'&&(PUSH100.live.size||PUSH100.wob.size)&&(PUSH100.live.has(p)||PUSH100.wob.has(p)))return true;
+  if(isNpc){if(typeof bst100Walks==='function'&&bst100Walks(p))return true;return false}
+  if(typeof AN100!=='undefined'&&AN100.on&&typeof an100On==='function'&&an100On()&&typeof an100Glide==='function'&&an100Glide(p))return true;
+  return false}catch(e){return true}}
+function fl104Ring(x,y,rx,ry,col,lw){ctx.strokeStyle=col;ctx.lineWidth=lw;ell(x,y,rx,ry);ctx.stroke()}
+function fl104Shadow(p,m){const r=FL104.sh.get(p);if(!r||!r.ok||r.tw!==TW||r.ox!==OX||r.oy!==OY||r.pr!==p.r||r.pc!==p.c)return 0;
+  ctx.fillStyle=r.fs;ell(r.x,r.y,r.rx,r.ry);ctx.fill();return 64}
+
+function floor104(alphaFor){if(FL104.off||HEADLESS||!S||typeof ctx==='undefined')return;const t0=performance.now();
+  FL104.done.clear();FL104.active=true;FL104.st.passes++;let n=0;
+  try{if(typeof isChariot==='function'&&isChariot())return;
+    const ev=EV(),teams=!!(ev&&(ev.teams||ev.coop)),curP=S.over?null:S.players[S.cur];
+    ctx.save();
+    if(!DRAW_EMPTY)for(const p of S.players){if(!p.alive||p.exited||p.underground||p._onlSc||p._onlTok)continue;if(swimming(p)||(p.ch&&p.ch.mounted))continue;if(fl104Moving(p,false))continue;
+      const m=center(p.r,p.c);ctx.globalAlpha=alphaFor?alphaFor('player',p.r,p.c):1;let bits=0;
+      const sk=standeeKeyCls(p.cls),useFig=wantFigure(hasCustomToken(p.cls)),fig=useFig?tokenImg(tokenForP(p)):sk&&standeesOn()&&standeeImg(sk);
+      const rim=FL104.rim.get(p),hasRim=!!(fig&&rim&&rim.tw===TW&&rim.ox===OX&&rim.oy===OY&&rim.pr===p.r&&rim.pc===p.c);
+      if(teams&&p.team&&fig){const col=teamColor(p.team),cvd=(SETTINGS.cvdMode||'off')!=='off'||!!SETTINGS.cvd;
+        ctx.save();ctx.fillStyle=col;ctx.globalAlpha*=0.2;ell(m.x,m.y+TW*0.03,TW*0.42,TW*0.21);ctx.fill();ctx.globalAlpha=(alphaFor?alphaFor('player',p.r,p.c):1)*0.95;
+        ctx.strokeStyle='rgba(10,6,4,.7)';ctx.lineWidth=6;ell(m.x,m.y+TW*0.03,TW*0.42,TW*0.21);ctx.stroke();
+        ctx.strokeStyle=col;ctx.lineWidth=4;if(cvd&&typeof TEAMDASH95!=='undefined')ctx.setLineDash((TEAMDASH95[p.team]||[]).map(v=>v*Math.max(0.6,TW/55)));
+        ell(m.x,m.y+TW*0.03,TW*0.42,TW*0.21);ctx.stroke();ctx.restore();bits|=32}
+      if(curP===p){const gx=hasRim?rim.rx+rim.w+1.5:TW*0.4;fl104Ring(m.x,m.y,gx,gx*0.5,'#f0cf7d',2.5);bits|=1}
+      if(fig){if(hasRim){const rr=rim.rx+rim.w/2;fl104Ring(rim.x,rim.y,rr,rr*0.5,p.color,rim.w);bits|=16}
+        else fl104Ring(m.x,m.y+TW*0.03,TW*0.3,TW*0.15,p.color,3);
+        if(teams)fl104Ring(m.x,m.y+TW*0.03,TW*0.36,TW*0.18,teamColor(p.team),1.5);bits|=2;
+        bits|=fl104Shadow(p,m)}
+      if(bits){FL104.done.set(p,bits);n++}}
+    if(!DRAW_EMPTY)for(const q of S.npcs){if(!q.alive||q.out||q.t==='zora')continue;if(fl104Moving(q,true))continue;
+      const m=center(q.r,q.c),T=NPCT[q.t];if(!T)continue;ctx.globalAlpha=alphaFor?alphaFor('npc',q.r,q.c):1;let bits=0;
+      const big=['tholo','lion','bear','commodus'].includes(q.t)||T.custom&&T.hp>=12,rx=TW*(big?0.27:0.22);
+      if(q.tamedBy!=null&&S.players[q.tamedBy]){fl104Ring(m.x,m.y,rx*1.35,rx*0.68,S.players[q.tamedBy].color,2.5);bits|=4}
+      if(q.alive&&npcStats(q).state==='Raged'){fl104Ring(m.x,m.y,rx*1.25,rx*0.62,'rgba(230,70,50,.85)',2);bits|=8}
+      bits|=fl104Shadow(q,m);if(bits){FL104.done.set(q,bits);n++}}
+    ctx.restore()}
+  catch(e){console.error(e);FL104.done.clear()}
+  finally{FL104.st.pieces+=n;FL104.st.ms+=performance.now()-t0;FL104.st.last={n,done:FL104.done.size}}}
+function floor104End(){FL104.active=false;FL104.done.clear()}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
