@@ -1643,3 +1643,17 @@ their bullet at the END of the "Systems" list below (the release that ships them
   (`y104Need`, `.v104unl`); B18 the hired house medicus is the CAPSARIUS (texts in 108/318/345/351), a staff slot in the Infirmary banner (`.v104cap`, face from `cap104Look`, candidates
   carry a stored `face`), his hours a gold `.k104cp` segment on the hours bar, the hire popup `cap104Pop` (three `.v104ct` tiles, `data-v101mh` kept, window-capture takes `[data-v101med]`
   because 318's opener is block-scoped), the list's small hire button gone; B20 row chips "Receiving treatment" / "Resting" (no ✓; 345's text changed too). No save change.
+- **355-v104fixs** (src/manager; v1.04 beta 1 fixes B22 B21 B23 B24 B4 B3; kill switch flavius_v104soff=1, test tv104h) — B22: a playoff bout (tier sb104)
+  takes only the bracket's houses; `sb104Why(w,b)` = the reason ("out of the Superbus" / "not in this round" / "not in this bout" / "chosen on the Superbus card");
+  any100Why / any100Enter / any100Classic / any100Book / any100Open refuse sb104 bouts; st95Fill returns 0 in a playoff week (350's reserve cover swapped an
+  outsider's seat — the leak); r101OffCard skips sb104 bouts and a window-capture refuses [data-rest] on a playoff fighter and [data-mg="underdog"]; the sb104
+  cards lose the select / Enter / Withdraw / Fix and show `.v104sno`. B21: `po104BracketHTML` REPLACED by `sb104Tree` (R1 Bout A/B → Semi I/II → final →
+  champion; CSS connectors `.v104k.k1/.k2`, `.lit` once the next round is set; rows `.v104e` seed · flagChip · house · place (RN), `.adv` gold / `.out` faded /
+  `.me` outlined / `.pj` projected grey; root keeps `.po104bk[data-po104proj]`, boxes `.po104b.v104b`; `.v104sx` scrolls on phones, min-width 720); shown open:
+  `.v104top` above the playoff card (card + banner bracket buttons removed), `.v104sbr` on the off-season page (its button removed), the League "Superbus" view
+  (`MGR.sb104v`, banner button `[data-v104s="sb"|"std"]` next to 📅 Season, drawn into #mgrPane by sb104Post; any [data-mg="tab"] clears it; 348's League
+  overlay button removed). The Match Week banner keeps its overlay button only in weeks 9–11. B23: endWeek wrapper sets V104S.toOff when the off-season opens; the
+  next mgrHTML turns tab awards/paper into night; the off-season header gets 🏆 awards + 📜 Acta buttons (`.v104soa`). B24: composeWeekPaper wrapper stores a playoff
+  week's edition as `<season>.11.<ph>` (rec.ph; week 11's own edition kept); paperHTML wrapper names it in the pager / masthead (`data-v104ed`) and the ribbon's
+  next stage (week 11's ribbon → "Superbus · Round 1"). B4: no reset on a new career (tested); the wipe = an old-calendar career's season 1 (17's old Superbus
+  special opens in week 1 of the next season). B3: `.mbox:has(.pn100) > #mClose.menu101` 46 px, in the Begin Event row (phones unchanged).
