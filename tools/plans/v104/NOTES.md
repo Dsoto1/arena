@@ -88,3 +88,8 @@ FEATURES (v1.05, own release):
 - N3 "Your scouts" column (17-manager betting table): it reads each fighter's RECRUITING scout level (g.scout), so rivals' fighters show
   "not scouted" almost always, and the word clashes with Recruiting. To be renamed and fed by the existing "🗺 Walk the sand at the arena
   gate" (185-v90week wsand90: today +1 AP +1 coin, sky, omen, crowd temper, a tip).
+- His answers (2026-10-16): s1a column renamed "Your read" (tooltip names the source: walked the sand / your recruiting dossier) — REPLACES
+  "Your scouts" · s2a walking the sand (185 wsand90) reads EVERY fighter on this week's card; fighters already scouted as recruits keep their
+  read without a walk · s3a the read is rough (± a few %) unless the Recruiter level is high · r1a a gate read = ONE ROUGH LOOK in Recruiting
+  (as the first scouting session; counts toward 351's "two earlier looks" before a trial bout; never past rough) · r2a watching a bout live
+  to the end gives the same rough look on everyone in it. With these, value / trap (pick 6) can show on every read fighter.
