@@ -53,7 +53,7 @@ ok(r8b.n===3&&r8b.top&&r8b.dirty,'8 migration: the first three of the old chart 
 const r8c=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};
   /* the perk: the same week twice from one snapshot, perk off then on */
   const base=JSON.stringify(W_());const run=async(perk)=>{MGR.world=mgrMigrate(JSON.parse(base));const w=W_(),m=me();const R=rosterOf(m);for(const g of R){delete g.inj;g.morale=50;g.loyB=3}
-    const S=R.filter(g=>g.slot95).map(g=>g.id);const B=R.filter(g=>!g.slot95&&wants88(g).includes('arena')).map(g=>g.id);
+    const S=R.filter(g=>g.slot95).map(g=>g.id);/* v1.04: the First-team reserve (350 tm104 'A') gets the starter perk, so he is not bench */const B=R.filter(g=>!g.slot95&&g.tm104!=='A'&&wants88(g).includes('arena')).map(g=>g.id);
     for(const x of w.night.bouts){x.done=true;x.res=x.res||{att:0,winners:[],rows:[],turns:1,lines:[],reason:''}}w.pend=[];
     const P=ST95.perk;const keep={...P};if(!perk)ST95.perk={morale:0,loy:0,benchMorale:0};__seed(777);const ok2=await endWeek();ST95.perk=keep;
     const mine=id=>{const g=gById(id);return !!(g&&g.alive&&g.contract&&g.contract.mgr===m.id)};const SM={};for(const id of S)if(mine(id))SM[id]=[gById(id).morale,gById(id).loyB];const BM={};for(const id of B)if(mine(id))BM[id]=gById(id).morale;return {ok:ok2,S:SM,B:BM,nS:S.length,nB:B.length}};

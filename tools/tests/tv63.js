@@ -15,7 +15,7 @@ o.m=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ope
   const head=!/Training hours 10\/10/.test(document.querySelector('.mhead').textContent); /* v0.73: hours left the header for the tab banners */
   const P=thPlan(w);P.g[g.id]={rehab:2};P.g[h.id]={str:4};P.doc=2;
   const capped=(()=>{const before=JSON.stringify(P.g[h.id]);const btn=document.querySelector(`[data-tp="g|${h.id}|spd|1"]`);MGR_REDRAW();return before})();
-  const left=thLeft(w);const sxp0=JSON.stringify((h.sxp||{}));const st0=gStats(h).str;
+  const left=thLeft(w)-thMax()+10; /* v1.04: training hours −2 (351); count from the pool */const sxp0=JSON.stringify((h.sxp||{}));const st0=gStats(h).str;
   const exh=needTHrs(w,EXHIB_HOURS)[0];
   MGR.tab='recruit';MGR_REDRAW();await new Promise(r=>setTimeout(r,1000));const rt=document.getElementById('recTable');const g2=rt.closest('.mgrid');const col=[...g2.children].find(c=>!c.contains(rt));
   const fa=rt.clientHeight>=Math.round(innerHeight*0.62)&&(Math.abs(rt.getBoundingClientRect().bottom-col.getBoundingClientRect().bottom)<4||rt.getBoundingClientRect().bottom>=innerHeight-12 /* v1.0 (299-v100recruit): the list is a viewport-high scroller beside the board — it runs to the bottom of the window */);MGR.tab='practice';MGR_REDRAW();
