@@ -25,3 +25,7 @@ His answers (2026-10-16): 1a (rub-down, Care routine and Rest week all move) · 
   Personal trainer duplicates the Training Yard's "⚒ Own doctore"; Medicus duplicates the Infirmary.
 - B2 Manager · the roster list view is slightly too wide.
 - B3 Play Now · the random-event 🎲 button aligned + scaled to sit with Begin event.
+- His answers (2026-10-16): B1a — drop Personal trainer + Medicus from Keeping him (they stay in the Training Yard / Infirmary), 6 left
+  (meal, word, family tickets, bonus, raise, promise), tray open by default. B2 — he sent a screenshot (did not reach the session; ask again
+  when building). B3 — it is the HOME button/icon in Play Now (not the 🎲): align + scale it to sit with Begin event.
+- Still testing; collect further notes here, build on his go.
