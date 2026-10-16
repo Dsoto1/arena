@@ -249,6 +249,7 @@
  "🛡 Armor designer": "🛡 Armour designer",
  "New armor": "New armour",
  "📜 Your armor · {0}": "📜 Your armour · {0}",
+ "{0}[style^=\"color:{1}\"],{2}[style^=\"color: {3}\"]": "{0}[style^=\"colour:{1}\"],{2}[style^=\"colour: {3}\"]",
  "☆ Pin to Favorites": "☆ Pin to Favourites",
  "{0} pinned to your Favorites.": "{0} pinned to your Favourites.",
  "🛡 The armorer": "🛡 The armourer",
