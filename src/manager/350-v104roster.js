@@ -293,7 +293,7 @@ function r104Room(R,w,pm){const room=R.querySelector('#mgrPane .rm100.rm100-rost
     if(sel){if(g.slot95){const lw=sel.closest('label')||sel;lw.outerHTML=`<button type="button" class="btn rm100tbtn" disabled title="${esc(_T('He starts a bout — take him off it before you lend him.'))}">⇢ ${_T`Lend`}</button>`}
       else{const H=c104Lenders(w,g);const keep=new Map(H.map(x=>[x.m.id,x]));for(const o of [...sel.querySelectorAll('option')]){if(!o.value)continue;const x=keep.get(o.value);if(!x)o.remove();else o.textContent=_T`${x.m.ludus} · pays ${x.lump} now · ${CAP104.loanWk} wk`}
         if(sel.options.length<2){const lw=sel.closest('label')||sel;lw.outerHTML=`<button type="button" class="btn rm100tbtn" disabled title="${esc(_T('No house can borrow him now (room under their cap and the lump sum).'))}">⇢ ${_T`Lend`}</button>`}}}
-    if(wax&&g.loanFrom&&g.loanFrom.mid!==pm.id){const o=mgrById(g.loanFrom.mid);const L=g.loanFrom;wax.querySelector('.rm100tb').insertAdjacentHTML('beforebegin',`<div class="rm100tr r104ln"><span>${_T`On loan`}</span><span class="rm100one">${L.c104?esc(_T`from ${o?o.ludus:''} · ${L.lump} paid up front · his wage is yours`):esc(_T`from ${o?o.ludus:''} · ${L.fee}/wk (old terms)`)}</span><span>${Math.max(0,L.weeks|0)} wk</span></div>`)}
+    if(wax&&g.loanFrom&&g.loanFrom.mid!==pm.id){const o=mgrById(g.loanFrom.mid);const L=g.loanFrom;wax.querySelector('.rm100tb').insertAdjacentHTML('beforebegin',`<div class="rm100tr r104ln"><span>${_T`On loan`}</span><span class="rm100one">${L.c104?esc(_T`from ${o?o.ludus:''} · ${L.lump} paid up front · his wage is yours`):esc(_T`from ${o?o.ludus:''} · ${L.fee}/wk (old terms)`)}</span>${_T`<span>${Math.max(0,L.weeks|0)} wk</span>`}</div>`)}
     /* "Keeping him" folded inside the tabula */
     const keep=room.querySelector('.rm100keep');if(keep&&wax){const d=document.createElement('details');d.className='r104keep';if(w.tutorial||R104.keepOpen)d.open=true;
       const ph=keep.querySelector('.rm100ph');d.innerHTML=`<summary>${ph?ph.innerHTML:_T('Keeping him · coin and favours')}</summary>`;if(ph)ph.remove();d.appendChild(keep);wax.appendChild(d)}}
@@ -314,7 +314,7 @@ if(V104C.on){const base=mgrHTML;mgrHTML=function(){try{const w=W_(),pm=w&&!w.dea
 /* ---------- the row menu ⋯ ---------- */
 function r104Close(){for(const p of document.querySelectorAll('.r104pop'))p.remove();R104.pop=null}
 function r104MenuHTML(g,w,pm){const k=team104(g,pm);const T=TM104();const nA=tm104Count(w,pm,'A'),nB=tm104Count(w,pm,'B');
-  const it=(attr,l,dis,why,on,x)=>`<button type="button" class="r104mi${on?' on':''}" ${attr} ${dis?`disabled title="${esc(why||'')}"`:''} role="menuitem"><span>${l}</span>${x!=null?`<small>${x}</small>`:''}</button>`;
+  const it=(attr,l,dis,why,on,x)=>`<button type="button" class="r104mi${on?' on':''}" ${attr} ${dis?_T`disabled title="${esc(why||'')}"`:''} role="menuitem"><span>${l}</span>${x!=null?`<small>${x}</small>`:''}</button>`;
   let h=`<div class="r104mh"><b>${esc(g.name)}</b><small>${k==='L'?T.L[0]:T[k][0]} · ${effOvr(g)}</small></div>`;
   if(k==='L'){let rc='';try{const f=recallFee(g);const busy=(w.night&&w.night.bouts||[]).some(b=>!b.done&&b.ents.includes(g.id));rc=it(`data-recall="${g.id}"`,_T`↩ Call him back · ${coinAmt87(f)}`,busy||pm.coin<f,busy?_T('He fights for them this week.'):_T('Not enough coin.'))}catch(e){}
     return h+`<div class="r104ms">${g.loanFrom&&g.loanFrom.c104?esc(c104LoanTxt(g,g.loanFrom)):esc(loanTerms(g))}</div>`+rc}

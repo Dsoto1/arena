@@ -323,8 +323,8 @@ function po104OffHTML(w){const P=po104P(w);const R=P.rev||po104Review(w,P);const
 /* the page: rail + banners say Superbus / Off-season, the bracket button, the season texts */
 /* the old "top four" texts (English strings of 231 / 290; other languages keep theirs until the release's translation pass) */
 const PO104_TXT=()=>[[_T('The Flavius Superbus: the top four of the league table send one fighter each to Roma when week 12 ends — invitation only.'),_T('The Flavius Superbus playoffs: the top 12 of the league table, weeks 12–14. Seeds 1–4 rest in week 12; each house sends one gladiator a round.')],
-  ['The top four houses at week 12 are invited to the Flavius Superbus.',_T('The top 12 houses after week 11 play the Superbus playoffs; seeds 1–4 rest in week 12.')],
-  ['The top four are invited to the Flavius Superbus',_T('The top 12 play the Superbus playoffs')]];
+  [_T('The top four houses at week 12 are invited to the Flavius Superbus.'),_T('The top 12 houses after week 11 play the Superbus playoffs; seeds 1–4 rest in week 12.')],
+  [_T('The top four are invited to the Flavius Superbus'),_T('The top 12 play the Superbus playoffs')]];
 function po104Post(h){const w=W_();if(!w||w.dead||MGR.view||typeof h!=='string'||!cal104New(w))return h;const ph=po104Ph(w);const br=po104BrOK(w);const lg=MGR.tab==='league'||MGR.tab==='sched';if(!ph&&!br&&!lg)return h;
   if(lg)for(const [a,b] of PO104_TXT())if(h.includes(a))h=h.split(a).join(b);
   const t=document.createElement('template');t.innerHTML=h;const R=t.content;const Q=s=>R.querySelector(s);
@@ -335,7 +335,7 @@ function po104Post(h){const w=W_();if(!w||w.dead||MGR.view||typeof h!=='string'|
     const lb=Q('.lu100tt>b');if(lb)lb.textContent=ic+lbl;
     const mw=Q('.lu100mw[data-id="night"]');if(mw){if(ph!=='off')mw.classList.add('sb103m');const mb=mw.querySelector('.tx>b');if(mb)mb.textContent=lbl}
     const eh=Q('.endconfirm h4');if(eh)eh.textContent=ph==='off'?_T`⏭ End the off-season → season ${w.season+1}?`:_T`⏭ End ${lbl}?`;
-    if(w.review&&w.review.po104&&w.review.po104s===w.season){const d=Q('details.rev91 summary b');const nm={r11:_T('Week 11'),r1:_T('Superbus Round 1'),sf:_T('Superbus semifinals'),fin:_T('Superbus Week')}[w.review.po104];if(d&&nm&&!(w.review.sb103))d.textContent=_T`${nm} in review · season ${RN(w.season)}`}}
+    if(w.review&&w.review.po104&&w.review.po104s===w.season){const d=Q(_T('details.rev91 summary b'));const nm={r11:_T('Week 11'),r1:_T('Superbus Round 1'),sf:_T('Superbus semifinals'),fin:_T('Superbus Week')}[w.review.po104];if(d&&nm&&!(w.review.sb103))d.textContent=_T`${nm} in review · season ${RN(w.season)}`}}
   if(br){const k=Q('.roomhd.b73-league .kick');if(k&&!k.querySelector('.po104bb'))k.appendChild(bb());const nt=Q('.roomhd.b73-night .roomttl');if(nt&&!nt.querySelector('.po104bb'))nt.appendChild(bb())}
   /* the League banner + the Season view say what the Superbus now is */
   const sub=Q('.roomhd.b73-league .sub');if(sub&&/Superbus/.test(sub.textContent))sub.textContent=_T`Season ${w.season} · ${Math.max(0,12-wkOf(w.week))} weeks left · 12 houses go to the Superbus playoffs, the top 4 rest in week 12`;

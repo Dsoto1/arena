@@ -124,7 +124,7 @@ function of104Answer(w,wk0){const m=me();if(!w.of104||!m)return;const P=w.of104;
       of104Letter(w,g,'💢',_T`${g.name} is insulted`,_T`<b>${esc(g.name)}</b> laughed at ${o.wage}/wk — he asks about ${ask}. Interest −${W104.of.scareIv}, and he will not talk to your house for ${W104.of.scareWks} weeks.`);continue}
     const v=offerVerdict(g,o.wage,o.weeks,o.bonus,o.pledge);
     if(!v.ok){const top=suitors(g)[0];const R=top&&top.m&&!top.m.isPlayer&&!top.m.dead?top.m:null;
-      if(R&&!v.cap103&&interestOf(g,R)>interestOf(g,m)&&w104U(`of104s:${w.id}:${g.id}:${wk0}`)<W104.of.snatch&&rosterOf(R).length<(typeof cap104==='function'?cap104(R):15)){
+      if(R&&!v.cap103&&interestOf(g,R)>interestOf(g,m)&&w104U(_T`of104s:${w.id}:${g.id}:${wk0}`)<W104.of.snatch&&rosterOf(R).length<(typeof cap104==='function'?cap104(R):15)){
         g.contract={mgr:R.id,wage:Math.max(ask,Math.round(o.wage*1.05)),weeks:8,since:w.week};g.unsigned=0;ghist(g,_T`signed with ${esc(R.ludus)}`);try{mlog(R,_T`signed ${g.name}, outbidding you`)}catch(e){}
         mnews(_T`${esc(R.ludus)} signs <b>${esc(g.name)}</b> — your offer came second.`);of104Letter(w,g,'🎣',_T`${g.name} chose ${R.ludus}`,_T`<b>${esc(g.name)}</b> took <b>${esc(R.ludus)}</b>'s terms over yours. ${esc(v.why||'')}`);continue}
       of104Letter(w,g,'✉',_T`${g.name} says no`,_T`<b>${esc(g.name)}</b> turns your offer down: ${esc(v.why||'')}`);continue}
@@ -223,7 +223,7 @@ function bp104Tile(w,pm,fk){const F=FAC[fk];const l=facLvl(pm,fk);const b=bp104O
   return `<div class="lu2r bp104t${!why&&l<3?' can':''}${here?' bld':''}" data-bp104="${fk}"><div class="bp104h"><b>${F.i} ${esc(_T(F.n))}</b><span class="facpips">${[0,1,2].map(i=>`<i class="${i<l?'on':''}"></i>`).join('')}</span></div>
     <div class="bp104pair"><figure>${bp104Art(fk,l)}<figcaption>${_T`Now`} · ${l?esc(F.fx(l)):esc(F.d)}</figcaption></figure>${l<3?`<span class="bp104arr">→</span><figure>${bp104Art(fk,here?b.l:l+1,true)}<figcaption>${here?_T('Being built'):_T`Next`} · ${esc(F.fx(here?b.l:l+1))}</figcaption></figure>`:''}</div>
     <div class="bp104f">${l>=3?`<span class="badge gold">${_T`complete`}</span>`:here?`<span class="bp104bld">${_T`🏗 ${bp104Left(pm,w)===1?_T('ready when this week ends'):_T`ready when ${wkName(b.end)} ends`}`}</span>`
-      :`<span class="rc-sub">${_T`${n} week${n===1?'':'s'} to build`}</span><button class="btn tksm${why?'':' primary'}" type="button" data-mg="build" data-id="${fk}" ${why?`disabled title="${esc(why)}"`:''}>${_T`Build ${BP104_RN[l]}`}<small>${coinAmt87(cost)}</small></button>`}${why&&!here&&l<3?`<small class="bp104why">${esc(why)}</small>`:''}</div></div>`}
+      :`<span class="rc-sub">${_T`${n} week${n===1?'':'s'} to build`}</span><button class="btn tksm${why?'':' primary'}" type="button" data-mg="build" data-id="${fk}" ${why?_T`disabled title="${esc(why)}"`:''}>${_T`Build ${BP104_RN[l]}`}<small>${coinAmt87(cost)}</small></button>`}${why&&!here&&l<3?`<small class="bp104why">${esc(why)}</small>`:''}</div></div>`}
 if(typeof lu102FacHTML==='function'){const base=lu102FacHTML;lu102FacHTML=function(w,pm){const h=base.apply(this,arguments);try{if(!w104Live()||typeof h!=='string')return h;
   const C=council83(w);const by={};for(const fk of Object.keys(FAC)){const o=lu2Owner(fk);(by[o]=by[o]||[]).push(fk)}const nm=k=>{const a=C.find(x=>x.k===k);return a?esc(a.name):k};const ro=k=>{const a=C.find(x=>x.k===k);return a?esc(a.role):''};
   const T=document.createElement('template');T.innerHTML=h;const R=T.content;const box=R.querySelector('.lu102fb');const sub=R.querySelector('.lu102fh .rc-sub');
@@ -233,7 +233,7 @@ if(typeof lu102FacHTML==='function'){const base=lu102FacHTML;lu102FacHTML=functi
 /* the advisor popover's rows (297) say so too */
 if(typeof lu2Row==='function'){const base=lu2Row;lu2Row=function(w,pm,fk){const h=base.apply(this,arguments);try{const b=w104Live()&&bp104Of(pm);if(!b||typeof h!=='string')return h;
   if(b.k===fk)return h.replace(/<button[^>]*data-mg="build"[\s\S]*?<\/button>/,`<span class="bp104bld">🏗 ${esc(_T`ready when ${wkName(b.end)} ends`)}</span>`);
-  return h.replace('data-mg="build"',`data-mg="build" disabled title="${esc(_T`The builders are on the ${_T(FAC[b.k].n)} — one project at a time.`)}"`)}catch(e){return h}}}
+  return h.replace('data-mg="build"',_T`data-mg="build" disabled title="${esc(_T`The builders are on the ${_T(FAC[b.k].n)} — one project at a time.`)}"`)}catch(e){return h}}}
 
 /* the Valetudinarium's effect line said "physicians' weekly cap" (23) — since 318 it is beds + Medicus hours */
 try{if(FAC.valet)FAC.valet.fx=l=>_T`+${l} bed${l===1?'':'s'} · +${l*CARE101.valet} Medicus hours a week`}catch(e){}
@@ -284,7 +284,7 @@ function mq104Warn(w,pm){try{w=w||W_();pm=pm||me();if(!w||!pm||w.tutorial||!w.ni
 function mq104WarnHTML(w,pm){const t=mq104Warn(w,pm);return t?`<div class="mq104w" role="status">${t} <span class="v101lnk" role="button" tabindex="0" data-mg="tab" data-id="roster">${_T`To the Roster`}</span></div>`:''}
 
 /* the plates */
-function w104Plate(o){return `<button type="button" class="v104pl plantile${o.why?' off':''}${o.on?' on':''}${o.rec?' v101rec':''}" ${o.attr} data-v104p="${o.k}" data-v101t="${o.k}"${o.why?` ${o.native?`disabled title="${esc(o.why)}"`:`data-dis="${esc(o.why)}" title="${esc(o.why)}"`}`:` title="${esc(o.fx||'')}"`}>
+function w104Plate(o){return `<button type="button" class="v104pl plantile${o.why?' off':''}${o.on?' on':''}${o.rec?' v101rec':''}" ${o.attr} data-v104p="${o.k}" data-v101t="${o.k}"${o.why?` ${o.native?_T`disabled title="${esc(o.why)}"`:`data-dis="${esc(o.why)}" title="${esc(o.why)}"`}`:` title="${esc(o.fx||'')}"`}>
   <span class="rm100fr">${w104Art(o.art||o.k)}</span><span class="v104pb"><b>${o.ic} ${o.n}</b><span class="v104ph">${o.cost}</span><span class="v104fx">${o.fx||''}</span>${o.on?`<span class="v101ok">${o.onTxt||_T('✓ this week')}</span>`:''}${o.why?`<span class="v104why">${esc(o.why)}</span>`:''}</span>${o.rec?`<span class="v101star">${_T`★ Suggested`}</span>`:''}</button>`}
 function w104Cost(k){return `${CARE101.h[k]} h · ${coinAmt87(care101Coin(k))}`}
 function w104Ward(g,w,pm,rk){const P=[];const i=g.inj&&!g.inj.war?g.inj:null;const sev=g.severed||[];const fw=i?fitWeekOf(g):null;const fitTo=n=>i?_T`fit ${wkName(fw)} → ${wkName(n)}`:'';
@@ -336,7 +336,7 @@ function w104Tabula(w,pm,sel){const Mx=mh101Max(pm,w),Lf=mh101Left(w,pm);const r
       <div class="v101oh">${_T`Booked this week`}</div>${B.length?`<ul class="w104bk">${B.map(x=>`<li>${x}</li>`).join('')}</ul>`:`<div class="rc-sub">${_T`Nothing booked yet.`}</div>`}</div>
     <div class="w104c"><div class="v101oh">${_T`The Medicus's order`}</div>
       ${Q.length?`<ol class="w104q">${Q.map(([g,s],n)=>`<li class="${n===0?'rec':''}"><b>${n===0?'★ ':''}${esc(g.name)}</b> · ${s.t}</li>`).join('')}</ol>`:`<div class="rc-sub">${_T`✓ Nobody waiting for the physicians.`}</div>`}
-      <button type="button" class="btn tksm${can?' primary':''}" data-mq104 ${can?'':`disabled title="${esc(_T('Nothing the hours and the treasury can pay for now'))}"`}>${_T`⚕ Treat the wounded in order`}</button>
+      <button type="button" class="btn tksm${can?' primary':''}" data-mq104 ${can?'':_T`disabled title="${esc(_T('Nothing the hours and the treasury can pay for now'))}"`}>${_T`⚕ Treat the wounded in order`}</button>
       ${sel&&S.length?`<div class="v101oh" style="margin-top:6px">${_T`${esc(sel.name)} · step by step`}</div><div class="v101ord w104ord">${S.map((x,n)=>`<div class="v101os${x.done?' done':''}${n===first?' rec':''}"><b>${x.done?'✓':n+1}</b><span>${x.t}</span></div>`).join('')}</div>`:''}</div></div></section>`}
 function w104Banner(hd,w,pm){const Mx=mh101Max(pm,w),Lf=mh101Left(w,pm);const rec=rc104Used(w);const wc=Math.max(0,Mx-Lf-rec);const pc=v=>Mx?(v/Mx*100).toFixed(1):0;
   for(const s of hd.querySelectorAll('.v101st,.v101bx,.roomstat'))s.remove();const Md=w.medicus76;

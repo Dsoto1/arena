@@ -1,0 +1,1762 @@
+[
+ {
+  "k": "Podiums earn points; the table seeds the <b>Flavius Superbus</b> playoffs after the season. Three week-ends in the red closes the ludus. <b>Tactics → Strategy</b> has the rest.",
+  "w": "17-manager.js:1180"
+ },
+ {
+  "k": "The Manager season reworked",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: the Superbus is a playoff — the league seeds all twelve houses, seeds 1–4 rest a round, the top 2 of each bout go on, with a bracket to follow and growing prizes",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "An off-season after the final: the season review, the Flavian Awards and contract renewals",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Careers: fighters age, peak and fade, five kinds of career from the brief bright star to the ageless veteran, and greats who retire may join your council",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Roster: a cap set by your Barracks, a First and Second team, one sortable list with the chosen gladiator beside it, loans paid up front, and trades of several fighters for one",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "The Infirmary in two wings, Ward and Baths, with recovery moved from the Training Yard; recruits answer offers the next week, and buildings take weeks to finish",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Byes in weeks 4 and 12, Rivalry Week in week 11, tutorial and tips updated for the playoffs",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "<b>📊 League</b> — the table. A podium is 3, 2 or 1 points; all twelve houses are seeded into the Superbus playoffs at season's end (the top four rest a round).",
+  "w": "36-mtutor.js:85"
+ },
+ {
+  "k": "The table seeds the <b>Superbus</b> playoffs (the top four rest a round; the top 2 of each bout go on). After them come the awards and the recap paper, and then the <b>Quaestor's Ledger</b> pays every house for its season.",
+  "w": "50-v48.js:129"
+ },
+ {
+  "k": "Season {0} · {1} weeks left · then the Superbus playoffs",
+  "w": "290-v100world.js:123"
+ },
+ {
+  "k": "The Flavius Superbus: the league table seeds the playoffs after the season — Round 1, the semifinals, then the final in Roma (one fighter per house each round).",
+  "w": "290-v100world.js:376"
+ },
+ {
+  "k": "Best Record: the best win rate of the season (4 bouts or more).",
+  "w": "348-v104season.js:49"
+ },
+ {
+  "k": "an invited outsider",
+  "w": "348-v104season.js:67"
+ },
+ {
+  "k": "{0} (invited)",
+  "w": "348-v104season.js:67"
+ },
+ {
+  "k": "{0} has no fit fighter for the Superbus: the editor hires {1} for the house (−5 fame).",
+  "w": "348-v104season.js:87"
+ },
+ {
+  "k": "🏛 {0}: {1}, +{2} fame.",
+  "w": "348-v104season.js:107"
+ },
+ {
+  "k": "Into the Superbus semifinals",
+  "w": "348-v104season.js:122"
+ },
+ {
+  "k": "Into the Superbus final",
+  "w": "348-v104season.js:123"
+ },
+ {
+  "k": "Champions of the Flavius Superbus",
+  "w": "348-v104season.js:124"
+ },
+ {
+  "k": "🏛 No Superbus bout for your house this week: the Senate pays your wages, {0}.",
+  "w": "348-v104season.js:160"
+ },
+ {
+  "k": "Not in the Superbus playoffs",
+  "w": "348-v104season.js:175"
+ },
+ {
+  "k": "🏛 The Superbus card is set by the playoffs: each house sends one gladiator a round — choose yours on the Superbus card.",
+  "w": "348-v104season.js:176"
+ },
+ {
+  "k": "That fighter cannot go this round.",
+  "w": "348-v104season.js:183"
+ },
+ {
+  "k": "{0} will fight for the house in the Superbus.",
+  "w": "348-v104season.js:185"
+ },
+ {
+  "k": "Round 1",
+  "w": "348-v104season.js:188"
+ },
+ {
+  "k": "the semifinals",
+  "w": "348-v104season.js:188"
+ },
+ {
+  "k": "the Superbus final",
+  "w": "348-v104season.js:188"
+ },
+ {
+  "k": "Seed #{0}: your house rests in week 12 and waits in the semifinals.",
+  "w": "348-v104season.js:190"
+ },
+ {
+  "k": "Seed #{0}: Round 1 this week — finish in the top 2 of your bout to reach the semifinals.",
+  "w": "348-v104season.js:190"
+ },
+ {
+  "k": "Your house did not make the twelve. Watch the rounds and bet on them.",
+  "w": "348-v104season.js:190"
+ },
+ {
+  "k": "The Superbus playoffs begin",
+  "w": "348-v104season.js:191"
+ },
+ {
+  "k": "The regular season is over. Twelve houses by league points play for the Flavius Superbus: seeds 5–12 in Round 1, seeds 1–4 rest a week.",
+  "w": "348-v104season.js:192"
+ },
+ {
+  "k": "Each house sends one gladiator a round. Prizes: semifinal {0}, final {1}, champion {2} and the Superbus Cup.",
+  "w": "348-v104season.js:192"
+ },
+ {
+  "k": "🏛 The bracket",
+  "w": "348-v104season.js:192"
+ },
+ {
+  "k": "🏛 <b>The Superbus playoffs begin.</b> Seeds 1–4 rest: {0}.",
+  "w": "348-v104season.js:193"
+ },
+ {
+  "k": "Superbus Week: the finalists",
+  "w": "348-v104season.js:195"
+ },
+ {
+  "k": "The four houses of the Flavius Superbus final in Roma: <b>{0}</b>.",
+  "w": "348-v104season.js:196"
+ },
+ {
+  "k": "<b>Your house is in the final.</b> Choose your champion on the Superbus card.",
+  "w": "348-v104season.js:196"
+ },
+ {
+  "k": "Your house is out. Watch the final and bet on it.",
+  "w": "348-v104season.js:196"
+ },
+ {
+  "k": "🏛 To Superbus Week",
+  "w": "348-v104season.js:196"
+ },
+ {
+  "k": "🏆 <b>Superbus Week.</b> The final in Roma: {0}.",
+  "w": "348-v104season.js:197"
+ },
+ {
+  "k": "🏛 The Superbus semifinals: {0}.",
+  "w": "348-v104season.js:198"
+ },
+ {
+  "k": "the Clerk",
+  "w": "348-v104season.js:215"
+ },
+ {
+  "k": "Season {0} in review",
+  "w": "348-v104season.js:215"
+ },
+ {
+  "k": "🌿 <b>The off-season.</b> No bouts this week: contracts, awards and recruiting before season {0}.",
+  "w": "348-v104season.js:216"
+ },
+ {
+  "k": "freed",
+  "w": "348-v104season.js:220"
+ },
+ {
+  "k": "fell",
+  "w": "348-v104season.js:220"
+ },
+ {
+  "k": "did not make the playoffs",
+  "w": "348-v104season.js:225"
+ },
+ {
+  "k": "won the Flavius Superbus",
+  "w": "348-v104season.js:225"
+ },
+ {
+  "k": "reached the final (place {0})",
+  "w": "348-v104season.js:225"
+ },
+ {
+  "k": "went out in the semifinals",
+  "w": "348-v104season.js:225"
+ },
+ {
+  "k": "went out in Round 1",
+  "w": "348-v104season.js:225"
+ },
+ {
+  "k": "Gladiator of the Year",
+  "w": "348-v104season.js:228"
+ },
+ {
+  "k": "Best Record",
+  "w": "348-v104season.js:228"
+ },
+ {
+  "k": "Rookie of the Year",
+  "w": "348-v104season.js:228"
+ },
+ {
+  "k": "Most Feared",
+  "w": "348-v104season.js:228"
+ },
+ {
+  "k": "Record:",
+  "w": "348-v104season.js:230"
+ },
+ {
+  "k": "{0}–{1} · {2} pts · {3}",
+  "w": "348-v104season.js:230"
+ },
+ {
+  "k": "Playoffs:",
+  "w": "348-v104season.js:230"
+ },
+ {
+  "k": "seed #{0}, {1}",
+  "w": "348-v104season.js:230"
+ },
+ {
+  "k": "Treasury:",
+  "w": "348-v104season.js:231"
+ },
+ {
+  "k": "fame {0}{1}",
+  "w": "348-v104season.js:231"
+ },
+ {
+  "k": "Came:",
+  "w": "348-v104season.js:231"
+ },
+ {
+  "k": "Went:",
+  "w": "348-v104season.js:231"
+ },
+ {
+  "k": "Titles:",
+  "w": "348-v104season.js:232"
+ },
+ {
+  "k": "The fallen:",
+  "w": "348-v104season.js:232"
+ },
+ {
+  "k": "Grade band-ups:",
+  "w": "348-v104season.js:232"
+ },
+ {
+  "k": "League awards:",
+  "w": "348-v104season.js:233"
+ },
+ {
+  "k": "not given",
+  "w": "348-v104season.js:233"
+ },
+ {
+  "k": "Also this off-season:",
+  "w": "348-v104season.js:234"
+ },
+ {
+  "k": "🌿 The off-season",
+  "w": "348-v104season.js:234"
+ },
+ {
+  "k": "{0}–{1} ({2}%)",
+  "w": "348-v104season.js:238"
+ },
+ {
+  "k": "left {0} in the off-season",
+  "w": "348-v104season.js:249"
+ },
+ {
+  "k": "📜 {0} contract ask{1} wait on the off-season page.",
+  "w": "348-v104season.js:250"
+ },
+ {
+  "k": "✍ {0} signs on: {1} a week for {2} more weeks.",
+  "w": "348-v104season.js:252"
+ },
+ {
+  "k": "{0} keeps the old terms and will walk when the contract ends.",
+  "w": "348-v104season.js:253"
+ },
+ {
+  "k": "{0} leaves the house.",
+  "w": "348-v104season.js:254"
+ },
+ {
+  "k": "{0} stays — and sulks (−10 morale).",
+  "w": "348-v104season.js:255"
+ },
+ {
+  "k": "Round 1 · {0}",
+  "w": "348-v104season.js:273"
+ },
+ {
+  "k": "Rest week · seeds 1–4",
+  "w": "348-v104season.js:274"
+ },
+ {
+  "k": "Semifinal · {0}",
+  "w": "348-v104season.js:275"
+ },
+ {
+  "k": "Round 1 · {0} · 1st",
+  "w": "348-v104season.js:276"
+ },
+ {
+  "k": "Round 1 · {0} · 2nd",
+  "w": "348-v104season.js:276"
+ },
+ {
+  "k": "The Superbus final",
+  "w": "348-v104season.js:278"
+ },
+ {
+  "k": "Semifinal A · top 2",
+  "w": "348-v104season.js:278"
+ },
+ {
+  "k": "Semifinal B · top 2",
+  "w": "348-v104season.js:278"
+ },
+ {
+  "k": "The Superbus Cup",
+  "w": "348-v104season.js:280"
+ },
+ {
+  "k": "champion: {0}",
+  "w": "348-v104season.js:280"
+ },
+ {
+  "k": "<b>If the season ended today</b> — projected seeds from the league table (week {0} of 12).",
+  "w": "348-v104season.js:282"
+ },
+ {
+  "k": "You: #{0}, a rest week.",
+  "w": "348-v104season.js:282"
+ },
+ {
+  "k": "You: #{0}, Round 1.",
+  "w": "348-v104season.js:282"
+ },
+ {
+  "k": "You: outside the twelve.",
+  "w": "348-v104season.js:282"
+ },
+ {
+  "k": "Your house: seed #{0}.",
+  "w": "348-v104season.js:283"
+ },
+ {
+  "k": "Your house is not in the playoffs.",
+  "w": "348-v104season.js:283"
+ },
+ {
+  "k": "Prizes: semifinal {0} · final {1} · champion {2}.",
+  "w": "348-v104season.js:283"
+ },
+ {
+  "k": "Week 12",
+  "w": "348-v104season.js:284"
+ },
+ {
+  "k": "Week 13",
+  "w": "348-v104season.js:284"
+ },
+ {
+  "k": "Week 14",
+  "w": "348-v104season.js:284"
+ },
+ {
+  "k": "The Superbus bracket",
+  "w": "348-v104season.js:286"
+ },
+ {
+  "k": "🏛 The Flavius Superbus · season {0}",
+  "w": "348-v104season.js:286"
+ },
+ {
+  "k": "Superbus · Round 1",
+  "w": "348-v104season.js:292"
+ },
+ {
+  "k": "Superbus · Semifinals",
+  "w": "348-v104season.js:292"
+ },
+ {
+  "k": "Off-season",
+  "w": "348-v104season.js:292"
+ },
+ {
+  "k": "SUPERBUS · ROUND 1",
+  "w": "348-v104season.js:295"
+ },
+ {
+  "k": "SUPERBUS · SEMIFINALS",
+  "w": "348-v104season.js:295"
+ },
+ {
+  "k": "Your gladiator <b>{0}</b> has fought.",
+  "w": "348-v104season.js:298"
+ },
+ {
+  "k": "Your gladiator for {0}:",
+  "w": "348-v104season.js:299"
+ },
+ {
+  "k": "the semifinal",
+  "w": "348-v104season.js:299"
+ },
+ {
+  "k": "One gladiator a round — chosen again each round.",
+  "w": "348-v104season.js:299"
+ },
+ {
+  "k": "Your house is not in the playoffs — watch the bouts and bet on them.",
+  "w": "348-v104season.js:300"
+ },
+ {
+  "k": "Seed #{0}: your house rests this week and waits in the semifinals.",
+  "w": "348-v104season.js:300"
+ },
+ {
+  "k": "Your house is out of the Superbus — watch the bouts and bet on them.",
+  "w": "348-v104season.js:300"
+ },
+ {
+  "k": "Prizes: semifinal {0} +{1} fame · final {2} +{3} · champion {4} +{5} and the Superbus Cup.",
+  "w": "348-v104season.js:301"
+ },
+ {
+  "k": "The Flavius Superbus · Roma · week {0} · season {1}",
+  "w": "348-v104season.js:302"
+ },
+ {
+  "k": "The top 2 of each bout by the event’s own finishing order go on. Playoff bouts score no league points.",
+  "w": "348-v104season.js:303"
+ },
+ {
+  "k": "asks {0} a week (+{1}%, was {2}) for {3} more weeks",
+  "w": "348-v104season.js:308"
+ },
+ {
+  "k": "sat on the bench and asks to leave",
+  "w": "348-v104season.js:308"
+ },
+ {
+  "k": "signed",
+  "w": "348-v104season.js:309"
+ },
+ {
+  "k": "let go",
+  "w": "348-v104season.js:309"
+ },
+ {
+  "k": "refused",
+  "w": "348-v104season.js:309"
+ },
+ {
+  "k": "kept",
+  "w": "348-v104season.js:309"
+ },
+ {
+  "k": "lapsed",
+  "w": "348-v104season.js:309"
+ },
+ {
+  "k": "Sign",
+  "w": "348-v104season.js:309"
+ },
+ {
+  "k": "Let him go",
+  "w": "348-v104season.js:309"
+ },
+ {
+  "k": "🌿 The off-season · after season {0}",
+  "w": "348-v104season.js:311"
+ },
+ {
+  "k": "No bouts this week. Season {0} starts when the week ends.",
+  "w": "348-v104season.js:311"
+ },
+ {
+  "k": "🏆 The Flavius Superbus: <b>{0}</b>",
+  "w": "348-v104season.js:312"
+ },
+ {
+  "k": "📜 Season {0} in review",
+  "w": "348-v104season.js:313"
+ },
+ {
+  "k": "✍ Contract renewals",
+  "w": "348-v104season.js:314"
+ },
+ {
+  "k": "No contract asks this off-season.",
+  "w": "348-v104season.js:314"
+ },
+ {
+  "k": "Unanswered asks lapse when the week ends: raises keep the old terms, the others stay and sulk.",
+  "w": "348-v104season.js:314"
+ },
+ {
+  "k": "🤝 Recruiting is open",
+  "w": "348-v104season.js:315"
+ },
+ {
+  "k": "Sign, scout and train before the new season.",
+  "w": "348-v104season.js:315"
+ },
+ {
+  "k": "The Flavius Superbus playoffs: the top 12 of the league table, weeks 12–14. Seeds 1–4 rest in week 12; each house sends one gladiator a round.",
+  "w": "348-v104season.js:325"
+ },
+ {
+  "k": "The top four houses at week 12 are invited to the Flavius Superbus.",
+  "w": "348-v104season.js:326"
+ },
+ {
+  "k": "The top 12 houses after week 11 play the Superbus playoffs; seeds 1–4 rest in week 12.",
+  "w": "348-v104season.js:326"
+ },
+ {
+  "k": "The top 12 play the Superbus playoffs",
+  "w": "348-v104season.js:327"
+ },
+ {
+  "k": "🏛 Bracket",
+  "w": "348-v104season.js:331"
+ },
+ {
+  "k": "🌿 Off-season · after season {0}",
+  "w": "348-v104season.js:334"
+ },
+ {
+  "k": "week {0} of season {1}",
+  "w": "348-v104season.js:334"
+ },
+ {
+  "k": "⏭ End the off-season → season {0}?",
+  "w": "348-v104season.js:337"
+ },
+ {
+  "k": "⏭ End {0}?",
+  "w": "348-v104season.js:337"
+ },
+ {
+  "k": "details.rev91 summary b",
+  "w": "348-v104season.js:338"
+ },
+ {
+  "k": "Week 11",
+  "w": "348-v104season.js:338"
+ },
+ {
+  "k": "Superbus Round 1",
+  "w": "348-v104season.js:338"
+ },
+ {
+  "k": "Superbus semifinals",
+  "w": "348-v104season.js:338"
+ },
+ {
+  "k": "{0} in review · season {1}",
+  "w": "348-v104season.js:338"
+ },
+ {
+  "k": "Season {0} · {1} weeks left · 12 houses go to the Superbus playoffs, the top 4 rest in week 12",
+  "w": "348-v104season.js:341"
+ },
+ {
+  "k": "playoffs · weeks 12–14",
+  "w": "348-v104season.js:342"
+ },
+ {
+  "k": "— set at the start of week 10, when the Consilium writes",
+  "w": "348-v104season.js:345"
+ },
+ {
+  "k": "Meteor",
+  "w": "349-v104careers.js:51"
+ },
+ {
+  "k": "Blazer",
+  "w": "349-v104careers.js:51"
+ },
+ {
+  "k": "Steady",
+  "w": "349-v104careers.js:51"
+ },
+ {
+  "k": "Ageless",
+  "w": "349-v104careers.js:51"
+ },
+ {
+  "k": "Rising",
+  "w": "349-v104careers.js:52"
+ },
+ {
+  "k": "Prime",
+  "w": "349-v104careers.js:52"
+ },
+ {
+  "k": "Fading",
+  "w": "349-v104careers.js:52"
+ },
+ {
+  "k": "retired at {0}{1}",
+  "w": "349-v104careers.js:82"
+ },
+ {
+  "k": "— a great of the sand",
+  "w": "349-v104careers.js:82"
+ },
+ {
+  "k": "🏺 <b>{0}</b>, {1}, retires{2} after {3} event{4} and {5} win{6}.{7}",
+  "w": "349-v104careers.js:83"
+ },
+ {
+  "k": "The sand will remember a great.",
+  "w": "349-v104careers.js:83"
+ },
+ {
+  "k": "🏺 {0} retired at {1}.",
+  "w": "349-v104careers.js:84"
+ },
+ {
+  "k": "{0} lays down the sword",
+  "w": "349-v104careers.js:85"
+ },
+ {
+  "k": "Lanista — <b>{0}</b> is {1} and the legs no longer answer. {2} event{3}, {4} win{5}, best overall {6}. The barracks drink to an old sand-hand tonight.",
+  "w": "349-v104careers.js:86"
+ },
+ {
+  "k": "{0} could stay with the house",
+  "w": "349-v104careers.js:88"
+ },
+ {
+  "k": "A great does not leave the sand easily. <b>{0}</b> offers to stay — as your Doctore or as your Barracks master, at level 3. Whoever holds that seat now steps aside.",
+  "w": "349-v104careers.js:89"
+ },
+ {
+  "k": "As Doctore",
+  "w": "349-v104careers.js:89"
+ },
+ {
+  "k": "now level {0}",
+  "w": "349-v104careers.js:89"
+ },
+ {
+  "k": "As Barracks master",
+  "w": "349-v104careers.js:89"
+ },
+ {
+  "k": "retired a great",
+  "w": "349-v104careers.js:91"
+ },
+ {
+  "k": "in full bloom — the prime has come",
+  "w": "349-v104careers.js:100"
+ },
+ {
+  "k": "past the prime: {0}",
+  "w": "349-v104careers.js:102"
+ },
+ {
+  "k": "📉 A losing season ({0}% won) — fame −{1}.",
+  "w": "349-v104careers.js:111"
+ },
+ {
+  "k": "🏺 Retired: {0}{1}",
+  "w": "349-v104careers.js:113"
+ },
+ {
+  "k": "One level a season — this advisor rose already. Next season.",
+  "w": "349-v104careers.js:133"
+ },
+ {
+  "k": "next season",
+  "w": "349-v104careers.js:134"
+ },
+ {
+  "k": "🏛 {0} is your {1} now — level {2}.",
+  "w": "349-v104careers.js:139"
+ },
+ {
+  "k": "short, bright career",
+  "w": "349-v104careers.js:149"
+ },
+ {
+  "k": "long career",
+  "w": "349-v104careers.js:149"
+ },
+ {
+  "k": "not read yet — scout to learn",
+  "w": "349-v104careers.js:150"
+ },
+ {
+  "k": "prime in ~{0} season{1}",
+  "w": "349-v104careers.js:152"
+ },
+ {
+  "k": "prime ~{0} season{1} left",
+  "w": "349-v104careers.js:152"
+ },
+ {
+  "k": "past the prime",
+  "w": "349-v104careers.js:152"
+ },
+ {
+  "k": "· late bloomer",
+  "w": "349-v104careers.js:153"
+ },
+ {
+  "k": "📈 Form:",
+  "w": "349-v104careers.js:155"
+ },
+ {
+  "k": "Your ludus is full: {0} of {1} fighters under contract. Release, lend or trade one first — the Barracks and the Barracks master make room.",
+  "w": "350-v104roster.js:53"
+ },
+ {
+  "k": "{0} has no room — their roster is at its cap of {1}.",
+  "w": "350-v104roster.js:60"
+ },
+ {
+  "k": "<b>Over the cap: {0} / {1}</b> — nobody new can sign or come on loan until you are under it. The {2} above the cap cost 25% more (+{3} a week).",
+  "w": "350-v104roster.js:64"
+ },
+ {
+  "k": "Trade",
+  "w": "350-v104roster.js:65"
+ },
+ {
+  "k": "· +{0} roster place{1}",
+  "w": "350-v104roster.js:69"
+ },
+ {
+  "k": "First team",
+  "w": "350-v104roster.js:74"
+ },
+ {
+  "k": "Bouts I–III and a reserve who covers them",
+  "w": "350-v104roster.js:74"
+ },
+ {
+  "k": "Second team",
+  "w": "350-v104roster.js:74"
+ },
+ {
+  "k": "next in line",
+  "w": "350-v104roster.js:74"
+ },
+ {
+  "k": "Rostered",
+  "w": "350-v104roster.js:74"
+ },
+ {
+  "k": "under contract, not in the plans",
+  "w": "350-v104roster.js:74"
+ },
+ {
+  "k": "Lent out",
+  "w": "350-v104roster.js:74"
+ },
+ {
+  "k": "fighting for other houses",
+  "w": "350-v104roster.js:74"
+ },
+ {
+  "k": "No ludus.",
+  "w": "350-v104roster.js:88"
+ },
+ {
+  "k": "Not one of yours.",
+  "w": "350-v104roster.js:88"
+ },
+ {
+  "k": "The First team is full — four already. Move one down first.",
+  "w": "350-v104roster.js:90"
+ },
+ {
+  "k": "Only a fit fighter can take a bout.",
+  "w": "350-v104roster.js:91"
+ },
+ {
+  "k": "The Second team is full — four already. Move one down first.",
+  "w": "350-v104roster.js:94"
+ },
+ {
+  "k": "{0} paid up front for {1} weeks · {2} left · his wage is theirs",
+  "w": "350-v104roster.js:122"
+ },
+ {
+  "k": "🤝 {0} starts a bout this week — take him off the bout before you lend him.",
+  "w": "350-v104roster.js:125"
+ },
+ {
+  "k": "🤝 {0} has no room — their roster is at its cap.",
+  "w": "350-v104roster.js:126"
+ },
+ {
+  "k": "🤝 {0} cannot pay the {1} up front.",
+  "w": "350-v104roster.js:128"
+ },
+ {
+  "k": "loaned to {0} for {1} weeks — {2} paid up front",
+  "w": "350-v104roster.js:131"
+ },
+ {
+  "k": "🤝 {0} goes on loan to {1} for {2} weeks — they pay {3} now and his wage.",
+  "w": "350-v104roster.js:132"
+ },
+ {
+  "k": "🤝 The treasury cannot pay the {0} up front.",
+  "w": "350-v104roster.js:136"
+ },
+ {
+  "k": "🤝 {0} joins you on loan from {1} for {2} weeks — {3} paid now, and you pay his wage.",
+  "w": "350-v104roster.js:139"
+ },
+ {
+  "k": "back home to {0} after a loan ({1} win{2})",
+  "w": "350-v104roster.js:149"
+ },
+ {
+  "k": "📨 <b>{0}</b> liked what they saw: {1} wins on loan — they offer {2} to buy <b>{3}</b> outright.",
+  "w": "350-v104roster.js:157"
+ },
+ {
+  "k": "📨 <b>{0}</b> will sell <b>{1}</b> after {2} wins under your colours — {3} buys him outright.",
+  "w": "350-v104roster.js:159"
+ },
+ {
+  "k": "📨 A buy-out offer from {0} {1}",
+  "w": "350-v104roster.js:161"
+ },
+ {
+  "k": "You buy",
+  "w": "350-v104roster.js:162"
+ },
+ {
+  "k": "rated {0} · {1}/wk · {2} wins on loan",
+  "w": "350-v104roster.js:162"
+ },
+ {
+  "k": "You pay",
+  "w": "350-v104roster.js:163"
+ },
+ {
+  "k": "his contract comes with him",
+  "w": "350-v104roster.js:163"
+ },
+ {
+  "k": "✔ Buy him",
+  "w": "350-v104roster.js:164"
+ },
+ {
+  "k": "They want to keep",
+  "w": "350-v104roster.js:166"
+ },
+ {
+  "k": "rated {0} · {1} wins for them on loan",
+  "w": "350-v104roster.js:166"
+ },
+ {
+  "k": "his contract goes with him",
+  "w": "350-v104roster.js:167"
+ },
+ {
+  "k": "✔ Sell",
+  "w": "350-v104roster.js:168"
+ },
+ {
+  "k": "✖ Keep him",
+  "w": "350-v104roster.js:168"
+ },
+ {
+  "k": "They pay up front",
+  "w": "350-v104roster.js:173"
+ },
+ {
+  "k": "for {0} weeks, and his wage · 2+ wins and they may offer to buy him",
+  "w": "350-v104roster.js:173"
+ },
+ {
+  "k": "On loan · {0}",
+  "w": "350-v104roster.js:181"
+ },
+ {
+  "k": "That offer is no longer on the table.",
+  "w": "350-v104roster.js:186"
+ },
+ {
+  "k": "The treasury cannot cover {0}.",
+  "w": "350-v104roster.js:187"
+ },
+ {
+  "k": "bought from {0} by {1} after a loan",
+  "w": "350-v104roster.js:188"
+ },
+ {
+  "k": "sold {0} to {1}",
+  "w": "350-v104roster.js:188"
+ },
+ {
+  "k": "✍ {0} is yours — bought from {1} for {2}.",
+  "w": "350-v104roster.js:189"
+ },
+ {
+  "k": "🔁 <b>Trade:</b> {0} goes to {1}; {2} go to {3}{4}.",
+  "w": "350-v104roster.js:197"
+ },
+ {
+  "k": "＋ Bundle: your one bundle offer this week is spent.",
+  "w": "350-v104roster.js:202"
+ },
+ {
+  "k": "＋ Bundle more of yours with him (2+ for 1 · once a week · the best counts in full, each other about half):",
+  "w": "350-v104roster.js:202"
+ },
+ {
+  "k": "One bundle offer a week — your envoy carries the next one next week.",
+  "w": "350-v104roster.js:211"
+ },
+ {
+  "k": "“We have no room for {0} more.” — {1} (their cap is {2})",
+  "w": "350-v104roster.js:214"
+ },
+ {
+  "k": "turned down a bundle offer from {0}",
+  "w": "350-v104roster.js:217"
+ },
+ {
+  "k": "“Close. Let me think on it.” — {0}. Expect their letter next week.",
+  "w": "350-v104roster.js:218"
+ },
+ {
+  "k": "“Not enough.” — {0}. Quantity is not quality.",
+  "w": "350-v104roster.js:219"
+ },
+ {
+  "k": "That counter-offer is settled.",
+  "w": "350-v104roster.js:223"
+ },
+ {
+  "k": "You let the counter-offer lapse.",
+  "w": "350-v104roster.js:224"
+ },
+ {
+  "k": "The deal is off — the fighters have moved on.",
+  "w": "350-v104roster.js:226"
+ },
+ {
+  "k": "{0} has no room any more.",
+  "w": "350-v104roster.js:228"
+ },
+ {
+  "k": "{0}: a counter-offer",
+  "w": "350-v104roster.js:233"
+ },
+ {
+  "k": "“I thought about your bundle — {0} for <b>{1}</b>. Add <b>{2}</b>{3} and it is done. This week only.”",
+  "w": "350-v104roster.js:234"
+ },
+ {
+  "k": "to the {0} you offered",
+  "w": "350-v104roster.js:234"
+ },
+ {
+  "k": "✔ Accept · {0}",
+  "w": "350-v104roster.js:234"
+ },
+ {
+  "k": "👥 Over the cap: the fighters above it cost {0} more this week (+25%).",
+  "w": "350-v104roster.js:242"
+ },
+ {
+  "k": "Tier",
+  "w": "350-v104roster.js:249"
+ },
+ {
+  "k": "OVR",
+  "w": "350-v104roster.js:249"
+ },
+ {
+  "k": "Fat.",
+  "w": "350-v104roster.js:249"
+ },
+ {
+  "k": "Bout {0}",
+  "w": "350-v104roster.js:255"
+ },
+ {
+  "k": "The reserve — covers a hurt starter",
+  "w": "350-v104roster.js:255"
+ },
+ {
+  "k": "at {0} · {1} wk",
+  "w": "350-v104roster.js:259"
+ },
+ {
+  "k": "← on loan from {0}",
+  "w": "350-v104roster.js:259"
+ },
+ {
+  "k": "on this week’s card",
+  "w": "350-v104roster.js:263"
+ },
+ {
+  "k": "Above the cap: +25%",
+  "w": "350-v104roster.js:266"
+ },
+ {
+  "k": "Actions for {0}",
+  "w": "350-v104roster.js:268"
+ },
+ {
+  "k": "Team, bout, loan",
+  "w": "350-v104roster.js:268"
+ },
+ {
+  "k": "Sort by {0}",
+  "w": "350-v104roster.js:271"
+ },
+ {
+  "k": "Nobody else under contract.",
+  "w": "350-v104roster.js:274"
+ },
+ {
+  "k": "Empty — drag a fighter here, or use ⋯ on his row.",
+  "w": "350-v104roster.js:274"
+ },
+ {
+  "k": "over the cap",
+  "w": "350-v104roster.js:275"
+ },
+ {
+  "k": "★ First",
+  "w": "350-v104roster.js:279"
+ },
+ {
+  "k": "Reserve",
+  "w": "350-v104roster.js:280"
+ },
+ {
+  "k": "First team · Bout {0} · {1}",
+  "w": "350-v104roster.js:288"
+ },
+ {
+  "k": "First team · the reserve",
+  "w": "350-v104roster.js:288"
+ },
+ {
+  "k": "{0} · in the ward",
+  "w": "350-v104roster.js:288"
+ },
+ {
+  "k": "He starts a bout — take him off it before you lend him.",
+  "w": "350-v104roster.js:293"
+ },
+ {
+  "k": "{0} · pays {1} now · {2} wk",
+  "w": "350-v104roster.js:294"
+ },
+ {
+  "k": "No house can borrow him now (room under their cap and the lump sum).",
+  "w": "350-v104roster.js:295"
+ },
+ {
+  "k": "On loan",
+  "w": "350-v104roster.js:296"
+ },
+ {
+  "k": "from {0} · {1} paid up front · his wage is yours",
+  "w": "350-v104roster.js:296"
+ },
+ {
+  "k": "from {0} · {1}/wk (old terms)",
+  "w": "350-v104roster.js:296"
+ },
+ {
+  "k": "<span>{0} wk</span>",
+  "w": "350-v104roster.js:296"
+ },
+ {
+  "k": "the cap: Barracks + its master",
+  "w": "350-v104roster.js:302"
+ },
+ {
+  "k": "1st team",
+  "w": "350-v104roster.js:307"
+ },
+ {
+  "k": "2nd team",
+  "w": "350-v104roster.js:307"
+ },
+ {
+  "k": "cap {0}",
+  "w": "350-v104roster.js:308"
+ },
+ {
+  "k": "↩ Call him back · {0}",
+  "w": "350-v104roster.js:319"
+ },
+ {
+  "k": "He fights for them this week.",
+  "w": "350-v104roster.js:319"
+ },
+ {
+  "k": "Four already.",
+  "w": "350-v104roster.js:321"
+ },
+ {
+  "k": "Bout {0} · {1}",
+  "w": "350-v104roster.js:322"
+ },
+ {
+  "k": "Reserve · covers a hurt starter",
+  "w": "350-v104roster.js:322"
+ },
+ {
+  "k": "Lend for {0} weeks · they pay up front + his wage",
+  "w": "350-v104roster.js:324"
+ },
+ {
+  "k": "He starts a bout — take him off it first.",
+  "w": "350-v104roster.js:325"
+ },
+ {
+  "k": "Four of yours are out on loan already.",
+  "w": "350-v104roster.js:325"
+ },
+ {
+  "k": "{0} now",
+  "w": "350-v104roster.js:326"
+ },
+ {
+  "k": "No house can borrow him now.",
+  "w": "350-v104roster.js:326"
+ },
+ {
+  "k": "⚕ To the Infirmary",
+  "w": "350-v104roster.js:327"
+ },
+ {
+  "k": "Your recruiting board is full ({0}/{1}) — take someone off it first. A higher Recruiter level holds more.",
+  "w": "351-v104ward.js:67"
+ },
+ {
+  "k": "{0} fighter{1} on the roster: {2} h (up to 3 fighters {3} h · 4-6 {4} h · 7-9 {5} h · 10+ {6} h){7} — each extra action on one recruit in a week costs {8} h more.",
+  "w": "351-v104ward.js:75"
+ },
+ {
+  "k": "A trial bout needs {0} earlier looks at him, in an earlier week ({1} so far).",
+  "w": "351-v104ward.js:77"
+ },
+ {
+  "k": "A trial bout needs {0} earlier looks at her, in an earlier week ({1} so far).",
+  "w": "351-v104ward.js:77"
+ },
+ {
+  "k": "Nobody to make an offer to.",
+  "w": "351-v104ward.js:100"
+ },
+ {
+  "k": "Your offer to {0} is already on the table — the answer comes when the week ends.",
+  "w": "351-v104ward.js:101"
+ },
+ {
+  "k": "{0} will not hear from your house until {1} — the last offer insulted him.",
+  "w": "351-v104ward.js:102"
+ },
+ {
+  "k": "No room on the roster for another signing — your other offers already fill it.",
+  "w": "351-v104ward.js:104"
+ },
+ {
+  "k": "was offered {0}/wk for {1} weeks by {2}",
+  "w": "351-v104ward.js:109"
+ },
+ {
+  "k": "✍ Offer sent to {0}: {1}/wk for {2} weeks{3}. The answer comes when the week ends.",
+  "w": "351-v104ward.js:110"
+ },
+ {
+  "k": "Offer to {0} withdrawn.",
+  "w": "351-v104ward.js:115"
+ },
+ {
+  "k": "{0} signed elsewhere",
+  "w": "351-v104ward.js:121"
+ },
+ {
+  "k": "Before your offer was answered, <b>{0}</b> signed with <b>{1}</b>. Another house was quicker on the line.",
+  "w": "351-v104ward.js:121"
+ },
+ {
+  "k": "took {0}'s offer as an insult",
+  "w": "351-v104ward.js:123"
+ },
+ {
+  "k": "{0} is insulted",
+  "w": "351-v104ward.js:124"
+ },
+ {
+  "k": "<b>{0}</b> laughed at {1}/wk — he asks about {2}. Interest −{3}, and he will not talk to your house for {4} weeks.",
+  "w": "351-v104ward.js:124"
+ },
+ {
+  "k": "of104s:{0}:{1}:{2}",
+  "w": "351-v104ward.js:127"
+ },
+ {
+  "k": "signed with {0}",
+  "w": "351-v104ward.js:128"
+ },
+ {
+  "k": "{0} signs <b>{1}</b> — your offer came second.",
+  "w": "351-v104ward.js:129"
+ },
+ {
+  "k": "{0} chose {1}",
+  "w": "351-v104ward.js:129"
+ },
+ {
+  "k": "<b>{0}</b> took <b>{1}</b>'s terms over yours. {2}",
+  "w": "351-v104ward.js:129"
+ },
+ {
+  "k": "{0} says no",
+  "w": "351-v104ward.js:130"
+ },
+ {
+  "k": "<b>{0}</b> turns your offer down: {1}",
+  "w": "351-v104ward.js:130"
+ },
+ {
+  "k": "{0} wants time",
+  "w": "351-v104ward.js:133"
+ },
+ {
+  "k": "<b>{0}</b> did not bite this week — the terms were close, but he wants a little more (coin, a pledge, a word to his wishes). Try again.",
+  "w": "351-v104ward.js:133"
+ },
+ {
+  "k": "{0} says yes — but",
+  "w": "351-v104ward.js:134"
+ },
+ {
+  "k": "<b>{0}</b> would sign, but your treasury cannot cover the bonus and the first week.",
+  "w": "351-v104ward.js:134"
+ },
+ {
+  "k": "✍ <b>{0}</b> accepts your offer ({1}/wk, {2} weeks).",
+  "w": "351-v104ward.js:136"
+ },
+ {
+  "k": "{0} signs",
+  "w": "351-v104ward.js:137"
+ },
+ {
+  "k": "<b>{0}</b> accepts: {1}/wk for {2} weeks{3}. Welcome him to the house.",
+  "w": "351-v104ward.js:137"
+ },
+ {
+  "k": "🎣 {0} turned down {1}.",
+  "w": "351-v104ward.js:143"
+ },
+ {
+  "k": "signed {0}",
+  "w": "351-v104ward.js:144"
+ },
+ {
+  "k": "🎣 {0}, on your board, signs with {1}.",
+  "w": "351-v104ward.js:145"
+ },
+ {
+  "k": "⚖ {0} has made <b>{1}</b> an offer — he answers next week. Beat it with yours.",
+  "w": "351-v104ward.js:153"
+ },
+ {
+  "k": "Nobody to rub down.",
+  "w": "351-v104ward.js:164"
+ },
+ {
+  "k": "Done this week.",
+  "w": "351-v104ward.js:164"
+ },
+ {
+  "k": "Not tired.",
+  "w": "351-v104ward.js:165"
+ },
+ {
+  "k": "Needs {0} Medicus hour — {1} left this week.",
+  "w": "351-v104ward.js:165"
+ },
+ {
+  "k": "🫒 Oil, steam and strong hands: {0} sheds some weariness (fatigue {1} → {2}, {3} Medicus hour).",
+  "w": "351-v104ward.js:169"
+ },
+ {
+  "k": "Wounded — the Ward first.",
+  "w": "351-v104ward.js:172"
+ },
+ {
+  "k": "🏗 {0} {1} · ready when {2} ends{3}",
+  "w": "351-v104ward.js:195"
+ },
+ {
+  "k": "({0} weeks)",
+  "w": "351-v104ward.js:195"
+ },
+ {
+  "k": "🏗 finished the {0} {1} — {2}",
+  "w": "351-v104ward.js:197"
+ },
+ {
+  "k": "🏗 The {0} {1} is finished — {2}. Ludus grade {3}.",
+  "w": "351-v104ward.js:198"
+ },
+ {
+  "k": "🏗 <b>{0}</b> (you) completes the {1} {2}. Ludus grade {3}.",
+  "w": "351-v104ward.js:198"
+ },
+ {
+  "k": "🏗 <b>{0}</b> completes the {1} {2}. Ludus grade {3}.",
+  "w": "351-v104ward.js:199"
+ },
+ {
+  "k": "🏗 began the {0} {1} ({2} coin, {3} week{4})",
+  "w": "351-v104ward.js:204"
+ },
+ {
+  "k": "Your builders are on the {0} {1} — ready when {2} ends. One project at a time.",
+  "w": "351-v104ward.js:206"
+ },
+ {
+  "k": "🏗 Work begins on the {0} {1} ({2}) — ready when {3} ends ({4} week{5}).",
+  "w": "351-v104ward.js:209"
+ },
+ {
+  "k": "🏗 Work begins on the {0} {1} — {2}.",
+  "w": "351-v104ward.js:210"
+ },
+ {
+  "k": "finished when this week ends",
+  "w": "351-v104ward.js:210"
+ },
+ {
+  "k": "{0} weeks: ready when {1} ends",
+  "w": "351-v104ward.js:210"
+ },
+ {
+  "k": "an empty plot",
+  "w": "351-v104ward.js:219"
+ },
+ {
+  "k": "Being built — ready when {0} ends.",
+  "w": "351-v104ward.js:221"
+ },
+ {
+  "k": "The builders are on the {0} — one project at a time.",
+  "w": "351-v104ward.js:221"
+ },
+ {
+  "k": "Being built",
+  "w": "351-v104ward.js:224"
+ },
+ {
+  "k": "🏗 {0}",
+  "w": "351-v104ward.js:225"
+ },
+ {
+  "k": "ready when this week ends",
+  "w": "351-v104ward.js:225"
+ },
+ {
+  "k": "ready when {0} ends",
+  "w": "351-v104ward.js:225"
+ },
+ {
+  "k": "{0} week{1} to build",
+  "w": "351-v104ward.js:226"
+ },
+ {
+  "k": "one project at a time · a level takes as many weeks as its number",
+  "w": "351-v104ward.js:230"
+ },
+ {
+  "k": "data-mg=\"build\" disabled title=\"{0}\"",
+  "w": "351-v104ward.js:236"
+ },
+ {
+  "k": "+{0} bed{1} · +{2} Medicus hours a week",
+  "w": "351-v104ward.js:239"
+ },
+ {
+  "k": "🪑 Worn ({0}): a Rest week on the bench — −{1} fatigue when the week ends",
+  "w": "351-v104ward.js:261"
+ },
+ {
+  "k": "🫒 A rub-down in the oiling room — −10 fatigue now",
+  "w": "351-v104ward.js:262"
+ },
+ {
+  "k": "📋 The Care routine — −{0} fatigue every week while it runs",
+  "w": "351-v104ward.js:263"
+ },
+ {
+  "k": "🛏 {0} to bed",
+  "w": "351-v104ward.js:273"
+ },
+ {
+  "k": "⚕ The Medicus works down the list: {0} step{1} booked.",
+  "w": "351-v104ward.js:275"
+ },
+ {
+  "k": "⚕ Nothing more the Medicus can do this week — no hours, no coin or nothing waiting.",
+  "w": "351-v104ward.js:275"
+ },
+ {
+  "k": "⚠ Match Week: only {0} of your {1} starters are fit to fight{2}.",
+  "w": "351-v104ward.js:283"
+ },
+ {
+  "k": "— {0} fit on the bench: promote one on the Roster",
+  "w": "351-v104ward.js:283"
+ },
+ {
+  "k": "— and nobody fit on the bench",
+  "w": "351-v104ward.js:283"
+ },
+ {
+  "k": "To the Roster",
+  "w": "351-v104ward.js:284"
+ },
+ {
+  "k": "fit {0} → {1}",
+  "w": "351-v104ward.js:290"
+ },
+ {
+  "k": "In bed",
+  "w": "351-v104ward.js:293"
+ },
+ {
+  "k": "Full-pace healing · the physicians can treat him",
+  "w": "351-v104ward.js:293"
+ },
+ {
+  "k": "✓ in bed · tap to take out",
+  "w": "351-v104ward.js:293"
+ },
+ {
+  "k": "free · {0} of {1} free",
+  "w": "351-v104ward.js:294"
+ },
+ {
+  "k": "Needed: a serious wound or a lost limb mends at half pace without one",
+  "w": "351-v104ward.js:294"
+ },
+ {
+  "k": "Full-pace healing",
+  "w": "351-v104ward.js:294"
+ },
+ {
+  "k": "✓ booked this week",
+  "w": "351-v104ward.js:296"
+ },
+ {
+  "k": "Regrows the {0} · one limb a week · needs a bed",
+  "w": "351-v104ward.js:298"
+ },
+ {
+  "k": "Closes any wound when the week ends, no mishap · +8 morale",
+  "w": "351-v104ward.js:300"
+ },
+ {
+  "k": "Valetudinarium {0}",
+  "w": "351-v104ward.js:302"
+ },
+ {
+  "k": "{0} · {1} week{2}",
+  "w": "351-v104ward.js:302"
+ },
+ {
+  "k": "+1 bed · +{0} Medicus hours a week",
+  "w": "351-v104ward.js:302"
+ },
+ {
+  "k": "🏗 being built",
+  "w": "351-v104ward.js:302"
+ },
+ {
+  "k": "A week off the healing · fit {0} → {1} · +4 morale",
+  "w": "351-v104ward.js:306"
+ },
+ {
+  "k": "Rub-down",
+  "w": "351-v104ward.js:308"
+ },
+ {
+  "k": "{0} h · free",
+  "w": "351-v104ward.js:308"
+ },
+ {
+  "k": "−10 fatigue now ({0} → {1}) · once a week",
+  "w": "351-v104ward.js:308"
+ },
+ {
+  "k": "Care routine",
+  "w": "351-v104ward.js:310"
+ },
+ {
+  "k": "{0} h a week",
+  "w": "351-v104ward.js:310"
+ },
+ {
+  "k": "A standing order: −{0} fatigue when each week ends · +5 morale · gear care",
+  "w": "351-v104ward.js:310"
+ },
+ {
+  "k": "✓ on · paid this week · tap to stop",
+  "w": "351-v104ward.js:310"
+ },
+ {
+  "k": "on · no hour left this week · tap to stop",
+  "w": "351-v104ward.js:310"
+ },
+ {
+  "k": "0 h · on the bench",
+  "w": "351-v104ward.js:312"
+ },
+ {
+  "k": "No bouts, no drills this week · −{0} fatigue when it ends ({1} → {2})",
+  "w": "351-v104ward.js:312"
+ },
+ {
+  "k": "Next week: <b>{0}</b> · {1}",
+  "w": "351-v104ward.js:318"
+ },
+ {
+  "k": "No recovery booked — the Baths take it down.",
+  "w": "351-v104ward.js:318"
+ },
+ {
+  "k": "Fresh enough for the sand.",
+  "w": "351-v104ward.js:318"
+ },
+ {
+  "k": "Recovery booked this week",
+  "w": "351-v104ward.js:320"
+ },
+ {
+  "k": "Rested ✓",
+  "w": "351-v104ward.js:320"
+ },
+ {
+  "k": "booked",
+  "w": "351-v104ward.js:323"
+ },
+ {
+  "k": "Hygeia (a limb)",
+  "w": "351-v104ward.js:325"
+ },
+ {
+  "k": "the bathhouse",
+  "w": "351-v104ward.js:325"
+ },
+ {
+  "k": "rub-down",
+  "w": "351-v104ward.js:326"
+ },
+ {
+  "k": "Care routine (1 h)",
+  "w": "351-v104ward.js:326"
+ },
+ {
+  "k": "Care routine — unpaid, no hour left",
+  "w": "351-v104ward.js:326"
+ },
+ {
+  "k": "in bed",
+  "w": "351-v104ward.js:327"
+ },
+ {
+  "k": "Tabula · this week",
+  "w": "351-v104ward.js:333"
+ },
+ {
+  "k": "Medicus hours",
+  "w": "351-v104ward.js:335"
+ },
+ {
+  "k": "<b>{0}</b> of {1} left · wound care {2} h · recovery {3} h",
+  "w": "351-v104ward.js:335"
+ },
+ {
+  "k": "Booked this week",
+  "w": "351-v104ward.js:336"
+ },
+ {
+  "k": "Nothing booked yet.",
+  "w": "351-v104ward.js:336"
+ },
+ {
+  "k": "The Medicus's order",
+  "w": "351-v104ward.js:337"
+ },
+ {
+  "k": "✓ Nobody waiting for the physicians.",
+  "w": "351-v104ward.js:338"
+ },
+ {
+  "k": "Nothing the hours and the treasury can pay for now",
+  "w": "351-v104ward.js:339"
+ },
+ {
+  "k": "⚕ Treat the wounded in order",
+  "w": "351-v104ward.js:339"
+ },
+ {
+  "k": "{0} · step by step",
+  "w": "351-v104ward.js:340"
+ },
+ {
+  "k": "Medicus hours this week",
+  "w": "351-v104ward.js:344"
+ },
+ {
+  "k": "{0} h wound care, {1} h recovery, {2} h left of {3}",
+  "w": "351-v104ward.js:344"
+ },
+ {
+  "k": "wound care {0} h",
+  "w": "351-v104ward.js:345"
+ },
+ {
+  "k": "recovery {0} h",
+  "w": "351-v104ward.js:345"
+ },
+ {
+  "k": "beds {0}/{1}",
+  "w": "351-v104ward.js:357"
+ },
+ {
+  "k": "✓ Nobody wounded.",
+  "w": "351-v104ward.js:358"
+ },
+ {
+  "k": "Weary",
+  "w": "351-v104ward.js:359"
+ },
+ {
+  "k": "✓ Nobody tired.",
+  "w": "351-v104ward.js:359"
+ },
+ {
+  "k": "Fit and fresh",
+  "w": "351-v104ward.js:360"
+ },
+ {
+  "k": "booked · fit {0}",
+  "w": "351-v104ward.js:363"
+ },
+ {
+  "k": "fit {0} · needs {1}",
+  "w": "351-v104ward.js:363"
+ },
+ {
+  "k": "back {0}",
+  "w": "351-v104ward.js:364"
+ },
+ {
+  "k": "Baths",
+  "w": "351-v104ward.js:369"
+ },
+ {
+  "k": "The Medicus, the surgeon, Hygeia and the beds — for wounds and lost limbs.",
+  "w": "351-v104ward.js:370"
+ },
+ {
+  "k": "Steam, oil and rest — for weary fighters (and a week off a wound).",
+  "w": "351-v104ward.js:370"
+ },
+ {
+  "k": "Nothing for the Ward — he is not wounded.",
+  "w": "351-v104ward.js:371"
+ },
+ {
+  "k": "Nothing for the Baths.",
+  "w": "351-v104ward.js:371"
+ },
+ {
+  "k": "<b>{0}</b> Medicus hours this week: {1} a week, +{2} for each Valetudinarium level, +{3} for each skill level of a house medicus. ♨ THE BATHS take weariness down from the same hours: a rub-down {4} h (−10 fatigue now), the Care routine {5} h a week (−{6} when each week ends), a Rest week 0 h (no bouts, −{7}).",
+  "w": "351-v104ward.js:381"
+ },
+ {
+  "k": "1 Medicus hour a week, in the Infirmary’s Baths",
+  "w": "351-v104ward.js:383"
+ },
+ {
+  "k": "Your board holds 6 + the Recruiter’s level",
+  "w": "351-v104ward.js:387"
+ },
+ {
+  "k": "📌 {0}/{1}",
+  "w": "351-v104ward.js:387"
+ },
+ {
+  "k": "Offer on the table — the answer comes when the week ends",
+  "w": "351-v104ward.js:388"
+ },
+ {
+  "k": "✍ <b>On the table:</b> {0}/wk for {1} weeks{2} — he answers when the week ends.",
+  "w": "351-v104ward.js:391"
+ },
+ {
+  "k": "Insulted — no talks until {0}",
+  "w": "351-v104ward.js:392"
+ },
+ {
+  "k": "answered next week",
+  "w": "351-v104ward.js:393"
+ },
+ {
+  "k": "One building project at a time",
+  "w": "351-v104ward.js:394"
+ },
+ {
+  "k": "arena · v1.04",
+  "w": "01-head.html"
+ }
+]

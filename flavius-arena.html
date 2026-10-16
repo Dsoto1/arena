@@ -1142,7 +1142,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 <div id="boot" aria-hidden="true"><img src="assets/logo.png" alt=""><i></i></div>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v1.03</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v1.04</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -23765,6 +23765,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.04',ic:'🏆',t:_T('The Manager season reworked'),hi:[_T('Manager: the Superbus is a playoff — the league seeds all twelve houses, seeds 1–4 rest a round, the top 2 of each bout go on, with a bracket to follow and growing prizes'),_T('An off-season after the final: the season review, the Flavian Awards and contract renewals'),_T('Careers: fighters age, peak and fade, five kinds of career from the brief bright star to the ageless veteran, and greats who retire may join your council'),_T('Roster: a cap set by your Barracks, a First and Second team, one sortable list with the chosen gladiator beside it, loans paid up front, and trades of several fighters for one'),_T('The Infirmary in two wings, Ward and Baths, with recovery moved from the Training Yard; recruits answer offers the next week, and buildings take weeks to finish')],fx:[_T('Byes in weeks 4 and 12, Rivalry Week in week 11, tutorial and tips updated for the playoffs')]},
   {v:'1.03',ic:'🔧',t:_T('Fixes from your v1.02 notes'),hi:[_T('Manager: Superbus Week with its own card and review, rivalry week locked, a roster cap of 15, loan asks shown as loans, Vulso writes through your Recruiter'),_T('Spectators switch section once a match and start spread around the stands'),_T('Beasts smaller and slimmer, bases gone from every figure when turned off, sharper pieces')],fx:[_T('Challenges start properly and warn before you leave, square close buttons, Market closed in a round without CF, tunnel and Telemachus say why, Gear designers in the new frame')]},
   {v:'1.02',ic:'📜',t:_T('Your notes, answered'),hi:[_T('Online: your gladiators earn XP every match — a results tally, level-ups where you place a point, Release or Grant the rudis, the class set at creation'),_T('Manager: recruits sign with issued kit, a loan market with a cap of four, injuries that take real weeks to mend, league points for podiums'),_T('A new Acta Diurna: your house leads the front page, past editions kept'),_T('Play Now: draft the gear in any event, and draft or roll the class abilities; refresh mid-match and you are back in it'),_T('Gladiators stand 80% of a pillar and keep their size; adjust held weapons in the poser; beasts in proportion')],fx:[_T('The Council simplified, File away on every letter, Studio designers restyled, sandstone closers, many fixes from your v1.01 notes')]},
   {v:'1.01',ic:'🛠',t:_T('Steadier and tidier'),hi:[_T('Manager: the Council in your ludus, Medicus hours in a clearer Infirmary, recovery in the Training Yard, and screens that update without flicker'),_T('Gladiators swing, sweep and thrust by weapon, walk with a stride, and stand still when idle; arrows, bolts and spears fly in a proper arc'),_T('The first fan of each gladiator holds his flag in the stands'),_T('Online: kits follow the new classes, two records per house (Ranked and Unranked), safer rooms, and the server double-checks Ranked results'),_T('Zooming is quicker: the board is prepared while you think')],fx:[_T('Many fixes from your notes: recruiting, fighters who cannot fight, loaned gear, a lost leg armor, players on different browsers staying in step')]},
@@ -73519,8 +73520,8 @@ function po104OffHTML(w){const P=po104P(w);const R=P.rev||po104Review(w,P);const
 /* the page: rail + banners say Superbus / Off-season, the bracket button, the season texts */
 /* the old "top four" texts (English strings of 231 / 290; other languages keep theirs until the release's translation pass) */
 const PO104_TXT=()=>[[_T('The Flavius Superbus: the top four of the league table send one fighter each to Roma when week 12 ends — invitation only.'),_T('The Flavius Superbus playoffs: the top 12 of the league table, weeks 12–14. Seeds 1–4 rest in week 12; each house sends one gladiator a round.')],
-  ['The top four houses at week 12 are invited to the Flavius Superbus.',_T('The top 12 houses after week 11 play the Superbus playoffs; seeds 1–4 rest in week 12.')],
-  ['The top four are invited to the Flavius Superbus',_T('The top 12 play the Superbus playoffs')]];
+  [_T('The top four houses at week 12 are invited to the Flavius Superbus.'),_T('The top 12 houses after week 11 play the Superbus playoffs; seeds 1–4 rest in week 12.')],
+  [_T('The top four are invited to the Flavius Superbus'),_T('The top 12 play the Superbus playoffs')]];
 function po104Post(h){const w=W_();if(!w||w.dead||MGR.view||typeof h!=='string'||!cal104New(w))return h;const ph=po104Ph(w);const br=po104BrOK(w);const lg=MGR.tab==='league'||MGR.tab==='sched';if(!ph&&!br&&!lg)return h;
   if(lg)for(const [a,b] of PO104_TXT())if(h.includes(a))h=h.split(a).join(b);
   const t=document.createElement('template');t.innerHTML=h;const R=t.content;const Q=s=>R.querySelector(s);
@@ -73531,7 +73532,7 @@ function po104Post(h){const w=W_();if(!w||w.dead||MGR.view||typeof h!=='string'|
     const lb=Q('.lu100tt>b');if(lb)lb.textContent=ic+lbl;
     const mw=Q('.lu100mw[data-id="night"]');if(mw){if(ph!=='off')mw.classList.add('sb103m');const mb=mw.querySelector('.tx>b');if(mb)mb.textContent=lbl}
     const eh=Q('.endconfirm h4');if(eh)eh.textContent=ph==='off'?_T`⏭ End the off-season → season ${w.season+1}?`:_T`⏭ End ${lbl}?`;
-    if(w.review&&w.review.po104&&w.review.po104s===w.season){const d=Q('details.rev91 summary b');const nm={r11:_T('Week 11'),r1:_T('Superbus Round 1'),sf:_T('Superbus semifinals'),fin:_T('Superbus Week')}[w.review.po104];if(d&&nm&&!(w.review.sb103))d.textContent=_T`${nm} in review · season ${RN(w.season)}`}}
+    if(w.review&&w.review.po104&&w.review.po104s===w.season){const d=Q(_T('details.rev91 summary b'));const nm={r11:_T('Week 11'),r1:_T('Superbus Round 1'),sf:_T('Superbus semifinals'),fin:_T('Superbus Week')}[w.review.po104];if(d&&nm&&!(w.review.sb103))d.textContent=_T`${nm} in review · season ${RN(w.season)}`}}
   if(br){const k=Q('.roomhd.b73-league .kick');if(k&&!k.querySelector('.po104bb'))k.appendChild(bb());const nt=Q('.roomhd.b73-night .roomttl');if(nt&&!nt.querySelector('.po104bb'))nt.appendChild(bb())}
   /* the League banner + the Season view say what the Superbus now is */
   const sub=Q('.roomhd.b73-league .sub');if(sub&&/Superbus/.test(sub.textContent))sub.textContent=_T`Season ${w.season} · ${Math.max(0,12-wkOf(w.week))} weeks left · 12 houses go to the Superbus playoffs, the top 4 rest in week 12`;
@@ -74014,7 +74015,7 @@ function r104Room(R,w,pm){const room=R.querySelector('#mgrPane .rm100.rm100-rost
     if(sel){if(g.slot95){const lw=sel.closest('label')||sel;lw.outerHTML=`<button type="button" class="btn rm100tbtn" disabled title="${esc(_T('He starts a bout — take him off it before you lend him.'))}">⇢ ${_T`Lend`}</button>`}
       else{const H=c104Lenders(w,g);const keep=new Map(H.map(x=>[x.m.id,x]));for(const o of [...sel.querySelectorAll('option')]){if(!o.value)continue;const x=keep.get(o.value);if(!x)o.remove();else o.textContent=_T`${x.m.ludus} · pays ${x.lump} now · ${CAP104.loanWk} wk`}
         if(sel.options.length<2){const lw=sel.closest('label')||sel;lw.outerHTML=`<button type="button" class="btn rm100tbtn" disabled title="${esc(_T('No house can borrow him now (room under their cap and the lump sum).'))}">⇢ ${_T`Lend`}</button>`}}}
-    if(wax&&g.loanFrom&&g.loanFrom.mid!==pm.id){const o=mgrById(g.loanFrom.mid);const L=g.loanFrom;wax.querySelector('.rm100tb').insertAdjacentHTML('beforebegin',`<div class="rm100tr r104ln"><span>${_T`On loan`}</span><span class="rm100one">${L.c104?esc(_T`from ${o?o.ludus:''} · ${L.lump} paid up front · his wage is yours`):esc(_T`from ${o?o.ludus:''} · ${L.fee}/wk (old terms)`)}</span><span>${Math.max(0,L.weeks|0)} wk</span></div>`)}
+    if(wax&&g.loanFrom&&g.loanFrom.mid!==pm.id){const o=mgrById(g.loanFrom.mid);const L=g.loanFrom;wax.querySelector('.rm100tb').insertAdjacentHTML('beforebegin',`<div class="rm100tr r104ln"><span>${_T`On loan`}</span><span class="rm100one">${L.c104?esc(_T`from ${o?o.ludus:''} · ${L.lump} paid up front · his wage is yours`):esc(_T`from ${o?o.ludus:''} · ${L.fee}/wk (old terms)`)}</span>${_T`<span>${Math.max(0,L.weeks|0)} wk</span>`}</div>`)}
     /* "Keeping him" folded inside the tabula */
     const keep=room.querySelector('.rm100keep');if(keep&&wax){const d=document.createElement('details');d.className='r104keep';if(w.tutorial||R104.keepOpen)d.open=true;
       const ph=keep.querySelector('.rm100ph');d.innerHTML=`<summary>${ph?ph.innerHTML:_T('Keeping him · coin and favours')}</summary>`;if(ph)ph.remove();d.appendChild(keep);wax.appendChild(d)}}
@@ -74035,7 +74036,7 @@ if(V104C.on){const base=mgrHTML;mgrHTML=function(){try{const w=W_(),pm=w&&!w.dea
 /* ---------- the row menu ⋯ ---------- */
 function r104Close(){for(const p of document.querySelectorAll('.r104pop'))p.remove();R104.pop=null}
 function r104MenuHTML(g,w,pm){const k=team104(g,pm);const T=TM104();const nA=tm104Count(w,pm,'A'),nB=tm104Count(w,pm,'B');
-  const it=(attr,l,dis,why,on,x)=>`<button type="button" class="r104mi${on?' on':''}" ${attr} ${dis?`disabled title="${esc(why||'')}"`:''} role="menuitem"><span>${l}</span>${x!=null?`<small>${x}</small>`:''}</button>`;
+  const it=(attr,l,dis,why,on,x)=>`<button type="button" class="r104mi${on?' on':''}" ${attr} ${dis?_T`disabled title="${esc(why||'')}"`:''} role="menuitem"><span>${l}</span>${x!=null?`<small>${x}</small>`:''}</button>`;
   let h=`<div class="r104mh"><b>${esc(g.name)}</b><small>${k==='L'?T.L[0]:T[k][0]} · ${effOvr(g)}</small></div>`;
   if(k==='L'){let rc='';try{const f=recallFee(g);const busy=(w.night&&w.night.bouts||[]).some(b=>!b.done&&b.ents.includes(g.id));rc=it(`data-recall="${g.id}"`,_T`↩ Call him back · ${coinAmt87(f)}`,busy||pm.coin<f,busy?_T('He fights for them this week.'):_T('Not enough coin.'))}catch(e){}
     return h+`<div class="r104ms">${g.loanFrom&&g.loanFrom.c104?esc(c104LoanTxt(g,g.loanFrom)):esc(loanTerms(g))}</div>`+rc}
@@ -74252,7 +74253,7 @@ function of104Answer(w,wk0){const m=me();if(!w.of104||!m)return;const P=w.of104;
       of104Letter(w,g,'💢',_T`${g.name} is insulted`,_T`<b>${esc(g.name)}</b> laughed at ${o.wage}/wk — he asks about ${ask}. Interest −${W104.of.scareIv}, and he will not talk to your house for ${W104.of.scareWks} weeks.`);continue}
     const v=offerVerdict(g,o.wage,o.weeks,o.bonus,o.pledge);
     if(!v.ok){const top=suitors(g)[0];const R=top&&top.m&&!top.m.isPlayer&&!top.m.dead?top.m:null;
-      if(R&&!v.cap103&&interestOf(g,R)>interestOf(g,m)&&w104U(`of104s:${w.id}:${g.id}:${wk0}`)<W104.of.snatch&&rosterOf(R).length<(typeof cap104==='function'?cap104(R):15)){
+      if(R&&!v.cap103&&interestOf(g,R)>interestOf(g,m)&&w104U(_T`of104s:${w.id}:${g.id}:${wk0}`)<W104.of.snatch&&rosterOf(R).length<(typeof cap104==='function'?cap104(R):15)){
         g.contract={mgr:R.id,wage:Math.max(ask,Math.round(o.wage*1.05)),weeks:8,since:w.week};g.unsigned=0;ghist(g,_T`signed with ${esc(R.ludus)}`);try{mlog(R,_T`signed ${g.name}, outbidding you`)}catch(e){}
         mnews(_T`${esc(R.ludus)} signs <b>${esc(g.name)}</b> — your offer came second.`);of104Letter(w,g,'🎣',_T`${g.name} chose ${R.ludus}`,_T`<b>${esc(g.name)}</b> took <b>${esc(R.ludus)}</b>'s terms over yours. ${esc(v.why||'')}`);continue}
       of104Letter(w,g,'✉',_T`${g.name} says no`,_T`<b>${esc(g.name)}</b> turns your offer down: ${esc(v.why||'')}`);continue}
@@ -74351,7 +74352,7 @@ function bp104Tile(w,pm,fk){const F=FAC[fk];const l=facLvl(pm,fk);const b=bp104O
   return `<div class="lu2r bp104t${!why&&l<3?' can':''}${here?' bld':''}" data-bp104="${fk}"><div class="bp104h"><b>${F.i} ${esc(_T(F.n))}</b><span class="facpips">${[0,1,2].map(i=>`<i class="${i<l?'on':''}"></i>`).join('')}</span></div>
     <div class="bp104pair"><figure>${bp104Art(fk,l)}<figcaption>${_T`Now`} · ${l?esc(F.fx(l)):esc(F.d)}</figcaption></figure>${l<3?`<span class="bp104arr">→</span><figure>${bp104Art(fk,here?b.l:l+1,true)}<figcaption>${here?_T('Being built'):_T`Next`} · ${esc(F.fx(here?b.l:l+1))}</figcaption></figure>`:''}</div>
     <div class="bp104f">${l>=3?`<span class="badge gold">${_T`complete`}</span>`:here?`<span class="bp104bld">${_T`🏗 ${bp104Left(pm,w)===1?_T('ready when this week ends'):_T`ready when ${wkName(b.end)} ends`}`}</span>`
-      :`<span class="rc-sub">${_T`${n} week${n===1?'':'s'} to build`}</span><button class="btn tksm${why?'':' primary'}" type="button" data-mg="build" data-id="${fk}" ${why?`disabled title="${esc(why)}"`:''}>${_T`Build ${BP104_RN[l]}`}<small>${coinAmt87(cost)}</small></button>`}${why&&!here&&l<3?`<small class="bp104why">${esc(why)}</small>`:''}</div></div>`}
+      :`<span class="rc-sub">${_T`${n} week${n===1?'':'s'} to build`}</span><button class="btn tksm${why?'':' primary'}" type="button" data-mg="build" data-id="${fk}" ${why?_T`disabled title="${esc(why)}"`:''}>${_T`Build ${BP104_RN[l]}`}<small>${coinAmt87(cost)}</small></button>`}${why&&!here&&l<3?`<small class="bp104why">${esc(why)}</small>`:''}</div></div>`}
 if(typeof lu102FacHTML==='function'){const base=lu102FacHTML;lu102FacHTML=function(w,pm){const h=base.apply(this,arguments);try{if(!w104Live()||typeof h!=='string')return h;
   const C=council83(w);const by={};for(const fk of Object.keys(FAC)){const o=lu2Owner(fk);(by[o]=by[o]||[]).push(fk)}const nm=k=>{const a=C.find(x=>x.k===k);return a?esc(a.name):k};const ro=k=>{const a=C.find(x=>x.k===k);return a?esc(a.role):''};
   const T=document.createElement('template');T.innerHTML=h;const R=T.content;const box=R.querySelector('.lu102fb');const sub=R.querySelector('.lu102fh .rc-sub');
@@ -74361,7 +74362,7 @@ if(typeof lu102FacHTML==='function'){const base=lu102FacHTML;lu102FacHTML=functi
 /* the advisor popover's rows (297) say so too */
 if(typeof lu2Row==='function'){const base=lu2Row;lu2Row=function(w,pm,fk){const h=base.apply(this,arguments);try{const b=w104Live()&&bp104Of(pm);if(!b||typeof h!=='string')return h;
   if(b.k===fk)return h.replace(/<button[^>]*data-mg="build"[\s\S]*?<\/button>/,`<span class="bp104bld">🏗 ${esc(_T`ready when ${wkName(b.end)} ends`)}</span>`);
-  return h.replace('data-mg="build"',`data-mg="build" disabled title="${esc(_T`The builders are on the ${_T(FAC[b.k].n)} — one project at a time.`)}"`)}catch(e){return h}}}
+  return h.replace('data-mg="build"',_T`data-mg="build" disabled title="${esc(_T`The builders are on the ${_T(FAC[b.k].n)} — one project at a time.`)}"`)}catch(e){return h}}}
 
 /* the Valetudinarium's effect line said "physicians' weekly cap" (23) — since 318 it is beds + Medicus hours */
 try{if(FAC.valet)FAC.valet.fx=l=>_T`+${l} bed${l===1?'':'s'} · +${l*CARE101.valet} Medicus hours a week`}catch(e){}
@@ -74412,7 +74413,7 @@ function mq104Warn(w,pm){try{w=w||W_();pm=pm||me();if(!w||!pm||w.tutorial||!w.ni
 function mq104WarnHTML(w,pm){const t=mq104Warn(w,pm);return t?`<div class="mq104w" role="status">${t} <span class="v101lnk" role="button" tabindex="0" data-mg="tab" data-id="roster">${_T`To the Roster`}</span></div>`:''}
 
 /* the plates */
-function w104Plate(o){return `<button type="button" class="v104pl plantile${o.why?' off':''}${o.on?' on':''}${o.rec?' v101rec':''}" ${o.attr} data-v104p="${o.k}" data-v101t="${o.k}"${o.why?` ${o.native?`disabled title="${esc(o.why)}"`:`data-dis="${esc(o.why)}" title="${esc(o.why)}"`}`:` title="${esc(o.fx||'')}"`}>
+function w104Plate(o){return `<button type="button" class="v104pl plantile${o.why?' off':''}${o.on?' on':''}${o.rec?' v101rec':''}" ${o.attr} data-v104p="${o.k}" data-v101t="${o.k}"${o.why?` ${o.native?_T`disabled title="${esc(o.why)}"`:`data-dis="${esc(o.why)}" title="${esc(o.why)}"`}`:` title="${esc(o.fx||'')}"`}>
   <span class="rm100fr">${w104Art(o.art||o.k)}</span><span class="v104pb"><b>${o.ic} ${o.n}</b><span class="v104ph">${o.cost}</span><span class="v104fx">${o.fx||''}</span>${o.on?`<span class="v101ok">${o.onTxt||_T('✓ this week')}</span>`:''}${o.why?`<span class="v104why">${esc(o.why)}</span>`:''}</span>${o.rec?`<span class="v101star">${_T`★ Suggested`}</span>`:''}</button>`}
 function w104Cost(k){return `${CARE101.h[k]} h · ${coinAmt87(care101Coin(k))}`}
 function w104Ward(g,w,pm,rk){const P=[];const i=g.inj&&!g.inj.war?g.inj:null;const sev=g.severed||[];const fw=i?fitWeekOf(g):null;const fitTo=n=>i?_T`fit ${wkName(fw)} → ${wkName(n)}`:'';
@@ -74464,7 +74465,7 @@ function w104Tabula(w,pm,sel){const Mx=mh101Max(pm,w),Lf=mh101Left(w,pm);const r
       <div class="v101oh">${_T`Booked this week`}</div>${B.length?`<ul class="w104bk">${B.map(x=>`<li>${x}</li>`).join('')}</ul>`:`<div class="rc-sub">${_T`Nothing booked yet.`}</div>`}</div>
     <div class="w104c"><div class="v101oh">${_T`The Medicus's order`}</div>
       ${Q.length?`<ol class="w104q">${Q.map(([g,s],n)=>`<li class="${n===0?'rec':''}"><b>${n===0?'★ ':''}${esc(g.name)}</b> · ${s.t}</li>`).join('')}</ol>`:`<div class="rc-sub">${_T`✓ Nobody waiting for the physicians.`}</div>`}
-      <button type="button" class="btn tksm${can?' primary':''}" data-mq104 ${can?'':`disabled title="${esc(_T('Nothing the hours and the treasury can pay for now'))}"`}>${_T`⚕ Treat the wounded in order`}</button>
+      <button type="button" class="btn tksm${can?' primary':''}" data-mq104 ${can?'':_T`disabled title="${esc(_T('Nothing the hours and the treasury can pay for now'))}"`}>${_T`⚕ Treat the wounded in order`}</button>
       ${sel&&S.length?`<div class="v101oh" style="margin-top:6px">${_T`${esc(sel.name)} · step by step`}</div><div class="v101ord w104ord">${S.map((x,n)=>`<div class="v101os${x.done?' done':''}${n===first?' rec':''}"><b>${x.done?'✓':n+1}</b><span>${x.t}</span></div>`).join('')}</div>`:''}</div></div></section>`}
 function w104Banner(hd,w,pm){const Mx=mh101Max(pm,w),Lf=mh101Left(w,pm);const rec=rc104Used(w);const wc=Math.max(0,Mx-Lf-rec);const pc=v=>Mx?(v/Mx*100).toFixed(1):0;
   for(const s of hd.querySelectorAll('.v101st,.v101bx,.roomstat'))s.remove();const Md=w.medicus76;
