@@ -127,3 +127,7 @@ FEATURES (v1.05, own release):
   perkPend). Advisors, buildings, gladiators keep their own growth. v1.05 or later.
 - B21 Superbus bracket (348 #po104br): hard to find; bland; not laid out as a playoff tree; Superbus Week / the off-season should show it and
   past seasons' results stay viewable.
+- B21 his answer b21a: the bracket as a real tree (R1 bouts A/B → Semi I/II → the Superbus final, connector lines, seed + flag + name +
+  place per house, gold = through, faded = out, your house outlined, laurel at the end, projected seeds grey before week 11); shown OPEN at
+  the top of Match Week during the playoffs, on Superbus Week + the off-season page, and in a League "Superbus" tab (this season in v1.04;
+  past seasons with N1's picker in v1.05). REPLACES the #po104br overlay look.
