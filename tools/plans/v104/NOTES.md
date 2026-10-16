@@ -58,3 +58,6 @@ FEATURES (v1.05, own release):
   (108-v76 roadLocked76), so the End-the-week confirm must NOT ask about untreated wounded / unspent hours. Those reminders belong at the
   moment of leaving ("Set off for <city>"/first bout); the end-of-week confirm only names bouts that will be simulated.
 - b5 (old calendar on a v1.03-beta career?) still to confirm with him.
+- N2 mock-up published 2026-10-16: https://claude.ai/artifact/8ZvV1U2SAfnTUW557hMy5h (clickable: plan → Set off (reminders) → Fight/
+  Watch/Simulate turns each bout card into its result card with a bout log → week ledger → End the week = one line). Open question: does
+  recruiting lock too once the house sets off (today 108-v76 locks only the Yard + Infirmary)?
