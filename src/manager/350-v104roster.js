@@ -71,7 +71,7 @@ if(V104C.on){
 }
 
 /* ============================== 2 · FIRST TEAM 4 + SECOND TEAM 4 ============================== */
-const TM104=()=>({A:[_T('First team'),_T('Bouts I–III and a reserve who covers them')],B:[_T('Second team'),_T('next in line')],R:[_T('Rostered'),_T('under contract, not in the plans')],L:[_T('Lent out'),_T('fighting for other houses')]});
+const TM104=()=>({A:[_T('First team'),_T('Bouts I–III and a reserve who covers them')],B:[_T('Second team'),_T('next in line')],R:[_T('Rostered'),_T('under contract, not in the plans')],I:[_T('🩸 Injured'),_T('cannot fight — back by himself when fit')],L:[_T('Lent out'),_T('fighting for other houses')]});
 const c104Pool=(w,pm)=>w&&pm?(w.glads||[]).filter(g=>g.alive&&g.contract&&g.contract.mgr===pm.id):[];
 const c104LentOut=(w,pm)=>(w.glads||[]).filter(g=>g.alive&&g.loanFrom&&g.loanFrom.mid===pm.id&&g.contract&&g.contract.mgr!==pm.id);
 function team104(g,pm){pm=pm||me();if(!g||!pm)return 'R';if(g.loanFrom&&g.loanFrom.mid===pm.id&&g.contract&&g.contract.mgr!==pm.id)return 'L';if(g.slot95||g.tm104==='A')return 'A';return g.tm104==='B'?'B':'R'}
@@ -267,12 +267,12 @@ function r104Row(g,w,pm,sel,over,grp){const lent=grp==='L';const r=g.rec||{};con
     <span class="r104f">${rm100Fd(g)}<span class="rm100iv">${f}</span></span><span class="rm100iv r104wk">${g.contract?Math.max(0,g.contract.weeks||0):''}</span>
     <button type="button" class="r104m" data-r104m="${g.id}" aria-label="${esc(_T`Actions for ${g.name}`)}" title="${esc(_T('Team, bout, loan'))}">⋯</button></div>`}
 function r104ListHTML(w,pm,sel){const T=TM104();const ros=c104Pool(w,pm);const out=c104LentOut(w,pm);const over=new Set(cap104Over(pm).map(g=>g.id));const cap=cap104(pm);
-  const G={A:[],B:[],R:[],L:out};for(const g of ros)G[team104(g,pm)].push(g);
+  const G={A:[],B:[],R:[],I:[],L:out};for(const g of ros)(G[team104(g,pm)]||G.R).push(g);
   const head=`<div class="rm100lh r104h">${R104_COLS().map(([k,l,s])=>s?`<button type="button" class="r104s${R104.sort.k===s&&(k!=='tier')?' on':''}" data-r104s="${s}" data-col="${k}" title="${esc(_T`Sort by ${l}`)}">${l}${R104.sort.k===s&&k!=='tier'?(R104.sort.d<0?' ▾':' ▴'):''}</button>`:`<span data-col="${k}">${l}</span>`).join('')}</div>`;
-  const grp=k=>{const L=k==='L'?G.L:r104Sort(G[k]);const n=k==='A'||k==='B'?`${L.length} / ${CAP104.team}`:String(L.length);if(k==='L'&&!L.length)return '';
+  const grp=k=>{const L=k==='L'?G.L:r104Sort(G[k]);const n=k==='A'||k==='B'?`${L.length} / ${CAP104.team}`:String(L.length);if((k==='L'||k==='I')&&!L.length)return '';
     return `<div class="r104g" data-r104g="${k}"><div class="r104gh"><b>${T[k][0]}</b><span class="r104gn">${n}</span><small class="rm100one">${T[k][1]}</small></div>
       ${L.map(g=>r104Row(g,w,pm,sel,over,k)).join('')||`<div class="r104e">${k==='R'?_T('Nobody else under contract.'):_T('Empty — drag a fighter here, or use ⋯ on his row.')}</div>`}</div>`};
-  return `<div class="rm100lhd r104lhd"><span>${_T`Your fighters`} · ${ros.length} / ${cap}</span>${ros.length>cap?`<span class="r104oc">${_T`over the cap`}</span>`:''}</div><div class="rm100rows r104rows">${head}${['A','B','R','L'].map(grp).join('')}</div>`}
+  return `<div class="rm100lhd r104lhd"><span>${_T`Your fighters`} · ${ros.length} / ${cap}</span>${ros.length>cap?`<span class="r104oc">${_T`over the cap`}</span>`:''}</div><div class="r104hint">${_T('⋯ or drag a row to set the First / Second team and bouts')}</div><div class="rm100rows r104rows">${head}${['A','B','R','I','L'].map(grp).join('')}</div>`}
 /* the selected fighter's team control (inside his portrait panel) */
 function r104TeamCtl(g,pm){const k=team104(g,pm);const T=TM104();if(k==='L')return '';
   const b=(kk,l,slot,on,tt)=>`<button type="button" class="r104tb${on?' on':''}" data-r104a="${kk}|${g.id}${slot!=null?'|'+slot:''}" aria-pressed="${on?'true':'false'}"${tt?` title="${esc(tt)}"`:''}>${l}</button>`;
