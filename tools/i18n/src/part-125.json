@@ -1,0 +1,78 @@
+[
+ {
+  "k": "Bout {0} · seeds {1}",
+  "w": "355-v104fixs.js:81"
+ },
+ {
+  "k": "Your recruiter has {0} h left this week — this takes {1} h.",
+  "w": "357-v104fixm.js:59"
+ },
+ {
+  "k": "Training Yard plan locked in",
+  "w": "357-v104fixm.js:92"
+ },
+ {
+  "k": "Hygeia's regrowth needs him in bed until the week ends",
+  "w": "357-v104fixm.js:98"
+ },
+ {
+  "k": "cancelled the Blessings of Hygeia",
+  "w": "357-v104fixm.js:104"
+ },
+ {
+  "k": "🌿 Hygeia's operation on {0} is cancelled — {1} h and {2} back. He may leave the bed.",
+  "w": "357-v104fixm.js:105"
+ },
+ {
+  "k": "✓ in bed · Hygeia needs him here",
+  "w": "357-v104fixm.js:110"
+ },
+ {
+  "k": "✓ booked · tap to cancel",
+  "w": "357-v104fixm.js:112"
+ },
+ {
+  "k": "Booked for this week — tap to cancel (hours and coin come back)",
+  "w": "357-v104fixm.js:112"
+ },
+ {
+  "k": "{0} is just above you (#{1}), {2} point{3} ahead.",
+  "w": "357-v104fixm.js:120"
+ },
+ {
+  "k": "{0} is just behind you (#{1}), {2} point{3} back.",
+  "w": "357-v104fixm.js:120"
+ },
+ {
+  "k": "A rest week: seeds 1–4 sit out Round 1 and wait in the semifinals.",
+  "w": "357-v104fixm.js:122"
+ },
+ {
+  "k": "Round 1 in week 12: finish top 2 of your bout to reach the semifinals.",
+  "w": "357-v104fixm.js:122"
+ },
+ {
+  "k": "Keep your best fighters fresh and avoid costly risks — hold the lead and the rest week is yours.",
+  "w": "357-v104fixm.js:123"
+ },
+ {
+  "k": "A rest week is {0} point{1} away — fight for it in the weeks left.",
+  "w": "357-v104fixm.js:124"
+ },
+ {
+  "k": "The cut is close: a loss now could drop you out of the twelve. Fight to hold your place.",
+  "w": "357-v104fixm.js:124"
+ },
+ {
+  "k": "Win your bouts, rest the worn — every league point moves your seed.",
+  "w": "357-v104fixm.js:124"
+ },
+ {
+  "k": "The road to the Superbus: you stand #{0}",
+  "w": "357-v104fixm.js:128"
+ },
+ {
+  "k": "The league table now points to the playoffs. If the season ended today your house would be <b>seed #{0}</b>.",
+  "w": "357-v104fixm.js:129"
+ }
+]
