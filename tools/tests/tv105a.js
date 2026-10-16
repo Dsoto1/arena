@@ -50,13 +50,17 @@ ok(out.l.off&&!out.l.pageX,'Set off button, no page scroll '+JSON.stringify(out.
 out.r=await ev(pg,async()=>{const w=W_(),n=w.night;const i=mw105Seq(n).find(k=>!n.bouts[k].done);const b=n.bouts[i];const m=me();
   const riv=b.ents.map(gById).find(g=>g&&g.contract&&g.contract.mgr!==m.id);const rm=riv&&mgrById(riv.contract.mgr);if(rm)rm.rivalry=60;
   const bk=boutProbs(b,'book');const lo=b.ents.findIndex((id,k)=>bk[k]<0.5);const tid=b.ents[lo];const hid=b.ents.find((id,k)=>k!==lo&&bk[k]>0.15);
-  window.yourRead105=g=>g.id===tid?{est:0.9,lo:0.8,hi:0.95,rough:true,src:'sand'}:g.id===hid?{est:0.01,rough:false,src:'dossier'}:null;await NIGHT();
-  const ob=document.querySelector('.mw105b.open .mw105bd');const r={rv:ob.querySelectorAll('.mw105rv').length,val:ob.querySelectorAll('.mw105vb.good').length,trap:ob.querySelectorAll('.mw105vb.bad').length,best:ob.querySelectorAll('.mw105bv').length,
-    rough:[...ob.querySelectorAll('.mw105rd.rough')].map(x=>x.textContent),none:[...ob.querySelectorAll('td')].filter(x=>x.textContent.trim()==='no read').length};
-  delete window.yourRead105;await NIGHT();r.after=document.querySelectorAll('.mw105b.open .mw105bv').length;return r});
+  const orig=window.yourRead105;
+  window.yourRead105=g=>g.id===tid?{est:effOvr(g)+25,lo:effOvr(g)+23,hi:effOvr(g)+27,rough:true,src:'sand'}:g.id===hid?{est:5,lo:5,hi:5,rough:false,src:'dossier'}:null;await NIGHT();
+  const ob=document.querySelector('.mw105b.open .mw105bd');const rd=[...ob.querySelectorAll('.mw105rd')].map(x=>x.textContent);
+  const r={rv:ob.querySelectorAll('.mw105rv').length,val:ob.querySelectorAll('.mw105vb.good').length,trap:ob.querySelectorAll('.mw105vb.bad').length,best:ob.querySelectorAll('.mw105bv').length,rd,
+    rough:[...ob.querySelectorAll('.mw105rd.rough')].map(x=>x.textContent),none:[...ob.querySelectorAll('td')].filter(x=>x.textContent.trim()==='no read').length,
+    badgeRows:[...ob.querySelectorAll('tr')].filter(t=>t.querySelector('.mw105vb,.mw105bv')).every(t=>t.querySelector('.mw105rd'))};
+  window.yourRead105=()=>null;await NIGHT();r.after=document.querySelectorAll('.mw105b.open .mw105bv,.mw105b.open .mw105vb').length;
+  window.yourRead105=orig;await NIGHT();return r});
 ok(out.r.rv>=1,'pick 5: rival chip '+JSON.stringify(out.r));
-ok(out.r.val===1&&out.r.trap===1&&out.r.best===1&&out.r.rough[0]==='~90%'&&out.r.none>=1,'pick 6: value / trap / best value from yourRead105, rough read, no read '+JSON.stringify(out.r));
-ok(out.r.after===0,'pick 6: no read API = no best-value badge '+JSON.stringify(out.r));
+ok(out.r.val===1&&out.r.trap===1&&out.r.best===1&&out.r.badgeRows&&out.r.rough.length===1&&/^~\d+$/.test(out.r.rough[0])&&out.r.rd.every(x=>!/%/.test(x))&&out.r.none>=1,'pick 6: value / trap / best value only on read fighters, the cell shows a rating (not a %) '+JSON.stringify(out.r));
+ok(out.r.after===0,'pick 6: every read null = no value / trap / best-value badge '+JSON.stringify(out.r));
 
 /* ---- B35d: the stake window ---- */
 const bet=pg.locator('.mw105b.open tr.me [data-mg="bet"]').first();await bet.click();await pg.waitForTimeout(250);

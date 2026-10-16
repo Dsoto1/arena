@@ -35,7 +35,7 @@ const ev=(pg,f,a)=>pg.evaluate(f,a);
     if(fa){const K=fa.sc98;out.look=!!K&&(K.l104||[]).includes(w.week);out.noScout=!fa.scout}else{out.look=true;out.noScout=true}
     MGR_REDRAW();await W8(400);
     const tds=[...document.querySelectorAll('#mgrBody table.tally tr')].map(tr=>tr.children[4]?tr.children[4].textContent.trim():'');
-    out.cells=tds.filter(x=>/\d+%/.test(x)).length>=gs.length;out.noNot=!tds.some(x=>/not scouted/.test(x));
+    out.cells=tds.filter(x=>/^~?\d+$/.test(x)).length>=gs.length;out.noNot=!tds.some(x=>/not scouted/.test(x));
     /* Recruiting: the gate look counts as an EARLIER look once the week turns */
     if(fa){const n0=rec104Prev(fa,w);w.week++;const n1=rec104Prev(fa,w);w.week--;out.prev=n1===n0+1}else out.prev=true;
     /* aging */

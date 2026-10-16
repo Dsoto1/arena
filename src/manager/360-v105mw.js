@@ -70,9 +70,9 @@ function mw105ResHTML(w,b){const R=b.res;if(!R)return `<div class="mw105res"><p 
 function mw105ResTag(w,b,vd){const R=b.res;const win=R?R.winners.map(gById).filter(Boolean):[];const h=R&&R.house101;
   const sub=vd?_T('A verdict waits on your fighter'):h&&typeof h.tot==='number'?_T`Fought · your house ${h.tot>=0?'+':'−'}${coinAmt87(Math.abs(h.tot))}`:_T('Fought');
   return `<div class="mw105rt${vd?' vd':''}"><b>${win.length?_T`🏆 Won by ${win.map(g=>esc(g.name)).join(' & ')}`:_T('No winner')}</b><small>${sub}</small></div>`}
-/* the read (361-v105read): null or {est, lo, hi, rough, src} */
-function mw105Read(g){try{if(typeof yourRead105!=='function')return undefined;const r=yourRead105(g);if(!r||r.est==null)return null;const f=v=>v==null?null:(+v>1?+v/100:+v);return {...r,est:f(r.est),lo:f(r.lo),hi:f(r.hi)}}catch(e){return null}}
-const mw105Src=s=>s==='sand'||s==='gate'?_T('walked the sand'):s==='dossier'||s==='rec'||s==='recruit'?_T('your recruiting dossier'):s==='watch'||s==='live'?_T('watched him live'):s==='own'||s==='mine'?_T('your own fighter'):s?esc(String(s)):_T('your read');
+/* the read (361-v105read): null or {est, lo, hi, rough, src}; est/lo/hi are a RATING (effOvr scale), not a chance */
+function mw105Read(g){try{if(typeof yourRead105!=='function')return undefined;const r=yourRead105(g);if(!r||r.est==null)return null;return r}catch(e){return null}}
+const mw105Src=s=>typeof read105Name==='function'?read105Name(s):_T('your read');
 
 /* the bout card's inside (not fought yet) */
 function mw105Card(c,w,b,i,myIn){const m=me();
@@ -83,20 +83,21 @@ function mw105Card(c,w,b,i,myIn){const m=me();
   const sk=c.querySelector('.bstake');if(sk)sk.remove();if(!c.querySelector('#mgStake'+i))c.insertAdjacentHTML('beforeend',`<input type="hidden" id="mgStake${i}" value="${Math.min(MW105.stake,Math.max(1,m.coin))}">`);
   /* the betting table */
   const tb=c.querySelector('table.tally');if(tb){const rows=[...tb.querySelectorAll('tr')];const hr=rows.find(r=>r.querySelector('th'));const heads=hr?[...hr.children].map(x=>x.textContent.replace('ⓘ','').trim()):[];
-    const rc=heads.findIndex(x=>x===_T('Your scouts')||x===_T('Your read'));if(hr&&rc>=0){const th=hr.children[rc];th.textContent=_T('Your read');th.title=_T('Your own read of each fighter (walked the sand, your recruiting dossier, a bout watched live). Value: his chance beats the odds. Trap: the odds flatter him.');heads[rc]=_T('Your read')}
+    const rc=heads.findIndex(x=>x===_T('Your scouts')||x===_T('Your read'));if(hr&&rc>=0){const th=hr.children[rc];th.textContent=_T('Your read');th.title=_T('Your read: from walking the sand, your recruiting dossier, or watching him fight. Value: your chance beats the odds. Trap: it falls short.');heads[rc]=_T('Your read')}
     const oc=heads.findIndex(x=>x===_T('Odds'));const bc=heads.findIndex(x=>x===_T('Bet'));const kc=heads.findIndex(x=>x===_T('Book'));const lc=heads.findIndex(x=>x===_T('Ludus'));
-    const foe=(()=>{try{return rivalOf(w,m.id)}catch(e){return null}})();let best=null;const R2=[];
+    const foe=(()=>{try{return rivalOf(w,m.id)}catch(e){return null}})();let best=null;const R2=[];let PR=null;try{const od=boutOdds(b),inv=od.map(o=>1/o),z=inv.reduce((a,c)=>a+c,0)||1;PR={mine:boutProbs(b,'mine'),imp:inv.map(v=>v/z)}}catch(e){}
     for(const tr of rows){if(tr===hr)continue;[...tr.children].forEach((td,k)=>{if(heads[k])td.dataset.l=heads[k]});
       const bt=tr.querySelector('[data-mg="bet"]');if(!bt)continue;const [,gid,odds]=bt.dataset.id.split('|');const g=gById(gid);if(!g)continue;const gm=g.contract?mgrById(g.contract.mgr):null;
       /* pick 5: rival chip */
       if(gm&&!gm.isPlayer&&lc>=0&&((foe&&foe.id===gm.id)||(gm.rivalry||0)>=35)){const t=tr.children[lc];if(t)t.insertAdjacentHTML('beforeend',` <span class="mw105rv" title="${esc(rivalTier(gm.rivalry||0))}">${_T('⚔ Rival')}</span>`)}
       /* the read + pick 6 */
-      const rd=mw105Read(g);if(rd!==undefined&&rc>=0){const td=tr.children[rc];if(td)td.innerHTML=rd?`<span class="mw105rd${rd.rough?' rough':''}" title="${_T`Your read · ${mw105Src(rd.src)}`}${rd.lo!=null&&rd.hi!=null?` · ${Math.round(rd.lo*100)}–${Math.round(rd.hi*100)}%`:''}">${rd.rough?'~':''}${Math.round(rd.est*100)}%</span>`:`<span class="rc-sub" title="${_T('Walk the sand at the arena gate, scout him in Recruiting or watch him fight to read him')}">${_T('no read')}</span>`;
-        if(rd&&kc>=0){const bk=parseFloat((tr.children[kc]||{}).textContent)/100;if(bk>=0){const edge=rd.est-bk;R2.push({tr,edge,oc});if(edge>=0.07&&(!best||edge>best.edge))best={tr,edge}}}}
+      const rd=mw105Read(g);if(rd!==undefined&&rc>=0){const td=tr.children[rc];if(td)td.innerHTML=rd?`<span class="mw105rd${rd.rough?' rough':''}" title="${rd.rough&&rd.lo!=null&&rd.hi!=null?`${rd.lo}–${rd.hi} · `:''}${esc(mw105Src(rd.src))}">${rd.rough?'~':''}${Math.round(rd.est)}</span>`:`<span class="rc-sub" title="${_T('Walk the sand at the arena gate, scout him in Recruiting or watch him fight to read him')}">${_T('no read')}</span>`;
+        /* value / trap: YOUR chance (boutProbs 'mine', which uses the reads) against the chance the posted odds imply (1/odds, the book's margin taken out) */
+        if(rd&&PR){const k=b.ents.indexOf(gid);if(k>=0&&PR.mine[k]!=null&&PR.imp[k]!=null){const edge=PR.mine[k]-PR.imp[k];R2.push({tr,edge,oc});if(edge>=0.05&&(!best||edge>best.edge))best={tr,edge}}}}
       /* bet label: what is already on him */
       const on=(b.bets||[]).filter(x=>x.gid===gid).reduce((a,x)=>a+x.stake,0);if(on){bt.classList.add('mw105on');bt.innerHTML=_T`Bet ${on}`}}
-    for(const x of R2){const td=x.tr.children[x.oc];if(!td)continue;if(x.edge>=0.07)td.insertAdjacentHTML('beforeend',` <span class="badge good mw105vb" title="${_T('Your read beats the public line: the odds pay too much.')}">${_T('▲ value')}</span>`);
-      else if(x.edge<=-0.07)td.insertAdjacentHTML('beforeend',` <span class="badge bad mw105vb" title="${_T('The public flatters him: the odds pay too little.')}">${_T('▼ trap')}</span>`)}
+    for(const x of R2){const td=x.tr.children[x.oc];if(!td)continue;if(x.edge>=0.05)td.insertAdjacentHTML('beforeend',` <span class="badge good mw105vb" title="${_T('Your chance beats the odds: they pay too much.')}">${_T('▲ value')}</span>`);
+      else if(x.edge<=-0.05)td.insertAdjacentHTML('beforeend',` <span class="badge bad mw105vb" title="${_T('The public flatters him: the odds pay too little.')}">${_T('▼ trap')}</span>`)}
     if(best){best.tr.classList.add('mw105best');const td=best.tr.children[oc];if(td)td.insertAdjacentHTML('beforeend',` <span class="mw105bv">${_T('★ best value')}</span>`)}
     tb.classList.add('mw105tb')}
   /* pick 4: one Watch button */
