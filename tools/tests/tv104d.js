@@ -102,7 +102,8 @@ const rec=await ev(pg,async()=>{const r={};const w=W_(),pm=me();for(const g of w
 for(const [k,v] of Object.entries(rec))ok(v,'recruiting '+k);
 
 /* ---------- Match Week warning on Your ludus ---------- */
-const mw=await ev(pg,async()=>{const w=W_(),pm=me();for(const g of rosterOf(pm))g.inj=null;st95Ensure(w,pm);const st=rosterOf(pm).filter(g=>g.slot95);for(const g of st.slice(0,2))g.inj={until:w.week+2,label:'a cut',pen:1,wk102:w.week};
+const mw=await ev(pg,async()=>{const w=W_(),pm=me();for(const g of rosterOf(pm))g.inj=null;st95Ensure(w,pm);const st=rosterOf(pm).filter(g=>g.slot95);/* v1.04 beta B19: the injured leave their slots and the reserve / Second team cover — the warning fires when no stand-in is left, so the bench is hurt too */
+  for(const g of rosterOf(pm).filter(x=>x!==st[2]))g.inj={until:w.week+2,label:'a cut',pen:1,wk102:w.week};
   if(w.night)w.night.bye=false;for(const bo of (w.night&&w.night.bouts)||[])bo.done=false;await GO('ludus');const a=!!mq104Warn(w,pm)&&!!document.querySelector('#mgrBody .mq104w');for(const g of rosterOf(pm))g.inj=null;return a});
 ok(mw,'match week warning');
 

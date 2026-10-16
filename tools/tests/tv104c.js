@@ -83,7 +83,7 @@ out.page=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));con
   r.rows=qa('.rm100list .rm100lr[data-mg="lsel"]').length===ros.length;r.cols=qa('.rm100list .r104h>*').length===10&&qa('.rm100list .r104h [data-r104s]').length>=6;
   r.chips=qa('.r104g[data-r104g="A"] .r104c.s').length===ros.filter(g=>team104(g,pm)==='A').length;
   r.noOld=!q('.rm100stt')&&!q('.rm100bench')&&!q('.st95slot')&&!q('.rm100dos>.rm100keep');
-  r.right=!!q('.rm100dos .rm100pp')&&!!q('.rm100dos .rm100rat .ratgrid')&&!!q('.rm100dos .rm100pers')&&!!q('.rm100con .rm100wax .r104keep [data-mg="meal"]')&&!!q('.rm100pp .r104tc [data-r104a]');
+  r.right=!!q('.rm100dos .rm100pp')&&!!q('.rm100dos .rm100rat .ratgrid')&&!!q('.rm100dos .rm100pers')&&!!q('.rm100con .rm100wax .r104keep [data-mg="meal"]')&&!q('.rm100pp .r104tc');/* v1.04 beta B6: the team buttons under the portrait are gone (the ⋯ menu keeps them) */
   /* OVR order inside each group by default */
   const ord=k=>qa(`.r104g[data-r104g="${k}"] .rm100lr[data-id]`).map(e=>effOvr(gById(e.dataset.id)));r.ovrOrder=['A','B','R'].every(k=>{const a=ord(k);return a.every((v,i)=>!i||a[i-1]>=v)});
   /* sort by wage */
@@ -101,7 +101,8 @@ out.page=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));con
     row.dispatchEvent(new DragEvent('dragstart',{bubbles:true,dataTransfer:dt}));zone.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer:dt}));zone.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer:dt}));
     await W8(400);r.drag=team104(bb,pm)==='R'}
   /* the team control on the right */
-  const sel=gById(MGR.lsel);const tb=q(`.rm100pp [data-r104a="R|${sel.id}"]`);if(tb){tb.click();await W8(400);r.ctl=team104(sel,pm)==='R'}
+  /* v1.04 beta B6: the control moved into the ⋯ menu — "Rostered" there */
+  const sel=gById(MGR.lsel);const mb=q(`[data-r104m="${sel.id}"]`);if(mb){mb.click();await W8(250);const tb=q(`.r104pop [data-r104a="R|${sel.id}"]`);if(tb){tb.click();await W8(400);r.ctl=team104(sel,pm)==='R'}}
   /* Escape closes a menu */
   q('[data-r104m]').click();await W8(200);document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await W8(100);r.esc=!q('.r104pop');
   /* the lesson's spot still finds the row */
