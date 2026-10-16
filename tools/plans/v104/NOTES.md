@@ -51,3 +51,10 @@ FEATURES (v1.05, own release):
 - N2 Match Week rework: bout cards turn into result cards as each bout ends; the separate "🏁 Match Week results" block (17 nightres)
   folds into them; "This week at <city>" (296 any100wk) and the End-the-week confirm placement rethought. Lead's proposal sent 2026-10-16.
 - Bracket view: already exists (#po104br — League banner, Match Week banner, playoff card; projected seeds from week 9) on the NEW calendar.
+- His answers (2026-10-16): B6a (hint line over the list + group headers light up while dragging; the buttons under the portrait go, ⋯ keeps
+  them) · B10a (at a new season keep only letters still needing an answer and still valid; file the rest) · N1 yes (League season picker:
+  that season's table, Superbus bracket, awards) — v1.05 · N2a: clickable MOCK-UP first — v1.05.
+- N2 item 6, his point: once the house leaves for the city (travel, or the first bout fought) the Training Yard + Infirmary are locked
+  (108-v76 roadLocked76), so the End-the-week confirm must NOT ask about untreated wounded / unspent hours. Those reminders belong at the
+  moment of leaving ("Set off for <city>"/first bout); the end-of-week confirm only names bouts that will be simulated.
+- b5 (old calendar on a v1.03-beta career?) still to confirm with him.
