@@ -119,7 +119,7 @@ function perkTree87(){const m=me(),w=W_();const P=m.perkPts||0;
   const cols=PERK87_BR.map(([br,ic,lab,tr,trl])=>`<div class="pk87b"><div class="pk87h"><b>${ic} ${lab}</b><span class="rc-sub">${_T`each rank also +${PERK87_TRAIT} ${trl}`}</span></div>${PERK87.filter(k=>k.br===br).map(node).join('<i class="pk87l"></i>')}</div>`).join('');
   const hone=MGR_KEYS.map(([k,l,d])=>`<button class="btn tksm" type="button" data-mg="perk" data-id="${k}" ${P<1||m.p[k]>=95?'disabled':''} title="${esc(d)}">${l} ${m.p[k]}${m.p[k]<95?' → '+Math.min(95,m.p[k]+2):''}</button>`).join('');
   return `<div class="card2 pk87card${P?' haspts':''}" id="schoolCard"><div class="pk87top"><div class="sect" style="margin:0">${_T`🎓 Lanista perks`}</div><span class="pk87pts${P?' on':''}" title="${_T`Perk points to spend`}">${_T`${P} point${P===1?'':'s'}`}</span></div>
-    <p class="rc-sub" style="margin:2px 0 8px">${_T`Points come each week: +1 for the week, +1 per bout won, +1 per kept pledge, +1 when training lifts two or more. This week so far: <b>${m.perkPend||0}</b> (ready next week).`}</p>
+    <p class="rc-sub pk87how" style="margin:2px 0 8px">${_T`Points come each week: +1 for the week, +1 per bout won, +1 per kept pledge, +1 when training lifts two or more. This week so far: <b>${m.perkPend||0}</b> (ready next week).`}</p>
     <div class="pk87tree">${cols}</div>
     <div class="pk87hone"><span class="rc-sub">${_T`Or hone a trait recruits grade you on (1 point · +2):`}</span><div class="acts">${hone}</div></div></div>`}
 {const base=schoolingCardHTML;schoolingCardHTML=function(){try{return perkTree87()}catch(e){console.error(e);return base.apply(this,arguments)}}}
