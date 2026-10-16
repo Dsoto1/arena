@@ -1,0 +1,286 @@
+[
+ {
+  "k": "🧑‍⚕️ <b>Hire a Capsarius</b>",
+  "w": "108-v76.js:627"
+ },
+ {
+  "k": "🧑‍⚕️ {0}, your Capsarius, packs their instruments and leaves your service.",
+  "w": "108-v76.js:630"
+ },
+ {
+  "k": "🧑‍⚕️ <b>{0}</b> joins your house as Capsarius (skill {1}, {2} a week).",
+  "w": "108-v76.js:631"
+ },
+ {
+  "k": "Your Capsarius has left",
+  "w": "108-v76.js:674"
+ },
+ {
+  "k": "Every cure takes <b>Medicus hours</b> and coin. The house has <b>{0}</b> hours a week: 4, +3 for each Valetudinarium level, +2 for each skill level of a Capsarius. Hours you don't use are lost when the week ends — a poor house can still heal, a rich one cannot buy more time.",
+  "w": "318-v101ward.js:114"
+ },
+ {
+  "k": "🧑‍⚕️ Hire a Capsarius",
+  "w": "318-v101ward.js:165"
+ },
+ {
+  "k": "Receiving treatment",
+  "w": "345-v103mgr.js:147"
+ },
+ {
+  "k": "🩸 Injured",
+  "w": "350-v104roster.js:74"
+ },
+ {
+  "k": "cannot fight — back by himself when fit",
+  "w": "350-v104roster.js:74"
+ },
+ {
+  "k": "⋯ or drag a row to set the First / Second team and bouts",
+  "w": "350-v104roster.js:275"
+ },
+ {
+  "k": "<b>{0}</b> Medicus hours this week: {1} a week, +{2} for each Valetudinarium level, +{3} for each skill level of a Capsarius. ♨ THE BATHS take weariness down from the same hours: a rub-down {4} h (−10 fatigue now), the Care routine {5} h a week (−{6} when each week ends), a Rest week 0 h (no bouts, −{7}).",
+  "w": "351-v104ward.js:381"
+ },
+ {
+  "k": "Worn: fights weaker, wounds more easily",
+  "w": "352-v104fixr.js:29"
+ },
+ {
+  "k": "{0} wk to fit",
+  "w": "352-v104fixr.js:37"
+ },
+ {
+  "k": "only Hygeia regrows a limb",
+  "w": "352-v104fixr.js:37"
+ },
+ {
+  "k": "He cannot fight — he waits in the Injured group and goes back by himself when fit.",
+  "w": "352-v104fixr.js:67"
+ },
+ {
+  "k": "Fighters are placed there by themselves, when they cannot fight.",
+  "w": "352-v104fixr.js:68"
+ },
+ {
+  "k": "back to the {0} when fit",
+  "w": "352-v104fixr.js:87"
+ },
+ {
+  "k": "From this season: the Superbus playoffs, byes in weeks 4 and 12, Rivalry Week in week 11, an off-season.",
+  "w": "353-v104fixl.js:41"
+ },
+ {
+  "k": "From next season: the Superbus playoffs, byes in weeks 4 and 12, Rivalry Week in week 11, an off-season.",
+  "w": "353-v104fixl.js:41"
+ },
+ {
+  "k": "A new season format",
+  "w": "353-v104fixl.js:42"
+ },
+ {
+  "k": "🔒 The Doctore's hours are locked in — they can go up, not down, this week.",
+  "w": "354-v104fixw.js:46"
+ },
+ {
+  "k": "🔒 The intensity is locked in for this week.",
+  "w": "354-v104fixw.js:47"
+ },
+ {
+  "k": "the Doctore",
+  "w": "354-v104fixw.js:51"
+ },
+ {
+  "k": "1 more hour with {0}",
+  "w": "354-v104fixw.js:52"
+ },
+ {
+  "k": "{0} more hours with {1}",
+  "w": "354-v104fixw.js:52"
+ },
+ {
+  "k": "Yard {0}",
+  "w": "354-v104fixw.js:52"
+ },
+ {
+  "k": ", or",
+  "w": "354-v104fixw.js:53"
+ },
+ {
+  "k": "drills +{0}% · Yard {1}/3 · hours with him {2}/{3}",
+  "w": "354-v104fixw.js:59"
+ },
+ {
+  "k": "Doctore · this week",
+  "w": "354-v104fixw.js:64"
+ },
+ {
+  "k": "Locked in for this week",
+  "w": "354-v104fixw.js:66"
+ },
+ {
+  "k": "Locked in — hours can go up, not down",
+  "w": "354-v104fixw.js:68"
+ },
+ {
+  "k": "🔒 held at {0} h — can go up, not down",
+  "w": "354-v104fixw.js:69"
+ },
+ {
+  "k": "+{0} h a week",
+  "w": "354-v104fixw.js:83"
+ },
+ {
+  "k": "saves limbs",
+  "w": "354-v104fixw.js:83"
+ },
+ {
+  "k": "may be lured away",
+  "w": "354-v104fixw.js:83"
+ },
+ {
+  "k": "Hire",
+  "w": "354-v104fixw.js:89"
+ },
+ {
+  "k": "Capsarius",
+  "w": "354-v104fixw.js:97"
+ },
+ {
+  "k": "+{0}–{1} h a week",
+  "w": "354-v104fixw.js:98"
+ },
+ {
+  "k": "Capsarius {0} h",
+  "w": "354-v104fixw.js:105"
+ },
+ {
+  "k": "Care is booked this week — it is done when the week ends",
+  "w": "354-v104fixw.js:107"
+ },
+ {
+  "k": "Recovery is booked this week — it takes effect when the week ends",
+  "w": "354-v104fixw.js:108"
+ },
+ {
+  "k": "Your house’s fighter for this round is chosen on the Superbus card.",
+  "w": "355-v104fixs.js:41"
+ },
+ {
+  "k": "Your house is not in the Superbus playoffs.",
+  "w": "355-v104fixs.js:42"
+ },
+ {
+  "k": "Your house is not in this bout.",
+  "w": "355-v104fixs.js:44"
+ },
+ {
+  "k": "Your house is not in this round — seeds 1–4 rest in Round 1.",
+  "w": "355-v104fixs.js:45"
+ },
+ {
+  "k": "Your house is out of the Superbus.",
+  "w": "355-v104fixs.js:46"
+ },
+ {
+  "k": "{0} fights in the Superbus this week — change your pick on the Superbus card first.",
+  "w": "355-v104fixs.js:59"
+ },
+ {
+  "k": "Not in the Superbus playoffs.",
+  "w": "355-v104fixs.js:60"
+ },
+ {
+  "k": "{0} fought for the house",
+  "w": "355-v104fixs.js:76"
+ },
+ {
+  "k": "Round 1 · Bout {0}",
+  "w": "355-v104fixs.js:81"
+ },
+ {
+  "k": "seeds {0}",
+  "w": "355-v104fixs.js:81"
+ },
+ {
+  "k": "Semifinal {0}",
+  "w": "355-v104fixs.js:82"
+ },
+ {
+  "k": "Bout {0} · 1st",
+  "w": "355-v104fixs.js:83"
+ },
+ {
+  "k": "Bout {0} · 2nd",
+  "w": "355-v104fixs.js:83"
+ },
+ {
+  "k": "Semifinal I · top 2",
+  "w": "355-v104fixs.js:86"
+ },
+ {
+  "k": "Semifinal II · top 2",
+  "w": "355-v104fixs.js:86"
+ },
+ {
+  "k": "Champions",
+  "w": "355-v104fixs.js:89"
+ },
+ {
+  "k": "Gold goes through · faded is out · the top 2 of each bout go on.",
+  "w": "355-v104fixs.js:94"
+ },
+ {
+  "k": "week 12",
+  "w": "355-v104fixs.js:97"
+ },
+ {
+  "k": "Semifinals",
+  "w": "355-v104fixs.js:97"
+ },
+ {
+  "k": "week 13",
+  "w": "355-v104fixs.js:97"
+ },
+ {
+  "k": "The Final",
+  "w": "355-v104fixs.js:97"
+ },
+ {
+  "k": "week 14",
+  "w": "355-v104fixs.js:97"
+ },
+ {
+  "k": "🏆 The Flavian Awards",
+  "w": "355-v104fixs.js:112"
+ },
+ {
+  "k": "📜 The Acta Diurna",
+  "w": "355-v104fixs.js:112"
+ },
+ {
+  "k": "the playoffs: weeks 12–14",
+  "w": "355-v104fixs.js:120"
+ },
+ {
+  "k": "The top 12 of the league table after week 11 play for the Superbus: seeds 5–12 in Round 1, seeds 1–4 join in the semifinals. Each house sends one gladiator a round; the top 2 of each bout go on. Playoff bouts score no league points.",
+  "w": "355-v104fixs.js:121"
+ },
+ {
+  "k": "◀ Standings",
+  "w": "355-v104fixs.js:132"
+ },
+ {
+  "k": "🏛 Superbus",
+  "w": "355-v104fixs.js:132"
+ },
+ {
+  "k": "Superbus · The Final",
+  "w": "355-v104fixs.js:144"
+ },
+ {
+  "k": "Season {0} · {1} · nailed to the forum wall at {2}",
+  "w": "355-v104fixs.js:160"
+ }
+]
