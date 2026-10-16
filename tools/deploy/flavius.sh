@@ -26,7 +26,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=5
+FSH_VER=6
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -255,7 +255,8 @@ cmd_update(){ gh_token; local b d best="" bestd=""
     d=$(gh_api "commits/$b" | python3 -c "import json,sys;print(json.load(sys.stdin)['commit']['committer']['date'])" 2>/dev/null || true); [ -n "$d" ] || continue
     [[ "$d" > "$bestd" ]] && { best="$b"; bestd="$d"; }; done; [ -n "$best" ] || die "No branch found."
   local t; t=$(mktemp); curl -fsS -m 20 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/$REPO/contents/tools/deploy/flavius.sh?ref=$best" -o "$t" || die "download failed"
-  if fsh_newer "$t"; then cp "$t" "$0"; ok "flavius.sh updated to version $(fsh_ver "$0") (from $best)"; else ok "flavius.sh is already the newest (version $(fsh_ver "$0"))"; fi; rm -f "$t"; }
+  # a new file (mv), never written over the running one: bash reads this script while it runs
+  if fsh_newer "$t"; then local v; v=$(fsh_ver "$t"); chmod +x "$t"; mv -f "$t" "$0"; ok "flavius.sh updated to version $v (from $best)"; exit 0; else ok "flavius.sh is already the newest (version $(fsh_ver "$0"))"; rm -f "$t"; fi; }
 
 # ---- beta: the work in progress on its OWN address (CloudFront's own domain = another origin → its own saves, never the players')
 cmd_beta(){ gh_token; local br="${1:-}"
