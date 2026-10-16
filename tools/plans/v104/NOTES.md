@@ -74,3 +74,17 @@ FEATURES (v1.05, own release):
 - mw1 (his principle): THE WEEK MOVES FORWARD. The first part of the week is all the lanista work (recruit, train, treat, deals); Match Week is
   only the bouts — nothing back at the ludus. Once the house sets off, Recruiting locks too (with the Yard + Infirmary). v1.05 with N2.
 - N2 mock-up v2 wanted: NOT a new idea — the information Match Week already shows, laid out more elegantly, visually pleasing and easier to read.
+
+## N2 · Match Week (v1.05) — mock-up rounds + his picks (2026-10-16)
+- Mock-up rounds: stake inside the Bet button (small window: −/+, 5·10·25·50, pays, Place bet); bout details as tiles with visuals
+  (tickets bar, coin, scales, laurel) in the open bout; "Your week at <city>" in the banner's upper right WITHOUT the treasury (it is in the
+  Manager header); slim banner; day tabs in the banner. Appearance fee shown once (was twice).
+- mw2 he picked 1 2 3 4 5 6 7 8 9:
+  1 your fighter's HP / fatigue / morale on the bout row + wound warning · 2 the next bout opens itself · 3 "what changed" (table places,
+  rating growth, weeks out) ONLY in the week's summary — later bouts move the table, so not per bout · 4 one Watch button (Spectate's seat
+  fee only when you have no fighter on the card) — REPLACES the separate Spectate · 5 rival chip in the betting table · 6 value / trap as a
+  badge on the odds + the best value bet marked · 7 greyed buttons say why · 8 bracket spot in the banner during the playoffs · 9 phone:
+  the betting table as one card per fighter.
+- N3 "Your scouts" column (17-manager betting table): it reads each fighter's RECRUITING scout level (g.scout), so rivals' fighters show
+  "not scouted" almost always, and the word clashes with Recruiting. To be renamed and fed by the existing "🗺 Walk the sand at the arena
+  gate" (185-v90week wsand90: today +1 AP +1 coin, sky, omen, crowd temper, a tip).
