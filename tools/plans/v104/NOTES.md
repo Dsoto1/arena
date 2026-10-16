@@ -200,3 +200,5 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
   strategy advisor — "when to fight, when to hold back") on the hunt for the Superbus: your projected seed, whether that rests you a round
   (1–4) or puts you in Round 1, the houses just above/below and the points gap, one line of advice; a link to the bracket. Adds to 348's
   week-11 "playoffs open" letter (that one stays). Rival-free careers / Sica: no letter when the house can't be seeded.
+- B34 the remaining bracket button (Match Week banner weeks 9–11 / League 🏛 Superbus) gets the REGAL look of the bracket popup it opens
+  (laurel, gold-on-crimson like 345's .sb103c Superbus card, the Cup icon) instead of a plain small button.
