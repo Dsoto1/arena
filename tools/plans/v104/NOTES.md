@@ -61,3 +61,10 @@ FEATURES (v1.05, own release):
 - N2 mock-up published 2026-10-16: https://claude.ai/artifact/8ZvV1U2SAfnTUW557hMy5h (clickable: plan → Set off (reminders) → Fight/
   Watch/Simulate turns each bout card into its result card with a bout log → week ledger → End the week = one line). Open question: does
   recruiting lock too once the house sets off (today 108-v76 locks only the Yard + Infirmary)?
+
+## Beta 1 · his notes, part 3 (2026-10-16) — Training Yard
+- B12 "🗣 Care" on a fighter's plan card (213-v92yard data-y92care): 1 TRAINING hour = morale talk +5 and gear care (+1 AP next bout).
+  OVERLAPS the Infirmary/Baths "📋 Care routine" (351: 1 Medicus h a week, standing order, −fatigue +5 morale + gear care) and Keeping him's
+  "A private word" (+3 morale). Lead's proposal: remove the Yard's Care (REPLACED by the Care routine in the Baths).
+- B13 the Doctore panel (Volero Asper: level, stars, drills +10%, Yard 0/3, hours with him 0/4; Intensity None/Light/Normal/Hard; Time ±;
+  Study the card) → into the Yard banner? and his hours must be LOCKED IN like the fighters' sessions (today P.doc is free to change).
