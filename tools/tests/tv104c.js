@@ -142,7 +142,7 @@ for(const k of ['oldFee','borrow','bi','biHTML','bought'])ok(out.loan[k]===true|
 
 /* ---------------- 5 · trade bundles ---------------- */
 out.trade=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const q=s=>document.querySelector(s);const r={};const w=W_(),pm=me();
-  const m=w.mgrs.find(x=>!x.isPlayer&&!x.sica&&!x.dead&&rosterOf(x).length>=3&&cap104N(x)+1<=cap104(x));m.relB=80;m.envoyWk=-1;w.tb104wk=-1;m.p.greed=20;
+  const m=w.mgrs.find(x=>!x.isPlayer&&!x.sica&&!x.dead&&rosterOf(x).length>=3&&cap104N(x)+1<=cap104(x));m.relB=80;m.envoyWk=-1;w.tb104Wk=-1;m.p.greed=20;
   const gt=rosterOf(m).sort((a,b)=>effOvr(a)-effOvr(b))[0];
   MGR.teamId=m.id;MGR.tab='team';MGR.trade={mid:m.id,mine:null,theirs:gt.id,coin:0};MGR_REDRAW();await W8(500);
   r.panel=!!q('.tb104')&&document.querySelectorAll('input[data-tb104g]').length>=2;
@@ -150,7 +150,7 @@ out.trade=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));co
   q('#trMine').value=mine[0].id;q('#trTheirs').value=gt.id;const cb=document.querySelector(`input[data-tb104g="${mine[1].id}"]`);cb.checked=true;cb.dispatchEvent(new Event('change',{bubbles:true}));
   const n0=rosterOf(pm).length;q(`[data-mg="tradego"][data-id="${m.id}"]`).click();await W8(500);
   r.done=gt.contract.mgr===pm.id&&mine[0].contract.mgr===m.id&&mine[1].contract.mgr===m.id&&rosterOf(pm).length===n0-1;
-  r.once=w.tb104wk===w.week;if(!r.done)r.why=JSON.stringify({msg:(MGR.trade||{}).msg,tab:MGR.tab,go:!!q(`[data-mg="tradego"]`),cbs:document.querySelectorAll('input[data-tb104g]:checked').length,mine:q('#trMine')&&q('#trMine').value,cap:[cap104N(m),cap104(m)]});
+  r.once=w.tb104Wk===w.week;if(!r.done)r.why=JSON.stringify({msg:(MGR.trade||{}).msg,tab:MGR.tab,go:!!q(`[data-mg="tradego"]`),cbs:document.querySelectorAll('input[data-tb104g]:checked').length,mine:q('#trMine')&&q('#trMine').value,cap:[cap104N(m),cap104(m)]});
   /* a second bundle this week is refused */
   const m3=w.mgrs.find(x=>!x.isPlayer&&!x.sica&&!x.dead&&x!==m&&rosterOf(x).length>=2&&cap104N(x)+1<=cap104(x));if(m3){m3.envoyWk=-1;MGR.teamId=m3.id;MGR.trade={mid:m3.id,mine:null,theirs:rosterOf(m3)[0].id,coin:0};MGR_REDRAW();await W8(400);
     r.usedTxt=/spent/.test((q('.tb104')||{}).textContent||'');const t0=rosterOf(m3)[0];const ms=rosterOf(pm).filter(g=>!g.loanFrom);

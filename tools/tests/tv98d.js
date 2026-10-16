@@ -121,10 +121,11 @@ adv98Check(w,m);r.low=lv();
   /* recruiter L4: 5 graded signings + fame 50 */
   S.sgn=5;m.fame=49;adv98Check(w,m);r.fame49=lv().recruiter;m.fame=50;adv98Check(w,m);r.l4=lv().recruiter;
   const n1=(w.letters||[]).filter(L=>/^adv98-recruiter-4/.test(L.key)).length;adv98Check(w,m);adv98Check(w,m);r.letters=[n1,(w.letters||[]).filter(L=>/^adv98-recruiter-4/.test(L.key)).length];
+  w.season++; /* v1.04 (349): one advisor level a season */
   S.best=80;m.fame=70;adv98Check(w,m);r.l5=lv().recruiter;
   /* others */
   S.bands=10;m.fame=70;S.healed=8;S.topCoin=1500;S.top4=1;S.morBest=70;adv98Check(w,m);r.o4=lv();
-  S.healed=20;S.clean=1;S.rich=1;S.won=1;S.calm=12;S.best=85;adv98Check(w,m);r.o5=lv();
+  w.season++;S.healed=20;S.clean=1;S.rich=1;S.won=1;S.calm=12;S.best=85;adv98Check(w,m);r.o5=lv();
   MGR.view=null;MGR.tab='ludus';MGR_REDRAW();await W8(500);r.ev=[...document.querySelectorAll('#mgrBody .c98ev')].length;
   /* the card shows progress for an advisor below the target */
   council83(w).find(x=>x.k==='clerk').lv=3;S.topCoin=900;MGR_REDRAW();await W8(400);r.prog=(document.querySelector('#mgrBody [data-c83="clerk"] .c98ev')||{}).textContent;
@@ -135,7 +136,7 @@ adv98Check(w,m);r.low=lv();
   const x=R[0];x.adv98=null;x.fame=60;r.f60b=advLvM(x,'recruiter');ADV98R.recBonus=0;x.adv98=null;x.fame=60;r.f60=advLvM(x,'recruiter');x.adv98=null;x.fame=20;r.f20=advLvM(x,'recruiter');r.bonus=[rb,Math.min(5,3+rb)];
   x.coin=1000;adv98R(x).lv.recruiter=1;let up=0;for(let i=0;i<40;i++){w.week++;adv98RivalWeek(w)}r.rtrain=[adv98R(x).lv.recruiter,adv98R(x).lv.recruiter<=3||x.fame>=50,1000-x.coin>0];
   x.adv98=null;x.fame=20;adv98R(x);x.coin=10;for(let i=0;i<10;i++){w.week++;adv98RivalWeek(w)}r.poor=adv98R(x).lv.recruiter;
-  const y=R[1];y.adv98=null;y.fame=20;y.coin=1e5;adv98R(y).lv.consilium=3;y.top4=0;adv98R(y).top4=1;w.week++;adv98RivalWeek(w);r.rearn=adv98R(y).lv.consilium;
+  const y=R[1];y.adv98=null;y.fame=20;y.coin=1e5;adv98R(y).lv.consilium=3;y.top4=0;adv98R(y).top4=1;w.week++;w.season++;adv98RivalWeek(w);r.rearn=adv98R(y).lv.consilium;
   /* level 3 is earned: every advisor at 2 with its lighter condition (forced counters) */
   {const w3=newWorld({type:'custom',mgr:{name:'T',ludus:'L3',city:'Roma',color:'#c0433a',p:{...MGR_PRESETS.balanced[1]},portrait:{},diff:'easy'}});const W3=W_(),m3=me();const S3=adv98S(W3);const l3=()=>Object.fromEntries(council83(W3).map(a=>[a.k,a.lv]));r.l3a=l3();
     S3.sgn=1;S3.bands=3;S3.healed=2;S3.topCoin=799;S3.mor3=59;S3.seaW=5;S3.top8=0;adv98Check(W3,m3);r.l3b=l3();

@@ -126,7 +126,7 @@ function mgrGuideHTML(){const ref=guideParts().mgr;return `<div class="guide">
  <p>${_T`How to run a ludus that lasts. The notes at the end come from a 16-season test run of the league.`}</p>
  <h4>${_T`The season`}</h4><ul>
   <li>${_T`12 weeks. Each week is a Match Week, Flavius's travelling games: the Undercard on Friday, the Feature on Saturday and the Main event on Sunday. Wins are worth 3 points and runner-up finishes 1.`}</li>
-  <li>${_T`The top four go to the <b>Superbus</b>. After it come the awards and the recap paper, and then the <b>Quaestor's Ledger</b> pays every house for its season.`}</li>
+  <li>${_T`The table seeds the <b>Superbus</b> playoffs (the top four rest a round; the top 2 of each bout go on). After them come the awards and the recap paper, and then the <b>Quaestor's Ledger</b> pays every house for its season.`}</li>
   <li>${_T`A new career opens with its founding ledger, which shows your starting treasury.`}</li></ul>
  <h4>${_T`Money`}</h4><ul>
   <li>${_T`<b>Wages are the bill, purses are the income.</b> A fighter rated 60 asks about ${coinAmt87(14)} a week, and an Undercard win pays about 30.`}</li>

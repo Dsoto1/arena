@@ -29,7 +29,8 @@
    5 · TRADE BUNDLES (E1a) — on a rival's team page the trade panel takes 2+ of yours for 1 of theirs (+ coin): once a week; quantity counts
        for less than quality (the best one full value, each other 55%); their cap must hold the bundle; a declined bundle that came close
        returns NEXT WEEK as a counter-offer letter ("add N coin and it is done").
-   Data: g.tm104, w.tm104, loanFrom.{c104,lump,wk0,w0}, w.bi104 (buy-in offers), w.tb104 (counter offer), w.tb104wk. SAVE_MIGRATIONS '1.04'
+   Data: g.tm104, w.tm104, loanFrom.{c104,lump,wk0,w0}, w.bi104 (buy-in offers), w.tb104 (counter offer), w.tb104Wk (…Wk: 348 frees it in a frozen
+   playoff week). The week-end work (the +25%, the reserve's perk, the counter letter) also runs on 348's frozen playoff week ends (OFF104.frozen). SAVE_MIGRATIONS '1.04'
    (teams). Display + Manager rules only; never the dice (the house picks use no rand()).
    ===================================================================== */
 const V104C={on:(()=>{try{return localStorage.getItem('flavius_v104coff')!=='1'}catch(e){return true}})()};
@@ -197,7 +198,7 @@ function c104Swap(w,pm,m,mine,gt,coin){pm.coin-=coin;m.coin+=coin;for(const g of
   tnews(_T`🔁 Traded ${names}${coin?_T` + ${coinAmt87(coin)}`:''} to ${esc(m.ludus)} for ${esc(gt.name)}.`,'big');try{st95Ensure(w,pm);tm104Ensure(w,pm)}catch(e){}}
 if(V104C.on){
   {const base=tradeHTML;tradeHTML=function(mgr,trade){let h=base.apply(this,arguments);try{const w=W_(),pm=me();if(!w||!pm||w.tutorial)return h;const mine=rosterOf(pm).filter(g=>!g.loanFrom).sort((a,b)=>effOvr(b)-effOvr(a));if(mine.length<2)return h;
-    const sel=new Set((trade&&trade.bun)||[]);const used=w.tb104wk===w.week;
+    const sel=new Set((trade&&trade.bun)||[]);const used=w.tb104Wk===w.week;
     const box=`<div class="tb104"><span class="rc-sub">${used?_T`＋ Bundle: your one bundle offer this week is spent.`:_T`＋ Bundle more of yours with him (2+ for 1 · once a week · the best counts in full, each other about half):`}</span><div class="tb104l">${mine.map(g=>`<label class="tb104c"><input type="checkbox" data-tb104g="${g.id}" ${sel.has(g.id)?'checked':''} ${used?'disabled':''}> ${esc(g.name)} · ${effOvr(g)}</label>`).join('')}</div></div>`;
     h=h.replace('<p class="rc-sub" style="margin:4px 0">',box+'<p class="rc-sub" style="margin:4px 0">')}catch(e){console.error(e)}return h}}
   document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.tb104g)return;e.stopPropagation();if(!MGR.trade)return;const s=new Set(MGR.trade.bun||[]);if(t.checked)s.add(t.dataset.tb104g);else s.delete(t.dataset.tb104g);MGR.trade.bun=[...s]},true);
@@ -207,12 +208,12 @@ if(V104C.on){
     e.preventDefault();e.stopImmediatePropagation();const w=W_(),pm=me();const m=mgrById(b.dataset.id);const gt=gById((document.querySelector('#trTheirs')||{}).value);const coin=Math.max(0,Math.floor(+((document.querySelector('#trCoin')||{}).value)||0));
     if(!w||!pm||!m||!gt)return;const mine=ids.map(gById).filter(g=>g&&g.contract&&g.contract.mgr===pm.id&&!g.loanFrom);
     MGR.trade={mid:m.id,mine:pid,theirs:gt.id,coin,bun:extra};const no=t=>{MGR.trade.msg=t;MGR.trade.ok=false;c104Toast('✉ '+String(t).replace(/<[^>]*>/g,''));c104Redraw()};
-    if(w.tb104wk===w.week)return no(_T('One bundle offer a week — your envoy carries the next one next week.'));
+    if(w.tb104Wk===w.week)return no(_T('One bundle offer a week — your envoy carries the next one next week.'));
     if(m.envoyWk===w.week)return no(_T('Your envoy has already called on this house this week.'));
     if(coin>pm.coin)return no(_T('Your treasury cannot cover that sweetener.'));
     if(cap104N(m)-1+mine.length>cap104(m))return no(_T`“We have no room for ${mine.length} more.” — ${esc(m.name)} (their cap is ${cap104(m)})`);
     const theirs=rosterOf(m);if(theirs.length<=2&&effOvr(gt)>=effOvr([...theirs].sort((a,b)=>effOvr(b)-effOvr(a))[0]))return no(_T`“${esc(gt.name)} is the house. No.” — ${esc(m.name)}`);
-    w.tb104wk=w.week;m.envoyWk=w.week;const give=c104BunVal(mine,coin),need=c104Need(m,gt);
+    w.tb104Wk=w.week;m.envoyWk=w.week;const give=c104BunVal(mine,coin),need=c104Need(m,gt);
     if(give<need){const gap=Math.ceil((need-give)*6);mlog(m,_T`turned down a bundle offer from ${pm.ludus}`);
       if(give>=need*CAP104.close){w.tb104={id:'t'+Date.now().toString(36),mid:m.id,mine:mine.map(g=>g.id),theirs:gt.id,coin,ask:gap,wk:w.week};return no(_T`“Close. Let me think on it.” — ${esc(m.name)}. Expect their letter next week.`)}
       return no(_T`“Not enough.” — ${esc(m.name)}. Quantity is not quality.`)}
@@ -227,19 +228,20 @@ if(V104C.on){
     if(cap104N(m)-1+mine.length>cap104(m)){T.done='cap';c104Toast(_T`${esc(m.ludus)} has no room any more.`);c104Redraw();return}
     c104Swap(w,pm,m,mine,gt,coin);T.done='yes';c104Toast(_T`🔁 Done — ${esc(gt.name)} joins ${esc(pm.ludus)}.`);c104Redraw()},true);
 }
-function c104Counter(w){const T=w&&w.tb104;if(!T||T.sent||T.done||T.wk>=w.week)return;const m=mgrById(T.mid),gt=gById(T.theirs);if(!m||!gt)return;T.sent=w.week;
+function c104Counter(w){const T=w&&w.tb104;if(!T||T.sent||T.done)return;const m=mgrById(T.mid),gt=gById(T.theirs);if(!m||!gt)return;T.sent=w.week;
   const names=T.mine.map(gById).filter(Boolean).map(g=>esc(g.name)).join(', ');
   sendLetter(w,{key:'tb104-'+T.id,kind:'letter',from:esc(m.name),seal:'🔁',title:_T`${m.ludus}: a counter-offer`,until:w.week,
     body:`<p>${_T`“I thought about your bundle — ${names} for <b>${esc(gt.name)}</b>. Add <b>${coinAmt87(T.ask)}</b>${T.coin?_T` to the ${T.coin} you offered`:''} and it is done. This week only.”`}</p><div class="acts"><button class="btn primary tksm" type="button" data-tb104="yes|${T.id}">${_T`✔ Accept · ${coinAmt87(T.coin+T.ask)}`}</button><button class="btn tksm" type="button" data-tb104="no|${T.id}">${_T`✖ Decline`}</button></div>`})}
 
 /* ============================== the week's end ============================== */
-if(V104C.on){const base=endWeek;endWeek=async function(){const w0=W_();let ex=0,res=[],wk=w0&&w0.week;
-  try{const pm0=w0&&!w0.dead&&!w0.tutorial?me():null;if(pm0){ex=cap104Extra(pm0);tm104Ensure(w0,pm0);res=c104Pool(w0,pm0).filter(g=>g.tm104==='A'&&!g.slot95).map(g=>g.id)}}catch(e){console.error(e)}
+if(V104C.on){const base=endWeek;endWeek=async function(){const w0=W_();let ex=0,res=[],wk=w0&&w0.week,frz=false,tPre=null;
+  try{const pm0=w0&&!w0.dead&&!w0.tutorial?me():null;if(pm0){frz=typeof OFF104!=='undefined'&&!!OFF104.frozen(w0);tPre=w0.tb104&&!w0.tb104.sent&&!w0.tb104.done?w0.tb104.id:null;ex=cap104Extra(pm0);tm104Ensure(w0,pm0);res=c104Pool(w0,pm0).filter(g=>g.tm104==='A'&&!g.slot95).map(g=>g.id)}}catch(e){console.error(e)}
   const r=await base.apply(this,arguments);
-  try{const w=W_();if(r!==false&&w&&w===w0&&w.week!==wk&&!w.dead&&!w.tutorial){const pm=me();
+  /* 348's playoff weeks are "frozen" (w.week stays 11 while the week really ends): they count as a week end here too */
+  try{const w=W_();if(r!==false&&w&&w===w0&&(w.week!==wk||frz)&&!w.dead&&!w.tutorial){const pm=me();
     if(ex){pm.coin-=ex;tnews(_T`👥 Over the cap: the fighters above it cost ${coinAmt87(ex)} more this week (+25%).`,'bad')}
     for(const id of res){const g=gById(id);if(g&&g.alive&&g.contract&&g.contract.mgr===pm.id){g.morale=clamp((g.morale||0)+ST95.perk.morale,0,100);g.loyB=clamp((g.loyB||0)+ST95.perk.loy,0,25)}}
-    tm104Ensure(w,pm);c104Counter(w);saveWorld()}}catch(e){console.error(e)}return r}}
+    tm104Ensure(w,pm);if(tPre&&w.tb104&&w.tb104.id===tPre)c104Counter(w);saveWorld()}}catch(e){console.error(e)}return r}}
 
 /* ============================== 3 · THE ROSTER PAGE ============================== */
 const R104={sort:{k:'ovr',d:-1},drag:null};
