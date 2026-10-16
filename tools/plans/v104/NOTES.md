@@ -93,3 +93,6 @@ FEATURES (v1.05, own release):
   read without a walk · s3a the read is rough (± a few %) unless the Recruiter level is high · r1a a gate read = ONE ROUGH LOOK in Recruiting
   (as the first scouting session; counts toward 351's "two earlier looks" before a trial bout; never past rough) · r2a watching a bout live
   to the end gives the same rough look on everyone in it. With these, value / trap (pick 6) can show on every read fighter.
+- B14 Recruiting (351 offers answered next week): after making an offer, leaving the recruit (another recruit or tab) and coming back shows
+  the Offer button enabled again; pressing it says the offer is already made. Fix: while an offer is out, the Offer button stays disabled and
+  the card keeps the "offer made · answer next week" info (terms + Withdraw), every time it is drawn.
