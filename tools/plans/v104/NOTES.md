@@ -96,3 +96,5 @@ FEATURES (v1.05, own release):
 - B14 Recruiting (351 offers answered next week): after making an offer, leaving the recruit (another recruit or tab) and coming back shows
   the Offer button enabled again; pressing it says the offer is already made. Fix: while an offer is out, the Offer button stays disabled and
   the card keeps the "offer made · answer next week" info (terms + Withdraw), every time it is drawn.
+- B15 Vulso's cart (goes with B11): once the 2 fighters the cart allows are taken, the cart closes by itself and its task/to-do line and
+  rail count clear too.
