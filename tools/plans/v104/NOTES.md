@@ -146,3 +146,7 @@ FEATURES (v1.05, own release):
   starts at once. Lead's proposal sent: "Winter quarters" (Hiberna) + Saturnalia, a stepper of rooms that gathers the season-level systems
   (awards night, the Quaestor's accounts, Council review + advisor promotion, Renown/perks, facilities, personnel/contracts/rudis, the
   winter market of tirones, a winter training camp, next season's schedule + goals) and takes that busywork OUT of the weekly tasks/letters.
+- N4 his answers (2026-10-16): o1a (all rooms) with room 9 = a WINTER FESTIVAL TOURNAMENT: every fighter granted clemency (no deaths, no
+  severe losses), free limb regrowth for any limb lost, does NOT count toward league points or lifetime records; its own trophy handed to
+  the winning house and passed on to each new winner (a la the Stanley Cup). The off-season LEADS INTO the festival. o2a mock-up first ·
+  o3a its own release v1.06 (after v1.05 Match Week).
