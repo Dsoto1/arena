@@ -131,3 +131,6 @@ FEATURES (v1.05, own release):
   place per house, gold = through, faded = out, your house outlined, laurel at the end, projected seeds grey before week 11); shown OPEN at
   the top of Match Week during the playoffs, on Superbus Week + the off-season page, and in a League "Superbus" tab (this season in v1.04;
   past seasons with N1's picker in v1.05). REPLACES the #po104br overlay look.
+- B21 add-on (2026-10-16): with the bracket shown open on the page, REMOVE the extra bracket buttons on that same screen (he saw two on the
+  Match Week page above the bouts: the banner's and the playoff card's). A bracket button stays only where the bracket itself is not shown
+  (e.g. the League banner before the Superbus tab exists / weeks 9–11 projection).
