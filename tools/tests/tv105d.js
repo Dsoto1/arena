@@ -32,13 +32,13 @@ const ev=(pg,f,a)=>pg.evaluate(f,a);
     o.bar=!!bar;o.barTxt=bar?bar.textContent.replace(/\s+/g,' ').slice(0,200):'';o.prog=!!(bar&&bar.querySelector('[role=progressbar]'));o.noOld=!/Points come each week/.test(document.querySelector('#schoolCard')?document.querySelector('#schoolCard').textContent:'');
     /* the week: no free point */
     pm.perkPts=0;pm.perkPend=0;const xpw=renOf105(pm).xp+renOf105(pm).lv*100;for(const g of rosterOf(pm))g.contract.weeks=30;
-    await WK();o.weekPts=pm.perkPts;
+    const lvw=renOf105(pm).lv;await WK();o.weekPts=pm.perkPts;o.weekLv=renOf105(pm).lv-lvw;
     return o});
   console.log('ON',JSON.stringify(r));
   ok(r.has,'module on');ok(r.l0===0&&r.p0===3,'new bar starts at 0, points kept');ok(r.weekNone,'week grants nothing');ok(r.two&&r.noPend,'win + pledge become renown, not pend');ok(r.lvUp,'level-up pays 1 point');ok(r.news,'level-up news');
   ok(/pod|po|sign/.test(r.srcs)&&r.srcs.includes('sign')&&r.srcs.includes('po')&&r.srcs.includes('win'),'sources listed: '+r.srcs);ok(r.rival,'rivals keep old grant');
   ok(r.bar&&r.prog&&/Renown/.test(r.barTxt)&&/This season/.test(r.barTxt)&&/Wins/.test(r.barTxt),'the bar renders with sources: '+r.barTxt);ok(r.noOld,'old weekly text replaced');
-  ok(r.weekPts<=1,'no free weekly point: '+r.weekPts);await pg.close()}
+  ok(r.weekPts===r.weekLv,'no free weekly point (points = renown levels earned that week): '+r.weekPts+' vs '+r.weekLv);await pg.close()}
 
 /* ---------- off: the old grants ---------- */
 {const pg=await open(true);
