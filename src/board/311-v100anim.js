@@ -305,13 +305,13 @@ function an100CellCanvas(im,key0,fx,sy,w,h,s){try{let id=AN100CCID.get(im);if(!i
 function an100Cell(src,P,face,x,y,opt){let o=an100Bm(src,P.set,P.name),row=src[P.set].meta.rows[P.name][P.i];
   if(!o&&P.set==='act'){o=an100Bm(src,'move','idle');P={set:'move',name:'idle',i:0};row=src.move.meta.rows.idle[0]}   /* the action decodes: idle meanwhile */
   if(!o||!row)return null;const [ry,w,h,ax,ay]=row;const im=o.bm||o.whole,sy=ry-o.y0;
-  const s=TW*MINI_BASE/25.4/src[P.set].meta.pxmm;ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=TW*MINI_BASE*0.55;ell(x+2,y+3,rw,rw*0.5);ctx.fill();
+  const s=TW*MINI_BASE/25.4/src[P.set].meta.pxmm;ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=TW*MINI_BASE*0.55;fl104Sh(x+2,y+3,rw,rw*0.5);
   if(opt&&opt.dim)ctx.globalAlpha=opt.dim;if(opt&&opt.filter)ctx.filter=opt.filter;
   const dx=x-ax*s,dy=y-ay*s,cc=an100CellCanvas(im,P.set+P.name+P.i,(face||0)*w,sy,w,h,s),cell=()=>cc?((typeof sh103Blit==='function'&&sh103Blit(cc,dx,dy,w*s,h*s,x,y))||ctx.drawImage(cc,dx,dy,w*s,h*s)):ctx.drawImage(im,(face||0)*w,sy,w,h,dx,dy,w*s,h*s);cell();   /* v1.03 T6: 346's sh103Blit = native size on the device grid */
   if(opt&&opt.flash){ctx.globalCompositeOperation='lighter';ctx.globalAlpha=opt.flash;cell();ctx.globalCompositeOperation='source-over'}
   /* the seat's colour on the base rim, like 222's 3D tokens */
   const pc=AN100.cur&&AN100.cur.color&&!(opt&&opt.filter);if(pc){const k=TW*MINI_BASE/25.4,rx=12.75*k;const R3=typeof rim103==='function'?rim103(k):{w:Math.max(1.5,2.3*k),dy:1.35*k};   /* v1.03 T3: 346 thins it on the thin base, none without a base */
-    if(R3){ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=R3.w;ctx.beginPath();ctx.ellipse(x,y-R3.dy,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}}
+    if(R3&&!fl104Rim(x,y,rx,R3.w)){ctx.globalAlpha=1;ctx.strokeStyle=pc;ctx.lineWidth=R3.w;ctx.beginPath();ctx.ellipse(x,y-R3.dy,rx,rx*0.5,0,0.05,Math.PI-0.05);ctx.stroke()}}
   ctx.restore();AN100.stats.cells++;return dy+h*s*0.05}
 /* an100DrawP — the stand-in of the gladiator being drawn (AN100.cur); null = let today's token draw */
 function an100DrawP(sp,x,y,opt){const p=AN100.cur;if(!p||typeof ctx==='undefined')return null;const s0=an100St(p);const sev=s0.sevT&&an100Now()<s0.sevT;

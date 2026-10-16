@@ -37,7 +37,7 @@ const lsSet95=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 /* ---------- 2 team rings ---------- */
 const TEAMDASH95={A:[],B:[9,5],C:[2,5],D:[10,4,2,4]};
 {const base=drawPlayer;drawPlayer=function(player){
-  try{if(player&&S&&EV()&&(EV().teams||EV().coop)&&player.team){const m=center(player.r,player.c);const col=teamColor(player.team);
+  try{if(player&&S&&EV()&&(EV().teams||EV().coop)&&player.team&&!fl104Has(player,32)){const m=center(player.r,player.c);const col=teamColor(player.team);
     const cvd=(SETTINGS.cvdMode||'off')!=='off'||!!SETTINGS.cvd;
     ctx.save();ctx.translate(0,swimming(player)?TW*0.02:0);
     ctx.fillStyle=col;ctx.globalAlpha=0.2;ell(m.x,m.y+TW*0.03,TW*0.42,TW*0.21);ctx.fill();ctx.globalAlpha=0.95;

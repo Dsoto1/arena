@@ -109,7 +109,7 @@ if(!MINI_ORIG.zoraMini&&STANDEE_SRC.zoraMini)MINI_ORIG.zoraMini=STANDEE_SRC.zora
 function miniScale(k){const a=MINI_A[k];const p=TW*MINI_BASE/25.4;const fit=Math.min(1,TW*MINI_FIT/(a[2]*p));return p/MINI_PXMM*fit*(k==='pillar'?MINI_PILLAR:1)}
 /* miniDraw — draws mini k with its base centred on (x,y); returns the top y or null */
 function miniDraw(k,x,y,opt={}){const im=miniImg(k),a=MINI_A[k];if(!im||!a)return null;const s=miniScale(k);
-  ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=a[2]*TW*MINI_BASE/25.4*Math.min(1,TW*MINI_FIT/(a[2]*TW*MINI_BASE/25.4))*0.55;ell(x+2,y+3,rw,rw*0.5);ctx.fill();
+  ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=a[2]*TW*MINI_BASE/25.4*Math.min(1,TW*MINI_FIT/(a[2]*TW*MINI_BASE/25.4))*0.55;fl104Sh(x+2,y+3,rw,rw*0.5);
   if(opt.dim)ctx.globalAlpha=opt.dim;if(opt.filter)ctx.filter=opt.filter;ctx.drawImage(im,x-a[0]*s,y-a[1]*s,im.naturalWidth*s,im.naturalHeight*s);ctx.restore();return y-a[1]*s}
 {const base=drawStandee;drawStandee=function(k,x,y,h,opt={}){const mk=miniKey(k);if(miniOn()&&MINI_A[mk]){const t=miniDraw(mk,x,y-TW*0.04,opt);if(t!=null)return t}return base.apply(this,arguments)}}
 {const base=standeeSize;standeeSize=function(k){const mk=miniKey(k);if(miniOn()&&MINI_A[mk]){const im=miniImg(mk);if(im)return im.naturalHeight*miniScale(mk)}return base.apply(this,arguments)}}
