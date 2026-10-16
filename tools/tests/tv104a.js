@@ -29,10 +29,11 @@ ok(out.cal.cal===1&&out.cal.bye==='4,12'&&out.cal.riv===11&&out.cal.b12&&!out.ca
 /* ---- weeks 1–8, then the projected bracket at week 9 ---- */
 out.w9=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_();const r={};let g=0;while(wkOf(w.week)<9&&g++<12)if(!await PW())break;r.wk=wkOf(w.week);
   r.byeNight=null;await ENS();
-  MGR.tab='league';MGR_REDRAW();await W8(800);const lb=document.querySelector('.roomhd.b73-league [data-po104="bracket"]');r.league=!!lb;r.sub=(document.querySelector('.roomhd.b73-league .sub')||{}).textContent||'';
-  if(lb){lb.click();await W8(300);const o=document.querySelector('#po104br .po104bk');r.proj=o?o.dataset.po104proj:'';r.txt=o?o.textContent:'';r.boxes=document.querySelectorAll('#po104br .po104b').length;po104Close()}
+  MGR.tab='league';MGR_REDRAW();await W8(800);/* v1.04 B21 (355): the League banner's bracket button opens the League "Superbus" view (the tree: R1 A/B, Semi I/II, the final = 5 boxes) */
+  const lb=document.querySelector('.roomhd.b73-league [data-v104s="sb"]')||document.querySelector('.roomhd.b73-league [data-po104="bracket"]');r.league=!!lb;r.sub=(document.querySelector('.roomhd.b73-league .sub')||{}).textContent||'';
+  if(lb){lb.click();await W8(500);const o=document.querySelector('#mgrPane .po104bk')||document.querySelector('#po104br .po104bk');r.proj=o?o.dataset.po104proj:'';r.txt=o?o.textContent:'';r.boxes=o?o.querySelectorAll('.po104b').length:0;po104Close();MGR.sb104v=0}
   MGR.tab='night';MGR_REDRAW();await W8(800);r.night=!!document.querySelector('.roomhd.b73-night [data-po104="bracket"]');return r});
-ok(out.w9.wk===9&&out.w9.league&&out.w9.night&&out.w9.proj==='1'&&/If the season ended today/.test(out.w9.txt)&&out.w9.boxes===6&&/12 houses/.test(out.w9.sub),'projected bracket week 9 '+JSON.stringify(out.w9).slice(0,400));
+ok(out.w9.wk===9&&out.w9.league&&out.w9.night&&out.w9.proj==='1'&&/If the season ended today/.test(out.w9.txt)&&(out.w9.boxes===5||out.w9.boxes===6)&&/12 houses/.test(out.w9.sub),'projected bracket week 9 '+JSON.stringify(out.w9).slice(0,400));
 
 /* ---- week 10: the rivalry letter; week 11: Rivalry Week ---- */
 out.riv=await ev(pg,async()=>{const w=W_();const r={};await PW();r.wk10=wkOf(w.week);r.letter=!!(w.letters||[]).find(L=>L.key==='rival-'+w.season);r.lockAbs=w.rivalry&&w.rivalry.abs;
@@ -55,7 +56,9 @@ out.r1=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const
   /* entering / withdrawing is refused on the Superbus card */
   const e0=JSON.stringify(n.bouts.map(b=>b.ents));const wd=document.querySelector('#mgrBody [data-mg="withdraw"],#mgrBody [data-mg="enter"]');if(wd){wd.click();await W8(300)}r.guard=JSON.stringify(W_().night.bouts.map(b=>b.ents))===e0;
   /* the bracket overlay is the real one now */
-  const bb=document.querySelector('.po104card [data-po104="bracket"]');if(bb){bb.click();await W8(300);r.real=(document.querySelector('#po104br .po104bk')||{dataset:{}}).dataset.po104proj;po104Close()}
+  /* v1.04 B21 (355): the real bracket is shown open on the page (no button); the overlay when the kill switch is on */
+  const inl=document.querySelector('#mgrBody .po104bk');if(inl)r.real=inl.dataset.po104proj;
+  const bb=!inl&&document.querySelector('.po104card [data-po104="bracket"]');if(bb){bb.click();await W8(300);r.real=(document.querySelector('#po104br .po104bk')||{dataset:{}}).dataset.po104proj;po104Close()}
   /* league points: the table stays the seeding table */
   r.pts0=JSON.stringify(w.mgrs.map(m=>msp(m).pts));for(const k of n.bouts.keys())if(!n.bouts[k].done)await runBoutSim(k);r.ptsSame=JSON.stringify(w.mgrs.map(m=>msp(m).pts))===r.pts0;
   r.order=n.bouts.map(b=>po104Order(b).map(x=>x.k));
