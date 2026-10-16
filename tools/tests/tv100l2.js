@@ -25,8 +25,8 @@ ok(A.per.doctore==='stands,yard'&&A.per.medicus==='kitchen,valet'&&A.per.barrack
 ok(A.mk.join()==='barracks,clerk,doctore,medicus','🏗 marker on the four builders');ok(A.tile&&A.ov&&A.jump,'Upgrade School → every building in its popup');ok(A.links,'counsel + Ledger left the links row');
 /* build from the popover: coin, level, one a week */
 const B=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};LU100.pop='doctore';MGR_REDRAW();await W8(250);const c0=m.coin;
-  document.querySelector('#lu100pop [data-mg="build"][data-id="yard"]').click();await W8(500);r.built=facLvl(m,'yard')===1&&m.coin===c0-FAC_COST[0]&&m.facWk===w.week;
-  let p=document.getElementById('lu100pop');r.stay=LU100.pop==='doctore'&&!!p&&/Build II/.test(p.textContent);
+  document.querySelector('#lu100pop [data-mg="build"][data-id="yard"]').click();await W8(500);r.built=(facLvl(m,'yard')===1||!!(m.bp104&&m.bp104.k==='yard'&&m.bp104.l===1)) /* v1.04 (351): a level takes weeks — the project starts */&&m.coin===c0-FAC_COST[0]&&m.facWk===w.week;
+  let p=document.getElementById('lu100pop');r.stay=LU100.pop==='doctore'&&!!p&&(/Build II/.test(p.textContent)||!!p.querySelector('.bp104bld'));
   LU100.pop='clerk';MGR_REDRAW();await W8(250);const s=document.querySelector('#lu100pop [data-mg="build"][data-id="stables"]');r.busy=!!s&&!!s.dataset.dis;const c1=m.coin;s.click();await W8(400);r.once=facLvl(m,'stables')===0&&m.coin===c1;
   r.mk=document.querySelectorAll('#council83 .lu2bm').length;LU100.pop=null;MGR_REDRAW();await W8(200);return r});
 ok(B.built&&B.stay,'Build from the popover: coin spent, level up '+JSON.stringify(B));ok(B.busy&&B.once&&B.mk===0,'one project a week');

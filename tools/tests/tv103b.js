@@ -82,7 +82,7 @@ ok(out.m6.before>=3&&out.m6.after>=3&&out.m6.sel&&out.m6.num,'M6 '+JSON.stringif
 /* ---- M8 treated ---- */
 out.m8=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),pm=me();const r={};const ros=rosterOf(pm).filter(g=>!g.loanFrom);ros.forEach(g=>{g.inj=null;g.severed=[]});
   const A=ros[0],B=ros[1];A.inj={until:w.week+3,label:'a cut',pen:3};B.inj={until:w.week+3,label:'a bruise',pen:2};A.medWk=w.week;
-  MGR.tab='infirm';MGR.inf90=A.id;MGR_REDRAW();await W8(900);const ra=document.querySelector(`.iv90row[data-inf90="${A.id}"]`),rb=document.querySelector(`.iv90row[data-inf90="${B.id}"]`);
+  MGR.tab='infirm';MGR.inf90=A.id;MGR_REDRAW();await W8(900);const ra=document.querySelector(`.iv90row[data-inf90="${A.id}"],.w104row[data-inf90="${A.id}"]`) /* v1.04: 351's rows */,rb=document.querySelector(`.iv90row[data-inf90="${B.id}"],.w104row[data-inf90="${B.id}"]`);
   r.a=!!ra&&!!ra.querySelector('.trt103')&&/Treated ✓/.test(ra.textContent);r.b=!!rb&&!rb.querySelector('.trt103');A.inj=null;B.inj=null;A.medWk=null;return r});
 ok(out.m8.a&&out.m8.b,'M8 '+JSON.stringify(out.m8));
 

@@ -1589,3 +1589,27 @@ their bullet at the END of the "Systems" list below (the release that ships them
   ratio; up-scaled cells (> `V103C.sharpMin` 1.05) get a 3×3 unsharp mask once (`sh103Sharpen`, ≤ `sharpMax` 2 a frame, not while TW changes; needs readable pixels). S1 Weapons /
   Armor / Trophies join 335's designer frame (D102_SPEC.gear getter by ST.gearSub + .trophies; removed from 247's ST98_ON); Insignia keeps 304a's own bench.
 - **347-v103beta** (src/batches; v1.03 beta fixes B1–B6, kill switch flavius_v103eoff=1, test tv103e): B1 drawPlayer/drawNPC wrapped — while 312 draws nets (BST100.on, bst100Mode()!='off') the unit's netted flag reads false during the draw so 07-ui's turquoise ring is skipped; B2 DC100_TW.wild renamed 'Wild: every beast hunts you' (🐺) + bf100Rules (301) prepends the running challenge's twists as rule cards; B3 modal wrapper disables the Crowd Favor grid's 'mk' (Unlock market) with a reason when dc100Has('nomarket') or EV().noMarket (v103eMarketWhy); B4 the same wrapper drops the 'dc100' button from the Manager submenu (sand100Titles()[1]); B5 CSS centres .pn98dice (inline-flex); B6 infirmNeed73 re-wrapped: counts fighters (inj non-war or severed, not trt103) once each, 145's Road lock kept, 108's double bed-wait addition replaced.
+- **351-v104ward** (src/manager; v1.04 builder D — his N4a N7a N9a N10a + R1 1a 2a 3a 4; kill switch flavius_v104doff=1; test tv104d; the lesson league (w.tutorial) keeps the old rules):
+  RECRUITING — rec98HrsMax wrapper `W104.rec.bands` (≤3 fighters 16 h · 4–6 12 · 7–9 9 · 10+ 6) + 3 a Recruiter level (REPLACES 319's 24/16/10/6 bands; rec101Why text follows);
+  `rec104Bump` raises every action's REC98.acts[a].h by 1 per action already taken on that recruit this week while rec98Can / rec98Act / rec98Btn / rc100ActCard run;
+  the trial needs 2 earlier looks in an EARLIER week (g.sc98.l104 weeks; REPLACES 333's "one cheaper look"); the board holds 6 + Recruiter level (`bd104Cap`, `bd104Sync`
+  keeps w.bd104 = pin order, old over-full boards keep their names, newcomers unpinned; window capture refuses pin / pitch / visit / gift / wishes off a full board; cityFav
+  wrapper). OFFERS NEXT WEEK: window capture on [data-mg="offer"] for a free agent → `of104Send` (w.of104[gid] terms; cap + pending room, treasury, insulted, board) →
+  endWeek `of104Answer`: signed elsewhere / lowball (< 0.75 × ask: interest −12, g.sc104 no talks 2 weeks) / offerVerdict refusal (a leaning rival may sign him, 50%) /
+  hashed acceptance chance by wage over ask + interest / signGlad (+ rudis88); a recruiter letter each (key of104_*); Withdraw [data-of104x]; the offer button says "answered
+  next week", the board tablet ✍. RIVALS: cpuLeagueWeek wrapper turns a fresh rival signing of a free agent into w.ro104 (news line removed), answered at next week's
+  cpuLeagueWeek (your better pending offer heard first). INFIRMARY TWO WINGS — final mgrHTML pass `w104Page` replaces 298/318's ward grid (.rm100-ward) with `.w104`:
+  banner `.w104ban` = Medicus head + ONE hours bar `.w104hb` (wound care .k104wc / recovery .k104rc / left) + hire/let go + ⓘ; list `.w104list` groups 🩸 Wounded
+  (.w104grp.wd) / 💤 Weary (.wy) / Fit and fresh (details .fr), rows [data-inf90] with mini-bars, Treated ✓ (.trt103) / Rested ✓ (.rst104), 🛏 Take out; Hygeia's Blessing
+  (.hyg87) at the list top; centre `.w104mid` = portrait + HP bar + 298's rm100Statue in .rm100niche + fatigue gauge `.w104g` (next week's marker when recovery is booked);
+  plate tabs [data-w104t] ⚕ Ward (bed, Medicus/surgeon, Hygeia, Asclepius, Valetudinarium) | ♨ Baths (bathhouse, rub-down, Care routine, Rest week) opening on the
+  fitting one (MGR.w104t/w104for); plates `.v104pl[data-v104p]` with hours + coin + effect, ★ = the next step (`w104Steps` = 318's ord101 + Baths steps); tabula
+  `.w104tab` = hours split, booked this week, the Medicus's order, ⚕ Treat the wounded in order [data-mq104] (`mq104Run`: bed / Hygeia / surgeon / Medicus / bathhouse
+  when short, festering → starters → rating), the selected fighter's steps, `mq104Warn` (also on Your ludus + Match Week). HOURS: mh101Max +3 (all houses), thMax −2;
+  rub-down = window capture on [data-bath] (1 Medicus hour, w.rc104.rub; 105's training-hour rub no longer runs); Care routine = ord87Apply wrapper (1 Medicus hour a
+  week, w.rc104.care; an unpaid week's −20 skipped by swapping ord87 to off during endWeek); Rest week 0 h; 318's yard "Recovery" block (.v101rec2) removed;
+  careGuideHTML + ROUT87_SUB.care texts; FAC.valet.fx = beds + Medicus hours. BUILDINGS TAKE WEEKS — facBuild wrapper: one project per house (m.bp104 {k,l,s,end}, level N =
+  N weeks, paid at the start), m.facWk kept on the running week (every "builders busy" check holds), endWeek `bp104Week` finishes it when its last week ends, OFF104.on
+  (348) finishes all in the off-season; ludusClick 'build' wrapper says so; banner chip `.bp104c`; Upgrade School = lu102FacHTML wrapper tiles `.bp104t` (NOW → NEXT art
+  `bp104Art`: rec100 murals / scene100 with level filters .bp104l0–3, Build disabled with the reason unless affordable + builders free, weeks to build); 297's lu2Row
+  disabled while a project runs; Promote = promoteCardHTML wrapper art tiles (.pr104g/.pr104t). No save change.
