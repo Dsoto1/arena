@@ -14,7 +14,7 @@ const p=await page(false);const mark=await p.evaluate(()=>ERR92.n);
 const r=await p.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),pm=me();const o={};pm.coin=5000;
   for(const g of freeAgents().filter(g=>!g.inj).slice(0,7))signGlad(g,askWage(g),12,0,false);
   const bench=()=>rosterOf(pm).filter(g=>!g.slot95&&!g.inj&&!g.loanFrom&&g.contract.mgr===pm.id);
-  const houses=w.mgrs.filter(m=>!m.isPlayer&&!m.dead&&!isRival(m));for(const m of houses)m.opinion=Math.max(m.opinion||0,60);
+  const houses=w.mgrs.filter(m=>!m.isPlayer&&!m.dead&&!isRival(m));for(const m of houses){m.opinion=Math.max(m.opinion||0,60);m.coin=Math.max(m.coin||0,3000)} /* v1.04 (350): a borrower pays the loan up front */
   /* 2 · the market */
   const H=houses[0];const ds=[];for(let k=0;k<8;k++)ds.push(loan102Demand(w,H,w.week+k));o.moves=new Set(ds).size>=4;o.ds=ds;
   const inj0=rosterOf(H).map(g=>g.inj);const dFull=loan102Demand(w,H);for(const g of rosterOf(H))g.inj={until:w.week+3,label:'test',pen:1};const dHurt=loan102Demand(w,H);rosterOf(H).forEach((g,i)=>{g.inj=inj0[i]});
@@ -27,15 +27,17 @@ const r=await p.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms))
     o.studs[t]={r:effOvr(A),base:loanFee(A),goodFee:best&&best.fee,demand:best&&best.d,starter:loan102Starter(A),wage:A.contract.wage};A.ovr=ovr0}
   o.studOk=[70,80,90].every(t=>{const s=o.studs[t];return s.goodFee>0&&s.goodFee>s.base&&s.goodFee<s.starter})&&o.studs[90].goodFee>o.studs[70].goodFee;
   /* lending: the borrower pays the wage, the fee goes to the lender */
-  const L=bench()[0],m0=houses.find(m=>rosterOf(m).length<9);const fee=loan102Fee(w,L,m0);lendTo(L,m0,loanFee(L),3);o.lent=L.loanFrom&&L.loanFrom.fee===fee&&L.contract.mgr===m0.id;
-  const c0=pm.coin;loansWeek(w,pm);o.paid=pm.coin-c0>=Math.min(fee,Math.max(0,m0.coin+fee));
+  const L=bench()[0],m0=houses.find(m=>rosterOf(m).length<9);const fee=loan102Fee(w,L,m0);const cL=pm.coin;lendTo(L,m0,loanFee(L),3);o.lent=L.loanFrom&&L.loanFrom.fee===fee&&L.contract.mgr===m0.id;
+  /* v1.04 (350) LOAN CONTRACT: this week's market price × the weeks, paid up front; no weekly fee after */
+  const c0=pm.coin;loansWeek(w,pm);o.paid=L.loanFrom&&L.loanFrom.c104?(c0-cL===fee*3&&pm.coin===c0):pm.coin-c0>=Math.min(fee,Math.max(0,m0.coin+fee));
   /* 2 · the picker shows this week's price */
+  {const pb=bench()[0];if(pb)MGR.lsel=pb.id} /* v1.04 (350): the Lend picker lives in the selected fighter's tabula */
   MGR.tab='roster';MGR_REDRAW();await W8(400);const opt=[...document.querySelectorAll('select[data-m47lend] option[value]')].find(x=>x.value);
-  if(opt){const g=gById(opt.closest('select').dataset.m47lend),m=mgrById(opt.value);o.pick=opt.textContent.includes(loan102Fee(w,g,m)+'/wk')}else o.pick='nopicker';
+  if(opt){const g=gById(opt.closest('select').dataset.m47lend),m=mgrById(opt.value);o.pick=opt.textContent.includes(loan102Fee(w,g,m)+'/wk')||opt.textContent.includes((loan102Fee(w,g,m)*3)+' now')}else o.pick='nopicker';
   /* 1 · the cap */
   for(const g of bench()){if(loan102Out(w,pm)>=4)break;lendTo(g,houses.find(m=>rosterOf(m).length<9),loanFee(g),3)}o.out4=loan102Out(w,pm)===4;
   const X=bench()[0];window.__toast='';o.fifth=X&&!lendTo(X,m0,loanFee(X),3)&&!X.loanFrom&&/four/i.test(window.__toast);
-  MGR_REDRAW();await W8(400);o.pickFull=!document.querySelector('#mgrPane select[data-m47lend]')&&!!document.querySelector('#mgrPane .l102full');
+  {const pb=bench()[0];if(pb)MGR.lsel=pb.id}MGR_REDRAW();await W8(400);o.pickFull=!document.querySelector('#mgrPane select[data-m47lend]')&&!!document.querySelector('#mgrPane .l102full');
   /* a rival house with four out cannot lend a fifth */
   const R=houses.find(m=>m!==m0);for(const g of freeAgents().filter(g=>!g.inj))if(rosterOf(R).length<6)g.contract={mgr:R.id,wage:3,weeks:10,since:w.week};if(R&&rosterOf(R).length>=5){const rs=rosterOf(R);for(let i=0;i<4;i++)rs[i].loanFrom={mid:R.id,fee:3,weeks:5},rs[i].contract.mgr=houses.find(z=>z!==R).id;
     const y=rosterOf(R).find(g=>!g.loanFrom);o.rivCap=!!y&&!borrowFrom(y,R,5,3);for(let i=0;i<4;i++){rs[i].contract.mgr=R.id;delete rs[i].loanFrom}}else o.rivCap='none';

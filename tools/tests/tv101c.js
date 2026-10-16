@@ -100,7 +100,7 @@ const R2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   const ros0=rosterOf(m).filter(g=>!g.lanista);for(const g of ros0){g.severed=[];delete g.inj;delete g.restWk}w.beds76=[];
   /* ---- M24 · the loaner kit ---- */
   {const rival=w.mgrs.find(x=>!x.isPlayer&&!isRival(x));const g=ros0[0];const had=[g.eq94.R,g.eq94.L,...g.eq94.a].filter(Boolean).map(p=>p.id);const sh0=arm94H(m).sh.length;
-    o.m24={rival:!!rival,had:had.length};lendTo(g,rival,2,3);ln101Sync(w);
+    o.m24={rival:!!rival,had:had.length};/* v1.04 (350): a Bout starter is not lent and the borrower pays up front */delete g.slot95;rival.coin=Math.max(rival.coin||0,500);lendTo(g,rival,2,3);ln101Sync(w);
     const E=g.eq94;o.m24.kit={R:E.R&&E.R.k,a:E.a.map(p=>p.k),flag:[E.R,...E.a].every(p=>p&&p.ln101),L:E.L,off:E.o.length};
     o.m24.home=had.every(id=>arm94H(m).sh.some(p=>p.id===id));o.m24.seat=arm94Seat(g).R==='gladius';o.m24.noLoanerOnShelf=!arm94H(m).sh.some(p=>p.ln101)&&!arm94All(m).some(x=>x.P.ln101);
     delete g.loanFrom;g.contract.mgr=m.id;ln101Sync(w);

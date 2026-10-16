@@ -1589,3 +1589,24 @@ their bullet at the END of the "Systems" list below (the release that ships them
   ratio; up-scaled cells (> `V103C.sharpMin` 1.05) get a 3×3 unsharp mask once (`sh103Sharpen`, ≤ `sharpMax` 2 a frame, not while TW changes; needs readable pixels). S1 Weapons /
   Armor / Trophies join 335's designer frame (D102_SPEC.gear getter by ST.gearSub + .trophies; removed from 247's ST98_ON); Insignia keeps 304a's own bench.
 - **347-v103beta** (src/batches; v1.03 beta fixes B1–B6, kill switch flavius_v103eoff=1, test tv103e): B1 drawPlayer/drawNPC wrapped — while 312 draws nets (BST100.on, bst100Mode()!='off') the unit's netted flag reads false during the draw so 07-ui's turquoise ring is skipped; B2 DC100_TW.wild renamed 'Wild: every beast hunts you' (🐺) + bf100Rules (301) prepends the running challenge's twists as rule cards; B3 modal wrapper disables the Crowd Favor grid's 'mk' (Unlock market) with a reason when dc100Has('nomarket') or EV().noMarket (v103eMarketWhy); B4 the same wrapper drops the 'dc100' button from the Manager submenu (sand100Titles()[1]); B5 CSS centres .pn98dice (inline-flex); B6 infirmNeed73 re-wrapped: counts fighters (inj non-war or severed, not trt103) once each, 145's Road lock kept, 108's double bed-wait addition replaced.
+- **350-v104roster** (src/manager; v1.04 builder C — his N5 cap/starters/layout/order a, N6a, X1a, X2, X5, E1a; kill switch flavius_v104coff=1; test tv104c):
+  ROSTER CAP `cap104(m)` = 8 + facLvl(m,'barracks') (0–3) + Barracks master level − 1 (adv98Lv 'barracks'; a rival's = 1 + fame/20, max 5), ≤ `CAP104.hard` 15 —
+  REPLACES 345's flat MGR_CAP103 (cap103Why / cap103Trim re-pointed, offerAccept checks both houses). Over the cap (X1a): nobody released, no signing / borrowing,
+  desk row 👥 "Over the cap N / cap" + Release / Lend / Trade, the fighters above the cap (latest signed, `cap104Over`) cost +25% (`cap104Extra`: weekMoney.cap104 +
+  charged at endWeek). FAC.barracks.fx + adv100Fx('barracks') say "+N roster place". 4 + 4: `g.tm104` 'A' First team (g.slot95 Bouts I–III stay the Match Week
+  rule + one reserve who covers a hurt / resting starter's bout in st95Fill and gets the starter perk) · 'B' Second team (4) · none = Rostered · Lent out apart
+  (`team104(g)`, `tm104Ensure`, `tm104Move(gid,k,slot)`; st95Set/st95Bench/signGlad wrappers; rivals' depthOf = their best 4); SAVE_MIGRATIONS '1.04' (w.tm104).
+  ROSTER PAGE (final mgrHTML pass on 298's room, `.rm100.r104`): `.rm100list` = one list in `.r104g[data-r104g=A|B|R|L]` groups, header `.r104h` sort buttons
+  `[data-r104s]` (R104.sort, localStorage flavius_r104sort; OVR by default, sorted inside each group), rows keep `[data-mg="lsel"]` + `draggable` `[data-r104d]`
+  (drag between groups), bout chip `.r104c` (I/II/III/R), ⋯ `[data-r104m]` → `.r104pop` menu (`[data-r104a="A|B|R|gid|slot"]`, `[data-r104lend="gid|mid"]`,
+  70's `[data-recall]`, ward); the dossier keeps only the selected fighter: portrait (+ `.r104tc` team / bout control), ratings, personality, the contract tabula
+  with `details.r104keep` (the old .rm100keep inside; open in the lesson) — 298's `.rm100stt` tablets and `.rm100bench` are removed. LOAN CONTRACT (N6a): new loans
+  (lendTo / borrowFrom wrappers) carry `loanFrom.{c104,lump,wk0,w0}`: lump = this week's fee (343 loan102Fee) × weeks paid up front, the borrower pays the wage,
+  loansWeek hides them from 47's weekly fee and counts them down; 2+ wins on the loan → a buy-out: a rival's `kind:'coin'` offer with `bo104` (Sell / Keep him) or
+  `w.bi104` (his house sells him to you, `[data-r104bo]`). Old loans finish on their weekly fee (X2). A Bout starter is not lent; a borrower needs room under its cap
+  and the lump. loanReq103 / loanTerms / loanTag show the lump terms. TRADE BUNDLES (E1a): tradeHTML wrapper `.tb104` checkboxes `[data-tb104g]` (MGR.trade.bun) + a
+  capture on `[data-mg="tradego"]`: 2+ of yours for 1 (best in full, others × 0.55, + coin/6) vs 23's need; once a week (`w.tb104wk`, + the envoy rule); their cap
+  must hold it; a refusal within 80% stores `w.tb104` → next week's counter-offer letter (`c104Counter`, `[data-tb104="yes|no|id"]`). Rival team page: 1st / 2nd team
+  chips + "cap N". Tests updated on purpose: tv95c (8a via the ⋯ menu), tv100rm (roster groups / menu), tv102l (lump-sum paid at lending; picker in the tabula),
+  tv103b (cap raised to 15 by Barracks III + master 5 before checking the hard cap), tv101c (M24 lends a non-starter; borrower can pay), tv88m (Immortalis laurel on
+  the list-row face `.r104av`), tv88p (phone key buttons include the 36 px ⋯ `.r104m`).
