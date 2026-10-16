@@ -115,3 +115,10 @@ FEATURES (v1.05, own release):
   coin, effect chips, Hire; square close). v1.04.
 - B19 (asked) Roster: an "Injured" group above Lent out for fighters who cannot fight (bed, missing limb, hurt — 319 M13 already bars them
   from every card), auto-filled by the reserve then the Second team.
+- B19 his answers i1a i2a i3a (2026-10-16): roster group "🩸 Injured" above Lent out; a fighter who cannot fight (bed, missing limb, hurt)
+  moves there by himself with his wound + weeks to fit; the First-team reserve steps in, then the best of the Second team; healed, he goes back
+  to his old place by himself; the v1.01 M13 rule stays (no bed / limb / hurt on a card); a worn fighter can be fielded with a warning
+  ("Worn: fights weaker, wounds more easily").
+- B20 Infirmary row chips: "Treated ✓" / "Rested ✓" (345-v103mgr's Treated ✓, 351's Rested ✓) read as finished, but the care completes at the
+  week's end. Wording while booked: "Receiving treatment" / "Resting" (no ✓); a ✓ only on the report after the week turns. REPLACES the
+  v1.03 "Treated ✓" chip text.
