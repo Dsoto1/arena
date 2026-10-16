@@ -196,3 +196,7 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
   to a pillar, near the wall letters). Audit every mark painted on or around a piece's cell AFTER the figure (turn/selection markers,
   white tile outlines, chevrons, target marks, the seat disc's light rim) and move floor marks under the figure; markers meant to float
   ABOVE a piece (turn arrow over the head) stay above the head, never across the body.
+- B33 (his ask): the week the PROJECTED bracket first appears (week 9, 348 V104A.proj), a short letter from the CONSILIUM (the Council's
+  strategy advisor — "when to fight, when to hold back") on the hunt for the Superbus: your projected seed, whether that rests you a round
+  (1–4) or puts you in Round 1, the houses just above/below and the points gap, one line of advice; a link to the bracket. Adds to 348's
+  week-11 "playoffs open" letter (that one stays). Rival-free careers / Sica: no letter when the house can't be seeded.
