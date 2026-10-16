@@ -1,0 +1,21 @@
+{
+ "Bout {0} · seeds {1}": "Combat {0} · têtes de série {1}",
+ "Your recruiter has {0} h left this week — this takes {1} h.": "Ton recruteur a encore {0} h cette semaine — cela en prend {1}.",
+ "Training Yard plan locked in": "Plan de la Cour d'entraînement verrouillé",
+ "Hygeia's regrowth needs him in bed until the week ends": "La repousse d'Hygeia exige qu'il reste alité jusqu'à la fin de la semaine",
+ "cancelled the Blessings of Hygeia": "a annulé les Blessings of Hygeia",
+ "🌿 Hygeia's operation on {0} is cancelled — {1} h and {2} back. He may leave the bed.": "🌿 L'opération d'Hygeia sur {0} est annulée — {1} h et {2} reviennent. Il peut quitter le lit.",
+ "✓ in bed · Hygeia needs him here": "✓ alité · Hygeia le veut ici",
+ "✓ booked · tap to cancel": "✓ réservé · touche pour annuler",
+ "Booked for this week — tap to cancel (hours and coin come back)": "Réservé pour cette semaine — touche pour annuler (heures et pièces reviennent)",
+ "{0} is just above you (#{1}), {2} point{3} ahead.": "{0} est juste au-dessus de toi (#{1}), {2} {3|point|points} d'avance.",
+ "{0} is just behind you (#{1}), {2} point{3} back.": "{0} est juste derrière toi (#{1}), {2} {3|point|points} de retard.",
+ "A rest week: seeds 1–4 sit out Round 1 and wait in the semifinals.": "Une semaine de repos : les têtes de série 1–4 sautent le Tour 1 et attendent en demi-finale.",
+ "Round 1 in week 12: finish top 2 of your bout to reach the semifinals.": "Tour 1 en semaine 12 : finis dans les 2 premiers de ton combat pour atteindre les demi-finales.",
+ "Keep your best fighters fresh and avoid costly risks — hold the lead and the rest week is yours.": "Garde tes meilleurs combattants frais et évite les risques coûteux — tiens la tête et la semaine de repos est à toi.",
+ "A rest week is {0} point{1} away — fight for it in the weeks left.": "Une semaine de repos est à {0} {1|point|points} — bats-toi pour elle dans les semaines restantes.",
+ "The cut is close: a loss now could drop you out of the twelve. Fight to hold your place.": "La coupe est proche : une défaite maintenant pourrait te sortir des douze. Bats-toi pour garder ta place.",
+ "Win your bouts, rest the worn — every league point moves your seed.": "Gagne tes combats, repose les fatigués — chaque point de ligue fait bouger ta tête de série.",
+ "The road to the Superbus: you stand #{0}": "La route vers le Superbus : tu es #{0}",
+ "The league table now points to the playoffs. If the season ended today your house would be <b>seed #{0}</b>.": "Le classement de la ligue vise désormais les playoffs. Si la saison s'arrêtait aujourd'hui, ta maison serait <b>tête de série #{0}</b>."
+}
