@@ -43,6 +43,8 @@ const L=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
 ok(L.pop&&L.badge,'Ledger from the Clerk and the badge '+JSON.stringify(L));
 /* the Consilium's report: v1.02 (333 M10) — inside his popover; the head lights only from his urgent letter and darkens once read */
 const K=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};const lit=()=>!!document.querySelector('.lu100t.k-adv .c83p.lit[data-c83="consilium"]'); /* v1.02: his head sits at the strip's bottom left */
+  /* v1.04 B5 (353): an old career gets ONE Consilium letter ("A new season format") that also lights his head; this test is about the report, so that letter is filed first */
+  for(const x of (w.letters||[]))if(x&&x.key==='cal104-note')x.read=true;
   delete w.lu2c;w.loan=null;m.coin=900;MGR_REDRAW();await W8(250);r.quiet=!lit()&&lu2Counsel(w)===null;
   LU100.pop='consilium';MGR_REDRAW();await W8(250);r.always=!!document.getElementById('lu100pop').querySelector('.cn101 .cons');LU100.pop=null;
   m.coin=-5;MGR_REDRAW();await W8(250);r.lit=lit();

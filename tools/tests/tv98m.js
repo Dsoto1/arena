@@ -24,11 +24,11 @@ ok(r1e.thrown&&r1e.gone,'1 overlay removed on error '+JSON.stringify(r1e));
 const r2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};m.coin=3000;MGR.tab='recruit';
   const lot=[];for(let i=0;i<3;i++){const g=genGlad({ovr:40});g.woe='test';g.auction=1;g.price=5;w.glads.push(g);lot.push(g.id)}w.cart={wk:w.week,ids:lot};
   MGR_REDRAW();await W8(400);const click=id=>{const bt=document.querySelector(`[data-m48="cartbuy"][data-id="${id}"]`);if(bt)bt.click();return !!bt};
-  o.b1=click(lot[0]);await W8(300);o.b2=click(lot[1]);await W8(300);o.btnLeft=document.querySelectorAll('[data-m48="cartbuy"]').length;o.note=(document.querySelector('.cart98left')||{}).textContent||'';o.bought=w.cart.bought;
+  o.intro=/two/.test((document.querySelector('.cartbox .sect')||{}).textContent||'');o.b1=click(lot[0]);await W8(300);o.b2=click(lot[1]);await W8(300);o.btnLeft=document.querySelectorAll('[data-m48="cartbuy"]').length;o.boxLeft=document.querySelectorAll('.cartbox').length;o.closed=w.cart.closed;o.bought=w.cart.bought;
   /* the handler refuses even if the button were forced */
   const f=document.createElement('button');f.setAttribute('data-m48','cartbuy');f.setAttribute('data-id',lot[2]);document.body.appendChild(f);f.click();await W8(300);f.remove();
-  o.third=!!gById(lot[2]).contract;o.coin=m.coin;o.intro=/two/.test((document.querySelector('.cartbox .sect')||{}).textContent||'');return o});
-ok(r2.b1&&r2.b2&&r2.bought===2,'2 two buys work '+JSON.stringify(r2));ok(r2.btnLeft===0&&/auction block/.test(r2.note),'2 last lot greyed with the note '+r2.btnLeft+' '+r2.note);ok(!r2.third,'2 handler refuses the third');ok(r2.intro,'2 header says take two');
+  o.third=!!gById(lot[2]).contract;o.coin=m.coin;return o});
+ok(r2.b1&&r2.b2&&r2.bought===2,'2 two buys work '+JSON.stringify(r2));/* v1.04 B15 (353) REPLACED 251's greyed last lot: the cart closes itself after the 2nd pick */ok(r2.btnLeft===0&&r2.boxLeft===0&&r2.closed,'2 cart closes after the second pick '+r2.btnLeft+' '+r2.boxLeft+' '+r2.closed);ok(!r2.third,'2 handler refuses the third');ok(r2.intro,'2 header says take two');
 if(SHOT)await pg.screenshot({path:SHOT+'/cart.png'});
 /* ---- 3 · podium inside the banner ---- */
 const shotLeague=async(w,h,name)=>{await pg.setViewportSize({width:w,height:h});await W(400);return pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),rv=w.mgrs.filter(x=>!x.isPlayer);const fx=(x,pts,wn,b)=>{const q=msp(x);q.pts=pts;q.w=wn;q.b=b};fx(rv[0],9,3,3);fx(rv[1],8,2,4);fx(me(),3,1,3);/* consistent with play: a win = 3 pts, a runner-up place = 1, each counts a bout (9 pts = 3-0, 8 = 2 wins + 2 seconds in 4, 3 = one win in 3) */MGR.tab='league';MGR_REDRAW();await W8(500);
