@@ -17,4 +17,4 @@ His answers (2026-10-16): 1a (rub-down, Care routine and Rest week all move) · 
 - s1a: playoff seeding stays as built (seeds 1–4 rest a round; any house can win; no extra edge for top seeds).
 - s2a: a house with no bout in a playoff week gets its FULL wages back from the Senate (348; was half). REPLACES the half refund (59's bye rule) for playoff weeks.
 - c1a: the First-team reserve (350, tm104 'A', not in Bouts I–III) can be lent out; only the three bout starters are locked.
-- Still open: advisor pace (one level a season; should each level also cost more?).
+- Advisor pace (his answer 2026-10-16): one level a season is enough for now; no extra cost per level.

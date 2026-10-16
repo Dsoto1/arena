@@ -723,3 +723,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - Decided 2026-10-16 (v1.04, his s1a s2a c1a): Superbus playoffs keep the flat seeding (seeds 1–4 rest one round, top 2 of each bout go on).
   Playoff weeks with no bout pay a house its FULL wages back — REPLACED: "half wages back" (59's bye rule) for playoff weeks; ordinary byes keep half.
   The First-team reserve may be lent out; only Bout I–III starters are locked.
+- Decided 2026-10-16 (v1.04): advisors rise at most one level a season (349 adv98Up); no extra cost per level for now.
