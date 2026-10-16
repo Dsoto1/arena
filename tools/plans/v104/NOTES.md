@@ -178,7 +178,8 @@ Four builders, one module each (after 351 in build.sh), each with its own test:
 - B27 (REPLACES the h1a note — its premise was wrong: the lanista's hours were removed in v0.87, 150-v87mgr HRS87; pitches, notes,
   gifts, visits cost no hours, only coin / weekly limits). His answer h2a (2026-10-16): the wooing actions — pitch, private note, gift,
   visit/feast — draw on the RECRUITER's hours (one pool for recruiting) and follow 351's +1 h for each further action on the same recruit
-  that week; coin costs stay; every recruiting button shows its hours. Keeping him (own fighters) stays as it is (coin / weekly limits).- B28 Your ludus checklist (88-v68): "No drills set for the week" shows when the Doctore's Intensity (w.train regime) is None, even after
+  that week; coin costs stay; every recruiting button shows its hours. Keeping him (own fighters) stays as it is (coin / weekly limits).
+- B28 Your ludus checklist (88-v68): "No drills set for the week" shows when the Doctore's Intensity (w.train regime) is None, even after
   the week's plan is LOCKED IN. Fix: the item is done once the Training Yard plan is locked (Lock in all, or every fit fighter's card
   locked); a plan locked with Intensity None counts as a choice. Only an unplanned / unlocked yard keeps the task.
 - B29 Play Now action row (B3 follow-up, his screenshot): 🎲 Random event · Begin Event · 🏛 Home look disjointed (gap before Home, the
