@@ -54,3 +54,4 @@
   Doctore row (face · TIME with him big − N h + with the level ladder · Intensity, greyed without time · ONE team-drill tile cycled ‹ › ·
   sit-out chips); the squad · the fighter's own sessions · ⚔ Trial of the Yard as ONE tile cycled ‹ › (spar / exhibition / beast pen);
   the Tabula strip at the bottom with Same as last week + Lock in all (locks everything). Waiting for his ok / changes.
+- B44 y1a (2026-10-17): the Doctore's hours come from the same weekly training hours (one number in the banner).
