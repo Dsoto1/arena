@@ -10,7 +10,9 @@
        renders the board sheets from, with SIZE102 / SIZE103 / SLIM103 / k102), loaded as patched copies (the yaw list and the render
        scale only), at the board's size relative to the gladiators (window.MM100_PXB: round bases + humanoids = the gladiators' px/mm,
        long bases fit 1.1 tile like 312 bst100Scale).
-   Every cell is cropped to its own alpha box; the strip meta gives [x, w, h, anchorX, anchorY] per cell (anchor = base centre).
+   NO BASES (B38, his call 2026-10-17): every figure is rendered without its base; the anchor is where the feet stand (the old base top),
+   the show draws a soft contact shadow there (282 mm100Spr).
+   Every cell is cropped to its own alpha box; the strip meta gives [x, w, h, anchorX, anchorY] per cell (anchor = the feet's ground point).
    ===================================================================== */
 const D2R = Math.PI / 180;
 
@@ -59,13 +61,19 @@ function pack(cells, q) { const W = cells.reduce((s, x) => s + x.c.width + 1, 0)
   const ra = cells.find(k => k.name === 'raise'); if (ra) r.tip = topPt(ra); return r; }
 
 /* render cells [name, yaw, spec|'@preset'] of the dressed token at pxmm (the game's sheetAsync, ×2 supersampled, one yaw each) */
-async function renderTok(api, list, pxmm) { const out = [];
+/* B38 (his call 2026-10-17 "default the main menu show to no bases"): the base is hidden and the anchor moves from the base bottom up to
+   the base TOP (where the feet stand): BASE_H = 3.2 mm seen at the sheet's 30° elevation */
+const BASE_TOP_MM = 3.2 * Math.cos(30 * D2R);
+function baseG(api) { const g = (api._dbg && api._dbg.baseG) || api.baseG; if (!g) throw new Error('tok93 baseG not found — update tools/art/mm100/mm100.js'); return g; }
+async function renderTok(api, list, pxmm, keepBase) { const out = []; const bg = baseG(api); bg.visible = !!keepBase;
+  try {
   for (const [name, yaw, spec] of list) {
     if (typeof spec === 'string') { const p = api.presets.find(x => x[0] === spec.slice(1)); if (!p) throw new Error('no preset ' + spec); api.setPose(p[2]); }
     else api.setPose(api.specPose(spec));
     const r = await api.sheetAsync({ pxmm, ss: 2, fit: false, yaws: [yaw] }); const [w, , ax, ay] = r.meta;
     if (r.canvas.width !== w) throw new Error('the yaw patch did not take (sheet ' + r.canvas.width + ' px wide, cell ' + w + ')');
-    out.push(crop(r.canvas, ax, ay, name)); }
+    out.push(crop(r.canvas, ax, keepBase ? ay : ay - BASE_TOP_MM * pxmm, name)); }
+  } finally { bg.visible = true; }
   try { api.setPose(api.presets[0][2]); } catch (e) {}
   return out; }
 window.MM100R = {
@@ -75,7 +83,7 @@ window.MM100R = {
     return { g, d, row, baked: !!api.baked, fig: LIB.FIG_SCALE }; },
   /* the soldier's plain probe: height of idle0 at pxmm (to fit the show's size) */
   async probe(look, gear, pxmm) { const api = await tok(); api.apply({ look, gear, pose: api.presets[0][2] });
-    const c = (await renderTok(api, [['idle0', 0, AN.ROWS.idle[0]]], pxmm))[0]; return { w: c.c.width, h: c.c.height, ax: c.ax, ay: c.ay, fig: LIB.FIG_SCALE }; },
+    const c = (await renderTok(api, [['idle0', 0, AN.ROWS.idle[0]]], pxmm, true))[0]; /* with its base: the show's scale stays the v1.05 one */ return { w: c.c.width, h: c.c.height, ax: c.ax, ay: c.ay, fig: LIB.FIG_SCALE }; },
   /* a look-test sheet (rows = frames, columns = yaws, uniform cells w×h with anchor ax,ay) → named cells: pick = [[name, row, col], …] */
   cut(png, meta, pick) { return new Promise((ok, no) => { const im = new Image(); im.onload = () => { const [w, h, ax, ay] = meta; const out = [];
       for (const [name, row, col] of pick) { if (row < 0 || col < 0) { no(new Error('frame missing for cell ' + name)); return; }
