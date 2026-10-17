@@ -22,7 +22,7 @@ function weekChecklist(){const w=W_(),m=me();const ros=rosterOf(m);const n=w.nig
   item(!!w.train&&w.train!=='off','🏋',w.train&&w.train!=='off'?_T`Regime: ${esc((TRAIN_REGIMES[w.train]||{}).n||w.train)}`:_T('No drills set for the week'),w.train&&w.train!=='off'?'':go('practice',_T('Set drills')));
   const th=typeof thLeft==='function'?thLeft(w):0;item(!th||!ros.length,'⏳',th?_T`<b>${th}</b> training hour${th===1?'':'s'} unspent`:_T('Training hours planned'),th&&ros.length?go('practice',_T('Plan hours')):'');
   const mine=new Set(ros.map(g=>g.id));const entered=n?n.bouts.filter(b=>b.ents.some(id=>mine.has(id))).length:0;const open=n?n.bouts.filter(b=>!b.done).length:0;const fit=ros.filter(g=>!g.inj&&g.morale>15).length;
-  item(entered>=Math.min(open,fit)||!fit,'⚔',entered?_T`${entered} of ${open} bout${open===1?'':'s'} carry your fighters`:fit?_T('None of your fighters is on this week\'s card'):_T('Nobody fit to fight'),entered>=Math.min(open,fit)?'':go('night',_T('Enter fighters')));
+  if(typeof st105Can!=='function'||st105Can(w,m))item(entered>=Math.min(open,fit)||!fit,'⚔',entered?_T`${entered} of ${open} bout${open===1?'':'s'} carry your fighters`:fit?_T('None of your fighters is on this week\'s card'):_T('Nobody fit to fight'),entered>=Math.min(open,fit)?'':go('night',_T('Enter fighters')));
   const onBoard=w.glads.filter(g=>g.alive&&g.favd&&!g.contract).length; /* v0.73: a recruit on the board clears it */
   item(ros.length>=4||onBoard>0,'🤝',ros.length>=4?_T`${ros.length} fighters on the roster`:onBoard?_T`Short-handed — ${onBoard} recruit${onBoard===1?'':'s'} on your board`:_T`Short-handed — only ${ros.length} fighter${ros.length===1?'':'s'}. Put a recruit on your board.`,ros.length>=4||onBoard?'':go('recruit',_T('Recruit')));
   return I}

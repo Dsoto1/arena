@@ -1136,7 +1136,7 @@ function ludusTodos(){const w=W_(),m=me(),n=w.night;const ros=rosterOf(m);const 
   if(m.coin<0)T.push(['☠',_T`Your treasury is <b>${m.coin}</b>. Win purses, bet well or trim wages before the creditors come.`,go('roster',_T('Roster'))]);
   const hurt=ros.filter(g=>g.inj&&!g.inj.war);if(hurt.length)T.push(['⚕',_T`${hurt.map(g=>esc(g.name)).join(', ')} ${hurt.length===1?_T('is'):_T('are')} hurt and cannot fight until treated.`,go('infirm',_T('Infirmary'))]);
   if(n&&!n.bouts.every(b=>b.done)){const entered=n.bouts.some(b=>b.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===m.id}));
-    if(!entered&&ros.some(g=>!g.inj))T.push(['⚔',_T`None of your fighters is on this week's card at <b>${esc(LOCATIONS[n.loc].n)}</b> — enter one for the purse and the appearance fee.`,go('night',_T('Match Week'))]);
+    if(!entered&&ros.some(g=>!g.inj)&&(typeof st105Can!=='function'||st105Can(w,m)))T.push(['⚔',_T`None of your fighters is on this week's card at <b>${esc(LOCATIONS[n.loc].n)}</b> — enter one for the purse and the appearance fee.`,go('night',_T('Match Week'))]);
     if(!n.scouted)T.push(['🗺',_T`Walk the sand at ${esc(LOCATIONS[n.loc].n)} before the games — your fighters on this week's card arrive with +1 AP and ${coinAmt87('+1')}.`,go('night',_T('Walk the sand'))])}
   if(w.hours>0)T.push(['⏳',_T`<b>${w.hours}</b> of the lanista's hours left this week — scout free agents, pitch a signing, or run a trial bout.`,go('recruit',_T('Recruiting'))]);
   if(!w.train||w.train==='off')T.push(['🏋',_T`The Training Yard is idle — pick this week's drills; light drills are cheap and safe.`,go('practice',_T('Training Yard'))]);
