@@ -40,3 +40,13 @@
 - B43 (beta 2 screenshot, Recruiting · ✉ Private note popup): 357's B27 "⏳ 1 h" chips are injected into each tone row (Praise / Promise /
   Plain truth) and sit ON TOP of the tone names, plus a fourth stray chip under the list. Fix: the hours shown ONCE, in the card's title line
   ("✉ Private note · once a week · ⏳ 1 h"), the rows untouched (name | effect); check the other wooing popups (pitch, gift, feast) the same way.
+- B44 Training Yard (his walk-through, beta 2): own sessions (training hours) + Lock in all, then 2 Doctore drill tiles still selectable with
+  0 Doctore hours and Intensity None — backwards. His answers (2026-10-17):
+  t1a the Doctore row on top of the week's plan: his hours + Intensity + ONE TEAM DRILL picked there; every fit fighter does it (tap a fighter to
+      sit him out); 0 hours = no team drill (drill + Intensity greyed "Give the Doctore time to run a drill"); per-fighter drill tiles go.
+  t2a 1 h opens the Lv 1 drills, each 2 more hours one level up; the Yard level raises his cap + the drill bonus; Intensity = team gains/fatigue,
+      only with hours.  t3a in v1.05 (beta 3). Bug either way: after Lock in all nothing stays choosable.
+  REPLACES v0.92 213 (per-fighter Doctore drills; level = 1 + Yard + hours/2) and part of v1.04 B13 d1a (hours lock with a fighter's drill →
+  they lock with the team drill).
+  His layout asks: ⚔ Trials of the Yard (213 y92trials / 269 sticky right column) to a more main spot — maybe ONE tile cycling between the
+  trials (spar / exhibition / beast pen); the Tabula + Doctore section to use the space better; TIME larger and more prominent. → mock-up first.

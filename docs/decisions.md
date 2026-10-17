@@ -739,3 +739,6 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   fallback on a slow load is REPLACED by holding a still 3D frame until the strips are ready (282-v100menu MM100S.cap).
 - Decided 2026-10-17 (his l1a l2a): v1.06 = board visuals — one sun per arena (N12a, 2026-10-15), shadows on everything (E5a), beast
   bodies + always 3D (N11a), sharp pieces (E6a); mock-up first. Winter Quarters moves to v1.07.
+- Decided 2026-10-17 (v1.05, his t1a t2a t3a): the Doctore runs ONE TEAM DRILL a week, unlocked by the hours you give him (1 h = Lv 1 drills,
+  +1 level per 2 more hours; Yard level = his cap + bonus; Intensity only with hours; 0 hours = no team drill). REPLACES v0.92 (213)
+  per-fighter Doctore drills and "level = 1 + Yard + hours/2", and v1.04 B13 d1a's hours lock tied to a fighter's drill.
