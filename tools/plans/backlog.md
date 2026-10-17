@@ -299,3 +299,5 @@ RELEASE PREP (2026-10-12): translations DONE (part-111, 1380 keys × 7, ceilings
   (111-onlcore kit tables, kits92.json via mkserver, ISSUE_W100, market.kit) still use the old loadouts → update the shared rules, run
   `node tools/mkserver.js`, server tests, redeploy the server.
 - 3D poser + equipment overhaul (his brief 2026-10-17, tools/plans/poser): five releases after v1.07, order + checkpoints decided (p1a–p6a).
+- docs/economy.md (his E2a, 2026-10-17): every coin source/sink + renown/fame in Manager and Online with module + decision; then fresh mgrsim
+  seasons (careful vs spendthrift house: treasury curve, inflation/starvation) → short report + proposed tweaks for his ok. AFTER v1.05 ships.

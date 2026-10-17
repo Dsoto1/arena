@@ -9,6 +9,7 @@ Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly c
 **Where things are written down** (this file = rules + how to work; read the others when the task touches them):
 - [docs/modules.md](docs/modules.md) — what every version module does (grep a module name, global or kill switch there before changing an area)
 - [docs/history.md](docs/history.md) — every release · [docs/decisions.md](docs/decisions.md) — his decisions + open items (later lines win)
+- [docs/known-issues.md](docs/known-issues.md) — what is still open: unfixed reports, accepted limits, flaky tests, waiting on him (keep current)
 - [docs/architecture.md](docs/architecture.md) · [docs/backend.md](docs/backend.md) (server, deploy, rollback) · [docs/i18n.md](docs/i18n.md) · [docs/testing.md](docs/testing.md)
 - tools/plans/vX.YY/NOTES.md — the release being built (his notes, sorted, his answers) · tools/plans/backlog.md — parked ideas
 
