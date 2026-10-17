@@ -34,6 +34,16 @@ out.pn=await pn.evaluate(()=>{const r=e=>e.getBoundingClientRect();const d=r(doc
 ok(Math.abs(out.pn.dh-out.pn.gh)<=1&&Math.abs(out.pn.hh-out.pn.gh)<=1&&Math.abs(out.pn.dy-out.pn.gy)<=1&&Math.abs(out.pn.hy-out.pn.gy)<=1,'B29 same height, same line '+JSON.stringify(out.pn));
 ok(out.pn.dg>=6&&out.pn.dg<=14&&Math.abs(out.pn.dg-out.pn.gh2)<=3,'B29 small equal gaps '+JSON.stringify(out.pn));
 ok(/radial-gradient/.test(out.pn.bg)&&out.pn.homeOnTop,'B29 sandstone dice tile, Home on top '+JSON.stringify(out.pn));
+const B39=()=>pn.evaluate(()=>{const d=document.querySelector('.pn98go .pn98dice'),g=document.getElementById('goBtn'),h=document.getElementById('mClose');const row=d.closest('.pn-top');
+  let sc=d.parentElement;while(sc&&!(sc.scrollHeight>sc.clientHeight+2&&/auto|scroll/.test(getComputedStyle(sc).overflowY)))sc=sc.parentElement;const st=sc.getBoundingClientRect().top;const t=e=>e.getBoundingClientRect().top;
+  return {sc:st,d:t(d),g:t(g),h:t(h),inRow:row.contains(h),pos:getComputedStyle(h).position}});
+const b39a=await B39();out.b39a=b39a;
+ok(b39a.d>=b39a.sc-0.5&&b39a.g>=b39a.sc-0.5&&b39a.h>=b39a.sc-0.5,'B39 not clipped at the top '+JSON.stringify(b39a));
+ok(Math.max(b39a.d,b39a.g,b39a.h)-Math.min(b39a.d,b39a.g,b39a.h)<=2,'B39 same top '+JSON.stringify(b39a));
+ok(b39a.inRow&&b39a.pos==='static','B39 Home is in the same row element, no own placement '+JSON.stringify(b39a));
+await pn.evaluate(()=>{const d=document.querySelector('.pn98go .pn98dice');let sc=d.parentElement;while(sc&&!(sc.scrollHeight>sc.clientHeight+2&&/auto|scroll/.test(getComputedStyle(sc).overflowY)))sc=sc.parentElement;sc.scrollTop=200});await pn.waitForTimeout(300);
+const b39b=await B39();out.b39b=b39b;
+ok(b39b.d>=b39b.sc-0.5&&b39b.g>=b39b.sc-0.5&&b39b.h>=b39b.sc-0.5&&Math.max(b39b.d,b39b.g,b39b.h)-Math.min(b39b.d,b39b.g,b39b.h)<=2,'B39 after scrolling 200 px: not clipped, same top '+JSON.stringify(b39b));
 await pn.close();
 
 const pg=await open(false);await mgr(pg);
