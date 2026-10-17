@@ -3,8 +3,8 @@
    a quiet backdrop at once, the still 3D group photo when the gladiators' strips are in, then the 3D show — mmFig (the flat token) is
    never drawn; Animations Off waits the same way and ends on the still 3D photo; the kill switch flavius_v105moff=1 = the old 1.5 s cap
    → flat show. The strips match the board: a gladiator's crown ≈ 0.8 of a pillar (as 311's sheets), each beast at 312's size against
-   him, MM100_BOOST 1. */
-const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const out={};
+   him, MM100_BOOST 1. No bases (B38, his call 2026-10-17): nothing under the figures' feet but a soft contact shadow; frame < 16 ms. */
+const {chromium}=require('playwright');const mm100ClsN=()=>['soldier','hero','slave','royalty','amazonia','veteranus','venatore','damnatio'];(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const out={};
 const open=async(o)=>{const ctx=await b.newContext({viewport:o.vw||{width:1400,height:900}});
   await ctx.route(/mm100_.*\.webp/,async r=>{await new Promise(z=>setTimeout(z,o.delay||3000));r.continue()});
   await ctx.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');
@@ -39,10 +39,28 @@ const visit=(pg,gd,delay)=>pg.evaluate(([gd,delay])=>{window.__mmD.g=gd;window._
   out.ms=await pg.evaluate(()=>{const r={};const run=(t)=>{const t0=performance.now();for(let i=0;i<20;i++){MM.t0=performance.now()-t*1000;mmLoop();if(MM.raf){cancelAnimationFrame(MM.raf);MM.raf=0}}return +((performance.now()-t0)/20).toFixed(2)};
     r.show=[14.5,17.0,28.6].map(run);MM105.wait=true;r.still=run(0);MM105.wait=false;return r});
   ok(Math.max(...out.ms.show,out.ms.still)<16,'menu frame under 16 ms '+JSON.stringify(out.ms));
+  /* 1b · NO BASES (B38, his call 2026-10-17): the strips carry no base — under each standing figure's feet the band where the base's wall
+     was (its outer ring, 3 px under the feet down to the base's thickness) is empty (the old strips with bases: 100% covered); the
+     figures draw the soft contact shadow (mm100Shadow) instead */
+  {const fs=require('fs'),path=require('path');const dir=path.join(path.dirname(process.argv[2]),'assets');const M=await pg.evaluate(()=>MM100_META);
+    ok(M.nb===1,'MM100_META.nb = 1 (strips without bases)');
+    const pick={commodus:['walk0','idle','raise'],tholo:['walk0'],wolf:['walk0','atk0'],snake:['walk0','atk0'],lion:['walk0']};
+    for(const k of mm100ClsN())pick['g_'+k]=['walk0','idle0','idle1','flex'],pick['d_'+k]=['atk0'];
+    out.band={};for(const [k,cells] of Object.entries(pick)){const a=M.a[k];if(!a){if(k!=='d_damnatio')ok(false,'strip '+k+' in the meta');continue}
+      const url='data:image/webp;base64,'+fs.readFileSync(path.join(dir,'mm100_'+k+'.webp')).toString('base64');
+      out.band[k]=await pg.evaluate(async([url,a,px,cells])=>{const im=new Image();im.src=url;await im.decode();const c=document.createElement('canvas');c.width=im.width;c.height=im.height;const g=c.getContext('2d');g.drawImage(im,0,0);
+        const d=g.getImageData(0,0,c.width,c.height).data;const p=a.px||px,R=12.7*p,bt=3.2*Math.cos(Math.PI/6)*p,r={};
+        for(const n of cells){const [x0,w,h,ax,ay]=a.c[n];let n1=0,n0=0;
+          for(let y=Math.round(ay+3);y<=Math.round(ay+bt);y++)for(let x=Math.round(ax-R*0.95);x<=Math.round(ax+R*0.95);x++){if(Math.abs(x-ax)/R<0.55)continue;n0++;if(x<0||x>=w||y<0||y>=h)continue;if(d[(y*c.width+x0+x)*4+3]>40)n1++}
+          r[n]=+(n1/n0).toFixed(3)}return r},[url,a,M.px,cells]);
+      for(const [n,f] of Object.entries(out.band[k]))ok(f<0.1,'no base under '+k+' '+n+' (band '+f+')')}
+    out.sh=await pg.evaluate(()=>{let n=0;const base=mm100Shadow;mm100Shadow=function(){n++;return base.apply(this,arguments)};MM105.wait=true;MM.t0=performance.now();mmLoop();MM105.wait=false;mm100Shadow=base;if(MM.raf){cancelAnimationFrame(MM.raf);MM.raf=0}return n});
+    ok(out.sh>=8,'the still photo draws a contact shadow per figure ('+out.sh+')')}
   /* 2 · the strips match the board's proportions */
   out.prop=await pg.evaluate(()=>{const pil=1.27*25.4/MINI_BASE;const r={glad:{},beast:{}};const M=MM100_META;
+    /* no bases (B38): the cell's anchor is the feet, the board's is the base bottom — its base thickness (3.2 mm at 30°) is added back */
     for(const k of mm100Cls()){const a=M.a['g_'+k],an=ANIM100_META[k]&&ANIM100_META[k].move;if(!a||!an)continue;
-      r.glad[k]=[+(a.c.idle0[4]/(a.px||M.px)/pil).toFixed(3),+(an.rows.idle[0][4]/an.pxmm/pil).toFixed(3)]}
+      r.glad[k]=[+((a.c.idle0[4]+(M.nb?3.2*Math.cos(Math.PI/6)*(a.px||M.px):0))/(a.px||M.px)/pil).toFixed(3),+(an.rows.idle[0][4]/an.pxmm/pil).toFixed(3)]}
     const per=TW*MINI_BASE/25.4;for(const [mk,bk] of [['lion','leo'],['bear','ursa'],['wolf','valencia'],['snake','glykon'],['tholo','tholo'],['commodus','commodus']]){const B=BEAST100_META[bk],a=M.a[mk];if(!B||!a)continue;
       r.beast[mk]=[+(a.px/M.px).toFixed(3),+(B.px*bst100Scale(B)/per).toFixed(3)]}
     r.boost=Object.values(MM100_BOOST);r.px=M.px;r.v=M.v;return r});

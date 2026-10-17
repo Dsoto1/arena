@@ -1,166 +1,166 @@
 {
  "pxmm": 4.714,
  "g_soldier": {
-  "kb": 42.7,
-  "decodedKB": 995,
+  "kb": 34.5,
+  "decodedKB": 511,
   "cells": 9,
-  "w": 1153,
-  "h": 221
+  "w": 703,
+  "h": 186
  },
  "d_soldier": {
-  "kb": 19.5,
-  "decodedKB": 482,
+  "kb": 16.4,
+  "decodedKB": 276,
   "cells": 4,
-  "w": 544,
-  "h": 227
+  "w": 366,
+  "h": 193
  },
  "g_hero": {
-  "kb": 42.3,
-  "decodedKB": 964,
+  "kb": 36.7,
+  "decodedKB": 518,
   "cells": 9,
-  "w": 1143,
-  "h": 216
+  "w": 733,
+  "h": 181
  },
  "d_hero": {
-  "kb": 21,
-  "decodedKB": 472,
+  "kb": 17.6,
+  "decodedKB": 316,
   "cells": 4,
-  "w": 544,
-  "h": 222
+  "w": 430,
+  "h": 188
  },
  "g_slave": {
-  "kb": 45.8,
-  "decodedKB": 980,
+  "kb": 39.2,
+  "decodedKB": 598,
   "cells": 9,
-  "w": 1189,
-  "h": 211
+  "w": 855,
+  "h": 179
  },
  "d_slave": {
-  "kb": 19.6,
-  "decodedKB": 496,
+  "kb": 15.5,
+  "decodedKB": 350,
   "cells": 4,
-  "w": 591,
-  "h": 215
+  "w": 506,
+  "h": 177
  },
  "g_royalty": {
-  "kb": 40.2,
-  "decodedKB": 897,
+  "kb": 33.2,
+  "decodedKB": 396,
   "cells": 9,
-  "w": 1143,
-  "h": 201
+  "w": 603,
+  "h": 168
  },
  "d_royalty": {
-  "kb": 18.9,
-  "decodedKB": 397,
+  "kb": 15.4,
+  "decodedKB": 208,
   "cells": 4,
-  "w": 508,
-  "h": 200
+  "w": 320,
+  "h": 166
  },
  "g_amazonia": {
-  "kb": 38.8,
-  "decodedKB": 884,
+  "kb": 31.1,
+  "decodedKB": 399,
   "cells": 9,
-  "w": 1143,
-  "h": 198
+  "w": 627,
+  "h": 163
  },
  "d_amazonia": {
-  "kb": 18.9,
-  "decodedKB": 419,
+  "kb": 15.4,
+  "decodedKB": 229,
   "cells": 4,
-  "w": 528,
-  "h": 203
+  "w": 347,
+  "h": 169
  },
  "g_veteranus": {
-  "kb": 42.1,
-  "decodedKB": 995,
+  "kb": 33.7,
+  "decodedKB": 510,
   "cells": 9,
-  "w": 1153,
-  "h": 221
+  "w": 702,
+  "h": 186
  },
  "d_veteranus": {
-  "kb": 19.5,
-  "decodedKB": 482,
+  "kb": 16.2,
+  "decodedKB": 274,
   "cells": 4,
-  "w": 544,
-  "h": 227
+  "w": 364,
+  "h": 193
  },
  "g_venatore": {
-  "kb": 42.4,
-  "decodedKB": 984,
+  "kb": 34.7,
+  "decodedKB": 565,
   "cells": 9,
-  "w": 1194,
-  "h": 211
+  "w": 817,
+  "h": 177
  },
  "d_venatore": {
-  "kb": 19,
-  "decodedKB": 481,
+  "kb": 15,
+  "decodedKB": 336,
   "cells": 4,
-  "w": 581,
-  "h": 212
+  "w": 495,
+  "h": 174
  },
  "g_damnatio": {
-  "kb": 36.9,
-  "decodedKB": 875,
+  "kb": 29.5,
+  "decodedKB": 372,
   "cells": 9,
-  "w": 1143,
-  "h": 196
+  "w": 591,
+  "h": 161
  },
  "d_damnatio": {
-  "kb": 17.7,
-  "decodedKB": 387,
+  "kb": 13.9,
+  "decodedKB": 202,
   "cells": 4,
-  "w": 508,
-  "h": 195
+  "w": 321,
+  "h": 161
  },
- "gladMs": 39655,
+ "gladMs": 85704,
  "beastRig": "/tools/plans/look100/beast5_rig.js",
- "totalKB": 646,
+ "totalKB": 529,
  "commodus": {
-  "kb": 60.6,
-  "decodedKB": 1327,
+  "kb": 48.6,
+  "decodedKB": 836,
   "cells": 11,
-  "w": 1523,
-  "h": 223,
-  "ms": 20811
+  "w": 1086,
+  "h": 197,
+  "ms": 50049
  },
  "tholo": {
-  "kb": 24,
-  "decodedKB": 493,
+  "kb": 20.1,
+  "decodedKB": 378,
   "cells": 4,
-  "w": 537,
-  "h": 235,
-  "ms": 4828
+  "w": 467,
+  "h": 207,
+  "ms": 11236
  },
  "lion": {
-  "kb": 34.5,
-  "decodedKB": 1339,
+  "kb": 31.6,
+  "decodedKB": 1080,
   "cells": 6,
-  "w": 1510,
-  "h": 227,
-  "ms": 10784
+  "w": 1494,
+  "h": 185,
+  "ms": 11289
  },
  "wolf": {
-  "kb": 14.4,
-  "decodedKB": 346,
+  "kb": 11.7,
+  "decodedKB": 211,
   "cells": 6,
-  "w": 790,
-  "h": 112,
-  "ms": 4539
+  "w": 749,
+  "h": 72,
+  "ms": 4606
  },
  "snake": {
-  "kb": 15.8,
-  "decodedKB": 335,
+  "kb": 10.3,
+  "decodedKB": 149,
   "cells": 6,
-  "w": 765,
-  "h": 112,
-  "ms": 3004
+  "w": 461,
+  "h": 83,
+  "ms": 3097
  },
  "bear": {
-  "kb": 11.5,
-  "decodedKB": 251,
+  "kb": 8.6,
+  "decodedKB": 161,
   "cells": 3,
-  "w": 331,
-  "h": 194,
-  "ms": 3177
+  "w": 273,
+  "h": 151,
+  "ms": 5689
  }
 }
