@@ -35,3 +35,15 @@ His brief: tools/plans/poser/BRIEF.md (verbatim, complete).
 - P5a each step its own small release + beta, after v1.06 (lighting) and v1.07 (Winter Quarters).
 - P6a each release opens with ONE class before/after + the automated check numbers (hand↔grip, armor/body penetration, feet on ground,
   framing) + a contact sheet; his ok → bake all (REPLACES the brief's "no mock-ups"; the checkpoint is real output, not a design doc).
+
+## His anatomy reference (2026-10-17): "athletic build"
+A three-view sculpt sheet (¾ front, front, back; grey briefs, neutral A-ish stance). Third-party art from the web → NOT committed (only these
+measurements, taken from the front view; keep his original if a builder needs to look again):
+- ≈ 7.9 heads tall (heroic; a real adult ≈ 7–7.5); legs (crotch → sole) ≈ 48% of the height.
+- Shoulders (deltoid to deltoid) ≈ 2.5 head heights wide; waist ≈ 1.3; hips ≈ 1.35 → a strong V-taper.
+- Reads from the forms, not lines: pecs over the rib cage, deltoids capping the shoulders, serratus + obliques, a defined 8-pack, large
+  traps/lats in the back, teardrop vastus medialis, long calves; forearms full, wrists/ankles slim; hands open, feet planted with arches.
+- Skin: matte, warm, tonal shift (cooler/pinker lower legs); muscle separation from shading only — no outlines. Matches his brief §2.
+My notes: this is the top of the range (closer to "muscular" than "athletic" by the brief's own "avoid superhero anatomy"). Proposal for P2a:
+use it as the MUSCULAR type; ATHLETIC = same skeleton at ~7.5 heads, shoulders ≈ 2.2, softer separation; historical gladiators (hordearii,
+"barley men") often carried a fat layer → STOCKY/HEAVY types matter for the Roman look. Ask him when release 3 (anatomy) starts.
