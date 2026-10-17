@@ -111,3 +111,6 @@
 - B63 (beta 2): in Rivalry Week his house was on NO card — is the house always set up in its rivalry bout? It must be: the rivalry bout
   always seats the player's house (auto-picked pair, editable until set-off) unless he has fewer than 2 fit fighters (then a clear warning +
   the Familia forfeit rule). Investigate why it was empty.
+- B64 (beta 2): the task "Match Week: only 2 of your 3 starters are fit…" counts the OLD 3-starter depth (47 depthOf n=3) while the v1.04 roster has
+  4 First-team slots (350) and he had 3 of 4 filled, each set to a bout. Fix: the warning checks THIS WEEK's bouts — a task only when a bout
+  you are entered for (or must fill) has no fit fighter, named per bout; no task when every bout has its fighter.
