@@ -103,3 +103,6 @@
 - B59 (beta 2): '<name> asks for a fight' task stayed after he was entered — clears as soon as he is in any bout this week (M1a case; with 378).
 - B60 (beta 2): in an away week the host city's City Square / temple / walk the sand opened before setting off. Fix: those open the 'Set off for <city>?' window first (mw1); home weeks unchanged (with B45/B53, 374).
 - B48 follow-up (his call): an UNBUILT building is not shown in the Infirmary at all (no plate, no link, no price) — buildings come from the advisors / building upgrades in My Ludus only. Built ones show as today.
+- B61 (his call): a recruit's "home city" want (157 WANTS88, glad.city, 17 baseInterest home bonus) must name a city WITH AN ARENA (LOCATIONS).
+  A recruit from a town without one (e.g. Alexandria) wants the NEAREST arena city to his town instead ("from Alexandria — wants Thysdrus"),
+  everywhere it shows and in the interest maths.
