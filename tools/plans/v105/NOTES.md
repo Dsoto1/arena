@@ -93,3 +93,4 @@
 - B56 (his call): gladiators ask for the RUDIS (their freedom) only in the OFF-SEASON — after the Winter festival once it exists (v1.07
   Winter Classic); until then in the off-season (348/349, with the renewals). No rudis requests during the 12 weeks or the playoffs.
   REPLACES rudis asks at any week (17/157/351 paths).
+- B57 (beta 2): the week-9 Consilium Superbus letter (357 B33) shows ANSWER BY WEEK 11 with nothing to answer. Rule: the badge only on letters that ask for a decision; info letters never (with B49–B54, 378).
