@@ -43,11 +43,17 @@ const shot=async(pg,n)=>{if(SHOT)await pg.screenshot({path:`${SHOT}/${n}.png`,fu
     g.recW=null;g.note74=null;g.giftWk=null;if(g.visits)delete g.visits[pm.id];w.pitchN=null;MGR.sel=g.id;await RSTEP(2);window.RG=g.id;return g.id});
   const gid=await pick();
   const s1=await ev(pg,()=>{const w=W_(),g=gById(window.RG);const q=s=>[...document.querySelectorAll(s)];const h=s=>q(s).map(x=>(x.querySelector('.m104h')||{}).textContent||'');
-    return {pit:h('[data-rec98p]').slice(0,2),gift:h('[data-mg="gift2"]'),feast:h('[data-mg="visit"]'),note:h('[data-rec74^="note:"]'),used:rec98Used(w),left:rec98Left(w),max:rec98HrsMax(w)}});
+    return {pit:h('[data-rec98p]').slice(0,2),gift:h('[data-mg="gift2"]'),feast:h('[data-mg="visit"]'),note:h('[data-rec74^="note:"]'),noteHd:q('.m104hd .m104h').map(x=>x.textContent),chipsAll:q('.m104h').length,btnMulti:q('button').filter(b=>b.querySelectorAll('.m104h').length>1).length,used:rec98Used(w),left:rec98Left(w),max:rec98HrsMax(w)}});
   console.log('B27a',JSON.stringify(s1));
   ok(s1.pit.length&&s1.pit.every(x=>x==='⏳ 1 h'),'pitch shows 1 h '+s1.pit);ok(s1.gift.length&&s1.gift.every(x=>x==='⏳ 2 h'),'gift 2 h '+s1.gift);ok(s1.feast.length&&s1.feast.every(x=>x==='⏳ 4 h'),'feast 4 h '+s1.feast);
-  ok(s1.note.length&&s1.note.every(x=>x==='⏳ 1 h'),'note 1 h '+s1.note);ok(s1.used===0,'nothing used yet');
+  ok(s1.note.length===3&&s1.note.every(x=>x===''),'note rows stay clean (no chip on the tone rows) '+s1.note);ok(s1.noteHd.length===1&&s1.noteHd[0]==='⏳ 1 h','the note hours sit ONCE in the card title line '+s1.noteHd);
+  ok(s1.btnMulti===0,'never two hours chips on one button');ok(s1.chipsAll===6+s1.gift.length+s1.feast.length+1,'exactly one hours chip per action: '+s1.chipsAll);ok(s1.used===0,'nothing used yet');
   await shot(pg,'v104j-court');
+  /* no hours chip overlaps any text in the wooing cards (the pitch cards, Win him over, the Private note) */
+  const ov=await ev(pg,()=>{const bad=[];for(const c of document.querySelectorAll('.m104h')){const cr=c.getBoundingClientRect();if(!cr.width)continue;const wk=document.createTreeWalker(document.querySelector('#mgrBody'),NodeFilter.SHOW_TEXT);let n;
+      while(n=wk.nextNode()){if(c.contains(n)||!n.textContent.trim()||!n.parentElement||!n.parentElement.offsetParent)continue;const rg=document.createRange();rg.selectNodeContents(n);
+        for(const t of rg.getClientRects())if(t.width>1&&t.height>1&&t.left<cr.right-1&&t.right>cr.left+1&&t.top<cr.bottom-1&&t.bottom>cr.top+1)bad.push(n.textContent.trim().slice(0,24))}}return bad});
+  console.log('B43',JSON.stringify(ov));ok(!ov.length,'an hours chip overlaps text: '+JSON.stringify(ov));
   /* a pitch: the Recruiter's hours go down by 1, coin untouched */
   const s2=await ev(pg,async()=>{const w=W_(),pm=me();const c0=pm.coin;const b=document.querySelector('[data-rec98p]:not([disabled])');if(!b)return {nob:1};b.click();await W8(500);
     const g=gById(window.RG);const K=rec98K(g);return {used:rec98Used(w),coin:c0-pm.coin,wo:JSON.stringify(K.wo104),gift:[...document.querySelectorAll('[data-mg="gift2"] .m104h')].map(x=>x.textContent),feast:[...document.querySelectorAll('[data-mg="visit"] .m104h')].map(x=>x.textContent)}});
@@ -58,7 +64,7 @@ const shot=async(pg,n)=>{if(SHOT)await pg.screenshot({path:`${SHOT}/${n}.png`,fu
     return {used:rec98Used(w)-u0,coin:c0-pm.coin,giftCost:giftCost(gById(window.RG))}});
   console.log('B27c',JSON.stringify(s3));ok(!s3.nob,'a gift button');ok(s3.used===3,'gift used 3 h (2 + 1 rising): '+s3.used);ok(s3.coin===s3.giftCost,'gift coin unchanged: '+s3.coin);
   /* a note: its hours follow (1 + 2 earlier actions) */
-  const s4=await ev(pg,async()=>{const w=W_();const u0=rec98Used(w);const b=document.querySelector('[data-rec74^="note:"]:not([disabled])');if(!b)return {nob:1};const lbl=(b.querySelector('.m104h')||{}).textContent;b.click();await W8(700);
+  const s4=await ev(pg,async()=>{const w=W_();const u0=rec98Used(w);const b=document.querySelector('[data-rec74^="note:"]:not([disabled])');if(!b)return {nob:1};const lbl=(document.querySelector('.m104hd .m104h')||{}).textContent;b.click();await W8(700);
     return {used:rec98Used(w)-u0,lbl}});
   console.log('B27d',JSON.stringify(s4));ok(!s4.nob,'a note button');ok(s4.lbl==='⏳ 3 h'&&s4.used===3,'note used 3 h (1 + 2 rising): '+JSON.stringify(s4));
   /* the scouting buttons rise after the woos too */
@@ -71,6 +77,14 @@ const shot=async(pg,n)=>{if(SHOT)await pg.screenshot({path:`${SHOT}/${n}.png`,fu
     const u0=rec98Used(w),c0=pm.coin;if(f){f.disabled=false;f.click();await W8(400)}r.same=rec98Used(w)===u0&&pm.coin===c0;return r});
   console.log('B27f',JSON.stringify(s6));ok(s6.feast&&/left this week/.test(s6.feastWhy),'feast disabled with the reason: '+s6.feastWhy);ok(s6.gift,'gift disabled');ok(s6.same,'a forced click spends nothing');
   await pg.close()}
+/* B43 · the same at 390 px: no overlap, one note chip, no sideways scroll */
+{const pg=await open(390,2200);
+  const r=await ev(pg,async()=>{const g=freeAgents()[0];g.favd=true;g.note74=null;W_().rh98=null;MGR.sel=g.id;await RSTEP(2);const bad=[];
+    for(const c of document.querySelectorAll('.m104h')){const cr=c.getBoundingClientRect();const wk=document.createTreeWalker(document.querySelector('#mgrBody'),NodeFilter.SHOW_TEXT);let n;
+      while(n=wk.nextNode()){if(c.contains(n)||!n.textContent.trim()||!n.parentElement||!n.parentElement.offsetParent)continue;const rg=document.createRange();rg.selectNodeContents(n);
+        for(const t of rg.getClientRects())if(t.width>1&&t.height>1&&t.left<cr.right-1&&t.right>cr.left+1&&t.top<cr.bottom-1&&t.bottom>cr.top+1)bad.push(n.textContent.trim().slice(0,24))}}
+    return {bad,hd:document.querySelectorAll('.m104hd .m104h').length,rows:[...document.querySelectorAll('[data-rec74^="note:"] .m104h')].length,sx:document.documentElement.scrollWidth>innerWidth+1}});
+  console.log('B43b',JSON.stringify(r));ok(!r.bad.length,'390 px: chip over text '+JSON.stringify(r.bad));ok(r.hd===1&&r.rows===0,'390 px: one note chip in the title, none on rows');ok(!r.sx,'390 px: no sideways scroll');await pg.close()}
 {const pg=await open(1440,900,true);
   const r=await ev(pg,async()=>{const w=W_();const g=freeAgents()[0];g.favd=true;MGR.sel=g.id;await RSTEP(2);return document.querySelectorAll('.m104h').length});
   ok(r===0,'kill switch: no hours chips '+r);await pg.close()}

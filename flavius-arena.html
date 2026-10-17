@@ -75291,7 +75291,7 @@ function floor104End(){FL104.active=false;FL104.done.clear()}
         cost WOO104 hours (1 / 1 / 2 / 4) from the Recruiter's weekly pool (w.rh98, 249's rec98Left), +W104.rec.step (351) for each further
         action on the same recruit that week — scouting actions AND wooing actions count together: the scouting buttons (rec98Can / rec98Act /
         rec98Btn / rc100ActCard) are wrapped once more here so they also rise after a woo (K.wo104 {wk, a:{pitch,note,gift,visit}} on the
-        recruit's scouting record). Coin costs and the weekly limits stay. Every one of these buttons shows "⏳ N h"; with too few hours it is
+        recruit's scouting record). Coin costs and the weekly limits stay. Each ACTION shows "⏳ N h" ONCE (B43, v1.05: pitch / gift / feast on their button, the private note once in the card title line, never on the tone rows); with too few hours it is
         disabled and says why (and a click that slips through is refused). Keeping him (own fighters) is untouched. The hours are paid when
         the action is really taken (recMark for pitch / feast / gift; the note when g.note74 is set).
    B28 · "NO DRILLS SET FOR THE WEEK" (88's weekChecklist, 108's before-you-leave list) is done once the Training Yard plan is LOCKED: Lock in
@@ -75318,7 +75318,13 @@ if(V104M.on){
   .r104 .r104gh,.r104 .r104e{width:0;min-width:100%;box-sizing:border-box}}
 .m104h{display:inline-block;margin-left:6px;padding:0 6px;border-radius:8px;border:1px solid #6b5420;background:#2b1c0f;color:#f0cf7d;font-size:11px;line-height:16px;white-space:nowrap;vertical-align:middle}
 button[disabled] .m104h,button.off .m104h{opacity:.6}
-.m104h.no{border-color:#c0433a;color:#ffb0a0}`;document.head.appendChild(st)}
+.m104h.no{border-color:#c0433a;color:#ffb0a0}
+.m104h{text-transform:none;letter-spacing:0;font-family:var(--mono)}
+.m104hd{white-space:normal!important;overflow:visible!important;line-height:18px!important}.m104hd .m104h{margin-left:8px}
+.rc1notes .m104h{background:#3a2616;border-color:#6b4a22}.rc1notes .m104h.no{background:#5a2018;border-color:#c0433a}
+.rc1wt .m104h{display:block;width:max-content;margin:1px 0 0;line-height:14px;font-size:10.5px}
+.btn.rc1wo{height:56px!important}.btn.rc1wo .rc1fr{height:48px!important}
+.rc1pit>.m104h{margin:0;justify-self:start;line-height:14px}`;document.head.appendChild(st)}
 
 /* ---------- B27 · wooing = the Recruiter's hours ---------- */
 const WOO104={pitch:1,note:1,gift:2,visit:4};
@@ -75353,11 +75359,19 @@ window.addEventListener('click',e=>{try{const b=e.target&&e.target.closest?e.tar
   if(o.a==='note'){const wk=typeof wkKey74==='function'?wkKey74():null;const before=o.g.note74;
     setTimeout(()=>{try{const w2=w104mLive();if(!w2||o.g.note74===before||o.g.note74!==wk)return;if(woo104Pay(o.g,'note',w2)){saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()}}catch(x){console.error(x)}},0)}}catch(err){console.error(err)}},true);
 /* every wooing button shows its hours; with too few it is disabled and says why */
+function woo104Chip(hh,why){const sp=document.createElement('span');sp.className='m104h'+(why?' no':'');sp.textContent='⏳ '+hh+' h';return sp}
 function woo104Skin(h){if(typeof h!=='string'||!/data-rec98p|data-mg="(?:pitch|visit|gift2)"|data-rec74="note:/.test(h))return h;const w=w104mLive();if(!w)return h;
-  const t=document.createElement('template');t.innerHTML=h;let ch=false;
-  for(const b of t.content.querySelectorAll(WOO104_SEL)){const o=woo104Of(b);if(!o)continue;const hh=woo104H(o.g,o.a,w);const why=woo104Why(o.g,o.a,w);
-    b.querySelectorAll('.m104h').forEach(x=>x.remove());const sp=document.createElement('span');sp.className='m104h'+(why?' no':'');sp.textContent='⏳ '+hh+' h';b.appendChild(sp);ch=true;
+  const t=document.createElement('template');t.innerHTML=h;let ch=false;const notes=[];
+  t.content.querySelectorAll('.m104h').forEach(x=>x.remove());
+  for(const b of t.content.querySelectorAll(WOO104_SEL)){const o=woo104Of(b);if(!o)continue;const hh=woo104H(o.g,o.a,w);const why=woo104Why(o.g,o.a,w);ch=true;
+    if(o.a==='note')notes.push({b,o,hh,why});
+    else{/* ONE chip per action, on its own button: inside the gift / feast tile's text block, else at the end of the button; never over a text node */
+      const sp=woo104Chip(hh,why);const host=b.querySelector('.rc1wt');(host||b).appendChild(sp)}
     if(why&&!b.hasAttribute('disabled')){b.setAttribute('disabled','');b.setAttribute('title',why)}}
+  /* the private note: the three tone rows stay clean (name | effect | fit); the hours sit ONCE in the card's title line. Sent this week = no chip */
+  if(notes.length){const n0=notes[0],sent=notes.every(x=>x.b.hasAttribute('disabled')&&!x.why);
+    let hd=t.content.querySelector('.rc1notes .rc1phd');if(!hd){const f=[...t.content.querySelectorAll('.sect')].find(x=>x.querySelector('.rc-sub')&&/note/i.test(x.textContent));hd=f||null}
+    if(hd&&!sent){hd.classList.add('m104hd');hd.appendChild(woo104Chip(n0.hh,n0.why))}}
   return ch?t.innerHTML:h}
 {const base=mgrHTML;mgrHTML=function(){const h=base.apply(this,arguments);try{return woo104Skin(h)}catch(e){console.error(e)}return h}}
 /* the Court / Scout step tabs re-draw the recruit's card on their own (299), not through mgrHTML */
