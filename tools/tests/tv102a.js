@@ -21,8 +21,8 @@ out.m17=await ev(pg,()=>/armthumb102_legwrapsU/.test(cardStyle('a:legwrapsU'))&&
 out.inf=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const q=s=>document.querySelector(s);const r={};const pm=me(),w=W_();const ros=rosterOf(pm);const A=ros[0];
   A.inj={until:w.week+3,label:'a gashed chest',pen:4,ser76:1};A.severed=['larm','rleg'];w.beds76=[];MGR.inf90=A.id;MGR.tab='infirm';MGR_REDRAW();await W8(600);
   /* M8 */r.m8=!!q('aside.rm100list > .v102inf [data-v101med]')&&!!q('aside.rm100list > .v102inf .hyg87')&&!q('.roomhd [data-v101med]')&&!q('.roomhd .hyg87');
-  /* M14 */pm.coin=100;MGR_REDRAW();await W8(500);let bd=q('.iv90care [data-b105]');r.m14off=!!bd&&!q('[data-mg="build"]'); /* v1.05 B48: the ward has no build button, poor or rich — a link to My Ludus */
-  pm.coin=900;MGR_REDRAW();await W8(500);bd=q('.iv90care [data-b105]');r.m14on=!!bd&&!q('[data-mg="build"]');
+  /* M14 */pm.coin=100;MGR_REDRAW();await W8(500);let bd=q('[data-b105]');r.m14off=!bd&&!q('[data-mg="build"]'); /* v1.05 B48: the ward shows no building, poor or rich */
+  pm.coin=900;MGR_REDRAW();await W8(500);bd=q('[data-b105]');r.m14on=!bd&&!q('[data-mg="build"]');
   /* M1: bed, Hygeia once */
   const bed=q(`#mgrPane [data-bed76="${A.id}"]`);if(bed)bed.click();await W8(500);r.bed=inBed76(A);
   let hy=q(`#mgrPane [data-mg="heal"][data-id="${A.id}"]`);r.hyTxt=!!hy&&/one limb a week/.test(hy.textContent)&&!hy.dataset.dis;const c0=pm.coin;if(hy)hy.click();await W8(500);
