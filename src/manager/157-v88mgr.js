@@ -111,7 +111,7 @@ const dis88=t=>'disabled title="'+esc(t||'')+'"'; /* i18n:skip */
 const REC88={bidWeek:2,bidX:1.2,outCoin:1.15,weeks:8};
 const WANT88={gain:14,pitch:10,weak:3,coinX:1.15,famMin:30,famMax:60,arenaRoster:6,coinBank:150,honor:55};
 const WANTS88=[['coin','🪙',_T('Coin')],['arena','⚔',_T('Arena time')],['fame','📣',_T('Fame')],['rudis','🗡',_T('Rudis path')],['home','🏠',_T('Home city')],['friend','🤝',_T('A friend in the house')]];
-const want88Def=k=>{const d=WANTS88.find(x=>x[0]===k)||[k,'•',k];return k==='coin'&&typeof ICO!=='undefined'&&ICO.coin?[d[0],ICO.coin,d[2]]:d};
+const want88Def=(k,g)=>{const d=WANTS88.find(x=>x[0]===k)||[k,'•',k];if(k==='home'&&g&&typeof home105Label==='function'){const t=home105Label(g);if(t)return [d[0],d[1],t]} /* v1.05 B61: the home want names an arena city */ return k==='coin'&&typeof ICO!=='undefined'&&ICO.coin?[d[0],ICO.coin,d[2]]:d};
 /* his wants: 1–2, rolled from his id (never the dice RNG) */
 function wants88(g){if(!g||!g.id)return [];const h=hashStr('want88:'+g.id);const n=h%3===0?2:1;const out=[];let i=(h>>>3)%WANTS88.length;
   while(out.length<n){const k=WANTS88[i%WANTS88.length][0];if(!out.includes(k))out.push(k);i+=1+((h>>>7)%5)}return out}
@@ -139,7 +139,7 @@ function want88With(g,m,bonus,fn){if(!bonus||WANT88_IN)return fn();const cur=int
   if(!g||!m||g.contract)return base.apply(this,arguments);const d=id=>document.getElementById(id);
   const T=want88Terms(g,+(d('ofWage')||{}).value||askWage(g),+(d('ofWeeks')||{}).value||8,!!(d('ofPledge')||{}).checked);
   const r=want88With(g,m,want88Bonus(g,m,T),()=>base.apply(self,args));
-  try{const el=d('ofMeter');const K=wants88Known(g);if(el&&K.length){el.insertAdjacentHTML('beforeend',`<div class="want88m">${_T`🎯 Wants:`} ${K.map(k=>{const [,ic,n]=want88Def(k);const ok=want88Fits(g,m,k,T);
+  try{const el=d('ofMeter');const K=wants88Known(g);if(el&&K.length){el.insertAdjacentHTML('beforeend',`<div class="want88m">${_T`🎯 Wants:`} ${K.map(k=>{const [,ic,n]=want88Def(k,g);const ok=want88Fits(g,m,k,T);
     return `<span class="want88c ${ok?'ok':''}" data-want88c="${k}">${ic} ${esc(n)} ${ok?`<b>✓ +${WANT88.gain}</b>`:`<i>✗ ${esc(want88How(g,k))}</i>`}</span>`}).join(' ')}</div>`)}}catch(e){console.error(e)}return r}}
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='ofRudis88')ofMeterUpdate()});
 /* a rudis promise is kept at signing */
@@ -149,7 +149,7 @@ function want88PitchGain(g,m,k){return want88Fits(g,m,k,null)?WANT88.pitch:WANT8
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-want88]');if(!b||b.disabled)return;e.preventDefault();e.stopPropagation();
   const w=W_(),m=me();const [k,id]=b.dataset.want88.split('|');const g=gById(id);if(!w||!m||!g||g.contract||!wants88Known(g).includes(k))return;const wk=wkKey74();if(g.wantWk88===wk)return;
   g.wantWk88=wk;const before=interestOf(g,m);g.interest[m.id]=capInterest(g,m,before+want88PitchGain(g,m,k));const got=g.interest[m.id]-before;
-  tnews(_T`🎯 You spoke to ${esc(g.name)}'s wish (${want88Def(k)[2].replace(/^./,ch=>typeof LANG!=='undefined'&&LANG==='de'?ch:ch.toLowerCase()) /* German nouns keep their capital */}): interest +${got}.`);MGR.msg=_T`🎯 ${g.name}: interest +${got}.`;saveWorld();MGR_REDRAW()},true);
+  tnews(_T`🎯 You spoke to ${esc(g.name)}'s wish (${want88Def(k,g)[2].replace(/^./,ch=>typeof LANG!=='undefined'&&LANG==='de'?ch:ch.toLowerCase()) /* German nouns keep their capital */}): interest +${got}.`);MGR.msg=_T`🎯 ${g.name}: interest +${got}.`;saveWorld();MGR_REDRAW()},true);
 
 /* (3) progressive scouting: ranges that narrow */
 function rng88Level(g){let m=null;try{m=me()}catch(e){}if(m&&g.contract&&g.contract.mgr===m.id)return 0;const sc=g.scout||0;if(sc>=2)return 0;if(g.watch74)return 4;if(sc>=1||g.rumor74)return 8;return 12}
@@ -179,7 +179,7 @@ function court88Body(w,g,R){const m=me();const bid=g.court88.bid;const btn=(a,l,
   const outs=court88Outs(g,m,bid);
   return `<p>${_T`“<b>${esc(R.ludus)}</b> has put <b>${bid.wage}</b> a week on the table for <b>${esc(g.name)}</b>. Answer by the week's end, or the fighter is theirs.”`}</p>
     ${outs.length?'':`<p class="rc-sub">${_T`We don't know what this one wants yet — scout first and we could outbid them on it.`}</p>`}
-    <div class="acts">${btn('match',_T`⚖ Match · ${bid.wage}/wk`,(m.coin||0)<bid.wage,_T('Your treasury cannot cover the first week.'))}${outs.map(o=>{const [,ic,n]=want88Def(o.k);return btn('want:'+o.k,_T`🎯 Outbid: ${ic} ${esc(n)} · ${o.wage}/wk`,!o.ok,o.why)}).join('')}${btn('walk',_T('🚶 Walk away'))}</div>`}
+    <div class="acts">${btn('match',_T`⚖ Match · ${bid.wage}/wk`,(m.coin||0)<bid.wage,_T('Your treasury cannot cover the first week.'))}${outs.map(o=>{const [,ic,n]=want88Def(o.k,g);return btn('want:'+o.k,_T`🎯 Outbid: ${ic} ${esc(n)} · ${o.wage}/wk`,!o.ok,o.why)}).join('')}${btn('walk',_T('🚶 Walk away'))}</div>`}
 function court88ToRival(w,g,why){const c=g.court88,bid=c&&c.bid;const R=bid&&mgrById(bid.mid);if(!R||g.contract)return false;
   g.contract={mgr:R.id,wage:bid.wage,weeks:REC88.weeks,since:w.week};g.unsigned=0;bid.ans=why;
   try{mlog(R,_T`signed ${g.name}, outbidding you`)}catch(e){}ghist(g,_T`signed with ${esc(R.ludus)} (${bid.wage}/wk)`);
@@ -188,7 +188,7 @@ function court88ToRival(w,g,why){const c=g.court88,bid=c&&c.bid;const R=bid&&mgr
 function court88Sign(w,g,wage,opt){const m=me();const bid=g.court88&&g.court88.bid;if(g.contract||!bid||bid.ans||(m.coin||0)<wage)return false;
   signGlad(g,wage,REC88.weeks,0,!!opt.pledge);bid.ans=opt.why;if(opt.rudis){g.rudis88={mid:m.id,s:w.season,wk:w.week};ghist(g,_T`was promised the rudis path by ${esc(m.ludus)}`)}
   if(opt.want)g.wantMet88=opt.want;const L=(w.letters||[]).find(x=>x.key==='rb88_'+g.id);if(L){L.read=true;L.done88=1}
-  tnews(_T`✍ ${esc(g.name)} signs with you (${wage}/wk)${opt.want?_T` — you answered a wish: ${want88Def(opt.want)[2].replace(/^./,ch=>typeof LANG!=='undefined'&&LANG==='de'?ch:ch.toLowerCase()) /* German nouns keep their capital */}`:''}.`,'big');return true}
+  tnews(_T`✍ ${esc(g.name)} signs with you (${wage}/wk)${opt.want?_T` — you answered a wish: ${want88Def(opt.want,g)[2].replace(/^./,ch=>typeof LANG!=='undefined'&&LANG==='de'?ch:ch.toLowerCase()) /* German nouns keep their capital */}`:''}.`,'big');return true}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-rb88]');if(!b||b.disabled)return;e.preventDefault();e.stopPropagation();
   const w=W_(),m=me();if(!w||!m)return;const [a,id]=b.dataset.rb88.split('|');const g=gById(id);const bid=g&&g.court88&&g.court88.bid;if(!g||!bid||bid.ans||g.contract)return;
   if(a==='match')court88Sign(w,g,bid.wage,{why:'match'});
@@ -213,13 +213,13 @@ function court88Tiny(g,w){const n=court88Left(g,w);if(n==null)return '';return n
   const K=wants88Known(g);const step=MGR.recStep||recStepNow(g,m);
   /* ranges even before scouting (144 had folded them to one line) */
   if(!g.scout){const i=h.indexOf('<div class="scoutsee rat85">');const c=i>=0?cutDiv(h,i):null;if(c)h=h.slice(0,i)+`<div class="scoutsee rat85 rg88">${ratingsHTML(g)}</div>`+h.slice(i+c[0].length)}
-  const chips=K.length?K.map(k=>{const [,ic,n]=want88Def(k);const ok=want88Fits(g,m,k,null);return `<span class="want88 ${ok?'ok':''}" data-want88k="${k}" title="${esc(ok?_T('Your house answers this now'):want88How(g,k))}">${ic} ${esc(n)}${ok?' ✓':''}</span>`}).join(''):
+  const chips=K.length?K.map(k=>{const [,ic,n]=want88Def(k,g);const ok=want88Fits(g,m,k,null);return `<span class="want88 ${ok?'ok':''}" data-want88k="${k}" title="${esc(ok?_T('Your house answers this now'):want88How(g,k))}">${ic} ${esc(n)}${ok?' ✓':''}</span>`}).join(''):
     `<span class="rc-sub">${wants88(g).length>1?_T('2 wishes'):_T('a wish')} ${_T`— watch them train or scout to learn`}</span>`;
   const bid=g.court88&&g.court88.bid,R=bid&&bid.mid&&!bid.ans?mgrById(bid.mid):null;
   const top=`<div class="want88row"><b>${_T`🎯 Wants`}</b> ${chips} ${court88Chip(g,w)}</div>${R?`<div class="bid88 card2">${court88Body(w,g,R)}</div>`:''}`;
   h=h.replace('<div class="rsteps">',top+'<div class="rsteps">');
   if(step===2&&K.length){const sent=g.wantWk88===wkKey74();
-    const pb=K.map(k=>{const [,ic,n]=want88Def(k);return `<button class="btn tksm" type="button" data-want88="${k}|${g.id}" ${sent?dis88(_T('Once a recruit a week')):''}>${_T`🎯 Speak to it: ${ic} ${esc(n)}<small>free · +${want88PitchGain(g,m,k)} interest</small>`}</button>`}).join('');
+    const pb=K.map(k=>{const [,ic,n]=want88Def(k,g);return `<button class="btn tksm" type="button" data-want88="${k}|${g.id}" ${sent?dis88(_T('Once a recruit a week')):''}>${_T`🎯 Speak to it: ${ic} ${esc(n)}<small>free · +${want88PitchGain(g,m,k)} interest</small>`}</button>`}).join('');
     h=h.replace('<div class="rpane">',`<div class="rpane"><div class="acts want88p">${pb}</div>`)}
   if(step===3&&K.includes('rudis'))h=h.replace('<div id="ofMeter"',`<label class="rudis88" style="font-size:12px" title="${esc(sx(g,_T('He wants a path to the rudis — his freedom. Promising it adds interest now and notes the promise on his record.'),_T('She wants a path to the rudis — her freedom. Promising it adds interest now and notes the promise on her record.')))}"><input type="checkbox" id="ofRudis88"> ${_T`🗡 Promise the rudis path (+${WANT88.gain})`}</label><div id="ofMeter"`);
   }catch(e){console.error(e)}return h}}
