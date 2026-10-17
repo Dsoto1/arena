@@ -57,10 +57,10 @@ if(SHOT){const H=await pg.evaluate(()=>{const api=T93.api;const g={wR:{t:'spear'
     for(const gr of [{},{R:[-60,80],L:[45,-40]}]){api.apply({gear:g,pose:api.standFor(g),grip:gr});out.push(api.hero({w:360,h:420,yaw:35}).toDataURL('image/png'))}
     api.apply({gear:{},pose:api.presets[0][2]});return out});
   H.forEach((u,i)=>fs.writeFileSync(SHOT+'/tv102e_grip'+i+'.png',Buffer.from(u.split(',')[1],'base64')))}
-/* 3. the poser's ⚔ Weapon tab: a soldier character; sliders change the grip, Save stores it in the token's pose */
+/* 3. the poser's ⚔ Weapon tab: a soldier character; sliders change the grip, Save stores it in the token's pose ; t93Open runs in a timer so this evaluate returns first (a long sync open + GC made Chromium drop the awaited promise: 'Promise was collected') */
 await pg.evaluate(async()=>{await loadCustoms();const c=blankChar();c.id='v102e';c.name='Miles Tenax';charFromClass(c,'soldier');c.classRef='cls:soldier';c.created='2026-10-14';c.status='active';
   await Store.put('customChars',c.id,c);await loadCustoms();openStudio('chars');await new Promise(r=>setTimeout(r,800));ST.draft=JSON.parse(JSON.stringify(CUSTOM.chars.find(x=>x.id==='v102e')));ST.view='edit';studioRedraw();
-  await new Promise(r=>setTimeout(r,300));t93Open()});
+  await new Promise(r=>setTimeout(r,300));setTimeout(t93Open,0)});
 const ui=await until(()=>document.querySelector('#t93m [data-v102g="R:0"]')&&T93.ui,120000);
 if(SHOT){await pg.click('#t93m [data-t93tab="grip"]');await pg.waitForTimeout(400);await pg.screenshot({path:SHOT+'/tv102e_poser_tab.png'})}
 const U=await pg.evaluate(async()=>{const ov=document.getElementById('t93m');ov.querySelector('[data-t93tab="grip"]').click();await new Promise(r=>setTimeout(r,100));
