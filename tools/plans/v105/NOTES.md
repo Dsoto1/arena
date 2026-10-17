@@ -116,3 +116,4 @@
   you are entered for (or must fill) has no fit fighter, named per bout; no task when every bout has its fighter.
 - B65 (beta 2): eliminated from the Superbus, in the semifinal week a Consilium task said 'None of your fighters is on this week's card' + Enter button. Rule: entry/fitness tasks only for bouts the house CAN enter (eliminated / bye / unseeded / not drawn = none). (with B64, 384)
 - B66 (beta 2): a gladiator KILLED in a Match Week bout shows up as a FREE AGENT right away. Rule: he stays with his house (marked fallen) until the week ends, then goes to the grave/annals — never the free-agent pool. Investigate where his contract is cleared.
+- B67 (his ask): off-season contract renewals show each fighter's overall rating (OVR, grade colour), season record (W-L) and recent form (the last 5 results dots, like the League).
