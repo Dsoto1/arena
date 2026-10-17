@@ -75840,7 +75840,7 @@ function mw105BoxHTML(w,seq,mine){const n=w.night,m=me();const B=n.bouts;const l
   const note=endWhy?'':left.length?_T`End the week simulates the ${left.length} bout${left.length===1?'':'s'} left.`:roadLocked76(w)?_T('Ready: wages are paid and the house goes home.'):_T('Ready: wages are paid.');
   return `<section class="mw105wk" aria-label="${_T('Your week')}"><div class="mw105wh"><b>${_T`Your week at ${esc(city)}`}</b><span>${prog}</span></div>
     <div class="mw105ti">${T.map(([k,v,c])=>`<div class="${c}"><i>${k}</i><b>${v}</b></div>`).join('')}</div>
-    ${off?`<button type="button" class="btn primary mw105off" data-mw105="off">${_T`🛣 Set off for ${esc(city)}`}<small>${_T('the Yard, the Infirmary and Recruiting shut until the week ends')}</small></button>`:''}
+    ${off?`<button type="button" class="btn primary mw105off" data-mw105="off">${typeof sq105Label==='function'&&sq105On()?sq105Label(w,city):_T`🛣 Set off for ${esc(city)}`}<small>${_T('the Yard, the Infirmary and Recruiting shut until the week ends')}</small></button>`:''}
     <div class="mw105ba"><button type="button" class="mw105sb" data-mg="simall" ${simDis}>${_T('Simulate the rest')}</button><button type="button" class="btn ${off?'':'primary'}" data-mw105="end" ${endDis}>${_T('End the week')}</button></div>
     <div class="mw105nt${endWhy?' wt':!left.length?' ok':''}">${endWhy||note}</div></section>`}
 
@@ -75890,10 +75890,11 @@ function mw105Shape(T,w){const n=w.night,m=me();const C=T.content;const Q=s=>C.q
   /* banner */
   const L=document.createElement('div');L.className='mw105L';hd.insertBefore(L,hd.firstElementChild&&hd.firstElementChild.tagName==='svg'?hd.firstElementChild.nextSibling:hd.firstChild);
   const ttl=hd.querySelector('.roomttl');if(ttl)L.appendChild(ttl);
-  const ch=[];const t=n.travel;const city=mw105City(w);
-  if(t&&t.cost>0){if(t.deal){const hh=mgrById(t.deal.mgr);ch.push(_T`🛣 From ${esc(t.from)} · the trip paid by ${esc(hh?hh.ludus:_T('another house'))}`)}else if(t.paid&&t.free105)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip paid by the games`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip paid by the games`);else if(t.paid)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`)}
+  const ch=[];const t=n.travel;const city=mw105City(w);const sq=typeof sq105On==='function'&&sq105On();
+  if(sq){}
+  else if(t&&t.cost>0){if(t.deal){const hh=mgrById(t.deal.mgr);ch.push(_T`🛣 From ${esc(t.from)} · the trip paid by ${esc(hh?hh.ludus:_T('another house'))}`)}else if(t.paid&&t.free105)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip paid by the games`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip paid by the games`);else if(t.paid)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`)}
   else if(t&&!n.selfBye&&!w.tutorial&&!B.some(b=>b.po104))ch.push(_T('🏠 Home sand'));
-  if(n.omen&&n.omen.k!=='clear')ch.push(`${esc(n.omen.n)} · ${n.omen.att>0?_T('attendance and purses up'):n.omen.att<0?_T('attendance and purses down'):_T('the city talks of little else')}`);
+  if(!sq&&n.omen&&n.omen.k!=='clear')ch.push(`${esc(n.omen.n)} · ${n.omen.att>0?_T('attendance and purses up'):n.omen.att<0?_T('attendance and purses down'):_T('the city talks of little else')}`);
   if(n.grand)ch.push(_T('The Grand Games: purses ×1.6'));
   if(roadLocked76(w))ch.push(_T('🔒 Yard, Infirmary and Recruiting shut until the week ends'));
   L.insertAdjacentHTML('beforeend',`<div class="mw105chips">${ch.map(x=>`<span class="mw105chip">${x}</span>`).join('')}${mw105PoChip(w,n)}</div>`);
@@ -75945,7 +75946,7 @@ window.addEventListener('click',e=>{if(MW105.pass||mw105Off())return;const el=e.
   /* End the week */
   if(el.matches('[data-mw105="end"]')){stop();const left=w.night.bouts.some(b=>!b.done);if(!left){const r=weekReady();if(!r.ok){mToast(r.why);return}}if((w.pend||[]).length)return;MGR.confirmEnd=true;mw105Redraw();const bx=document.getElementById('mBody');if(bx)bx.scrollTop=0;return}
   /* mw1: setting off (B60: walking the host city's square counts as leaving, so it asks first) */
-  const sel=el.matches('[data-mw105="off"]')?'off':el.matches(MW105_START)?'start':null;if(!sel||MGR.busy)return;
+  const sel=el.matches('[data-mw105="off"]')?'off':el.matches(MW105_START)&&!(el.matches('[data-mg="city"]')&&typeof sq105On==='function'&&sq105On())?'start':null;if(!sel||MGR.busy)return;
   if(!mw105NeedOff(w)){if(sel==='off'){stop();mw105Redraw()}return}
   const L=mw105Leave(w);if((!L.length||!e.isTrusted)&&sel==='start'){mw105Go(w);return}
   stop();const a=el.dataset.mg,id=el.dataset.id;mw105SetOffAsk(w,el).then(v=>{if(!v)return;mw105Go(w);if(sel==='off'){mToast(_T`🛣 The house sets off for <b>${esc(mw105City(w))}</b>.`);mw105Redraw();return}
@@ -77228,6 +77229,30 @@ if(V105DEAD.on){
       const strip=`<div class="r104g f105" data-f105="1"><div class="r104gh"><b>${_T('✝ Fallen this week')}</b><span class="r104gn">${F.length}</span></div>${F.map(g=>`<div class="r104e">✝ <b>${esc(g.name)}</b> · ${esc(mgrById(g.contract.mgr).ludus)}</div>`).join('')}</div>`;
       return h.replace(/<\/div>\s*$/,strip+'</div>')}catch(e){console.error(e)}return h}}
 }
+/* 389-v105sq (v1.05 B74 + B75): the City Square is locked until the house has SET OFF.
+   • B74: in a Match Week away from home (a trip to pay / set off for) EVERY way into the host city's square is refused until the house sets off:
+     citySquareGate (rail/map/Imperium data-ct="square" entries) and openCitySquare refuse, and the banner's Walk the city square button shows
+     "🔒 Set off first" (disabled, title + small text). After Set off it opens as before. A home-city week (no trip), a bye, the lesson and a finished
+     week are open. REPLACES beta 3's "Set off for X?" ask when walking the square (360 no longer routes the city button into it).
+   • B75: the Match Week slim banner drops the trip chip, the world-event chip and the temple / sand links; the trip cost sits on the Set off
+     button ("🛣 Set off for Pompeii · 🪙15", free trip → "· free"). (The chips are skipped in 360 mw105Shape via sq105On.)
+   Kill switch: localStorage flavius_v105sqoff=1 (beta 3 behaviour). Test tv105aa. */
+function sq105On(){try{return localStorage.getItem('flavius_v105sqoff')!=='1'&&localStorage.getItem('flavius_v105aoff')!=='1'}catch(e){return true}}
+function sq105Locked(w,li){try{if(!sq105On())return false;w=w||W_();const n=w&&w.night;if(!n||n.bye||n.selfBye||w.tutorial||w.dead)return false;if(li!=null&&+li!==+n.loc)return false;
+  const t=n.travel;if(!t||!(t.cost>0)||t.gone)return false;return !n.bouts.every(b=>b.done)}catch(e){return false}}
+const sq105Why=()=>_T('🔒 Set off first');
+function sq105Label(w,city){const t=w.night.travel;const c=t&&(t.free105||t.deal)?_T('free'):coinAmt87(t.cost);return _T`🛣 Set off for ${esc(city)} · ${c}`}
+{const base=citySquareGate;citySquareGate=function(li){const r=base.apply(this,arguments);if(r)return r;return sq105Locked(null,li)?sq105Why():r}}
+{const base=openCitySquare;openCitySquare=function(li){if(sq105Locked(null,li)){try{mToast(sq105Why())}catch(e){}return}return base.apply(this,arguments)}}
+/* the Manager's own Walk button: stop it before anything else listens */
+window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mg="city"]');if(!b||!b.closest('#mgrBody')||!sq105Locked())return;
+  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();try{mToast(sq105Why())}catch(x){}},true);
+{const base=mw105Shape;mw105Shape=function(T,w){const r=base.apply(this,arguments);
+  try{if(r&&sq105On()){const hd=T.content.querySelector('.roomhd.mw105ban');if(hd){const note=hd.querySelector('.walk96 .city90n');
+    if(sq105Locked(w)){const b=hd.querySelector('.walk96b');if(b){b.disabled=true;b.setAttribute('data-sq105','1');b.title=sq105Why();b.innerHTML=sq105Why()}
+      if(note){note.textContent=_T('The square opens once the house sets off.')}}
+    else if(note)note.remove()}}}catch(e){console.error(e)}
+  return r}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
