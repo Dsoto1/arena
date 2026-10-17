@@ -1,6 +1,7 @@
 #!/bin/bash
 # flavius.sh — one helper for every Flavius Rule deployment, run in AWS CloudShell (us-east-1).
 #
+#   bash flavius.sh betaurl                                 prints the beta address again (no deploy)
 #   bash flavius.sh release [1.02]                          EVERYTHING, straight from GitHub (no uploads): the newest release branch
 #                                                           release/vX.YY on the repo (or the version named = a rollback) → server (only when it changed) → game →
 #                                                           download → status. The GitHub token is asked once (hidden), kept in
@@ -26,7 +27,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=7
+FSH_VER=8
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -309,6 +310,6 @@ cmd_release(){ local here; here=$(pwd)
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;; beta) cmd_beta "$@";; update) cmd_update;; clean) cmd_clean;;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
   *) sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//';;
 esac
