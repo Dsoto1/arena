@@ -3,7 +3,9 @@ const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1000);await pg.evaluate(()=>{window.travelOK=()=>true;window.travelBlock=()=>false});await pg.click('#mClose');
 await pg.evaluate(()=>{newWorld({type:'pre',key:MGR_PRE[0].key});openManager()});await pg.waitForTimeout(500);
 await pg.evaluate(()=>{MGR.tab='night';MGR_REDRAW()});await pg.waitForTimeout(300);
-await pg.click('[data-mg="city"]');await pg.waitForTimeout(1400);
+await pg.click('[data-mg="city"]');await pg.waitForTimeout(400);
+// v1.05 (360-v105mw): walking the host city's square counts as setting off, so it asks first — confirm
+await pg.evaluate(()=>{const y=document.querySelector('.ask76bg [data-ask76="1"]');if(y)y.click()});await pg.waitForTimeout(1000);
 await pg.evaluate(()=>cityHorns());await pg.waitForTimeout(600);
 await pg.evaluate(()=>cityEnterArena());await pg.waitForTimeout(1500);
 const l1=await pg.evaluate(()=>{const w=W_();const btn=document.querySelector('[data-mg="city"]');

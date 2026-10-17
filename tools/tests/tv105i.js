@@ -28,7 +28,10 @@ const setup=(pg,kind)=>pg.evaluate(async(kind)=>{const W8=ms=>new Promise(r=>set
     pls[0].r=qr+1;pls[0].c=qc+1;pls[1].r=qr-1;pls[1].c=qc-1;pls[2].r=0;pls[2].c=0;pls[3].r=0;pls[3].c=1;window.__T={A:s,F:pls[0],R:pls[1]};ids.kind='npc'}
   else{const a=pls[0];a.r=qr;a.c=qc;a.netted=true;pls[1].r=0;pls[1].c=0;pls[2].r=0;pls[2].c=1;pls[3].r=0;pls[3].c=2;
     nz[0].r=qr+1;nz[0].c=qc+1;nz[1].r=qr-1;nz[1].c=qc-1;window.__T={A:a,F:nz[0],R:nz[1]};ids.kind='pl'}
-  S.mode='';HL.clear();render();for(let i=0;i<8;i++){draw();await W8(40)}return ids},kind);
+  S.mode='';HL.clear();render();for(let i=0;i<8;i++){draw();await W8(40)}
+  /* the piece's net FLIGHT (312's BST100.nets entry, wind+fly = 700 ms at speed 1) starts at the first draw; the net is only in the piece's slot once it has landed — without this wait the order check raced the 700 ms mark (failed at ~650-700 ms elapsed) */
+  for(let i=0;i<60;i++){const T=(BST100.net.wind+BST100.net.fly)*bst100K(),now=performance.now();if(!BST100.nets.some(x=>x.u===window.__T.A&&now-x.t0<T+60))break;draw();await W8(50)}
+  return ids},kind);
 const order=(pg,ids)=>pg.evaluate(async(ids)=>{const A=window.__T.A,F=window.__T.F,R=window.__T.R;
   NET105.rec=[];draw();const rec=NET105.rec;NET105.rec=null;
   const fig=u=>rec.findIndex(e=>e.k==='fig'&&e.u===u),net=rec.map((e,i)=>e.k==='net'&&e.u===A?i:-1).filter(i=>i>=0);
