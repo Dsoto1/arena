@@ -1,0 +1,478 @@
+[
+ {
+  "k": "🛣 On the road from {0} · trip paid by the games",
+  "w": "360-v105mw.js:184"
+ },
+ {
+  "k": "🛣 Booked for {0} from {1} · trip paid by the games",
+  "w": "360-v105mw.js:184"
+ },
+ {
+  "k": "Holds · {0} of {1}",
+  "w": "371-v105pot.js:20"
+ },
+ {
+  "k": "🤝 {0} cannot take {1} on loan right now.",
+  "w": "379-v105loan.js:20"
+ },
+ {
+  "k": "earned the rudis at {0} ({1}) — the request waits for the off-season",
+  "w": "380-v105rudis.js:29"
+ },
+ {
+  "k": "Rudis · off-season",
+  "w": "380-v105rudis.js:30"
+ },
+ {
+  "k": "{0} earns the rudis ({1}) — the request comes in the off-season",
+  "w": "380-v105rudis.js:30"
+ },
+ {
+  "k": "the off-season",
+  "w": "380-v105rudis.js:38"
+ },
+ {
+  "k": "🗡 <b>{0}</b> has earned the <b>rudis</b> and asks for it — your call on the off-season page.",
+  "w": "380-v105rudis.js:44"
+ },
+ {
+  "k": "earned the rudis — and chose to fight on",
+  "w": "380-v105rudis.js:46"
+ },
+ {
+  "k": "👛 <b>{0}</b> asks to buy their freedom for {1} — decide on the off-season page.",
+  "w": "380-v105rudis.js:50"
+ },
+ {
+  "k": "{0} freedom ask{1} waiting",
+  "w": "380-v105rudis.js:54"
+ },
+ {
+  "k": "🔒 The week is locked in — nothing changes until next week.",
+  "w": "373-v105yard.js:78"
+ },
+ {
+  "k": "↻ Planned as last week — Lock in all to make it count.",
+  "w": "373-v105yard.js:84"
+ },
+ {
+  "k": "🔒 Locked in — {0} fighter{1} drill {2} {3} this week.",
+  "w": "373-v105yard.js:86"
+ },
+ {
+  "k": "🔒 The week's plan is locked in.",
+  "w": "373-v105yard.js:86"
+ },
+ {
+  "k": "🧑‍🏫 Team drill {0} {1}: {2} fighter{3} ({4}+{5}, +{6}%)",
+  "w": "373-v105yard.js:100"
+ },
+ {
+  "k": "Lv {0} (cap Lv {1})",
+  "w": "373-v105yard.js:124"
+ },
+ {
+  "k": "+{0} from {1}",
+  "w": "373-v105yard.js:124"
+ },
+ {
+  "k": "your Doctore",
+  "w": "373-v105yard.js:124"
+ },
+ {
+  "k": "no drill (0 h)",
+  "w": "373-v105yard.js:124"
+ },
+ {
+  "k": "Lv {0} · free",
+  "w": "373-v105yard.js:125"
+ },
+ {
+  "k": "Lv {0} · +{1} h",
+  "w": "373-v105yard.js:125"
+ },
+ {
+  "k": "Lv {0} · ✓",
+  "w": "373-v105yard.js:125"
+ },
+ {
+  "k": "Lv {0} · {1} h",
+  "w": "373-v105yard.js:125"
+ },
+ {
+  "k": "+{0} from {1} (your Doctore advisor)",
+  "w": "373-v105yard.js:126"
+ },
+ {
+  "k": "needs his time",
+  "w": "373-v105yard.js:128"
+ },
+ {
+  "k": "Needs Yard {0}",
+  "w": "373-v105yard.js:130"
+ },
+ {
+  "k": "{0} h with him opens it",
+  "w": "373-v105yard.js:130"
+ },
+ {
+  "k": "Give the Doctore time to run a drill",
+  "w": "373-v105yard.js:131"
+ },
+ {
+  "k": "✓ The squad drills this — locked in",
+  "w": "373-v105yard.js:131"
+ },
+ {
+  "k": "✓ The squad drills this",
+  "w": "373-v105yard.js:131"
+ },
+ {
+  "k": "His own drill this week",
+  "w": "373-v105yard.js:135"
+ },
+ {
+  "k": "Sits out — tap to drill",
+  "w": "373-v105yard.js:136"
+ },
+ {
+  "k": "Drills — tap to sit him out",
+  "w": "373-v105yard.js:136"
+ },
+ {
+  "k": "No team drill this week.",
+  "w": "373-v105yard.js:137"
+ },
+ {
+  "k": "{0} of {1} fit fighters drill · {2} + {3}",
+  "w": "373-v105yard.js:137"
+ },
+ {
+  "k": "Pick a drill he can run, or give him more time.",
+  "w": "373-v105yard.js:137"
+ },
+ {
+  "k": "The Doctore · this week",
+  "w": "373-v105yard.js:139"
+ },
+ {
+  "k": "runs ONE team drill · his level now:",
+  "w": "373-v105yard.js:139"
+ },
+ {
+  "k": "Time with him",
+  "w": "373-v105yard.js:140"
+ },
+ {
+  "k": "Less time",
+  "w": "373-v105yard.js:140"
+ },
+ {
+  "k": "More time",
+  "w": "373-v105yard.js:140"
+ },
+ {
+  "k": "from the training hours · Yard {0}/3 · drills +{1}%",
+  "w": "373-v105yard.js:141"
+ },
+ {
+  "k": "📜 Studied the card",
+  "w": "373-v105yard.js:142"
+ },
+ {
+  "k": "📜 Study the card · 1 h",
+  "w": "373-v105yard.js:142"
+ },
+ {
+  "k": "Intensity · the whole squad",
+  "w": "373-v105yard.js:143"
+ },
+ {
+  "k": "Gains and fatigue of the team drill and every session.",
+  "w": "373-v105yard.js:143"
+ },
+ {
+  "k": "Previous drill",
+  "w": "373-v105yard.js:144"
+ },
+ {
+  "k": "Team drill · {0} of {1}",
+  "w": "373-v105yard.js:145"
+ },
+ {
+  "k": "Next drill",
+  "w": "373-v105yard.js:147"
+ },
+ {
+  "k": "Who drills · tap to sit a fighter out",
+  "w": "373-v105yard.js:148"
+ },
+ {
+  "k": "The squad · own sessions",
+  "w": "373-v105yard.js:149"
+ },
+ {
+  "k": "Own sessions · training hours",
+  "w": "373-v105yard.js:155"
+ },
+ {
+  "k": "No sessions and no team drill this week.",
+  "w": "373-v105yard.js:159"
+ },
+ {
+  "k": "Team drill: {0} {1} ({2} + {3}) on top of his sessions.",
+  "w": "373-v105yard.js:167"
+ },
+ {
+  "k": "His own drill this week: {0} {1} 🔒",
+  "w": "373-v105yard.js:167"
+ },
+ {
+  "k": "Sits out the team drill this week.",
+  "w": "373-v105yard.js:167"
+ },
+ {
+  "k": "No team drill for him this week.",
+  "w": "373-v105yard.js:167"
+ },
+ {
+  "k": "a bout with a housemate · 🏃 +0.25 · 💪 +0.25 each",
+  "w": "373-v105yard.js:180"
+ },
+ {
+  "k": "⏳ 2 h each · 😮‍💨 +{0}",
+  "w": "373-v105yard.js:180"
+ },
+ {
+  "k": "⏳ {0} h · {1} · 😮‍💨 +{2}",
+  "w": "373-v105yard.js:181"
+ },
+ {
+  "k": "a real fight · kill it: +{0} to a rating",
+  "w": "373-v105yard.js:182"
+ },
+ {
+  "k": "⏳ {0} h + fee · 😮‍💨 a real fight",
+  "w": "373-v105yard.js:182"
+ },
+ {
+  "k": "{0} has had his trial this week",
+  "w": "373-v105yard.js:184"
+ },
+ {
+  "k": "⚔ Trial of the Yard · one a week per fighter",
+  "w": "373-v105yard.js:188"
+ },
+ {
+  "k": "Previous trial",
+  "w": "373-v105yard.js:189"
+ },
+ {
+  "k": "Next trial",
+  "w": "373-v105yard.js:191"
+ },
+ {
+  "k": "Sessions {0}/{1}",
+  "w": "373-v105yard.js:197"
+ },
+ {
+  "k": "· not locked",
+  "w": "373-v105yard.js:197"
+ },
+ {
+  "k": "Drill: {0}",
+  "w": "373-v105yard.js:198"
+ },
+ {
+  "k": "Drill: {0} (own)",
+  "w": "373-v105yard.js:198"
+ },
+ {
+  "k": "Drill: sits out",
+  "w": "373-v105yard.js:198"
+ },
+ {
+  "k": "Drill: —",
+  "w": "373-v105yard.js:198"
+ },
+ {
+  "k": "Trial: {0}",
+  "w": "373-v105yard.js:199"
+ },
+ {
+  "k": "Trial: —",
+  "w": "373-v105yard.js:199"
+ },
+ {
+  "k": "🔒 Locked in",
+  "w": "373-v105yard.js:202"
+ },
+ {
+  "k": "Lock in all",
+  "w": "373-v105yard.js:202"
+ },
+ {
+  "k": "Nothing changes until next week.",
+  "w": "373-v105yard.js:203"
+ },
+ {
+  "k": "Locks sessions, the Doctore's time, intensity and the drill.",
+  "w": "373-v105yard.js:203"
+ },
+ {
+  "k": "Training hours left",
+  "w": "373-v105yard.js:217"
+ },
+ {
+  "k": "Pick a fighter in <b>the squad</b>; his <b>own sessions</b> show each rating — 🏃 Speed, 💪 Strength, 📜 Tactics, 🎭 Crowd — and what this week's work adds.",
+  "w": "373-v105yard.js:223"
+ },
+ {
+  "k": "Press <b>+</b> on a rating to plan a <b>session</b> for {0}. Each takes one of the house's training hours; a fighter takes at most <b>{1} a week</b>.",
+  "w": "373-v105yard.js:224"
+ },
+ {
+  "k": "Give <b>the Doctore</b> time: press <b>+</b>. His hours come from the same training hours — 1 h opens his Lv 1 drills, every 2 more hours one level more; your Yard sets his cap.",
+  "w": "373-v105yard.js:225"
+ },
+ {
+  "k": "He runs <b>one team drill</b> for the whole squad — two ratings at once, with his bonus. Pick it with ‹ ›. Every fit fighter does it; tap a fighter's chip to sit him out.",
+  "w": "373-v105yard.js:226"
+ },
+ {
+  "k": "A plan is only a plan: press <b>🔒 Lock in all</b>. It locks the sessions, his hours, the intensity and the drill — nothing changes until next week.",
+  "w": "373-v105yard.js:227"
+ },
+ {
+  "k": "<b>Your Doctore.</b> <b>Intensity</b> works only with his hours: more gain, more fatigue for the team drill and every session. <b>↻ Same as last week</b> repeats the whole plan.",
+  "w": "373-v105yard.js:228"
+ },
+ {
+  "k": "<b>⚔ Trial of the Yard</b>: cycle ‹ › between a spar with a housemate, an exhibition against a rival house and the beast pen — one a week per fighter. Not today: we have a card to fight.",
+  "w": "373-v105yard.js:229"
+ },
+ {
+  "k": "<b>Training Yard.</b> Give the Doctore time for a team drill, press <b>+</b> on a rating for a fighter's own session, then <b>🔒 Lock in all</b> — only a locked plan trains.",
+  "w": "373-v105yard.js:230"
+ },
+ {
+  "k": "Signed recently: no offers for him yet",
+  "w": "378-v105rec.js:41"
+ },
+ {
+  "k": "🆕 settling in · {0} wk",
+  "w": "378-v105rec.js:41"
+ },
+ {
+  "k": "{0} signed only lately — he is settling in for {1} more weeks; no offers yet.",
+  "w": "378-v105rec.js:42"
+ },
+ {
+  "k": "{0} signed with {1}",
+  "w": "378-v105rec.js:48"
+ },
+ {
+  "k": "<b>{0}</b> signed with <b>{1}</b> — their terms beat yours.",
+  "w": "378-v105rec.js:48"
+ },
+ {
+  "k": "Sica takes no seed (wildcard only)",
+  "w": "381-v105seed.js:19"
+ },
+ {
+  "k": "Seed #{0} · rests in Round 1",
+  "w": "381-v105seed.js:21"
+ },
+ {
+  "k": "Seed #{0}",
+  "w": "381-v105seed.js:21"
+ },
+ {
+  "k": "Ties: points, then win rate, then fame",
+  "w": "381-v105seed.js:24"
+ },
+ {
+  "k": "Superbus seed from week 9 · seeds 1–4 rest in Round 1",
+  "w": "381-v105seed.js:27"
+ },
+ {
+  "k": "Seed",
+  "w": "381-v105seed.js:27"
+ },
+ {
+  "k": "(after week {0})",
+  "w": "381-v105seed.js:32"
+ },
+ {
+  "k": "After week {0}'s games.",
+  "w": "381-v105seed.js:32"
+ },
+ {
+  "k": "Home: {0} (from {1})",
+  "w": "382-v105home.js:22"
+ },
+ {
+  "k": "A bout",
+  "w": "384-v105start.js:28"
+ },
+ {
+  "k": "⚠ Match Week: {0} have no fit fighter",
+  "w": "384-v105start.js:35"
+ },
+ {
+  "k": "⚠ Match Week: {0} has no fit fighter",
+  "w": "384-v105start.js:35"
+ },
+ {
+  "k": "— {0} fit on the bench: promote one on the Roster or enter one",
+  "w": "384-v105start.js:36"
+ },
+ {
+  "k": "🛣 On the road to {0}",
+  "w": "383-v105riv.js:31"
+ },
+ {
+  "k": "from {0} · trip paid by the games",
+  "w": "383-v105riv.js:31"
+ },
+ {
+  "k": "⚠ Only {0} fit fighter{1}. Two must stand together: the house loses {2} fame and the editor fills {3} with free agents.",
+  "w": "383-v105riv.js:47"
+ },
+ {
+  "k": "⚔ Your pair vs {0}",
+  "w": "383-v105riv.js:49"
+ },
+ {
+  "k": "Set — the house has set off.",
+  "w": "383-v105riv.js:49"
+ },
+ {
+  "k": "The two best fit, picked for you. Change them until you set off.",
+  "w": "383-v105riv.js:49"
+ },
+ {
+  "k": "Set pair",
+  "w": "383-v105riv.js:50"
+ },
+ {
+  "k": "A free agent holds a place — set your pair.",
+  "w": "383-v105riv.js:51"
+ },
+ {
+  "k": "⚔ Your pair for Rivalry Week: <b>{0}</b> and <b>{1}</b>.",
+  "w": "383-v105riv.js:56"
+ },
+ {
+  "k": "killed in the league",
+  "w": "385-v105dead.js:29"
+ },
+ {
+  "k": "He has fallen.",
+  "w": "385-v105dead.js:31"
+ },
+ {
+  "k": "✝ Fallen this week",
+  "w": "385-v105dead.js:36"
+ }
+]
