@@ -11,7 +11,7 @@ for(const k of ['road','paid','home','bye']){
  const r=await pg.evaluate(async(k)=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),n=w.night,m=me();n.bye=false;delete n.selfBye;delete n.travel;n.scouted=null;
   const home=travelHome(m);if(k==='home')n.loc=home;else if(n.loc===home)n.loc=home===6?5:6;
   if(k!=='home'&&k!=='bye'){const t=travelState(w);if(k==='paid')t.paid=true}
-  rosterOf(m)[0].wantFight={week:w.week};if(k==='bye')n.bye=true;
+  {const g0=rosterOf(m)[0];for(const b2 of (n.bouts||[]))b2.ents=b2.ents.filter(x=>x!==g0.id);g0.wantFight={week:w.week}} /* v1.05 B59: an ask clears once he is on the card, so he is taken off it first */if(k==='bye')n.bye=true;
   MGR_REDRAW();await W8(900);
   const q=s=>document.querySelector('#mgrBody '+s);const R=e=>e.getBoundingClientRect();const o={};
   const btn=q('.roomhd .walk96 [data-mg="city"]');o.btn=!!btn;o.anyCity=!!q('[data-mg="city"]');

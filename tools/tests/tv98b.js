@@ -15,11 +15,11 @@ await until(()=>document.querySelector('#mBody .pn98 .pn98go #goBtn'));
 await pg.evaluate(async()=>{const s=document.getElementById('evSel');s.value='familia';s.dispatchEvent(new Event('change',{bubbles:true}))});
 await until(()=>CFG.ev==='familia'&&document.querySelector('#mBody .pn98 .pn98cnt'));await W8(300);
 const A=await pg.evaluate(()=>{const q=s=>document.querySelector('#mBody '+s);const g=q('.pn98 .pn-top .pn-acts .pn98go');const r=g?g.getBoundingClientRect():{};
-  const kids=g?[...g.children].map(x=>x.matches('.pn-sum')?'sum':x.matches('[data-pnrand90]')?'dice':x.id==='goBtn'?'go':'?'):[];
+  const kids=g?[...g.children].map(x=>x.matches('.pn-sum')?'sum':x.matches('[data-pnrand90]')?'dice':x.id==='goBtn'?'go':x.id==='mClose'?'home':'?'):[];
   return {kids:kids.join(','),right:r.right,top:r.top,w:innerWidth,title:getComputedStyle(document.getElementById('mTitle')).display,start:!!q('.pn-start'),
     sum:(q('.pn98go .pn-sum')||{}).textContent||'',go:(q('#goBtn')||{}).textContent||'',diceTxt:(q('[data-pnrand90]')||{}).getAttribute&&q('[data-pnrand90]').getAttribute('aria-label'),
     head:(q('.pn98h')||{}).textContent,badge:!!q('.pn98pc .pn-badge'),cnt:[...document.querySelectorAll('#mBody .pn98cnt button')].map(x=>x.textContent+(x.disabled?'-':'')+(x.classList.contains('on')?'*':'')).join(' ')}});
-ok(A.kids==='sum,dice,go'&&A.right>A.w*0.8&&A.top<70,'upper-right group: summary · 🎲 · Begin Event '+JSON.stringify(A));
+ok(A.kids==='sum,dice,go,home'&&A.right>A.w*0.8&&A.top<70,'upper-right group: summary · 🎲 · Begin Event · main menu (v1.05 367) '+JSON.stringify(A));
 ok(A.title==='none'&&A.head&&!A.start,'"Play Now" heads the bar, the old title and bottom bar are gone');
 ok(/Familia/.test(A.sum)&&/Begin Event/.test(A.go)&&/Random event/.test(A.diceTxt||''),'summary + Begin Event + dice label');
 ok(A.badge&&/^2- 3- 4 5 6\*? 7 8$/.test(A.cnt.replace(/\*/g,'').trim().replace(/(\d)-/g,'$1-'))&&/\*/.test(A.cnt),'count picker under the badge '+A.cnt);
