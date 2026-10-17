@@ -34,3 +34,6 @@
 - B41 (beta 2 screenshot): a netted snake's NET (the bell/dome cage) is drawn over a gladiator standing on the tile in front of it — the cage
   crosses his body. Fix: draw the net with the netted piece in depth order (behind pieces in front of its tile, in front of pieces behind),
   never in a late overlay pass.
+- B42 (his ask, beta 2): attacking a blessing pot with too little damage (04-rules doAttack: "the pot holds (needs 2)" only in the log) shows
+  nothing on the board. Add a short readout ABOVE the pot (the same family as the hit readouts, 277/303): e.g. "Holds · 1 of 2" (and
+  "Miss" when no hit); a small shake of the pot; Reduce motion / Animations Off = the text only. Small feedback, not a rule change.
