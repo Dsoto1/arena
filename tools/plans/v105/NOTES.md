@@ -20,3 +20,5 @@
   pillar at the arena edge) — the seat disc (grey disc, dark ring, gold rim) draws OVER his shins/feet. 359 moved the glide/target/truce rings;
   this path is still drawn after the figure (likely the move-phase / selection overlay or the seat disc itself). Find it by recording the draw
   order at that cell, put every floor mark under the figure.
+- B37 (beta 1 screenshot, 2026-10-17): with the token BASE toggled off (346), a gladiator's beige base disc still shows — intermittently.
+  Likely the same path as B36 (one draw path ignores the toggle and the floor order). Sent to the B36 builder (366-v105fixb3).
