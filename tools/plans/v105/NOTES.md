@@ -16,3 +16,7 @@
 - D  x1a Renown bar (perk points from one bar) — 363-v105renown
 - Beta 1 (2026-10-17): "new manager careers start in season 5" — by design since v0.22 (careers join the shared empire calendar). His q1a:
   new careers start at Season 1 week 1 on their own count; the empire calendar is separate (built as 365-v105cal).
+- B36 (beta 1 screenshot, 2026-10-17; B31/B32 not fixed): the ACTIVE gladiator on his move (orange "1" move tiles shown, 3D mini, beside a
+  pillar at the arena edge) — the seat disc (grey disc, dark ring, gold rim) draws OVER his shins/feet. 359 moved the glide/target/truce rings;
+  this path is still drawn after the figure (likely the move-phase / selection overlay or the seat disc itself). Find it by recording the draw
+  order at that cell, put every floor mark under the figure.
