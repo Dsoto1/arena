@@ -29,3 +29,5 @@
   hidden under the header edge), the 🏛 Home tile sits lower and to the right, outside the row, over the scrollbar, and it MOVES on its own
   (stays put while the panel scrolls / is positioned separately). Fix: the three in ONE flex row inside the same container, same top, same
   height, nothing clipped, Home scrolls with the row (no fixed/absolute placement), check 1440 / 1000 / 760 / 390 px and while scrolling.
+- B40 (beta 2 screenshot): the stands fan's flag (321, "first fan of each gladiator holds his flag") floats beside the pole — a gap between
+  the pole and the cloth. Fix: the flag's hoist edge sits on the pole near its top (both facings, every zoom, the 3D crowd 313 too).
