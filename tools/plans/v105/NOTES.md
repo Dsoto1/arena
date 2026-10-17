@@ -90,3 +90,6 @@
   roster freeze, 3 no releases in the playoff weeks). HIS ANSWER d1a d2-1,2,3 (2026-10-17) — built in v1.06 (new rules).
 - B54 (his ask): Recruiting keeps the selected recruit's options in view — no jump to the top after scouting/pitching/offers; selecting a recruit scrolls his options panel into view (with B49–B52, 378).
 - B55 (beta 2): accepted a loan request (2 weeks + a coin sum) from its LETTER, but the fighter stayed on his roster, not lent out. Investigate the letter's accept path vs 47 offyes / lendTo (+ the 343/345/350 wrappers that can refuse silently).
+- B56 (his call): gladiators ask for the RUDIS (their freedom) only in the OFF-SEASON — after the Winter festival once it exists (v1.07
+  Winter Classic); until then in the off-season (348/349, with the renewals). No rudis requests during the 12 weeks or the playoffs.
+  REPLACES rudis asks at any week (17/157/351 paths).

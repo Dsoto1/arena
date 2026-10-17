@@ -749,3 +749,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - Decided 2026-10-17 (his d1a d2-1,2,3; v1.06): trade/loan deadline end of week 8 (rivals + Sica too, week-7 warning letter); after it free
   agents only into an empty spot under the cap, the Superbus roster frozen at the deadline, no releases in the playoff weeks. Today trades
   and loans are open all season (REPLACED).
+- Decided 2026-10-17: rudis requests only in the off-season (after the Winter festival once built); REPLACES asks during the season.
