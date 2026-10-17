@@ -87,7 +87,7 @@ const rec=await ev(pg,async()=>{const r={};const w=W_(),pm=me();for(const g of w
   /* offers next week */
   for(const x of fa.slice(2,cap))x.favd=false;bd104Sync(w);
   const h=fa[1];h.favd=true;h.interest[pm.id]=99;const ask=askWage(h);let s=of104Send(w,h,{wage:Math.ceil(ask*1.6),weeks:10,bonus:0});r.sent=s.ok&&!h.contract&&!!w.of104[h.id];
-  const l=fa[2];l.favd=true;s=of104Send(w,l,{wage:Math.max(1,Math.floor(ask*0.3)),weeks:8,bonus:0});r.sentLow=s.ok;r.dup=!of104Send(w,h,{wage:ask,weeks:8}).ok;
+  const l=fa[2];l.favd=true;s=of104Send(w,l,{wage:Math.max(1,Math.floor(askWage(l)*0.3)),weeks:8,bonus:0}) /* the insult is judged against l's OWN ask (351: eff < ask*0.75) — an offer sized on h's ask could be fine for a cheaper l and never scare */;r.sentLow=s.ok;r.dup=!of104Send(w,h,{wage:ask,weeks:8}).ok;
   await GO('recruit');MGR.sel=h.id;MGR.recStep=3;await GO('recruit');r.ui=!!document.querySelector('.pipeline .bd104')&&!!document.querySelector('.pipeline .of104c');
   /* the yes/no-time roll hashes the world id: pin it so a generous offer to a keen recruit always signs (the roll has its own unit check) */
   const pm0=W104.of.pMin;W104.of.pMin=1;

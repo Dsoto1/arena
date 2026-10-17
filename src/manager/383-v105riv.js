@@ -13,7 +13,9 @@ const RIV105={key:'flavius_v105rivoff'};
 function riv105Off(){try{return localStorage.getItem(RIV105.key)==='1'}catch(e){return false}}
 const riv105Wk=w=>!!(w&&!w.tutorial&&w.night&&w.night.rivalry&&!w.night.bye&&!w.night.selfBye);
 /* the game's own fitness: alive, not a lanista, no injury (even a healed-by-date one still needs treating), not resting this week */
-function riv105Fit(g,w){w=w||W_();return !!g&&g.alive!==false&&!g.lanista&&!g.inj&&!(g.restWk!=null&&g.restWk===w.week)}
+function riv105Fit(g,w){w=w||W_();return !!g&&g.alive!==false&&!g.lanista&&!g.inj&&!(g.restWk!=null&&g.restWk===w.week)&&!riv105Barred(g)}
+/* 319's rule of who may be entered at all (in an infirmary bed, a lost limb, away at war): the sweep takes such a fighter off the card at once and puts a free agent in his place, so he is never fit for the pair */
+function riv105Barred(g){try{return typeof r101Block==='function'&&!!r101Block(g)}catch(e){return false}}
 /* ---- pairing: the player's house is never the odd house out ---- */
 {const base=rivalPairs;rivalPairs=function(w){const P=base.apply(this,arguments);try{if(riv105Off())return P;const pm=me();
   if(pm&&P.bye.includes(pm.id)&&P.pairs.length){let best=null,bs=-1e9;

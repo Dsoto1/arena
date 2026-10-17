@@ -106,8 +106,8 @@ const E=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   const cnt=()=>{const b=document.querySelector('#desk99 .lu100mb b');return b?+b.textContent:0};const n0=cnt();
   env.open=true;await W8(300);MGR_REDRAW();await W8(400);const n1=cnt();o.counts=[n0,n1];o.dropRead=n1===n0-1;
   if(rev){const r2=document.querySelector('details.rev91');r2.open=true;await W8(300);MGR_REDRAW();await W8(400);o.revRead=cnt()===n1-1}
-  /* a desk row from a read letter does not count on the rail */
-  sendLetter(w,{key:'t102b',kind:'letter',from:'the Quaestor',seal:'📊',title:'Act test',body:'<p>x</p><button class="btn tksm" type="button" data-mg="tab" data-id="league">League</button>',until:w.week+1});
+  /* a desk row from a read letter does not count on the rail (a letter with a real answer button is a task; since 378 a letter with only tab/bracket buttons is plain information, no row) */
+  sendLetter(w,{key:'t102b',kind:'letter',from:'the Quaestor',seal:'📊',title:'Act test',body:'<p>x</p><button class="btn tksm" type="button" data-t102="x">Do it</button>',until:w.week+1});
   MGR_REDRAW();await W8(400);const t0=ludusTodo73();w.mailRead.push('L:t102b');MGR_REDRAW();await W8(300);const t1=ludusTodo73();o.rail=[t0,t1];o.railDrop=t1===t0-1;
   /* File away ✓ files it */
   document.querySelector('details.mail[data-mail="L:t102a"] button.fa102').click();await W8(400);o.filed=(w.letters.find(l=>l.key==='t102a')||{}).read===true&&!document.querySelector('details.mail[data-mail="L:t102a"]');

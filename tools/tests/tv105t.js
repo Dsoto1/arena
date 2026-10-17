@@ -31,12 +31,14 @@ out.w11=await ev(pg,async()=>{const w=W_(),pm=me();const r={};let g=0;while(wkOf
   r.neverBye=Array.from({length:60},()=>rivalPairs(w).bye.includes(pm.id)).every(x=>!x);
   await PW();r.wk=wkOf(w.week);const n=w.night;r.riv=!!n.rivalry;const b=n.bouts.find(x=>x.rivalry&&(x.rivalry.a===pm.id||x.rivalry.b===pm.id));r.has=!!b;
   if(b){const mine=b.ents.map(gById).filter(x=>x&&x.contract&&x.contract.mgr===pm.id);r.mine=mine.length;const other=b.rivalry.a===pm.id?b.rivalry.b:b.rivalry.a;r.rival=b.ents.map(gById).filter(x=>x&&x.contract&&x.contract.mgr===other).length;
-    const fit=rosterOf(pm).filter(x=>riv105Fit(x,w)).sort((x,y)=>effOvr(y)-effOvr(x)).slice(0,2).map(x=>x.id);r.best=mine.every(x=>fit.includes(x.id))}
+    const fit=rosterOf(pm).filter(x=>riv105Fit(x,w)).sort((x,y)=>effOvr(y)-effOvr(x)).slice(0,2).map(x=>x.id);r.best=mine.every(x=>fit.includes(x.id));
+    /* the seats a house CAN fill: ten weeks of bouts leave fighters hurt, in a bed or without a limb (not enterable), and a house with fewer than two fit fighters is filled up from the free agents (the forfeit rule) — expect min(2, fit), not always 2 */
+    r.wantMine=Math.min(2,rosterOf(pm).filter(x=>riv105Fit(x,w)).length);r.wantRival=Math.min(2,rivalEligible(w,mgrById(other),w.week).filter(x=>!r101Block(x)).length)}
   /* B62: away city, the trip costs nothing */
   const L=n.loc===6?4:6;pm.city=LOCATIONS[n.loc===6?4:6].n;n.travel=null;const c0=pm.coin;const t=travelState(w);r.cost=t.cost;r.free=!!t.free105;r.paid=t.paid;r.coin=pm.coin-c0;
   r.card=travelCardHTML();return r});
 ok(out.w11.wk10===10&&out.w11.pairsPm&&out.w11.noCommit&&out.w11.neverBye,'week 10 lock, no letter opened '+JSON.stringify(out.w11));
-ok(out.w11.wk===11&&out.w11.riv&&out.w11.has&&out.w11.mine===2&&out.w11.rival===2&&out.w11.best,'house and rival seated, best two '+JSON.stringify(out.w11));
+ok(out.w11.wk===11&&out.w11.riv&&out.w11.has&&out.w11.mine===out.w11.wantMine&&out.w11.rival===out.w11.wantRival&&out.w11.best,'house and rival seated, best two '+JSON.stringify(out.w11));
 ok(out.w11.cost>0&&out.w11.free&&out.w11.paid&&out.w11.coin===0&&/paid by the games/.test(out.w11.card),'trip free '+JSON.stringify(out.w11));
 
 /* ---- edit the pair until set-off ---- */
@@ -50,10 +52,10 @@ ok(out.edit.card&&(out.edit.n<3||out.edit.ok)&&out.edit.locked&&out.edit.dis,'ed
 /* ---- fewer than 2 fit: the warning + the forfeit rule, then healing reseats ---- */
 const pg2=await open(false);
 out.few=await ev(pg2,async()=>{const w=W_(),pm=me();const r={};let g=0;while(wkOf(w.week)<10&&g++<12)if(!await PW())break;
-  const ros=rosterOf(pm);for(const x of ros.slice(1))x.inj={until:w.week+3,label:'t',pen:2};const f0=pm.fame;await PW(true);
+  const ros=rosterOf(pm);/* a clean slate: no limb lost, nobody in a bed (319 would bar him from the card), so exactly the first one is fit */for(const x of ros){x.severed=[];x.restWk=null}w.beds76=[];ros[0].inj=null;for(const x of ros.slice(1))x.inj={until:w.week+3,label:'t',pen:2};const f0=pm.fame;await PW(true);
   r.wk=wkOf(w.week);const n=w.night;const b=riv105Bout(w).b;const own=()=>riv105Bout(w).slots.map(s=>gById(b.ents[s])).filter(x=>x&&x.contract&&x.contract.mgr===pm.id).length;
   r.fit=rosterOf(pm).filter(x=>riv105Fit(x,w)).length;r.own=own();r.fameDrop=f0-pm.fame;r.html=nightHTML();r.warn=/Only 1 fit fighter/.test(r.html);
-  for(const x of rosterOf(pm))x.inj=null;const h2=nightHTML();r.own2=own();r.warn2=/Only \d fit fighter/.test(h2);return r});
+  for(const x of rosterOf(pm)){x.inj=null;x.severed=[]}w.beds76=[];const h2=nightHTML();r.own2=own();r.warn2=/Only \d fit fighter/.test(h2);return r});
 ok(out.few.wk===11&&out.few.fit===1&&out.few.own<=1&&out.few.warn&&out.few.fameDrop>=1,'one fit fighter: warning + forfeit '+JSON.stringify({...out.few,html:0}));
 ok(out.few.own2===2&&!out.few.warn2,'healed: reseated '+JSON.stringify({...out.few,html:0}));
 

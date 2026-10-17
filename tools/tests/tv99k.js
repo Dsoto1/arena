@@ -9,7 +9,7 @@ const open=async(W,H,off)=>{const pg=await b.newPage({viewport:{width:W,height:H
   await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
     const w=W_(),pm=me(),ros=rosterOf(pm);ros[0].inj={until:w.week+2,label:'a gashed thigh',pen:3};pm.perkPts=2;w.train='off';w.pend=[{t:'thumb',gid:ros[2].id,bi:0,f:18}];
     const riv=w.mgrs.find(x=>!x.isPlayer&&rosterOf(x).length);const th=rosterOf(riv)[0];w.offers=[{id:'o99k',kind:'swap',mid:riv.id,gid:ros[1].id,give:[th.id],coin:25,until:w.week+1}];
-    sendLetter(w,{key:'t99btn',kind:'letter',from:'the tester',seal:'🧪',title:'Answer me',body:'<p>One button.</p><div class="acts"><button class="btn tksm" type="button" data-mg="tab" data-id="recruit">Go recruit</button></div>',until:w.week});
+    /* since 378 a letter whose buttons are only tab/bracket links is plain information (Letters); a real answer button keeps it a task row */sendLetter(w,{key:'t99btn',kind:'letter',from:'the tester',seal:'🧪',title:'Answer me',body:'<p>One button.</p><div class="acts"><button class="btn tksm" type="button" data-t99="go">Do it</button></div>',until:w.week});
     sendLetter(w,{key:'t99act',kind:'letter',from:'the tester',seal:'🧭',title:'Chosen by act',body:'<p>No button, but the sender says it needs an answer.</p>',until:w.week,act:{ic:'🧭',line:'<b>Act row</b> chosen by the sender',tier:2}});
     sendLetter(w,{key:'t99news',kind:'letter',from:'the tester',seal:'📰',title:'Just news',body:'<p>Nothing to do.</p>',until:w.week});
     for(let k=0;k<5&&CUR_MODAL;k++){CUR_MODAL.done(null);await W8(200)}menuHide();openManager('ludus');await W8(1000);MGR.view=null;MGR.tab='ludus';MGR_REDRAW();await W8(500)});return pg};
@@ -21,7 +21,7 @@ const A=await pg.evaluate(()=>{const rows=[...document.querySelectorAll('#desk99
   return {one:document.querySelectorAll('#desk99').length===1&&!document.querySelector('#mgrBody #mailBox,#mgrBody .wkcheck,#mgrBody .lrow91'),n:rows.length,todo:ludusTodo73(),
     sorted:tiers.every((t,i)=>!i||t>=tiers[i-1]),tiers,verdict:!!ic('⚖')&&!ic('⚖').querySelector('[data-dk99x]')&&tiers[0]===1,
     hurt:!!ic('⚕'),perk:!!ic('🎓'),offer:!!rows.find(r=>r.querySelector('.dk99dec')&&/wants/.test(r.textContent)),
-    btn:!!row('L:t99btn')&&!!row('L:t99btn').querySelector('.dk99b [data-mg="tab"][data-id="recruit"]')&&!!row('L:t99btn').querySelector('.dk99l'),
+    btn:!!row('L:t99btn')&&!!row('L:t99btn').querySelector('.dk99b [data-t99="go"]')&&!!row('L:t99btn').querySelector('.dk99l'),
     act:!!row('L:t99act')&&+row('L:t99act').dataset.tier===2&&/Act row/.test(row('L:t99act').textContent),
     news:!!document.querySelector('#desk99 .dk99lt details.mail[data-mail="L:t99news"]')&&!row('L:t99news'),
     rail:vis.length===1&&+vis[0].textContent===rows.length&&!/✉/.test(lud.textContent),banner:(document.querySelector('.roomhd.b73-ludus')||document.body).textContent.includes(String(rows.length)),
