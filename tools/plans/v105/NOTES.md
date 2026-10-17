@@ -50,3 +50,7 @@
   they lock with the team drill).
   His layout asks: ⚔ Trials of the Yard (213 y92trials / 269 sticky right column) to a more main spot — maybe ONE tile cycling between the
   trials (spar / exhibition / beast pen); the Tabula + Doctore section to use the space better; TIME larger and more prominent. → mock-up first.
+- B44 mock-up published 2026-10-17: https://claude.ai/artifact/1b6VF1sbtfKs3aUi3Y7mkq (clickable). Banner with the week's TIME big; the
+  Doctore row (face · TIME with him big − N h + with the level ladder · Intensity, greyed without time · ONE team-drill tile cycled ‹ › ·
+  sit-out chips); the squad · the fighter's own sessions · ⚔ Trial of the Yard as ONE tile cycled ‹ › (spar / exhibition / beast pen);
+  the Tabula strip at the bottom with Same as last week + Lock in all (locks everything). Waiting for his ok / changes.
