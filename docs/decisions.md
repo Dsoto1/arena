@@ -737,3 +737,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   calendar where it stands" (17-manager newWorld) and the "behind the empire" banner for new careers. Running careers keep their numbers.
 - Decided 2026-10-17 (v1.05, his a): the main menu show always plays in 3D from strips rendered from the CURRENT figures; the flat-show
   fallback on a slow load is REPLACED by holding a still 3D frame until the strips are ready (282-v100menu MM100S.cap).
+- Decided 2026-10-17 (his l1a l2a): v1.06 = board visuals — one sun per arena (N12a, 2026-10-15), shadows on everything (E5a), beast
+  bodies + always 3D (N11a), sharp pieces (E6a); mock-up first. Winter Quarters moves to v1.07.
