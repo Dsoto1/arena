@@ -756,3 +756,7 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   (team drill card + who-drills chips), Lock in in the banner; the Armory, Recruiting and Training Yard banners are the slim Infirmary/Roster
   banner with their counters as chips. REPLACES the y1a mock-up's layout (373, approved 2026-10-17: the big banner hours plate, the stacked
   Doctore/time/intensity block, the full-width team drill card, Lock in at the page bottom) and the tall Armory/Recruiting banners.
+- Decided 2026-10-17 (his B73 l1a l2a): the Lanista and five World tab banners are the slim banner (League podium = 3 chips, Tituli = up to 4 small
+  trophy icons + "N of M earned"). REPLACES the v1.0 World painted banners (290-v100world, his W picks 2026-10-11) incl. the banner podium and plinths.
+- Decided 2026-10-17 (B74/B75): the City Square is locked until the house sets off (REPLACES beta 3's "Set off for X?" ask); the Match Week banner
+  drops the trip, world-event chip and temple/sand links (REPLACES those parts of 374's slim banner); the trip cost sits on the Set off button.

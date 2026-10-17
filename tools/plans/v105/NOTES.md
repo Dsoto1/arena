@@ -141,3 +141,5 @@
 - B75 (same screenshot): the Match Week banner (374 slim banner) drops the "Booked for Pompeii from Leptis Magna · trip 15" chip, the world-event
   chip ("Grain dole day · attendance and purses up") and the "the temple · walk the sand at the arena gate" links (both still inside the City
   Square). The trip cost moves into the Set off button ("🛣 Set off for Pompeii · 15").
+- Answers B73 (2026-10-17): L1a (League podium → three chips 🥇🥈🥉 with house parma + points in the slim banner) · L2a (Tituli → up to 4 small
+  earned-trophy icons + "N of M earned" in the slim banner). Lanista, News, Imperium, Season banners = the slim look, numbers as chips.
