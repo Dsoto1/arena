@@ -83,3 +83,4 @@
   rival's new signing); a "🆕 settling in · N wk" tag. REPLACES: no protection (Sica poach any unhappy fighter, trade asks any time).
 - B51 (his ask): a weekly task / letter suggesting a BARGAIN recruit clears itself as soon as that recruit is on your Recruiting board
   (already there, or put there later) — like the other tasks. Builds on v1.04 B10/B17 (353 l104Sweep).
+- B52 (his ask): the Your ludus mail panel hides itself when no letters are left; it comes back when one arrives (with B49–B51, 378).
