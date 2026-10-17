@@ -77252,13 +77252,22 @@ if(V105DEAD.on){
    Review round: the time block is two columns (− N h + over the Study chip | the Lv ladder over its two lines) and Intensity is 310 px,
         so the band has no empty strip under Intensity; once locked, the banner's 🔒 Locked in takes the Tabula's note as its title (no
         orphan note); the Armory title drops its own 🛡 (the medallion is it); phones: Armory / Recruiting keep ONE row (the counter's
-        number only, its label as the chip's title; a project chip wraps under).
+        number only; a project chip wraps under).
+   Review round 2: the top band is a grid sized to its content — Doctore | Time (its own width, no gap before Intensity) | Intensity
+        (the rest, ≥ 380 px so each button is ≥ 90 px: label on line 1, cost on line 2; idle, the four "needs his time" go: the note under
+        says it). A narrower Yard (laptops ≈1100–1300 px) keeps one band in two columns: Doctore over Intensity | Time beside both. The
+        Team drill card is as wide as its content. The counter chips get no title of their own (Recruiting keeps 319's data-tip; no two
+        tooltips); on phones the Armory's number carries a 🛡. The Doctore advisor's "+N from X" line is printed once: once he drills
+        the Doctore's level line says it, so the Time block's copy goes.
    Phones: the Yard banner wraps (face + title, then the chips + Lock in), so Lock in stays in the first screen. Static DOM, no animation.
    ===================================================================== */
 function cp105On(){try{return localStorage.getItem('flavius_v105compactoff')!=='1'}catch(e){return true}}
 /* Y1a + Y2a + Y3: the Yard */
 function cp105Yard(R){const root=R.querySelector('#mgrPane .y105');if(!root)return false;root.classList.add('cp105');
   const tm=root.querySelector('.y105doc .y105time');
+  /* the advisor's "+N from X" line: the Doctore's own level line already says it once he drills (Lv ≥ 1) — printed once */
+  const an=tm&&tm.querySelector(':scope>.y105advn'),wt=root.querySelector('.y105doc .y105who .y105sub'),wn=root.querySelector('.y105doc .y105who .y105nm');
+  if(an&&wt&&wn){const lb=wt.querySelector('b');if(lb&&wn.textContent.trim()&&lb.textContent.includes(wn.textContent.trim()))an.remove()}
   if(tm&&!tm.querySelector('.cp105tr')){const row=tm.querySelector(':scope>.y105row'),lad=tm.querySelector(':scope>.y105lads');
     if(row&&lad){const tr=document.createElement('div');tr.className='cp105tr';row.before(tr);
       /* left: − N h + with the Study chip under it · right: the Lv ladder with its lines under it (no empty strip under Intensity) */
@@ -77280,9 +77289,9 @@ function cp105Ban(R,tab){if(typeof rm100On!=='function'||!rm100On())return false
   /* the Armory's medallion is its 🛡: the title does not repeat it */
   if(tab==='armory'){const tb=hd.querySelector('.roomttl b'),tx=tb&&tb.firstChild;if(tx&&tx.nodeType===3)tx.nodeValue=tx.nodeValue.replace(/^\s*\u{1F6E1}\uFE0F?\s*/u,'')}
   if(tab!=='practice')hd.classList.add('cp105one');
-  for(const st of hd.querySelectorAll(':scope>.roomstat')){st.classList.add('rm100cnt','cp105c');
-    /* phones show the number only: its label stays readable on a long press / hover */
-    const lb=st.querySelector(':scope>span');if(lb&&!st.title&&tab!=='practice')st.title=lb.textContent.trim()}
+  if(tab==='armory')hd.classList.add('cp105arm');
+  /* no title of its own: the label is printed under the number (Recruiting keeps 319's data-tip; phones: the Armory's number carries a 🛡) */
+  for(const st of hd.querySelectorAll(':scope>.roomstat'))st.classList.add('rm100cnt','cp105c');
   const cnt=hd.querySelector(':scope>.y105hrs, :scope>.roomstat');
   if(tab==='practice'){const lk=R.querySelector('#mgrPane .y105tab [data-y105="lock"]');const hrs=hd.querySelector(':scope>.y105hrs');
     if(lk&&hrs){const acts=lk.closest('.y105acts');hd.appendChild(lk);
@@ -77324,29 +77333,32 @@ function cp105Ban(R,tab){if(typeof rm100On!=='function'||!rm100On())return false
 #mgrBody .roomhd.cp105ban>.y105lock{position:relative;z-index:2;flex:none;min-height:44px;max-height:52px;padding:0 18px;border-radius:8px;font-size:18px;white-space:nowrap}
 .y105.cp105{gap:10px}
 .y105.cp105 .y105doc{gap:10px;padding:10px 14px}
-.y105.cp105 .y105dtop{gap:10px 16px;align-items:flex-start}
-.y105.cp105 .y105who{flex:0 1 250px;align-items:flex-start;gap:10px}
+.y105.cp105 .y105dtop{display:grid;grid-template-columns:minmax(170px,220px) minmax(0,auto) minmax(380px,1fr);gap:10px 16px;align-items:start}
+.y105.cp105 .y105dtop>*{min-width:0}
+.y105.cp105 .y105who{align-items:flex-start;gap:10px}
 .y105.cp105 .y105face{width:52px;height:52px;font-size:28px;border-width:2px}
 .y105.cp105 .y105who .y105nm{font-size:20px}
-.y105.cp105 .y105time{flex:2 1 400px;gap:5px}
+.y105.cp105 .y105time{gap:5px}
 .y105.cp105 .cp105tr{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 14px}
-.y105.cp105 .cp105ts{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.y105.cp105 .cp105ts{flex:none;width:min-content;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
 .y105.cp105 .cp105tr .y105row{flex:none;gap:8px}
-.y105.cp105 .cp105tr .y105lads{min-width:0;gap:4px}.y105.cp105 .y105lad{font-size:11px;padding:1px 7px}
+.y105.cp105 .cp105tr .y105lads{min-width:0;gap:4px}.y105.cp105 .y105lad{font-size:10.5px;padding:1px 6px}
 .y105.cp105 .y105step{width:36px;height:36px;font-size:20px}
 .y105.cp105 .y105dh{min-width:58px;font-size:18px}.y105.cp105 .y105dh .y105big{font-size:34px}
 .y105.cp105 .cp105tl{flex:1 1 200px;display:flex;flex-direction:column;gap:3px;min-width:0}
-.y105.cp105 .cp105ts .y105mini{min-height:28px;padding:2px 8px;font-size:12px;max-width:100%;white-space:normal}.y105.cp105 .cp105tl .y105sub{font-size:12.5px;line-height:1.3}
-.y105.cp105 .y105int{flex:0 1 310px;gap:5px}
-.y105.cp105 .y105segs{gap:5px}.y105.cp105 .y105seg{min-height:38px;padding:2px 3px}.y105.cp105 .y105seg small{font-size:10.5px;line-height:1.15;white-space:normal;overflow:visible;text-overflow:clip;text-align:center;overflow-wrap:anywhere}
+.y105.cp105 .cp105ts .y105mini{min-height:28px;padding:2px 8px;font-size:12px;max-width:100%;white-space:normal;text-wrap:balance}.y105.cp105 .cp105tl .y105sub{font-size:12px;line-height:1.3}
+.y105.cp105 .y105int{gap:5px}
+.y105.cp105 .y105segs{gap:5px}.y105.cp105 .y105seg{min-height:38px;padding:2px 3px;font-size:13px}.y105.cp105 .y105seg b{max-width:100%;overflow:hidden;text-overflow:ellipsis}.y105.cp105 .y105doc.idle .y105seg small{display:none}.y105.cp105 .y105seg small{font-size:10.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
 .y105.cp105 .y105dbot{gap:10px 20px;padding-top:10px;align-items:flex-start}
 .y105.cp105 .y105drill{flex:0 1 auto;gap:8px}
-.y105.cp105 .y105dt{flex:0 1 auto;width:430px;max-width:100%;box-sizing:border-box;padding:6px 8px}
+.y105.cp105 .y105dt{flex:0 1 auto;width:max-content;max-width:min(560px,100%);box-sizing:border-box;padding:6px 12px 6px 8px}
 .y105.cp105 .y105dt .y105art{width:96px}.y105.cp105 .y105dt .y105art>.rm100fr{height:66px}.y105.cp105 .y105dt .y105ic{width:66px;height:66px;font-size:32px}
 .y105.cp105 .y105dt .y105nm{font-size:20px}
 .y105.cp105 .y105arr{width:40px;height:40px}
 .y105.cp105 .y105whod{flex:1 1 260px;gap:6px}
-@container y105 (max-width:620px){.y105.cp105 .y105who,.y105.cp105 .y105int{flex:1 1 100%}.y105.cp105 .y105drill{flex:1 1 100%}.y105.cp105 .y105dt{flex:1 1 auto;width:auto}}
+@container y105 (min-width:1500px){.y105.cp105 .y105dtop{grid-template-columns:minmax(200px,340px) minmax(0,auto) minmax(384px,1fr)}.y105.cp105 .cp105ts{width:auto}.y105.cp105 .cp105ts .y105mini{white-space:nowrap}}
+@container y105 (max-width:1000px){.y105.cp105 .y105dtop{grid-template-columns:minmax(300px,400px) minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"who time" "int time"}.y105.cp105 .y105who{grid-area:who}.y105.cp105 .y105time{grid-area:time}.y105.cp105 .y105int{grid-area:int}}
+@container y105 (max-width:620px){.y105.cp105 .y105dtop{grid-template-columns:minmax(0,1fr);grid-template-areas:"who" "time" "int"}.y105.cp105 .cp105ts{width:auto;flex-direction:row;flex-wrap:wrap;align-items:center}.y105.cp105 .cp105ts .y105mini{white-space:nowrap}.y105.cp105 .y105who,.y105.cp105 .y105int{flex:1 1 100%}.y105.cp105 .y105drill{flex:1 1 100%}.y105.cp105 .y105dt{flex:1 1 auto;width:auto}}
 @media (max-width:760px){#mgrBody .roomhd.cp105ban{gap:6px 10px;padding:8px 10px}#mgrBody .roomhd.cp105ban .roomttl{flex:1 1 calc(100% - 70px)}
   #mgrBody .roomhd.cp105ban .y105hrs{order:0;flex:0 0 auto;margin-left:0;display:grid;justify-items:start;align-items:start;gap:0;padding:3px 10px}
   #mgrBody .roomhd.cp105ban .y105hrs .y105big{font-size:20px}
@@ -77354,7 +77366,7 @@ function cp105Ban(R,tab){if(typeof rm100On!=='function'||!rm100On())return false
   #mgrBody .roomhd.cp105ban>.y105lock{flex:1 1 120px;min-height:42px;font-size:17px}}
 @media (max-width:600px){#mgrBody .roomhd.cp105ban.cp105one .roomttl{flex:1 1 0;min-width:110px}
   #mgrBody .roomhd.cp105ban.cp105one .roomstat.rm100cnt{order:1;flex:none;min-width:0;padding:3px 10px;margin-left:auto;justify-items:end;text-align:right}
-  #mgrBody .roomhd.cp105ban.cp105one .roomstat.rm100cnt .ptbox{font-size:18px}#mgrBody .roomhd.cp105ban.cp105one .roomstat.rm100cnt>span{display:none}
+  #mgrBody .roomhd.cp105ban.cp105one .roomstat.rm100cnt .ptbox{font-size:18px}#mgrBody .roomhd.cp105ban.cp105one .roomstat.rm100cnt>span{display:none}#mgrBody .roomhd.cp105ban.cp105arm .roomstat.rm100cnt .ptbox::after{content:" \\1F6E1";font-size:.8em}
   #mgrBody .roomhd.cp105ban.cp105one .bp104c{order:2;flex:1 1 100%}
   #mgrBody .roomhd.cp105ban{min-height:62px}#mgrBody .roomhd.cp105ban .roomttl b{font-size:19px}#mgrBody .roomhd.cp105ban .rm100adv{width:44px;height:44px}#mgrBody .roomhd.cp105ban .cp105md{font-size:22px}}
 `;document.head.appendChild(st)})();
