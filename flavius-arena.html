@@ -75399,11 +75399,11 @@ function yard104Locked(w,m){try{const P=thPlan(w);if(P.reglk)return true;
 
 /* ---------- B30 · a booked regrowth keeps him in bed; clicking the booked plate cancels ---------- */
 const hyg104=(g,w)=>!!(g&&w&&g.rg102&&g.rg102.wk===w.week&&(g.severed||[]).length);
-const HYG104T={t:0};
+const HYG104T={t:0,seen:''}; /* seen = the booking the plate last showed: the double-click guard runs from when the booked plate FIRST appears, so a slow redraw cannot let a second tap cancel */
 const HYG104_WHY=()=>_T("Hygeia's regrowth needs him in bed until the week ends");
 window.addEventListener('click',e=>{try{const w=w104mLive();if(!w)return;const t=e.target&&e.target.closest?e.target.closest('[data-unbed76],[data-mg="heal"]'):null;if(!t||!t.closest('#mgrBody'))return;
   if(t.hasAttribute('data-unbed76')){const g=gById(t.dataset.unbed76);if(hyg104(g,w)){e.preventDefault();e.stopImmediatePropagation();if(typeof mToast==='function')mToast('🛏 '+esc(HYG104_WHY()))}return}
-  const g=gById(t.dataset.id);if(!hyg104(g,w)){HYG104T.t=Date.now();return}
+  const g=gById(t.dataset.id);if(!hyg104(g,w)){HYG104T.t=Date.now();HYG104T.seen='';return}
   e.preventDefault();e.stopImmediatePropagation();if(Date.now()-HYG104T.t<700)return; /* a double click books once and does not cancel itself */
   const m=me();const hh=CARE101.h.heal,c=care101Coin('heal');
   const r=mh101Rec(w,m);if(r)r.u=Math.max(0,r.u-hh);m.coin+=c;g.rg102=null;try{ghist(g,_T`cancelled the Blessings of Hygeia`)}catch(x){}
@@ -75414,6 +75414,7 @@ function hyg104Skin(h){if(typeof h!=='string'||(h.indexOf('data-unbed76')<0&&h.i
   for(const b of t.content.querySelectorAll('[data-unbed76]')){if(!hyg104(gById(b.dataset.unbed76),w))continue;b.setAttribute('disabled','');b.classList.add('off');b.setAttribute('title',HYG104_WHY());
     const ok=b.querySelector('.v101ok');if(ok)ok.textContent=_T('✓ in bed · Hygeia needs him here');ch=true}
   for(const b of t.content.querySelectorAll('[data-mg="heal"]')){if(!hyg104(gById(b.dataset.id),w))continue;
+    const bk=b.dataset.id+'@'+w.week;if(HYG104T.seen!==bk){HYG104T.seen=bk;HYG104T.t=Date.now()}
     const ok=b.querySelector('.v101ok');if(ok)ok.textContent=_T('✓ booked · tap to cancel');b.setAttribute('title',_T('Booked for this week — tap to cancel (hours and coin come back)'));ch=true}
   return ch?t.innerHTML:h}
 {const base=mgrHTML;mgrHTML=function(){const h=base.apply(this,arguments);try{return hyg104Skin(h)}catch(e){console.error(e)}return h}}

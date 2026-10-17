@@ -25,7 +25,9 @@ out.inf=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   pm.coin=900;MGR_REDRAW();await W8(500);bd=q('[data-b105]');r.m14on=!bd&&!q('[data-mg="build"]');
   /* M1: bed, Hygeia once */
   const bed=q(`#mgrPane [data-bed76="${A.id}"]`);if(bed)bed.click();await W8(500);r.bed=inBed76(A);
-  let hy=q(`#mgrPane [data-mg="heal"][data-id="${A.id}"]`);r.hyTxt=!!hy&&/one limb a week/.test(hy.textContent)&&!hy.dataset.dis;const c0=pm.coin;if(hy)hy.click();await W8(500);
+  let hy=q(`#mgrPane [data-mg="heal"][data-id="${A.id}"]`);r.hyTxt=!!hy&&/one limb a week/.test(hy.textContent)&&!hy.dataset.dis;const c0=pm.coin;if(hy)hy.click();
+  /* v1.04 B30: a click on a BOOKED plate cancels the booking (hours + coin back) except inside a 700 ms double-click guard. The second click is therefore sent the moment the booked plate shows (polled), so a slow machine cannot turn it into a cancel; the cancel itself is asserted in tv104j. */
+  for(let k=0;k<100;k++){await W8(20);const p2=q(`#mgrPane [data-mg="heal"][data-id="${A.id}"]`);if(p2&&p2.dataset.dis)break}
   r.booked=!!A.rg102&&A.rg102.wk===w.week&&A.severed.length===2&&pm.coin<c0;
   hy=q(`#mgrPane [data-mg="heal"][data-id="${A.id}"]`);r.second=!!hy&&/One limb a week/.test(hy.dataset.dis||'');const c1=pm.coin;if(hy)hy.click();await W8(400);r.noSecond=pm.coin===c1&&A.severed.length===2;
   const l0=A.rg102&&A.rg102.l;const f0=A.fat;const wk0=w.week;for(const bo of w.night.bouts)bo.done=true;w.pend=[];
