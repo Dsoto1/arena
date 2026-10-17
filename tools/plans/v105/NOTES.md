@@ -79,3 +79,7 @@
   NOTICE (no deadline badge, no action button, no advice): "<name> signed with <house> (their terms beat yours)." It files itself.
 - B50 (his ask): no offers on a newly signed fighter for a burn-in period — no rival bid / trade ask / Sica poach / player offer on a
   fighter who signed recently. Length + scope asked (P1).
+- P1a (2026-10-17): burn-in = 4 weeks from signing for EVERY offer kind (rival bids, trade asks, Sica's poaching, the player's offers on a
+  rival's new signing); a "🆕 settling in · N wk" tag. REPLACES: no protection (Sica poach any unhappy fighter, trade asks any time).
+- B51 (his ask): a weekly task / letter suggesting a BARGAIN recruit clears itself as soon as that recruit is on your Recruiting board
+  (already there, or put there later) — like the other tasks. Builds on v1.04 B10/B17 (353 l104Sweep).

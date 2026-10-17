@@ -744,3 +744,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   per-fighter Doctore drills and "level = 1 + Yard + hours/2", and v1.04 B13 d1a's hours lock tied to a fighter's drill.
 - Decided 2026-10-17 (v1.05): Manager Match Week — at most ONE bout a week has the Golden Eagle (some weeks none); REPLACES eaglePot on every
   Manager bout. Infirmary: no build/buy buttons in the ward — buildings are bought in My Ludus only; REPLACES the ward's build buttons.
+- Decided 2026-10-17 (v1.05, his p1a): a newly signed fighter can't receive any offer for 4 weeks (rival bids, trade asks, Sica's poaching,
+  the player's offers); REPLACES no burn-in.
