@@ -23,7 +23,7 @@ o.i=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   r.card=!!document.querySelector('#mgrBody .card2.imm88.imm88m .imm88chip');
   const other=rosterOf(m).find(x=>x.id!==g.id);r.otherPlain=!other||!document.querySelector(`.st95chip[data-id="${other.id}"].imm88m`);
   /* Training Yard */
-  MGR.tab='practice';MGR.yd87=g.id;MGR_REDRAW();await W8(500);r.yard=!!document.querySelector('#mgrBody .yd76c.imm88m, #mgrBody .yo87r.imm88m, #mgrBody .y92c.imm88m');
+  MGR.tab='practice';MGR.yd87=g.id;MGR.tr92=g.id;MGR_REDRAW();await W8(500);r.yard=!!document.querySelector('#mgrBody .yd76c.imm88m, #mgrBody .yo87r.imm88m, #mgrBody .y92c.imm88m, #mgrBody .y105ses.imm88m') /* v1.05 B44: 373's own-sessions panel */;
   /* Match Week: his row framed, the others fear him */
   const n=w.night;const bt=n&&n.bouts&&n.bouts.find(x=>!x.done);if(bt){if(!bt.ents.includes(g.id))bt.ents[0]=g.id;MGR.tab='night';MGR_REDRAW();await W8(500);
     const fb=document.querySelector(`#mgrBody [data-mg="fav"][data-id="${g.id}"]`);r.night=!!(fb&&fb.closest('tr').classList.contains('imm88m'));r.fear=document.querySelectorAll('#mgrBody .fear88').length>0;

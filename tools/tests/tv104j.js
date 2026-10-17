@@ -97,7 +97,7 @@ const shot=async(pg,n)=>{if(SHOT)await pg.screenshot({path:`${SHOT}/${n}.png`,fu
     await GO('practice');const g=rosterOf(pm)[2];MGR.tr92=g.id;MGR_REDRAW();await W8(400);const s=document.querySelector(`[data-y92s="${g.id}|spd|1"]`);if(s){s.click();await W8(300)}
     out.planned=!!s;out.stillOpen=it().done===false;
     /* Lock in all (Intensity stays None) = a choice */
-    const all=document.querySelector('[data-y92all]');if(all&&!all.disabled){all.click();await W8(500)}out.locked=!!thPlan(w).reglk;out.regime=w.train;
+    const all=document.querySelector('[data-y92all],[data-y105="lock"]') /* v1.05 B44: 373's Lock in all */;if(all&&!all.disabled){all.click();await W8(500)}out.locked=!!thPlan(w).reglk;out.regime=w.train;
     out.done=it().done===true&&/locked in/.test(it().txt);await GO('ludus');out.dom=!/No drills set/.test(document.getElementById('mgrBody').innerText);
     out.leave=!(typeof leaveList76==='function'&&leaveList76(w).some(x=>/No drills set/.test(x)));
     /* every fit fighter locked, without Lock in all */
