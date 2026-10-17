@@ -763,6 +763,8 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - Decided 2026-10-17 (his v1a–v6a on his lighting brief, tools/plans/v106): v1.06a = one sun upper left everywhere, contact + BAKED cast shadows
   (shadow sheets from make.js), figures re-baked with key/fill/rim light; v1.06b = materials, night torches, wall/stands depth; Settings Lighting
   Full/Light/Off with auto-drop; benchmark scene + mock-up first. Builds on N12a/E5a/E6a (2026-10-15/17); nothing replaced.
-- Decided 2026-10-17 (his p1a–p6a on his 3D poser brief, tools/plans/poser): after v1.06/v1.07, five small releases — grip/fit/framing → poses
-  → anatomy + body types (new look option) → face params + a close-up view → armor detail/materials; each opens with one class before/after +
+- Decided 2026-10-17 (his p1a–p6a on his 3D poser brief, tools/plans/poser): after v1.06/v1.07, five small releases (order REPLACED by his q1a below); each opens with one class before/after +
   automated fit checks for his ok. Portrait → 3D matching out of scope.
+- Decided 2026-10-17 (his q1a q2a q3a, tools/plans/poser): poser releases in BODY-FIRST order — body + body types (muscular = his reference,
+  athletic, lean, stocky, heavy) → poses → armor/weapons → face params + close-up view → render polish (REPLACES p4a fit-first); soft matte
+  shading everywhere with a thin outline only on the board (REPLACES the toon + ink look); a ≈ 2 mm sculpt only for close-ups.

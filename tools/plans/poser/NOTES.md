@@ -64,3 +64,6 @@ use it as the MUSCULAR type; ATHLETIC = same skeleton at ~7.5 heads, shoulders �
   → his body-first order is right (it REPLACES p4a's fit-first order, pending his confirm).
 - Limits found: a 4 mm grid can't hold eyelids/nostrils/lips → the close-up view needs a finer sculpt (≈ 2 mm, only for close-ups);
   the toon + ink look vs the reference's soft matte shading is an art-direction call.
+- His answers (2026-10-17): Q1a body-first order (body → poses → armor/weapons → face/materials → render polish; REPLACES p4a's fit-first) ·
+  Q2a soft matte shading everywhere, a THIN outline kept only on the board (readability at ~85 px; REPLACES the toon + ink look) ·
+  Q3a a finer sculpt (≈ 2 mm) only for the close-up view; board sheets stay on the 4 mm grid.
