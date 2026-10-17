@@ -128,3 +128,8 @@
   tooltip overlaps its own text. REPLACES part of the B44 layout (the approved y1a mock-up, built in 373).
 - B71 (his aside): the Armory, Recruiting and Training Yard page banners = the slim Infirmary/Roster banner (same height + look).
 - B72 (his beta-3 report): Recruiting — the screen jitters/flickers when clicking a recruit's buttons (scouting etc.). Likely the B54 keep-in-view watcher (378 rec105Watch/rec105Show: scrollTop fixes per redraw + smooth scrollIntoView fighting). Fix, keep the panel steady.
+- Answers B70–B71 (2026-10-17): Y1a (Yard: one top band — Doctore face/name/level | Time −/+ and the level ladder | the four Intensity
+  buttons, shorter — then ONE row: the Team drill card shrunk to its content (‹ › kept) + the "Who drills" chips filling the right half; the squad /
+  own sessions / Trial move up) · Y2a (Lock in sits in the banner beside the hours, always visible) · Y3 ok (drop the Beast pen's duplicate
+  "Needs 2 hours" tooltip) · Y4a (Armory, Recruiting, Training Yard banners = the slim Infirmary/Roster banner: same height, face left, title +
+  one line; the Yard's big "0 of 10 h" plate and Recruiting's counters become chips in the banner).

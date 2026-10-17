@@ -752,3 +752,7 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - Decided 2026-10-17: rudis requests only in the off-season (after the Winter festival once built); REPLACES asks during the season.
 - Decided 2026-10-17 (his m1a): tasks = actionable and self-clearing; mail = informational; decision letters are tasks. REPLACES v0.99's one-list Lanista's desk (270-v99desk).
 - Decided 2026-10-17 (his t1a; v1.06): rival trade offers come from a motive (wages, youth, gap, all-in, sell high) with a wage-aware value and a one-line reason + weekly cost change on the card; REPLACES 47's value-match offers.
+- Decided 2026-10-17 (his y1a y2a y4a, B70/B71): the Training Yard is compacted to one top band (Doctore | time + ladder | intensity) + one row
+  (team drill card + who-drills chips), Lock in in the banner; the Armory, Recruiting and Training Yard banners are the slim Infirmary/Roster
+  banner with their counters as chips. REPLACES the y1a mock-up's layout (373, approved 2026-10-17: the big banner hours plate, the stacked
+  Doctore/time/intensity block, the full-width team drill card, Lock in at the page bottom) and the tall Armory/Recruiting banners.
