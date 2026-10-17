@@ -298,3 +298,4 @@ RELEASE PREP (2026-10-12): translations DONE (part-111, 1380 keys × 7, ceilings
   Damnatio (+ Iron Helm galea, + Belt I balteus1, pelted every other turn) and Amazonia (no Falcata). Online class kits / recruit kits
   (111-onlcore kit tables, kits92.json via mkserver, ISSUE_W100, market.kit) still use the old loadouts → update the shared rules, run
   `node tools/mkserver.js`, server tests, redeploy the server.
+- 3D poser + equipment overhaul (his brief 2026-10-17, tools/plans/poser): five releases after v1.07, order + checkpoints decided (p1a–p6a).

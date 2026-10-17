@@ -24,3 +24,14 @@ His brief: tools/plans/poser/BRIEF.md (verbatim, complete).
 7. Measurable checks instead of adjectives: automated (in node with the rig) hand-to-grip distance, armor/body penetration (raycasts),
    feet on the ground, framing (no cropped crest/weapon tip) for every class × weapon × pose; a contact sheet per release for his eye;
    budgets: sheet size ≤ 60 KB, device bake time per character ≤ X s on a phone (measure today first).
+
+## His answers (2026-10-17): p1a p2a p3a p4a p5a p6a
+- P1a a close-up view (character card / after a victory) so face + fine detail are seen; the board shows silhouette, stance, grip, fit.
+- P2a body types as a new look option (lean, athletic, muscular, stocky, heavy); each printed class a fixed one (Studio field + SAVE_MIGRATIONS
+  + online tokens + re-bake).
+- P3a more face parameters (face shape, age, brow, nose, scars) mapped well; portrait → 3D matching out of scope.
+- P4a order: 1 grip + armor fit + framing → 2 pose audit + combat body mechanics → 3 anatomy + body types → 4 face + close-up view →
+  5 armor detail + materials (REPLACES the brief's §11 order anatomy-first).
+- P5a each step its own small release + beta, after v1.06 (lighting) and v1.07 (Winter Quarters).
+- P6a each release opens with ONE class before/after + the automated check numbers (hand↔grip, armor/body penetration, feet on ground,
+  framing) + a contact sheet; his ok → bake all (REPLACES the brief's "no mock-ups"; the checkpoint is real output, not a design doc).
