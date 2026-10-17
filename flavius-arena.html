@@ -75890,7 +75890,7 @@ function mw105Shape(T,w){const n=w.night,m=me();const C=T.content;const Q=s=>C.q
   const L=document.createElement('div');L.className='mw105L';hd.insertBefore(L,hd.firstElementChild&&hd.firstElementChild.tagName==='svg'?hd.firstElementChild.nextSibling:hd.firstChild);
   const ttl=hd.querySelector('.roomttl');if(ttl)L.appendChild(ttl);
   const ch=[];const t=n.travel;const city=mw105City(w);
-  if(t&&t.cost>0){if(t.deal){const hh=mgrById(t.deal.mgr);ch.push(_T`🛣 From ${esc(t.from)} · the trip paid by ${esc(hh?hh.ludus:_T('another house'))}`)}else if(t.paid)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`)}
+  if(t&&t.cost>0){if(t.deal){const hh=mgrById(t.deal.mgr);ch.push(_T`🛣 From ${esc(t.from)} · the trip paid by ${esc(hh?hh.ludus:_T('another house'))}`)}else if(t.paid&&t.free105)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip paid by the games`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip paid by the games`);else if(t.paid)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`)}
   else if(t&&!n.selfBye&&!w.tutorial&&!B.some(b=>b.po104))ch.push(_T('🏠 Home sand'));
   if(n.omen&&n.omen.k!=='clear')ch.push(`${esc(n.omen.n)} · ${n.omen.att>0?_T('attendance and purses up'):n.omen.att<0?_T('attendance and purses down'):_T('the city talks of little else')}`);
   if(n.grand)ch.push(_T('The Grand Games: purses ×1.6'));
@@ -76524,6 +76524,7 @@ function y105Drillers(w,m){const P=thPlan(w);const T=y105Peek(P);if(!y105Open(w,
 /* Intensity works only with his hours: run fn with the week's regime held at None when he has none */
 function y105With(w,fn){const P=thPlan(w);const off=!((P.doc||0)>0)&&w.train&&w.train!=='off';const keep=w.train;if(off)w.train='off';try{return fn()}finally{if(off)w.train=keep}}
 const y105First=g=>{const p=String(g&&g.name||'').replace(/"/g,'').split(/\s+/);return /^the$/i.test(p[0])&&p[1]?p[0]+' '+p[1]:p[0]};
+function y105RivOff(){try{return localStorage.getItem('flavius_v105rivoff')==='1'}catch(e){return false}}
 function y105Doc(w){try{return council83(w).find(x=>x.k==='doctore')||null}catch(e){return null}}
 function y105TrialOf(g,w){try{const P=thPlan(w);if(P.pairs.some(p=>p.k==='spar'&&(p.a===g.id||p.b===g.id)))return _T('⚔ Spar');if(g.exWk===w.week)return _T('🏟 Exhibition');if(g.pen76Wk===w.week)return _T('🐾 Beast pen')}catch(e){}return ''}
 
@@ -76584,8 +76585,9 @@ function y105TrialArt(k,g){try{if(typeof rm100Scn!=='function')return `<span cla
   return y105Art(A[k]||'')}catch(e){return ''}}
 function y105DocHTML(w,m){const P=thPlan(w);const T=y105Peek(P);const LK=!!P.lk105;const doc=P.doc||0;const lv=y105Lv(w,m);const cap=y105Cap(w,m);const mx=y105DocMax(w,m);const left=thLeft(w);
   const Y=y105Yard(m);const adv=y105Adv(w,m);const a=y105Doc(w);const face=a&&typeof face83==='function'?face83(a,76):'🧑‍🏫';const X=x74(w);
-  const lvTxt=lv?_T`Lv ${lv} (cap Lv ${cap})`:_T('no drill (0 h)');
-  const ladder=[1,2,3,4,5].map(L=>{const ok=L<=cap,on=lv>=L;const need=L-2-adv;return `<span class="y105lad${on?' on':ok?'':' off'}">${_T`Lv ${L} · ${y105HrsFor(w,m,L)} h`}${ok?'':` · ${_T`Yard ${V105Y.ROM[Math.max(1,Math.min(3,need))]}`}`}</span>`}).join('');
+  const lvTxt=lv?_T`Lv ${lv} (cap Lv ${cap})`+(adv>0&&!y105RivOff()?' · '+_T`+${adv} from ${esc(a?a.name:_T('your Doctore'))}`:''):_T('no drill (0 h)');
+  const ladder=[1,2,3,4,5].map(L=>{const ok=L<=cap,on=lv>=L;const need=L-2-adv;const hl=adv>0&&!y105RivOff()?(L<=adv?_T`Lv ${L} · free`:(y105HrsFor(w,m,L)-doc>0?_T`Lv ${L} · +${y105HrsFor(w,m,L)-doc} h`:_T`Lv ${L} · ✓`)):_T`Lv ${L} · ${y105HrsFor(w,m,L)} h`;return `<span class="y105lad${on?' on':ok?'':' off'}">${hl}${ok?'':` · ${_T`Yard ${V105Y.ROM[Math.max(1,Math.min(3,need))]}`}`}</span>`}).join('');
+  const advName=a?a.name:_T('your Doctore');const advNote=adv>0&&!y105RivOff()?`<div class="y105sub y105advn">${_T`+${adv} from ${esc(advName)} (your Doctore advisor)`}</div>`:'';
   const regs=Y92_REG.map(([k,ic,l])=>{const R=TRAIN_REGIMES[k];const M=Y92_MUL[k];const on=doc>0&&(w.train||'off')===k;
     return `<button type="button" class="y105seg${on?' on':''}" data-mg="regime" data-id="${k}" ${doc>0&&!LK?'':'disabled'}><b>${ic} ${l}</b><small>${doc>0?(R.c?coinAmt87(R.c):_T('free'))+(k==='off'?'':` · ×${M.g}`):_T('needs his time')}</small></button>`}).join('');
   const k=y105K(w);const pr=y92Pre(k);const i=Y92_PRE.indexOf(pr);const open=doc>0&&pr.lv<=lv;const bn=Math.round(y105Bonus(w,m,Math.max(lv,1))*100);
@@ -76600,7 +76602,7 @@ function y105DocHTML(w,m){const P=thPlan(w);const T=y105Peek(P);const LK=!!P.lk1
   return `<section class="y105p y105doc${doc>0?'':' idle'}${LK?' lk':''}"><div class="y105dtop">
     <div class="y105who"><span class="y105face">${face}</span><div><div class="y105cap">${_T('The Doctore · this week')}</div><div class="y105nm">${a?esc(a.name):_T('Your doctore')}</div><div class="y105sub">${_T('runs ONE team drill · his level now:')} <b>${lvTxt}</b></div></div></div>
     <div class="y105time"><div class="y105cap">${_T('Time with him')}</div><div class="y105row"><button type="button" class="y105step" data-y105="doc|-1" aria-label="${esc(_T('Less time'))}" ${doc>0&&!LK?'':'disabled'}>−</button><span class="y105dh"><b class="y105big">${doc}</b> h</span><button type="button" class="y105step" data-y105="doc|1" aria-label="${esc(_T('More time'))}" ${!LK&&left>0&&doc<mx?'':'disabled'}>+</button></div>
-      <div class="y105lads">${ladder}</div><div class="y105sub">${_T`from the training hours · Yard ${Y}/3 · drills +${bn}%`}</div>
+      <div class="y105lads">${ladder}</div>${advNote}<div class="y105sub">${_T`from the training hours · Yard ${Y}/3 · drills +${bn}%`}</div>
       <button type="button" class="y105mini${X.study?' on':''}" data-yj="study" ${X.study||left<1||LK?'disabled':''}>${X.study?_T('📜 Studied the card'):_T('📜 Study the card · 1 h')}</button></div>
     <div class="y105int"><div class="y105cap">${_T('Intensity · the whole squad')}</div><div class="y105segs">${regs}</div><div class="y105sub">${doc>0?_T('Gains and fatigue of the team drill and every session.'):_T('Give the Doctore time to run a drill')}</div></div></div>
     <div class="y105dbot"><div class="y105drill"><button type="button" class="y105arr" data-y105="dr|-1" aria-label="${esc(_T('Previous drill'))}" ${LK?'disabled':''}>‹</button>
@@ -77127,6 +77129,64 @@ const BP105_TAB={valet:'infirm',yard:'practice',stands:'practice',armory:'armory
   if(!hd||R.querySelector('.bp104c'))return h;
   hd.insertAdjacentHTML('beforeend',`<span class="bp104c" title="${esc(_T('One building project at a time'))}">${bp104Line(pm,W_())}</span>`);
   const d=document.createElement('div');d.appendChild(R);return d.innerHTML}catch(e){console.error(e)}return h}}
+/* v1.05 (383-v105riv) · MANAGER — RIVALRY WEEK (week 11, the Familia 2v2 against the rival house; his B62, B63, C1a; tools/plans/v105/NOTES.md).
+   • B62 TRIP FREE: the organisers pay the road to Rivalry Week. n.travel is made PAID with cost kept (so the set-off window and the road lock still work) and
+     flagged free105 — no coin is taken (not even for fighters already booked); the travel card and 360's banner chip read "trip paid by the games".
+   • B63 ALWAYS SEATED. Root cause (reproduced): 77's rivalPick seats the player's house from rivalEligible, which called a fighter fit unless
+     inj.until >= week — it ignored the game's own fitness (any non-war injury "cannot fight until treated", a rest day) — and when fewer than 2 were left
+     it silently filled the places with FREE AGENTS (−8 fame); 345's M3 then closed the card (no enter / swap / withdraw), so the house had no fighter of
+     its own in any bout and nothing to fix it with. Also the odd house out of rivalPairs could be the player's. Now: (1) rivalPairs seats the player's house
+     first (the odd house is never his); (2) rivalEligible uses the game's fitness for the player's house; (3) a card on Match Week shows the pair (the two
+     best fit, auto-picked) and lets him change it until he sets off / the first bout is fought; free-agent places are re-seated with his own fit fighters
+     when they heal; (4) fewer than 2 fit = a warning with the forfeit rule (−8 fame, free agents fill the places). The rival is seated by 77 as before.
+   Kill switch localStorage flavius_v105rivoff=1 (also restores 373's old ladder labels). Test tv105t. */
+const RIV105={key:'flavius_v105rivoff'};
+function riv105Off(){try{return localStorage.getItem(RIV105.key)==='1'}catch(e){return false}}
+const riv105Wk=w=>!!(w&&!w.tutorial&&w.night&&w.night.rivalry&&!w.night.bye&&!w.night.selfBye);
+/* the game's own fitness: alive, not a lanista, no injury (even a healed-by-date one still needs treating), not resting this week */
+function riv105Fit(g,w){w=w||W_();return !!g&&g.alive!==false&&!g.lanista&&!g.inj&&!(g.restWk!=null&&g.restWk===w.week)}
+/* ---- pairing: the player's house is never the odd house out ---- */
+{const base=rivalPairs;rivalPairs=function(w){const P=base.apply(this,arguments);try{if(riv105Off())return P;const pm=me();
+  if(pm&&P.bye.includes(pm.id)&&P.pairs.length){let best=null,bs=-1e9;
+    for(let i=0;i<P.pairs.length;i++)for(let k=0;k<2;k++){const u=mgrById(P.pairs[i][k]);const s=u?rivalHeat(pm,u):-1e9;if(s>bs){bs=s;best={i,k}}}
+    if(best){const pr=P.pairs[best.i];const u=pr[best.k],v=pr[1-best.k];P.pairs[best.i]=[pm.id,u];P.bye=P.bye.filter(x=>x!==pm.id).concat([v])}}}catch(e){console.error(e)}return P}}
+/* ---- the player's eligible fighters use the same fitness as the rest of the game ---- */
+{const base=rivalEligible;rivalEligible=function(w,m,abs){const r=base.apply(this,arguments);try{if(!riv105Off()&&m&&m.isPlayer)return r.filter(g=>riv105Fit(g,w))}catch(e){}return r}}
+/* ---- B62: the organisers pay the road ---- */
+{const base=travelState;travelState=function(world){try{if(!riv105Off()){const w=world||W_();if(riv105Wk(w)){const n=w.night;
+  if(!n.travel){const c=travelCost(w);if(c>0)n.travel={cost:c,paid:true,offer:null,deal:null,from:LOCATIONS[travelHome(me())].n,free105:1}}
+  else if(!n.travel.free105&&n.travel.cost>0&&!n.travel.paid&&!n.travel.deal){n.travel.paid=true;n.travel.free105=1;n.travel.offer=null}}}}catch(e){console.error(e)}return base.apply(this,arguments)}}
+{const base=travelCardHTML;travelCardHTML=function(){let h=base.apply(this,arguments);try{const w=W_();const t=w&&w.night&&w.night.travel;
+  if(!riv105Off()&&t&&t.free105&&t.cost>0)h=`<div class="card2 travelcard"><b>${_T`🛣 On the road to ${esc(LOCATIONS[w.night.loc].n)}`}</b> <span class="rc-sub">${_T`from ${esc(t.from)} · trip paid by the games`}</span></div>`}catch(e){}return h}}
+/* ---- B63: the house's pair in its rivalry bout ---- */
+function riv105Bout(w){const n=w&&w.night;const pm=me();if(!n||!pm||!n.bouts)return null;const i=n.bouts.findIndex(b=>b.rivalry&&(b.rivalry.a===pm.id||b.rivalry.b===pm.id));if(i<0)return null;
+  const b=n.bouts[i];return {i,b,slots:b.rivalry.a===pm.id?[0,2]:[1,3]}}
+function riv105Locked(w){const n=w.night;const t=n.travel;return !!((t&&t.gone)||n.bouts.some(b=>b.done))}
+const riv105Own=(g,pm)=>!!g&&!!g.contract&&g.contract.mgr===pm.id;
+/* a place held by a free agent (or by a fighter who has since fallen unfit) goes to one of his fit fighters, best first */
+function riv105Reseat(w){try{const R=riv105Bout(w);if(!R||riv105Locked(w))return false;const pm=me();const {b,slots}=R;let ch=false;
+  const pool=rosterOf(pm).filter(g=>riv105Fit(g,w)).sort((a,c)=>effOvr(c)-effOvr(a));
+  for(const s of slots){const cur=gById(b.ents[s]);if(riv105Own(cur,pm)&&riv105Fit(cur,w))continue;
+    const pick=pool.find(g=>!b.ents.includes(g.id));if(!pick)continue;const gone=b.ents[s];b.ents[s]=pick.id;if(typeof voidBets==='function')voidBets(b,gone);ch=true}
+  if(ch)saveWorld();return ch}catch(e){console.error(e);return false}}
+function riv105Card(w){const R=riv105Bout(w);if(!R)return '';const pm=me();const {b,slots}=R;const lock=riv105Locked(w);
+  const fit=rosterOf(pm).filter(g=>riv105Fit(g,w)).sort((a,c)=>effOvr(c)-effOvr(a));
+  const cur=slots.map(s=>gById(b.ents[s]));const mine=cur.filter(g=>riv105Own(g,pm)).length;
+  const sel=(id,i)=>`<select class="tin" id="riv105${id}" ${lock||fit.length<2?'disabled':''}>${fit.map(g=>`<option value="${g.id}" ${cur[i]&&cur[i].id===g.id?'selected':''}>${esc(g.name)} · ${effOvr(g)}</option>`).join('')}</select>`;
+  const warn=fit.length<2?`<p class="bad riv105w">${_T`⚠ Only ${fit.length} fit fighter${fit.length===1?'':'s'}. Two must stand together: the house loses ${RIVAL_FAME_SHORT} fame and the editor fills ${2-fit.length===1?_T('the place'):_T('both places')} with free agents.`}</p>`:'';
+  const foe=rivalOf(w,pm.id);
+  return `<div class="card2 riv105" data-riv105card="1"><b>${_T`⚔ Your pair vs ${esc(foe?foe.ludus:'—')}`}</b> <span class="rc-sub">${lock?_T('Set — the house has set off.'):_T('The two best fit, picked for you. Change them until you set off.')}</span>
+    <div class="acts" style="align-items:center;margin-top:6px">${sel('A',0)}${sel('B',1)}<button class="btn primary tksm" type="button" data-riv105="set" ${lock||fit.length<2?'disabled':''}>${_T('Set pair')}</button></div>${warn}
+    ${mine<2&&fit.length>=2&&!lock?`<p class="rc-sub">${_T('A free agent holds a place — set your pair.')}</p>`:''}</div>`}
+document.addEventListener('click',e=>{try{const el=e.target.closest&&e.target.closest('[data-riv105="set"]');if(!el||riv105Off())return;const w=W_();const R=riv105Bout(w);if(!R||riv105Locked(w))return;
+  const a=(document.getElementById('riv105A')||{}).value,c=(document.getElementById('riv105B')||{}).value;
+  if(!a||!c||a===c){if(typeof mToast==='function')mToast(_T('Choose two different fighters.'));return}
+  const {b,slots}=R;[a,c].forEach((id,k)=>{const s=slots[k];const gone=b.ents[s];if(gone!==id){b.ents[s]=id;if(typeof voidBets==='function')voidBets(b,gone)}});
+  const pm=me();if(w.rivalry&&w.rivalry.commit)w.rivalry.commit[pm.id]=[a,c];saveWorld();if(typeof mnews==='function')mnews(_T`⚔ Your pair for Rivalry Week: <b>${esc(gById(a).name)}</b> and <b>${esc(gById(c).name)}</b>.`);
+  if(typeof MGR_REDRAW==='function')MGR_REDRAW()}catch(err){console.error(err)}});
+{const base=nightHTML;nightHTML=function(){const h=base.apply(this,arguments);try{if(riv105Off())return h;const w=W_();if(!riv105Wk(w))return h;riv105Reseat(w);return riv105Card(w)+h}catch(e){console.error(e)}return h}}
+/* the pair is checked at the start of the week too (an injury that healed at once, a place held by a free agent) */
+{const base=makeNight;makeNight=function(){const r=base.apply(this,arguments);try{const w=W_();if(!riv105Off()&&riv105Wk(w))riv105Reseat(w)}catch(e){console.error(e)}return r}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
