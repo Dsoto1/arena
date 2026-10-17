@@ -30,7 +30,7 @@ const o=await pg.evaluate(async(SEED)=>{let sd=SEED>>>0;Math.random=()=>{sd=(sd*
   await go(A.id);const rt=q(`.iv90care [data-plan87="rest"]`);if(rt)rt.click();await W8(300);r.rest=A.inj&&A.inj.plan87==='rest';
   /* 4 · beds full */
   B.inj={until:w2.week+2,label:'a deep thigh cut',pen:2};await go(B.id);
-  r.full=!!q(`.iv90care [data-bed76="${B.id}"][data-dis]`)&&!!q('.iv90care [data-mg="build"][data-id="valet"]'); /* v1.01: refusals say why; the Valetudinarium is a care option (318) */
+  r.full=!!q(`.iv90care [data-bed76="${B.id}"][data-dis]`)&&!!q('.iv90care [data-b105]'); /* v1.01: refusals say why; the Valetudinarium is a care option (318); v1.05 B48: a "Build it in My Ludus" link, no button */
   m.fac=m.fac||{};m.fac.valet=1;await go(B.id);r.more=bedsOf76(m)===2&&!!q(`.iv90care [data-bed76="${B.id}"]:not([data-dis])`)&&!q('.full87');
   /* 5 · three limbs lost: one week at home to regrow one, else he retires */
   delete A.inj;delete B.inj;w2.beds76=[];const C=ros[3],D=ros[4],E=ros[5]||ros[0];C.severed=['rarm','larm','rleg'];D.severed=['rarm','lleg','rleg'];E.severed=['larm','lleg','rleg'];

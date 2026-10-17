@@ -970,7 +970,7 @@ const buyout=glad=>glad.contract?Math.round(glad.contract.wage*Math.max(2,glad.c
 async function scoutGlad(glad,onProg){
   const w=W_();const pool=w.glads.filter(x=>x.alive&&x!==glad&&Math.abs(effOvr(x)-effOvr(glad))<=12);
   const cfgs=Array.from({length:6},()=>()=>{const opp=shuffle([...pool]).slice(0,3);while(opp.length<3)opp.push(genGlad({ovr:effOvr(glad)}));
-    return {ev:'democritus',loc:3,seats:[seatFor(glad),...opp.map(o=>seatFor(o))],opts:{mods:false,mandata:true,optOffers:true,eaglePot:true,spect:0}}});
+    return {ev:'democritus',loc:3,seats:[seatFor(glad),...opp.map(o=>seatFor(o))],opts:{mods:false,mandata:true,optOffers:true,eaglePot:!eg105Live(),spect:0}}});
   const rs=(await simBatch(cfgs,onProg)).filter(r=>r&&!r.error);
   const mine=rs.map(r=>r.rows.find(x=>x.mgrId===glad.id)).filter(Boolean);const n=mine.length||1;
   const avg=k=>Math.round(mine.reduce((s,x)=>s+(x[k]||0),0)/n*10)/10;
@@ -1401,7 +1401,7 @@ function exhibCfg(match,live,fight){
   const m=me();
   const seats=[seatFor(match.g,m.color,!!fight),...match.theirs.map(x=>seatFor(x,match.opp.color)),...match.partners.map(x=>seatFor(x,null))];
   const home=LOCATIONS.findIndex(L=>L&&L.n===m.city);
-  return {ev:'democritus',loc:home>0?home:3,seats,opts:{mods:false,mandata:true,optOffers:true,eaglePot:true,spect:live?'exhib':0},omen:OMENS[0],
+  return {ev:'democritus',loc:home>0?home:3,seats,opts:{mods:false,mandata:true,optOffers:true,eaglePot:!eg105Live(),spect:live?'exhib':0},omen:OMENS[0],
     exhibCtx:{cid:W_().id,week:W_().week,my:match.g.id,opp:match.opp.id,theirs:match.theirs.map(x=>x.id)}};
 }
 /* exhibApply — applies an exhibition: their fighters fully scouted, a training chance for yours, a perk point, cooler rivalry. */
@@ -1899,7 +1899,7 @@ function wireManager(done){
         const pool=w.glads.filter(x=>x.alive&&x!==g&&x!==best&&Math.abs(effOvr(x)-effOvr(g))<=14);
         const nOpp=best?2:3;
         const cfgs=Array.from({length:2},()=>()=>{const opp=shuffle([...pool]).slice(0,nOpp);while(opp.length<nOpp)opp.push(genGlad({ovr:effOvr(g)}));
-          return {ev:'democritus',loc:3,seats:[seatFor(g),...(best?[seatFor(best,m.color)]:[]),...opp.map(o=>seatFor(o))],opts:{mods:false,mandata:true,optOffers:true,eaglePot:true,spect:0}}});
+          return {ev:'democritus',loc:3,seats:[seatFor(g),...(best?[seatFor(best,m.color)]:[]),...opp.map(o=>seatFor(o))],opts:{mods:false,mandata:true,optOffers:true,eaglePot:!eg105Live(),spect:0}}});
         const rs=(await simBatch(cfgs,(i,n)=>{const bar=pr2&&pr2.querySelector('i');if(bar)bar.style.width=(i/n*100)+'%'})).filter(r=>r&&!r.error);
         won=rs.filter(r=>r.rows.find(x=>x.mgrId===g.id&&x.won)).length;
       }finally{MGR.busy=false}
