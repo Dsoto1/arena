@@ -37,3 +37,6 @@
 - B42 (his ask, beta 2): attacking a blessing pot with too little damage (04-rules doAttack: "the pot holds (needs 2)" only in the log) shows
   nothing on the board. Add a short readout ABOVE the pot (the same family as the hit readouts, 277/303): e.g. "Holds · 1 of 2" (and
   "Miss" when no hit); a small shake of the pot; Reduce motion / Animations Off = the text only. Small feedback, not a rule change.
+- B43 (beta 2 screenshot, Recruiting · ✉ Private note popup): 357's B27 "⏳ 1 h" chips are injected into each tone row (Praise / Promise /
+  Plain truth) and sit ON TOP of the tone names, plus a fourth stray chip under the list. Fix: the hours shown ONCE, in the card's title line
+  ("✉ Private note · once a week · ⏳ 1 h"), the rows untouched (name | effect); check the other wooing popups (pitch, gift, feast) the same way.
