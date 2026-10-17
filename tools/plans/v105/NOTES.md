@@ -55,4 +55,4 @@
   sit-out chips); the squad · the fighter's own sessions · ⚔ Trial of the Yard as ONE tile cycled ‹ › (spar / exhibition / beast pen);
   the Tabula strip at the bottom with Same as last week + Lock in all (locks everything). Waiting for his ok / changes.
 - B44 y1a (2026-10-17): the Doctore's hours come from the same weekly training hours (one number in the banner).
-- B38 follow-up (2026-10-17, his answer): the menu show follows the token BASE setting like the board — bases off = no bases on the menu figures.
+- B38 follow-up (2026-10-17, his answer, then simplified): the menu show ALWAYS draws its figures without bases (soft contact shadow) — no setting.
