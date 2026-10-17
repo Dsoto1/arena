@@ -145,7 +145,7 @@ function rec98DealHit(g,m){const D=rec98Deal(g);return D&&m&&m.p&&D.bad(m.p[D.t]
 function rec98PersHTML(g,m){const K=rec98K(g);const n=STATS.filter(([k])=>K.p[k]>=1).length;
   if((g.scout||0)<2)return `<div class="pe98 lock"><b>${_T`🔒 Personality`}</b><span class="rc-sub">${sx(g,_T`Grade all five ratings to read him — wants, temper, dealbreakers.`,_T`Grade all five ratings to read her — wants, temper, dealbreakers.`)} (${n}/5)</span></div>`;
   const tags=typeof persTags73==='function'?persTags73(g):[];const W=typeof wants88==='function'?wants88(g):[];const D=rec98Deal(g);const hit=D&&rec98DealHit(g,m);
-  const wants=W.map(k=>{const [,ic,nm]=want88Def(k);const ok=want88Fits(g,m,k,null);return `<span class="want88 ${ok?'ok':''}" data-w98="${k}" title="${esc(ok?_T('Your house answers this now'):want88How(g,k))}">${ic} ${esc(nm)}${ok?' ✓':''}</span>`}).join(' ');
+  const wants=W.map(k=>{const [,ic,nm]=want88Def(k,g);const ok=want88Fits(g,m,k,null);return `<span class="want88 ${ok?'ok':''}" data-w98="${k}" title="${esc(ok?_T('Your house answers this now'):want88How(g,k))}">${ic} ${esc(nm)}${ok?' ✓':''}</span>`}).join(' ');
   const mot=(g.motives||[]).map(([k,wt])=>MOTIVES[k]?`<span class="mo98">${esc(MOTIVES[k][0])} <i>${Math.round(wt*100)}%</i></span>`:'').join(' ');
   return `<div class="pe98"><div class="sect" style="margin-top:4px">${_T`🎭 Personality`}</div>
     <div class="pe98r"><span class="pe98l">${_T`Temper`}</span>${tags.map(t=>`<span class="badge gold">${esc(t)}</span>`).join(' ')||'—'}</div>

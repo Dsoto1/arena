@@ -85,7 +85,7 @@ function rc100Pers(g,m){const K=rec98K(g);const n=STATS.filter(([k])=>K.p[k]>=1)
   if((g.scout||0)<2){const a=rec98Next(g);const L=a?REC98_ACT_L(g)[a][0]:'';
     return `<div class="pe98 lock rc1lock" title="${esc(sx(g,_T`Grade all five ratings to read him — wants, temper, dealbreakers.`,_T`Grade all five ratings to read her — wants, temper, dealbreakers.`))}"><div>${sx(g,_T`🔒 <b>Grade all five to read him</b>`,_T`🔒 <b>Grade all five to read her</b>`)} (${n}/5)</div>${a?`<div class="rc-sub">${_T`Next:`} ${REC98.acts[a].ic} ${esc(L)}</div>`:''}</div>`}
   const tags=typeof persTags73==='function'?persTags73(g):[];const W=typeof wants88==='function'?wants88(g):[];const D=rec98Deal(g);const hit=D&&rec98DealHit(g,m);
-  const wants=W.map(k=>{const [,ic,nm]=want88Def(k);const ok=want88Fits(g,m,k,null);return `<span class="want88 rc1tg w ${ok?'ok':''}" data-w98="${k}" title="${esc(ok?_T('Your house answers this now'):want88How(g,k))}">${ic} ${esc(nm)}${ok?' ✓':''}</span>`}).join('');
+  const wants=W.map(k=>{const [,ic,nm]=want88Def(k,g);const ok=want88Fits(g,m,k,null);return `<span class="want88 rc1tg w ${ok?'ok':''}" data-w98="${k}" title="${esc(ok?_T('Your house answers this now'):want88How(g,k))}">${ic} ${esc(nm)}${ok?' ✓':''}</span>`}).join('');
   const mot=(g.motives||[]).filter(([k])=>MOTIVES[k]).map(([k,wt])=>`${esc(MOTIVES[k][0])} <b>${Math.round(wt*100)}</b>`).join(' · ');
   const motT=(g.motives||[]).filter(([k])=>MOTIVES[k]).map(([k,wt])=>`${MOTIVES[k][0]} ${Math.round(wt*100)}%`).join(' · ');
   return `<div class="pe98 rc1pe">
@@ -183,7 +183,7 @@ function rc100TabRows(g,T){const w=W_(),m=me();const r=(a,b,c,cls)=>`<div class=
     (W.includes('rudis')?r(_T('Rudis'),T.rudis?_T('the rudis path is promised'):_T('no rudis clause'),T.rudis?'✓':'—'):'')+
     r(_T('Ends'),_T`after ${T.weeks} weeks · week ${ewk} · renew or release`,`W${ewk}`);
   h+=`<div class="rc1tsub">${sx(g,_T`His wants`,_T`Her wants`)}</div>`;
-  if(W.length)for(const k of W){const [,ic,nm]=want88Def(k);const ok=want88Fits(g,m,k,T);h+=r(`${ic} ${esc(nm)}`,ok?_T('your terms answer it'):esc(want88How(g,k)),ok?_T('✓ met'):_T('✗ unmet'),ok?'ok':'no')}
+  if(W.length)for(const k of W){const [,ic,nm]=want88Def(k,g);const ok=want88Fits(g,m,k,T);h+=r(`${ic} ${esc(nm)}`,ok?_T('your terms answer it'):esc(want88How(g,k)),ok?_T('✓ met'):_T('✗ unmet'),ok?'ok':'no')}
   else h+=r('🎯',sx(g,_T('grade all five to learn what he wants'),_T('grade all five to learn what she wants')),'?');
   if(D)h+=r(_T('Dealbreaker'),esc(D.txt()),hit?_T('⚠ broken'):_T('✓ safe'),hit?'no':'ok');
   h+=`<div class="rc1tsub">${_T`On your ledger`}</div>`;
@@ -267,7 +267,7 @@ function sg100HTML(g,calm){const T=g.truth98;const st=gStats(g);const m=me();con
       <div class="sg1t real"><div class="in"><div class="f seal"><i></i></div><div class="b rl">${rg} <small>${v}</small></div></div>${ovr?`<svg class="sg1crack" viewBox="0 0 96 54" preserveAspectRatio="none" aria-hidden="true"><path d="M40 0l6 14-9 9 12 10-5 21M46 14l14-4M37 23l-12 6" stroke="#1a120c" stroke-width="2.4" fill="none"/><path d="M41 0l6 14-9 9 12 10-5 21" stroke="#d9ccb0" stroke-width=".8" fill="none"/></svg>`:''}</div>${dl}</div>`};
   const minP=Math.min(...STATS.map(([k])=>pre[k]||0));
   const rows=STATS.map(([k,n,ic],i)=>row(`<i>${ic}</i>${esc(n)}`,T.s[k]||'?',pre[k]||0,st[k],false,i)).join('')+row(esc(_T('Overall')),T.s.ovr||'?',minP,effOvr(g),true,6);
-  const cls=CLASSES[g.cls];const wants=(typeof wants88==='function'?wants88(g):[]).map(k=>want88Def(k)[2]);
+  const cls=CLASSES[g.cls];const wants=(typeof wants88==='function'?wants88(g):[]).map(k=>want88Def(k,g)[2]);
   const cl=[c.cl76&&c.cl76.nonaum?_T('no Naumachia'):'',g.rudis88?_T('the rudis path'):'',g.pledge?_T('the main event'):''].filter(Boolean);
   const big={gem:_T('✦ A gem!'),fair:_T('As scouted.'),dud:_T('A dud.')}[V.k];
   return `<div class="sgbox sg1card" role="dialog" aria-modal="true" aria-label="${esc(_T`Signed: ${g.name}`)}">

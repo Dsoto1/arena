@@ -110,7 +110,7 @@ function rm100Roster(R,w,pm){const pane=R.querySelector('#mgrPane');const wrap=p
   const prow=(k,v)=>`<div class="rm100row"><span class="rm100k">${k}</span><span class="rm100one">${v}</span></div>`;
   const pers=`<section class="rm100p rm100pers"><div class="rm100ph">${_T`Personality · record · scars`}</div>
     ${prow(_T`Temper`,tags.map(t=>`<span class="rm100tg t">${esc(t)}</span>`).join('')||'—')}
-    ${prow(_T`Wants`,wn.map(k=>{const d=typeof want88Def==='function'?want88Def(k):[k,'',k];return `<span class="rm100tg w">${d[1]} ${esc(d[2])}</span>`}).join('')||'—')}
+    ${prow(_T`Wants`,wn.map(k=>{const d=typeof want88Def==='function'?want88Def(k,g):[k,'',k];return `<span class="rm100tg w">${d[1]} ${esc(d[2])}</span>`}).join('')||'—')}
     ${prow(_T`Record`,_T`${r.w}–${r.l} · ${r.ev} bouts${g.rec&&g.rec.kn?` · ${g.rec.kn} beasts`:''}`)}
     ${prow(_T`Scars`,esc(scars))}
     ${prow(_T`Last`,last?esc(`W${last.wk} ${last.loc||''} · ${last.won?_T('won'):last.place?_T`place ${last.place}`:_T('fought')}${last.f?_T` · ${last.f} CF`:''}`):_T`no bout yet`)}</section>`;
