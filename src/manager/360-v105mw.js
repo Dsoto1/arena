@@ -181,7 +181,7 @@ function mw105Shape(T,w){const n=w.night,m=me();const C=T.content;const Q=s=>C.q
   const L=document.createElement('div');L.className='mw105L';hd.insertBefore(L,hd.firstElementChild&&hd.firstElementChild.tagName==='svg'?hd.firstElementChild.nextSibling:hd.firstChild);
   const ttl=hd.querySelector('.roomttl');if(ttl)L.appendChild(ttl);
   const ch=[];const t=n.travel;const city=mw105City(w);
-  if(t&&t.cost>0){if(t.deal){const hh=mgrById(t.deal.mgr);ch.push(_T`🛣 From ${esc(t.from)} · the trip paid by ${esc(hh?hh.ludus:_T('another house'))}`)}else if(t.paid)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`)}
+  if(t&&t.cost>0){if(t.deal){const hh=mgrById(t.deal.mgr);ch.push(_T`🛣 From ${esc(t.from)} · the trip paid by ${esc(hh?hh.ludus:_T('another house'))}`)}else if(t.paid&&t.free105)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip paid by the games`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip paid by the games`);else if(t.paid)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`)}
   else if(t&&!n.selfBye&&!w.tutorial&&!B.some(b=>b.po104))ch.push(_T('🏠 Home sand'));
   if(n.omen&&n.omen.k!=='clear')ch.push(`${esc(n.omen.n)} · ${n.omen.att>0?_T('attendance and purses up'):n.omen.att<0?_T('attendance and purses down'):_T('the city talks of little else')}`);
   if(n.grand)ch.push(_T('The Grand Games: purses ×1.6'));

@@ -60,6 +60,7 @@ function y105Drillers(w,m){const P=thPlan(w);const T=y105Peek(P);if(!y105Open(w,
 /* Intensity works only with his hours: run fn with the week's regime held at None when he has none */
 function y105With(w,fn){const P=thPlan(w);const off=!((P.doc||0)>0)&&w.train&&w.train!=='off';const keep=w.train;if(off)w.train='off';try{return fn()}finally{if(off)w.train=keep}}
 const y105First=g=>{const p=String(g&&g.name||'').replace(/"/g,'').split(/\s+/);return /^the$/i.test(p[0])&&p[1]?p[0]+' '+p[1]:p[0]};
+function y105RivOff(){try{return localStorage.getItem('flavius_v105rivoff')==='1'}catch(e){return false}}
 function y105Doc(w){try{return council83(w).find(x=>x.k==='doctore')||null}catch(e){return null}}
 function y105TrialOf(g,w){try{const P=thPlan(w);if(P.pairs.some(p=>p.k==='spar'&&(p.a===g.id||p.b===g.id)))return _T('⚔ Spar');if(g.exWk===w.week)return _T('🏟 Exhibition');if(g.pen76Wk===w.week)return _T('🐾 Beast pen')}catch(e){}return ''}
 
@@ -120,8 +121,9 @@ function y105TrialArt(k,g){try{if(typeof rm100Scn!=='function')return `<span cla
   return y105Art(A[k]||'')}catch(e){return ''}}
 function y105DocHTML(w,m){const P=thPlan(w);const T=y105Peek(P);const LK=!!P.lk105;const doc=P.doc||0;const lv=y105Lv(w,m);const cap=y105Cap(w,m);const mx=y105DocMax(w,m);const left=thLeft(w);
   const Y=y105Yard(m);const adv=y105Adv(w,m);const a=y105Doc(w);const face=a&&typeof face83==='function'?face83(a,76):'🧑‍🏫';const X=x74(w);
-  const lvTxt=lv?_T`Lv ${lv} (cap Lv ${cap})`:_T('no drill (0 h)');
-  const ladder=[1,2,3,4,5].map(L=>{const ok=L<=cap,on=lv>=L;const need=L-2-adv;return `<span class="y105lad${on?' on':ok?'':' off'}">${_T`Lv ${L} · ${y105HrsFor(w,m,L)} h`}${ok?'':` · ${_T`Yard ${V105Y.ROM[Math.max(1,Math.min(3,need))]}`}`}</span>`}).join('');
+  const lvTxt=lv?_T`Lv ${lv} (cap Lv ${cap})`+(adv>0&&!y105RivOff()?' · '+_T`+${adv} from ${esc(a?a.name:_T('your Doctore'))}`:''):_T('no drill (0 h)');
+  const ladder=[1,2,3,4,5].map(L=>{const ok=L<=cap,on=lv>=L;const need=L-2-adv;const hl=adv>0&&!y105RivOff()?(L<=adv?_T`Lv ${L} · free`:(y105HrsFor(w,m,L)-doc>0?_T`Lv ${L} · +${y105HrsFor(w,m,L)-doc} h`:_T`Lv ${L} · ✓`)):_T`Lv ${L} · ${y105HrsFor(w,m,L)} h`;return `<span class="y105lad${on?' on':ok?'':' off'}">${hl}${ok?'':` · ${_T`Yard ${V105Y.ROM[Math.max(1,Math.min(3,need))]}`}`}</span>`}).join('');
+  const advName=a?a.name:_T('your Doctore');const advNote=adv>0&&!y105RivOff()?`<div class="y105sub y105advn">${_T`+${adv} from ${esc(advName)} (your Doctore advisor)`}</div>`:'';
   const regs=Y92_REG.map(([k,ic,l])=>{const R=TRAIN_REGIMES[k];const M=Y92_MUL[k];const on=doc>0&&(w.train||'off')===k;
     return `<button type="button" class="y105seg${on?' on':''}" data-mg="regime" data-id="${k}" ${doc>0&&!LK?'':'disabled'}><b>${ic} ${l}</b><small>${doc>0?(R.c?coinAmt87(R.c):_T('free'))+(k==='off'?'':` · ×${M.g}`):_T('needs his time')}</small></button>`}).join('');
   const k=y105K(w);const pr=y92Pre(k);const i=Y92_PRE.indexOf(pr);const open=doc>0&&pr.lv<=lv;const bn=Math.round(y105Bonus(w,m,Math.max(lv,1))*100);
@@ -136,7 +138,7 @@ function y105DocHTML(w,m){const P=thPlan(w);const T=y105Peek(P);const LK=!!P.lk1
   return `<section class="y105p y105doc${doc>0?'':' idle'}${LK?' lk':''}"><div class="y105dtop">
     <div class="y105who"><span class="y105face">${face}</span><div><div class="y105cap">${_T('The Doctore · this week')}</div><div class="y105nm">${a?esc(a.name):_T('Your doctore')}</div><div class="y105sub">${_T('runs ONE team drill · his level now:')} <b>${lvTxt}</b></div></div></div>
     <div class="y105time"><div class="y105cap">${_T('Time with him')}</div><div class="y105row"><button type="button" class="y105step" data-y105="doc|-1" aria-label="${esc(_T('Less time'))}" ${doc>0&&!LK?'':'disabled'}>−</button><span class="y105dh"><b class="y105big">${doc}</b> h</span><button type="button" class="y105step" data-y105="doc|1" aria-label="${esc(_T('More time'))}" ${!LK&&left>0&&doc<mx?'':'disabled'}>+</button></div>
-      <div class="y105lads">${ladder}</div><div class="y105sub">${_T`from the training hours · Yard ${Y}/3 · drills +${bn}%`}</div>
+      <div class="y105lads">${ladder}</div>${advNote}<div class="y105sub">${_T`from the training hours · Yard ${Y}/3 · drills +${bn}%`}</div>
       <button type="button" class="y105mini${X.study?' on':''}" data-yj="study" ${X.study||left<1||LK?'disabled':''}>${X.study?_T('📜 Studied the card'):_T('📜 Study the card · 1 h')}</button></div>
     <div class="y105int"><div class="y105cap">${_T('Intensity · the whole squad')}</div><div class="y105segs">${regs}</div><div class="y105sub">${doc>0?_T('Gains and fatigue of the team drill and every session.'):_T('Give the Doctore time to run a drill')}</div></div></div>
     <div class="y105dbot"><div class="y105drill"><button type="button" class="y105arr" data-y105="dr|-1" aria-label="${esc(_T('Previous drill'))}" ${LK?'disabled':''}>‹</button>
