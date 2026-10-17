@@ -61,3 +61,13 @@ It EXTENDS N12a / E5a / E6a / l1a above (nothing replaced; it sets the bar and t
 - Measurable acceptance (added to the brief): frame ≤ 16 ms laptop / ≤ 33 ms phone on the benchmark scene, shadows ≤ 2 ms of it; highlight
   overlays keep their contrast vs the floor (automated); no haze on the board (depth only between sand, walls, stands); local light only where
   something burns/glows; board first, then the main-menu show (same sheets); City Square / Studio / Online later.
+
+## Target clarity (a tester's note via him, 2026-10-17; his u1c u2a u3a)
+Tester: "changing the cursor or having a confirmation when selecting nearby targets for attacks — in the isometric view it isn't clear what
+you're targeting. That said, it went where I wanted each time." Found: the board has NO hover feedback at all (no pointermove on the board).
+- U1c HOVER PREVIEW: with an attack chosen, the valid target under the pointer gets a red ring on its tile + a soft outline on the figure +
+  a crosshair cursor + a small tag (name · your hit chance); leaving clears it; the click hits exactly what is shown. Overlapping figures:
+  the figure whose BODY (sprite alpha) is under the pointer wins over the tile behind. PLUS Settings → "Confirm attacks" (off by default):
+  "Strike <name>?" Yes/No.
+- U2a TOUCH: first tap = select + the same ring/outline/tag, second tap on the same target = strike (a tap elsewhere cancels).
+- U3a in v1.06 (the board release, with the lighting). Display/input only: no rule, dice or online-lockstep change.

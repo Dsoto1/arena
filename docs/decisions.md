@@ -768,3 +768,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - Decided 2026-10-17 (his q1a q2a q3a, tools/plans/poser): poser releases in BODY-FIRST order — body + body types (muscular = his reference,
   athletic, lean, stocky, heavy) → poses → armor/weapons → face params + close-up view → render polish (REPLACES p4a fit-first); soft matte
   shading everywhere with a thin outline only on the board (REPLACES the toon + ink look); a ≈ 2 mm sculpt only for close-ups.
+- Decided 2026-10-17 (his u1c u2a u3a, a tester's note): v1.06 adds attack-target hover preview (ring + outline + crosshair + name/hit-chance
+  tag; body under the pointer wins), touch = tap to select, tap again to strike, and Settings "Confirm attacks" (off by default).
