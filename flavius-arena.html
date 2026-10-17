@@ -6062,7 +6062,10 @@ async function doAttack(player, source, target, {
       log(pre + _T(' — the chains snap.'));
       const pl = target.ref;
       await breakPot(pl, player, [pl.r + Math.sign(player.r - pl.r), pl.c + Math.sign(player.c - pl.c)]);
-    } else log(_T`${pre} — the pot holds (needs 2).`);
+    } else {
+      log(_T`${pre} — the pot holds (needs 2).`);
+      if (typeof BUS !== 'undefined' && BUS.has('pot.hold')) try { BUS.emit('pot.hold', { r: target.r, c: target.c, dmg: Math.max(0, dmg), need: 2 }); } catch (e) {} /* v1.05 B42: display only */
+    }
   } else if (target.kind === 'npc') {
     const nn = target.ref;
     if (w.punch && nn.t === 'bear') stat(player, 'punchBear');
@@ -60654,7 +60657,7 @@ function h100Paint(clear){if(typeof fx95Cv!=='function')return;const c=fx95Cv();
     /* the line above the token */
     if(R.text&&!R.faded||R.word&&!R.pip){const fs=Math.round(Math.max(R.faded?14:13,Math.min(R.big?24:R.faded?21:19,TW*(R.big?0.3:R.faded?0.27:0.24))));cx.font=`700 ${fs}px Marcellus SC, serif`;cx.textBaseline='middle';
       const txt=R.text||R.word;const tw=cx.measureText(txt).width;const isz=R.cause&&!R.faded?fs*1.15:0;const pad=fs*0.45,gap=isz?fs*0.3:0;
-      const W2=tw+isz+gap+pad*2,H2=fs*1.55;let x=m.x-W2/2;const y=Math.max(2,Math.min(m.y-TW*1.15-H2/2-lift,top-H2-3));x=Math.max(4,Math.min((B95.fxW||x+W2)-W2-4,x));
+      const W2=tw+isz+gap+pad*2,H2=fs*1.55;let x=m.x-W2/2;const y=Math.max(2,Math.min(m.y-TW*(1.15+(R.up||0))-H2/2-lift,top-H2-3-(R.up?TW*R.up:0)));x=Math.max(4,Math.min((B95.fxW||x+W2)-W2-4,x));
       if(!R.faded){cx.fillStyle='rgba(12,8,6,.8)';h100Pill(cx,x,y,W2,H2);cx.fill();cx.strokeStyle=R.edge||'rgba(240,207,125,.55)';cx.lineWidth=1;cx.stroke()}
       if(isz){const im=R.cause.k?h100Img(R.cause.k):null;if(R.cause.tok)h100Tok(cx,R.cause.tok,x+pad,y+(H2-isz)/2,isz);else if(R.cause.paw)h100Paw(cx,x+pad,y+(H2-isz)/2,isz);else if(im&&im.complete&&im.naturalWidth)cx.drawImage(im,x+pad,y+(H2-isz)/2,isz,isz);
         else{cx.font=`${Math.round(isz*0.85)}px serif`;cx.textAlign='left';cx.fillStyle='#fff';cx.fillText(R.cause.g||'',x+pad,y+H2/2);cx.font=`700 ${fs}px Marcellus SC, serif`}}
@@ -76112,6 +76115,40 @@ const b3105Off=()=>{try{return typeof bs101Mode==='function'&&bs101Mode()===2}ca
 if(typeof bst100Piece==='function'){const base=bst100Piece;bst100Piece=function(){const was=B3105.bst;
   B3105.bst=false;try{const n=typeof MINI_CUR!=='undefined'?MINI_CUR:null;if(n&&!n.cls&&n.t&&NPCT[n.t]&&bst100Mode()!=='off'){const k=bst100Key(n);B3105.bst=!!(k&&bst100Img(k,0))}}catch(e){} /* the 3D sheet path only (334/346 flood its base away) */
   try{return base.apply(this,arguments)}finally{B3105.bst=was}}}
+/* =====================================================================
+   371-V105POT · v1.05 B42 · THE POT HOLDS, ON THE BOARD. DISPLAY ONLY: nothing here writes S, rolls a die or changes a promise.
+   Hitting a pillar's Blessings pot too weakly (or missing) used to leave only a log line ("— the pot holds (needs 2)"). Now:
+   - doAttack's pot branch emits BUS 'pot.hold' {r,c,dmg,need} (04-rules; a one-line emit after the log, no rule touched);
+   - this module listens and floats ONE readout ABOVE the pot's pillar through 277's h100Add (the hit-readout family):
+       damage short of the need -> "Holds · 1 of 2" (dealt of needed);  no damage at all -> "Miss" (replaces 04-rules' small "Missed"
+       float on that tile, so it is one word, not two);
+   - the pot shakes a little (a ~360 ms side-to-side jiggle painted by a drawPillar / drawPot wrapper, outermost).
+   Reduce motion / Animations Off (SETTINGS.anim88 'off', SETTINGS.calm) -> the text only, no shake. Effects off / Fast / Snap / headless:
+   nothing new (277's own rules; without 277 the text goes through fx()). A pot that breaks is untouched.
+   KILL SWITCH localStorage flavius_v105potoff=1. Test tv105j. Small edit in 277: readouts take an optional R.up (tile heights).
+   ===================================================================== */
+const POT105={off:false,sh:null,dx:0};
+try{POT105.off=localStorage.getItem('flavius_v105potoff')==='1'}catch(e){}
+const POT105_SHAKE=360; /* TWEAK: ms of the jiggle */
+const pot105Anim=()=>{try{if(typeof reduceMotion==='function'&&reduceMotion())return false;if(typeof SETTINGS!=='undefined'&&SETTINGS.anim88==='off')return false;if(typeof h100Anim==='function')return h100Anim();return true}catch(e){return true}};
+function pot105Show(e){
+  if(POT105.off||HEADLESS||!S||S.sim||!e||e.r==null)return;
+  const dmg=Math.max(0,e.dmg|0),need=e.need||2;
+  const word=dmg>0?_T`Holds · ${dmg} of ${need}`:_T('Miss');
+  const col=dmg>0?'#f3e6cf':'#b8b0a4';
+  const pl=(S.pillars||[]).find(p=>p.r===e.r&&p.c===e.c);const up=0.45+0.44*Math.max(0,((pl&&pl.pots&&pl.pots.length)||1)-1);
+  if(typeof h100Add==='function'&&typeof h100Live==='function'&&h100Live()){
+    const key='tile:'+e.r+','+e.c;
+    if(!dmg){const old=_T('Missed'),now=performance.now();H100.list=H100.list.filter(x=>!(x.key===key&&x.word===old&&now-x.made<900))} /* before the add: the queue starts after what is still shown */
+    h100Add(key,{word,text:word,color:col,r:e.r,c:e.c,up})}
+  else if(typeof fx==='function')fx(e.r,e.c,word,col);
+  if(pl&&pot105Anim()&&!(typeof h100Fast==='function'&&h100Fast())){POT105.sh={pl,t0:performance.now()};pot105Loop()}}
+function pot105Loop(){requestAnimationFrame(()=>{try{draw()}catch(e){}const s=POT105.sh;if(s&&performance.now()-s.t0<POT105_SHAKE)pot105Loop();else POT105.sh=null})}
+function pot105Dx(pl){const s=POT105.sh;if(!s||s.pl!==pl)return 0;const k=(performance.now()-s.t0)/POT105_SHAKE;if(k>=1||k<0)return 0;return Math.sin(k*Math.PI*6)*(1-k)*TW*0.05}
+{const base=drawPillar;drawPillar=function(pl){const dx=POT105.off?0:pot105Dx(pl);if(!dx)return base.apply(this,arguments);
+  POT105.dx=dx;try{return base.apply(this,arguments)}finally{POT105.dx=0}}}
+{const base=drawPot;drawPot=function(x,y,s,eagle){if(POT105.dx)x+=POT105.dx;return base.apply(this,arguments)}}
+if(!POT105.off&&typeof BUS!=='undefined')BUS.on('pot.hold',e=>{try{pot105Show(e)}catch(err){console.error(err)}});
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

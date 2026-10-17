@@ -271,7 +271,10 @@ async function doAttack(player, source, target, {
       log(pre + _T(' — the chains snap.'));
       const pl = target.ref;
       await breakPot(pl, player, [pl.r + Math.sign(player.r - pl.r), pl.c + Math.sign(player.c - pl.c)]);
-    } else log(_T`${pre} — the pot holds (needs 2).`);
+    } else {
+      log(_T`${pre} — the pot holds (needs 2).`);
+      if (typeof BUS !== 'undefined' && BUS.has('pot.hold')) try { BUS.emit('pot.hold', { r: target.r, c: target.c, dmg: Math.max(0, dmg), need: 2 }); } catch (e) {} /* v1.05 B42: display only */
+    }
   } else if (target.kind === 'npc') {
     const nn = target.ref;
     if (w.punch && nn.t === 'bear') stat(player, 'punchBear');
