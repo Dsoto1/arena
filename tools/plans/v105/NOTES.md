@@ -133,3 +133,4 @@
   own sessions / Trial move up) · Y2a (Lock in sits in the banner beside the hours, always visible) · Y3 ok (drop the Beast pen's duplicate
   "Needs 2 hours" tooltip) · Y4a (Armory, Recruiting, Training Yard banners = the slim Infirmary/Roster banner: same height, face left, title +
   one line; the Yard's big "0 of 10 h" plate and Recruiting's counters become chips in the banner).
+- B73 (his ask): the Lanista (me) and the five World tab banners (290-v100world: news, league, imp, trophy, sched) slimmer + compact like the Infirmary/Roster banner (extends Y4a). Would REPLACE the v1.0 World painted banners (his W picks 2026-10-11): the League podium and the Tituli trophy plinths live in those banners today.
