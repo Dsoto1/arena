@@ -31,3 +31,6 @@
   height, nothing clipped, Home scrolls with the row (no fixed/absolute placement), check 1440 / 1000 / 760 / 390 px and while scrolling.
 - B40 (beta 2 screenshot): the stands fan's flag (321, "first fan of each gladiator holds his flag") floats beside the pole — a gap between
   the pole and the cloth. Fix: the flag's hoist edge sits on the pole near its top (both facings, every zoom, the 3D crowd 313 too).
+- B41 (beta 2 screenshot): a netted snake's NET (the bell/dome cage) is drawn over a gladiator standing on the tile in front of it — the cage
+  crosses his body. Fix: draw the net with the netted piece in depth order (behind pieces in front of its tile, in front of pieces behind),
+  never in a late overlay pass.
