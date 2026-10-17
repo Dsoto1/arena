@@ -100,3 +100,4 @@
   (2) Sica's Syndicate sits in the table but takes NO playoff seed (348 po104Seeds skips m.sica), so seeds ≠ table places. Fix: a SEED
   column/marker in the League table (Sica "—, wildcard only"), the tie-break order in the header tooltip (points → win rate → fame), the letter
   dated ("after week 8's games") and gone from mail at the week's end (M1a), the Match Week banner's seed chip always live.
+- B59 (beta 2): '<name> asks for a fight' task stayed after he was entered — clears as soon as he is in any bout this week (M1a case; with 378).
