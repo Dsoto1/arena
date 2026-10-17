@@ -47,3 +47,20 @@ measurements, taken from the front view; keep his original if a builder needs to
 My notes: this is the top of the range (closer to "muscular" than "athletic" by the brief's own "avoid superhero anatomy"). Proposal for P2a:
 use it as the MUSCULAR type; ATHLETIC = same skeleton at ~7.5 heads, shoulders ≈ 2.2, softer separation; historical gladiators (hordearii,
 "barley men") often carried a fat layer → STOCKY/HEAVY types matter for the Roman look. Ask him when release 3 (anatomy) starts.
+
+## His follow-up (2026-10-17)
+- Body types: he likes the variations (muscular = the reference; athletic softer; lean; stocky + heavy for the hordearii look). The reference is
+  "the extreme".
+- His priority order: 1 base human model (proportions, joints, muscle groups, hands, head) → 2 fighter-quality poses ("ten excellent poses beat
+  fifty random ones", equipment-aware: feet, hips, torso, shoulders, weapon tell one story) → 3 armor + weapon integration (fit, joints, grips;
+  fixing clipping beats decoration) → 4 facial identity + materials → 5 final render polish (key/fill, contact shadows, AO, roughness, framing,
+  export). Compare the SAME character / pose / armor / weapon before and after each stage. Inspect before rebuilding anything.
+- His technical table, answered from the code (tools/art/rig92): the body is PROCEDURAL — ~150 anatomical primitives (muscle ellipsoids, round
+  cones, smooth unions, subtracted eye sockets/mouth/ears/navel) → a field on a 4 mm grid → surface nets → ONE skinned mesh on a skeleton
+  (rig.js, two-bone IK for arms/feet). Armor = shells LIFTED OFF THE SKIN with the same skin weights (gear.js shellFrom, masked per equip point)
+  + rigid helmets/shields/weapons; grips via hold.js. No portrait input. Materials today: TOON shading + INK OUTLINE (body.js).
+  → rows that apply: "procedurally generated body" (better primitives, smooth transitions, proportion parameters = body types) and "mostly
+  procedural armor/weapons" (profiles, bevels, attachment rules). Because the shells follow the skin, a better body improves armor fit by itself
+  → his body-first order is right (it REPLACES p4a's fit-first order, pending his confirm).
+- Limits found: a 4 mm grid can't hold eyelids/nostrils/lips → the close-up view needs a finer sculpt (≈ 2 mm, only for close-ups);
+  the toon + ink look vs the reference's soft matte shading is an art-direction call.
