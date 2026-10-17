@@ -22,3 +22,6 @@
   order at that cell, put every floor mark under the figure.
 - B37 (beta 1 screenshot, 2026-10-17): with the token BASE toggled off (346), a gladiator's beige base disc still shows — intermittently.
   Likely the same path as B36 (one draw path ignores the toggle and the floor order). Sent to the B36 builder (366-v105fixb3).
+- B38 (beta 2, 2026-10-17): the main menu show uses old tokens — 282's pre-rendered strips (assets/mm100_*.webp, rendered for v1.0) predate
+  336 (80% of a pillar, weapon grip), 346 (smaller beasts) and 323 (attacks); and when the strips take > 1.5 s to load the visit falls back
+  to the old FLAT show. His a: re-render the strips from today's figures + never fall back to the flat show (hold a still 3D frame, then play).

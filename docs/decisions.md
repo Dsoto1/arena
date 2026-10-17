@@ -735,3 +735,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - Decided 2026-10-17 (v1.05, his q1a): every NEW Manager career starts at Season 1, week 1 and counts its own seasons; careers no longer
   join or push the shared empire calendar (Play Now date / city schedule keep their own). REPLACES v0.22 "a new career joins the empire's
   calendar where it stands" (17-manager newWorld) and the "behind the empire" banner for new careers. Running careers keep their numbers.
+- Decided 2026-10-17 (v1.05, his a): the main menu show always plays in 3D from strips rendered from the CURRENT figures; the flat-show
+  fallback on a slow load is REPLACED by holding a still 3D frame until the strips are ready (282-v100menu MM100S.cap).
