@@ -1,5 +1,5 @@
 # 3D character poser + equipment rendering overhaul — his brief (2026-10-17), not yet scheduled
-His brief: tools/plans/poser/BRIEF.md (verbatim; it was cut off in §9 "ENGINEERING AND PERFORMANCE" — ask him for the rest).
+His brief: tools/plans/poser/BRIEF.md (verbatim, complete).
 
 ## What exists (for the brief's §1 audit)
 - rig92 (tools/art/rig92 → assets/three93.js + tok93.js, three.js loaded on demand) = the body, gear and poser. Printed classes: sheets baked at

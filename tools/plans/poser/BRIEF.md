@@ -1,4 +1,4 @@
-# His brief: 3D character poser + equipment rendering overhaul (2026-10-17, verbatim; his message ended mid-§9)
+# His brief: 3D character poser + equipment rendering overhaul (2026-10-17, verbatim; §9 onward sent in a second message)
 
 FLAVIUS RULE — 3D CHARACTER POSER & EQUIPMENT RENDERING OVERHAUL
 
@@ -261,5 +261,69 @@ If the tool supports multiple viewing angles, ensure the model remains convincin
 Preserve existing output dimensions, transparency requirements, export formats, and downstream integrations.
 
 9. ENGINEERING AND PERFORMANCE
-Maintain the current application architecture unless inspection establishes
-[message ended here]
+Maintain the current application architecture unless inspection establishes a strong reason to change it.
+* Reuse existing geometry and materials where possible.
+* Cache reusable body parts and procedural geometry when safe.
+* Avoid rebuilding unchanged geometry on every frame.
+* Avoid unnecessary allocations in animation or rendering loops.
+* Keep pose definitions separate from the rendering implementation.
+* Keep anatomy parameters separate from lighting and material parameters.
+* Use descriptive names and small, testable functions.
+* Follow existing code conventions and dependency choices.
+* Avoid adding a large dependency for a feature that can be implemented reliably within the existing system.
+Ensure the system remains usable with many different character and equipment combinations.
+Do not trade application stability for a small visual improvement.
+
+10. VALIDATION MATRIX
+Test the completed system against a representative set of cases.
+Include:
+* Different portrait identities and face shapes.
+* Different supported skin tones and hair styles.
+* Lean, athletic, muscular, and stocky body types where supported.
+* Unarmored characters.
+* Lightly armored and heavily armored characters.
+* Different helmet styles.
+* Sword-and-shield combinations.
+* Spears and other long weapons.
+* Two-handed weapons where supported.
+* Wide and compact combat poses.
+* Extreme but valid joint positions.
+* Characters with overlapping equipment.
+* Camera changes and output resizing.
+* Repeated pose changes without restarting the application.
+Look specifically for anatomical defects, clipping, disconnected equipment, incorrect grips, broken normals, inconsistent lighting, and unstable procedural output.
+Compare results against the original implementation using equivalent portraits, poses, and equipment.
+Run available tests and actual rendering checks. Distinguish verified results from assumptions.
+
+11. IMPLEMENTATION WORKFLOW
+Phase 1 — Audit: Map the existing pipeline and identify the largest quality problems.
+Phase 2 — Prioritize: Rank improvements by visual impact, implementation risk, and performance cost.
+Phase 3 — Foundation: Improve base anatomy, proportions, joints, and head construction.
+Phase 4 — Posing: Refine the pose library and procedural joint logic.
+Phase 5 — Equipment: Improve attachment points, fit, grips, clipping, and equipment geometry.
+Phase 6 — Rendering: Refine materials, lighting, shadows, and final composition.
+Phase 7 — Validation: Compare representative outputs, run tests, inspect failure cases, and fix regressions.
+Implement changes incrementally. Maintain a working checkpoint and preserve existing functionality.
+Do not stop at recommendations, mockups, or a design document. Implement the highest-value improvements and report any unfinished work honestly.
+
+12. ACCEPTANCE CRITERIA
+The overhaul is successful when:
+* The body has coherent, recognizable human anatomy.
+* Muscle definition comes from believable form and lighting.
+* The face has meaningful structure and retains supported portrait identity.
+* Combat poses communicate balance, intention, and weapon handling.
+* Joint articulation remains plausible across supported poses.
+* Armor fits and follows the character more convincingly.
+* Weapons align correctly with hands and grips.
+* Materials are distinguishable and visually cohesive.
+* Lighting reveals anatomy and equipment without washing out detail.
+* The character remains convincing from supported viewing angles.
+* Existing equipment, portrait inputs, controls, and export workflows remain functional.
+* Performance and memory use remain acceptable.
+* Representative test cases have been rendered and inspected.
+
+FINAL DIRECTIVE
+Treat this as a professional character-system upgrade.
+Improve the underlying anatomy, the logic that poses the body, the fit of the equipment, and the rendering that communicates all three.
+Preserve character identity, game compatibility, and existing functionality.
+Inspect the real implementation. Fix the underlying causes. Validate the rendered results. Prioritize substantial, repeatable improvements over superficial detail.
