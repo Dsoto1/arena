@@ -742,3 +742,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - Decided 2026-10-17 (v1.05, his t1a t2a t3a): the Doctore runs ONE TEAM DRILL a week, unlocked by the hours you give him (1 h = Lv 1 drills,
   +1 level per 2 more hours; Yard level = his cap + bonus; Intensity only with hours; 0 hours = no team drill). REPLACES v0.92 (213)
   per-fighter Doctore drills and "level = 1 + Yard + hours/2", and v1.04 B13 d1a's hours lock tied to a fighter's drill.
+- Decided 2026-10-17 (v1.05): Manager Match Week — at most ONE bout a week has the Golden Eagle (some weeks none); REPLACES eaglePot on every
+  Manager bout. Infirmary: no build/buy buttons in the ward — buildings are bought in My Ludus only; REPLACES the ward's build buttons.

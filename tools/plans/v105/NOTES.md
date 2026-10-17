@@ -62,3 +62,11 @@
   Fix: a SLIM banner (roughly half today's height): row 1 = city name + "Match Week · week N of 12" + the chips inline (pill height = text,
   centred, one line, ellipsis); row 2 = map inset + day tabs + Walk the city square + temple/gate links; the Your-week box compact
   (tiles in one row of 6 or 3×2 at ~half height, buttons beside); no overlap at 1440/1280/1000; phones stack.
+- B46 (his call, beta 2): the Golden Eagle is in play in almost every Match Week bout (17-manager boutSpec opts.eaglePot:true on every bout,
+  shown as "🦅 Golden Eagle in play"). Wanted: AT MOST ONE bout a week has the Eagle (some weeks none). REPLACES the always-on eaglePot in
+  Manager bouts (v0.6x; backlog #5 only highlighted it).
+- B47 (beta 2 screenshot, City Square): a house (tiled roof, white walls) is drawn UNDER/over the arena's outer wall — it sits inside the
+  arena's footprint. Fix: no building overlaps the arena (layout or depth), every city.
+- B48 (his call, beta 2): remove the BUILD/buy options from the Infirmary ward (he misclicked Hygeia and bought it). Building happens only
+  from My Ludus (the rooms/building screens); the ward shows what is built, and what is not built shows "Build it in My Ludus" (a link),
+  never a purchase button. REPLACES the in-ward build buttons (318/351 ward plates).
