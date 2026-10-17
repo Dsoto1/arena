@@ -106,3 +106,8 @@
 - B61 (his call): a recruit's "home city" want (157 WANTS88, glad.city, 17 baseInterest home bonus) must name a city WITH AN ARENA (LOCATIONS).
   A recruit from a town without one (e.g. Alexandria) wants the NEAREST arena city to his town instead ("from Alexandria — wants Thysdrus"),
   everywhere it shows and in the interest maths.
+- C1a (2026-10-17): keep the Council Doctore advisor's free levels on the Yard ladder, labelled ("+1 from <advisor>").
+- B62 (his call): Rivalry Week (week 11, Familia 2v2 vs the rival) costs NO travel — the trip is paid by the organisers. REPLACES the travel fee that week.
+- B63 (beta 2): in Rivalry Week his house was on NO card — is the house always set up in its rivalry bout? It must be: the rivalry bout
+  always seats the player's house (auto-picked pair, editable until set-off) unless he has fewer than 2 fit fighters (then a clear warning +
+  the Familia forfeit rule). Investigate why it was empty.
