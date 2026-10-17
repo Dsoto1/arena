@@ -751,3 +751,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   and loans are open all season (REPLACED).
 - Decided 2026-10-17: rudis requests only in the off-season (after the Winter festival once built); REPLACES asks during the season.
 - Decided 2026-10-17 (his m1a): tasks = actionable and self-clearing; mail = informational; decision letters are tasks. REPLACES v0.99's one-list Lanista's desk (270-v99desk).
+- Decided 2026-10-17 (his t1a; v1.06): rival trade offers come from a motive (wages, youth, gap, all-in, sell high) with a wage-aware value and a one-line reason + weekly cost change on the card; REPLACES 47's value-match offers.

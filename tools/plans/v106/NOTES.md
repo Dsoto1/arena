@@ -25,3 +25,10 @@ Winter Quarters (N4, was v1.06) moves to v1.07.
   letter warns; rivals and Sica follow it.
 - After the deadline: free agents may still be signed ONLY into an empty roster spot under the cap; Superbus bouts take only fighters on
   the roster at the deadline; no releasing fighters during the playoff weeks.
+
+## Rival trade strategy (his t1a, 2026-10-17)
+- Each AI trade offer comes from a MOTIVE picked from the house's situation: cut wages (poor house), youth/potential (rebuilding),
+  fill a gap (missing class / injured starter), all-in (contender, weeks 7–8), sell high (a fighter about to fade).
+- Value = rating + fame + age + career kind + potential − weekly wage (a dearer fighter costs value). The offer card says WHY in one line
+  and shows the weekly cost change ("+3/wk for you"). Deadline end of week 8 (d1a). REPLACES 47 offersWeek's gValue match (rating×2.2 +
+  fame×1.2 − age over 30, no wages).
