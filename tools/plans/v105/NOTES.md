@@ -134,3 +134,10 @@
   "Needs 2 hours" tooltip) · Y4a (Armory, Recruiting, Training Yard banners = the slim Infirmary/Roster banner: same height, face left, title +
   one line; the Yard's big "0 of 10 h" plate and Recruiting's counters become chips in the banner).
 - B73 (his ask): the Lanista (me) and the five World tab banners (290-v100world: news, league, imp, trophy, sched) slimmer + compact like the Infirmary/Roster banner (extends Y4a). Would REPLACE the v1.0 World painted banners (his W picks 2026-10-11): the League podium and the Tituli trophy plinths live in those banners today.
+- B74 (his beta-3 screenshot, Pompeii week 2, not yet set off): he can STILL walk the city square before travelling. The beta-3 fix (360: walking
+  the host square with an unpaid trip asks "Set off for X?") is not what he wants. Fix: until the house has set off, Walk the city square (and
+  every other square entry: the temple, walk the sand at the arena gate, the City Square rail/map entries) is LOCKED ("🔒 set off first");
+  after Set off it opens. REPLACES the beta-3 confirm dialog. A home-city week (no trip) is open at once.
+- B75 (same screenshot): the Match Week banner (374 slim banner) drops the "Booked for Pompeii from Leptis Magna · trip 15" chip, the world-event
+  chip ("Grain dole day · attendance and purses up") and the "the temple · walk the sand at the arena gate" links (both still inside the City
+  Square). The trip cost moves into the Set off button ("🛣 Set off for Pompeii · 15").
