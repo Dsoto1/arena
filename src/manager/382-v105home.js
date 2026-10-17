@@ -10,11 +10,13 @@
 const HOME105={off(){try{return localStorage.getItem('flavius_v105homeoff')==='1'}catch(e){return false}}};
 const isArena105=c=>!!c&&LOCATIONS.some((L,i)=>i>0&&L&&L.n===c);
 function townXY105(c){const X=typeof MI100_XTRA!=='undefined'&&MI100_XTRA[c];if(X)return X;const Y=typeof CITY_XY!=='undefined'&&CITY_XY[c];return Y||null}
-function nearestArena105(c){if(isArena105(c))return c;const P=townXY105(c);const ar=LOCATIONS.filter((L,i)=>i>0&&L);
+/* his call 2026-10-17: hand-mapped towns, checked before the nearest-arena maths */
+const HOME_OVR105={Londinium:'Nemausus',Antiochia:'Syracusae'};
+function nearestArena105(c){if(isArena105(c))return c;if(HOME_OVR105[c]&&isArena105(HOME_OVR105[c]))return HOME_OVR105[c];const P=townXY105(c);const ar=LOCATIONS.filter((L,i)=>i>0&&L);
   if(!P)return ar[Math.abs(typeof hashStr==='function'?hashStr('home105:'+c):0)%ar.length].n;
   let best=null,bd=Infinity;for(const L of ar){const d=Math.hypot((L.x-P[0])*MAPW,(L.y-P[1])*MAPH);if(d<bd-1e-9){bd=d;best=L.n}}return best}
 function homeArena105(g){if(!g||!g.city)return g?g.city||null:null;if(HOME105.off())return g.city;
-  if(g.homeArena105&&g.homeArenaOf105===g.city&&isArena105(g.homeArena105))return g.homeArena105;
+  if(g.homeArena105&&g.homeArenaOf105===g.city&&isArena105(g.homeArena105)&&!HOME_OVR105[g.city])return g.homeArena105;
   const a=nearestArena105(g.city);try{g.homeArena105=a;g.homeArenaOf105=g.city}catch(e){}return a}
 /* the chip text: null = leave the old label */
 function home105Label(g){if(HOME105.off()||!g||!g.city)return null;const a=homeArena105(g);if(!a||a===g.city)return null;return _T`Home: ${a} (from ${g.city})`}
