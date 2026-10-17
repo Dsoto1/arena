@@ -127,3 +127,4 @@
   Intensity, the Team drill card (empty right half); the Lock-in button sits below the fold (must scroll). Also seen: the Beast pen "Needs 2 hours"
   tooltip overlaps its own text. REPLACES part of the B44 layout (the approved y1a mock-up, built in 373).
 - B71 (his aside): the Armory, Recruiting and Training Yard page banners = the slim Infirmary/Roster banner (same height + look).
+- B72 (his beta-3 report): Recruiting — the screen jitters/flickers when clicking a recruit's buttons (scouting etc.). Likely the B54 keep-in-view watcher (378 rec105Watch/rec105Show: scrollTop fixes per redraw + smooth scrollIntoView fighting). Fix, keep the panel steady.
