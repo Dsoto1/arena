@@ -29,6 +29,10 @@
         Team drill card is as wide as its content. The counter chips get no title of their own (Recruiting keeps 319's data-tip; no two
         tooltips); on phones the Armory's number carries a 🛡. The Doctore advisor's "+N from X" line is printed once: once he drills
         the Doctore's level line says it, so the Time block's copy goes.
+   Review round 3: the Armory's info in its banner — 229's "🛡 Your Armory" heading (it repeated the title) goes, its rule line moves to the
+        new ⚕ hurt chip's data-tip with the names (the "⚕ Hurt: …" line goes); the Doctore column 228–236 px at laptop widths with a
+        one-line eyebrow + 12 px text (2 lines, not 4), the 📜 Study chip one line, the Time lines 11 px (one line each at 1440 px);
+        ≥1500 px: "N of N fit fighters drill" sits on the chips' line.
    Phones: the Yard banner wraps (face + title, then the chips + Lock in), so Lock in stays in the first screen. Static DOM, no animation.
    ===================================================================== */
 function cp105On(){try{return localStorage.getItem('flavius_v105compactoff')!=='1'}catch(e){return true}}
@@ -67,7 +71,16 @@ function cp105Ban(R,tab){if(typeof rm100On!=='function'||!rm100On())return false
     if(lk&&hrs){const acts=lk.closest('.y105acts');hd.appendChild(lk);
       const s=acts&&acts.querySelector(':scope>.y105sub');lk.title=s?s.textContent.trim():_T('Locks sessions, the Doctore\'s time, intensity and the drill.');if(s)s.remove()}}
   const bp=hd.querySelector(':scope>.bp104c');if(bp&&cnt)cnt.before(bp);
+  if(tab==='armory')cp105Arm(R,hd);
   return true}
+/* review round 3: the Armory's info in its slim banner — 229's "🛡 Your Armory" heading repeats the banner title (its rule line goes to the
+   hurt chip's data-tip), and 229's "⚕ Hurt: names" line becomes a .roomstat chip after the shelf chip (the count; the names in its data-tip) */
+function cp105Arm(R,hd){const pane=R.querySelector('#mgrPane')||R;const hp=pane.querySelector('.ar95hurt');let h4=null;
+  for(const x of pane.querySelectorAll('h4.secth'))if(x.nextElementSibling===hp||(x.textContent||'').includes(_T`only fit fighters can be equipped — a hurt fighter's gear waits on the shelf`)){h4=x;break}
+  if(h4)h4.remove();
+  if(hp&&!hd.querySelector('.cp105hurt')){let hurt=[];try{hurt=rosterOf(me()).filter(g=>g.inj)}catch(e){}const n=hurt.length;
+    if(n){const tip=_T`⚕ Hurt:`+' '+hurt.map(g=>g.name).join(', ')+' · '+_T`only fit fighters can be equipped — a hurt fighter's gear waits on the shelf`;
+      hd.insertAdjacentHTML('beforeend',`<div class="roomstat rm100cnt cp105c cp105hurt" data-tip="${esc(tip)}" tabindex="0"><div class="ptbox on">${n}</div><span>${_T('hurt')}</span></div>`);hp.remove()}}}
 {const base=mgrHTML;mgrHTML=function(){const h=base.apply(this,arguments);try{
   if(!cp105On()||typeof h!=='string'||MGR.view)return h;const tab=MGR.tab;if(tab!=='practice'&&tab!=='armory'&&tab!=='recruit')return h;
   if(h.indexOf('roomhd')<0&&h.indexOf('y105')<0)return h;
@@ -96,6 +109,8 @@ function cp105Ban(R,tab){if(typeof rm100On!=='function'||!rm100On())return false
 #mgrBody .roomhd.cp105ban .roomstat.rm100cnt .ptbox small{font-size:13px;color:#c9a44a}
 #mgrBody .roomhd.cp105ban .roomstat.rm100cnt>span{font:11px var(--mono);color:#cbb593;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 #mgrBody .roomhd.cp105ban .roomstat.rm100cnt .hpips{display:none}
+#mgrBody .roomhd.cp105ban .roomstat.cp105hurt{margin-left:0;min-width:64px;cursor:help}
+#mgrBody .roomhd.cp105ban .roomstat.cp105hurt .ptbox,#mgrBody .roomhd.cp105ban .roomstat.cp105hurt .ptbox.on{color:#f2a497!important}
 #mgrBody .roomhd.cp105ban .y105hrs{position:relative;z-index:2;flex:none;margin-left:auto;display:grid;justify-items:end;gap:0;padding:4px 12px;min-width:92px;box-sizing:border-box;border:1px solid #c9a458;border-radius:6px;background:#1a120de0}
 #mgrBody .roomhd.cp105ban .y105hrs>.y105cap{order:2;font:11px var(--mono,monospace);letter-spacing:0;text-transform:none;color:#cbb593;white-space:nowrap}
 #mgrBody .roomhd.cp105ban .y105hrs .y105big{font:400 21px/1.1 var(--display,serif);color:#b9e39a}
@@ -103,20 +118,21 @@ function cp105Ban(R,tab){if(typeof rm100On!=='function'||!rm100On())return false
 #mgrBody .roomhd.cp105ban>.y105lock{position:relative;z-index:2;flex:none;min-height:44px;max-height:52px;padding:0 18px;border-radius:8px;font-size:18px;white-space:nowrap}
 .y105.cp105{gap:10px}
 .y105.cp105 .y105doc{gap:10px;padding:10px 14px}
-.y105.cp105 .y105dtop{display:grid;grid-template-columns:minmax(170px,220px) minmax(0,auto) minmax(380px,1fr);gap:10px 16px;align-items:start}
+.y105.cp105 .y105dtop{display:grid;grid-template-columns:minmax(228px,236px) minmax(0,auto) minmax(372px,1fr);gap:10px 16px;align-items:start}
 .y105.cp105 .y105dtop>*{min-width:0}
 .y105.cp105 .y105who{align-items:flex-start;gap:10px}
 .y105.cp105 .y105face{width:52px;height:52px;font-size:28px;border-width:2px}
 .y105.cp105 .y105who .y105nm{font-size:20px}
+.y105.cp105 .y105who .y105cap{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.05em;font-size:10.5px}.y105.cp105 .y105who .y105sub{font-size:12px;line-height:1.3}
 .y105.cp105 .y105time{gap:5px}
-.y105.cp105 .cp105tr{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 14px}
+.y105.cp105 .cp105tr{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 10px}
 .y105.cp105 .cp105ts{flex:none;width:min-content;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
 .y105.cp105 .cp105tr .y105row{flex:none;gap:8px}
 .y105.cp105 .cp105tr .y105lads{min-width:0;gap:4px}.y105.cp105 .y105lad{font-size:10.5px;padding:1px 6px}
 .y105.cp105 .y105step{width:36px;height:36px;font-size:20px}
 .y105.cp105 .y105dh{min-width:58px;font-size:18px}.y105.cp105 .y105dh .y105big{font-size:34px}
 .y105.cp105 .cp105tl{flex:1 1 200px;display:flex;flex-direction:column;gap:3px;min-width:0}
-.y105.cp105 .cp105ts .y105mini{min-height:28px;padding:2px 8px;font-size:12px;max-width:100%;white-space:normal;text-wrap:balance}.y105.cp105 .cp105tl .y105sub{font-size:12px;line-height:1.3}
+.y105.cp105 .cp105ts .y105mini{min-height:28px;padding:2px 7px;font-size:11.5px;max-width:100%;white-space:nowrap}.y105.cp105 .cp105tl .y105sub{font-size:11px;line-height:1.3}
 .y105.cp105 .y105int{gap:5px}
 .y105.cp105 .y105segs{gap:5px}.y105.cp105 .y105seg{min-height:38px;padding:2px 3px;font-size:13px}.y105.cp105 .y105seg b{max-width:100%;overflow:hidden;text-overflow:ellipsis}.y105.cp105 .y105doc.idle .y105seg small{display:none}.y105.cp105 .y105seg small{font-size:10.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
 .y105.cp105 .y105dbot{gap:10px 20px;padding-top:10px;align-items:flex-start}
@@ -126,7 +142,7 @@ function cp105Ban(R,tab){if(typeof rm100On!=='function'||!rm100On())return false
 .y105.cp105 .y105dt .y105nm{font-size:20px}
 .y105.cp105 .y105arr{width:40px;height:40px}
 .y105.cp105 .y105whod{flex:1 1 260px;gap:6px}
-@container y105 (min-width:1500px){.y105.cp105 .y105dtop{grid-template-columns:minmax(200px,340px) minmax(0,auto) minmax(384px,1fr)}.y105.cp105 .cp105ts{width:auto}.y105.cp105 .cp105ts .y105mini{white-space:nowrap}}
+@container y105 (min-width:1500px){.y105.cp105 .cp105tl .y105sub{font-size:12px}.y105.cp105 .y105whod{flex-direction:row;flex-wrap:wrap;align-items:center;column-gap:16px}.y105.cp105 .y105whod>.y105cap{flex:1 1 100%;margin-bottom:0}.y105.cp105 .y105whod>.y105chips{flex:0 1 auto}.y105.cp105 .y105whod>.y105sub{flex:1 1 220px}.y105.cp105 .y105dtop{grid-template-columns:minmax(200px,340px) minmax(0,auto) minmax(384px,1fr)}.y105.cp105 .cp105ts{width:auto}.y105.cp105 .cp105ts .y105mini{white-space:nowrap}}
 @container y105 (max-width:1000px){.y105.cp105 .y105dtop{grid-template-columns:minmax(300px,400px) minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"who time" "int time"}.y105.cp105 .y105who{grid-area:who}.y105.cp105 .y105time{grid-area:time}.y105.cp105 .y105int{grid-area:int}}
 @container y105 (max-width:620px){.y105.cp105 .y105dtop{grid-template-columns:minmax(0,1fr);grid-template-areas:"who" "time" "int"}.y105.cp105 .cp105ts{width:auto;flex-direction:row;flex-wrap:wrap;align-items:center}.y105.cp105 .cp105ts .y105mini{white-space:nowrap}.y105.cp105 .y105who,.y105.cp105 .y105int{flex:1 1 100%}.y105.cp105 .y105drill{flex:1 1 100%}.y105.cp105 .y105dt{flex:1 1 auto;width:auto}}
 @media (max-width:760px){#mgrBody .roomhd.cp105ban{gap:6px 10px;padding:8px 10px}#mgrBody .roomhd.cp105ban .roomttl{flex:1 1 calc(100% - 70px)}
@@ -136,7 +152,7 @@ function cp105Ban(R,tab){if(typeof rm100On!=='function'||!rm100On())return false
   #mgrBody .roomhd.cp105ban>.y105lock{flex:1 1 120px;min-height:42px;font-size:17px}}
 @media (max-width:600px){#mgrBody .roomhd.cp105ban.cp105one .roomttl{flex:1 1 0;min-width:110px}
   #mgrBody .roomhd.cp105ban.cp105one .roomstat.rm100cnt{order:1;flex:none;min-width:0;padding:3px 10px;margin-left:auto;justify-items:end;text-align:right}
-  #mgrBody .roomhd.cp105ban.cp105one .roomstat.rm100cnt .ptbox{font-size:18px}#mgrBody .roomhd.cp105ban.cp105one .roomstat.rm100cnt>span{display:none}#mgrBody .roomhd.cp105ban.cp105arm .roomstat.rm100cnt .ptbox::after{content:" \\1F6E1";font-size:.8em}
+  #mgrBody .roomhd.cp105ban.cp105one .roomstat.rm100cnt .ptbox{font-size:18px}#mgrBody .roomhd.cp105ban.cp105one .roomstat.rm100cnt>span{display:none}#mgrBody .roomhd.cp105ban.cp105arm .roomstat.rm100cnt .ptbox::after{content:" \\1F6E1";font-size:.8em}#mgrBody .roomhd.cp105ban.cp105arm .roomstat.cp105hurt{margin-left:0}#mgrBody .roomhd.cp105ban.cp105arm .roomstat.cp105hurt .ptbox::after{content:" \\2695"}
   #mgrBody .roomhd.cp105ban.cp105one .bp104c{order:2;flex:1 1 100%}
   #mgrBody .roomhd.cp105ban{min-height:62px}#mgrBody .roomhd.cp105ban .roomttl b{font-size:19px}#mgrBody .roomhd.cp105ban .rm100adv{width:44px;height:44px}#mgrBody .roomhd.cp105ban .cp105md{font-size:22px}}
 `;document.head.appendChild(st)})();

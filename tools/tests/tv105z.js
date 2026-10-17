@@ -5,6 +5,7 @@
    Who-drills chips share one row (tops ±8); no empty strip under Intensity (band bottom − Intensity bottom ≤ 30); the Armory title does not repeat its 🛡 medallion; once
    locked the banner's Lock in carries the Tabula's note as its title; the Beast pen's "Needs 2 hours" is printed once (no duplicate title tooltip). 390x844: no
    sideways scroll on the three pages, the Armory / Recruiting banners one row (≤70 px), Lock in in the first screen. Review round 2: Intensity buttons ≥ 88 px, unclipped; the drill card as wide as its content; no title + data-tip on the counter chips;
+   review round 3: the Armory's "Your Armory" heading gone, its hurt count a banner chip (names in the data-tip), the 1440 px Doctore column short (one-line eyebrow), the Study chip one line;
    2000x1150: Intensity starts ≤ 40 px after the Time content; 1280x800: one band (3 columns, or Doctore over Intensity with Time beside); German at 1440;
    390 px: the Armory number keeps its 🛡. Kill switch flavius_v105compactoff=1 = the old layout. SHOT=<dir> saves
    screenshots. */
@@ -36,6 +37,7 @@ const y=await ev(pg,async BAN=>{const q=s=>document.querySelector(s),qa=s=>[...d
   r.hrsChip=!!q('#mgrPane .roomhd .y105hrs .y105big')&&+q('#mgrPane .roomhd .y105hrs .y105big').textContent===thLeft(W_());r.face=!!hd.querySelector('.rm100rd');
   r.yard=BOX(BAN).h;r.who=BOX('#mgrPane .y105who');r.time=BOX('#mgrPane .y105time');r.int=BOX('#mgrPane .y105int');r.dt=BOX('#mgrPane .y105drill');r.band=BOX('#mgrPane .y105dtop');r.whod=BOX('#mgrPane .y105whod');
   r.B=BAND();r.dtEmpty=BOX('#mgrPane .y105dt').r-TXR('#mgrPane .y105dt');
+  {const e=q('#mgrPane .y105who .y105cap'),m=q('#mgrPane .cp105ts .y105mini');r.eyeOne=!!e&&e.getBoundingClientRect().height<=18;r.miniOne=!!m&&m.getBoundingClientRect().height<=32}
   r.arrows=qa('#mgrPane .y105drill [data-y105^="dr|"]').length;r.chips=qa('#mgrPane .y105whod .y105chip').length;r.drillCard=!!q('#mgrPane .y105dt[data-y105k]');
   return r},BAN);
 console.log('YARD',JSON.stringify(y));
@@ -44,12 +46,17 @@ ok(y.lockVis,'Lock in visible without scrolling '+JSON.stringify(y.lock));ok(y.h
 ok(y.band.b-y.int.b<=30,'no empty strip under Intensity (band bottom '+y.band.b+', Intensity bottom '+y.int.b+')');
 const tops=[y.who.t,y.time.t,y.int.t];ok(Math.max(...tops)-Math.min(...tops)<=8&&y.who.l<y.time.l&&y.time.l<y.int.l,'Doctore / Time / Intensity share one band '+JSON.stringify(tops));
 ok(Math.abs(y.dt.t-y.whod.t)<=8&&y.dt.r<=y.whod.l+2,'Team drill card + Who-drills chips share one row '+y.dt.t+'/'+y.whod.t);ok(y.arrows===2&&y.chips>=3&&y.drillCard,'drill card keeps ‹ › and the chips');ok(y.dtEmpty<=30,'Team drill card sized to its content (empty right '+y.dtEmpty+')');
+ok(y.who.h<=84&&y.who.w>=226&&y.eyeOne&&y.miniOne,'1440 px: the Doctore column is short (eyebrow one line, '+y.who.w+'x'+y.who.h+'), the Study chip one line');
 ok(y.B.segs.length===4&&y.B.segs.every(x=>x.w>=88&&x.h<=46&&!x.ov),'Intensity buttons ≥ 88 px wide, short, labels not clipped '+JSON.stringify(y.B.segs));
 const bn=await ev(pg,async BAN=>{const q=s=>document.querySelector(s);const r={};
+  await TAB('armory');{const hd=q(BAN),hc=hd&&hd.querySelector('.roomstat.cp105hurt'),pm=me(),hu=rosterOf(pm).filter(g=>g.inj);
+    r.arm3={chip:!!hc,n:hc?+hc.querySelector('.ptbox').textContent:-1,hurt:hu.length,names:!!hc&&hu.every(g=>(hc.dataset.tip||'').includes(g.name))&&!hc.title,
+      head:[...document.querySelectorAll('#mgrPane h4.secth')].some(e=>/Your Armory/.test(e.textContent)),line:!!document.querySelector('#mgrPane .ar95hurt'),first:((hd.querySelector('.roomstat .ptbox')||{}).parentNode||{}).classList+''}}
   for(const t of ['infirm','roster','armory','recruit']){await TAB(t);const hd=q(BAN);const st=hd&&hd.querySelector('.roomstat');r[t]={two:!!st&&!!st.title&&!!(st.dataset.tip||st.getAttribute('data-tt')),ttl:((hd&&hd.querySelector('.roomttl b'))||{}).textContent||'',h:BOX(BAN).h,slim:!!hd&&hd.classList.contains('cp105ban'),face:!!hd&&!!hd.querySelector('.rm100rd'),stat:((hd&&hd.querySelector('.roomstat'))||{}).textContent||'',old:!!(hd&&hd.querySelector('.rc1banf'))}}
   return r},BAN);
 console.log('BANNERS',JSON.stringify(bn));
 for(const t of ['armory','recruit'])ok(bn[t].slim&&bn[t].face&&!bn[t].old&&/\d/.test(bn[t].stat),t+': slim banner, face at left, the counter as a chip');
+ok(bn.arm3.chip&&bn.arm3.n===bn.arm3.hurt&&bn.arm3.n>0&&bn.arm3.names&&!bn.arm3.head&&!bn.arm3.line&&!/cp105hurt/.test(bn.arm3.first),'Armory: no "Your Armory" heading under the banner, the hurt count is a banner chip (after the shelf chip, names in its data-tip) '+JSON.stringify(bn.arm3));
 ok(!bn.recruit.two&&!bn.armory.two,'the counter chips do not carry two tooltips (title + data-tip)');ok(!/\u{1F6E1}/u.test(bn.armory.ttl),'Armory: the 🛡 medallion is not repeated in the title '+bn.armory.ttl);
 for(const [t,h] of [['practice',y.yard],['armory',bn.armory.h],['recruit',bn.recruit.h]])ok(Math.abs(h-bn.roster.h)<=2&&h<=bn.infirm.h+2,`${t} banner ${h} px = the Roster banner (${bn.roster.h}) ±2, not taller than the Infirmary's (${bn.infirm.h})`);
 await shot(pg,'tv105z-armory');
@@ -115,8 +122,8 @@ await shot(ph,'tv105z-390');await ph.close();
 const pk=await open(1440,900,true);
 const k=await ev(pk,async BAN=>{const q=s=>document.querySelector(s);const r={};await TAB('practice');
   r.plate=!!q('#mgrPane .roomhd .y105hrs');r.noSlim=!q('.cp105ban')&&!q('#mgrPane .y105.cp105');r.tabLock=!!q('#mgrPane .y105tab [data-y105="lock"]');r.banLock=!!q('#mgrPane .roomhd [data-y105="lock"]');
-  await TAB('armory');r.arm=BOX(BAN).h;r.armSlim=!!q('.cp105ban');await TAB('recruit');r.rec=BOX(BAN).h;r.recFace=!!q('.roomhd .rc1banf');return r},BAN);
+  await TAB('armory');r.arm=BOX(BAN).h;r.armSlim=!!q('.cp105ban');r.armHead=[...document.querySelectorAll('#mgrPane h4.secth')].some(e=>/Your Armory/.test(e.textContent))&&!!q('#mgrPane .ar95hurt')&&!q('.cp105hurt');await TAB('recruit');r.rec=BOX(BAN).h;r.recFace=!!q('.roomhd .rc1banf');return r},BAN);
 console.log('OFF',JSON.stringify(k));
-ok(k.plate&&k.noSlim&&k.tabLock&&!k.banLock&&!k.armSlim&&k.arm>100&&k.rec>100&&k.recFace,'kill switch: the old layout (Lock in in the Tabula, tall Armory / Recruiting banners)');
+ok(k.plate&&k.noSlim&&k.tabLock&&!k.banLock&&!k.armSlim&&k.arm>100&&k.rec>100&&k.recFace&&k.armHead,'kill switch: the old layout (Lock in in the Tabula, tall Armory / Recruiting banners)');
 await pk.close();
 console.log('MISSING',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
