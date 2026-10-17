@@ -25,3 +25,7 @@
 - B38 (beta 2, 2026-10-17): the main menu show uses old tokens — 282's pre-rendered strips (assets/mm100_*.webp, rendered for v1.0) predate
   336 (80% of a pillar, weapon grip), 346 (smaller beasts) and 323 (attacks); and when the strips take > 1.5 s to load the visit falls back
   to the old FLAT show. His a: re-render the strips from today's figures + never fall back to the flat show (hold a still 3D frame, then play).
+- B39 (beta 2 screenshot, B29 follow-up): Play Now action row still not one set — the 🎲 and Begin Event are cut off at the TOP (their tops
+  hidden under the header edge), the 🏛 Home tile sits lower and to the right, outside the row, over the scrollbar, and it MOVES on its own
+  (stays put while the panel scrolls / is positioned separately). Fix: the three in ONE flex row inside the same container, same top, same
+  height, nothing clipped, Home scrolls with the row (no fixed/absolute placement), check 1440 / 1000 / 760 / 390 px and while scrolling.
