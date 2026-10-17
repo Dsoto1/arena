@@ -47,3 +47,17 @@ It EXTENDS N12a / E5a / E6a / l1a above (nothing replaced; it sets the bar and t
   Settings path (Off / Light / Full) for every effect incl. Reduce motion / Animations Off, tests through smartreg, the full suite only on GitHub.
 - Process (his l1a: mock-up first): audit + baseline numbers → before/after mock-up on real board screenshots (day, night, zoomed, phone)
   + frame-time numbers → his ok → build → measure → report in the brief's §11 format.
+
+## His answers on the lighting brief (2026-10-17): v1a v2a v3a v4a v5a v6a
+- V1a one sun upper left in every arena; arenas vary by warmth/time of day (shadow length); the figure sheets re-baked once.
+- V2a figure shadows BAKED with the figures: make.js renders each facing × pose's true ground shadow from the sun → a shadow sheet beside each
+  move/act sheet (≈ +⅓ download; a lighter set for phones); zero runtime cost. Layering: contact (dark, at the feet, runtime) + baked cast shadow.
+  Materials (metal sheen, skin form, rim separation, self-shadow) come from the re-bake lighting (key = sun, fill, thin rim, AO), not runtime paint.
+- V3a night torches in the lighting work (warm local light, shadows away from the rim torches) — goes to v1.06b (V6a).
+- V4a Settings → Lighting: Full / Light / Off; Full drops to Light by itself when frames exceed 16 ms; phones start on Light.
+- V5a order: baseline frame times on a BENCHMARK SCENE (a fixed packed arena from a recorded replay: gladiators, beasts, pillars, pots, an attack)
+  → mock-up (today vs v1.06a: day, night, zoomed, phone + one class re-baked before/after + the numbers) → his ok → bake all classes → build.
+- V6a split: v1.06a = sun + contact/cast shadows on everything + re-baked figures; v1.06b = materials polish, night torches, wall/stands depth.
+- Measurable acceptance (added to the brief): frame ≤ 16 ms laptop / ≤ 33 ms phone on the benchmark scene, shadows ≤ 2 ms of it; highlight
+  overlays keep their contrast vs the floor (automated); no haze on the board (depth only between sand, walls, stands); local light only where
+  something burns/glows; board first, then the main-menu show (same sheets); City Square / Studio / Online later.

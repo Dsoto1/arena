@@ -760,3 +760,6 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   trophy icons + "N of M earned"). REPLACES the v1.0 World painted banners (290-v100world, his W picks 2026-10-11) incl. the banner podium and plinths.
 - Decided 2026-10-17 (B74/B75): the City Square is locked until the house sets off (REPLACES beta 3's "Set off for X?" ask); the Match Week banner
   drops the trip, world-event chip and temple/sand links (REPLACES those parts of 374's slim banner); the trip cost sits on the Set off button.
+- Decided 2026-10-17 (his v1a–v6a on his lighting brief, tools/plans/v106): v1.06a = one sun upper left everywhere, contact + BAKED cast shadows
+  (shadow sheets from make.js), figures re-baked with key/fill/rim light; v1.06b = materials, night torches, wall/stands depth; Settings Lighting
+  Full/Light/Off with auto-drop; benchmark scene + mock-up first. Builds on N12a/E5a/E6a (2026-10-15/17); nothing replaced.
