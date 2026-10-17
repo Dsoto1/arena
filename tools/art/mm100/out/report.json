@@ -1,166 +1,166 @@
 {
- "pxmm": 4.267,
+ "pxmm": 4.714,
  "g_soldier": {
-  "kb": 43.1,
-  "decodedKB": 929,
+  "kb": 42.7,
+  "decodedKB": 995,
   "cells": 9,
-  "w": 1062,
-  "h": 224
+  "w": 1153,
+  "h": 221
  },
  "d_soldier": {
-  "kb": 19.8,
-  "decodedKB": 346,
-  "cells": 4,
-  "w": 479,
-  "h": 185
- },
- "g_hero": {
-  "kb": 42.7,
-  "decodedKB": 897,
-  "cells": 9,
-  "w": 1048,
-  "h": 219
- },
- "d_hero": {
-  "kb": 20.3,
-  "decodedKB": 359,
-  "cells": 4,
-  "w": 491,
-  "h": 187
- },
- "g_slave": {
-  "kb": 46.4,
-  "decodedKB": 1183,
-  "cells": 9,
-  "w": 1346,
-  "h": 225
- },
- "d_slave": {
-  "kb": 21.2,
-  "decodedKB": 478,
+  "kb": 19.5,
+  "decodedKB": 482,
   "cells": 4,
   "w": 544,
-  "h": 225
+  "h": 227
+ },
+ "g_hero": {
+  "kb": 42.3,
+  "decodedKB": 964,
+  "cells": 9,
+  "w": 1143,
+  "h": 216
+ },
+ "d_hero": {
+  "kb": 21,
+  "decodedKB": 472,
+  "cells": 4,
+  "w": 544,
+  "h": 222
+ },
+ "g_slave": {
+  "kb": 45.8,
+  "decodedKB": 980,
+  "cells": 9,
+  "w": 1189,
+  "h": 211
+ },
+ "d_slave": {
+  "kb": 19.6,
+  "decodedKB": 496,
+  "cells": 4,
+  "w": 591,
+  "h": 215
  },
  "g_royalty": {
-  "kb": 41.9,
-  "decodedKB": 821,
+  "kb": 40.2,
+  "decodedKB": 897,
   "cells": 9,
-  "w": 1035,
-  "h": 203
+  "w": 1143,
+  "h": 201
  },
  "d_royalty": {
-  "kb": 18.4,
-  "decodedKB": 331,
+  "kb": 18.9,
+  "decodedKB": 397,
   "cells": 4,
-  "w": 460,
-  "h": 184
- },
- "g_amazonia": {
-  "kb": 40.8,
-  "decodedKB": 809,
-  "cells": 9,
-  "w": 1035,
+  "w": 508,
   "h": 200
  },
- "d_amazonia": {
-  "kb": 18.7,
-  "decodedKB": 358,
-  "cells": 4,
-  "w": 506,
-  "h": 181
- },
- "g_veteranus": {
-  "kb": 42.3,
-  "decodedKB": 929,
+ "g_amazonia": {
+  "kb": 38.8,
+  "decodedKB": 884,
   "cells": 9,
-  "w": 1062,
-  "h": 224
- },
- "d_veteranus": {
-  "kb": 19.4,
-  "decodedKB": 346,
-  "cells": 4,
-  "w": 479,
-  "h": 185
- },
- "g_venatore": {
-  "kb": 43.1,
-  "decodedKB": 1052,
-  "cells": 9,
-  "w": 1202,
-  "h": 224
- },
- "d_venatore": {
-  "kb": 18.5,
-  "decodedKB": 461,
-  "cells": 4,
-  "w": 663,
-  "h": 178
- },
- "g_damnatio": {
-  "kb": 36.3,
-  "decodedKB": 801,
-  "cells": 9,
-  "w": 1035,
+  "w": 1143,
   "h": 198
  },
- "d_damnatio": {
-  "kb": 16.1,
-  "decodedKB": 313,
+ "d_amazonia": {
+  "kb": 18.9,
+  "decodedKB": 419,
   "cells": 4,
-  "w": 460,
-  "h": 174
+  "w": 528,
+  "h": 203
  },
- "gladMs": 116197,
- "beastRig": "/tools/plans/look100/beast3_rig.js",
- "totalKB": 631,
+ "g_veteranus": {
+  "kb": 42.1,
+  "decodedKB": 995,
+  "cells": 9,
+  "w": 1153,
+  "h": 221
+ },
+ "d_veteranus": {
+  "kb": 19.5,
+  "decodedKB": 482,
+  "cells": 4,
+  "w": 544,
+  "h": 227
+ },
+ "g_venatore": {
+  "kb": 42.4,
+  "decodedKB": 984,
+  "cells": 9,
+  "w": 1194,
+  "h": 211
+ },
+ "d_venatore": {
+  "kb": 19,
+  "decodedKB": 481,
+  "cells": 4,
+  "w": 581,
+  "h": 212
+ },
+ "g_damnatio": {
+  "kb": 36.9,
+  "decodedKB": 875,
+  "cells": 9,
+  "w": 1143,
+  "h": 196
+ },
+ "d_damnatio": {
+  "kb": 17.7,
+  "decodedKB": 387,
+  "cells": 4,
+  "w": 508,
+  "h": 195
+ },
+ "gladMs": 39655,
+ "beastRig": "/tools/plans/look100/beast5_rig.js",
+ "totalKB": 646,
  "commodus": {
-  "kb": 53.1,
-  "decodedKB": 1150,
+  "kb": 60.6,
+  "decodedKB": 1327,
   "cells": 11,
-  "w": 1389,
-  "h": 212,
-  "ms": 215371
+  "w": 1523,
+  "h": 223,
+  "ms": 20811
  },
  "tholo": {
-  "kb": 21.6,
-  "decodedKB": 420,
+  "kb": 24,
+  "decodedKB": 493,
   "cells": 4,
-  "w": 493,
-  "h": 218,
-  "ms": 124247
+  "w": 537,
+  "h": 235,
+  "ms": 4828
  },
  "lion": {
-  "kb": 27.9,
-  "decodedKB": 735,
+  "kb": 34.5,
+  "decodedKB": 1339,
   "cells": 6,
-  "w": 1120,
-  "h": 168,
-  "ms": 12614
+  "w": 1510,
+  "h": 227,
+  "ms": 10784
  },
  "wolf": {
-  "kb": 18,
-  "decodedKB": 489,
+  "kb": 14.4,
+  "decodedKB": 346,
   "cells": 6,
-  "w": 985,
-  "h": 127,
-  "ms": 11529
+  "w": 790,
+  "h": 112,
+  "ms": 4539
  },
  "snake": {
-  "kb": 13.4,
-  "decodedKB": 272,
+  "kb": 15.8,
+  "decodedKB": 335,
   "cells": 6,
-  "w": 704,
-  "h": 99,
-  "ms": 8355
+  "w": 765,
+  "h": 112,
+  "ms": 3004
  },
  "bear": {
-  "kb": 8.5,
-  "decodedKB": 181,
+  "kb": 11.5,
+  "decodedKB": 251,
   "cells": 3,
-  "w": 309,
-  "h": 150,
-  "ms": 8092
+  "w": 331,
+  "h": 194,
+  "ms": 3177
  }
 }
