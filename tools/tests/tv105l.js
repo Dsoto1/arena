@@ -1,6 +1,5 @@
 /* tv105l — v1.05 375-v105mgr: B46 the Golden Eagle is in AT MOST ONE Match Week bout a week (some weeks none; Manager only), the Match Week card shows the
-   chip only on that bout; B48 the Infirmary ward has no build/buy button (the Valetudinarium plate is a "Build it in My Ludus" link that opens My Ludus'
-   Upgrade School); kill switch flavius_v105mgroff=1 restores both. */
+   chip only on that bout; B48 the Infirmary ward shows no unbuilt building (no build button, no link, no Valetudinarium plate or price; the grid closes up); kill switch flavius_v105mgroff=1 restores both. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const out={};
 const open=async off=>{const pg=await b.newPage({viewport:{width:1440,height:1000}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
   await pg.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');if(o)localStorage.setItem('flavius_v105mgroff','1')},off?1:0);
@@ -42,11 +41,11 @@ await pg.close();pg=await open(false);await mgr(pg);
 out.ward=await ev(pg,async()=>{const pm=me(),w=W_();const g=rosterOf(pm)[0];await ENS();MGR.tab='infirm';MGR.inf90=g.id;MGR.w104for=g.id;MGR.w104t='ward';MGR_REDRAW();await W8(600);
   const body=document.querySelector('#mgrBody');const q=s=>body.querySelectorAll(s).length;
   const r={build:q('[data-mg="build"]'),link:q('[data-b105]'),valet:facLvl(pm,'valet'),plates:q('.b105pl'),txt:/Build it in My Ludus/.test(body.textContent)};
-  const lk=body.querySelector('[data-b105]');if(lk){lk.click();await W8(700);r.after={tab:MGR.tab,fac:LU102.fac,pop:!!document.querySelector('#mgrPane .lu102fac')}}
+  r.plateN=q('.v104pl');r.empty=[...body.querySelectorAll('.w104plates > *')].filter(e=>!e.textContent.trim()).length;r.valTxt=/Valetudinarium (I|II|III)\b/.test(body.querySelector('.w104plates')?body.querySelector('.w104plates').textContent:'');
   return r});
 ok(out.ward.build===0,'no build button in the ward '+JSON.stringify(out.ward));
-ok(out.ward.link>=1&&out.ward.plates===1&&out.ward.txt,'the link is there');
-ok(out.ward.after&&out.ward.after.tab==='ludus'&&out.ward.after.fac&&out.ward.after.pop,'the link opens My Ludus Upgrade School '+JSON.stringify(out.ward.after));
+ok(out.ward.valet<3&&out.ward.link===0&&out.ward.plates===0&&!out.ward.txt&&!out.ward.valTxt,'unbuilt building: no link, no plate, no price '+JSON.stringify(out.ward));
+ok(out.ward.empty===0,'no empty grid cell left '+JSON.stringify(out.ward));
 await pg.close();
 
 /* ---- kill switch ---- */

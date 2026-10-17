@@ -26,7 +26,7 @@ const inf=await ev(pg,async()=>{const q=s=>document.querySelector(s),qa=s=>[...d
   r.ban=!!q('#mgrPane .roomhd.w104ban .w104hb .w104bar')&&!!q('.w104hb .k104wc')&&!!q('.w104hb .k104rc')&&/7 of 7/.test(q('.w104hb').textContent)&&!!q('.roomhd [data-v101med]')&&!!q('.roomhd [data-cure90]')&&!!q('.roomhd .rm100adv');
   r.groups=qa('.w104grp.wd [data-inf90]').length===2&&qa('.w104grp.wy [data-inf90]').length===2&&!!q('details.w104grp.fr');
   r.statue=!!q('.w104mid .rm100niche svg')&&!!q('.w104mid .w104g .w104gb');r.hyg=!!q('.w104list .hyg87 [data-m48="hygeia"]');
-  r.wardTab=!!q('[data-w104t="ward"].on')&&!!q('.v104pl[data-v104p="bed"][data-bed76]')&&!!q('.v104pl[data-v104p="medic"][data-mg="medic"]')&&!!q('.v104pl[data-v104p="heal"]')&&!!q('.v104pl[data-v104p="asclepius"]')&&!!q('.v104pl[data-v104p="build"] [data-b105]')&&!q('.w104 [data-mg="build"]'); /* v1.05 B48: a link, no button */
+  r.wardTab=!!q('[data-w104t="ward"].on')&&!!q('.v104pl[data-v104p="bed"][data-bed76]')&&!!q('.v104pl[data-v104p="medic"][data-mg="medic"]')&&!!q('.v104pl[data-v104p="heal"]')&&!!q('.v104pl[data-v104p="asclepius"]')&&!q('[data-v104p="build"]')&&!q('.w104 [data-b105]')&&!q('.w104 [data-mg="build"]'); /* v1.05 B48: no Valetudinarium plate, link or button */
   r.plateTxt=qa('.v104pl').every(p=>p.querySelector('.v104ph')&&p.querySelector('.v104fx')&&p.querySelector('.rm100fr img'))&&/2 h/.test(q('[data-v104p="medic"] .v104ph').textContent)&&/→/.test(q('[data-v104p="medic"] .v104fx').textContent);
   r.star=!!q('.v104pl.v101rec .v101star');r.tabula=!!q('.w104tab .w104q li.rec')&&!!q('.w104tab [data-mq104]');
   /* queue: bed + Hygeia for A, the Medicus for B */

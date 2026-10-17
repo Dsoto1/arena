@@ -30,7 +30,7 @@ out.inf=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   r.noBath=!q('#mgrPane [data-bath]')&&!q('#mgrPane [data-rest]')&&!q('#mgrPane [data-care90]');
   /* order + suggestion */
   r.ord=qa('#mgrPane .v101ord .v101os').length>=3&&!!q('#mgrPane .v101ord .v101os.rec');r.star=!!q('#mgrPane .iv90care .v101rec .v101star');
-  r.build=!!q('#mgrPane .iv90care [data-b105]')&&!q('#mgrPane [data-mg="build"]'); /* v1.05 B48: a link to My Ludus, never a build button */
+  r.build=!q('#mgrPane [data-b105]')&&!q('#mgrPane [data-mg="build"]'); /* v1.05 B48: no plate, link or build button at all */
   /* medicus hire popup */
   q('[data-v101med]').click();await W8(300);const mh=q('.v101mp [data-v101mh="1"]');r.medPop=!!mh;if(mh)mh.click();await W8(500);
   r.medHired=!!w.medicus76&&mh101Max(pm,w)===4+2*w.medicus76.skill;const mx=mh101Max(pm,w);
