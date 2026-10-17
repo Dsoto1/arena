@@ -8,7 +8,7 @@
      e.g. Superbus bouts); click the row / chevron [data-mw105t] to open it. Open + not fought = the old bout card restyled (tiles with a tickets bar, purse
      and the appearance fee only on the row — shown once), the betting table, the actions. Fought = a result card (place, house, CF, fate, your coin, bet slips,
      this bout's verdicts moved in from #pendbox). 17's "🏁 Match Week results" block (#nightRes) is folded into them and removed. The next bout opens itself
-     after one ends (pick 2). "What changed" (table place, ratings, weeks out) ONLY in the week's summary once all are fought (pick 3; snapshot w.mw105s).
+     after one ends (pick 2; B53: it folds to its result row, only the next is open, after the last all fold + scroll to top). "What changed" (table place, ratings, weeks out) ONLY in the week's summary once all are fought (pick 3; snapshot w.mw105s).
    • Pick 1: your fighter's HP / fatigue / morale on the bout row + a wound warning. Pick 4: ONE Watch button — the free board view when your fighter is in the
      bout, the stands (Spectate, seat fee) when he is not — REPLACES the separate 🎟 Spectate. Pick 5: ⚔ Rival chip in the betting table. Pick 6: value/trap
      badge on the odds + ★ best value, from yourRead105(g) (361-v105read; null = no badge). Pick 7: greyed buttons show why. Pick 9: phones = one card per fighter.
@@ -147,11 +147,11 @@ function mw105Shape(T,w){const n=w.night,m=me();const C=T.content;const Q=s=>C.q
   const pane=Q('#mgrPane'),hd=Q('.roomhd.b73-night');if(!pane||!hd)return false;const cards=QA('#mgrPane .card2.bout');if(!cards.length)return false;
   const seq=mw105Seq(n);const byI=new Map();cards.forEach((c,k)=>{const x=c.querySelector('[data-mw105i]');const i=x?+x.dataset.mw105i:seq[k];for(const y of c.querySelectorAll('[data-mw105i]'))y.remove();if(n.bouts[i]&&!byI.has(i))byI.set(i,c)});
   const order=seq.filter(i=>byI.has(i));const mine=new Set(rosterOf(m).map(g=>g.id));const B=n.bouts;
-  /* which bouts are open: the next to fight; after a bout ends, that result + the next (pick 2) */
+  /* which bouts are open: only the next to fight (B53: a finished bout folds to its result row; after the last, all are folded and the page scrolls to the top) */
   const key=w.id+':'+w.week;const doneN=B.filter(b=>b.done).length;
   if(MW105.key!==key){MW105.key=key;MW105.doneN=-1}
   if(MW105.doneN!==doneN){const nx=order.find(i=>!B[i].done);const done=order.filter(i=>B[i].done);const last=done.length?done[done.length-1]:null;
-    if(MW105.doneN>=0&&doneN>MW105.doneN&&last!=null)MW105.scroll=last;MW105.open=new Set();if(doneN>0&&last!=null)MW105.open.add(last);if(nx!=null)MW105.open.add(nx);MW105.doneN=doneN}
+    if(MW105.doneN>=0&&doneN>MW105.doneN&&nx==null)MW105.scroll='top';MW105.open=new Set();if(nx!=null)MW105.open.add(nx);MW105.doneN=doneN}
   /* verdict rows → their bout */
   const pv=new Map();for(const r of QA('#pendbox .lrow')){const t=r.querySelector('[id^="pend"]');const pi=t?+t.id.slice(4):-1;const P=(w.pend||[])[pi];if(!P)continue;
     const bi=[...order].reverse().find(i=>B[i].done&&B[i].ents.includes(P.gid));if(bi==null)continue;if(!pv.has(bi))pv.set(bi,[]);pv.get(bi).push(r)}
@@ -204,7 +204,8 @@ function mw105SumHTML(w){const m=me();const S=w.mw105s&&w.mw105s.wk===w.week?w.m
 {const base=mgrHTML;mgrHTML=function(){const h=base.apply(this,arguments);try{mw105PopClose();if(mw105Off()||typeof h!=='string'||MGR.tab!=='night'||h.indexOf('b73-night')<0)return h;
   const w=W_();if(!w||!w.night||w.night.bye||w.tutorial||(w.special&&!w.special.done)||!w.night.bouts||!w.night.bouts.length)return h;mw105Snap(w);
   const T=document.createElement('template');T.innerHTML=h;if(!mw105Shape(T,w))return h;
-  if(MW105.scroll!=null){const i=MW105.scroll;MW105.scroll=null;setTimeout(()=>{const a=document.querySelector(`#mgrBody [data-mw105b="${i}"]`);if(a)a.scrollIntoView({block:'start'})},60)}
+  if(MW105.scroll==='top'){MW105.scroll=null;setTimeout(()=>{const rm=typeof reduceMotion==='function'&&reduceMotion();try{window.scrollTo({top:0,behavior:rm?'auto':'smooth'});for(const e of [document.querySelector('#mgrBody'),document.querySelector('#mgrPane')])if(e&&e.scrollTop)e.scrollTo({top:0,behavior:rm?'auto':'smooth'})}catch(e){}if(!rm)setTimeout(()=>{try{if(window.scrollY>4&&document.querySelector('#mgrBody .mw105ban'))window.scrollTo({top:0,behavior:'auto'})}catch(e){}},900)},60)}
+  else if(MW105.scroll!=null){const i=MW105.scroll;MW105.scroll=null;setTimeout(()=>{const a=document.querySelector(`#mgrBody [data-mw105b="${i}"]`);if(a)a.scrollIntoView({block:'start'})},60)}
   return T.innerHTML}catch(e){console.error(e);return h}}}
 
 /* ---------- clicks ---------- */
@@ -215,7 +216,7 @@ async function mw105SetOffAsk(w,btn){const city=mw105City(w);const L=mw105Leave(
   return v}
 function mw105Go(w){const t=w.night.travel;if(t&&t.paid&&t.cost>0&&!t.gone){t.gone=true;try{tnews(_T`🛣 ${esc(me().ludus)} sets off for ${esc(mw105City(w))}.`)}catch(e){}try{saveWorld()}catch(e){}}}
 function mw105Reclick(btn,sel){const nb=btn&&btn.isConnected?btn:document.querySelector(sel);if(!nb)return;MW105.pass=1;try{nb.click()}finally{MW105.pass=0}}
-const MW105_START='[data-mg="fight"],[data-mg="watch"],[data-mg="sim"],[data-mg="spect"],[data-mg="simall"],[data-mg="underdog"]';
+const MW105_START='[data-mg="fight"],[data-mg="watch"],[data-mg="sim"],[data-mg="spect"],[data-mg="simall"],[data-mg="underdog"],[data-mg="city"]';
 const REC105='[data-rec98a],[data-rec98p],[data-rec74],[data-mg="visit"],[data-mg="gift2"],[data-mg="pitch"],[data-mg="offer"],[data-mg="poach"],[data-mg="scout"],[data-mg="sign"],[data-m48="cartbuy"],[data-of104x]';
 const mw105RecWhy=w=>_T`🛣 On the road to ${esc(mw105City(w))} — Recruiting reopens when the week ends.`;
 window.addEventListener('click',e=>{if(MW105.pass||mw105Off())return;const el=e.target.closest&&e.target.closest('button,[data-mw105t],[data-bt85],.mw105b > .a1ev,[role="button"]');if(!el||!el.closest('#mgrBody'))return;
@@ -233,7 +234,7 @@ window.addEventListener('click',e=>{if(MW105.pass||mw105Off())return;const el=e.
   if(el.matches('[data-mw105="tree"]')){stop();const t=document.querySelector('#mgrBody .v104top')||document.querySelector('#mgrBody .po104bk');if(t)t.scrollIntoView({block:'start',behavior:typeof reduceMotion==='function'&&reduceMotion()?'auto':'smooth'});else if(typeof po104Open==='function')po104Open();return}
   /* End the week */
   if(el.matches('[data-mw105="end"]')){stop();const left=w.night.bouts.some(b=>!b.done);if(!left){const r=weekReady();if(!r.ok){mToast(r.why);return}}if((w.pend||[]).length)return;MGR.confirmEnd=true;mw105Redraw();const bx=document.getElementById('mBody');if(bx)bx.scrollTop=0;return}
-  /* mw1: setting off */
+  /* mw1: setting off (B60: walking the host city's square counts as leaving, so it asks first) */
   const sel=el.matches('[data-mw105="off"]')?'off':el.matches(MW105_START)?'start':null;if(!sel||MGR.busy)return;
   if(!mw105NeedOff(w)){if(sel==='off'){stop();mw105Redraw()}return}
   const L=mw105Leave(w);if((!L.length||!e.isTrusted)&&sel==='start'){mw105Go(w);return}
