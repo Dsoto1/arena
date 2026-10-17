@@ -71,3 +71,5 @@ you're targeting. That said, it went where I wanted each time." Found: the board
   "Strike <name>?" Yes/No.
 - U2a TOUCH: first tap = select + the same ring/outline/tag, second tap on the same target = strike (a tap elsewhere cancels).
 - U3a in v1.06 (the board release, with the lighting). Display/input only: no rule, dice or online-lockstep change.
+- His follow-up (2026-10-17): "Confirm attacks" is OFFLINE ONLY — never in Online matches (the setting is ignored/hidden there; turn timers).
+  The hover preview (and the touch two-tap select) DO work in Online.
