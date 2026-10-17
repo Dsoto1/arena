@@ -76790,7 +76790,7 @@ try{if(typeof FH100_MGR!=='undefined'){const s=FH100_MGR.find(x=>x.k==='g_yard')
         nothing unread, nothing still listed, no past mail); they come back with the next letter.
    B54  Manager → Recruiting: picking a recruit brings his whole options panel into view (smooth, instant with Reduce motion; a panel taller than the
         screen aligns to its top), and a click on one of his actions (scout, watch, pitch, note, gift, feast, visit, offer …) keeps the panel at the same
-        place on the screen when the page re-renders (#mBody is moved by however far the panel moved). Never to the top. One generic watcher.
+        place on the screen when the page re-renders (B72: restored in the same task by a MutationObserver, no scrolling, no jitter; tv105y). Never to the top.
    B57 + M1a  "Answer by week N" belongs to TASKS only. A letter whose only buttons are links (data-mg="tab", the bracket) is information: sendLetter
         gives it act:false (270's plain-letter row, no deadline, no task) and it files itself the week after (set105Sweep). Mail = information (reports,
         news, the Consilium race letter, signed-elsewhere notices, tips); tasks = what can be acted on (loan asks, trade offers, recruit terms, Yard plan, …)
@@ -76892,11 +76892,22 @@ function rec105Watch(fn,ms){try{if(rec105Obs)rec105Obs.disconnect()}catch(e){}co
 function rec105Show(){const p=rec105Panel(),box=rec105Box();if(!p||!box)return;const r=p.getBoundingClientRect(),b=box.getBoundingClientRect();
   const fits=r.height<=b.height;const off=fits?(r.top<b.top||r.bottom>b.bottom):(r.top<b.top||r.top>b.top+b.height*0.35);if(!off)return;
   const smooth=!(typeof reduceMotionOn==='function'&&reduceMotionOn());try{p.scrollIntoView({block:fits?'nearest':'start',behavior:smooth?'smooth':'auto'})}catch(e){p.scrollIntoView()}}
+/* B72: an action click keeps the panel put WITHOUT any scrolling of its own. At the click the panel's place in #mBody is noted; every DOM change under
+   #mgrBody for the next 900 ms is answered in the same task (a MutationObserver callback is a microtask: it runs after 17's own scrollTop restore and
+   BEFORE the browser paints) by putting the panel back where it was, so the screen shows one step, never a jump and a fix. No smooth scroll, no
+   requestAnimationFrame. Native scroll anchoring is off on #mBody meanwhile (it would move the box a second time). */
+let rec105Hd=null;
+function rec105Rel(){const p=rec105Panel(),box=rec105Box();if(!p||!box)return null;const q=p.getBoundingClientRect();return q.height>0?q.top-box.getBoundingClientRect().top:null}
+function rec105Hold(){const box=rec105Box(),host=document.getElementById('mgrBody');if(!box||!host||typeof MutationObserver==='undefined')return;
+  if(rec105Hd)rec105Hd.end();const r0=rec105Rel();if(r0===null)return;
+  const o=new MutationObserver(()=>{try{const a=rec105Rel();if(a!==null&&Math.abs(a-r0)>0.5)box.scrollTop+=a-r0}catch(e){console.error(e)}});
+  o.observe(host,{childList:true,subtree:true,attributes:true,characterData:true});
+  try{box.style.overflowAnchor="none";host.style.minHeight=host.offsetHeight+"px"}catch(e){}
+  const h=rec105Hd={end(){clearTimeout(h.t);o.disconnect();if(rec105Hd===h)rec105Hd=null;try{box.style.overflowAnchor="";host.style.minHeight=""}catch(e){}}};h.t=setTimeout(h.end,900)}
 let rec105T=0;
 const rec105Start=e=>{try{if(MGR.tab!=='recruit'||MGR.view)return;const t=e.target;if(!t||!t.closest||!t.closest('#mgrBody'))return;const box=rec105Box();if(!box)return;
   const act=t.closest(REC105_ACT);const row=t.closest('[data-mg="sel"]');
-  if(act&&act.closest('.card2')&&!row){const p=act.closest('.card2');const T0=p.getBoundingClientRect().top;let n=0;
-    rec105Watch(()=>{const q=rec105Panel();if(!q)return;const d=q.getBoundingClientRect().top-T0;if(Math.abs(d)>2){box.scrollTop+=d}rec105Show();n++},900)}
+  if(act&&act.closest('.card2')&&!row)rec105Hold()
   else if(row){let done=false;rec105Watch(()=>{if(done)return;const q=rec105Panel();if(!q)return;done=true;setTimeout(rec105Show,30)},700);setTimeout(rec105Show,120);setTimeout(rec105Show,420)}}catch(err){console.error(err)}};
 /* pointerdown first (the offer / poach handlers stop a later click), click for the keyboard */
 window.addEventListener('pointerdown',e=>{rec105T=Date.now();rec105Start(e)},true);
