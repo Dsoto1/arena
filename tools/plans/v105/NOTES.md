@@ -88,3 +88,4 @@
   scrolls back to the top (week results). REPLACES 360 pick-2's "result card + next bout both open". (with B45, 374)
 - D1/D2 trade deadline + late-season locks: proposed 2026-10-17 (D1a deadline end of week 8; D2 1 free agents only into empty spots, 2 Superbus
   roster freeze, 3 no releases in the playoff weeks). HIS ANSWER d1a d2-1,2,3 (2026-10-17) — built in v1.06 (new rules).
+- B54 (his ask): Recruiting keeps the selected recruit's options in view — no jump to the top after scouting/pitching/offers; selecting a recruit scrolls his options panel into view (with B49–B52, 378).
