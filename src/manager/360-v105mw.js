@@ -130,7 +130,7 @@ function mw105BoxHTML(w,seq,mine){const n=w.night,m=me();const B=n.bouts;const l
   const note=endWhy?'':left.length?_T`End the week simulates the ${left.length} bout${left.length===1?'':'s'} left.`:roadLocked76(w)?_T('Ready: wages are paid and the house goes home.'):_T('Ready: wages are paid.');
   return `<section class="mw105wk" aria-label="${_T('Your week')}"><div class="mw105wh"><b>${_T`Your week at ${esc(city)}`}</b><span>${prog}</span></div>
     <div class="mw105ti">${T.map(([k,v,c])=>`<div class="${c}"><i>${k}</i><b>${v}</b></div>`).join('')}</div>
-    ${off?`<button type="button" class="btn primary mw105off" data-mw105="off">${_T`🛣 Set off for ${esc(city)}`}<small>${_T('the Yard, the Infirmary and Recruiting shut until the week ends')}</small></button>`:''}
+    ${off?`<button type="button" class="btn primary mw105off" data-mw105="off">${typeof sq105Label==='function'&&sq105On()?sq105Label(w,city):_T`🛣 Set off for ${esc(city)}`}<small>${_T('the Yard, the Infirmary and Recruiting shut until the week ends')}</small></button>`:''}
     <div class="mw105ba"><button type="button" class="mw105sb" data-mg="simall" ${simDis}>${_T('Simulate the rest')}</button><button type="button" class="btn ${off?'':'primary'}" data-mw105="end" ${endDis}>${_T('End the week')}</button></div>
     <div class="mw105nt${endWhy?' wt':!left.length?' ok':''}">${endWhy||note}</div></section>`}
 
@@ -180,10 +180,11 @@ function mw105Shape(T,w){const n=w.night,m=me();const C=T.content;const Q=s=>C.q
   /* banner */
   const L=document.createElement('div');L.className='mw105L';hd.insertBefore(L,hd.firstElementChild&&hd.firstElementChild.tagName==='svg'?hd.firstElementChild.nextSibling:hd.firstChild);
   const ttl=hd.querySelector('.roomttl');if(ttl)L.appendChild(ttl);
-  const ch=[];const t=n.travel;const city=mw105City(w);
-  if(t&&t.cost>0){if(t.deal){const hh=mgrById(t.deal.mgr);ch.push(_T`🛣 From ${esc(t.from)} · the trip paid by ${esc(hh?hh.ludus:_T('another house'))}`)}else if(t.paid&&t.free105)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip paid by the games`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip paid by the games`);else if(t.paid)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`)}
+  const ch=[];const t=n.travel;const city=mw105City(w);const sq=typeof sq105On==='function'&&sq105On();
+  if(sq){}
+  else if(t&&t.cost>0){if(t.deal){const hh=mgrById(t.deal.mgr);ch.push(_T`🛣 From ${esc(t.from)} · the trip paid by ${esc(hh?hh.ludus:_T('another house'))}`)}else if(t.paid&&t.free105)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip paid by the games`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip paid by the games`);else if(t.paid)ch.push(t.gone?_T`🛣 On the road from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`:_T`🛣 Booked for ${esc(city)} from ${esc(t.from)} · trip ${coinAmt87(t.cost)}`)}
   else if(t&&!n.selfBye&&!w.tutorial&&!B.some(b=>b.po104))ch.push(_T('🏠 Home sand'));
-  if(n.omen&&n.omen.k!=='clear')ch.push(`${esc(n.omen.n)} · ${n.omen.att>0?_T('attendance and purses up'):n.omen.att<0?_T('attendance and purses down'):_T('the city talks of little else')}`);
+  if(!sq&&n.omen&&n.omen.k!=='clear')ch.push(`${esc(n.omen.n)} · ${n.omen.att>0?_T('attendance and purses up'):n.omen.att<0?_T('attendance and purses down'):_T('the city talks of little else')}`);
   if(n.grand)ch.push(_T('The Grand Games: purses ×1.6'));
   if(roadLocked76(w))ch.push(_T('🔒 Yard, Infirmary and Recruiting shut until the week ends'));
   L.insertAdjacentHTML('beforeend',`<div class="mw105chips">${ch.map(x=>`<span class="mw105chip">${x}</span>`).join('')}${mw105PoChip(w,n)}</div>`);
@@ -235,7 +236,7 @@ window.addEventListener('click',e=>{if(MW105.pass||mw105Off())return;const el=e.
   /* End the week */
   if(el.matches('[data-mw105="end"]')){stop();const left=w.night.bouts.some(b=>!b.done);if(!left){const r=weekReady();if(!r.ok){mToast(r.why);return}}if((w.pend||[]).length)return;MGR.confirmEnd=true;mw105Redraw();const bx=document.getElementById('mBody');if(bx)bx.scrollTop=0;return}
   /* mw1: setting off (B60: walking the host city's square counts as leaving, so it asks first) */
-  const sel=el.matches('[data-mw105="off"]')?'off':el.matches(MW105_START)?'start':null;if(!sel||MGR.busy)return;
+  const sel=el.matches('[data-mw105="off"]')?'off':el.matches(MW105_START)&&!(el.matches('[data-mg="city"]')&&typeof sq105On==='function'&&sq105On())?'start':null;if(!sel||MGR.busy)return;
   if(!mw105NeedOff(w)){if(sel==='off'){stop();mw105Redraw()}return}
   const L=mw105Leave(w);if((!L.length||!e.isTrusted)&&sel==='start'){mw105Go(w);return}
   stop();const a=el.dataset.mg,id=el.dataset.id;mw105SetOffAsk(w,el).then(v=>{if(!v)return;mw105Go(w);if(sel==='off'){mToast(_T`🛣 The house sets off for <b>${esc(mw105City(w))}</b>.`);mw105Redraw();return}

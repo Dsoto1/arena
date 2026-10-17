@@ -22,15 +22,19 @@ for(const k of ['road','paid','home','bye']){
   const st=q('.travelcard.strip96');o.strip=!!st;o.stripText=(st?st.textContent:'')+' '+[...document.querySelectorAll('.mw105ban .mw105chip')].map(x=>x.textContent).join(' ');o.ask=st?/🗣/.test(st.textContent):false;o.stripH=st?R(st).height:0;
   o.oldSide=!!q('.road85side')||!!q('.travelcard.road85')||!!q('.fightreq');o.oldAsk=[...document.querySelectorAll('#mgrBody .mailline')].some(x=>/🗣/.test(x.textContent));
   o.cityOutside=!!q('.road85t [data-mg="city"]');
-  if(btn&&k==='road'){btn.click();await W8(900);o.opened=!!CITY.open;try{closeCity()}catch(e){}await W8(500)}
+  o.dis=btn?btn.disabled:null;
+  if(btn&&k==='road'){btn.click();await W8(900);o.opened=!!CITY.open;try{closeCity()}catch(e){}await W8(500);
+    /* v1.05 B74 (389): locked until Set off; once the house has set off it opens */
+    n.travel.gone=true;MGR_REDRAW();await W8(700);const b2=q('.roomhd .walk96 [data-mg="city"]');if(b2){b2.click();await W8(900);o.opened2=!!CITY.open;try{closeCity()}catch(e){}await W8(500)}}
   return o},k);
  const t=k+' W'+W;
  if(k==='bye'){ok(!r.btn,t+' no walk button in a banner');continue}
- ok(r.btn&&r.text==='Walk the city square'&&r.noIcon,t+' button text only '+JSON.stringify([r.text,r.noIcon]));ok(r.bg,t+' forum image background');ok(r.inBanner&&r.clear,t+' inside banner, clear of tracker');ok(r.note,t+' note beside it');ok(r.sw,t+' no horizontal scroll');
+ if(k==='home')ok(r.btn&&r.text==='Walk the city square'&&r.noIcon,t+' button text only '+JSON.stringify([r.text,r.noIcon]));
+ else ok(r.btn&&/Set off first/.test(r.text)&&r.dis,t+' away week before Set off: locked '+JSON.stringify([r.text,r.dis]));ok(r.bg,t+' forum image background');ok(r.inBanner&&r.clear,t+' inside banner, clear of tracker');ok(k==='home'?!r.note:r.note,t+' small text beside it (home: the temple/sand links are gone, B75)');ok(r.sw,t+' no horizontal scroll');
  ok(r.strip&&r.ask,t+' strip with the asking line');ok(!r.oldSide&&!r.oldAsk&&!r.cityOutside,t+' old boxes gone');
- if(k==='road'||k==='paid')ok(/(On the road to|Road to|On the road from|Booked for)/.test(r.stripText) /* v1.05: the road line is a banner chip (360) */,t+' road text: '+r.stripText.slice(0,80));
+ if(k==='road'||k==='paid')ok(r.dis /* v1.05 B75: the trip chip is gone; the locked Walk button is the road sign */,t+' road text: '+r.stripText.slice(0,80));
  if(k==='road'||k==='paid')ok(r.stripH<(W>600?80:170),t+' slim '+r.stripH);
- if(k==='road')ok(r.opened,t+' click opens the City Square');
+ if(k==='road')ok(!r.opened&&r.opened2,t+' locked click refuses, after Set off it opens '+JSON.stringify([r.opened,r.opened2]));
 }
 await pg.close()}
 console.log(miss.length?'FAIL\n'+miss.join('\n'):'PASS');console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();

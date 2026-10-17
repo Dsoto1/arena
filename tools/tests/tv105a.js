@@ -73,19 +73,17 @@ out.bet=await ev(pg,()=>{const w=W_(),n=w.night;const i=mw105Seq(n).find(k=>!n.b
 ok(out.pv==='30'&&out.bet.bets.length===1&&out.bet.bets[0]===30&&!out.bet.pop&&out.bet.lab[0]==='Bet 30','B35d Place bet → 30 on him, the button says so '+JSON.stringify([out.pv,out.bet]));
 await bet.click().catch(()=>{});await pg.waitForTimeout(150);await pg.keyboard.press('Escape');out.esc=await ev(pg,()=>!document.querySelector('.mw105pop'));ok(out.esc,'Escape closes the window');
 
-/* ---- B60: an away week, the city square before setting off asks first ---- */
+/* ---- B60 -> B74 (389-v105sq): an away week, the city square is LOCKED until the house sets off (no ask from the square any more) ---- */
 await ev(pg,()=>{window.__c=0;if(!window.__cb){window.__cb=openCitySquare;openCitySquare=function(){window.__c++}}});
+out.c0=await pg.evaluate(()=>{const b=document.querySelector('#mgrBody [data-mg="city"]');const d=b.disabled;b.disabled=false;b.click();return d});await pg.waitForTimeout(500);
+out.c1=await ev(pg,c0=>({ask:!!document.querySelector('.ask76bg'),c:window.__c,gone:!!W_().night.travel.gone,dis:c0}),out.c0);
+ok(!out.c1.ask&&out.c1.c===0&&!out.c1.gone&&out.c1.dis,'B74 city square click before set-off: locked, no ask, no city '+JSON.stringify(out.c1));
+await pg.click('#mgrBody [data-mw105="off"]');await pg.waitForTimeout(500);await pg.click('.ask76bg [data-ask76="1"]');await pg.waitForTimeout(800);
 await pg.click('#mgrBody [data-mg="city"]');await pg.waitForTimeout(500);
-out.c1=await ev(pg,()=>({ask:!!document.querySelector('.ask76bg'),t:(document.querySelector('.ask76bg')||{textContent:''}).textContent,c:window.__c,gone:!!W_().night.travel.gone}));
-ok(out.c1.ask&&/Set off/.test(out.c1.t)&&out.c1.c===0&&!out.c1.gone,'B60 city square click before set-off opens the set-off window, no city '+JSON.stringify(out.c1));
-await pg.click('.ask76bg [data-ask76="0"]');await pg.waitForTimeout(500);
-out.c2=await ev(pg,()=>({ask:!!document.querySelector('.ask76bg'),c:window.__c,gone:!!W_().night.travel.gone}));
-ok(!out.c2.ask&&out.c2.c===0&&!out.c2.gone,'B60 Cancel keeps the house home, nothing opens '+JSON.stringify(out.c2));
-await pg.click('#mgrBody [data-mg="city"]');await pg.waitForTimeout(500);await pg.click('.ask76bg [data-ask76="1"]');await pg.waitForTimeout(1500);
 out.c3=await ev(pg,()=>{const r={c:window.__c,gone:!!W_().night.travel.gone};W_().night.travel.gone=false;MGR_REDRAW();return r});
-ok(out.c3.gone&&out.c3.c===1,'B60 confirm sets travel.gone and opens the city '+JSON.stringify(out.c3));
+ok(out.c3.gone&&out.c3.c===1,'B74 after Set off the square opens '+JSON.stringify(out.c3));
 await ev(pg,async()=>{await W8(500)});
-out.c4=await ev(pg,async()=>{const t=W_().night.travel,k=t.cost;t.cost=0;window.__c=0;document.querySelector('#mgrBody [data-mg="city"]').click();await W8(400);const r={ask:!!document.querySelector('.ask76bg'),c:window.__c};t.cost=k;return r});
+out.c4=await ev(pg,async()=>{const t=W_().night.travel,k=t.cost;t.cost=0;MGR_REDRAW();await W8(400);window.__c=0;document.querySelector('#mgrBody [data-mg="city"]').click();await W8(400);const r={ask:!!document.querySelector('.ask76bg'),c:window.__c};t.cost=k;return r});
 ok(!out.c4.ask&&out.c4.c===1,'B60 a home week: the square opens as before '+JSON.stringify(out.c4));
 await ev(pg,()=>{openCitySquare=window.__cb;window.__cb=null;MGR_REDRAW()});
 
@@ -146,7 +144,7 @@ ok(out.off.ban===0&&out.off.stake>0&&out.off.wk&&!out.off.need,'kill switch flav
 ok(!(await pg.evaluate(()=>typeof errNew92==='function'?errNew92(window.RM_MARK||0).length:0)),'no new 00c errors');
 /* ---- B45 (374-v105mwban): the slim banner. Measured against the old one (kill switch flavius_v105mwbanoff=1), chips centred, no overlap, phone stack ---- */
 {const bp=async(vw,offK)=>{const p=await b.newPage({viewport:vw});await p.route(/fonts\./,r=>r.abort());p.on('pageerror',e=>errs.push(e.message));
-  await p.addInitScript(k=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');if(k)localStorage.setItem('flavius_v105mwbanoff','1')},offK?1:0);
+  await p.addInitScript(k=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');if(k){localStorage.setItem('flavius_v105mwbanoff','1');localStorage.setItem('flavius_v105sqoff','1')}},offK?1:0);
   await p.goto('file://'+process.argv[2],{timeout:90000});await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await mgr(p);
   await p.evaluate(async()=>{const w=W_();let g=0;const away=()=>{const t=travelState(w);return t&&t.cost>0&&t.paid&&!t.gone&&!w.night.bye&&!w.night.selfBye&&w.night.bouts.some(b=>b.ents.some(id=>{const x=gById(id);return x&&x.contract&&x.contract.mgr===me().id}))};
     while(!away()&&g++<6)await PW();w.pend=[];await NIGHT();mw105Go(w);MGR_REDRAW();await W8(700)});return p};
