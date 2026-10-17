@@ -123,3 +123,7 @@
   only for fighters who fight this week (starters / entered in a bout); reserves never get it.
 - B69 (his call, with 4yes): each page banner shows its own building's project chip: the Infirmary's on the Infirmary banner, the Yard's on the
   Yard banner, Recruiting's on Recruiting, etc. (.bp104c, 351) — the Your ludus banner keeps the ludus-wide one.
+- B70 (his beta-3 screenshot, Training Yard): too much empty space — the Doctore block (padding above/below), the gap between "Time with him" and
+  Intensity, the Team drill card (empty right half); the Lock-in button sits below the fold (must scroll). Also seen: the Beast pen "Needs 2 hours"
+  tooltip overlaps its own text. REPLACES part of the B44 layout (the approved y1a mock-up, built in 373).
+- B71 (his aside): the Armory, Recruiting and Training Yard page banners = the slim Infirmary/Roster banner (same height + look).
