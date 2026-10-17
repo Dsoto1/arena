@@ -32,3 +32,18 @@ Winter Quarters (N4, was v1.06) moves to v1.07.
 - Value = rating + fame + age + career kind + potential − weekly wage (a dearer fighter costs value). The offer card says WHY in one line
   and shows the weekly cost change ("+3/wk for you"). Deadline end of week 8 (d1a). REPLACES 47 offersWeek's gValue match (rating×2.2 +
   fame×1.2 − age over 30, no wages).
+
+## His lighting + shadow brief (2026-10-17) — tools/plans/v106/BRIEF-lighting.md (verbatim); how it maps onto this repo
+It EXTENDS N12a / E5a / E6a / l1a above (nothing replaced; it sets the bar and the method). Adapted to how the game is built:
+- Renderer: one 2D canvas, draw() in 03/07 + board layers (227 layers/bus, 260 zoom/camera, 277/321 arena look). Figures + beasts are NOT live 3D:
+  Three.js bakes them OFFLINE (tools/art/anim100/make.js → assets/anim100_<cls>_move/act.webp, 8 facings) or on the device for Studio/Online
+  tokens (311 ANIM100_LIB). So "light the units" = re-bake the sheets with the sun's direction per facing (asset change), not a live shader;
+  "cast shadows from silhouettes" = a cached, skewed alpha silhouette per sheet frame, drawn under the figure (moves with every frame).
+- Existing shadow/light code to unify (one LIGHT config, one shadow module): 356/359 floor marks under figures, 366 shadow scale with bases
+  off, 282 mm100Shadow (menu), 176 sculpt light upper left, 192 day sky sun upper left, 189 night look, 136 sand, 134/135 spikes/chest,
+  312 beasts, 313 crowd, 323 projectiles, 277-hit FX. Pillars/pots/chest/rubble are drawn procedurally → cast shadows computed from height.
+- Our standing rules win where they differ from the brief: VISUAL POLISH RULE (tv91r/tv92p draw cost, ≤ 16 ms laptop / 30 fps phone,
+  tv66/tv88 phones, tv86/tv87l languages, saves, trng92 dice, tonl* online lockstep — display only, never S/rand()), a kill switch +
+  Settings path (Off / Light / Full) for every effect incl. Reduce motion / Animations Off, tests through smartreg, the full suite only on GitHub.
+- Process (his l1a: mock-up first): audit + baseline numbers → before/after mock-up on real board screenshots (day, night, zoomed, phone)
+  + frame-time numbers → his ok → build → measure → report in the brief's §11 format.
