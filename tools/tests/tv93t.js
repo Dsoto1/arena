@@ -1,5 +1,5 @@
 /* tv93t — v0.93 Manager lesson end to end (36-mtutor): every step's lit spot exists and is visible, the coach is on screen,
-   the Armory look (v0.94), the Training Yard steps (card, + session under the weekly cap, 🔒 Lock in, the Doctore's drill, his panel, Trials of the Yard)
+   the Armory look (v0.94), the Training Yard steps (v1.05 B44: own sessions, + session under the weekly cap, the Doctore's time, the team drill, 🔒 Lock in all, his row, the trial tile)
    are taught and done for real, the guard rails still block a stray click, and the lesson finishes with nothing saved.
    SHOTS=dir writes a screenshot per step. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
@@ -43,11 +43,13 @@ for(let iter=0;iter<200;iter++){
    case 'school':await clk('[data-mg="run"][data-id="school"]');break;
    case 'perk':await clk('#mgrPane [data-mg="perk"]:not([disabled])');break;
    case 'yard':await clk('[data-mg="tab"][data-id="practice"]');break;
-   case 'yplus':{const r=await pg.evaluate(()=>{const b=document.querySelector(`#mgrPane [data-y92c="${MTUT.B}"] [data-y92s$="|1"]:not([disabled])`);if(!b)return null;b.click();return b.dataset.y92s});
+   /* v1.05 B44 (373-v105yard): + a session, the Doctore's time, the team drill (‹ ›, Next), Lock in all */
+   case 'yplus':{const r=await pg.evaluate(()=>{const b=document.querySelector(`#mgrPane .y105ses[data-y105g="${MTUT.B}"] [data-y92s$="|1"]:not([disabled])`);if(!b)return null;b.click();return b.dataset.y92s});
      yard={plus:r};break}
-   case 'ylock':case 'ydlock':await pg.evaluate(()=>{const b=document.querySelector(`#mgrPane [data-y92lock="${MTUT.B}"]`);b&&b.click()});break;
-   case 'ydrill':{await pg.evaluate(()=>{const b=document.querySelector(`#mgrPane [data-y92c="${MTUT.B}"] .y92pb:not([disabled]), #mgrPane .rm100drills [data-y92pre^="${MTUT.B}|"]:not([disabled])`) /* v1.0: 298's drill plates */;b&&b.click()});
-     yard.after=await pg.evaluate(()=>{const P=thPlan(mtW());const y=P.y92&&P.y92[MTUT.B];return y?{L:y92Sum(y.L),Q:y92Sum(y.Q),pre:!!y.pre}:null});break}
+   case 'ylock':await pg.evaluate(()=>{const b=document.querySelector('#mgrPane [data-y105="doc|1"]');b&&b.click()});break;
+   case 'ydrill':await pg.evaluate(()=>{const b=document.querySelector('#mgrPane [data-y105="dr|1"]');b&&b.click()});await pg.waitForTimeout(300);await next();break;
+   case 'ydlock':{await pg.evaluate(()=>{const b=document.querySelector('#mgrPane [data-y105="lock"]');b&&b.click()});await pg.waitForTimeout(400);
+     yard.after=await pg.evaluate(()=>{const P=thPlan(mtW());const y=P.y92&&P.y92[MTUT.B];return {L:y?y92Sum(y.L):0,doc:P.doc||0,lk:!!P.lk105,on:!!(P.y105&&P.y105.on)}});break}
    case 'night':await clk('[data-mg="tab"][data-id="night"]');break;
    case 'enter0':await pg.evaluate(()=>{const s=document.getElementById('ent0');if(s){s.value=MTUT.A;document.querySelector('[data-mg="enter"][data-id="0"]').click()}});break;
    case 'watch':await clk('[data-mg="watch"][data-id="0"]');await until(()=>S&&S.mgrCtx&&!S.over);break;
@@ -84,7 +86,7 @@ await pg.waitForTimeout(800);
 const fin=await pg.evaluate(async()=>({on:MTUT.on,title:document.getElementById('mTitle').textContent,world:!!(MGR.world&&MGR.world.tutorial),done:localStorage.getItem('flavius_mtutDone'),careers:(await Store.list('mgrCareers')).length}));
 const need=['yard','ycard','yplus','ylock','ydrill','ydoc','ytrials','acta'];for(const k of need)if(!seen.includes(k))fails.push('never reached '+k);
 if(guard!=='roster'&&guard!=='ludus')fails.push('guard let a stray tab click through: '+guard);
-if(!yard||!yard.plus)fails.push('no + session button');if(!yard||!yard.after||yard.after.L<1||!yard.after.pre)fails.push('yard plan not done '+JSON.stringify(yard));
+if(!yard||!yard.plus)fails.push('no + session button');if(!yard||!yard.after||yard.after.L<1||yard.after.doc<1||!yard.after.lk||!yard.after.on)fails.push('yard plan not done '+JSON.stringify(yard));
 if(fin.on||fin.world||fin.done!=='1'||!/Tutorial completed/.test(fin.title)||fin.careers!==careers0)fails.push('finish '+JSON.stringify(fin));
 console.log('steps',seen.length,seen.join(' '));console.log('yard',JSON.stringify(yard));console.log('fin',JSON.stringify(fin));
 console.log(fails.length?'FAIL '+JSON.stringify(fails):'OK lesson walked end to end');
