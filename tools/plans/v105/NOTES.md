@@ -95,3 +95,8 @@
   REPLACES rudis asks at any week (17/157/351 paths).
 - B57 (beta 2): the week-9 Consilium Superbus letter (357 B33) shows ANSWER BY WEEK 11 with nothing to answer. Rule: the badge only on letters that ask for a decision; info letters never (with B49–B54, 378).
 - M1a (2026-10-17): TASKS = actionable only (button to the place, clear themselves when done, only they carry Answer-by); MAIL = information only (no badges/buttons, files itself, hides when empty); a decision letter appears once, as a task. REPLACES v0.99's Lanista's desk (270, mail + checklist in one list). (with B49–B57, 378)
+- B58 (beta 2 screenshots, week 10): League shows Corvus 6th (9 pts, tied with #2–#5) while the week-9 Consilium letter says "seed #4,
+  Istrian Pens just above (#3)". Causes: (1) the letter is a week-9 snapshot (written before week 9's bouts) and was still showing in week 10;
+  (2) Sica's Syndicate sits in the table but takes NO playoff seed (348 po104Seeds skips m.sica), so seeds ≠ table places. Fix: a SEED
+  column/marker in the League table (Sica "—, wildcard only"), the tie-break order in the header tooltip (points → win rate → fame), the letter
+  dated ("after week 8's games") and gone from mail at the week's end (M1a), the Match Week banner's seed chip always live.
