@@ -154,7 +154,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
       if(!(s.querySelector('.amt87')||/\d/.test(tx)))s.remove()}
     /* 5: the Golden Eagle among the Blessings */
     const n=w.night;const cards=[...R.querySelectorAll('.card2.bout')];
-    if(n&&n.bouts)cards.forEach((c,i)=>{const b=n.bouts[i];if(!b)return;const ev=EVENTS[b.ev]||{};if(ev.kind==='eagle'||b.ev==='chariot'||b.ev==='naumachia')return;
+    if(n&&n.bouts)cards.forEach((c,i)=>{const b=n.bouts[i];if(!b)return;const ev=EVENTS[b.ev]||{};if(ev.kind==='eagle'||b.ev==='chariot'||b.ev==='naumachia')return;if(typeof eg105Has==='function'&&!eg105Has(w,i))return;
       const tt=c.querySelector('.bouttitle');if(tt&&!tt.querySelector('.eg99'))tt.insertAdjacentHTML('beforeend',`<span class="eg99" title="${_T('The Golden Eagle is one of the 12 Blessings on the pillars: trade it to the crowd for 5 CF')}">🦅 ${_T('Golden Eagle in play')}</span>`)})}
   if(tab==='recruit'){for(const td of R.querySelectorAll('tr.r85 > td.n:last-child')){const v=td.textContent.trim();if(/^\d+$/.test(v))td.innerHTML=`${coin99(+v)}<small>${_T('/wk')}</small>`}}
   if(tab==='ludus'){const rev=R.querySelector('.rev91');const Rv=w.review;if(rev&&!Rv&&w.welc99)rev.remove(); /* 21: the scroll replaced the old welcome letter */

@@ -47,7 +47,7 @@ const m1=await p.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   GEN99B.dam=0.5;const lot=Array.from({length:200},()=>genGlad({ovr:40}));GEN99B.dam=0;o.lotDam=lot.filter(g=>g.cls==='damnatio').length;
   /* 4/27/5 Match Week */
   MGR.tab='night';MGR_REDRAW();await W8(600);const btns=[...document.querySelectorAll('#mgrBody .card2.bout .acts .btn')];o.compact=btns.length>0&&btns.every(b=>{const s=b.querySelector('small');return !s||/\d/.test(s.textContent)});
-  o.eagle=!!document.querySelector('#mgrBody .card2.bout .eg99');
+  o.eagle=document.querySelectorAll('#mgrBody .card2.bout .eg99').length===(eg105Pick(W_())>=0?1:0); /* v1.05 B46: the Eagle is in at most one bout a week */
   return o});
 console.log(JSON.stringify(m1));
 ok(m1.welc&&m1.welcGone,'21 the welcome scroll opens on a new career and the seal closes it');
@@ -57,7 +57,7 @@ ok(m1.purged&&m1.keptBought,'3 death: the issued kit vanishes, a bought piece st
 ok(/^\d+ h$/.test(m1.oval)&&m1.oval===m1.stat,'23 the Recruiting oval shows the Recruiter\'s hours ('+m1.oval+' / '+m1.stat+')');ok(m1.ask,'24 the Ask column wears the coin');
 ok(m1.step,'26 picking a recruit resets the step');ok(m1.revX&&m1.revGone,'25 Week in review can be dismissed');ok(m1.noInv&&!m1.specErr,'21 no invitations in the first season '+(m1.specErr||''));
 ok(m1.tri===true||m1.tri==='nofixture','22 Triumviratus moved to the Undercard ('+m1.tri+')');ok(m1.capua>0.35,'28 Capua sends mostly slaves ('+m1.capua+')');ok(m1.dam===0,'28 no Damnatio outside Vulso/auction ('+m1.dam+')');ok(m1.lotDam>60,'28 Vulso/auction lots carry Damnatio ('+m1.lotDam+')');
-ok(m1.compact,'4/27 Match Week buttons are one line');ok(m1.eagle,'5 the bout card shows the Golden Eagle');
+ok(m1.compact,'4/27 Match Week buttons are one line');ok(m1.eagle,'5 the Golden Eagle chip sits on the Eagle bout only (none in most weeks)');
 /* ---- the board ---- */
 const m2=await p.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};try{const mc=document.getElementById('mClose');if(mc)mc.click()}catch(e){}await W8(400);while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(80)}try{menuHide()}catch(e){}
   o.zora=STANDEE_SRC.zoraMini==='assets/zora99.webp';

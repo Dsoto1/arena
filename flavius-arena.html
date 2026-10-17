@@ -19137,7 +19137,7 @@ const buyout=glad=>glad.contract?Math.round(glad.contract.wage*Math.max(2,glad.c
 async function scoutGlad(glad,onProg){
   const w=W_();const pool=w.glads.filter(x=>x.alive&&x!==glad&&Math.abs(effOvr(x)-effOvr(glad))<=12);
   const cfgs=Array.from({length:6},()=>()=>{const opp=shuffle([...pool]).slice(0,3);while(opp.length<3)opp.push(genGlad({ovr:effOvr(glad)}));
-    return {ev:'democritus',loc:3,seats:[seatFor(glad),...opp.map(o=>seatFor(o))],opts:{mods:false,mandata:true,optOffers:true,eaglePot:true,spect:0}}});
+    return {ev:'democritus',loc:3,seats:[seatFor(glad),...opp.map(o=>seatFor(o))],opts:{mods:false,mandata:true,optOffers:true,eaglePot:!eg105Live(),spect:0}}});
   const rs=(await simBatch(cfgs,onProg)).filter(r=>r&&!r.error);
   const mine=rs.map(r=>r.rows.find(x=>x.mgrId===glad.id)).filter(Boolean);const n=mine.length||1;
   const avg=k=>Math.round(mine.reduce((s,x)=>s+(x[k]||0),0)/n*10)/10;
@@ -19568,7 +19568,7 @@ function exhibCfg(match,live,fight){
   const m=me();
   const seats=[seatFor(match.g,m.color,!!fight),...match.theirs.map(x=>seatFor(x,match.opp.color)),...match.partners.map(x=>seatFor(x,null))];
   const home=LOCATIONS.findIndex(L=>L&&L.n===m.city);
-  return {ev:'democritus',loc:home>0?home:3,seats,opts:{mods:false,mandata:true,optOffers:true,eaglePot:true,spect:live?'exhib':0},omen:OMENS[0],
+  return {ev:'democritus',loc:home>0?home:3,seats,opts:{mods:false,mandata:true,optOffers:true,eaglePot:!eg105Live(),spect:live?'exhib':0},omen:OMENS[0],
     exhibCtx:{cid:W_().id,week:W_().week,my:match.g.id,opp:match.opp.id,theirs:match.theirs.map(x=>x.id)}};
 }
 /* exhibApply — applies an exhibition: their fighters fully scouted, a training chance for yours, a perk point, cooler rivalry. */
@@ -20066,7 +20066,7 @@ function wireManager(done){
         const pool=w.glads.filter(x=>x.alive&&x!==g&&x!==best&&Math.abs(effOvr(x)-effOvr(g))<=14);
         const nOpp=best?2:3;
         const cfgs=Array.from({length:2},()=>()=>{const opp=shuffle([...pool]).slice(0,nOpp);while(opp.length<nOpp)opp.push(genGlad({ovr:effOvr(g)}));
-          return {ev:'democritus',loc:3,seats:[seatFor(g),...(best?[seatFor(best,m.color)]:[]),...opp.map(o=>seatFor(o))],opts:{mods:false,mandata:true,optOffers:true,eaglePot:true,spect:0}}});
+          return {ev:'democritus',loc:3,seats:[seatFor(g),...(best?[seatFor(best,m.color)]:[]),...opp.map(o=>seatFor(o))],opts:{mods:false,mandata:true,optOffers:true,eaglePot:!eg105Live(),spect:0}}});
         const rs=(await simBatch(cfgs,(i,n)=>{const bar=pr2&&pr2.querySelector('i');if(bar)bar.style.width=(i/n*100)+'%'})).filter(r=>r&&!r.error);
         won=rs.filter(r=>r.rows.find(x=>x.mgrId===g.id&&x.won)).length;
       }finally{MGR.busy=false}
@@ -58311,7 +58311,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
       if(!(s.querySelector('.amt87')||/\d/.test(tx)))s.remove()}
     /* 5: the Golden Eagle among the Blessings */
     const n=w.night;const cards=[...R.querySelectorAll('.card2.bout')];
-    if(n&&n.bouts)cards.forEach((c,i)=>{const b=n.bouts[i];if(!b)return;const ev=EVENTS[b.ev]||{};if(ev.kind==='eagle'||b.ev==='chariot'||b.ev==='naumachia')return;
+    if(n&&n.bouts)cards.forEach((c,i)=>{const b=n.bouts[i];if(!b)return;const ev=EVENTS[b.ev]||{};if(ev.kind==='eagle'||b.ev==='chariot'||b.ev==='naumachia')return;if(typeof eg105Has==='function'&&!eg105Has(w,i))return;
       const tt=c.querySelector('.bouttitle');if(tt&&!tt.querySelector('.eg99'))tt.insertAdjacentHTML('beforeend',`<span class="eg99" title="${_T('The Golden Eagle is one of the 12 Blessings on the pillars: trade it to the crowd for 5 CF')}">🦅 ${_T('Golden Eagle in play')}</span>`)})}
   if(tab==='recruit'){for(const td of R.querySelectorAll('tr.r85 > td.n:last-child')){const v=td.textContent.trim();if(/^\d+$/.test(v))td.innerHTML=`${coin99(+v)}<small>${_T('/wk')}</small>`}}
   if(tab==='ludus'){const rev=R.querySelector('.rev91');const Rv=w.review;if(rev&&!Rv&&w.welc99)rev.remove(); /* 21: the scroll replaced the old welcome letter */
@@ -76219,6 +76219,40 @@ if(typeof flag101Draw==='function'&&!FLAG105.off){const base=flag101Draw;flag101
     return da.apply(this,arguments)};
   try{return base.apply(this,arguments)}finally{
     if(own)ctx.drawImage=da;else delete ctx.drawImage;if(mown)ctx.moveTo=mt;else delete ctx.moveTo}}}
+/* v1.05 (375-v105mgr) · MANAGER — two of his calls (tools/plans/v105/NOTES.md B46, B48; docs/decisions.md 2026-10-17).
+   B46 GOLDEN EAGLE: a Match Week week has AT MOST ONE bout with the Eagle among its Blessings (about half the weeks have one, the rest none).
+     eg105Pick(w) = hashStr(w.id:season:week) -> even = an Eagle week, the bout is picked from the same hash among the bouts that can carry it (not the
+     Eagle event itself, the chariot race, the naumachia). Never the dice RNG. boutCfg wrapper sets opts.eaglePot only on that bout; the "🦅 Golden
+     Eagle in play" chip (272's night post-process) asks eg105Has(w,i). Exhibitions and yard trials carry no Eagle (17's three specs ask eg105Live()).
+     Play Now, tournaments (22-trophies) and Online are untouched. REPLACES eaglePot on every Manager bout.
+   B48 INFIRMARY HAS NO BUILD BUTTON: every [data-mg="build"] on the infirmary page (351's Valetudinarium plate keeps its face) becomes a "Build it in My Ludus" link that opens the Upgrade School (333's
+     LU102.fac popup, where buildings are bought); any other [data-mg="build"] left on the infirmary page is swept to the same link. Built
+     buildings and staff hiring work as before. Hygeia, Asclepius, the surgeon and the bathhouse are CARE bookings (hours + coin, cancellable),
+     not buildings, and stay.
+   Kill switch localStorage flavius_v105mgroff=1 (both back to today). Test tv105l. */
+function eg105Live(){try{return localStorage.getItem('flavius_v105mgroff')!=='1'}catch(e){return true}}
+function eg105Can(b){const E=EVENTS[b&&b.ev]||{};return !(E.kind==='eagle'||(b&&(b.ev==='chariot'||b.ev==='naumachia')))}
+/* the index of the week's Eagle bout in w.night.bouts; -1 none; -2 = kill switch (every bout, as before) */
+function eg105Pick(w){try{w=w||W_();const n=w&&w.night;if(!n||!n.bouts||!n.bouts.length)return -1;if(!eg105Live())return -2;
+  const h=hashStr(String(w.id)+':'+w.season+':'+w.week)>>>0;if(h%2)return -1;
+  const C=[];n.bouts.forEach((b,i)=>{if(eg105Can(b))C.push(i)});if(!C.length)return -1;return C[(h>>>1)%C.length]}catch(e){return -1}}
+function eg105Has(w,i){const p=eg105Pick(w);return p===-2?true:p===i}
+{const base=boutCfg;boutCfg=function(bout){const cfg=base.apply(this,arguments);try{const w=W_();if(!cfg||!cfg.opts||!w||!w.night||!eg105Live())return cfg;
+  const i=w.night.bouts.indexOf(bout);if(i<0)return cfg;cfg.opts=Object.assign({},cfg.opts,{eaglePot:eg105Pick(w)===i})}catch(e){}return cfg}}
+
+/* ---- B48 ---- */
+function b105Link(){return `<span class="b105lk v101lnk" role="button" tabindex="0" data-b105="1">${_T`Build it in My Ludus →`}</span>`}
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{if(!eg105Live()||typeof h!=='string'||MGR.tab!=='infirm'||h.indexOf('data-mg="build"')<0)return h;
+  const t=document.createElement('template');t.innerHTML=h;
+  for(const b of t.content.querySelectorAll('[data-mg="build"]')){
+    if(b.classList.contains('v104pl')){const nm=b.querySelector('.v104pb > b'),fx=b.querySelector('.v104fx'),ph=b.querySelector('.v104ph'); /* 351's Valetudinarium plate: same face, a link instead of the button */
+      b.outerHTML=`<div class="v104pl plantile b105pl" data-v104p="build"><span class="rm100fr">${(b.querySelector('.rm100fr')||{innerHTML:''}).innerHTML}</span><span class="v104pb"><b>${nm?nm.innerHTML:'🏗'}</b>${ph?ph.outerHTML:''}${fx?fx.outerHTML:''}${b105Link()}</span></div>`}
+    else b.outerHTML=b105Link()}
+  return t.innerHTML}catch(e){console.error(e)}return h}}
+function b105Go(){MGR.tab='ludus';MGR.view=null;if(typeof LU100!=='undefined')LU100.pop=null;if(typeof LU102!=='undefined')LU102.fac=true;if(typeof MGR_REDRAW==='function')MGR_REDRAW()}
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-b105]');if(!b||!b.closest('#mgrBody'))return;e.preventDefault();e.stopPropagation();b105Go()},true);
+document.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const b=e.target&&e.target.closest&&e.target.closest('[data-b105]');if(!b||!b.closest('#mgrBody'))return;e.preventDefault();e.stopPropagation();b105Go()},true);
+try{const st=document.createElement('style');st.textContent='.b105pl{cursor:default}.b105lk{display:inline-block;margin-top:4px;cursor:pointer;text-decoration:underline;color:var(--gold,#d6ab4c)}';document.head.appendChild(st)}catch(e){}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
