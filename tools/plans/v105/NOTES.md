@@ -56,3 +56,9 @@
   the Tabula strip at the bottom with Same as last week + Lock in all (locks everything). Waiting for his ok / changes.
 - B44 y1a (2026-10-17): the Doctore's hours come from the same weekly training hours (one number in the banner).
 - B38 follow-up (2026-10-17, his answer, then simplified): the menu show ALWAYS draws its figures without bases (soft contact shadow) — no setting.
+- B45 (beta 2 screenshots, Match Week banner, 360-v105mw): too tall and wasteful — a big empty middle (the city art) while the content
+  crowds the left; the "Your week at <city>" box is tall; the pop-up chips ("On the road from … · trip 12", "🔒 Yard, Infirmary and Recruiting
+  shut until the week ends") are oversized ovals with the text sitting high (not vertically centred) and the second one runs over the scenery.
+  Fix: a SLIM banner (roughly half today's height): row 1 = city name + "Match Week · week N of 12" + the chips inline (pill height = text,
+  centred, one line, ellipsis); row 2 = map inset + day tabs + Walk the city square + temple/gate links; the Your-week box compact
+  (tiles in one row of 6 or 3×2 at ~half height, buttons beside); no overlap at 1440/1280/1000; phones stack.
