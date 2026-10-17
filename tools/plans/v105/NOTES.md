@@ -114,3 +114,4 @@
 - B64 (beta 2): the task "Match Week: only 2 of your 3 starters are fit…" counts the OLD 3-starter depth (47 depthOf n=3) while the v1.04 roster has
   4 First-team slots (350) and he had 3 of 4 filled, each set to a bout. Fix: the warning checks THIS WEEK's bouts — a task only when a bout
   you are entered for (or must fill) has no fit fighter, named per bout; no task when every bout has its fighter.
+- B65 (beta 2): eliminated from the Superbus, in the semifinal week a Consilium task said 'None of your fighters is on this week's card' + Enter button. Rule: entry/fitness tasks only for bouts the house CAN enter (eliminated / bye / unseeded / not drawn = none). (with B64, 384)
