@@ -14,3 +14,5 @@
 - B  N3 Your read (s1a s2a s3a r1a r2a): read data + walk the sand + recruiting rough look + watch-live look — 361-v105read
 - C  N1 League season picker (table, Superbus bracket, awards per past season) + F1 rail chips — 362-v105league
 - D  x1a Renown bar (perk points from one bar) — 363-v105renown
+- Beta 1 (2026-10-17): "new manager careers start in season 5" — by design since v0.22 (careers join the shared empire calendar). His q1a:
+  new careers start at Season 1 week 1 on their own count; the empire calendar is separate (built as 365-v105cal).

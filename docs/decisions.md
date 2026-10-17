@@ -732,3 +732,6 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   button REPLACES the separate Spectate; the stake lives in the Bet button (REPLACES the full-width "Your stake" row); Recruiting locks with
   the Yard + Infirmary once the house sets off; set-off reminders REPLACE the End-the-week confirm's wounded/hours questions; the Renown bar
   REPLACES the free +1 perk point a week and the scattered +1s (17-manager perkPend).
+- Decided 2026-10-17 (v1.05, his q1a): every NEW Manager career starts at Season 1, week 1 and counts its own seasons; careers no longer
+  join or push the shared empire calendar (Play Now date / city schedule keep their own). REPLACES v0.22 "a new career joins the empire's
+  calendar where it stands" (17-manager newWorld) and the "behind the empire" banner for new careers. Running careers keep their numbers.
