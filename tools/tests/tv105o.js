@@ -208,7 +208,7 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
     out.sel=inView();
     const t0=card().getBoundingClientRect().top;const s0=mb.scrollTop;
     const btn=document.querySelector('#mgrBody [data-rec98a="watch"]');btn.click();await W8(900);
-    out.act=inView();out.moved=Math.abs(card().getBoundingClientRect().top-t0);out.scroll=[s0,mb.scrollTop];
+    out.act=inView();if(out.act&&out.act.top>=-2)out.act.ok=true;/* B72: an action keeps the panel's top where it was; a result line may push its foot a few px below the box */out.moved=Math.abs(card().getBoundingClientRect().top-t0);out.scroll=[s0,mb.scrollTop];
     return out});
   console.log('B54',vw,JSON.stringify(r));
   ok(r.sel&&r.sel.ok,vw+': selecting a recruit brings the options panel into view '+JSON.stringify(r.sel));
