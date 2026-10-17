@@ -84,3 +84,7 @@
 - B51 (his ask): a weekly task / letter suggesting a BARGAIN recruit clears itself as soon as that recruit is on your Recruiting board
   (already there, or put there later) — like the other tasks. Builds on v1.04 B10/B17 (353 l104Sweep).
 - B52 (his ask): the Your ludus mail panel hides itself when no letters are left; it comes back when one arrives (with B49–B51, 378).
+- B53 (his ask): Match Week flow — after a bout completes it COLLAPSES and the next opens; when all 3–4 are done all collapse and the page
+  scrolls back to the top (week results). REPLACES 360 pick-2's "result card + next bout both open". (with B45, 374)
+- D1/D2 trade deadline + late-season locks: proposed 2026-10-17 (D1a deadline end of week 8; D2 1 free agents only into empty spots, 2 Superbus
+  roster freeze, 3 no releases in the playoff weeks) — awaiting his picks; v1.06+ (new rules).
