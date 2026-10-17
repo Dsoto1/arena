@@ -746,3 +746,6 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   Manager bout. Infirmary: no build/buy buttons in the ward — buildings are bought in My Ludus only; REPLACES the ward's build buttons.
 - Decided 2026-10-17 (v1.05, his p1a): a newly signed fighter can't receive any offer for 4 weeks (rival bids, trade asks, Sica's poaching,
   the player's offers); REPLACES no burn-in.
+- Decided 2026-10-17 (his d1a d2-1,2,3; v1.06): trade/loan deadline end of week 8 (rivals + Sica too, week-7 warning letter); after it free
+  agents only into an empty spot under the cap, the Superbus roster frozen at the deadline, no releases in the playoff weeks. Today trades
+  and loans are open all season (REPLACED).

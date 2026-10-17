@@ -19,3 +19,9 @@ Winter Quarters (N4, was v1.06) moves to v1.07.
   (≤ 16 ms laptop, 30 fps phone); compare side by side in the mock-up.
 - Seen in the same shot: one beast drawn as a flat dark silhouette (right half, a small black figure on a grey disc) — check whether it is a
   render still pending (N11a: plain 3D set while pending) or a missing render.
+
+## Season locks (his d1a d2-1,2,3, 2026-10-17)
+- Trade + loan DEADLINE at the end of week 8: from week 9 no new trades, loans or loan asks (running loans finish on their terms); a week-7
+  letter warns; rivals and Sica follow it.
+- After the deadline: free agents may still be signed ONLY into an empty roster spot under the cap; Superbus bouts take only fighters on
+  the roster at the deadline; no releasing fighters during the playoff weeks.
