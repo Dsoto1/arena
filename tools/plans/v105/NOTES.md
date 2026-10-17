@@ -101,3 +101,4 @@
   column/marker in the League table (Sica "—, wildcard only"), the tie-break order in the header tooltip (points → win rate → fame), the letter
   dated ("after week 8's games") and gone from mail at the week's end (M1a), the Match Week banner's seed chip always live.
 - B59 (beta 2): '<name> asks for a fight' task stayed after he was entered — clears as soon as he is in any bout this week (M1a case; with 378).
+- B60 (beta 2): in an away week the host city's City Square / temple / walk the sand opened before setting off. Fix: those open the 'Set off for <city>?' window first (mw1); home weeks unchanged (with B45/B53, 374).
