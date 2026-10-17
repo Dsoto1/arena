@@ -74,3 +74,8 @@
   4 this week) repeat the top bar and confuse; the Clerk's (Quaestor's) ledger report already explains the week's money in/out. REMOVE the
   chip row from the banner (17 weekReviewHTML .chron.mini and whatever re-renders it in the banner, 294/297/317). Keep last week's bout
   results list + the Acta button where they are. REPLACES the v0.x "week in review" stat chips.
+- B49 (beta 2 screenshot, Recruiter letter): "Agrippa 'Pugnax' Verus chose Ludus S…" carries "ANSWER BY WEEK 7" + "Go to the Recruiting board",
+  and the text both says he took Severianus's terms AND advises raising the wage next week. Fix: a recruit who signed elsewhere = a plain
+  NOTICE (no deadline badge, no action button, no advice): "<name> signed with <house> (their terms beat yours)." It files itself.
+- B50 (his ask): no offers on a newly signed fighter for a burn-in period — no rival bid / trade ask / Sica poach / player offer on a
+  fighter who signed recently. Length + scope asked (P1).
