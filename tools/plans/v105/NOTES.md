@@ -70,3 +70,7 @@
 - B48 (his call, beta 2): remove the BUILD/buy options from the Infirmary ward (he misclicked Hygeia and bought it). Building happens only
   from My Ludus (the rooms/building screens); the ward shows what is built, and what is not built shows "Build it in My Ludus" (a link),
   never a purchase button. REPLACES the in-ward build buttons (318/351 ward plates).
+- F2 (his call, beta 2 screenshots): the Your ludus week banner's review chips (−268 treasury (now 62) · 0 fame · 0/0 wins/bouts · 0 fallen ·
+  4 this week) repeat the top bar and confuse; the Clerk's (Quaestor's) ledger report already explains the week's money in/out. REMOVE the
+  chip row from the banner (17 weekReviewHTML .chron.mini and whatever re-renders it in the banner, 294/297/317). Keep last week's bout
+  results list + the Acta button where they are. REPLACES the v0.x "week in review" stat chips.
