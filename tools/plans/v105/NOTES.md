@@ -117,3 +117,9 @@
 - B65 (beta 2): eliminated from the Superbus, in the semifinal week a Consilium task said 'None of your fighters is on this week's card' + Enter button. Rule: entry/fitness tasks only for bouts the house CAN enter (eliminated / bye / unseeded / not drawn = none). (with B64, 384)
 - B66 (beta 2): a gladiator KILLED in a Match Week bout shows up as a FREE AGENT right away. Rule: he stays with his house (marked fallen) until the week ends, then goes to the grave/annals — never the free-agent pool. Investigate where his contract is cleared.
 - B67 (his ask): off-season contract renewals show each fighter's overall rating (OVR, grade colour), season record (W-L) and recent form (the last 5 results dots, like the League).
+- Answers (2026-10-17): H1a (care bookings stay one click) · Antiochia/Londinium hand-mapped (Londinium → Nemausus, Antiochia → Syracusae) ·
+  buy-freedom asks stay off-season only · the building-project chip stays in the Your ludus banner.
+- B68 (his report): weekly task "Faustus "Fulmen" Invictus fights with bare hands" for a RESERVE. Fix: the empty-hand tasks (225 weekChecklist)
+  only for fighters who fight this week (starters / entered in a bout); reserves never get it.
+- B69 (his call, with 4yes): each page banner shows its own building's project chip: the Infirmary's on the Infirmary banner, the Yard's on the
+  Yard banner, Recruiting's on Recruiting, etc. (.bp104c, 351) — the Your ludus banner keeps the ludus-wide one.
