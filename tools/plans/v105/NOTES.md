@@ -94,3 +94,4 @@
   Winter Classic); until then in the off-season (348/349, with the renewals). No rudis requests during the 12 weeks or the playoffs.
   REPLACES rudis asks at any week (17/157/351 paths).
 - B57 (beta 2): the week-9 Consilium Superbus letter (357 B33) shows ANSWER BY WEEK 11 with nothing to answer. Rule: the badge only on letters that ask for a decision; info letters never (with B49–B54, 378).
+- M1a (2026-10-17): TASKS = actionable only (button to the place, clear themselves when done, only they carry Answer-by); MAIL = information only (no badges/buttons, files itself, hides when empty); a decision letter appears once, as a task. REPLACES v0.99's Lanista's desk (270, mail + checklist in one list). (with B49–B57, 378)
