@@ -776,3 +776,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   ONE hours chip on banners + ONE rail pill (REPLACES the Yard plate .y105hrs, Recruiting's roomstat chip, the Infirmary Medicus box, the
   green/grey rail badges).
 - Decided 2026-10-18: his ok on the v1.06a lighting mock-up (https://claude.ai/artifact/5HKkQE1uKseEt3VHawxBCh) → full build.
+- Decided 2026-10-18 (his "you decide"): poaching (player, rivals, Sica) is blocked after the week-8 deadline like trades; coin loans + recalling a lent fighter stay open.
