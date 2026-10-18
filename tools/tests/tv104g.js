@@ -89,7 +89,7 @@ await shot(pg,'v104g-hire-popup');
 const i2=await ev(pg,async()=>{const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];const r={};const w=W_();const c0=me().coin;
   const mx0=mh101Max(me(),w);q('.v104mp [data-v101mh="1"]').click();await W8(500);const M=w.medicus76;r.hired=!!M&&M.skill===2;r.popGone=!q('.v104mp');
   const sl=q('.roomhd .v104cap.on');r.slot=!!sl&&sl.textContent.includes(M.name)&&!!sl.querySelector('.v104cf svg')&&!!sl.querySelector('.ic87c')&&!!sl.querySelector('[data-med76="fire"]')&&/★★☆/.test(sl.textContent);
-  r.bar=!!q('.w104bar .k104cp')&&parseFloat(q('.w104bar .k104cp').style.width)>0&&!!q('.w104hbl .k104cp');r.hours=mh101Max(me(),w)-mx0===4;
+  r.bar=!!q('.hc105')&&/Capsarius/.test(q('.hc105').dataset.tip||'')&&!q('.w104bar'); /* 392: his hours sit in the one hours chip's data-tip */r.hours=mh101Max(me(),w)-mx0===4;
   r.news=(w.news||[]).slice(-3).concat(w.tnews||[]).join(' ');
   q('[data-med76="fire"]').click();await W8(500);r.fired=!w.medicus76&&!!q('.roomhd .v104cap [data-v101med]');
   return r});

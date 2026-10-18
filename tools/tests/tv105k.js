@@ -18,12 +18,12 @@ const ev=(pg,f,a)=>pg.evaluate(f,a);const shot=async(pg,n)=>{if(SHOT)await pg.sc
 const pg=await open(1440,1400);
 /* 0 h: no team drill, Intensity greyed */
 const a=await ev(pg,async()=>{const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];const w=W_(),pm=me();const r={};
-  r.room=!!q('#mgrPane .y105 .y105doc')&&!!q('#mgrPane .y105ses')&&!!q('#mgrPane .y105trial')&&!!q('#mgrPane .y105tab');
+  r.room=!!q('#mgrPane .y105 .y105doc')&&!!q('#mgrPane .y105ses')&&!!q('#mgrPane .y105trial')&&!q('#mgrPane .y105tab'); /* 392: the Tabula is gone */
   r.noOld=!q('#mgrPane .y92doc')&&!q('#mgrPane .rm100drills')&&!q('#mgrPane [data-y92pre]')&&!q('#mgrPane .rm100plt');
   r.regDis=qa('#mgrPane .y105doc [data-mg="regime"]').length===4&&qa('#mgrPane .y105doc [data-mg="regime"]').every(x=>x.disabled);
   r.msg=(q('#mgrPane .y105msg')||{}).textContent;r.tileOff=!q('#mgrPane .y105dt.on')&&!!q('#mgrPane .y105doc.idle');
   r.chipsDis=qa('#mgrPane .y105chip').every(x=>x.disabled);r.drl=y105Drillers(w,pm).length;
-  r.big=+(q('#mgrPane .roomhd .y105hrs .y105big')||{}).textContent;r.left=thLeft(w);r.max=thMax();
+  r.big=parseInt((q('#mgrPane .roomhd .hc105 .hc105n')||{}).textContent,10);r.left=thLeft(w);r.max=thMax();
   return r});
 console.log('ZERO',JSON.stringify(a));
 ok(a.room,'the new room');ok(a.noOld,'no per-fighter drill tiles / old Doctore card');ok(a.regDis,'Intensity greyed at 0 h');ok(a.msg==='Give the Doctore time to run a drill','drill msg: '+a.msg);
@@ -31,7 +31,7 @@ ok(a.tileOff&&a.chipsDis&&a.drl===0,'drill tile greyed, chips off, nobody drills
 await shot(pg,'tv105k-zero');
 /* hours → level, one pool, the Yard cap */
 const h=await ev(pg,async()=>{const q=s=>document.querySelector(s);const w=W_(),pm=me();const P=thPlan(w);const r={};const L0=thLeft(w);
-  q('[data-y105="doc|1"]').click();await W8(250);r.d1=P.doc;r.lv1=y105Lv(w,pm);r.pool1=L0-thLeft(w);r.big1=+q('#mgrPane .roomhd .y105big').textContent===thLeft(w);
+  q('[data-y105="doc|1"]').click();await W8(250);r.d1=P.doc;r.lv1=y105Lv(w,pm);r.pool1=L0-thLeft(w);r.big1=parseInt(q('#mgrPane .roomhd .hc105 .hc105n').textContent,10)===thLeft(w);
   r.regOn=!q('#mgrPane .y105doc [data-mg="regime"]').disabled;
   /* the drill tile: Footwork (Lv 1) open, The Showman (Lv 2) not yet */
   y105T(P).k='foot';MGR_REDRAW();await W8(200);r.foot=!!q('#mgrPane .y105dt.on[data-y105k="foot"]');
@@ -51,10 +51,10 @@ const t=await ev(pg,async()=>{const q=s=>document.querySelector(s);const w=W_(),
   q('#mgrPane .y105run').click();await W8(300);r.panel=!!q('#mgrPane .y105trial .yd76p');const sel=q('#mgrPane .y105trial [data-yp76p]');
   if(sel){const mate=[...sel.options].map(o=>o.value).find(id=>id!==ros[0].id);sel.value=mate;r.mate=mate}
   const go=q('#mgrPane .y105trial [data-yp76]');if(go)go.click();await W8(300);const P=thPlan(w);r.spar=P.pairs.some(p=>p.k==='spar'&&p.a===ros[0].id);
-  r.tab=/Trial: ⚔ Spar/.test(q('#mgrPane .y105tab').textContent);return r});
+  r.tab=!q('#mgrPane .y105tab'); /* 392: no Tabula to show it */return r});
 console.log('TRIAL',JSON.stringify(t));
 ok(t.k0==='spar'&&t.k1==='exh'&&t.k2==='pen'&&t.k3==='spar','trial tile cycles spar → exh → pen → spar');ok(/^pen:/.test(t.penBtn||''),'the run button is the old data-yb76');
-ok(t.panel&&t.spar&&t.tab,'run: the panel opens and the spar is booked (tabula shows it)');
+ok(t.panel&&t.spar&&t.tab,'run: the panel opens and the spar is booked (392: the Tabula is gone)');
 /* sit one out, plan a session, Lock in all → nothing choosable */
 const l=await ev(pg,async()=>{const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];const w=W_(),pm=me();const P=thPlan(w);const r={};const ros=rosterOf(pm);
   const busy=new Set(P.pairs.flatMap(p=>[p.a,p.b]));const free=ros.filter(g=>y105Fit(g)&&!busy.has(g.id));const D=free[0],O=free[1];window.DO={D:D.id,O:O.id};

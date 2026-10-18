@@ -23,7 +23,7 @@ const pg=await open(false);await mgr(pg);
 
 /* ---- F1: rail chips at the right edge (desktop) ---- */
 const chipJS=()=>{const o=[];for(const bt of document.querySelectorAll('.mtabs [data-mg="tab"]')){const br=bt.getBoundingClientRect(),pr=parseFloat(getComputedStyle(bt).paddingRight);
-  for(const c of bt.querySelectorAll('.mcount,.hrchip,.tabchk')){if(c.offsetParent===null||getComputedStyle(c).display==='none')continue;const cr=c.getBoundingClientRect();if(!cr.width)continue;o.push([bt.dataset.id,c.textContent.trim(),Math.round(br.right-pr-cr.right)])}}return o};
+  for(const c of bt.querySelectorAll('.mcount,.hrchip,.tabchk,.hp105')){if(c.offsetParent===null||getComputedStyle(c).display==='none')continue;const cr=c.getBoundingClientRect();if(!cr.width)continue;o.push([bt.dataset.id,c.textContent.trim(),Math.round(br.right-pr-cr.right)])}}return o};
 out.railD=await ev(pg,async()=>{const w=W_();for(const g of rosterOf(me()))g.inj=null;MGR.tab='ludus';MGR_REDRAW();await W8(900);return 1});
 const cd=await pg.evaluate(chipJS);out.chipsD=cd;
 ok(cd.some(x=>x[0]==='recruit')&&cd.some(x=>x[0]==='infirm'&&x[1]==='✓'),'F1 the Recruiting hours chip and the Infirmary tick exist '+JSON.stringify(cd));

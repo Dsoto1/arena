@@ -33,16 +33,16 @@ const BAN='#mgrPane .roomhd, .railmain>.roomhd';
 const pg=await open(1440,900);
 const y=await ev(pg,async BAN=>{const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];const r={};await TAB('practice');
   const hd=q(BAN);r.slim=!!hd&&hd.classList.contains('cp105ban');const lk=q('[data-y105="lock"]');r.lockInBan=!!lk&&!!hd&&hd.contains(lk);r.lockN=qa('[data-y105="lock"]').length;
-  const L=BOX('[data-y105="lock"]');r.lock=L;r.lockVis=!!L&&L.t>=0&&L.b<=innerHeight&&L.w>0;r.tabLock=!!q('#mgrPane .y105tab [data-y105="lock"]');r.same=!!q('#mgrPane .y105tab [data-y105="same"]');
-  r.hrsChip=!!q('#mgrPane .roomhd .y105hrs .y105big')&&+q('#mgrPane .roomhd .y105hrs .y105big').textContent===thLeft(W_());r.face=!!hd.querySelector('.rm100rd');
+  const L=BOX('[data-y105="lock"]');r.lock=L;r.lockVis=!!L&&L.t>=0&&L.b<=innerHeight&&L.w>0;r.tabLock=!!q('#mgrPane .y105tab [data-y105="lock"]');r.same=!!q('#mgrPane .roomhd [data-y105="same"]');
+  r.hrsChip=!!q('#mgrPane .roomhd .hc105 .hc105n')&&parseInt(q('#mgrPane .roomhd .hc105 .hc105n').textContent,10)===thLeft(W_());r.face=!!hd.querySelector('.rm100rd');
   r.yard=BOX(BAN).h;r.who=BOX('#mgrPane .y105who');r.time=BOX('#mgrPane .y105time');r.int=BOX('#mgrPane .y105int');r.dt=BOX('#mgrPane .y105drill');r.band=BOX('#mgrPane .y105dtop');r.whod=BOX('#mgrPane .y105whod');
   r.B=BAND();r.dtEmpty=BOX('#mgrPane .y105dt').r-TXR('#mgrPane .y105dt');
   {const e=q('#mgrPane .y105who .y105cap'),m=q('#mgrPane .cp105ts .y105mini');r.eyeOne=!!e&&e.getBoundingClientRect().height<=18;r.miniOne=!!m&&m.getBoundingClientRect().height<=32}
   r.arrows=qa('#mgrPane .y105drill [data-y105^="dr|"]').length;r.chips=qa('#mgrPane .y105whod .y105chip').length;r.drillCard=!!q('#mgrPane .y105dt[data-y105k]');
   return r},BAN);
 console.log('YARD',JSON.stringify(y));
-ok(y.slim&&y.face,'Yard banner = the slim banner with the Doctore face');ok(y.lockInBan&&y.lockN===1&&!y.tabLock&&y.same,'Lock in moved into the banner (one button), ↻ Same as last week stays in the Tabula');
-ok(y.lockVis,'Lock in visible without scrolling '+JSON.stringify(y.lock));ok(y.hrsChip,'the hours chip (.y105hrs .y105big) shows the hours left');
+ok(y.slim&&y.face,'Yard banner = the slim banner with the Doctore face');ok(y.lockInBan&&y.lockN===1&&!y.tabLock&&y.same,'Lock in moved into the banner (one button), ↻ Same as last week beside it (392: the Tabula is gone)');
+ok(y.lockVis,'Lock in visible without scrolling '+JSON.stringify(y.lock));ok(y.hrsChip,'the hours chip (.hc105 .hc105n, 392) shows the hours left');
 ok(y.band.b-y.int.b<=30,'no empty strip under Intensity (band bottom '+y.band.b+', Intensity bottom '+y.int.b+')');
 const tops=[y.who.t,y.time.t,y.int.t];ok(Math.max(...tops)-Math.min(...tops)<=8&&y.who.l<y.time.l&&y.time.l<y.int.l,'Doctore / Time / Intensity share one band '+JSON.stringify(tops));
 ok(Math.abs(y.dt.t-y.whod.t)<=8&&y.dt.r<=y.whod.l+2,'Team drill card + Who-drills chips share one row '+y.dt.t+'/'+y.whod.t);ok(y.arrows===2&&y.chips>=3&&y.drillCard,'drill card keeps ‹ › and the chips');ok(y.dtEmpty<=30,'Team drill card sized to its content (empty right '+y.dtEmpty+')');
@@ -52,7 +52,7 @@ const bn=await ev(pg,async BAN=>{const q=s=>document.querySelector(s);const r={}
   await TAB('armory');{const hd=q(BAN),hc=hd&&hd.querySelector('.roomstat.cp105hurt'),pm=me(),hu=rosterOf(pm).filter(g=>g.inj);
     r.arm3={chip:!!hc,n:hc?+hc.querySelector('.ptbox').textContent:-1,hurt:hu.length,names:!!hc&&hu.every(g=>(hc.dataset.tip||'').includes(g.name))&&!hc.title,
       head:[...document.querySelectorAll('#mgrPane h4.secth')].some(e=>/Your Armory/.test(e.textContent)),line:!!document.querySelector('#mgrPane .ar95hurt'),first:((hd.querySelector('.roomstat .ptbox')||{}).parentNode||{}).classList+''}}
-  for(const t of ['infirm','roster','armory','recruit']){await TAB(t);const hd=q(BAN);const st=hd&&hd.querySelector('.roomstat');r[t]={two:!!st&&!!st.title&&!!(st.dataset.tip||st.getAttribute('data-tt')),ttl:((hd&&hd.querySelector('.roomttl b'))||{}).textContent||'',h:BOX(BAN).h,slim:!!hd&&hd.classList.contains('cp105ban'),face:!!hd&&!!hd.querySelector('.rm100rd'),stat:((hd&&hd.querySelector('.roomstat'))||{}).textContent||'',old:!!(hd&&hd.querySelector('.rc1banf'))}}
+  for(const t of ['infirm','roster','armory','recruit']){await TAB(t);const hd=q(BAN);const st=hd&&hd.querySelector('.roomstat');r[t]={two:!!st&&!!st.title&&!!(st.dataset.tip||st.getAttribute('data-tt')),ttl:((hd&&hd.querySelector('.roomttl b'))||{}).textContent||'',h:BOX(BAN).h,slim:!!hd&&hd.classList.contains('cp105ban'),face:!!hd&&!!hd.querySelector('.rm100rd'),stat:((hd&&hd.querySelector('.roomstat, .hc105'))||{}).textContent||'',old:!!(hd&&hd.querySelector('.rc1banf'))}}
   return r},BAN);
 console.log('BANNERS',JSON.stringify(bn));
 for(const t of ['armory','recruit'])ok(bn[t].slim&&bn[t].face&&!bn[t].old&&/\d/.test(bn[t].stat),t+': slim banner, face at left, the counter as a chip');
@@ -102,7 +102,7 @@ await pl.close();
 /* ---- German at 1440: long labels fit, the band stays compact ---- */
 const pd=await open(1440,900,false,'de');
 const de=await ev(pd,async BAN=>{const r={};const P=thPlan(W_());const keep=P.doc;P.doc=Math.min(3,thMax());await TAB('practice');r.B=BAND();P.doc=keep;await TAB('practice');r.hs=HSCROLL();r.lock=BOX('[data-y105="lock"]');
-  for(const t of ['armory','recruit']){await TAB(t);const hd=document.querySelector(BAN),st=hd&&hd.querySelector('.roomstat');r[t]=!!st&&st.scrollWidth<=st.clientWidth+1}return r},BAN);
+  for(const t of ['armory','recruit']){await TAB(t);const hd=document.querySelector(BAN),st=hd&&hd.querySelector('.roomstat, .hc105');r[t]=!!st&&st.scrollWidth<=st.clientWidth+1}return r},BAN);
 console.log('DE',JSON.stringify(de));
 ok(de.B.segs.every(x=>x.w>=88&&!x.ov),'de 1440: Intensity labels not clipped '+JSON.stringify(de.B.segs));ok(de.B.band.b-de.B.int.b<=60,'de 1440 (3 h with him): no large empty strip under Intensity ('+(de.B.band.b-de.B.int.b)+')');
 ok(!de.hs&&de.lock&&de.lock.b<=900&&de.armory&&de.recruit,'de 1440: no sideways scroll, Lock in visible, the chips do not overflow');

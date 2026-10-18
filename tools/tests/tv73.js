@@ -12,7 +12,7 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   r.ovals=['ludus','recruit','practice'].every(k=>{const c=document.querySelector(`.mtabs [data-id="${k}"] .mcount.c73`);return c&&!c.hidden});
   for(const k of ['roster','night','news','league','imp','trophy','sched','me','exch']){MGR.tab=k;MGR_REDRAW();await W8(80);if(!document.querySelector('.roomhd.b73-'+k))r.missing=(r.missing||'')+k+' '}
   const fa=w.glads.find(g=>!g.contract&&g.alive!==false);fa.scout=2;MGR.tab='recruit';MGR.sel=fa.id;MGR.recFor=fa.id;MGR.recStep=1;MGR_REDRAW();await W8(300);
-  r.scout=!!document.querySelector('.gs98 .gb98')&&!!document.querySelector('.pe98:not(.lock) .badge'); /* v0.98: grades + the personality block */r.recStat=/\d/.test( /* v0.98: the recruiter's hours on the Recruiting banner */(document.querySelector('.roomhd.b73-recruit .roomstat .ptbox')||{}).textContent||'');
+  r.scout=!!document.querySelector('.gs98 .gb98')&&!!document.querySelector('.pe98:not(.lock) .badge'); /* v0.98: grades + the personality block */r.recStat=/\d/.test( /* v0.98: the recruiter's hours on the Recruiting banner */(document.querySelector('.roomhd.b73-recruit .hc105 .hc105n')||document.querySelector('.roomhd.b73-recruit .roomstat .ptbox')||{}).textContent||'');
   /* roster check */
   const ros=rosterOf(me());for(const g of ros.slice(1))g.contract=null;w.glads.forEach(g=>g.favd=false);r.short=weekChecklist().some(x=>!x.done&&/Short-handed/.test(x.txt));fa.favd=true;r.cleared=!weekChecklist().some(x=>!x.done&&/Short-handed/.test(x.txt));
   /* plan + compare */
