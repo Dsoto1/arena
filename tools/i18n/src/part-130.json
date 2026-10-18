@@ -1,0 +1,142 @@
+[
+ {
+  "k": "One sun over the arena",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Light and shadows: one sun from the upper left, soft contact shadows under every piece, cast shadows from pillars, jugs, the chest, rubble, gladiators and beasts; Settings → Lighting: Full / Light / Off",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Aim with confidence: the target under your pointer gets a ring, an outline and its name with your chance to hit; on touch, tap to select and tap again to strike; Confirm attacks in Settings (offline)",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: a trade and loan deadline after week 8, the Superbus roster frozen at the deadline; rival houses make offers for a reason you can read, with the weekly cost",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "The Infirmary banner shows how many are injured",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "🔒 Deadline passed",
+  "w": "393-v106lock.js:29"
+ },
+ {
+  "k": "The trade and loan deadline was the end of week 8. Running loans finish on their terms.",
+  "w": "393-v106lock.js:30"
+ },
+ {
+  "k": "No releases during the Superbus weeks.",
+  "w": "393-v106lock.js:31"
+ },
+ {
+  "k": "Trade deadline after week 8",
+  "w": "393-v106lock.js:55"
+ },
+ {
+  "k": "From week 9: no new trades, loans or loan asks — for every house. Running loans finish on their terms.",
+  "w": "393-v106lock.js:56"
+ },
+ {
+  "k": "After it, free agents sign only into an empty roster spot; the Superbus takes only the fighters on your roster at the deadline; no releases in the Superbus weeks.",
+  "w": "393-v106lock.js:56"
+ },
+ {
+  "k": "🔒 Past the deadline a free agent signs only into an empty spot: {0} on the roster + {1} out on loan = {2} / {3}.",
+  "w": "393-v106lock.js:89"
+ },
+ {
+  "k": "{0} must cut wages: {1} costs them {2}/wk.",
+  "w": "394-v106trade.js:60"
+ },
+ {
+  "k": "{0} goes all-in for the Superbus before the deadline.",
+  "w": "394-v106trade.js:64"
+ },
+ {
+  "k": "{0}’s starter {1} is hurt — they need a fighter now.",
+  "w": "394-v106trade.js:65"
+ },
+ {
+  "k": "{0} has no {1} — they need one.",
+  "w": "394-v106trade.js:66"
+ },
+ {
+  "k": "{0} sells high: {1}’s best years are nearly over.",
+  "w": "394-v106trade.js:71"
+ },
+ {
+  "k": "{0} is rebuilding — they want {1} ({2}) for the years ahead.",
+  "w": "394-v106trade.js:75"
+ },
+ {
+  "k": "+{0}/wk for you",
+  "w": "394-v106trade.js:93"
+ },
+ {
+  "k": "−{0}/wk for you",
+  "w": "394-v106trade.js:93"
+ },
+ {
+  "k": "same wages",
+  "w": "394-v106trade.js:93"
+ },
+ {
+  "k": "{0} injured · {1} still need care this week",
+  "w": "395-v106inf.js:10"
+ },
+ {
+  "k": "injured",
+  "w": "395-v106inf.js:11"
+ },
+ {
+  "k": "Pot",
+  "w": "396-v106aim.js:29"
+ },
+ {
+  "k": "Strike {0}?",
+  "w": "396-v106aim.js:166"
+ },
+ {
+  "k": "{0}% to hit",
+  "w": "396-v106aim.js:166"
+ },
+ {
+  "k": "No",
+  "w": "396-v106aim.js:166"
+ },
+ {
+  "k": "<b>⚔ Confirm attacks</b>",
+  "w": "396-v106aim.js:171"
+ },
+ {
+  "k": "Ask “Strike …?” before each attack. Not in Online matches.",
+  "w": "396-v106aim.js:171"
+ },
+ {
+  "k": "☀ Lighting set to Light: frames were slow. Settings → Board & pieces to change it.",
+  "w": "399-v106light.js:247"
+ },
+ {
+  "k": "Lighting",
+  "w": "399-v106light.js:266"
+ },
+ {
+  "k": "Full: the sun casts shadows from pillars, gladiators and beasts. Light: soft shadows at their feet only. Off: flat, the fastest.",
+  "w": "399-v106light.js:267"
+ },
+ {
+  "k": "Now on Light: frames were slow.",
+  "w": "399-v106light.js:267"
+ },
+ {
+  "k": "Shadows",
+  "w": "399-v106light.js:268"
+ },
+ {
+  "k": "arena · v1.06",
+  "w": "01-head.html"
+ }
+]

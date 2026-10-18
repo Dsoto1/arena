@@ -29,7 +29,7 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - `node tools/smartreg.js --dry` sometimes starts a full run instead of printing the plan; smartreg runs of 5+ tests have hit 10-minute
   agent timeouts · run smaller groups.
 - tonl100a timed out at 100 s once when run by hand (passes in CI).
-- tools/i18n/prep.sh wraps code in 362-v105league.js and 364-v105contrast.js (and, at beta 3, an attribute in 373 and city keys in 382) ·
+- tools/i18n/prep.sh wraps code in 362-v105league.js and 364-v105contrast.js (also 373, 382 and an Error message in 311 — check every prep) ·
   after every prep: `git diff src` and revert the wrong wraps.
 - A commit that only touches tools/deploy (e.g. release.sh's advert shot) starts no regression run · dispatch the full run by hand.
 
