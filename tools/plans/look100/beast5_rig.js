@@ -22,6 +22,7 @@
    Tholo + Commodus (humanoids) are rendered by anim_rig.js (the rig92 gladiator body) — see beast_make.js.
    ===================================================================== */
 import * as THREE from 'three';
+import * as L106 from '../../art/anim100b/l106.js';   /* v1.06a: one sun + ground shadows (tools/art/anim100b/make.js l106) */
 const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45], D2R = Math.PI / 180, PXMM = 3.143;
 /* ---------- vectors ---------- */
 const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]], sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
@@ -477,22 +478,31 @@ async function sheet(build, frames, o) {
   MATS.ink.userData.u.value = (o.ink || 0.85) * ss / ppm;
   makeBase(o.base, o.rim || '#4a3a2a');
   REND.setSize(S, S, false);
+  /* v1.06a (o.l106 = 399's LIGHT106_BAKE + sun): lit by one sun; a ground-shadow cell per colour cell (half resolution, a wider camera) */
+  const LX = o.l106 ? { undo: L106.lights(THREE, SCENE, o.l106, new THREE.Vector3(0, ty, 0), o.box / 4, BASE ? [BASE] : []), rows: [] } : null;
+  if (LX) { const pY = o.base ? -3.4 : 0, hs = hw * 1.35, ps = ppm / 2, Ss = Math.ceil(2 * hs * ps / 4) * 4; LX.S = Ss; LX.pY = pY;
+    LX.cam = L106.shadowCam(THREE, new THREE.Vector3(o.box * 0.12, ty * 0.3, o.box * 0.06), Ss / 2 / ps, 500); const a = new THREE.Vector3(0, pY, 0).project(LX.cam); LX.AX = (a.x * 0.5 + 0.5) * Ss / ss; LX.AY = (-a.y * 0.5 + 0.5) * Ss / ss; }
   const anc = new THREE.Vector3(0, 0, 0).project(cam); const AX = (anc.x * 0.5 + 0.5) * S / ss, AY = (-anc.y * 0.5 + 0.5) * S / ss;
   const cells = [], JR = [], st = { sculpt: 0, render: 0, tris: 0, verts: 0 };
   for (const f of frames) { const q0 = performance.now(); const prims = build(f); const r = meshOf(prims, o.h); MESH.scale.setScalar(o.sc || 1); INK.scale.setScalar(o.sc || 1); if (o.sx) { MESH.scale.x *= o.sx; INK.scale.x *= o.sx; } MESH.geometry.dispose(); MESH.geometry = r.geo; INK.geometry = r.geo; st.tris = Math.max(st.tris, r.tris); st.verts = Math.max(st.verts, r.verts);
     const q1 = performance.now(); st.sculpt += q1 - q0; const row = []; const jl = JL.slice(); const jrow = [];
     for (const yaw of MINI_YAW) { const Y = new THREE.Vector3(0, 1, 0); jrow.push(jl.map(j => { const v = new THREE.Vector3(...j.p).multiplyScalar(o.sc || 1).applyAxisAngle(Y, yaw * D2R).project(cam); return { n: j.n, par: j.par, cat: j.cat, x: +((v.x * 0.5 + 0.5) * S / ss - AX).toFixed(1), y: +((-v.y * 0.5 + 0.5) * S / ss - AY).toFixed(1) }; })); } JR.push(jrow);
+    const srow = [];
     for (const yaw of MINI_YAW) { TURN.rotation.y = yaw * D2R; TURN.updateMatrixWorld(true); REND.render(SCENE, cam); let c = document.createElement('canvas'); c.width = S; c.height = S; c.getContext('2d').drawImage(REND.domElement, 0, 0);
-      const d = document.createElement('canvas'); d.width = S / 2; d.height = S / 2; const g = d.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(c, 0, 0, d.width, d.height); row.push({ c: d, box: alphaBox(d) }); }
+      const d = document.createElement('canvas'); d.width = S / 2; d.height = S / 2; const g = d.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(c, 0, 0, d.width, d.height); row.push({ c: d, box: alphaBox(d) });
+      if (LX) srow.push(L106.shadowCell(THREE, SCENE, { casters: [MESH], hide: [INK, ...(BASE ? [BASE] : [])], planeY: LX.pY, planeW: o.box * 6, cam: LX.cam, S: LX.S, ss })); }
+    if (LX) LX.rows.push(srow);
     TURN.rotation.y = 0; st.render += performance.now() - q1; cells.push(row); await new Promise(ok => setTimeout(ok, 0)); }
   /* crop a set of rows round the base anchor (round 3: o.split = [[name, rowRegExp], ...] -> each part cropped on its own) */
   const crop = (idx) => { let L = 0, Rr = 0, Tt = 0, Bm = 0; for (const j of idx) for (const { box } of cells[j]) { if (box[2] < 0) continue; L = Math.max(L, AX - box[0]); Rr = Math.max(Rr, box[2] + 1 - AX); Tt = Math.max(Tt, AY - box[1]); Bm = Math.max(Bm, box[3] + 1 - AY); }
     const half = Math.ceil(Math.max(L, Rr)) + 1, w = half * 2, top = Math.ceil(Tt) + 1, h = top + Math.ceil(Bm) + 1, x0 = Math.floor(AX) - half, y0 = Math.floor(AY) - top;
     const out = document.createElement('canvas'); out.width = w * 8; out.height = h * idx.length; const g = out.getContext('2d'); idx.forEach((j, jj) => cells[j].forEach(({ c }, i) => g.drawImage(c, x0, y0, w, h, i * w, jj * h, w, h)));
     return { canvas: out, meta: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1), idx.length], rows: idx.map(j => frames[j].n) }; };
-  const all = crop(frames.map((_, j) => j));
-  const parts = (o.split || []).map(([name, re]) => Object.assign({ name }, crop(frames.map((f, j) => re.test(f.n) ? j : -1).filter(j => j >= 0))));
-  return { canvas: all.canvas, parts, joints: JR, meta: all.meta, rows: all.rows, ms: Math.round(performance.now() - t0), sculptMs: Math.round(st.sculpt), renderMs: Math.round(st.render), tris: st.tris, verts: st.verts };
+  if (LX) LX.undo();
+  const shOf = (idx) => LX ? L106.crop(idx.map(j => LX.rows[j]), LX.AX, LX.AY) : null;
+  const all = crop(frames.map((_, j) => j)); all.sh = shOf(frames.map((_, j) => j));
+  const parts = (o.split || []).map(([name, re]) => { const idx = frames.map((f, j) => re.test(f.n) ? j : -1).filter(j => j >= 0); return Object.assign({ name, sh: shOf(idx) }, crop(idx)); });
+  return { canvas: all.canvas, sh: all.sh, parts, joints: JR, meta: all.meta, rows: all.rows, ms: Math.round(performance.now() - t0), sculptMs: Math.round(st.sculpt), renderMs: Math.round(st.render), tris: st.tris, verts: st.verts };
 }
 const enc = (c, q = 0.8) => { const u = c.toDataURL('image/webp', q); return { url: u, bytes: Math.round((u.length - u.indexOf(',') - 1) * 0.75) }; };
 /* the beasts to render: key → [builder, frames, options] */
@@ -527,7 +537,7 @@ window.BEAST300 = {
     if (opt.only) frames = frames.filter(f => opt.only.includes(f.n));
     if (opt.h) h = opt.h;
     if (opt.diag) frames = frames.filter(f => f.n === 'idle0');
-    const r = await sheet(build, frames, { split: opt.diag || opt.only ? null : B.split, base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: (B.sc || 1) * (SIZE102[key] || 1) * (SIZE103[key] || 1), sx: SLIM103[key] || 1, pxmm: opt.diag ? 6 / (B.sc || 1) * 1.2 : (B.base ? DRAWN(B.base) : PXMM) });
+    const r = await sheet(build, frames, { split: opt.diag || opt.only ? null : B.split, base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: (B.sc || 1) * (SIZE102[key] || 1) * (SIZE103[key] || 1), sx: SLIM103[key] || 1, pxmm: opt.diag ? 6 / (B.sc || 1) * 1.2 : (B.base ? DRAWN(B.base) : PXMM), l106: opt.l106 || null });
     window.BSHEET = window.BSHEET || {}; BSHEET[key] = r;
     const parts = r.parts.map(p => { const e = enc(p.canvas); return { name: p.name, meta: p.meta, rows: p.rows, kb: +(e.bytes / 1024).toFixed(1), webp: e.url, decodedMB: +(p.meta[0] * p.meta[1] * 4 * 8 * p.rows.length / 1048576).toFixed(2) }; });
     const w8 = enc(r.canvas); const idleWalk = frames.filter(f => /^(idle|walk)/.test(f.n)).length;

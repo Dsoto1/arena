@@ -14,7 +14,7 @@ const mark=await pg.evaluate(()=>typeof ERR92!=='undefined'?ERR92.n:0).catch(()=
 const s1=await pg.evaluate(()=>{const o={};for(const k of AN100.CLS){const M=ANIM100_META[k];const ar=M.act.rows,mr=M.move.rows;
     o[k]={idle:mr.idle.length,walk:mr.walk.length,slash:(ar.slash||[]).length,sweep:(ar.sweep||[]).length,thrust:(ar.thrust||[]).length,throw:(ar.throw||[]).length,limp:!!ar.limp,cower:!!ar.cower,v:M.act.v}}
   return {o,sets:AN100L.SETS,ver:AN100L.VER}});
-ok(Object.values(s1.o).every(x=>x.idle===1&&x.walk===8&&x.slash===4&&x.sweep===4&&x.thrust===4&&x.throw===4&&!x.limp&&!x.cower&&x.v===4),'1 every class: idle 1 + walk 8 | slash/sweep/thrust/throw 4 each, no limp/cower (sheets v 4: v1.02 fixed figure size) '+JSON.stringify(s1));
+ok(Object.values(s1.o).every(x=>x.idle===1&&x.walk===8&&x.slash===4&&x.sweep===4&&x.thrust===4&&x.throw===4&&!x.limp&&!x.cower&&x.v>=4),'1 every class: idle 1 + walk 8 | slash/sweep/thrust/throw 4 each, no limp/cower (sheets v ≥ 4: v1.02 fixed figure size; 5 = the v1.06a re-lit bake) '+JSON.stringify(s1));
 /* a seeded Democritus, seat 0 human soldier, at its Action phase */
 const st=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}try{menuHide()}catch(e){}
   SETTINGS.briefing=false;SETTINGS.calm=false;startEvent({ev:'democritus',loc:6,seed:777,seats:[{cls:'soldier'},{cls:'hero',cpu:true},{cls:'royalty',cpu:true},{cls:'venatore',cpu:true}],opts:{spect:0}});

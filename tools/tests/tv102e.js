@@ -82,7 +82,7 @@ ok(U.saved&&JSON.stringify(gp.R)==='[45,20]'&&U.v===4&&(U.pose||'').length<=600,
 const K=await pg.evaluate(()=>{const c=CUSTOM.chars.find(x=>x.id==='v102e');const t=c.tok93;const p=an100Parts({cls:'cc_v102e'},t);const q=an100Parts({cls:'cc_v102e'},t);
   const plain=Object.assign({},t,{pose:'{"v":1}'});const r=an100Parts({cls:'cc_v102e'},plain);
   return {grip:p&&p.grip,same:p===q,key:an100DevKey(p)!==an100DevKey(r),ver:AN100L.VER}});
-ok(K.grip&&JSON.stringify(K.grip.R)==='[45,20]'&&K.same&&K.key&&K.ver===4,'device-rendered animated sets carry the grip (own key; ANIM100_LIB VER 4) '+JSON.stringify(K));
+ok(K.grip&&JSON.stringify(K.grip.R)==='[45,20]'&&K.same&&K.key&&K.ver>=4,'device-rendered animated sets carry the grip (own key; ANIM100_LIB VER ≥ 4: 5 = v1.06a light) '+JSON.stringify(K));
 /* 4. the board: the drawn head (bare body, the fixed scale) about 55% of the pillar mini; every printed class's animated sheet re-rendered at
       that scale (meta v 3) — a soldier / hero (helmet, no weapon over the head) a little over half a pillar */
 const P=await pg.evaluate(async()=>{const TWx=56;const pil=MINI_A.pillar[1]*(TWx*MINI_BASE/25.4/MINI_PXMM*Math.min(1,TWx*MINI_FIT/(30*TWx*MINI_BASE/25.4))*MINI_PILLAR*MINI_PILLAR75);const out={},v={};
@@ -91,7 +91,7 @@ const P=await pg.evaluate(async()=>{const TWx=56;const pil=MINI_A.pillar[1]*(TWx
   return {pil:+(pil/TWx).toFixed(3),body,out,v}});
 console.log('HEIGHT',JSON.stringify(P));
 ok(Math.abs(P.pil-1.27)<0.01&&P.body>=0.76&&P.body<=0.84,'the bare figure stands about 80% of a pillar on the board (his call) '+JSON.stringify({pil:P.pil,body:P.body}));
-ok(Object.keys(P.v).length===8&&Object.values(P.v).every(x=>x===4),'every printed class sheet was re-rendered at the fixed scale (meta v 4) '+JSON.stringify(P.v));
+ok(Object.keys(P.v).length===8&&Object.values(P.v).every(x=>x>=4),'every printed class sheet was re-rendered at the fixed scale (meta v ≥ 4; 5 = the v1.06a re-lit bake) '+JSON.stringify(P.v));
 ok(P.out.soldier>=0.78&&P.out.soldier<=0.95&&P.out.hero>=0.78&&P.out.hero<=0.95,'soldier / hero sheets (helmets) about 80–95% of a pillar '+JSON.stringify(P.out));
 /* 5. his 1a: the beasts in proportion to that gladiator (top above the base point, figure only — bases keep their tile sizes) */
 const BH=await pg.evaluate(()=>{const keep=TW;TW=56;const per=TW*MINI_BASE/25.4;const o={};

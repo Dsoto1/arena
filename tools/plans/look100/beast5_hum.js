@@ -180,10 +180,11 @@ window.LOOK100.humanoid3 = async function (key, o = {}) {
   const rows = [X.GLAD_ROWS[0], X.GLAD_ROWS[1], X.GLAD_ROWS[2], X.GLAD_ROWS[4], X.FALL_ROWS[0]];
   let fr = rows.flatMap(([k, fs]) => fs.map((s, i) => ({ k: k === 'fall' ? 'die' : k, i, s }))); if (o.only) fr = fr.filter(x => o.only.includes(x.k + x.i));
   let clothMs = 0;
-  const S = await X.renderFrames(fr, { set: (x) => { X.setFrame(x.s); const t = performance.now(); cloth.update(x.k, x.i); clothMs += performance.now() - t; }, box: 6.4, ty: 0.85, yaws: o.yaws });
+  const S = await X.renderFrames(fr, { set: (x) => { X.setFrame(x.s); const t = performance.now(); cloth.update(x.k, x.i); clothMs += performance.now() - t; }, box: 6.4, ty: 0.85, yaws: o.yaws, l106: o.l106 || null });
   B.group.scale.set(1, 1, 1); cloth.kill(); for (const m of extra) K.kill(m); X.setFrame({ p: [0, 0, 0], j: {}, f: {} });
   const rowsN = fr.map(x => x.k + x.i); const w = X.enc(S.canvas, 'image/webp', 0.8);
   const parts = o.only ? [] : splitSheet4(S, rowsN, [[key, /^(idle|walk)/], [key + '_act', /^(attack|hit|die)/]]);
+  if (S.shRows) for (const p of parts) { const re = p.name === key ? /^(idle|walk)/ : /^(attack|hit|die)/; p.sh = X.L106.crop(rowsN.map((r, i) => re.test(r) ? S.shRows[i] : null).filter(Boolean), S.shA[0], S.shA[1]); }   /* v1.06a */
   return { key, meta: S.meta, rows: rowsN, ms: S.ms, clothMs: Math.round(clothMs), kb: +(w.bytes / 1024).toFixed(1), webp: w.url, png: S.canvas.toDataURL('image/png'), parts,
     decodedMB: +(S.meta[0] * S.meta[1] * 4 * 8 * rowsN.length / 1048576).toFixed(2), idleWalkMB: +(S.meta[0] * S.meta[1] * 4 * 8 * 10 / 1048576).toFixed(2), frames: rowsN.length, pxmm: 3.143 };
 };

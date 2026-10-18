@@ -11,6 +11,7 @@
 import * as THREE from 'three';
 import { createToken } from '../../art/rig92/game.js';
 import { resolveSpec, MM_PER_M } from '../../art/rig92/rig.js';
+import * as L106 from '../../art/anim100b/l106.js';   /* v1.06a: one sun + ground shadows (o.l106; tools/art/anim100b/make.js l106) */
 
 const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45];
 const D2R = Math.PI / 180;
@@ -169,6 +170,9 @@ async function renderFrames(frames, o = {}) {
   const r = renderer(S, S);
   const anc = new THREE.Vector3(0, o.noBase ? 0 : -0.0, 0).project(cam); const AX = (anc.x * 0.5 + 0.5) * S / ss, AY = (-anc.y * 0.5 + 0.5) * S / ss;
   const yaws = o.yaws || MINI_YAW; const cells = []; const per = [];
+  const LX = o.l106 ? { undo: L106.lights(THREE, scene, o.l106, target.clone(), 1, BASE ? [BASE] : []), rows: [] } : null;
+  if (LX) { const pY = -3.2 / MM_PER_M, hs = hw * 1.35, ps = ppm / 2, Ss = Math.ceil(2 * hs * ps / 4) * 4; LX.S = Ss; LX.pY = pY;
+    LX.cam = L106.shadowCam(THREE, new THREE.Vector3((o.box || 4.2) * 0.12, target.y * 0.3, (o.box || 4.2) * 0.06), Ss / 2 / ps, 10); const a = new THREE.Vector3(0, pY, 0).project(LX.cam); LX.AX = (a.x * 0.5 + 0.5) * Ss / ss; LX.AY = (-a.y * 0.5 + 0.5) * Ss / ss; }
   for (const fr of frames) {
     const t1 = performance.now(); if (o.set) o.set(fr); const row = [];
     for (const yaw of yaws) {
@@ -176,17 +180,21 @@ async function renderFrames(frames, o = {}) {
       let c = document.createElement('canvas'); c.width = S; c.height = S; c.getContext('2d').drawImage(r.domElement, 0, 0);
       const q1 = performance.now(); TIMES.render += q1 - q0; TIMES.cells++;
       for (let k = ss; k > 1; k /= 2) { const d = document.createElement('canvas'); d.width = Math.ceil(c.width / 2); d.height = Math.ceil(c.height / 2); const g = d.getContext('2d'); g.imageSmoothingQuality = 'high'; if (o.shade && k === 2) g.filter = o.shade; g.drawImage(c, 0, 0, d.width, d.height); c = d; }
-      row.push({ c, box: alphaBox(c) }); TIMES.post += performance.now() - q1; await new Promise(ok => setTimeout(ok, 0));
+      row.push({ c, box: alphaBox(c) }); TIMES.post += performance.now() - q1;
+      if (LX) { turn.rotation.y = yaw * D2R; turn.updateMatrixWorld(true); (LX.cur || (LX.cur = [])).push(L106.shadowCell(THREE, scene, { casters: turn.children.filter(x => x !== BASE), hide: BASE ? [BASE] : [], planeY: LX.pY, planeW: 40, cam: LX.cam, S: LX.S, ss })); }
+      await new Promise(ok => setTimeout(ok, 0));
     }
+    if (LX) { LX.rows.push(LX.cur); LX.cur = null; }
     turn.rotation.y = 0; turn.updateMatrixWorld(true); cells.push(row); per.push(performance.now() - t1);
   }
+  if (LX) LX.undo();
   let L = 0, Rr = 0, T = 0, Bm = 0;
   for (const row of cells) for (const { box } of row) { if (box[2] < 0) continue; L = Math.max(L, AX - box[0]); Rr = Math.max(Rr, box[2] + 1 - AX); T = Math.max(T, AY - box[1]); Bm = Math.max(Bm, box[3] + 1 - AY); }
   const half = Math.ceil(Math.max(L, Rr)) + 1, w = half * 2, top = Math.ceil(T) + 1, h = top + Math.ceil(Bm) + 1;
   const x0 = Math.floor(AX) - half, y0 = Math.floor(AY) - top;
   const out = document.createElement('canvas'); out.width = w * yaws.length; out.height = h * cells.length; const g = out.getContext('2d');
   cells.forEach((row, j) => row.forEach(({ c }, i) => g.drawImage(c, x0, y0, w, h, i * w, j * h, w, h)));
-  return { canvas: out, meta: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1), cells.length], ms: Math.round(performance.now() - t0), msPerFrame: Math.round(per.reduce((a, b) => a + b, 0) / per.length) };
+  return { canvas: out, shRows: LX ? LX.rows : null, shA: LX ? [LX.AX, LX.AY] : null, meta: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1), cells.length], ms: Math.round(performance.now() - t0), msPerFrame: Math.round(per.reduce((a, b) => a + b, 0) / per.length) };
 }
 const enc = (c, type, q) => { const u = c.toDataURL(type, q); return { url: u, bytes: Math.round((u.length - u.indexOf(',') - 1) * 0.75) }; };
 
@@ -429,4 +437,4 @@ Object.assign(window.LOOK100, {
 });
 window.LOOK100_READY = true;
 /* beasts round 3 (beast3_hum.js): read-only access to this module's frames + renderer for the humanoid beasts (additive, nothing above changes) */
-export const LOOK100X = { GLAD_ROWS, FALL_ROWS, renderFrames, setFrame, enc, get B() { return B; }, get TOK() { return TOK; } };
+export const LOOK100X = { GLAD_ROWS, FALL_ROWS, renderFrames, setFrame, enc, L106, get B() { return B; }, get TOK() { return TOK; } };
