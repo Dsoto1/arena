@@ -77984,9 +77984,9 @@ function inf106Chip(n,need){const tip=_T`${n} injured · ${need} still need care
    • U1c HOVER PREVIEW: while the active human has an attack chosen (HL holds 'atk' / a tamed beast's 'catk' tiles), the valid target under the
      pointer gets a red ring on its tile (highlights layer, under the figures; it pulses for ~1.5 s after it is picked, then stays still),
      a soft red outline round the figure (drawn in the figure's own depth slot right after it; the outline sprite is built ONCE from the
-     figure's drawn images and cached by frame, no per-frame blur), a crosshair cursor and a tag "Name · NN%" (overlays layer).
-     NN% = the chance that at least one hit die lands: 1 − (1 − HIT_CHANCE)^dice, dice as doAttack / chAttack / tamedAttack roll them
-     (4 vs a beast or in the endgame, else 2). No helper existed; aim106Chance mirrors those counts.
+     figure's drawn images and cached by frame, no per-frame blur), a crosshair cursor and a tag "Name · 62% to wound · ~3 dmg" (overlays layer; a pot: "% to break").
+     The % = the chance to WOUND, exact from the rules (aim106Wound below, his a1a a2a 2026-10-18 — REPLACES the first build's
+     "≥1 hit die lands" 1 − ½^dice); the damage shows when the chance is 50%+. Cached per (target entry, turn state).
    • BODY FIRST: while aiming, the target figures' drawImage calls are recorded (only theirs, only while aiming); the pointer is tested
      against those images' alpha, front-most by draw order, before the tile under it. pick() returns the tile of that body, so the
      07-ui click (and the hover text) hits exactly what is shown. Tainted images (file://) fall back to the drawn image's rectangle.
@@ -77995,7 +77995,7 @@ function inf106Chip(n,need){const tip=_T`${n} injured · ${need} still need care
    • Settings → General → "Confirm attacks" (SETTINGS.confirmAtk106, off by default): a strike first asks "Strike <name>?" Yes / No (ask76).
      OFFLINE ONLY (his follow-up 2026-10-17): in an Online match the row is hidden and the setting ignored; hover + two-tap work there.
    • Reduce motion / Animations Off: no pulse, a static ring.
-   Kill switch: localStorage flavius_v106aimoff=1 (every wrapper passes through; no Settings row). Test: tv106d.
+   Kill switch: localStorage flavius_v106aimoff=1 (every wrapper passes through; no Settings row). Tests: tv106d, tv106g (the model vs the real attack code).
    ===================================================================== */
 const AIM106={off:(()=>{try{return localStorage.getItem('flavius_v106aimoff')==='1'}catch(e){return false}})(),
   rec:false,tmap:new Map(),figs:[],cur:null,hov:null,sel:null,t0:0,pulseMs:1500,timer:0,raf:0,mx:0,my:0,lastPT:'',
@@ -78007,11 +78007,112 @@ function aim106Calm(){try{return (typeof reduceMotion==='function'&&reduceMotion
 /* the target map: HL key → HL entry, for attack tiles only */
 function aim106Map(){const m=new Map();if(!aim106Live()||typeof HL==='undefined')return m;for(const [k,h] of HL)if(h&&(h.t==='atk'||h.t==='catk')&&h.target)m.set(k,h);return m}
 function aim106Name(h){const t=h.target;if(!t)return '';if(t.kind==='pot')return _T('Pot');return t.ref&&t.ref.name?String(t.ref.name):tl(t.r,t.c)}
-/* the hit chance shown on the tag: at least one hit die lands. Mirrors the dice counts of doAttack (4 vs a beast or in the endgame, else 2),
-   chAttack (2) and tamedAttack (2). Display only. */
-function aim106Chance(h){try{if(typeof ONL80R!=='undefined'&&ONL80R.hints)return null; /* Ranked online: no hints or odds (v0.80 rule) — the tag shows the name only */const p=typeof HIT_CHANCE==='number'?HIT_CHANCE:0.5;let n=2;
-  if(h.t==='atk'&&!(typeof isChariot==='function'&&isChariot()&&h.target.kind==='player'))n=S.endgame?4:h.target.kind==='npc'?4:2;
-  return Math.round(100*(1-Math.pow(1-p,n)))}catch(e){return null}}
+/* ---------- THE CHANCE TO WOUND (his a1a a2a, 2026-10-18; REPLACES the "≥1 hit die lands" %) ----------
+   aim106Wound(attacker, target, kind, src) → {p, avg, notes, pot}: p = the chance (0–100) that this attack puts ≥1 point of damage on the
+   target's location (its AP or HP; a beast's / ship's HP; a pot: that it breaks at 2), avg = the expected damage that lands. EXACT: the hit
+   dice are enumerated (binomial), the location die is rollLoc's own distribution (a d6 re-rolled on lost locations, 30 tries, then the chest),
+   and every modifier the attack path applies before or during the roll is applied (tools/plans/v106/AIM-MODIFIERS.md lists them):
+   dice 4 vs a beast / in the endgame else 2 (chariot + tamed 2) · weapon / throw power · Strength band + Iron Fist pair (statDmgB) · Cestus +1 ·
+   Herculean Vigor · Focus (a pot: +1; the location: best of 3 dice) · Focus! / the endgame (you pick the spot) · Omnia Mutantur in your hand
+   (a2a: played on the misses) · Minerva's Push / Fidelis Constans in the target's hand · the target's shield · fists glance off armor ·
+   the online named weapons / armor and their affixes (Ultor, Aegis, pierce, Vindex, the ward, Invicta, Missilis, Venatorius, Ferox) ·
+   the Tholo headshot. A later choice of the DEFENDER (Minerva, Fidelis, raising the shield) is assumed made (worst case for the attacker)
+   and named in notes; a choice of the ATTACKER (Omnia, the Focus spot, the chariot part) is assumed made in the attacker's favour.
+   PURE: reads S, never writes it, never calls rand(). Unit-tested against a Monte-Carlo of the real doAttack / tamedAttack (tv106g). */
+function aim106Bin(n,p){const o=[];for(let k=0;k<=n;k++){let c=1;for(let i=0;i<k;i++)c=c*(n-i)/(i+1);o.push(c*Math.pow(p,k)*Math.pow(1-p,n-k))}return o}
+/* rollLoc's distribution for this target */
+function aim106LocDist(q){const m=new Map();let miss=0;for(let i=1;i<=6;i++)if(!(q.hp[HIT_LOC[i]]>0))miss++;miss/=6;
+  let s=0,x=1;for(let i=0;i<30;i++){s+=x;x*=miss}
+  for(let i=1;i<=6;i++){const l=HIT_LOC[i];if(q.hp[l]>0)m.set(l,(m.get(l)||0)+s/6)}
+  if(x>0)m.set('chest',(m.get('chest')||0)+x);return m}
+/* the shield the target raises (hurt's pick: a live shield on a live arm, the biggest absorb) */
+function aim106Shield(q){if(!q||!q.cls)return null;const s=['L','R'].map(a=>({a,w:q['w'+a]})).filter(x=>x.w&&x.w.shield&&x.w.usesLeft>0&&armAlive(q,x.a)).sort((x,y)=>y.w.absorb-x.w.absorb)[0];return s?s.w:null}
+/* 03-engine hurt(): the shield (raised: worst case), then a fist without a Cestus glances off armor; what is left lands on AP, then HP */
+function aim106Core(q,loc,d,s,shield){let rem=d;if(rem>0&&shield){const w=aim106Shield(q);if(w)rem-=Math.min(rem,w.absorb)}
+  if(rem>0&&s.punch&&q.ap[loc]>0&&!s.cestus)rem=0;return Math.max(0,rem)}
+/* the damage that lands on a gladiator's location for d incoming: hurt()'s wrappers outermost first (177 affixes → 139 named armor →
+   133 named weapons), then hurt() itself. s = {type:'player'|'npc', p: the attacking gladiator, w, punch, cestus, thr, far} */
+function aim106Land(q,loc,d,s){if(!(d>0)||!q||!q.hp||!q.alive||q.exited)return 0;
+  if(S&&S.onl&&q.cls&&q.pieces&&typeof j89On==='function'){
+    if(s.type==='npc'&&j89On(q,loc,'venat'))d--;
+    if(s.type==='player'&&s.p&&s.p!==q){const w=s.w||{};const ranged=!!s.thr||!!s.far||(w.ammo!=null&&!w.punch);if(ranged&&d>0&&j89On(q,loc,'miss'))d--}
+    if(d<=0)return 0}
+  if(q.cls&&q.pieces&&d>0&&typeof na84On==='function'){const att=s.type==='player'&&s.p&&s.p!==q?s.p:null;
+    if(att&&att.lastHitBy===q.id&&na84On(att,A=>A.uq==='vindex'))d++;
+    if(S&&d>0&&na84On(q,A=>A.ward)&&q._ward84!==S.ri+':'+S.rotation)d--;
+    if(d>=2&&na84On(q,(A,pc,l)=>A.uq==='invicta'&&l===loc))d--}
+  const w=s.type==='player'&&s.w&&s.w.named83?s.w:null,pvp=!!q.cls;
+  if(typeof onl83Held==='function'){if(w&&pvp&&d>0&&w.uq==='ultor'&&s.p&&s.p.lastHitBy===q.id&&q!==s.p)d++;
+    if(pvp&&d>0&&S&&onl83Held(q,'aegis')&&q._aeg83!==S.ri+':'+S.rotation)d--}
+  const pr=w?(w.uq==='percussor'?2:(w.pierce|0)):0;
+  if(pr&&d>0&&pvp&&!s.punch&&q.ap&&q.ap[loc]>0){const d1=Math.min(pr,d);const a=aim106Core(q,loc,d-d1,s,true);
+    return a+(q.hp[loc]-Math.max(0,a-(q.ap[loc]|0))>0?d1:0)} /* the pierce lands direct while the location still stands */
+  return aim106Core(q,loc,d,s,true)}
+/* the spot an attacker who picks (Focus!, the endgame, a focus roll) takes: the most damage landing (ties: the first) */
+function aim106Best(q,locs,d,s){let b=null,bv=-1;for(const l of locs){const v=aim106Land(q,l,d,s);if(v>bv){bv=v;b=l}}return b}
+function aim106Has(p,k){return !!(p&&p.items&&p.items.some(x=>x.kind==='card'&&x.key===k))}
+function aim106Wound(att,target,kind,src){
+  const notes=[];const t=target||{};const q=t.ref;kind=kind||'atk';const H=typeof HIT_CHANCE==='number'?HIT_CHANCE:0.5;
+  let n=2,pw=1,B=0,omnia=null,s,locMode='roll',defend=true,cestus=false,chariot=false;
+  if(kind==='catk'){const st=npcStats(att);pw=st.ap;s={type:'npc',n:att}}
+  else{pw=srcPow(src);cestus=hasCestus(att,src.arm);
+    if(typeof isChariot==='function'&&isChariot()&&t.kind==='player'){chariot=true;defend=false;s={type:'player',p:att}}
+    else{n=S.endgame?4:t.kind==='npc'?4:2;
+      let focusRoll=!!att.focusRoll;if(focusRoll&&typeof FOCUS98!=='undefined'&&(att.mv||0)<FOCUS98.min)focusRoll=false;
+      const potF=!!(typeof FOCUS98!=='undefined'&&FOCUS98.bless&&focusRoll&&t.kind==='pot');
+      B=statDmgB(att)+(potF?1:0)+(cestus?1:0)+(att.hercules||0);
+      if(potF)notes.push(_T('Focus: +1 damage on the pot'));if(att.hercules)notes.push(_T`Herculean Vigor +${att.hercules}`);
+      omnia=['omnia1','omnia2'].filter(k=>aim106Has(att,k));
+      if(att.focusNext||S.endgame){locMode='pick';notes.push(att.focusNext?_T('Focus!: you pick the spot'):_T('Flavius Rule: you pick the spot'))}
+      else if(focusRoll&&(att.mv||0)>0){locMode='roll3';notes.push(_T('Focus roll: the best of 3 location dice'))}
+      s={type:'player',p:att,w:src.w,punch:!!src.w.punch,cestus,thr:!!src.thr,far:cheb(att,t)>1}}}
+  /* the hit dice (+ Omnia Mutantur on the misses: omnia2 first when 2+ missed, as doAttack asks) */
+  const bin=aim106Bin(n,H),hd=new Array(n+1).fill(0);let usedOm=false;
+  for(let h0=0;h0<=n;h0++){let h=h0;const m=n-h0;if(m>0&&omnia&&omnia.length){const k=(m>=2?['omnia2','omnia1']:['omnia1','omnia2']).find(x=>omnia.includes(x));h+=Math.min(m,CARDS[k].flip);usedOm=true}hd[h]+=bin[h0]}
+  if(usedOm)notes.push(_T('Omnia Mutantur played on the misses'));
+  const dmgOf=h=>h>0?h*pw+(chariot?(cestus?1:0):B):0;
+  let P=0,E=0;
+  if(t.kind==='pot'){for(let h=0;h<=n;h++)if(dmgOf(h)>=2)P+=hd[h];notes.push(_T('a pot breaks at 2 damage'));return {p:100*P,avg:null,notes,pot:true}}
+  if(t.kind==='ship'){for(let h=0;h<=n;h++){const d=dmgOf(h);if(d>0){P+=hd[h];E+=hd[h]*d}}return {p:100*P,avg:E,notes}}
+  if(t.kind==='npc'){const w=kind==='atk'?src.w:null;const focused=kind==='atk'&&(!!att.focusNext||locMode==='roll3');
+    const head=!!(w&&q.t==='tholo'&&focused&&typeof shotKind83==='function'&&shotKind83(w)==='bolt');if(head)notes.push(_T('a focused bolt fells Tholo'));
+    for(let h=0;h<=n;h++){let d=dmgOf(h);if(!(d>0))continue;if(w&&w.named83&&w.uq==='ferox')d++;if(head)d=Math.max(d,q.hp);P+=hd[h];E+=hd[h]*d}
+    return {p:100*P,avg:E,notes}}
+  if(!q||!q.hp)return {p:0,avg:0,notes};
+  /* a gladiator: the defence cards in the target's hand, the location, then hurt() */
+  const hasM=defend&&!!q.cls&&aim106Has(q,'minerva'),hasF=defend&&!!q.cls&&aim106Has(q,'fidelis');
+  const alive=LOCS.filter(l=>q.hp[l]>0),dl=[...aim106LocDist(q)];
+  const one=(d,loc)=>loc==='wheel'||loc==='horse'?d:aim106Land(q,loc,d,s);
+  const atLoc=d=>{ /* [P(lands), E(lands)] for d damage reaching the location step */
+    if(!(d>0))return [0,0];
+    if(locMode==='pick'){const v=one(d,aim106Best(q,alive,d,s));return [v>0?1:0,v]}
+    let p=0,e=0;
+    if(locMode==='roll3'){for(const [a,pa] of dl)for(const [b,pb] of dl)for(const [c,pc] of dl){const v=one(d,aim106Best(q,[...new Set([a,b,c])],d,s));if(v>0)p+=pa*pb*pc;e+=pa*pb*pc*v}return [p,e]}
+    for(const [l,pl] of dl){const v=one(d,l);if(v>0)p+=pl;e+=pl*v}return [p,e]};
+  if(chariot){const opts=[...(q.ch&&q.ch.wheel?['wheel']:[]),...(q.ch&&q.ch.horse?['horse']:[]),...alive];let best=null;
+    for(const o of opts){let p=0,e=0;for(let h=0;h<=n;h++){const v=one(dmgOf(h),o);if(v>0)p+=hd[h];e+=hd[h]*v}if(!best||p>best.p+1e-12||(Math.abs(p-best.p)<1e-12&&e>best.e))best={o,p,e}}
+    notes.push(_T('Chariot: you pick the wheel, the horse or a spot'));return best?{p:100*best.p,avg:best.e,notes,pick:best.o}:{p:0,avg:0,notes}}
+  let anyF=false;
+  for(let h=0;h<=n;h++){let d=dmgOf(h);if(!(d>0)||!hd[h])continue;
+    if(hasM)continue; /* Minerva's Push dodges all of it */
+    if(hasF){anyF=true;d=dmgOf(h-1)}
+    const [p,e]=atLoc(d);P+=hd[h]*p;E+=hd[h]*e}
+  if(hasM)notes.push(_T`assumes ${q.name} plays Minerva's Push (dodges)`);else if(anyF)notes.push(_T`assumes ${q.name} plays Fidelis Constans (−1 hit die)`);
+  const sh=aim106Shield(q);if(sh&&!hasM)notes.push(_T`assumes ${q.name} raises the ${sh.n} (absorbs ${sh.absorb})`);
+  if(s.punch&&!s.cestus&&alive.some(l=>q.ap[l]>0))notes.push(_T('fists glance off armor'));
+  return {p:100*P,avg:E,notes}}
+/* the tag / confirm numbers for an HL entry, cached per (entry, turn state): a hover redraw never recomputes */
+const AIM106W=new WeakMap();
+function aim106Stamp(a,q){const L=x=>x&&x.hp&&typeof x.hp==='object'?LOCS.map(l=>x.hp[l]+'/'+(x.ap?x.ap[l]:0)).join(','):x&&x.hp;
+  return [S.turnNo,S.ask101|0,S.ri,S.rotation,S.endgame?1:0,a.mv,a.focusRoll?1:0,a.focusNext?1:0,a.hercules|0,a.items?a.items.length:0,q&&q.items?q.items.length:0,L(q),q&&q.alive,
+    q&&q.cls?['L','R'].map(k=>q['w'+k]?q['w'+k].usesLeft:'-').join(''):''].join('|')}
+function aim106Chance(h){try{if(typeof ONL80R!=='undefined'&&ONL80R.hints)return null; /* Ranked online: no hints or odds (v0.80 rule) — the tag shows the name only */
+  const catk=h.t==='catk',a=catk?(S.cmd&&S.cmd.n):cur();if(!a||!h.target||(!catk&&!h.src))return null;
+  const st=aim106Stamp(a,h.target.ref);const c=AIM106W.get(h);if(c&&c.st===st)return c.r;
+  const r=aim106Wound(a,h.target,catk?'catk':'atk',h.src);AIM106W.set(h,{st,r});AIM106.stats.wound=(AIM106.stats.wound|0)+1;return r}catch(e){console.error(e);return null}}
+/* "62% to wound · ~3 dmg" (the damage only when the chance is at least even) */
+function aim106Line(r){if(!r)return '';const pct=Math.round(r.p);const d=r.avg!=null&&r.p>=50?Math.round(r.avg):0;
+  return (r.pot?_T`${pct}% to break`:_T`${pct}% to wound`)+(d>0?' · '+_T`~${d} dmg`:'')}
 /* the figure an entry stands for (players / beasts); pots and ships have none */
 const aim106Fig=h=>h&&h.target&&(h.target.kind==='player'||h.target.kind==='npc')?h.target.ref:null;
 /* the target shown now: a touch selection wins over the hover */
@@ -78106,8 +78207,8 @@ function aim106Ring(){const s=aim106Shown();if(!s)return;const a=aim106Pulse(),m
   ctx.save();ctx.globalAlpha=a;tilePath(s.r,s.c,1);ctx.strokeStyle='#ff3b2a';ctx.lineWidth=Math.max(2,TW*0.05);ctx.stroke();
   ctx.lineWidth=Math.max(2.5,TW*0.06);ell(m.x,m.y,TW*0.4,TW*0.2);ctx.stroke();ctx.restore()}
 /* the tag "Name · NN%" over the shown target */
-function aim106Tag(){const s=aim106Shown();if(!s)return;const dpr=window.devicePixelRatio||1;const pct=aim106Chance(s.h);
-  const txt=aim106Name(s.h)+(pct!=null?' · '+pct+'%':'');AIM106.tag=txt;
+function aim106Tag(){const s=aim106Shown();if(!s)return;const dpr=window.devicePixelRatio||1;const r=aim106Chance(s.h);
+  const txt=aim106Name(s.h)+(r?' · '+aim106Line(r):'');AIM106.tag=txt;
   const fig=AIM106.figs.find(f=>f.u===s.ref&&f.bb);let X,Y;
   if(fig){X=(fig.bb.x0+fig.bb.x1)/2;Y=fig.top!=null?fig.top:fig.bb.y0}else{const m=center(s.r,s.c),T=ctx.getTransform();const y=m.y-TW*0.55;X=T.a*m.x+T.c*y+T.e;Y=T.b*m.x+T.d*y+T.f}
   ctx.save();ctx.setTransform(1,0,0,1,0,0);const fs=Math.round(12*dpr);ctx.font=`600 ${fs}px Alegreya Sans, sans-serif`;
@@ -78142,8 +78243,8 @@ if(typeof bs101Patch==='function'){const base=bs101Patch;bs101Patch=function(){i
   const h=HL.get(r*N+c);if(!h||(h.t!=='atk'&&h.t!=='catk')||!h.target)return base.apply(this,arguments);
   if(h.t==='atk'&&!(humanTurn()&&S.phase==='action'))return base.apply(this,arguments);
   if(h.t==='catk'&&!(S.phase==='command'&&S.cmd&&!S.cmd.lock))return base.apply(this,arguments);
-  if(AIM106.asking||typeof ask76!=='function')return;AIM106.asking=true;const pct=aim106Chance(h);
-  ask76(_T`Strike ${esc(aim106Name(h))}?`,pct!=null?_T`${pct}% to hit`:'',_T('Yes'),_T('No')).then(ok=>{AIM106.asking=false;if(!ok)return;
+  if(AIM106.asking||typeof ask76!=='function')return;AIM106.asking=true;const wr=aim106Chance(h);
+  ask76(_T`Strike ${esc(aim106Name(h))}?`,wr?aim106Line(wr):'',_T('Yes'),_T('No')).then(ok=>{AIM106.asking=false;if(!ok)return;
     AIM106.go=true;try{onTile(r,c)}finally{AIM106.go=false}}).catch(()=>{AIM106.asking=false})}}
 /* Settings → General: the row (hidden in an Online match and with the kill switch) */
 if(typeof settingsHTML==='function'){const base=settingsHTML;settingsHTML=function(tab){const h=base.apply(this,arguments);

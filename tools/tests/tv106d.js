@@ -1,4 +1,4 @@
-/* v1.06 TARGET CLARITY (396-v106aim, his u1c u2a): (1) mouse over a valid target → red ring + tag "name · NN%" + crosshair cursor;
+/* v1.06 TARGET CLARITY (396-v106aim, his u1c u2a): (1) mouse over a valid target → red ring + tag "name · NN% to wound · ~N dmg" + crosshair cursor;
    (2) the head of a target standing over the tile behind still picks that target (body before tile); (3) an overlapping pair: the FRONT
    body wins where both bodies are, the back one where only it is; (4) the click strikes exactly the shown target; (5) touch: tap selects,
    a tap elsewhere cancels, tap + tap again strikes; (6) Confirm attacks on → "Strike …?" dialog first (No = nothing, Yes = strike);
@@ -45,8 +45,8 @@ let pg=await open();const st=await start(pg);ok(st.human&&st.on&&/^atk/.test(st.
 let P=await pts(pg);ok(!P.err&&P.A&&P.both&&P.onlyB,'0b points found '+JSON.stringify(P));
 /* 1 · hover */
 await pg.mouse.move(P.far.x,P.far.y);await W(120);await pg.mouse.move(P.A.x,P.A.y);await W(200);
-let s1=await state(pg);ok(s1.shown===P.names[0]&&s1.cursor==='crosshair'&&s1.tag.startsWith(P.names[0]+' · ')&&/\d+%$/.test(s1.tag),'1 hover A: shown + crosshair + tag '+JSON.stringify(s1));
-ok(/ · 94%$/.test(s1.tag),'1b hit chance vs a beast (4 dice) = 1-(1/2)^4 = 94% '+s1.tag);
+let s1=await state(pg);ok(s1.shown===P.names[0]&&s1.cursor==='crosshair'&&s1.tag.startsWith(P.names[0]+' · ')&&/\d+% to wound/.test(s1.tag),'1 hover A: shown + crosshair + tag '+JSON.stringify(s1));
+ok(/ · 94% to wound · ~\d+ dmg$/.test(s1.tag),'1b chance to wound a beast (4 dice, no defences) = 1-(1/2)^4 = 94% + the likely damage '+s1.tag);
 const ringDrawn=await pg.evaluate(()=>{let n=0;const o=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){if(String(this.strokeStyle)==='#ff3b2a')n++;return o.apply(this,arguments)};try{draw()}finally{CanvasRenderingContext2D.prototype.stroke=o}return n});
 ok(ringDrawn>=2,'1c red ring strokes painted '+ringDrawn);
 const outl=await pg.evaluate(()=>({o:AIM106.figs.some(f=>f.outlined),built:AIM106.stats.built}));ok(outl.o&&outl.built>=1,'1d outline drawn on the figure '+JSON.stringify(outl));
