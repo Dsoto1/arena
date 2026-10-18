@@ -64,14 +64,15 @@ const bld=await ev(pg,async()=>{const q=s=>document.querySelector(s);const r={};
   {const R2=w.mgrs.find(m=>!m.isPlayer&&!m.dead&&m!==R);R2.coin=5000;R2.fac=R2.fac||{};R2.fac.stands=1;delete R2.bp104;facBuild(R2,'stands',true);const wk=W_().week;bp104Week(W_());const half=!!R2.bp104&&R2.bp104.n===1;bp104Week(W_());r.frozen=half&&!R2.bp104&&facLvl(R2,'stands')===2&&W_().week===wk}
   pm.coin=10;pm.facWk=null;await GO('ludus');q('.k-school').click();await W8(400);const sb=q('.lu102fac [data-mg="build"][data-id="stables"]');r.poor=!!sb&&sb.disabled&&!!q('.lu102fac .bp104why');
   q('[data-lu102fac="0"]')&&q('[data-lu102fac="0"]').click();await W8(300);
-  q('[data-mg="run"][data-id="promote"]').click();await W8(500);r.promote=document.querySelectorAll('.pr104g .pr104t .pr104a img').length>=3;
+  q('[data-mg="run"][data-id="promote"]').click();/* the room redraws on its own clock: wait for the art tiles (up to 8 s) instead of a fixed half second, which a loaded runner overruns */let pms=0;for(;pms<8000&&document.querySelectorAll('.pr104g .pr104t .pr104a img').length<3;pms+=100)await W8(100);r.pms=pms;r.promote=document.querySelectorAll('.pr104g .pr104t .pr104a img').length>=3;
   pm.coin=900;return r});
 for(const [k,v] of Object.entries(bld))ok(v,'buildings '+k);
 
 /* ---------- care routine across the week's end ---------- */
 const cw=await ev(pg,async()=>{const r={};const w=W_(),pm=me();const ros=rosterOf(pm);for(const g of ros){g.inj=null;g.severed=[];g.ord87=null;g.restWk=null}
   w.rc104=null;w.mh101=null;const P=ros[0],Q=ros[1];P.fat=60;Q.fat=60;ord87Set(P,'care');w.mh101={wk:w.week,u:mh101Max(pm,w)};ord87Set(Q,'care');r.unpaid=!rc104Cared(w,Q)&&rc104Cared(w,P);if(!r.unpaid)r.dbg=[rc104Cared(w,Q),rc104Cared(w,P),roadLocked76(w),JSON.stringify(P.ord87),P.restWk,w.week,JSON.stringify(w.rc104),mh101Left(w,pm),P.alive].join('|');
-  await J_END();const w2=W_();r.paidDrop=gFat(P)<gFat(Q);r.newWeek=rc104Cared(w2,P)&&rc104Cared(w2,Q)&&rc104Used(w2)===2;return r});
+  /* 85-v65 rolls a "worn down" injury at the week's end with Math.random() when fatigue is over 50 (up to 20%): fatigue 60 here made it a coin the test did not hold — an injured fighter's Care routine is (rightly) not paid in the new week. Hold that roll off for this one week's end. */
+  const rnd0=Math.random;Math.random=()=>0.999;try{await J_END()}finally{Math.random=rnd0}const w2=W_();r.paidDrop=gFat(P)<gFat(Q);r.newWeek=rc104Cared(w2,P)&&rc104Cared(w2,Q)&&rc104Used(w2)===2;return r});
 for(const [k,v] of Object.entries(cw))ok(v,'care week '+k);
 
 /* ---------- recruiting ---------- */
@@ -91,7 +92,9 @@ const rec=await ev(pg,async()=>{const r={};const w=W_(),pm=me();for(const g of w
   await GO('recruit');MGR.sel=h.id;MGR.recStep=3;await GO('recruit');r.ui=!!document.querySelector('.pipeline .bd104')&&!!document.querySelector('.pipeline .of104c');
   /* the yes/no-time roll hashes the world id: pin it so a generous offer to a keen recruit always signs (the roll has its own unit check) */
   const pm0=W104.of.pMin;W104.of.pMin=1;
-  const wk0=w.week;await J_END();W104.of.pMin=pm0;const m=me();r.signed=!!h.contract&&h.contract.mgr===m.id;r.scared=!l.contract&&!!(l.sc104&&l.sc104[m.id]>=W_().week);r.letter=(W_().letters||[]).some(x=>/^of104_/.test(x.key));
+  /* a rival whose barracks is thin (below 2 + ambition/28) courts and signs the best-value free agent at the week's end (17-manager, 23-ludus) — it may take h or l before the offers are answered. Fill every rival's barracks from the OTHER free agents so this week's end cannot snap the two recruits under test. */
+  const padded=[];for(const R0 of w.mgrs.filter(x=>!x.isPlayer&&!x.dead)){let gd=0;while(rosterOf(R0).length<7&&gd++<8){const f0=freeAgents().find(x=>x!==h&&x!==l&&!x.contract&&!x.inj);if(!f0)break;f0.contract={mgr:R0.id,wage:askWage(f0),weeks:8,since:w.week};f0.unsigned=0;padded.push(f0)}}
+  const wk0=w.week;/* 17-manager's Mors Omnibus kills any living fighter at a week's end on a Math.random() roll (the recruit h included: seen as 'died: an angry spectator with a roof tile' → no signing) — hold that roll off for this week's end */const rnd1=Math.random;Math.random=()=>0.999;try{await J_END()}finally{Math.random=rnd1}W104.of.pMin=pm0;for(const f0 of padded)if(f0.contract&&f0.contract.since===wk0&&f0.alive!==false)f0.contract=null;const m=me();r.signed=!!h.contract&&h.contract.mgr===m.id;r.scared=!l.contract&&!!(l.sc104&&l.sc104[m.id]>=W_().week);r.letter=(W_().letters||[]).some(x=>/^of104_/.test(x.key));
   r.scaredNo=!of104Send(W_(),l,{wage:askWage(l)*2,weeks:8}).ok;
   /* trial after two looks in an earlier week */
   const t=rec98Can(g,'trial');r.trialOk=t[0]||!/earlier/.test(t[1]||'');
@@ -106,7 +109,7 @@ for(const [k,v] of Object.entries(rec))ok(v,'recruiting '+k);
 /* ---------- Match Week warning on Your ludus ---------- */
 const mw=await ev(pg,async()=>{const w=W_(),pm=me();for(const g of rosterOf(pm))g.inj=null;st95Ensure(w,pm);const st=rosterOf(pm).filter(g=>g.slot95);/* v1.04 beta B19: the injured leave their slots and the reserve / Second team cover — the warning fires when no stand-in is left, so the bench is hurt too */
   for(const g of rosterOf(pm).filter(x=>x!==st[2]))g.inj={until:w.week+2,label:'a cut',pen:1,wk102:w.week};
-  if(w.night)w.night.bye=false;for(const bo of (w.night&&w.night.bouts)||[])bo.done=false;await GO('ludus');const a=!!mq104Warn(w,pm)&&!!document.querySelector('#mgrBody .mq104w');for(const g of rosterOf(pm))g.inj=null;return a});
+  if(w.night)w.night.bye=false;for(const bo of (w.night&&w.night.bouts)||[])bo.done=false;await GO('ludus');/* GO waits a fixed half second for the redraw; on a loaded runner the warning text is already true (mq104Warn) while the strip is not drawn yet — wait for the strip */for(let i=0;i<80&&!document.querySelector('#mgrBody .mq104w');i++)await W8(100);const a=!!mq104Warn(w,pm)&&!!document.querySelector('#mgrBody .mq104w');for(const g of rosterOf(pm))g.inj=null;return a});
 ok(mw,'match week warning');
 
 /* ---------- 390 px ---------- */
