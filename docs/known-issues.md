@@ -5,8 +5,7 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
-- 2026-10-17 · Training Yard / Armory / Recruiting banners (B70/B71) · being built (388-v105compact, reviewed in rounds) → beta 4.
-- 2026-10-17 · Lanista + World tab banners (B73, L1a/L2a) · queued after B70/B71 → beta 4.
+- 2026-10-18 · B70–B75 (compact Yard, slim banners, square lock, Match Week banner) built → in beta 4, waiting on his play-test.
 - 2026-10-17 · a beast drawn as a flat dark silhouette on a grey disc (beta 2 screenshot) · not diagnosed; pending render or missing render ·
   checked in v1.06 (tools/plans/v106/NOTES.md).
 - 2026-10-17 · 3D minis, beasts and crowd look soft/blurry (not drawn at devicePixelRatio) · v1.06 (E6a).
@@ -36,4 +35,5 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - A commit that only touches tools/deploy (e.g. release.sh's advert shot) starts no regression run · dispatch the full run by hand.
 
 ## Waiting on him
-- Beta 4 of v1.05 (after B70–B75 + B73 merge) → play → "ship it".
+- Beta 4 of v1.05 (full GitHub run green 2026-10-18, run 39082593924) → he plays it → "ship it".
+- Infirmary banner stays 90 px (its title wraps beside the Medicus box); the other slim banners are 74 px — slim it too? (asked)
