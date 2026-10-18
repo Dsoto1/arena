@@ -98,7 +98,9 @@ function qsCardHTML(){const w=W_();const Q=w.qsLast;if(!Q||Q.seen)return '';retu
 /* ---------------- trade offers from rival houses ---------------- */
 const isRival=m=>Math.max(m.rivalry||0,(m.rivals||{})[me().id]||0)>=35;
 function gValue(g){return Math.round(effOvr(g)*2.2+(g.fame||0)*1.2-Math.max(0,gAge(g)-30)*4)}
-function offersWeek(w,pm){w.offers=(w.offers||[]).filter(o=>o.until>=w.week&&gById(o.gid)&&gById(o.gid).alive);
+function offersWeek(w,pm){w.offers=(w.offers||[]).filter(o=>o.until>=w.week&&gById(o.gid)&&gById(o.gid).alive);offersGen(w,pm)}
+/* offersGen — this week's new trade offer (v1.06: 394-v106trade replaces it with the motive-driven offers) */
+function offersGen(w,pm){
   const mine=rosterOf(pm).filter(g=>!g.loanFrom);if(mine.length<2||w.offers.length>=2||Math.random()>0.35)return;
   const houses=w.mgrs.filter(m=>!m.isPlayer&&!isRival(m)&&opinionOf(m).v>=20);if(!houses.length)return;const m=pickOne(houses);
   const want=[...mine].sort((a,b)=>effOvr(b)-effOvr(a))[Math.min(mine.length-1,1+rnd(Math.max(1,mine.length-1)))];if(!want)return;const val=gValue(want);

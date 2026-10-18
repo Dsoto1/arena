@@ -49,7 +49,7 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
 
 {const pg=await open(false);
   /* ---------- B50 / P1a ---------- */
-  const r=await pg.evaluate(async()=>{const w=W_(),pm=me();const out={};const sM=Math.random;const low=()=>{let c=0;return()=>c++<80?0:sM.call(Math)};const rosterIds=()=>rosterOf(pm).map(g=>g.id);
+  const r=await pg.evaluate(async()=>{const w=W_(),pm=me();const out={};w.week=3; /* v1.06 (393): the 4 protected weeks + week 5 sit before the week-8 trade deadline */const sM=Math.random;const low=()=>{let c=0;return()=>c++<80?0:sM.call(Math)};const rosterIds=()=>rosterOf(pm).map(g=>g.id);
     const mine=rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a));const f=mine[mine.length-1];/* the weakest: the one a trade ask picks with two on the books */
     const rivals=w.mgrs.filter(m=>!m.isPlayer&&!m.sica);const R=rivals[0];
     for(const g of w.glads){g.morale=80;if(g.inj)g.inj=null}
@@ -60,16 +60,16 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
     force();Math.random=low();const run1=async()=>{try{cpuLeagueWeek()}catch(e){out.err=String(e)}};
     await run1();out.pPoach=f.contract&&f.contract.mgr===pm.id;
     w.week=f.contract.since+4;out.left5=set105Left(f);force();Math.random=low();await run1();out.openPoach=!(f.contract&&f.contract.mgr===pm.id);
-    f.contract.mgr=pm.id;f.contract.since=6;w.week=6;Math.random=sM;window.loyaltyOf=sc;
+    f.contract.mgr=pm.id;f.contract.since=3;w.week=3;Math.random=sM;window.loyaltyOf=sc;
     console.log('st sica');
     const sm=sicaMgr(w);out.hasSica=!!sm;f.morale=10;Math.random=low();try{sicaPoach(w)}catch(e){out.err=String(e)}Math.random=sM;out.pSica=f.contract.mgr===pm.id;
-    w.week=10;f.morale=10;Math.random=low();try{sicaPoach(w)}catch(e){out.err=String(e)}Math.random=sM;out.openSica=f.contract.mgr!==pm.id;f.contract.mgr=pm.id;f.morale=80;f.contract.since=6;w.week=6;
+    w.week=7;f.morale=10;Math.random=low();try{sicaPoach(w)}catch(e){out.err=String(e)}Math.random=sM;out.openSica=f.contract.mgr!==pm.id;f.contract.mgr=pm.id;f.morale=80;f.contract.since=3;w.week=3;
     console.log('st trade');/*: two non-loaned fighters, the protected one is the weaker */
     const others=rosterOf(pm).filter(g=>g!==f);const keep=others.sort((a,b)=>effOvr(b)-effOvr(a))[0];const st=[];for(const g of others)if(g!==keep){st.push([g,g.loanFrom]);g.loanFrom={mid:pm.id,fee:0,weeks:9}}
     for(const m of w.mgrs)if(!m.isPlayer){m.coin=99999;m.relB=60;m.rivalry=0;m.rivals={}}
-    const askRun=()=>{w.offers=[];const t0=(w.tlog||[]).length;Math.random=low();try{offersWeek(w,pm)}catch(e){out.err=String(e)}Math.random=sM;return (w.offers||[]).filter(o=>o.gid===f.id).length};
+    const askRun=()=>{w.offers=[];const tr=typeof TR106!=='undefined'?TR106.on:null;if(tr!=null)TR106.on=false; /* v1.06 (394): 47's forced path, not the motive offers */const t0=(w.tlog||[]).length;Math.random=low();try{offersWeek(w,pm)}catch(e){out.err=String(e)}Math.random=sM;if(tr!=null)TR106.on=tr;return (w.offers||[]).filter(o=>o.gid===f.id).length};
     let n=0;for(let i=0;i<12;i++)n+=askRun();out.pAsk=n;
-    w.week=10;n=0;for(let i=0;i<12;i++)n+=askRun();out.openAsk=n;w.week=6;
+    w.week=7;n=0;for(let i=0;i<12;i++)n+=askRun();out.openAsk=n;w.week=3;
     for(const [g,L] of st){if(L)g.loanFrom=L;else delete g.loanFrom}
     console.log('st loan');/*: the protected fighter is the only bench man */
     const ros=rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a));const away=[];while(rosterOf(pm).length>4){const x=rosterOf(pm).sort((a,b)=>effOvr(a)-effOvr(b)).find(g=>g!==f);away.push([x,x.contract.mgr]);x.contract.mgr=R.id}
@@ -77,7 +77,7 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
     const loanRun=()=>{w.offers=[];Math.random=low();try{loansWeek(w,pm)}catch(e){out.err=String(e)}Math.random=sM;return (w.offers||[]).filter(o=>o.gid===f.id).length};
     out.benchF=depthOf(pm).bench.map(g=>g.id).includes(f.id);
     for(const m of w.mgrs)if(!m.isPlayer&&!m.sica){m.relB=40}
-    n=0;for(let i=0;i<8;i++)n+=loanRun();out.pLoan=n;w.week=10;n=0;for(let i=0;i<8;i++)n+=loanRun();out.openLoan=n;w.week=6;
+    n=0;for(let i=0;i<8;i++)n+=loanRun();out.pLoan=n;w.week=7;n=0;for(let i=0;i<8;i++)n+=loanRun();out.openLoan=n;w.week=3;
     for(const [x,mm] of away)x.contract.mgr=mm;
     console.log('st offer');
     const p=rosterOf(R)[0];p.contract.since=w.week;p.scout=3;
@@ -88,7 +88,7 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
     MGR.trade={mid:R.id,mine:pm.id,theirs:p.id,coin:0};MGR.teamId=R.id;MGR.tab='team';MGR_REDRAW();await W8(500);
     const tg=document.querySelector('#mgrBody [data-mg="tradego"]');const opt=document.querySelector('#trTheirs option[value="'+p.id+'"]');
     out.tradeBtn=!!tg&&tg.hasAttribute('disabled')&&/settling in/.test(tg.dataset.dis||'');out.tradeOpt=!!opt&&/settling in/.test(opt.textContent);
-    w.week=10;out.verdictOpen=poachVerdict(p,99).set105!==1;w.week=6;
+    w.week=7;out.verdictOpen=poachVerdict(p,99).set105!==1;w.week=3;
     /* the tag on the roster rows */
     MGR.tab='roster';MGR.sel=f.id;MGR.teamId=null;MGR_REDRAW();await W8(600);
     out.rowTag=[...document.querySelectorAll('#mgrBody .r104r')].some(r=>r.dataset.id===f.id&&/settling in · 4 wk/.test(r.textContent));
@@ -143,7 +143,7 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
     w.week=9;try{pj104Send(w)}catch(e){out.pjErr=String(e)}
     let L=(w.letters||[]).find(l=>/^pj104-/.test(l.key));out.real=!!L;
     if(!L){sendLetter(w,{key:'pj104-x',kind:'letter',from:'the Consilium',adv:'consilium',seal:'🏛',title:'The road to the Superbus',until:w.week+2,body:'<p>x</p><div class="acts"><button class="btn tksm" type="button" data-po104="bracket">The bracket</button></div>'});L=w.letters.find(l=>l.key==='pj104-x')}
-    out.act=L.act;
+    out.act=L.act;w.week=8; /* v1.06 (393): loan asks stop at the week-8 deadline */
     /* a real decision: a house asks to borrow a bench fighter */
     const R=w.mgrs.find(m=>!m.isPlayer&&!m.sica);const bench=depthOf(pm).bench[0]||rosterOf(pm)[rosterOf(pm).length-1];
     w.offers=[{id:'o1',kind:'loan',mid:R.id,gid:bench.id,fee:9,weeks:3,until:w.week+1}];
@@ -165,7 +165,7 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
   const r=await pg.evaluate(async()=>{const w=W_(),pm=me();const out={};w.letters=[];w.mailLog=[];if(w.qsLast)w.qsLast.seen=true;w.week=9;
     const R=w.mgrs.find(m=>!m.isPlayer&&!m.sica);const g1=freeAgents()[0];g1.contract={mgr:R.id,wage:20,weeks:8,since:w.week};w.of104={[g1.id]:{wage:20,weeks:8,bonus:0,pledge:false,rudis:false,wk:w.week-1}};of104Answer(w,w.week); /* signed elsewhere */
     sendLetter(w,{key:'pj104-x',kind:'letter',from:'the Consilium',adv:'consilium',seal:'🏛',title:'The road to the Superbus',until:w.week+2,body:'<p>x</p><div class="acts"><button class="btn tksm" type="button" data-po104="bracket">The bracket</button></div>'});
-    const bench=depthOf(pm).bench[0]||rosterOf(pm)[rosterOf(pm).length-1];w.offers=[{id:'o1',kind:'loan',mid:R.id,gid:bench.id,fee:9,weeks:3,until:w.week+1}];
+    w.week=8; /* v1.06 (393): loan asks stop at the week-8 deadline */const bench=depthOf(pm).bench[0]||rosterOf(pm)[rosterOf(pm).length-1];w.offers=[{id:'o1',kind:'loan',mid:R.id,gid:bench.id,fee:9,weeks:3,until:w.week+1}];
     openManager();await W8(400);MGR.tab='ludus';MGR_REDRAW();await W8(500);
     const rows=()=>[...document.querySelectorAll('#desk99 .dk99row')];const mail=()=>[...document.querySelectorAll('#desk99 .dk99lt>details.mail')];
     const info=[g1.name,'Superbus'];

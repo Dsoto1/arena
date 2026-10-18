@@ -48,7 +48,9 @@ out.r1=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const
   r.letter=!!(w.letters||[]).find(L=>L.key==='po104-r1-'+w.season);r.frozen=OFF104.frozen(w);r.lag=calLag();
   const M=po104MyBout(w);r.mine=!!M;r.rig=n.bouts.every(b=>!boutRiggable(b));
   /* two fresh fit fighters so the picker has a choice */
-  for(let i=0;i<2;i++){const g=genGlad({ovr:66+i});g.contract={mgr:pm.id,wage:3,weeks:30,since:w.week};w.glads.push(g)}
+  for(let i=0;i<2;i++){const g=genGlad({ovr:66+i});g.contract={mgr:pm.id,wage:3,weeks:30,since:w.week};w.glads.push(g);
+    /* v1.06 (393): the Superbus takes only the roster at the trade deadline (end of week 8) — these two count as signed before it */
+    if(typeof lk106Snap==='function'){const L=lk106Snap(w);if(L&&L.r[pm.id])L.r[pm.id].push(g.id)}}
   await ENS();MGR.tab='night';MGR_REDRAW();await W8(800);
   r.card=!!document.querySelector('.po104card.sb103c .sb103ban');r.rail=(document.querySelector('.mtabs [data-id="night"]')||{}).textContent||'';r.cards=document.querySelectorAll('.card2.bout.sb104').length;
   r.noTravel=!document.querySelector('#mgrBody .travelcard');const sel=document.querySelector('[data-po104pick]');r.pick=!!sel;

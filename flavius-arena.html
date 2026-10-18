@@ -25264,7 +25264,9 @@ function qsCardHTML(){const w=W_();const Q=w.qsLast;if(!Q||Q.seen)return '';retu
 /* ---------------- trade offers from rival houses ---------------- */
 const isRival=m=>Math.max(m.rivalry||0,(m.rivals||{})[me().id]||0)>=35;
 function gValue(g){return Math.round(effOvr(g)*2.2+(g.fame||0)*1.2-Math.max(0,gAge(g)-30)*4)}
-function offersWeek(w,pm){w.offers=(w.offers||[]).filter(o=>o.until>=w.week&&gById(o.gid)&&gById(o.gid).alive);
+function offersWeek(w,pm){w.offers=(w.offers||[]).filter(o=>o.until>=w.week&&gById(o.gid)&&gById(o.gid).alive);offersGen(w,pm)}
+/* offersGen — this week's new trade offer (v1.06: 394-v106trade replaces it with the motive-driven offers) */
+function offersGen(w,pm){
   const mine=rosterOf(pm).filter(g=>!g.loanFrom);if(mine.length<2||w.offers.length>=2||Math.random()>0.35)return;
   const houses=w.mgrs.filter(m=>!m.isPlayer&&!isRival(m)&&opinionOf(m).v>=20);if(!houses.length)return;const m=pickOne(houses);
   const want=[...mine].sort((a,b)=>effOvr(b)-effOvr(a))[Math.min(mine.length-1,1+rnd(Math.max(1,mine.length-1)))];if(!want)return;const val=gValue(want);
@@ -77675,6 +77677,246 @@ body.hp105on .mtabs [data-id="recruit"] .mcount.hr99,body.hp105on .mtabs [data-i
   #mgrBody .roomhd.cp105ban .cp105cap{flex:1 1 auto}}
 @media (max-width:600px){#mgrBody .roomhd.cp105ban>.y105sameb{font-size:13px;padding:0 8px;flex:1 1 100px}#mgrBody .roomhd.cp105ban>.y105lock{flex:1 1 100px}#mgrBody .roomhd.cp105ban .hc105 .hc105n{font-size:18px}#mgrBody .roomhd.cp105ban .hc105 .hc105l{font-size:10px}#mgrBody .roomhd.cp105ban.cp105one .hc105{order:1}}
 `;document.head.appendChild(st)})();
+/* =====================================================================
+   393-v106lock — v1.06 SEASON LOCKS (his d1a d2-1,2,3, 2026-10-17; tools/plans/v106/NOTES.md "Season locks"). Manager only.
+   Kill switch localStorage flavius_v106lockoff=1. Test tools/tests/tv106a.js. REPLACES: trades and loans open all season.
+   1 · THE DEADLINE = the end of week 8 (LK106.dl). From week 9 to the season's end (the frozen Superbus weeks stay week 11, the off-season
+       week is 12) there are no NEW trades, loans or loan asks — the player, the rival houses and Sica alike. Running loans finish on their terms.
+       · offersWeek: no rival trade offers; open trade / loan offers lapse at the deadline (lk106Prune: kinds swap, coin, loan, loanin, the
+         buy-outs bo104 / bi104, the bundle counter-offer tb104); asks made in a week end past the deadline are dropped with their news line.
+       · lendTo / borrowFrom / offerAccept / c104Swap / c104BuyOut / c104Counter / doPoach refuse; poachVerdict says why; ludusClick refuses
+         "🔁 Propose a trade" and Send; the rivals' poaching in cpuLeagueWeek (noPoach, as 378 does) and Sica's (sicaPoach) stop.
+       · the buttons and pickers (trade, lend, borrow, poach, buy-out, counter-offer, the Clerk's "Lend for 3 weeks") show "🔒 Deadline passed",
+         disabled (lk106Sweep after every Manager paint + popup menus); the roster's ⋯ menu shows one "🔒 Deadline passed" line in place of the
+         borrowing houses (r104MenuHTML); the Clerk's loan advice (loan102Advice) is not given.
+   2 · WEEK-7 LETTER "Trade deadline after week 8" (an information letter, act:false), once a season.
+   3 · SIGNING after the deadline: free agents only into an EMPTY spot under the cap — your own fighters out on loan keep their places
+       (cap103Why wrapper: roster + lent out ≥ cap → the reason). Rivals sign only below their own want (always under their cap).
+   4 · SUPERBUS ROSTER FROZEN: w.lk106 = {s, r:{mid:[gid…]}} = every house's roster (+ its fighters out on loan) at the end of week 8 (taken at
+       the first week end past the deadline; an older save mid-season takes it the first time it is needed — no migration). po104Fit (348)
+       accepts only those fighters, so the playoff card's picker and the rivals' picks follow; a house with nobody fit gets 348's hired hand.
+   5 · NO RELEASES IN THE PLAYOFF WEEKS (Round 1, semifinals, final = po104Ph r1/sf/fin): your Release button is locked; rival houses keep
+       their extras (cpuLeagueWeek's cut is skipped those weeks).
+   ===================================================================== */
+const LK106={on:(()=>{try{return localStorage.getItem('flavius_v106lockoff')!=='1'}catch(e){return true}})(),dl:8,warn:7,
+  kinds:['swap','coin','loan','loanin']};
+function lk106Live(w){w=w||(typeof W_==='function'?W_():null);return !!(LK106.on&&w&&!w.tutorial&&!w.dead)}
+/* past the deadline: weeks 9–12 of the season (the playoff weeks are frozen at 11) */
+function lk106Past(w){w=w||(typeof W_==='function'?W_():null);return lk106Live(w)&&wkOf(w.week)>LK106.dl}
+/* the playoff weeks: Round 1, the semifinals, the final */
+function lk106Po(w){w=w||(typeof W_==='function'?W_():null);if(!lk106Live(w))return false;try{return typeof po104Ph==='function'&&['r1','sf','fin'].includes(po104Ph(w))}catch(e){return false}}
+const lk106Txt=()=>_T('🔒 Deadline passed');
+const lk106Why=()=>_T('The trade and loan deadline was the end of week 8. Running loans finish on their terms.');
+const lk106RelWhy=()=>_T('No releases during the Superbus weeks.');
+const lk106Toast=t=>{try{if(typeof mToast==='function')mToast(t)}catch(e){}};
+/* a house's fighters out on loan (they keep their place) */
+function lk106Out(w,m){return (w.glads||[]).filter(g=>g.alive&&g.loanFrom&&g.loanFrom.mid===m.id&&g.contract&&g.contract.mgr!==m.id)}
+
+/* ---------------- 4 · the Superbus roster, frozen at the deadline ---------------- */
+function lk106Snap(w,force){w=w||W_();if(!lk106Past(w))return null;if(!force&&w.lk106&&w.lk106.s===w.season)return w.lk106;
+  const r={};for(const m of w.mgrs||[]){if(m.dead)continue;r[m.id]=rosterOf(m).map(g=>g.id).concat(lk106Out(w,m).map(g=>g.id))}
+  w.lk106={s:w.season,wk:w.week,r};return w.lk106}
+function lk106OnRoster(w,m,g){const L=lk106Snap(w);if(!L||!m||!g)return true;const ids=L.r[m.id];return !ids||ids.includes(g.id)}
+
+/* ---------------- 1 · offers lapse; new ones are not made ---------------- */
+function lk106Drop(o){return !!o&&(LK106.kinds.includes(o.kind)||!!o.bo104)}
+function lk106Prune(w,top){w=w||W_();if(!lk106Past(w))return 0;const O=w.offers||[];const bad=O.filter(lk106Drop);let n=bad.length;
+  if(n){w.offers=O.filter(o=>!lk106Drop(o));
+    /* the news lines of asks made during this week end go with them */
+    if(top!==undefined){const T=w.tlog||[];let idx=top?T.indexOf(top):T.length;if(idx<0)idx=T.length;
+      const names=bad.map(o=>{const g=gById(o.gid);return g?esc(g.name):null}).filter(Boolean);
+      w.tlog=T.filter((x,i)=>i>=idx||!names.some(nm=>String(x.text).includes(nm)))}}
+  if((w.bi104||[]).length){n+=w.bi104.length;w.bi104=[]}
+  if(w.tb104&&!w.tb104.done){w.tb104.done='deadline';n++}
+  return n}
+/* the week-7 warning, once a season */
+function lk106Warn(w){w=w||W_();if(!lk106Live(w)||wkOf(w.week)!==LK106.warn||w.lk106w===w.season||typeof sendLetter!=='function')return false;w.lk106w=w.season;
+  sendLetter(w,{key:'lk106-'+w.season,kind:'letter',from:_T('the Consilium'),seal:'🔒',act:false,title:_T('Trade deadline after week 8'),until:w.week+1,
+    body:`<p>${_T('From week 9: no new trades, loans or loan asks — for every house. Running loans finish on their terms.')}</p><p>${_T('After it, free agents sign only into an empty roster spot; the Superbus takes only the fighters on your roster at the deadline; no releases in the Superbus weeks.')}</p>`});
+  return true}
+
+if(LK106.on){
+  /* the week's end: lapse + drop asks, warn in week 7, freeze the Superbus roster at the first week past the deadline */
+  {const base=endWeek;endWeek=async function(){const w0=W_();const top=w0&&(w0.tlog||[])[0];const r=await base.apply(this,arguments);
+    try{const w=W_();if(r!==false&&w&&w===w0&&lk106Live(w)){lk106Prune(w,top);lk106Warn(w);lk106Snap(w)}}catch(e){console.error(e)}return r}}
+  {const base=offersWeek;offersWeek=function(w){if(lk106Past(w)){try{lk106Prune(w)}catch(e){console.error(e)}return}return base.apply(this,arguments)}}
+  {const base=loansWeek;loansWeek=function(w){const top=w&&(w.tlog||[])[0];const r=base.apply(this,arguments);try{lk106Prune(w,top)}catch(e){console.error(e)}return r}}
+  {const base=offersHTML;offersHTML=function(){try{lk106Prune()}catch(e){}return base.apply(this,arguments)}}
+  {const base=mgrHTML;mgrHTML=function(){try{const w=typeof W_==='function'?W_():null;if(w&&lk106Live(w)){lk106Prune(w);lk106Warn(w)}}catch(e){console.error(e)}return base.apply(this,arguments)}}
+  /* the deals themselves */
+  {const base=lendTo;lendTo=function(){if(lk106Past()){lk106Toast(lk106Txt()+' — '+lk106Why());return false}return base.apply(this,arguments)}}
+  {const base=borrowFrom;borrowFrom=function(){if(lk106Past()){lk106Toast(lk106Txt()+' — '+lk106Why());return false}return base.apply(this,arguments)}}
+  {const base=offerAccept;offerAccept=function(o){if(lk106Past()&&lk106Drop(o)){try{OFFER_FAIL95=lk106Txt()+' — '+lk106Why()}catch(e){}return false}return base.apply(this,arguments)}}
+  if(typeof c104Swap==='function'){const base=c104Swap;c104Swap=function(){if(lk106Past()){lk106Toast(lk106Txt());return}return base.apply(this,arguments)}}
+  if(typeof c104BuyOut==='function'){const base=c104BuyOut;c104BuyOut=function(w){if(lk106Past(w))return;return base.apply(this,arguments)}}
+  if(typeof c104Counter==='function'){const base=c104Counter;c104Counter=function(w){if(lk106Past(w)){if(w&&w.tb104)w.tb104.done='deadline';return}return base.apply(this,arguments)}}
+  {const base=poachVerdict;poachVerdict=function(){if(lk106Past())return {ok:false,why:lk106Txt()+' — '+lk106Why()};return base.apply(this,arguments)}}
+  {const base=doPoach;doPoach=function(){if(lk106Past()){lk106Toast(lk106Txt());return}return base.apply(this,arguments)}}
+  if(typeof loan102Advice==='function'){const base=loan102Advice;loan102Advice=function(w){if(lk106Past(w))return null;return base.apply(this,arguments)}}
+  {const base=ludusClick;ludusClick=async function(action,id,btn,ctx){try{if(lk106Past()&&(action==='tradego'||(action==='envoy'&&/\|trade$/.test(String(id||''))))){
+      if(MGR.trade)MGR.trade=null;if(ctx&&ctx.say)ctx.say(lk106Txt()+' — '+lk106Why());else lk106Toast(lk106Txt());return true}}catch(e){console.error(e)}return base.apply(this,arguments)}}
+  /* the rivals and Sica: no poaching past the deadline; no releases in the playoff weeks */
+  {const base=cpuLeagueWeek;cpuLeagueWeek=function(){const w=W_();if(!lk106Past(w))return base.apply(this,arguments);
+    const P=lk106Past(w)?(w.glads||[]).filter(g=>g.alive&&!g.noPoach):[];for(const g of P)g.noPoach=true;
+    const keep=[];if(lk106Po(w))for(const m of w.mgrs||[]){if(m.isPlayer||m.dead||!m.p)continue;const n=rosterOf(m).length;const want=2+Math.round(m.p.ambition/28);
+      if(n>want+1){keep.push([m,m.p]);m.p=Object.assign({},m.p,{ambition:28*(n-3)})}}
+    try{return base.apply(this,arguments)}finally{for(const g of P)delete g.noPoach;for(const [m,p] of keep)m.p=p}}}
+  if(typeof sicaPoach==='function'){const base=sicaPoach;sicaPoach=function(w){if(lk106Past(w||W_()))return;return base.apply(this,arguments)}}
+  /* 3 · signing: only into an empty spot under the cap (your fighters out on loan keep theirs) */
+  if(typeof cap103Why==='function'){const base=cap103Why;cap103Why=function(){const why=base.apply(this,arguments);if(why)return why;try{const w=W_();if(!lk106Past(w))return why;const pm=me();
+      const cap=typeof cap104==='function'?cap104(pm):MGR_CAP103;const n=rosterOf(pm).length,out=lk106Out(w,pm).length;
+      if(out&&n+out>=cap)return _T`🔒 Past the deadline a free agent signs only into an empty spot: ${n} on the roster + ${out} out on loan = ${n+out} / ${cap}.`}catch(e){console.error(e)}return why}}
+  /* 4 · the Superbus takes only the fighters on the roster at the deadline */
+  if(typeof po104Fit==='function'){const base=po104Fit;po104Fit=function(w,m,g){const r=base.apply(this,arguments);if(!r)return r;try{if(lk106Past(w)&&!lk106OnRoster(w,m,g))return false}catch(e){console.error(e)}return r}}
+  /* 5 · releases: your button is refused in the playoff weeks */
+  window.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-mg="release"]');if(!b||!lk106Po())return;
+    e.preventDefault();e.stopImmediatePropagation();lk106Toast(lk106Txt()+' — '+lk106RelWhy())},true);
+}
+
+/* ---------------- the locked buttons ---------------- */
+const LK106_SEL=['[data-mg="envoy"][data-id$="|trade"]','[data-mg="tradego"]','[data-tb104="yes"]','[data-r104bo="yes"]','[data-l102lend]','[data-r104lend]',
+  'select[data-m47lend]','select[data-m47borrow]','[data-m48="loaninyes"]','[data-mg="poach"]','[data-m47="offyes"]','input[data-tb104g]'];
+function lk106Lock(el,why){if(el.dataset.lk106)return;el.dataset.lk106='1';el.disabled=true;el.setAttribute('aria-disabled','true');el.title=why;
+  if(el.tagName==='SELECT'){const o=el.options&&el.options[0];if(o)o.textContent=lk106Txt();return}
+  if(el.tagName==='INPUT')return;
+  if(el.classList.contains('r104mi')){const s=el.querySelector('span');if(s)s.textContent=lk106Txt();const sm=el.querySelector('small');if(sm)sm.remove();return}
+  el.textContent=lk106Txt()}
+function lk106Sweep(root){if(!LK106.on)return;const w=typeof W_==='function'?W_():null;if(!w||!lk106Live(w))return;root=root||document;
+  if(lk106Past(w)){const why=lk106Why();for(const el of root.querySelectorAll(LK106_SEL.join(',')))lk106Lock(el,why)}
+  if(lk106Po(w))for(const el of root.querySelectorAll('[data-mg="release"]'))lk106Lock(el,lk106RelWhy())}
+if(LK106.on){
+  /* the roster's ⋯ menu: one locked line instead of the houses that would borrow him */
+  if(typeof r104MenuHTML==='function'){const base=r104MenuHTML;r104MenuHTML=function(){let h=base.apply(this,arguments);try{if(lk106Past()&&typeof h==='string'){const re=/<button[^>]*data-r104lend="[^"]*"[^>]*>[\s\S]*?<\/button>/g;let first=true;
+      h=h.replace(re,()=>{if(!first)return '';first=false;return `<div class="r104mx lk106mx">${lk106Txt()}</div>`})}}catch(e){console.error(e)}return h}}
+  {const base=mgrPaint;mgrPaint=function(el){const r=base.apply(this,arguments);try{lk106Sweep(el)}catch(e){console.error(e)}return r}}
+  /* popups (the roster's ⋯ menu) and patched pages */
+  if(typeof MutationObserver!=='undefined'){let busy=false;const mo=new MutationObserver(()=>{if(busy)return;const w=typeof W_==='function'?W_():null;if(!w||!lk106Live(w)||!(lk106Past(w)||lk106Po(w)))return;
+      busy=true;try{lk106Sweep(document)}catch(e){console.error(e)}finally{busy=false}});
+    const hook=()=>{if(document.body)mo.observe(document.body,{childList:true,subtree:true})};if(document.body)hook();else document.addEventListener('DOMContentLoaded',hook)}
+}
+/* =====================================================================
+   394-v106trade — v1.06 RIVAL TRADE MOTIVES (his t1a, 2026-10-17; tools/plans/v106/NOTES.md "Rival trade strategy"). Manager only.
+   Kill switch localStorage flavius_v106troff=1 (back to 47's value match). Test tools/tests/tv106b.js.
+   REPLACES 47 offersGen (offersWeek's new offer: a 35% Math.random roll, any friendly house, gValue = rating×2.2 + fame×1.2 − age over 30,
+   no wages). 47's pruning, 229's live check, 345's "always gives something", 378's settling-in guard and 393's deadline still wrap it.
+   1 · VALUE tr106Val(g) = rating×2.2 + fame×1.2 + age (young +1.5 a year under 24, −4 a year over 28) + career kind (349 c104Phase: rising
+       up to +8, prime up to +6, fading −6 a season past it; Steady +4, Ageless +6, Meteor −2) + potential (pot − ovr) − weekly wage×2.
+       tr106Parts(g) gives the parts.
+   2 · MOTIVE tr106Motive(w,m) from the house's situation, first that holds:
+       wages  (poor: coin under 3 weeks of its wages, or under 60) → swaps its dearest fighter for a cheaper one of yours, no coin;
+       allin  (contender: top 4 of the league in weeks 7–8) → pays a premium (×1.15–1.35) for your best;
+       gap    (a starter hurt) → buys a like-for-like fighter;
+       sell   (a fighter of its own about to fade: prime ending this season or fading, rated at least its average) → offers him for a younger one of yours;
+       gap    (a lopsided squad — TR106.thin = 2 classes or fewer — lacking a class you have) → buys one of that class;
+       youth  (rebuilding: bottom third from week 3, or a squad averaging 27+) → wants your young prospect (≤23, room to grow), a veteran or coin back.
+       Coin is never more than the house's treasury minus 4 weeks of its wages (no house goes broke on a trade).
+   3 · THE CARD (offersHTML wrapper): one line WHY (o.why106) + the weekly cost change for you (o.dw106 = their wages in − his wage out):
+       "+3/wk for you" · "−12/wk for you" · "same wages". The desk row keeps 270's line.
+   4 · DETERMINISTIC: the week's roll and pick come from mulberry32(hashStr('tr106|world id|season|week')) — never the dice, never Math.random.
+       The offer id is 'o6<season>_<week>_<house>'. w.tr106n counts offers by motive (the sim reads it).
+   ===================================================================== */
+const TR106={on:(()=>{try{return localStorage.getItem('flavius_v106troff')!=='1'}catch(e){return true}})(),p:0.35,reserveWk:4,poorWk:3,poorMin:60,
+  K:{ovr:2.2,fame:1.2,young:1.5,old:4,pot:1,wage:2},allin:[1.15,1.35],thin:2,coin:[0.95,1.2],
+  kinds:{steady:4,ageless:6,meteor:-2,blazer:0,common:0}};
+const TR106_M=['wages','allin','gap','sell','youth'];
+function tr106Wages(m){return rosterOf(m).reduce((a,g)=>a+((g.contract&&g.contract.wage)||0),0)}
+function tr106Wage(g){return g&&g.contract?(g.contract.wage||0):(typeof askWage==='function'&&g?askWage(g):0)}
+function tr106Parts(g){const o=effOvr(g),f=g.fame||0,a=gAge(g),wage=tr106Wage(g);const K=TR106.K;
+  const age=a<24?(24-a)*K.young:a>28?-(a-28)*K.old:0;
+  let car=0;try{if(typeof c104Phase==='function'&&(typeof c104On!=='function'||c104On())){const P=c104Phase(g);
+    car=P.ph==='rise'?Math.min(8,2*P.left):P.ph==='prime'?Math.min(6,2*P.left):-6*(P.past||1);car+=TR106.kinds[P.c.k]||0}}catch(e){}
+  const pot=Math.max(0,((g.pot!=null?g.pot:g.ovr)||0)-(g.ovr||0))*K.pot;
+  const v=Math.round(o*K.ovr+f*K.fame+age+car+pot-wage*K.wage);return {ovr:o,fame:f,age,car,pot,wage,v}}
+const tr106Val=g=>tr106Parts(g).v;
+/* about to fade: the prime ends this season, or already fading */
+function tr106Fading(g){try{if(typeof c104Phase!=='function')return gAge(g)>=31;const P=c104Phase(g);return P.ph==='fade'||(P.ph==='prime'&&P.left<=1)}catch(e){return false}}
+const tr106Prot=(g,w)=>{try{return typeof set105Left==='function'&&set105Left(g,w)>0}catch(e){return false}};
+const tr106Fit=g=>!!g&&g.alive!==false&&!g.inj&&!g.loanFrom&&!g.lanista;
+function tr106Rank(w,m){const L=leagueSort((w.mgrs||[]).filter(x=>!x.dead&&!x.sica),w.season);return {rank:L.indexOf(m)+1,n:L.length}}
+/* the house's situation → its motive (or null) */
+function tr106Sit(w,m,pm){const ros=rosterOf(m).filter(g=>!g.loanFrom);const wages=tr106Wages(m);const wk=wkOf(w.week);const {rank,n}=tr106Rank(w,m);
+  const avgO=ros.length?ros.reduce((a,g)=>a+effOvr(g),0)/ros.length:0;const avgA=ros.length?ros.reduce((a,g)=>a+gAge(g),0)/ros.length:0;
+  const st=(typeof depthOf==='function'?depthOf(m).starters:ros.slice(0,3));const hurt=st.find(g=>g.inj&&!g.inj.war)||null;
+  const have=new Set(ros.map(g=>g.cls));const mine=pm?rosterOf(pm).filter(g=>tr106Fit(g)&&!tr106Prot(g,w)):[];const thin=have.size<=TR106.thin;const miss=thin?mine.find(g=>!have.has(g.cls))||null:null;
+  const fader=ros.filter(g=>!g.inj&&tr106Fading(g)&&effOvr(g)>=avgO&&!tr106Prot(g,w)).sort((a,b)=>effOvr(b)-effOvr(a)||(a.id<b.id?-1:1))[0]||null;
+  return {poor:m.coin<Math.max(TR106.poorMin,wages*TR106.poorWk),contender:rank>0&&rank<=4&&(wk===7||wk===8),hurt,miss,fader,
+    rebuild:(wk>=3&&rank>0&&rank>Math.ceil(n*2/3))||avgA>=27,wages,rank,n,avgO,avgA}}
+function tr106Motive(w,m,pm){const S=tr106Sit(w,m,pm||me());
+  if(S.poor)return 'wages';if(S.contender)return 'allin';if(S.hurt)return 'gap';if(S.fader)return 'sell';if(S.miss)return 'gap';if(S.rebuild)return 'youth';return null}
+const tr106Room=m=>Math.max(0,(m.coin||0)-tr106Wages(m)*TR106.reserveWk);
+const tr106By=f=>(a,b)=>(f(b)-f(a))||(a.id<b.id?-1:a.id>b.id?1:0);
+const tr106Near=(L,v,f)=>[...L].sort((a,b)=>(Math.abs(f(a)-v)-Math.abs(f(b)-v))||(a.id<b.id?-1:1))[0]||null;
+/* one house's offer for this week (no side effects); r = a 0..1 number for the coin spread */
+function tr106Plan(w,m,pm,r){pm=pm||me();const mot=tr106Motive(w,m,pm);if(!mot)return null;const S=tr106Sit(w,m,pm);
+  const mine=rosterOf(pm).filter(g=>tr106Fit(g)&&!tr106Prot(g,w));const theirs=rosterOf(m).filter(g=>tr106Fit(g)&&!tr106Prot(g,w));if(!mine.length)return null;
+  const room=tr106Room(m);const C=TR106.coin;r=r==null?0.5:r;let want=null,give=[],coin=0,why='';const L=esc(m.ludus);
+  const buy=(g,k)=>{const c=Math.max(20,Math.round(tr106Val(g)*k));return c<=room?c:0};
+  if(mot==='wages'){const dear=[...theirs].sort(tr106By(tr106Wage))[0];if(!dear||tr106Wage(dear)<6)return null;
+    want=tr106Near(mine.filter(g=>tr106Wage(g)<=tr106Wage(dear)-3),tr106Val(dear),tr106Val);if(!want)return null;give=[dear];
+    why=_T`${L} must cut wages: ${esc(dear.name)} costs them ${tr106Wage(dear)}/wk.`}
+  else if(mot==='allin'){want=[...mine].sort(tr106By(effOvr))[0];coin=buy(want,TR106.allin[0]+(TR106.allin[1]-TR106.allin[0])*r);
+    if(!coin){const kids=theirs.filter(g=>gAge(g)<=23).sort(tr106By(tr106Val));if(!kids.length)return null;give=[kids[0]];const gap=tr106Val(want)-tr106Val(kids[0]);
+      if(gap>0&&kids[1]&&tr106Val(kids[0])<tr106Val(want)*0.8)give.push(kids[1]);coin=Math.min(room,Math.max(0,Math.round((tr106Val(want)-give.reduce((a,g)=>a+tr106Val(g),0))*0.5)))}
+    why=_T`${L} goes all-in for the Superbus before the deadline.`}
+  else if(mot==='gap'){if(S.hurt){want=tr106Near(mine,effOvr(S.hurt),effOvr);why=_T`${L}’s starter ${esc(S.hurt.name)} is hurt — they need a fighter now.`}
+    else{want=mine.filter(g=>g.cls===S.miss.cls).sort(tr106By(effOvr))[0];const cn=CLASSES[want.cls]?CLASSES[want.cls].name:want.cls;why=_T`${L} has no ${esc(cn)} — they need one.`}
+    if(!want)return null;coin=buy(want,C[0]+(C[1]-C[0])*r);
+    if(!coin){const spare=theirs.filter(g=>g!==S.hurt).sort(tr106By(g=>-effOvr(g)))[0];if(!spare)return null;give=[spare];coin=Math.min(room,Math.max(0,Math.round((tr106Val(want)-tr106Val(spare))*0.5)))}}
+  else if(mot==='sell'){const f=S.fader;const fv=tr106Val(f);want=mine.filter(g=>gAge(g)<=gAge(f)-3&&tr106Val(g)<=fv+10).sort(tr106By(g=>(g.pot||g.ovr||0)-(g.ovr||0)+effOvr(g)/10))[0];if(!want)return null;
+    give=[f];coin=Math.min(room,Math.max(0,Math.round((tr106Val(want)-fv)*0.5)));
+    why=_T`${L} sells high: ${esc(f.name)}’s best years are nearly over.`}
+  else if(mot==='youth'){want=mine.filter(g=>gAge(g)<=23&&((g.pot||g.ovr||0)-(g.ovr||0)>=5||tr106Parts(g).car>0)).sort(tr106By(g=>(g.pot||g.ovr||0)-(g.ovr||0)))[0];if(!want)return null;
+    const vet=theirs.filter(g=>gAge(g)>=29&&effOvr(g)>=effOvr(want)).sort(tr106By(effOvr))[0];
+    if(vet){give=[vet];coin=Math.min(room,Math.max(0,Math.round((tr106Val(want)-tr106Val(vet))*0.5)))}else{coin=buy(want,C[0]+(C[1]-C[0])*r);if(!coin)return null}
+    why=_T`${L} is rebuilding — they want ${esc(want.name)} (${gAge(want)}) for the years ahead.`}
+  if(!want||give.includes(want))return null;
+  const dw=give.reduce((a,g)=>a+tr106Wage(g),0)-tr106Wage(want);
+  const o={id:'o6'+w.season+'_'+w.week+'_'+m.id,kind:give.length?'swap':'coin',mid:m.id,gid:want.id,coin,until:w.week+2,mot106:mot,why106:why,dw106:dw};if(give.length)o.give=give.map(g=>g.id);
+  if(o.kind==='coin'&&!(coin>0))return null;return o}
+/* this week's offer: replaces 47's offersGen */
+function tr106Gen(w,pm){const mine=rosterOf(pm).filter(g=>!g.loanFrom);if(mine.length<2||(w.offers||[]).length>=2)return null;
+  const R=mulberry32(hashStr('tr106|'+w.id+'|'+w.season+'|'+w.week));if(R.next()>TR106.p)return null;
+  const houses=(w.mgrs||[]).filter(m=>!m.isPlayer&&!m.dead&&!isRival(m)&&opinionOf(m).v>=20).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);if(!houses.length)return null;
+  const r=R.next();const plans=houses.map(m=>tr106Plan(w,m,pm,r)).filter(Boolean);if(!plans.length)return null;
+  const o=plans[Math.floor(R.next()*plans.length)];return o}
+if(TR106.on){
+  {const base=offersGen;offersGen=function(w,pm){if(!TR106.on||!w||!pm||w.tutorial)return base.apply(this,arguments);
+    try{const o=tr106Gen(w,pm);if(!o)return;const m=mgrById(o.mid),g=gById(o.gid);(w.offers=w.offers||[]).push(o);(w.tr106n=w.tr106n||{})[o.mot106]=(w.tr106n[o.mot106]||0)+1;
+      tnews(_T`📨 <b>${esc(m.ludus)}</b> sends a trade offer for <b>${esc(g.name)}</b> — see the top of any tab.`,'big')}catch(e){console.error(e)}}}
+  /* the card: why + the weekly cost */
+  {const base=offersHTML;offersHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(!w||typeof h!=='string'||!h)return h;
+    for(const o of w.offers||[]){if(!o.why106)continue;const k=h.indexOf(`data-m47="offyes" data-id="${o.id}"`);if(k<0)continue;const a=h.lastIndexOf('<div class="acts"',k);if(a<0)continue;
+      const dw=o.dw106|0;const wk=dw>0?_T`+${dw}/wk for you`:dw<0?_T`−${-dw}/wk for you`:_T`same wages`;
+      h=h.slice(0,a)+`<div class="tr106" data-tr106="${o.mot106}"><span class="tr106why">${o.why106}</span><span class="tr106wk ${dw>0?'up':dw<0?'dn':''}">${wk}</span></div>`+h.slice(a)}}catch(e){console.error(e)}return h}}
+  (()=>{if(typeof document==='undefined'||document.getElementById('tr106css'))return;const st=document.createElement('style');st.id='tr106css';
+    st.textContent=`.tr106{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin:6px 0 2px;font-size:13px}.tr106 .tr106why{flex:1 1 220px;color:var(--ink,#e9dcc0);font-style:italic}
+.tr106 .tr106wk{font:12px var(--mono,monospace);color:#cbb593;white-space:nowrap;border:1px solid #6b5236;border-radius:4px;padding:0 6px}.tr106 .tr106wk.up{color:#ffb0a0;border-color:#8a3a2a}.tr106 .tr106wk.dn{color:#a8e0a0;border-color:#3a6a3a}`;
+    document.head.appendChild(st)})();
+}
+/* =====================================================================
+   395-v106inf — v1.06 I1 (his call 2026-10-18; tools/plans/v106/NOTES.md "His calls 2026-10-18"). Manager only, LAYOUT ONLY.
+   Kill switch localStorage flavius_v106infoff=1. Test tools/tests/tv106c.js.
+   The Infirmary's slim banner (388 .cp105ban, 392's hours chip + Capsarius chip) gets an INJURED chip "⚕ N injured" (.hc106inj: the hours
+   chip's look — 392 .hc105 — big number + small label, dim at 0; its own class so every .hc105 lookup still finds the hours chip) before the Capsarius chip, the Medicus hours chip last. N = your fighters hurt (not
+   away at war); the chip's tip adds how many still need care this week (95 infirmNeed73). The rail tab keeps only its "⚕ N" (unchanged).
+   The banner stays 74 px at 1440. Answers the open beta-5 question (392 B81 left the injured count on the rail only).
+   ===================================================================== */
+function inf106On(){try{return localStorage.getItem('flavius_v106infoff')!=='1'}catch(e){return true}}
+function inf106Chip(n,need){const tip=_T`${n} injured · ${need} still need care this week`;
+  return `<div class="hc106inj${n?'':' hc106z'}" data-tip="${esc(tip)}" tabindex="0"><span class="hc106n">⚕ ${n}</span><span class="hc106l">${_T('injured')}</span></div>`}
+{const base=mgrHTML;mgrHTML=function(){const h=base.apply(this,arguments);try{
+  if(!inf106On()||typeof h!=='string'||MGR.view||MGR.tab!=='infirm'||h.indexOf('cp105ban')<0)return h;const w=W_(),pm=me();if(!w||w.dead||!pm)return h;
+  const T=document.createElement('template');T.innerHTML=h;const hd=T.content.querySelector('.roomhd.cp105ban');if(!hd||hd.querySelector('.hc106inj'))return h;
+  const n=rosterOf(pm).filter(g=>g.inj&&!g.inj.war).length;let need=n;try{if(typeof infirmNeed73==='function')need=infirmNeed73()}catch(e){}
+  const box=document.createElement('template');box.innerHTML=inf106Chip(n,need);const chip=box.content.firstElementChild;
+  const at=hd.querySelector(':scope>.bp104c')||hd.querySelector(':scope>.cp105cap')||hd.querySelector(':scope>.hc105');if(at)at.before(chip);else hd.appendChild(chip);
+  const d=document.createElement('div');d.appendChild(T.content);return d.innerHTML}catch(e){console.error(e)}return h}}
+(()=>{if(typeof document==='undefined'||document.getElementById('inf106css'))return;const st=document.createElement('style');st.id='inf106css';
+  st.textContent=`.hc106inj{position:relative;z-index:2;flex:none;display:grid;justify-items:end;align-content:center;gap:0;max-height:52px;box-sizing:border-box;padding:4px 12px;border:1px solid #c9a458;border-radius:6px;background:#1a120de0;text-align:right;cursor:default}
+.hc106inj .hc106n{font:400 21px/1.1 var(--display,serif);color:#f0cf7d;white-space:nowrap}.hc106inj .hc106l{font:11px var(--mono,monospace);color:#cbb593;white-space:nowrap}
+.hc106inj.hc106z{border-color:#6b5a3e;opacity:.72}.hc106inj.hc106z .hc106n{color:#b8a27c}
+@media (max-width:900px){#mgrBody .roomhd.cp105ban .hc106inj{padding:3px 10px}}
+@media (max-width:600px){#mgrBody .roomhd.cp105ban .hc106inj .hc106n{font-size:18px}#mgrBody .roomhd.cp105ban .hc106inj .hc106l{font-size:10px}#mgrBody .roomhd.cp105ban.cp105one .hc106inj{order:1}}`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
