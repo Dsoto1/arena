@@ -5,8 +5,13 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
-- 2026-10-17 · a beast drawn as a flat dark silhouette on a grey disc (beta 2 screenshot) · not diagnosed; pending render or missing render ·
-  checked in v1.06 (tools/plans/v106/NOTES.md).
+- 2026-10-17 · a beast drawn as a flat dark silhouette on a grey disc (beta 2 screenshot) · FIXED for v1.06 beta 2 (398): Moechus's near-black
+  fur (#5c5856) re-rendered grey; the grey disc is the Lighting Off shadow disc · moves to history with v1.06.
+- 2026-10-18 · bases off: a gladiator's base TOP (a beige disc) stays under the figure when the board is zoomed in or on a 2× screen (321's
+  bs101Off flood misses the up-scaled cell; 1× unzoomed is clean) · seen while fixing G5, not fixed.
+- 2026-10-18 · tools/art/anim100b/make.js l106 run today bakes DIFFERENT beast shadow sheets than the committed v1.06a ones (moechus/valencia:
+  cell 56×18, anchor y 47 vs 58×28, y 11 — the shadow sits above its anchor); the lit sheets come out byte-identical. Check l106.js's shadow
+  crop before any beast re-bake (398 kept the committed shadow sheets).
 - 2026-10-17 · 3D minis, beasts and crowd look soft/blurry (not drawn at devicePixelRatio) · v1.06 (E6a).
 
 ## Game — accepted limitations

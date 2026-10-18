@@ -58,17 +58,18 @@ let pg=await open();const st=await start(pg);ok(st.human&&st.on&&st.move>3&&st.w
 /* ---- 1 · still ---- */
 const A=await probe(pg);
 ok(A.fig&&A.fa===1,'1a active figure drawn at full opacity in See-through auto '+JSON.stringify(A));
-ok(A.before>=2&&A.after.length===0,'1b floor marks at his cell before his figure, none after '+JSON.stringify({before:A.before,after:A.after}));
+const MIN398=await pg.evaluate(()=>typeof B1B106!=='undefined'&&!B1B106.off?0:2); /* v1.06 G5a (398): no rings under figures — none before, still none after */
+ok(A.before>=MIN398&&A.after.length===0,'1b floor marks at his cell before his figure, none after '+JSON.stringify({before:A.before,after:A.after}));
 ok(A.wa!=null&&A.wa<1,'1c the wolf in front of his tile still fades '+A.wa);
 /* ---- 2 · hover a move tile behind him ---- */
 const H=await probe(pg,"hoverTile={r:4,c:1}");await pg.evaluate(()=>{hoverTile=null});
 ok(H.fa===1&&H.after.length===0,'2a hovering a tile behind him: still opaque, nothing over him '+JSON.stringify(H));
 /* ---- 3 · gliding ---- */
 const G=await probe(pg,GL);await pg.evaluate(UNGL);
-ok(G.fa===1&&G.after.length===0&&G.before>=2,'3a gliding: opaque, floor marks under '+JSON.stringify(G));
+ok(G.fa===1&&G.after.length===0&&G.before>=MIN398,'3a gliding: opaque, floor marks under '+JSON.stringify(G));
 /* ---- 4 · zoomed ---- */
 await ZOOM(pg);const Z=await probe(pg);
-ok(Z.fa===1&&Z.after.length===0&&Z.before>=2,'4a zoomed: opaque, floor marks under '+JSON.stringify(Z));
+ok(Z.fa===1&&Z.after.length===0&&Z.before>=MIN398,'4a zoomed: opaque, floor marks under '+JSON.stringify(Z));
 await ZOOM(pg);
 /* ---- 5 · bases off ---- */
 await pg.evaluate(async()=>{SETTINGS.bases101=false;applySettings();XRAY='auto';for(let i=0;i<6;i++){draw();await new Promise(r=>setTimeout(r,60))}});

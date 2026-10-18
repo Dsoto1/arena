@@ -17,9 +17,16 @@ ok(await start('familia'),'0a familia started');
 const t=await pg.evaluate(async()=>{const o={};const cols=['A','B','C','D'].map(teamColor);o.distinct=new Set(cols).size===4;
   const rec=[];const st=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){if(this.lineWidth===4)rec.push([this.strokeStyle,this.getLineDash().length]);return st.apply(this,arguments)};
   SETTINGS.cvdMode='off';draw();o.rings=rec.slice();rec.length=0;SETTINGS.cvdMode='rg';draw();o.cvd=rec.slice();SETTINGS.cvdMode='off';CanvasRenderingContext2D.prototype.stroke=st;return o});
-ok(t.distinct,'2a team colours distinct');ok(t.rings.length>=4,'2b a ring for every piece ('+t.rings.length+')');
+/* v1.06 G5a (398-v106b1b): no team rings under the figures any more (his g5a) — the team shows as a chip with the team letter beside the pennant */
+const ch=await pg.evaluate(()=>{if(typeof B1B106==='undefined'||B1B106.off)return null;const rec=[];const o=b1bChip;b1bChip=function(p,x,top){rec.push([teamColor(p.team),p.team]);return o.apply(this,arguments)};
+  const ft=CanvasRenderingContext2D.prototype.fillText,txt=[];CanvasRenderingContext2D.prototype.fillText=function(t){txt.push(String(t));return ft.apply(this,arguments)};
+  try{SETTINGS.cvdMode='rg';draw();SETTINGS.cvdMode='off'}finally{b1bChip=o;CanvasRenderingContext2D.prototype.fillText=ft}return {rec,letters:['A','B'].every(l=>txt.includes(l))}});
+ok(t.distinct,'2a team colours distinct');
+if(ch){ok(ch.rec.length>=4,'2b a team chip for every piece ('+ch.rec.length+')');ok(ch.rec.some(r=>/#4aa8e8/i.test(r[0]))&&ch.rec.some(r=>/#f0a020/i.test(r[0])),'2c A blue and B orange');
+  ok(ch.letters,'2d the team letter on the chip (colour-blind modes too)');ok(!t.rings.length,'2e no team ring under the figures')}
+else{ok(t.rings.length>=4,'2b a ring for every piece ('+t.rings.length+')');
 ok(t.rings.some(r=>/#4aa8e8/i.test(r[0]))&&t.rings.some(r=>/#f0a020/i.test(r[0])),'2c A blue and B orange');
-ok(t.cvd.some(r=>r[1]>0),'2d patterns in a colour-blind mode');ok(!t.rings.some(r=>r[1]>0),'2e solid otherwise');
+ok(t.cvd.some(r=>r[1]>0),'2d patterns in a colour-blind mode');}ok(!t.rings.some(r=>r[1]>0),'2e solid otherwise');
 /* ---- Zora + floating numbers + keys + CF (Democritus) ---- */
 ok(await start('democritus'),'0b democritus started');
 const r=await pg.evaluate(async()=>{const o={};const W8=ms=>new Promise(r=>setTimeout(r,ms));const p=S.players[0];

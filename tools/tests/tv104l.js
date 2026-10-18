@@ -61,7 +61,8 @@ await pg.context().close();
 /* ---- 6 · switch ---- */
 pg=await open({flavius_v104b2off:'1'});const st2=await start(pg);ok(st2.human,'6a switch: start');
 const K=await probe(pg,GL);
-ok(K.bits==null&&!K.goldBeforeFigure,'6b switch off: the gliding piece is skipped by the pass and draws inline again (beta 1) '+JSON.stringify(K));
+const noRing398=await pg.evaluate(()=>typeof B1B106!=='undefined'&&!B1B106.off); /* v1.06 G5a (398): no turn ring at all — inline or on the floor */
+ok(K.bits==null&&(!K.goldBeforeFigure||noRing398),'6b switch off: the gliding piece is skipped by the pass and draws inline again (beta 1) '+JSON.stringify(K));
 await pg.context().close();
 /* ---- 7 · Animations Off + 8 · cost ---- */
 pg=await open();await start(pg);
