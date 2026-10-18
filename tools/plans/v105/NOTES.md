@@ -152,3 +152,7 @@
 - B79 Training Yard: drop the bottom sections (his screenshot: the TABULA "week's plan" strip + "📜 Last week in the yard"). REPLACES 373's
   Tabula (B44 / y1a mock-up). Its "↻ Same as last week" button needs a new home (asked).
 - B80 Wagers banner = the same slim banner as the others (74 px).
+- B81 (his call, 2026-10-18): ONE look for remaining hours on every banner and every rail tab. Today four styles: the Yard's big plate
+  (388/373 .y105hrs "8 of 8 h · Training hours left"), Recruiting's chip (299/249/388 roomstat "N of 18 · the Recruiter's hours"), the
+  Infirmary's Medicus-hours box (351/354), and the rail badges (green "18 h" on Recruiting vs grey "8 h" on the Yard; 357 ⏳ chips).
+  REPLACES all four with one component (asked: format + badge colours).
