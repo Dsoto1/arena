@@ -777,3 +777,7 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   green/grey rail badges).
 - Decided 2026-10-18: his ok on the v1.06a lighting mock-up (https://claude.ai/artifact/5HKkQE1uKseEt3VHawxBCh) → full build.
 - Decided 2026-10-18 (his "you decide"): poaching (player, rivals, Sica) is blocked after the week-8 deadline like trades; coin loans + recalling a lent fighter stay open.
+- Decided 2026-10-18 (his r1a r2a r3a r4a, on slow release cycles): R1 seeded test worlds (no Date.now/random ids in tests) after v1.06 ships;
+  R2 a CI input that re-runs only named tests (failed-only reruns ≈ 5 min); R3 the beta may start while test-only failures are still being
+  fixed (offline beta, own saves; game bugs → next beta); R4 a re-bake never ships bundled with other feature work (v1.06b, poser releases,
+  economy each alone).
