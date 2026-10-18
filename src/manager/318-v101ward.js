@@ -251,7 +251,7 @@ function v101Btns(R){for(const b of R.querySelectorAll('[data-mg="medic"],[data-
 /* the Infirmary is a to-do only while there are hours for a cure (the old physicians' cap never runs down now) */
 if(typeof ludusPending==='function'){const base=ludusPending;ludusPending=function(){const P=base.apply(this,arguments);try{const w=W_(),m=me();if(Array.isArray(P)&&P.includes('infirm')&&w&&m&&mh101Left(w,m)<CARE101.h.bath&&!(typeof hygeiaReady==='function'&&hygeiaReady(m)))return P.filter(x=>x!=='infirm')}catch(e){}return P}}
 /* ---------- 7 · M14: the recruiting-hours oval stays on the rail ---------- */
-const v101Own=n=>n.nodeType===1&&n.classList&&(n.classList.contains('c73')||n.classList.contains('c85n')||n.classList.contains('hr99'));
+const v101Own=n=>n.nodeType===1&&n.classList&&(n.classList.contains('c73')||n.classList.contains('c85n')||n.classList.contains('hr99')||n.classList.contains('hp105'));
 morph90=function(o,n){
   for(const a of [...o.attributes])if(a.name!=='class'&&a.name!=='title'&&!n.hasAttribute(a.name))o.removeAttribute(a.name);
   for(const a of [...n.attributes])if(a.name!=='class'&&o.getAttribute(a.name)!==a.value)o.setAttribute(a.name,a.value);

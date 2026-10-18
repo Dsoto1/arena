@@ -23,7 +23,7 @@ const inf=await ev(pg,async()=>{const q=s=>document.querySelector(s),qa=s=>[...d
   const A=ros[ros.length-1],B=ros[0],C=ros[1],D=ros[2];A.inj={until:w.week+3,label:'a gashed chest',pen:4,ser76:1,wk102:w.week-1};A.severed=['larm'];A.fat=64;B.inj={until:w.week+2,label:'a twisted ankle',pen:1,wk102:w.week-1};C.fat=55;D.fat=72;w.beds76=[];w.medicus76=null;pm.fac=pm.fac||{};pm.fac.valet=0;
   r.med=mh101Max(pm,w)===7;r.th=thMax()===8;
   MGR.inf90=A.id;await GO('infirm');
-  r.ban=!!q('#mgrPane .roomhd.w104ban .w104hb .w104bar')&&!!q('.w104hb .k104wc')&&!!q('.w104hb .k104rc')&&/7 of 7/.test(q('.w104hb').textContent)&&!!q('.roomhd [data-v101med]')&&!!q('.roomhd [data-cure90]')&&!!q('.roomhd .rm100adv');
+  r.ban=!!q('#mgrPane .roomhd.w104ban .hc105')&&/7 of 7/.test(q('.hc105').textContent)&&/Medicus/.test(q('.hc105').textContent)&&!!q('.roomhd [data-v101med]')&&!!q('.roomhd [data-cure90]')&&!!q('.roomhd .rm100adv');
   r.groups=qa('.w104grp.wd [data-inf90]').length===2&&qa('.w104grp.wy [data-inf90]').length===2&&!!q('details.w104grp.fr');
   r.statue=!!q('.w104mid .rm100niche svg')&&!!q('.w104mid .w104g .w104gb');r.hyg=!!q('.w104list .hyg87 [data-m48="hygeia"]');
   r.wardTab=!!q('[data-w104t="ward"].on')&&!!q('.v104pl[data-v104p="bed"][data-bed76]')&&!!q('.v104pl[data-v104p="medic"][data-mg="medic"]')&&!!q('.v104pl[data-v104p="heal"]')&&!!q('.v104pl[data-v104p="asclepius"]')&&!q('[data-v104p="build"]')&&!q('.w104 [data-b105]')&&!q('.w104 [data-mg="build"]'); /* v1.05 B48: no Valetudinarium plate, link or button */
@@ -37,7 +37,7 @@ const inf=await ev(pg,async()=>{const q=s=>document.querySelector(s),qa=s=>[...d
   MGR.inf90=C.id;await GO('infirm');r.bathsTab=!!q('[data-w104t="baths"].on')&&!!q('.v104pl[data-v104p="rub"][data-bath]')&&!!q('.v104pl[data-v104p="care"][data-care90]')&&!!q('.v104pl[data-v104p="rest"][data-rest]')&&/0 h/.test(q('[data-v104p="rest"] .v104ph').textContent);
   const th0=thLeft(w),f0=gFat(C),h0=mh101Left(w,pm);q('[data-v104p="rub"]').click();await W8(400);r.rub=gFat(C)===f0-10&&mh101Left(w,pm)===h0-1&&thLeft(w)===th0;
   q('[data-v104p="care"]').click();await W8(400);r.care=!!(C.ord87&&C.ord87.r==='care')&&mh101Left(w,pm)===h0-2&&thLeft(w)===th0;
-  r.rested=!!q(`[data-inf90="${C.id}"] .rst104`);r.split=/recovery 2 h/.test(q('.w104hb').textContent);r.next=!!q('.w104g .nx');
+  r.rested=!!q(`[data-inf90="${C.id}"] .rst104`);r.split=/recovery 2 h/.test(q('.hc105').dataset.tip||'');r.next=!!q('.w104g .nx');
   q('[data-w104t="ward"]').click();await W8(400);r.tabSw=!!q('[data-w104t="ward"].on');
   /* rest week, 0 h */
   MGR.inf90=D.id;MGR.w104for=null;await GO('infirm');const h1=mh101Left(w,pm);for(const bo of w.night.bouts)bo.ents=bo.ents.filter(id=>id!==D.id);q('[data-v104p="rest"]').click();await W8(400);r.rest=D.restWk===w.week&&mh101Left(w,pm)===h1;
@@ -116,7 +116,7 @@ await ph.goto('file://'+process.argv[2]);await ph.waitForFunction(()=>window.FLA
 const p=await ph.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();for(let i=0;i<40&&typeof newWorld!=='function';i++)await W8(100);await W8(500);
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;W_().welc99=1;for(let k=0;k<5&&CUR_MODAL;k++){CUR_MODAL.done(null);await W8(200)}const g=rosterOf(me())[0];g.inj={until:W_().week+2,label:'a cut',pen:1};MGR.inf90=g.id;
   openManager('infirm');MGR.tab='infirm';MGR_REDRAW();await W8(800);const el=document.querySelector('.w104');const pl=document.querySelector('.w104plates');
-  return {w:!!el&&el.scrollWidth<=el.clientWidth+2&&document.documentElement.scrollWidth<=392,pl:!!pl&&pl.getBoundingClientRect().width<=392,hb:!!document.querySelector('.w104hb')&&document.querySelector('.w104hb').getBoundingClientRect().right<=392}});
+  return {w:!!el&&el.scrollWidth<=el.clientWidth+2&&document.documentElement.scrollWidth<=392,pl:!!pl&&pl.getBoundingClientRect().width<=392,hb:!!document.querySelector('.hc105')&&document.querySelector('.hc105').getBoundingClientRect().right<=392}});
 for(const [k,v] of Object.entries(p))ok(v,'390 '+k);
 
 /* ---------- kill switch ---------- */

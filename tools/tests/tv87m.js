@@ -15,7 +15,7 @@ o.h=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   r.saved=JSON.stringify(w).includes('"hours"');w.hours=0;r.after0=w.hours;w.hours-=5;r.afterSub=w.hours;
   const fa=freeAgents().sort((a,b)=>effOvr(b)-effOvr(a));const g=fa.find(x=>m.fame>=reqFame(x))||fa[0];m.fame=Math.max(m.fame,reqFame(g));g.scout=2;g.favd=true;
   MGR.tab='recruit';MGR.sel=g.id;MGR.recFor=g.id;MGR.recStep=2;MGR_REDRAW();await W8(500);const body=document.getElementById('mgrBody').innerHTML,txt=document.getElementById('mgrBody').innerText;
-  r.lanH=/lanista's hours|lanista’s hours/.test(txt);r.btnH=(body.match(/<small>[^<]*\b\d+ h\b[^<]*<\/small>/g)||[]).slice(0,4);
+  r.lanH=/lanista's hours|lanista’s hours/.test(txt);r.btnH=(body.replace(/<div class="hc105[\s\S]*?<\/div>/g,'').match(/<small>[^<]*\b\d+ h\b[^<]*<\/small>/g)||[]).slice(0,4);
   r.badge=/Recruiting hours/.test(body);r.stat=tabStat73('recruit');r.done=tabDone73('recruit');
   /* a pitch: free, answers with a result, one per recruit a week */
   const pb=[...document.querySelectorAll(`#mgrBody [data-rec98p$="|${g.id}"]`)].find(x=>!x.disabled); /* v0.98: the house-grade pitches */r.pitchBtn=!!pb;if(!pb)r.pdbg=[...document.querySelectorAll('#mgrBody [data-mg="pitch"]')].map(x=>x.dataset.id.split('|')[0]===g.id?'G':'o'+(x.disabled?(x.title||'dis'):'')).slice(0,6).concat([pitchesLeft(),m.fame,reqFame(g),MGR.recStep,!!g.contract]);const coin0=m.coin;pb&&pb.click();await W8(500);
