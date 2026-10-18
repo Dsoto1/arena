@@ -143,3 +143,12 @@
   Square). The trip cost moves into the Set off button ("🛣 Set off for Pompeii · 15").
 - Answers B73 (2026-10-17): L1a (League podium → three chips 🥇🥈🥉 with house parma + points in the slim banner) · L2a (Tituli → up to 4 small
   earned-trophy icons + "N of M earned" in the slim banner). Lanista, News, Imperium, Season banners = the slim look, numbers as chips.
+
+## His beta-4 notes (2026-10-18, PDF "105")
+- B76 Armory: list only First team, Second team, Reserves — not fighters loaned out, not the injured (in a bed / not fit).
+- B77 two contracts ending the same week → the task showed 2 buttons with no way to tell which fighter each belongs to (name them).
+- B78 Manager "Save & quit" (top-right corner, 17 mgrCloseLabel #mClose.saveq) moves into the rail, below End the week, with a little more
+  space between them. REPLACES its corner spot.
+- B79 Training Yard: drop the bottom sections (his screenshot: the TABULA "week's plan" strip + "📜 Last week in the yard"). REPLACES 373's
+  Tabula (B44 / y1a mock-up). Its "↻ Same as last week" button needs a new home (asked).
+- B80 Wagers banner = the same slim banner as the others (74 px).
