@@ -249,3 +249,9 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   Infirmary/Yard + Capsarius 354, Superbus entry guards + one bracket 355, board floor marks under the figures 356 + 359, wooing on the
   Recruiter's hours + ward/yard/letter fixes 357, Play Now row + regal bracket button + playoff Match Week 358. flavius.sh 7 (beta self-update).
   No server change.
+
+- **v1.05** Match Week + Manager polish (tools/plans/v105/NOTES.md, five betas): Match Week rework 360 + slim banner 374/389 (square locked until
+  Set off), your read 361, League seasons 362, Renown 363, careers start S1W1 365, Training Yard rework 373 + compact 388, letters = tasks vs
+  mail 378, loans/rudis/seeds/home arenas 379–382, Rivalry Week pairs + free trip 383, starters warning by bouts 384, fallen stay signed 385,
+  renewals OVR/form 386, tasks/project chips 387, slim banners everywhere 388/390/392 + one hours chip/rail pill 392, Armory list + Save & quit
+  in the rail 391, recruiting jitter fix (378). docs/known-issues.md started. No server change.
