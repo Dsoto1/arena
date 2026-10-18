@@ -18,6 +18,7 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
   re-measured with docs/economy.md after v1.05 ships (his E2a).
 
 ## Tests + tooling
+- 2026-10-18 · tv85f "Face → ad bestias runs to the end": under CPU throttle 4 the rival case once ended "bribed" instead of "face" (1 of 10) · timing; watch in CI.
 - 2026-10-18 · tv101z (pre-baked board vs old paint) now runs with Lighting Off: with Full the shadow layer adds ~9.5k px of ≤24-level anti-alias differences between the two paths (none >24) · not a visual bug; revisit if the pre-bake ever draws shadows itself.
 - tv93a (contrast + a11y): one local run in 8 failed "focus did not return to btnRules" — likely Escape vs the 40 ms close debounce in the
   a11y93 focus return under load; not proven, not changed · watch in CI.
