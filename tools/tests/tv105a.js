@@ -96,7 +96,7 @@ out.go=await ev(pg,async()=>{await ENS();if(MGR.tab!=='night')await NIGHT();cons
   const open=[...document.querySelectorAll('.mw105b.open')].map(a=>+a.dataset.mw105b);const a0=document.querySelector(`.mw105b[data-mw105b="${done[0]}"]`);
   return {gone:!!n.travel.gone,locked:roadLocked76(w),done,open,nx,res:!!(a0&&a0.querySelector('.mw105res .mw105pod li')),tag:a0?a0.querySelector('.mw105rt')?.textContent:'',chip:[...document.querySelectorAll('.mw105chip')].map(x=>x.textContent).join('|'),sum:!!document.querySelector('.mw105sum')}});
 ok(out.go.gone&&out.go.locked&&out.go.done.length===1,'mw1 confirmed: the house set off, the bout ran '+JSON.stringify(out.go));
-ok(out.go.res&&/Won by|No winner/.test(out.go.tag)&&(!out.go.open.includes(out.go.done[0])||/verdict/.test(out.go.tag))&&out.go.open.includes(out.go.nx)&&out.go.open.length<=2,'the card turned into its result, the next bout opened itself '+JSON.stringify(out.go));
+ok(out.go.res&&/Won by|Won|Lost|Fell|No winner/.test(out.go.tag) /* v1.06 G4a (398): our fighter's Won / Lost / Fell, or the winner */&&(!out.go.open.includes(out.go.done[0])||/verdict/.test(out.go.tag))&&out.go.open.includes(out.go.nx)&&out.go.open.length<=2,'the card turned into its result, the next bout opened itself '+JSON.stringify(out.go));
 ok(/Recruiting shut/.test(out.go.chip)&&!out.go.sum,'banner: road lock chip; no "what changed" until all are fought '+JSON.stringify(out.go));
 
 /* ---- mw1: Recruiting locks on the road ---- */

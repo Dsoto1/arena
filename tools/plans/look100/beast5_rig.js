@@ -166,7 +166,7 @@ export const SPECIES = {
 /* variants = a recolour (sampled from his minis8: the lit 85th-percentile colour of the figure) */
 export const VARIANTS = {
   leo: ['lion'], leaena: ['lioness'], ursa: ['bear'], brutum: ['bear', { fur: '#96785a', u: '#7c6248', muz: '#bca27c' }],
-  valencia: ['wolf'], moechus: ['wolf', { fur: '#5c5856', u: '#8e8a86', muz: '#86827e' }],
+  valencia: ['wolf'], moechus: ['wolf', { fur: '#8c8884', u: '#b8b4ae', muz: '#aca8a2' }] /* v1.06 G5 (398): was fur #5c5856 — rendered near-black (a flat silhouette on the board) */,
   boar: ['boar'], croc: ['croc'],
 };
 function quad(S, f, COL) {
