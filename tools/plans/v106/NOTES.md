@@ -83,3 +83,15 @@ you're targeting. That said, it went where I wanted each time." Found: the board
 - Mock-up published 2026-10-18: https://claude.ai/artifact/5HKkQE1uKseEt3VHawxBCh (prototype on branch worktree-agent-a95f2ee3813202e8e, commit 23221c1, off by default; not merged until his ok).
 - His ok on the mock-up (2026-10-18): "lighting looks good" → full v1.06a build: direct shadow draw + cached static shadow layer, darker base top, half-size alpha shadow sheets (+ phone set), all classes + severed sets + beasts baked (no runtime stand-ins), Settings → Lighting Full/Light/Off with auto-drop on the frame meter, test tv106l.
 - Poaching after the deadline (his "you decide", 2026-10-18): BLOCKED for the player, rivals and Sica's lure from week 9 (a signed fighter moving houses = a trade; keeps the frozen Superbus roster honest). The moneylender's coin loans and calling back your own lent fighter stay open.
+
+## His beta-1 notes (2026-10-18, PDF "beta")
+- G1 Match Week: he entered a fighter into the FIRST bout and simulated it BEFORE setting off (B74 locked the square, not the bouts).
+  Fix: no bout can be fought, watched or simulated before the house has set off on an away week (Set off first, same 🔒 message).
+- G2 City Square (screenshot, Capua): the city's EDGES look strange (houses cut off at the map border, the tiled ground ending in a hard
+  line); the building SIGN letters don't fit their plates (Bathhouse, Armorer, Arms market, Auction block, Lupanar, The Arena Gate…).
+- G3 City Square: remove the speed control (it only speeds walking; no purpose). REPLACES its place in the square's top bar.
+- G4 Match Week: when a bout ends (it collapses, the next opens) the results card should show OUR gladiator in the win/results box on
+  the right of the card.
+- G5 Board (screenshot, Classic Elimination): rings still an issue + new visual "debris" — yellow arrows at: the dashed ring under each
+  snake, a white tile outline + dark ring under the bears, specks around a flat dark beast figure (the B? flat silhouette, known issue),
+  the orange ring under the active gladiator. Likely v1.06a shadow-sheet artifacts (lossy alpha) + leftover rings.
