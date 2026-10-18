@@ -23,7 +23,7 @@ if(SHOT){await W(300);await pg.screenshot({path:SHOT+'/tv90k_matchweek.png'})}
 /* B · the League tab */
 await pg.evaluate(()=>{MGR.tab='league';MGR_REDRAW()});await W(400);
 const b1=await pg.evaluate(()=>{const w=W_();const t=document.querySelector('#mgrBody .wd100lgt');const rows=t?t.querySelectorAll('.wd100r').length:0;
-  return {rows,n:w.mgrs.length,first:(document.querySelector('#mgrBody .lp96p.p1')||{}).title||'',next:!!document.querySelector('#mgrBody .wd100next'),me:!!(t&&t.querySelector('.wd100r.me'))}});
+  return {rows,n:w.mgrs.length,first:(document.querySelector('#mgrBody .wb105med')||{}).title||'',next:!!document.querySelector('#mgrBody .wd100next'),me:!!(t&&t.querySelector('.wd100r.me'))}});
 ok(b1.rows===b1.n&&/120/.test(b1.first)&&b1.me&&b1.next,'B standings: podium prizes in the hover + table '+JSON.stringify(b1));
 await pg.click('#mgrBody [data-wd100h]:not(.me)');await W(400); /* v1.0: a row opens its house card; v1.01 (317 M10): no Scout / Challenge buttons — Team Details only */
 const b2=await pg.evaluate(()=>{const c=document.querySelector('#mgrBody .wd100hc[data-lg90box]');return {box:!!c,tab:MGR.tab,noScout:!!c&&!c.querySelector('[data-wd100sc]')&&!c.querySelector('[data-lg90ch]'),team:!!c&&!!c.querySelector('[data-mg="team"]'),ros:c?c.querySelectorAll('.gr').length:0}});

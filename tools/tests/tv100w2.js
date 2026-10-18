@@ -111,21 +111,21 @@ out.tit=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   o.seaN=sea.length;o.seaProg=sea.filter(p=>p.querySelector('.prog i')).length;o.seaHint=sea.filter(p=>/awarded at season/.test(p.querySelector('.prog').textContent)).length;
   const w0=w.week;w.week=12;MGR_REDRAW();await W8(250);o.prog12=q('.wd100tp .prog i').length;w.week=w0;
   /* the banner: nothing earned → four empty plinths and the invitation */
-  MGR_REDRAW();await W8(250);const bn=document.querySelector('#mgrBody .wd100ban');o.none={pl:bn.querySelectorAll('.wd100tro.none .wd100pl').length,tro:bn.querySelectorAll('.wd100pl .tr').length,txt:/Your first honour awaits/.test(bn.textContent),chip:/0 \/ \d+/.test(bn.textContent),all:!!bn.querySelector('.wd100all')};
+  MGR_REDRAW();await W8(250);const bn=document.querySelector('#mgrBody .wd100ban');o.none={pl:bn.querySelectorAll('.wd100tro .wd100pl').length,tro:bn.querySelectorAll('.wd100pl .tr').length,txt:/Your first honour awaits/.test(bn.textContent),chip:/0 of \d+/.test(bn.textContent),all:!!bn.querySelector('.wb105of.all')}; /* v1.05 B73 (390): the plinths became small icons + an "N of M" chip */
   /* earn a few: only earned ones, most prestigious first (cups, then other awards by recency) */
   const E=id=>earnTrophy(w,id,{who:'Testus',why:'test'});E('tiro');o.lit=false;MGR_REDRAW();await W8(250);const t=document.querySelector('#mgrBody .wd100tp[data-wd100tp="tiro"]');o.lit=!!t&&!t.classList.contains('lock')&&/Testus/.test(t.textContent);
   o.one={tro:document.querySelectorAll('#mgrBody .wd100ban .wd100pl .tr').length,none:!!document.querySelector('#mgrBody .wd100ban .wd100tro.none')};
-  E('horn');E('flavian_cup');E('aureus');E('darling');MGR_REDRAW();await W8(250);o.some=[...document.querySelectorAll('#mgrBody .wd100ban .wd100pl')].map(x=>x.title);o.someChip=/5 \/ \d+/.test(document.querySelector('#mgrBody .wd100ban').textContent);
+  E('horn');E('flavian_cup');E('aureus');E('darling');MGR_REDRAW();await W8(250);o.some=[...document.querySelectorAll('#mgrBody .wd100ban .wd100pl')].map(x=>x.title);o.someChip=/5 of \d+/.test(document.querySelector('#mgrBody .wd100ban').textContent);
   /* all earned: the four most prestigious + a laurel ring round "ALL n" */
   for(const d of TROPHY_LIB)if(!(w.trophies||[]).some(x=>x.tid===d.id))E(d.id);MGR_REDRAW();await W8(250);const b2=document.querySelector('#mgrBody .wd100ban');
-  o.all={names:[...b2.querySelectorAll('.wd100pl')].map(x=>x.title),ring:!!b2.querySelector('.wd100all svg'),txt:(b2.querySelector('.wd100all')||{}).textContent||'',chip:!!b2.querySelector('.wd100bc')};
+  o.all={names:[...b2.querySelectorAll('.wd100pl')].map(x=>x.title),ring:!!b2.querySelector('.wb105of.all'),txt:(b2.querySelector('.wb105of.all')||{}).textContent||'',chip:!!b2.querySelector('.wd100bc')};
   for(const f of ['pn','onl']){WD100.tf=f;MGR_REDRAW();await W8(400);const Q=[...document.querySelectorAll('#mgrBody .wd100tp')];o[f]=Q.length&&Q.every(p=>p.querySelector('.art svg,.art img'))&&!Q.some(p=>EMO.test(p.querySelector('.art').textContent))}
   WD100.tf='mgr';return o});
 ok(out.tit.n===out.tit.lib&&out.tit.art&&!out.tit.emoji&&out.tit.lock===out.tit.n&&out.tit.lit&&out.tit.pn&&out.tit.onl,'5 Tituli plaques: art not emoji, earned lit, Play Now + Online filters '+JSON.stringify(out.tit));
 ok(out.tit.seaN>=10&&out.tit.seaProg===0&&out.tit.seaHint===out.tit.seaN&&out.tit.prog12>=1,'5 season-award progress hidden before week 12, shown in week 12 '+JSON.stringify([out.tit.week,out.tit.seaN,out.tit.seaProg,out.tit.seaHint,out.tit.prog12]));
-ok(out.tit.none.pl===4&&out.tit.none.tro===0&&out.tit.none.txt&&out.tit.none.chip&&!out.tit.none.all,'5 banner, none earned: four empty plinths + "Your first honour awaits" '+JSON.stringify(out.tit.none));
+ok(out.tit.none.pl===0&&out.tit.none.tro===0&&out.tit.none.txt&&out.tit.none.chip&&!out.tit.none.all,'5 banner, none earned: no icons, "Your first honour awaits" + "0 of M" chip (v1.05 B73: the empty plinths are gone) '+JSON.stringify(out.tit.none));
 ok(out.tit.one.tro===1&&!out.tit.one.none&&out.tit.some.join('|')==='The Flavian Cup|The Aureus Gladius|Darling of the Stands|The Bestiarius Horn'&&out.tit.someChip,'5 banner shows only earned ones, cups first then the most recent '+JSON.stringify([out.tit.one,out.tit.some]));
-ok(out.tit.all.names.join('|')==='The Flavian Cup|The Superbus Cup|The Aureus Gladius|The Colossus Crown'&&out.tit.all.ring&&/ALL\s*\d+/.test(out.tit.all.txt)&&!out.tit.all.chip,'5 banner, all earned: the four most prestigious + a laurel ring "ALL n" '+JSON.stringify(out.tit.all));
+ok(out.tit.all.names.join('|')==='The Flavian Cup|The Superbus Cup|The Aureus Gladius|The Colossus Crown'&&out.tit.all.ring&&/(\d+) of \1/.test(out.tit.all.txt)&&!out.tit.all.chip,'5 banner, all earned: the four most prestigious + a gold "N of N" chip (v1.05 B73: replaces the laurel ring) '+JSON.stringify(out.tit.all));
 if(SHOT)await pg.screenshot({path:path.join(SHOT,'w2_trophy_all.png')});
 /* 6 · the Calendar: three seasons, current week highlighted on tablets and in the list, contrast ≥ 4.5 */
 out.cal=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={s:[]};const w=W_();MGR.tab='sched';

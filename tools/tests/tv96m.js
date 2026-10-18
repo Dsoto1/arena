@@ -27,12 +27,12 @@ ok(r2.includes('Save and Exit')&&!r2.some(x=>/leave this career/.test(x)),'2 Sav
 const r3=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const rv=w.mgrs.filter(x=>!x.isPlayer);msp(rv[0]).pts=9;msp(rv[1]).pts=6;msp(m).pts=3;
   const g=rosterOf(rv[0])[0];if(g)g.recent=[{s:w.season,wk:1,t:'Feature',ev:'Egidious',loc:'Roma',place:1,won:true}];
   MGR.lg90=rv[0].id;MGR.tab='league';MGR_REDRAW();await W8(500);const B=document.getElementById('mgrBody');const o={};const box=B.querySelector('.wd100lgt');o.box=!!box;
-  o.pod=[...B.querySelectorAll('.lp96pod .lp96p')].map(x=>x.className.replace(/\s*me/,'').replace('lp96p ',''));o.cup=!!B.querySelector('.lp96p.p1 .lp96cup svg');
-  o.tip=(B.querySelector('.lp96p.p1')||{}).title||'';o.tip2=(B.querySelector('.lp96p.p2')||{}).title||'';
+  o.pod=[...B.querySelectorAll('.wb105med .wb105m')].map(x=>x.textContent);o.cup=true; /* v1.05 B73 (390): the podium became three medal chips (the cup went with it) */
+  const mc=B.querySelectorAll('.wb105med');o.tip=(mc[0]||{}).title||'';o.tip2=(mc[1]||{}).title||'';
   const th=[...B.querySelectorAll('.wd100rh>span')].map(x=>x.textContent.trim());o.th=th;o.txt=B.querySelector('.wd100lgt').textContent;
   o.rows=B.querySelectorAll('.wd100lgt .wd100r').length;o.top4=B.querySelectorAll('.wd100lgt .wd100r.top4').length;o.me=!!B.querySelector('.wd100lgt .wd100r.me');o.latest=/won/.test((B.querySelector('.wd100led')||{}).textContent||'');o.ledger=[...B.querySelectorAll('.wd100led .kv>span:first-child')].map(x=>x.textContent.trim());
   o.rec=/^🥇\d+ 🥈\d+ 🥉\d+ · \d+$/.test(B.querySelector('.wd100lgt .wd100r .rec').textContent.trim()); /* v1.02 (333 M5): podiums */return o});
-ok(r3.box&&r3.pod.join()==='p2,p1,p3'&&r3.cup,'3 podium 2nd-1st-3rd with the cup on 1st '+JSON.stringify(r3.pod));ok(/120/.test(r3.tip)&&/Superbus/.test(r3.tip)&&/Quaestor/.test(r3.tip)&&/80/.test(r3.tip2),'3 hover = the season-finish prizes '+r3.tip);
+ok(r3.box&&r3.pod.join('')==='\u{1F947}\u{1F948}\u{1F949}'&&r3.cup,'3 podium chips 🥇🥈🥉 (v1.05 B73) '+JSON.stringify(r3.pod));ok(/120/.test(r3.tip)&&/Superbus/.test(r3.tip)&&/Quaestor/.test(r3.tip)&&/80/.test(r3.tip2),'3 hover = the season-finish prizes '+r3.tip);
 ok(['House','Pts','Top gladiator','Podiums'] /* v1.02 (333 M5) */.every(x=>r3.th.includes(x))&&r3.ledger.includes('Latest event')&&r3.top4===4,'3 standings columns (place, house, points, top gladiator, record) + Latest event in the house card + the four Superbus places marked '+r3.th.join('|')+' '+r3.ledger.join('|'));ok(!/Quaestor|League prize/.test(r3.txt.replace(/Quaestor's/g,'')===r3.txt?r3.txt:r3.txt),'3 no Quaestor / prize column');
 ok(r3.rows>=8&&r3.me&&r3.latest&&r3.rec,'3 rows, your row lit, record + latest event '+JSON.stringify(r3));
 if(SHOT){await W(300);await pg.screenshot({path:SHOT+'/tv96m_league.png'})}
