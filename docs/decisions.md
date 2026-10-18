@@ -781,3 +781,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   R2 a CI input that re-runs only named tests (failed-only reruns ≈ 5 min); R3 the beta may start while test-only failures are still being
   fixed (offline beta, own saves; game bugs → next beta); R4 a re-bake never ships bundled with other feature work (v1.06b, poser releases,
   economy each alone).
+- Decided 2026-10-18 (his g4a g5a): Match Week results box shows our fighter (face, name, result, purse); NO rings under figures on the board (only the active piece's highlighted tile) — REPLACES the v1.0 team rings at mini bases (thinned in v1.03).

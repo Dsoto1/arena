@@ -95,3 +95,6 @@ you're targeting. That said, it went where I wanted each time." Found: the board
 - G5 Board (screenshot, Classic Elimination): rings still an issue + new visual "debris" — yellow arrows at: the dashed ring under each
   snake, a white tile outline + dark ring under the bears, specks around a flat dark beast figure (the B? flat silhouette, known issue),
   the orange ring under the active gladiator. Likely v1.06a shadow-sheet artifacts (lossy alpha) + leftover rings.
+- Answers (2026-10-18): G4a (the results box shows OUR fighter's face + name + result Won/Lost/Fell + purse; none of ours → the bout winner's
+  face) · G5a (no rings under figures — only the highlighted tile under the active piece; fix the shadow-sheet speck artifacts; diagnose the
+  flat dark beast). REPLACES the team/seat rings at the mini bases (v1.0 "team rings at mini bases", thinned in v1.03 346).
