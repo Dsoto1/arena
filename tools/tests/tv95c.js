@@ -119,7 +119,7 @@ const r7=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   h.inj={until:w.week+3,label:'a cracked rib',pen:3};MGR_REDRAW();await W8(400);
   o.stripped=[h.eq94.R,h.eq94.L,...h.eq94.a,...h.eq94.o].filter(Boolean).length===0&&arm94H(m).sh.length===sh0+n0&&(h.re95||[]).length===n0;
   const P=arm94H(m).sh[0];const r=arm94Put(m,P.id,{g:h.id,z:'auto'});o.refused=!!r.no&&/hurt/.test(r.no);
-  MGR.ar94=h.id;arm94Redraw();await W8(300);o.warn=!!document.querySelector('#ar94 .ar94warn');
+  MGR.ar94=h.id;arm94Redraw();await W8(300);o.warn=!!document.querySelector('#ar94 .ar94warn')||(typeof arm105Own==='function'&&!arm105Own(m).includes(h)); /* v1.05 B76 (391): a hurt fighter is no longer listed in the Armory at all */
   delete h.inj;MGR.tab='ludus';MGR_REDRAW();await W8(500);const it=[...document.querySelectorAll('#desk99 .dk99row .tx')].find(x=>/healed/.test(x.textContent));o.todo=!!it&&it.textContent.includes(h.name);
   const bt=document.querySelector(`[data-re95="${h.id}"]`);o.btn=!!bt;if(bt)bt.click();await W8(400);o.back=[h.eq94.R,h.eq94.L,...h.eq94.a,...h.eq94.o].filter(Boolean).length===n0&&!h.re95;o.dbg=[n0,[h.eq94.R,h.eq94.L,...h.eq94.a,...h.eq94.o].filter(Boolean).length,h.re95,h.eq94.h,m.id,!!h.inj];
   o.todoGone=![...document.querySelectorAll('#desk99 .dk99row .tx')].some(x=>/healed/.test(x.textContent)&&x.textContent.includes(h.name));return o});
