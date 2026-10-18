@@ -13,7 +13,7 @@ const {chromium}=require('playwright');const path=require('path');const page=pat
 (async()=>{const b=await chromium.launch();const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m);else console.log('ok',m.slice(0,200))};
 const serve=require(path.join(__dirname,'..','perf95','serve.js'));const URL0=await serve(page);
 const open=async(ls,vp)=>{const cx=await b.newContext({viewport:vp||{width:1440,height:900}});const q=await cx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
-  await q.addInitScript(ls=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');for(const k in ls)localStorage.setItem(k,ls[k])},ls||{});
+  await q.addInitScript(ls=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');for(const k in ls)localStorage.setItem(k,ls[k])},Object.assign({flavius_light106:'off'},ls||{})); /* v1.06a (399): this test compares the pre-baked layers with the old paint — lighting off */
   await q.goto(URL0,{timeout:180000});await q.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:120000});return q};
 const start=q=>q.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}try{menuHide()}catch(e){}
   window.__e0=typeof ERR92!=='undefined'?ERR92.n:0;
