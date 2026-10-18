@@ -77948,7 +77948,7 @@ function aim106Map(){const m=new Map();if(!aim106Live()||typeof HL==='undefined'
 function aim106Name(h){const t=h.target;if(!t)return '';if(t.kind==='pot')return _T('Pot');return t.ref&&t.ref.name?String(t.ref.name):tl(t.r,t.c)}
 /* the hit chance shown on the tag: at least one hit die lands. Mirrors the dice counts of doAttack (4 vs a beast or in the endgame, else 2),
    chAttack (2) and tamedAttack (2). Display only. */
-function aim106Chance(h){try{const p=typeof HIT_CHANCE==='number'?HIT_CHANCE:0.5;let n=2;
+function aim106Chance(h){try{if(typeof ONL80R!=='undefined'&&ONL80R.hints)return null; /* Ranked online: no hints or odds (v0.80 rule) — the tag shows the name only */const p=typeof HIT_CHANCE==='number'?HIT_CHANCE:0.5;let n=2;
   if(h.t==='atk'&&!(typeof isChariot==='function'&&isChariot()&&h.target.kind==='player'))n=S.endgame?4:h.target.kind==='npc'?4:2;
   return Math.round(100*(1-Math.pow(1-p,n)))}catch(e){return null}}
 /* the figure an entry stands for (players / beasts); pots and ships have none */
