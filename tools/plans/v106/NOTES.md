@@ -104,3 +104,5 @@ you're targeting. That said, it went where I wanted each time." Found: the board
   target's shield raise, armor/AP soak, blessings (Minerva etc.), Fidelis Constans, Achilles' shield, elixirs, the attacker's Focus! and
   Omnia Mutantur when active this turn (a2a); likely damage added when the chance is high. Ranked online: no % (unchanged). The confirm
   dialog shows the same number. Enumerate every modifier from 03-engine hurt()/04-rules doAttack and their wrappers (grep), list them.
+  M1a (2026-10-18): Minerva's Push in the target's hand → the tag shows 0% and names Minerva (assumes the defender plays her). M2a: Omnia
+  Mutantur in the attacker's hand counts (assumed played on the misses), not only once played.

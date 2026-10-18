@@ -120,7 +120,7 @@ function aim106Wound(att,target,kind,src){
   if(hasM)notes.push(_T`assumes ${q.name} plays Minerva's Push (dodges)`);else if(anyF)notes.push(_T`assumes ${q.name} plays Fidelis Constans (−1 hit die)`);
   const sh=aim106Shield(q);if(sh&&!hasM)notes.push(_T`assumes ${q.name} raises the ${sh.n} (absorbs ${sh.absorb})`);
   if(s.punch&&!s.cestus&&alive.some(l=>q.ap[l]>0))notes.push(_T('fists glance off armor'));
-  return {p:100*P,avg:E,notes}}
+  return {p:100*P,avg:E,notes,minerva:hasM}}
 /* the tag / confirm numbers for an HL entry, cached per (entry, turn state): a hover redraw never recomputes */
 const AIM106W=new WeakMap();
 function aim106Stamp(a,q){const L=x=>x&&x.hp&&typeof x.hp==='object'?LOCS.map(l=>x.hp[l]+'/'+(x.ap?x.ap[l]:0)).join(','):x&&x.hp;
@@ -132,7 +132,7 @@ function aim106Chance(h){try{if(typeof ONL80R!=='undefined'&&ONL80R.hints)return
   const r=aim106Wound(a,h.target,catk?'catk':'atk',h.src);AIM106W.set(h,{st,r});AIM106.stats.wound=(AIM106.stats.wound|0)+1;return r}catch(e){console.error(e);return null}}
 /* "62% to wound · ~3 dmg" (the damage only when the chance is at least even) */
 function aim106Line(r){if(!r)return '';const pct=Math.round(r.p);const d=r.avg!=null&&r.p>=50?Math.round(r.avg):0;
-  return (r.pot?_T`${pct}% to break`:_T`${pct}% to wound`)+(d>0?' · '+_T`~${d} dmg`:'')}
+  return (r.pot?_T`${pct}% to break`:_T`${pct}% to wound`)+(d>0?' · '+_T`~${d} dmg`:'')+(r.minerva?' · '+_T('Minerva'):'')} /* M1a: the target holds Minerva's Push → 0% and her name */
 /* the figure an entry stands for (players / beasts); pots and ships have none */
 const aim106Fig=h=>h&&h.target&&(h.target.kind==='player'||h.target.kind==='npc')?h.target.ref:null;
 /* the target shown now: a touch selection wins over the hover */

@@ -47,6 +47,7 @@ let P=await pts(pg);ok(!P.err&&P.A&&P.both&&P.onlyB,'0b points found '+JSON.stri
 await pg.mouse.move(P.far.x,P.far.y);await W(120);await pg.mouse.move(P.A.x,P.A.y);await W(200);
 let s1=await state(pg);ok(s1.shown===P.names[0]&&s1.cursor==='crosshair'&&s1.tag.startsWith(P.names[0]+' · ')&&/\d+% to wound/.test(s1.tag),'1 hover A: shown + crosshair + tag '+JSON.stringify(s1));
 ok(/ · 94% to wound · ~\d+ dmg$/.test(s1.tag),'1b chance to wound a beast (4 dice, no defences) = 1-(1/2)^4 = 94% + the likely damage '+s1.tag);
+ok(await pg.evaluate(()=>aim106Line({p:0,avg:0,notes:[],minerva:true})===`0% to wound · Minerva`&&aim106Line({p:62,avg:3,notes:[]})===`62% to wound · ~3 dmg`),'1c M1a: Minerva in the target’s hand → 0% and her name');
 const ringDrawn=await pg.evaluate(()=>{let n=0;const o=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){if(String(this.strokeStyle)==='#ff3b2a')n++;return o.apply(this,arguments)};try{draw()}finally{CanvasRenderingContext2D.prototype.stroke=o}return n});
 ok(ringDrawn>=2,'1c red ring strokes painted '+ringDrawn);
 const outl=await pg.evaluate(()=>({o:AIM106.figs.some(f=>f.outlined),built:AIM106.stats.built}));ok(outl.o&&outl.built>=1,'1d outline drawn on the figure '+JSON.stringify(outl));
