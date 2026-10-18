@@ -22022,7 +22022,6 @@ function openCitySquare(locIdx,opts={}){
     <div class="citybar"><b>🏛 ${esc((CITY_DRESS[L.n]||{}).sq||_T('The Square'))} · ${esc(L.n)}</b>${typeof CITY_FLAG!=='undefined'&&CITY_FLAG[L.n]&&typeof flagURIk==='function'?`<img class="flagchip" src="${flagURIk(CITY_FLAG[L.n])}" style="height:16px" alt="" title="${_T`The banner of ${esc(L.n)}`}">`:''}<span class="rc-sub" id="cityLand">${esc((CITY_DRESS[L.n]||{}).land||'')}</span>
       <span id="cityClock" class="cityclock" hidden></span><span style="flex:1"></span>
       <span id="cityNext" class="rc-sub"></span>
-      <div class="seg" title="${_T`How fast the square lives — strolling, walking, the countdown, all of it`}">${[1,2,4].map(v=>`<button type="button" data-cspd="${v}" class="${v===1?'on':''}">${v}×</button>`).join('')}</div>
       <span class="cityclock" id="cityCoin" title="${_T`Your treasury — every shop, gift and auction bid draws on it`}"></span>
       ${opts.prematch?`<button class="btn tksm" type="button" id="cityBell" title="${_T`Sound the horns early — the crowd files in and the games begin`}">${_T`🎺 Sound the horns`}</button>`:''}
       <button class="btn tksm" type="button" id="cityLeave">${opts.prematch?_T('Leave the square ✕'):'LEAVE_LBL'}</button></div>
@@ -22036,7 +22035,6 @@ function openCitySquare(locIdx,opts={}){
   {const lv=ov.querySelector('#cityLeave');if(!opts.prematch){lv.textContent=CITY_EXIT_LBL[cityExitKind()];lv.onclick=()=>cityExit()}else lv.onclick=()=>closeCity()}
   const bell=ov.querySelector('#cityBell');if(bell)bell.onclick=()=>cityHorns();
   CITY.side='stands';citySideDraw();if(typeof loadBestiary==='function')loadBestiary().then(()=>{if(CITY.open&&CITY.side==='beasts')citySideDraw()}).catch(()=>{});ov.querySelectorAll('[data-cside]').forEach(b=>b.onclick=()=>{if(b.dataset.cside==='hide'){ov.classList.toggle('sidefold');setTimeout(citySize,50);return}CITY.side=b.dataset.cside;ov.querySelectorAll('[data-cside]').forEach(x=>x.classList.toggle('on',x===b));citySideDraw()});
-  ov.querySelectorAll('[data-cspd]').forEach(b=>b.onclick=()=>{CITY.speed=+b.dataset.cspd;ov.querySelectorAll('[data-cspd]').forEach(x=>x.classList.toggle('on',x===b))});
   {const nx=ov.querySelector('#cityNext');if(nx)nx.innerHTML=cityNextEventLine()}
   CITY.cv.addEventListener('click',cityClick);CITY.cv.addEventListener('mousemove',cityMove);
   CITY.esc=e=>{if(e.key==='Escape'){e.stopPropagation();closeCity()}};document.addEventListener('keydown',CITY.esc,true);
@@ -44118,9 +44116,9 @@ cityDraw=function(){const c2=CITY.c2;if(!c2||!CITY.TW)return;const W=CITY.W||CIT
   /* labels: plaques over the landmarks, brighter on hover */
   const fs=Math.max(9,Math.round(T*0.19));c2.font=`600 ${fs}px IBM Plex Mono, monospace`;c2.textAlign='center';c2.textBaseline='middle';
   const keep89=[];/* label boxes the chatter must not cover */
-  for(const Lb of K.labs){const t=`${Lb.ico} ${Lb.lab}`;const wd=c2.measureText(t).width+12,hh=fs+7;const hov=CITY.hovB89===Lb.k;keep89.push([Lb.p.x-wd/2,Lb.p.y-hh/2,wd,hh]);
+  for(const Lb of K.labs){const t=`${Lb.ico} ${Lb.lab}`;const wd=lab106W(c2,t,fs,T,W),hh=fs+7;const hov=CITY.hovB89===Lb.k;keep89.push([Lb.p.x-wd/2,Lb.p.y-hh/2,wd,hh]);
     c2.fillStyle=hov?'rgba(60,36,12,.95)':'rgba(28,18,10,.78)';c2.beginPath();c2.roundRect(Lb.p.x-wd/2,Lb.p.y-hh/2,wd,hh,4);c2.fill();c2.strokeStyle=hov?'#f0cf7d':'rgba(201,164,88,.7)';c2.lineWidth=1;c2.stroke();c2.fillStyle=hov?'#ffe7a8':'#efe2c0';c2.fillText(t,Lb.p.x,Lb.p.y+1)}
-  {const gp=P89(CITY_GATE[0],CITY_GATE[1],2.35);const t=_T('⬆ THE ARENA GATE');const wd=c2.measureText(t).width+12,hh=fs+7;keep89.push([gp.x-wd/2,gp.y-hh/2,wd,hh]);const hov=CITY.hovB89==='arena';c2.fillStyle=hov?'rgba(60,36,12,.95)':'rgba(28,18,10,.82)';c2.beginPath();c2.roundRect(gp.x-wd/2,gp.y-hh/2,wd,hh,4);c2.fill();c2.strokeStyle='#d4ae5c';c2.stroke();c2.fillStyle='#f0cf7d';c2.fillText(t,gp.x,gp.y+1)}
+  {const gp=P89(CITY_GATE[0],CITY_GATE[1],2.35);const t=_T('⬆ THE ARENA GATE');const wd=lab106W(c2,t,fs,T,W),hh=fs+7;keep89.push([gp.x-wd/2,gp.y-hh/2,wd,hh]);const hov=CITY.hovB89==='arena';c2.fillStyle=hov?'rgba(60,36,12,.95)':'rgba(28,18,10,.82)';c2.beginPath();c2.roundRect(gp.x-wd/2,gp.y-hh/2,wd,hh,4);c2.fill();c2.strokeStyle='#d4ae5c';c2.stroke();c2.fillStyle='#f0cf7d';c2.fillText(t,gp.x,gp.y+1)}
   /* you, always findable */
   {const P=CITY.player;if(P._x!=null){c2.font=`600 ${Math.max(9,Math.round(T*0.2))}px IBM Plex Mono, monospace`;c2.fillStyle='#f0cf7d';c2.strokeStyle='rgba(20,12,4,.8)';c2.lineWidth=3;const t=CITY.mgr?_T('YOU · LANISTA'):_T('YOU');const yw=c2.measureText(t).width+8;keep89.push([P._x-yw/2,P._y+T*0.3-T*0.15,yw,T*0.3]);c2.strokeText(t,P._x,P._y+T*0.3);c2.fillText(t,P._x,P._y+T*0.3)}}
   /* chatter bubbles */
@@ -76005,6 +76003,8 @@ window.addEventListener('click',e=>{if(MW105.pass||mw105Off())return;const el=e.
   /* B35d: Bet opens the stake window */
   if(el.matches('[data-mg="bet"]')&&el.closest('.mw105b')){stop();mw105Pop(el);return}
   if(el.matches('[data-mw105="tree"]')){stop();const t=document.querySelector('#mgrBody .v104top')||document.querySelector('#mgrBody .po104bk');if(t)t.scrollIntoView({block:'start',behavior:typeof reduceMotion==='function'&&reduceMotion()?'auto':'smooth'});else if(typeof po104Open==='function')po104Open();return}
+  /* v1.06 G1: an away week before the set-off plays no bout (397) */
+  if(typeof bt106Locked==='function'&&bt106Locked()&&(el.matches(MW105_START)||el.matches('[data-mw105="end"]'))&&!el.matches('[data-mg="city"]')){stop();bt106Toast();return}
   /* End the week */
   if(el.matches('[data-mw105="end"]')){stop();const left=w.night.bouts.some(b=>!b.done);if(!left){const r=weekReady();if(!r.ok){mToast(r.why);return}}if((w.pend||[]).length)return;MGR.confirmEnd=true;mw105Redraw();const bx=document.getElementById('mBody');if(bx)bx.scrollTop=0;return}
   /* mw1: setting off (B60: walking the host city's square counts as leaving, so it asks first) */
@@ -76021,6 +76021,7 @@ window.addEventListener('click',e=>{if(MW105.pass||mw105Off())return;const b=e.t
 /* End the week with bouts left: simulate them first (verdicts still stop it) */
 window.addEventListener('click',async e=>{if(MW105.pass||mw105Off())return;const b=e.target.closest&&e.target.closest('[data-mg="endweek"]');if(!b||!b.closest('#mgrBody'))return;
   const w=typeof W_==='function'&&W_();if(!w||!w.night||w.night.bye||MGR.busy)return;const n=w.night;if(!n.bouts.some(x=>!x.done)||(w.special&&!w.special.done))return;
+  if(typeof bt106Locked==='function'&&bt106Locked()){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();bt106Toast();return}
   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();MGR.busy=true;try{mw105Go(w);for(const i of mw105Seq(n))if(!n.bouts[i].done)await runBoutSim(i)}finally{MGR.busy=false}
   if((w.pend||[]).length||!weekReady().ok){MGR.confirmEnd=false;mw105Redraw();mToast(_T('Verdicts are waiting on Match Week — settle them, then end the week.'));return}
   mw105Reclick(b,'#mgrBody [data-mg="endweek"]')},true);
@@ -78421,6 +78422,48 @@ if(typeof set98Pieces==='function'){const base=set98Pieces;set98Pieces=function(
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-light106]');if(!b)return;const v=b.dataset.light106;
   SETTINGS.light106=v;if(v==='full'){L106.auto=null;L106.fm=[];try{localStorage.removeItem('flavius_light106drop')}catch(x){}}applySettings();
   b.parentElement.querySelectorAll('[data-light106]').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b))});try{if(S&&!HEADLESS)draw()}catch(x){}});
+/* 397-v106b1 (v1.06 beta-1 notes G1–G3):
+   • G1: in a Match Week AWAY from home, before the house has SET OFF (389's sq105Locked: trip cost > 0, not gone, not bye/home/tutorial),
+     NO bout can be fought, watched or simulated: runBoutSim / watchBout / boutCfg refuse (the play functions themselves), the bout cards'
+     Watch / Simulate / Fight / Spectate, "Simulate the rest" and End-the-week-that-plays-bouts show "🔒 Set off first" (360's click handler
+     calls bt106Locked before its auto set-off). Entering fighters stays allowed. After Set off everything works as before.
+   • G2: City Square look: sign plates fit their text (lab106W: ink width, shrinks the font for long names; used by 172's label code) and the
+     city's edges get a soft fade to the dark backdrop (baked once into the fg layer, no per-frame cost).
+   • G3: the square's speed control is gone (25-city); walking stays at normal speed (CITY.speed stays 1).
+   Kill switch: localStorage flavius_v106b1off=1 (G1 + G2; G3 is a removal). Test tv106e. */
+function b1106On(){try{return localStorage.getItem('flavius_v106b1off')!=='1'}catch(e){return true}}
+function bt106Locked(){try{return b1106On()&&typeof sq105Locked==='function'&&sq105Locked()}catch(e){return false}}
+function bt106Toast(){try{mToast(sq105Why())}catch(e){}}
+{const base=runBoutSim;runBoutSim=async function(){if(bt106Locked()){bt106Toast();return}return base.apply(this,arguments)}}
+{const base=watchBout;watchBout=function(){if(bt106Locked()){bt106Toast();return}return base.apply(this,arguments)}}
+{const base=boutCfg;boutCfg=function(){if(bt106Locked())throw new Error('Set off first');return base.apply(this,arguments)}}
+/* the buttons: stop them before the set-off ask, and mark them locked */
+window.addEventListener('click',e=>{const el=e.target.closest&&e.target.closest('[data-mg="fight"],[data-mg="watch"],[data-mg="sim"],[data-mg="spect"],[data-mg="simall"],[data-mg="underdog"],[data-mg="endweek"]');
+  if(!el||!el.closest('#mgrBody')||!bt106Locked())return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();bt106Toast()},true);
+/* the Match Week card: 🔒 on the buttons that play a bout, and on End the week while bouts are left */
+function bt106Mark(root){try{if(!root||!bt106Locked())return;const w=W_();const left=w.night.bouts.some(b=>!b.done);
+  for(const b of root.querySelectorAll('[data-mg="fight"],[data-mg="watch"],[data-mg="sim"],[data-mg="spect"],[data-mg="simall"],[data-mg="underdog"],[data-mg="endweek"],[data-mw105="end"]')){
+    if(b.matches('[data-mw105="end"],[data-mg="endweek"]')&&!left)continue;if(b.getAttribute('data-bt106'))continue;
+    b.setAttribute('data-bt106','1');b.title=sq105Why();b.classList.add('bt106l');b.setAttribute('aria-disabled','true');
+    if(b.matches('[data-mg="simall"],[data-mw105="end"],[data-mg="endweek"]')){b.innerHTML=sq105Why()}else b.insertAdjacentText('afterbegin','🔒 ')}}catch(e){console.error(e)}}
+{const base=mw105Shape;mw105Shape=function(T){const r=base.apply(this,arguments);try{if(T&&T.content)bt106Mark(T.content)}catch(e){}return r}}
+{let q=0;const mo=new MutationObserver(()=>{if(q)return;q=1;requestAnimationFrame(()=>{q=0;if(!bt106Locked())return;const rb=document.getElementById('mgrBody');if(rb)bt106Mark(rb)})});
+  const arm=()=>{try{mo.observe(document.body,{childList:true,subtree:true})}catch(e){}};if(document.body)arm();else document.addEventListener('DOMContentLoaded',arm)}
+(function(){const st=document.createElement('style');st.textContent='.bt106l{opacity:.55;cursor:not-allowed}';document.head.appendChild(st)})();
+
+/* ---- G2: sign plates + soft city edges ---- */
+function lab106W(c2,t,fs,T,W){let f=fs;const fam='IBM Plex Mono, monospace';c2.font=`600 ${f}px ${fam}`;
+  if(!b1106On())return c2.measureText(t).width+12;
+  const cap=Math.max(120,Math.min(W*0.3,T*3.6));
+  let m=c2.measureText(t),w=Math.max(m.width,(m.actualBoundingBoxLeft||0)+(m.actualBoundingBoxRight||0));
+  while(w+16>cap&&f>7){f--;c2.font=`600 ${f}px ${fam}`;m=c2.measureText(t);w=Math.max(m.width,(m.actualBoundingBoxLeft||0)+(m.actualBoundingBoxRight||0))}
+  const pw=Math.ceil(w+16);try{(CITY.lab106=CITY.lab106||{})[t]=[pw,w,f]}catch(e){}return pw}
+{const base=bake89;bake89=function(){const K=base.apply(this,arguments);
+  try{if(b1106On()&&K&&K.fg&&!K.fg._e106){K.fg._e106=1;const W=CITY.W,H=CITY.H,dpr=CITY.dpr||1;const f=K.fg.getContext('2d');f.save();f.setTransform(dpr,0,0,dpr,0,0);
+    const e=Math.max(28,Math.round(Math.min(W,H)*0.09));const c0='rgba(22,15,9,.96)',c1='rgba(22,15,9,0)';
+    for(const [x0,y0,x1,y1,rx,ry,rw,rh] of [[0,0,e,0,0,0,e,H],[W,0,W-e,0,W-e,0,e,H],[0,H,0,H-e,0,H-e,W,e],[0,0,0,e*0.6,0,0,W,e*0.6]]){const g=f.createLinearGradient(x0,y0,x1,y1);g.addColorStop(0,c0);g.addColorStop(1,c1);f.fillStyle=g;f.fillRect(rx,ry,rw,rh)}
+    f.restore()}}catch(x){console.error(x)}
+  return K}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

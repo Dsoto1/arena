@@ -12,7 +12,7 @@ const mgr=async pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout
     for(let k=0;k<5&&CUR_MODAL;k++){CUR_MODAL.done(null);await W8(200)}
     window.W8=W8;window.ENS=async()=>{const el=document.querySelector('#mgrBody');if(!el||!el.offsetParent){menuHide();openManager(MGR.tab||'ludus');await W8(900)}};
     window.NIGHT=async()=>{await ENS();MGR.tab='night';MGR.confirmEnd=false;MGR_REDRAW();await W8(700)};
-    window.SIMS=async()=>{const w=W_();for(let k=0;k<w.night.bouts.length;k++)if(!w.night.bouts[k].done)await runBoutSim(k)};
+    window.SIMS=async()=>{const w=W_();if(w.night&&w.night.travel&&w.night.travel.cost>0)w.night.travel.gone=true /* v1.06 G1: an away week plays only after Set off */;for(let k=0;k<w.night.bouts.length;k++)if(!w.night.bouts[k].done)await runBoutSim(k)};
     window.PW=async(keep,pre)=>{const w=W_(),pm=me();if(!keep)for(const g of rosterOf(pm)){g.inj=null;g.contract.weeks=Math.max(g.contract.weeks,30)}
       if(w.special&&!w.special.done)await specAutoRun();await SIMS();if(pre)pre();
       let guard=0;while((w.pend||[]).length&&guard++<30){const P=w.pend[0];try{if(P.t==='thumb')settlePending(0,null,{d6:6,d12:12});else if(P.t==='blood')settlePending(0,'let');else if(P.t==='levy')settlePending(0,'march');else settlePending(0,'stay')}catch(e){w.pend.shift()}}
@@ -88,10 +88,14 @@ ok(!out.c4.ask&&out.c4.c===1,'B60 a home week: the square opens as before '+JSON
 await ev(pg,()=>{openCitySquare=window.__cb;window.__cb=null;MGR_REDRAW()});
 
 /* ---- mw1: set off from the open bout's Simulate ---- */
-await pg.click('.mw105b.open [data-mg="sim"]');await pg.waitForTimeout(400);
+/* v1.06 G1: Simulate is locked before Set off (no auto set-off ask any more): the house sets off first, then the bout runs */
+await ev(pg,()=>{document.querySelector('.mw105b.open [data-mg="sim"]').click()});await pg.waitForTimeout(300);
+ok(await ev(pg,()=>!document.querySelector('.ask76bg')&&!W_().night.travel.gone&&!W_().night.bouts.some(b=>b.done)),'G1 Simulate before Set off: refused, no ask, no set-off');
+await pg.click('#mgrBody [data-mw105="off"]');await pg.waitForTimeout(400);
 out.ask=await ev(pg,()=>{const a=document.querySelector('.ask76bg');return a?{t:a.textContent,li:a.querySelectorAll('li').length}:null});
 ok(out.ask&&/Set off/.test(out.ask.t)&&/Recruiting/.test(out.ask.t)&&out.ask.li>=1,'mw1 the set-off window lists what is undone '+JSON.stringify(out.ask));
-await pg.click('.ask76bg [data-ask76="1"]');await pg.waitForTimeout(2500);
+await pg.click('.ask76bg [data-ask76="1"]');await pg.waitForTimeout(800);
+await pg.click('.mw105b.open [data-mg="sim"]');await pg.waitForTimeout(2500);
 out.go=await ev(pg,async()=>{await ENS();if(MGR.tab!=='night')await NIGHT();const w=W_(),n=w.night;const S=mw105Seq(n);const done=S.filter(i=>n.bouts[i].done);const nx=S.find(i=>!n.bouts[i].done);
   const open=[...document.querySelectorAll('.mw105b.open')].map(a=>+a.dataset.mw105b);const a0=document.querySelector(`.mw105b[data-mw105b="${done[0]}"]`);
   return {gone:!!n.travel.gone,locked:roadLocked76(w),done,open,nx,res:!!(a0&&a0.querySelector('.mw105res .mw105pod li')),tag:a0?a0.querySelector('.mw105rt')?.textContent:'',chip:[...document.querySelectorAll('.mw105chip')].map(x=>x.textContent).join('|'),sum:!!document.querySelector('.mw105sum')}});

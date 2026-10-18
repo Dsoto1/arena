@@ -591,9 +591,9 @@ cityDraw=function(){const c2=CITY.c2;if(!c2||!CITY.TW)return;const W=CITY.W||CIT
   /* labels: plaques over the landmarks, brighter on hover */
   const fs=Math.max(9,Math.round(T*0.19));c2.font=`600 ${fs}px IBM Plex Mono, monospace`;c2.textAlign='center';c2.textBaseline='middle';
   const keep89=[];/* label boxes the chatter must not cover */
-  for(const Lb of K.labs){const t=`${Lb.ico} ${Lb.lab}`;const wd=c2.measureText(t).width+12,hh=fs+7;const hov=CITY.hovB89===Lb.k;keep89.push([Lb.p.x-wd/2,Lb.p.y-hh/2,wd,hh]);
+  for(const Lb of K.labs){const t=`${Lb.ico} ${Lb.lab}`;const wd=lab106W(c2,t,fs,T,W),hh=fs+7;const hov=CITY.hovB89===Lb.k;keep89.push([Lb.p.x-wd/2,Lb.p.y-hh/2,wd,hh]);
     c2.fillStyle=hov?'rgba(60,36,12,.95)':'rgba(28,18,10,.78)';c2.beginPath();c2.roundRect(Lb.p.x-wd/2,Lb.p.y-hh/2,wd,hh,4);c2.fill();c2.strokeStyle=hov?'#f0cf7d':'rgba(201,164,88,.7)';c2.lineWidth=1;c2.stroke();c2.fillStyle=hov?'#ffe7a8':'#efe2c0';c2.fillText(t,Lb.p.x,Lb.p.y+1)}
-  {const gp=P89(CITY_GATE[0],CITY_GATE[1],2.35);const t=_T('⬆ THE ARENA GATE');const wd=c2.measureText(t).width+12,hh=fs+7;keep89.push([gp.x-wd/2,gp.y-hh/2,wd,hh]);const hov=CITY.hovB89==='arena';c2.fillStyle=hov?'rgba(60,36,12,.95)':'rgba(28,18,10,.82)';c2.beginPath();c2.roundRect(gp.x-wd/2,gp.y-hh/2,wd,hh,4);c2.fill();c2.strokeStyle='#d4ae5c';c2.stroke();c2.fillStyle='#f0cf7d';c2.fillText(t,gp.x,gp.y+1)}
+  {const gp=P89(CITY_GATE[0],CITY_GATE[1],2.35);const t=_T('⬆ THE ARENA GATE');const wd=lab106W(c2,t,fs,T,W),hh=fs+7;keep89.push([gp.x-wd/2,gp.y-hh/2,wd,hh]);const hov=CITY.hovB89==='arena';c2.fillStyle=hov?'rgba(60,36,12,.95)':'rgba(28,18,10,.82)';c2.beginPath();c2.roundRect(gp.x-wd/2,gp.y-hh/2,wd,hh,4);c2.fill();c2.strokeStyle='#d4ae5c';c2.stroke();c2.fillStyle='#f0cf7d';c2.fillText(t,gp.x,gp.y+1)}
   /* you, always findable */
   {const P=CITY.player;if(P._x!=null){c2.font=`600 ${Math.max(9,Math.round(T*0.2))}px IBM Plex Mono, monospace`;c2.fillStyle='#f0cf7d';c2.strokeStyle='rgba(20,12,4,.8)';c2.lineWidth=3;const t=CITY.mgr?_T('YOU · LANISTA'):_T('YOU');const yw=c2.measureText(t).width+8;keep89.push([P._x-yw/2,P._y+T*0.3-T*0.15,yw,T*0.3]);c2.strokeText(t,P._x,P._y+T*0.3);c2.fillText(t,P._x,P._y+T*0.3)}}
   /* chatter bubbles */
