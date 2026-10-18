@@ -8,9 +8,10 @@
      flush = draw() + a 1-pixel getImageData (forces the canvas to rasterise now) — run AFTER the js pass, because readbacks may move
              the canvas off the GPU path for the rest of the page's life.
    Configs: desk 1440×900 @1x and phone 390×844 @2x (mobile, touch) × day / night × flat / zoomed (Zoom in, camera on the soldier).
-   Also prints the layer manager's per-layer averages (219 LAYERS93) and, when the v1.06 prototype is on, its own pass time (L106.st).
+   Also prints the layer manager's per-layer averages (219 LAYERS93) and, when the v1.06a light pass runs, its own time (399 L106.st).
      node tools/bench/board.js <page> [--frames 120] [--warm 20] [--ls key=val,key=val] [--shots DIR --tag NAME] [--only desk|phone] [--json FILE]
-   --ls sets localStorage before load (e.g. flavius_light106=1 turns the v1.06 lighting prototype on). --shots saves a frozen-clock PNG
+   --ls sets localStorage before load (e.g. flavius_light106=full|light|off forces the v1.06a Lighting mode, flavius_light106auto=0 keeps Full;
+   desk defaults to Full, phone to Light). --shots saves a frozen-clock PNG
    of the board canvas per config + the overlay-contrast numbers (highlight pixels vs the same pixels without the highlight).
    The machine load (/proc/loadavg, nproc) is printed before and after: other builders may share this box. Served over http
    (tools/perf95/serve.js) so sprite sheets read back like on the site. */
@@ -51,11 +52,13 @@ const SET=async(mode)=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.night=!!
   return {TW,z:typeof DUEL!=='undefined'?+DUEL.z.toFixed(3):1,night:night91On()}};
 const MEASURE=async({n,warm,flush})=>{const raf=()=>new Promise(r=>requestAnimationFrame(r));const D=[],L=[];let painted=0;
   const g=flush?cv.getContext('2d'):null;
-  for(let i=0;i<warm+n;i++){await raf();BENCH.tick();const f0=LAYERS93.frames;const t=performance.now();draw();if(flush)g.getImageData(0,0,1,1);const d=performance.now()-t;
-    if(i>=warm){D.push(d);if(LAYERS93.frames>f0)painted++}}
+  const LP=[];const hasL=typeof L106!=='undefined'&&L106.st;
+  for(let i=0;i<warm+n;i++){await raf();BENCH.tick();if(hasL&&i===warm){for(const k of ['ms','n','tStatic','tFig','tCont','builds','figs','contacts'])L106.st[k]=0} /* v1.06a: the light pass counted after the warm-up (a zoom change before a config rebuilds its layer) */
+    const f0=LAYERS93.frames,l0=hasL?L106.st.ms:0;const t=performance.now();draw();if(flush)g.getImageData(0,0,1,1);const d=performance.now()-t;
+    if(i>=warm){D.push(d);if(LAYERS93.frames>f0)painted++;if(hasL)LP.push(L106.st.ms-l0)}}
   const q=(a,p)=>{const s=a.slice().sort((x,y)=>x-y);return +s[Math.min(s.length-1,Math.floor(p*(s.length-1)))].toFixed(2)};
   const lay={};for(const k of ['stands','tiles','walls','floor','decals','highlights','pieces','overlays','fx'])if(LAYERS93.stats[k])lay[k]=+LAYERS93.stats[k].avg.toFixed(2);
-  const l106=typeof L106!=='undefined'&&L106.on?(()=>{const t=L106.st,n=Math.max(1,t.n),f=v=>+((v||0)/n).toFixed(3);return {ms:f(t.ms),n:t.n,solid:f(t.tSolid),fig:f(t.tFig),comp:f(t.tComp),contact:f(t.tCont)}})():null;if(l106){for(const k of ['ms','n','tSolid','tFig','tComp','tCont'])L106.st[k]=0}
+  const l106=typeof L106!=='undefined'&&L106.st&&L106.st.n?(()=>{const t=L106.st,n=Math.max(1,t.n),f=v=>+((v||0)/n).toFixed(3);return {ms:f(t.ms),p50:LP.length?q(LP,.5):null,p95:LP.length?q(LP,.95):null,n:t.n,mode:l106Mode(),static:f(t.tStatic),fig:f(t.tFig),contact:f(t.tCont),builds:t.builds,figs:+(t.figs/n).toFixed(1)}})():null;if(l106){for(const k of ['ms','n','tStatic','tFig','tCont','builds','figs','contacts'])L106.st[k]=0}
   return {p50:q(D,.5),p95:q(D,.95),max:q(D,1),mean:+(D.reduce((a,b)=>a+b,0)/D.length).toFixed(2),painted,n:D.length,layers:lay,l106}};
 /* frozen clock + cosmetic randomness, for still pictures and the contrast read-back */
 const FREEZE=()=>{let s=12345;const t=performance.now();window.__pn=performance.now;window.__mr=Math.random;Object.defineProperty(performance,'now',{value:()=>t,configurable:true,writable:true});
@@ -85,7 +88,7 @@ const CONTRAST=()=>{const dpr=devicePixelRatio||1,g=cv.getContext('2d');const lu
     const rows={};
     for(const flush of [false,true])for(const m of modes){const st=await pg.evaluate(SET,m);const r=await pg.evaluate(MEASURE,{n:FRAMES,warm:WARM,flush});
       const key=vk+' '+m.name+' '+(flush?'flush':'js');rows[key]={...r,TW:st.TW,z:st.z};res.runs.push({key,view:vk,mode:m.name,flush,...r,TW:st.TW,z:st.z});
-      console.log(key.padEnd(26),`p50 ${r.p50}  p95 ${r.p95}  max ${r.max}  painted ${r.painted}/${r.n}`,r.l106?`L106 ${r.l106.ms} ms/pass (solids ${r.l106.solid} figs ${r.l106.fig} composite ${r.l106.comp} contact ${r.l106.contact})`:'','layers',JSON.stringify(r.layers))}
+      console.log(key.padEnd(26),`p50 ${r.p50}  p95 ${r.p95}  max ${r.max}  painted ${r.painted}/${r.n}`,r.l106?`L106 ${r.l106.mode} ${r.l106.ms} ms/pass p50 ${r.l106.p50} p95 ${r.l106.p95} (static ${r.l106.static} figs ${r.l106.fig} [${r.l106.figs}/pass] contact ${r.l106.contact}; layer builds ${r.l106.builds})`:'','layers',JSON.stringify(r.layers))}
     if(SHOTS){fs.mkdirSync(SHOTS,{recursive:true});
       for(const m of modes){const st=await pg.evaluate(SET,m);console.log("set",m.name,JSON.stringify(st));await pg.evaluate(FREEZE);const c=await pg.evaluate(CONTRAST);await pg.evaluate(()=>draw());
         const el=await pg.evaluateHandle(()=>cv);const f=path.join(SHOTS,`${TAG}_${vk}_${m.name}.png`);await el.screenshot({path:f});await pg.evaluate(THAW);

@@ -22,6 +22,12 @@ window.addEventListener('error', e => { window.__err = String(e.message); });
       async sheet(look, gear, set, pxmm, q, limb) { const api = this.api; const t0 = performance.now(); api.apply({ look, gear, pose: api.presets[0][2] });
         const r = await AN100L.render(api, set, { pxmm, ss: 2, limb }); const url = r.canvas.toDataURL('image/webp', q);
         return { url, png: set === 'move' || limb ? r.canvas.toDataURL('image/png') : '', meta: r.meta, w: r.canvas.width, h: r.canvas.height, ms: Math.round(performance.now() - t0) }; },
+      /* v1.06a LIGHT (make.js l106): the sheet lit by ONE sun (cfg = 399's LIGHT106_BAKE) + its ground-shadow sheet at shPx px/mm — both by the
+         ANIM100_LIB renderer the game uses on the device (AN100L.light / shadowRow) → {url, png, meta, shPng, shMeta, w, h, ms} */
+      async sheetL(look, gear, set, pxmm, q, limb, cfg, shPx) { const api = this.api; const t0 = performance.now(); api.apply({ look, gear, pose: api.presets[0][2] });
+        const r = await AN100L.render(api, set, { pxmm, ss: 2, limb, light: cfg, shadow: { pxmm: shPx, ss: 2 } });
+        return { url: r.canvas.toDataURL('image/webp', q), png: r.canvas.toDataURL('image/png'), meta: r.meta, shPng: r.sh.canvas.toDataURL('image/png'), shMeta: r.sh.meta,
+          w: r.canvas.width, h: r.canvas.height, shW: r.sh.canvas.width, shH: r.sh.canvas.height, ms: Math.round(performance.now() - t0) }; },
     };
     window.AN100R_READY = true;
   } catch (e) { window.__err = String(e && e.stack || e); }

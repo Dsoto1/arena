@@ -14,7 +14,7 @@ RETIRED|={f for f in os.listdir(A) if f.startswith('beast100_')}
 # v1.0: the 3D crowd sheets stay on the site only (the standalone keeps today's painted crowd — 313-v100crowd falls back)
 RETIRED|={f for f in os.listdir(A) if f.startswith('crowd100_')}
 for f in sorted(os.listdir(A)):
-    if f in RETIRED or (f.startswith('anim100_') and f.endswith('.webp')): continue
+    if f in RETIRED or (f.startswith(('anim100_','anim106')) and f.endswith('.webp')): continue  # v1.06a: the shadow sheets (anim106_*, phone anim106p_*) go with the figure sheets: the standalone keeps the pillar/chest/rubble casts + contact shadows
     p=os.path.join(A,f);mt=mimetypes.guess_type(f)[0] or ('image/webp' if f.endswith('.webp') else 'application/octet-stream')
     data[f]='data:%s;base64,%s'%(mt,base64.b64encode(open(p,'rb').read()).decode())
 import re

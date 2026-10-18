@@ -6,60 +6,60 @@
   "decodedMB": 1.07,
   "ms": 5641
  },
- "totalKB": 4147,
+ "totalKB": 4331,
  "leo": {
-  "kb": 570,
+  "kb": 603.9,
   "decodedMB": 29.57,
-  "ms": 23389
+  "ms": 88703
  },
  "leaena": {
-  "kb": 468.8,
+  "kb": 497.1,
   "decodedMB": 22.31,
-  "ms": 14517
+  "ms": 67445
  },
  "ursa": {
-  "kb": 417.4,
+  "kb": 442.3,
   "decodedMB": 14.22,
-  "ms": 19168
+  "ms": 80179
  },
  "brutum": {
-  "kb": 384.2,
+  "kb": 406.2,
   "decodedMB": 14.22,
-  "ms": 17354
+  "ms": 70416
  },
  "valencia": {
-  "kb": 221.7,
+  "kb": 232.8,
   "decodedMB": 5.82,
-  "ms": 11123
+  "ms": 58854
  },
  "moechus": {
-  "kb": 182.2,
+  "kb": 191,
   "decodedMB": 5.82,
-  "ms": 9875
+  "ms": 52569
  },
  "glykon": {
-  "kb": 245.5,
+  "kb": 250.5,
   "decodedMB": 5.44,
-  "ms": 16000
+  "ms": 36294
  },
  "arenosus": {
-  "kb": 241.6,
+  "kb": 249.3,
   "decodedMB": 5.44,
-  "ms": 23239
+  "ms": 36652
  },
  "zora": {
-  "kb": 319.1,
+  "kb": 336.7,
   "decodedMB": 11.2,
-  "ms": 56611
+  "ms": 70590
  },
  "tholo": {
-  "kb": 523.8,
+  "kb": 537.9,
   "decodedMB": 23.06,
-  "ms": 906749
+  "ms": 1040531
  },
  "commodus": {
-  "kb": 537.7,
+  "kb": 548.4,
   "decodedMB": 18.04,
-  "ms": 927204
+  "ms": 1557456
  }
 }
