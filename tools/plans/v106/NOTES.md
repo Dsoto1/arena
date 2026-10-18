@@ -80,3 +80,4 @@ you're targeting. That said, it went where I wanted each time." Found: the board
 - v1.06 order: (1) lighting — benchmark scene + baseline frame times + audit → mock-up (today vs v1.06a, one class re-baked) for his ok, THEN the
   full bake/build; (2) Manager: season locks (d1a d2-123) + rival trade motives (t1a) + I1; (3) attack-target preview + offline Confirm attacks
   (u1c u2a, Online hover only). (2)+(3) are decided → built now; lighting waits on the mock-up ok.
+- Mock-up published 2026-10-18: https://claude.ai/artifact/5HKkQE1uKseEt3VHawxBCh (prototype on branch worktree-agent-a95f2ee3813202e8e, commit 23221c1, off by default; not merged until his ok).
