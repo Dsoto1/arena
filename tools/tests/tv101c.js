@@ -6,7 +6,7 @@
    Training Yard · kill switch · no new errors in the 00c log. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const pg=await b.newPage({viewport:{width:1440,height:900}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message));
-await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_v104doff','1') /* v1.04: 351-v104ward replaces this layout / these rules — tv104d covers them */});
+await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_v106b1off','1');localStorage.setItem('flavius_v104doff','1') /* v1.04: 351-v104ward replaces this layout / these rules — tv104d covers them */});
 await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};const mark=ERR92.n;let sd=101;Math.random=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};
   if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);

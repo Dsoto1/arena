@@ -6,7 +6,7 @@
    a special played to the end pays its purse; the kill switch; no new errors in the 00c log; 390 px has no horizontal overflow. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const pg=await b.newPage({viewport:{width:1440,height:900}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message));
-await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_v106b1off','1')});
 await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};const mark=ERR92.n;
   if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);
@@ -103,7 +103,7 @@ ok(R.team.done&&R.team.rows===4,'team special played '+JSON.stringify(R.team));
 ok(R.off.none&&R.off.panel,'kill switch '+JSON.stringify(R.off));ok(!R.errs.length,'no new errors '+JSON.stringify(R.errs));
 /* phones: 390 px, no horizontal overflow on Match Week or in the picker */
 {const p2=await b.newPage({viewport:{width:390,height:800}});await p2.route(/fonts\./,r=>r.abort());p2.on('pageerror',e=>errs.push(e.message));
-await p2.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+await p2.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_v106b1off','1')});
 await p2.goto('file://'+process.argv[2]);await p2.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const P=await p2.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);
   newWorld({type:'pre',key:MGR_PRE[0].key});W_().welc99=1;MGR.view=null;MGR.tab='night';MGR_REDRAW();await W8(900);const o={};

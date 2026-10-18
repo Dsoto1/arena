@@ -233,6 +233,8 @@ window.addEventListener('click',e=>{if(MW105.pass||mw105Off())return;const el=e.
   /* B35d: Bet opens the stake window */
   if(el.matches('[data-mg="bet"]')&&el.closest('.mw105b')){stop();mw105Pop(el);return}
   if(el.matches('[data-mw105="tree"]')){stop();const t=document.querySelector('#mgrBody .v104top')||document.querySelector('#mgrBody .po104bk');if(t)t.scrollIntoView({block:'start',behavior:typeof reduceMotion==='function'&&reduceMotion()?'auto':'smooth'});else if(typeof po104Open==='function')po104Open();return}
+  /* v1.06 G1: an away week before the set-off plays no bout (397) */
+  if(typeof bt106Locked==='function'&&bt106Locked()&&(el.matches(MW105_START)||el.matches('[data-mw105="end"]'))&&!el.matches('[data-mg="city"]')){stop();bt106Toast();return}
   /* End the week */
   if(el.matches('[data-mw105="end"]')){stop();const left=w.night.bouts.some(b=>!b.done);if(!left){const r=weekReady();if(!r.ok){mToast(r.why);return}}if((w.pend||[]).length)return;MGR.confirmEnd=true;mw105Redraw();const bx=document.getElementById('mBody');if(bx)bx.scrollTop=0;return}
   /* mw1: setting off (B60: walking the host city's square counts as leaving, so it asks first) */
@@ -249,6 +251,7 @@ window.addEventListener('click',e=>{if(MW105.pass||mw105Off())return;const b=e.t
 /* End the week with bouts left: simulate them first (verdicts still stop it) */
 window.addEventListener('click',async e=>{if(MW105.pass||mw105Off())return;const b=e.target.closest&&e.target.closest('[data-mg="endweek"]');if(!b||!b.closest('#mgrBody'))return;
   const w=typeof W_==='function'&&W_();if(!w||!w.night||w.night.bye||MGR.busy)return;const n=w.night;if(!n.bouts.some(x=>!x.done)||(w.special&&!w.special.done))return;
+  if(typeof bt106Locked==='function'&&bt106Locked()){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();bt106Toast();return}
   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();MGR.busy=true;try{mw105Go(w);for(const i of mw105Seq(n))if(!n.bouts[i].done)await runBoutSim(i)}finally{MGR.busy=false}
   if((w.pend||[]).length||!weekReady().ok){MGR.confirmEnd=false;mw105Redraw();mToast(_T('Verdicts are waiting on Match Week — settle them, then end the week.'));return}
   mw105Reclick(b,'#mgrBody [data-mg="endweek"]')},true);

@@ -76,7 +76,6 @@ function openCitySquare(locIdx,opts={}){
     <div class="citybar"><b>🏛 ${esc((CITY_DRESS[L.n]||{}).sq||_T('The Square'))} · ${esc(L.n)}</b>${typeof CITY_FLAG!=='undefined'&&CITY_FLAG[L.n]&&typeof flagURIk==='function'?`<img class="flagchip" src="${flagURIk(CITY_FLAG[L.n])}" style="height:16px" alt="" title="${_T`The banner of ${esc(L.n)}`}">`:''}<span class="rc-sub" id="cityLand">${esc((CITY_DRESS[L.n]||{}).land||'')}</span>
       <span id="cityClock" class="cityclock" hidden></span><span style="flex:1"></span>
       <span id="cityNext" class="rc-sub"></span>
-      <div class="seg" title="${_T`How fast the square lives — strolling, walking, the countdown, all of it`}">${[1,2,4].map(v=>`<button type="button" data-cspd="${v}" class="${v===1?'on':''}">${v}×</button>`).join('')}</div>
       <span class="cityclock" id="cityCoin" title="${_T`Your treasury — every shop, gift and auction bid draws on it`}"></span>
       ${opts.prematch?`<button class="btn tksm" type="button" id="cityBell" title="${_T`Sound the horns early — the crowd files in and the games begin`}">${_T`🎺 Sound the horns`}</button>`:''}
       <button class="btn tksm" type="button" id="cityLeave">${opts.prematch?_T('Leave the square ✕'):'LEAVE_LBL'}</button></div>
@@ -90,7 +89,6 @@ function openCitySquare(locIdx,opts={}){
   {const lv=ov.querySelector('#cityLeave');if(!opts.prematch){lv.textContent=CITY_EXIT_LBL[cityExitKind()];lv.onclick=()=>cityExit()}else lv.onclick=()=>closeCity()}
   const bell=ov.querySelector('#cityBell');if(bell)bell.onclick=()=>cityHorns();
   CITY.side='stands';citySideDraw();if(typeof loadBestiary==='function')loadBestiary().then(()=>{if(CITY.open&&CITY.side==='beasts')citySideDraw()}).catch(()=>{});ov.querySelectorAll('[data-cside]').forEach(b=>b.onclick=()=>{if(b.dataset.cside==='hide'){ov.classList.toggle('sidefold');setTimeout(citySize,50);return}CITY.side=b.dataset.cside;ov.querySelectorAll('[data-cside]').forEach(x=>x.classList.toggle('on',x===b));citySideDraw()});
-  ov.querySelectorAll('[data-cspd]').forEach(b=>b.onclick=()=>{CITY.speed=+b.dataset.cspd;ov.querySelectorAll('[data-cspd]').forEach(x=>x.classList.toggle('on',x===b))});
   {const nx=ov.querySelector('#cityNext');if(nx)nx.innerHTML=cityNextEventLine()}
   CITY.cv.addEventListener('click',cityClick);CITY.cv.addEventListener('mousemove',cityMove);
   CITY.esc=e=>{if(e.key==='Escape'){e.stopPropagation();closeCity()}};document.addEventListener('keydown',CITY.esc,true);
