@@ -156,3 +156,8 @@
   (388/373 .y105hrs "8 of 8 h · Training hours left"), Recruiting's chip (299/249/388 roomstat "N of 18 · the Recruiter's hours"), the
   Infirmary's Medicus-hours box (351/354), and the rail badges (green "18 h" on Recruiting vs grey "8 h" on the Yard; 357 ⏳ chips).
   REPLACES all four with one component (asked: format + badge colours).
+- Answers (2026-10-18): S1a (phones: Save & quit at the end of the bottom rail bar) · T1a ("↻ Same as last week" moves into the Yard banner
+  beside Lock in) · T2a (last week's yard results dropped from the Yard; the week-in-review letter reports them) · H1a (one hours chip on
+  every banner: big "6 of 8 h" + small owner label Training / Recruiter / Medicus; gold = hours left, dim ✓ = all spent, red = overbooked) ·
+  H2a (one rail pill "6 h": gold while hours are left, dim ✓ once spent; Recruiting's green goes) · H3a (the Infirmary's Medicus box becomes
+  that chip, the Capsarius a chip beside it → the Infirmary banner slims to 74 px).

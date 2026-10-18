@@ -770,3 +770,8 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   shading everywhere with a thin outline only on the board (REPLACES the toon + ink look); a ≈ 2 mm sculpt only for close-ups.
 - Decided 2026-10-17 (his u1c u2a u3a, a tester's note): v1.06 adds attack-target hover preview (ring + outline + crosshair + name/hit-chance
   tag; body under the pointer wins), touch = tap to select, tap again to strike, and Settings "Confirm attacks" (off by default; OFFLINE only — never in Online, where the hover preview still works).
+- Decided 2026-10-18 (his beta-4 notes B76–B81, s1a t1a t2a h1a h2a h3a): Armory lists only First/Second team + Reserves (no loaned, no
+  injured); renewal buttons carry the fighter's name; Save & quit in the rail under End the week (REPLACES the top-right corner); the Yard
+  loses the Tabula + "Last week in the yard" (REPLACES 373's bottom strip; Same as last week → banner); the Wagers + Infirmary banners slim;
+  ONE hours chip on banners + ONE rail pill (REPLACES the Yard plate .y105hrs, Recruiting's roomstat chip, the Infirmary Medicus box, the
+  green/grey rail badges).
