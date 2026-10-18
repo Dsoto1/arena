@@ -46,6 +46,8 @@ function r101Bare(g){if(r101Off()||!g)return '';if(g.alive===false)return _T('is
   if(sev.length)return _T`has lost ${sev.map(l=>(LOCN[l]||l).toLowerCase()).join(' and ')} — only Hygeia regrows a limb`;
   if(g.inj)return _T`is hurt (${g.inj.label})`;
   try{if(typeof serious76==='function'&&serious76(g))return _T('is seriously hurt')}catch(e){}
+  /* v1.06: hidden from the governor's edict this week = barred like a hurt man, so no auto-seating (starter fill, reserve cover, rivalry reseat) puts him back */
+  try{if(typeof caseOf85==='function'){const x=caseOf85(W_(),g);if(x&&x.c.st==='hid')return _T('is hidden from the governor')}}catch(e){}
   return ''}
 const r101Block=g=>{const b=r101Bare(g);return b?g.name+' '+b+'.':''};
 const r101Short=g=>{const a=g.inj&&g.inj.war?_T('at war'):r101Bed(g)?_T('in a bed'):(g.severed||[]).length?_T('lost a limb'):g.inj?_T('hurt'):_T('is seriously hurt');return a};

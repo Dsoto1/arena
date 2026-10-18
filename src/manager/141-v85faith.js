@@ -83,8 +83,8 @@ function caseOf85(w,g){if(!w||!g)return null;for(const E of curEdicts85(w)){cons
 /* busy: not to be entered this week (an undecided case, hidden, or held for the beasts) */
 function busy85(g){const w=W_();const x=caseOf85(w,g);return !!x&&['open','hid','face'].includes(x.c.st)}
 /* take a fighter off this week's card — a free agent fills the seat (the withdraw path, without the editor's count) */
-function pull85(w,gid){if(!w.night)return;for(const b of w.night.bouts){if(b.done)continue;const i=b.ents.indexOf(gid);if(i<0)continue;const T=TIERS[b.tier]||{lo:50,hi:70};const used=new Set(w.night.bouts.flatMap(x=>x.ents));
-  const rep=freeAgents().find(q=>!used.has(q.id)&&!q.inj&&!busy85(q)&&effOvr(q)>=T.lo-3&&effOvr(q)<=T.hi+3)||genGlad({ovr:T.lo+5});if(!rep.debut)rep.debut={s:w.season,wk:w.week};if(!gById(rep.id))w.glads.push(rep);b.ents[i]=rep.id;voidBets(b,gid)}}
+function pull85(w,gid){if(!w.night)return;for(const b of w.night.bouts){if(b.done)continue;/* v1.06: EVERY seat he holds (a starter may already sit in the bout and be written in again) */let i;while((i=b.ents.indexOf(gid))>=0){const T=TIERS[b.tier]||{lo:50,hi:70};const used=new Set(w.night.bouts.flatMap(x=>x.ents));
+  const rep=freeAgents().find(q=>!used.has(q.id)&&!q.inj&&!busy85(q)&&effOvr(q)>=T.lo-3&&effOvr(q)<=T.hi+3)||genGlad({ovr:T.lo+5});if(!rep.debut)rep.debut={s:w.season,wk:w.week};if(!gById(rep.id))w.glads.push(rep);b.ents[i]=rep.id;voidBets(b,gid)}}}
 function edictLetter85(w,E,cs){const gs=cs.map(c=>gById(c.gid)).filter(Boolean);if(!gs.length)return;const R=E.den?mgrById(E.den):null;const city=cityN85(E.city);const g=gs[0];
   const nl=gs.map(x=>`<b>${esc(x.name)}</b>`);const names=nl.length>1?nl.slice(0,-1).join(', ')+' and '+nl[nl.length-1]:nl[0];const one=gs.length===1;
   sendLetter(w,{key:'fa85-'+E.id,kind:'letter',from:_T('the Consilium'),adv:'consilium',seal:'✝',until:w.week,
