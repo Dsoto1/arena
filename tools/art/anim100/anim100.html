@@ -22,6 +22,58 @@ window.addEventListener('error', e => { window.__err = String(e.message); });
       async sheet(look, gear, set, pxmm, q, limb) { const api = this.api; const t0 = performance.now(); api.apply({ look, gear, pose: api.presets[0][2] });
         const r = await AN100L.render(api, set, { pxmm, ss: 2, limb }); const url = r.canvas.toDataURL('image/webp', q);
         return { url, png: set === 'move' || limb ? r.canvas.toDataURL('image/png') : '', meta: r.meta, w: r.canvas.width, h: r.canvas.height, ms: Math.round(performance.now() - t0) }; },
+      /* v1.06 LIGHTING (src/board/399-v106light.js, make.js l106): ONE sun from LIGHT106_SUN (az° = the shadow's ground direction from
+         screen-right toward the viewer, el = elevation) as the KEY light, a cool FILL from the camera side, a thin warm RIM from behind-right;
+         the token's own camera-relative sun is switched off. Same camera, same cells, same 8 facings (the figure turns, the lights stay). */
+      light106(cfg) { const T = window.THREE93, D = this.api._dbg, sc = D.scene; const tgt = new T.Vector3(0, 0.82, 0);
+        for (const l of sc.children.slice()) if (l.userData && l.userData.l106) { sc.remove(l); if (l.target) sc.remove(l.target); }
+        for (const l of sc.children) { if (l.isDirectionalLight) l.visible = false; if (l.isAmbientLight) l.intensity = cfg.amb * Math.PI; }
+        const mk = (dir, int, col) => { const L = new T.DirectionalLight(col, int * Math.PI); L.userData.l106 = 1; L.position.copy(tgt).add(new T.Vector3(...dir).normalize().multiplyScalar(6));
+          L.target.position.copy(tgt); L.target.userData.l106 = 1; sc.add(L); sc.add(L.target); L.target.updateMatrixWorld(); return L; };
+        const a = cfg.az * Math.PI / 180, e = cfg.el * Math.PI / 180, ux = Math.cos(a), uz = Math.sin(a);
+        this.sunDir = [-ux * Math.cos(e), Math.sin(e), -uz * Math.cos(e)];
+        this.key = mk(this.sunDir, cfg.key, 0xfff0dc); mk(cfg.fillDir, cfg.fill, 0xdfe4f0); mk(cfg.rimDir, cfg.rim, 0xffe2b8);
+        const k = this.key; k.castShadow = true; k.shadow.mapSize.set(2048, 2048); const C = k.shadow.camera; C.left = -2.4; C.right = 2.4; C.top = 2.4; C.bottom = -2.4; C.near = 0.1; C.far = 20;
+        C.layers.mask = 0xffffffff; C.updateProjectionMatrix(); k.shadow.bias = -0.0005; k.shadow.radius = 2;
+        return { sun: this.sunDir.map(v => +v.toFixed(3)) }; },
+      /* the GROUND SHADOW of the current pose, 8 facings: a ShadowMaterial plane on the sand (BASE_H below the feet) seen by the same
+         orthographic camera; the figure is drawn only into the shadow map (colour + depth writes off), the base not at all. One row = [canvas, w, h, ax, ay]. */
+      shadowRow(pxmm, ss) { const T = window.THREE93, D = this.api._dbg, sc = D.scene, turn = D.turn, B = D.B; const MM = 32.5 / 1.85, BASE_H = 3.2 / MM;   /* tok93.js MM_PER_M, BASE_H */
+        if (!this.R2) { const R = new T.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); R.outputColorSpace = T.SRGBColorSpace; R.setClearColor(0x000000, 0); R.setPixelRatio(1);
+          R.shadowMap.enabled = true; R.shadowMap.type = T.PCFSoftShadowMap; this.R2 = R;
+          this.plane = new T.Mesh(new T.PlaneGeometry(8, 8), new T.ShadowMaterial({ opacity: 1, color: 0x000000 })); this.plane.rotation.x = -Math.PI / 2; this.plane.position.y = -BASE_H; this.plane.receiveShadow = true; }
+        const ppm = pxmm * MM * ss, S = Math.ceil(4.8 * ppm / 4) * 4, R = this.R2; if (R.domElement.width !== S) R.setSize(S, S, false);
+        const tgt = new T.Vector3(0.7, 0.3, 0.3), hw = S / 2 / ppm, cam = new T.OrthographicCamera(-hw, hw, hw, -hw, 0.01, 50), d = 10, el = 30 * Math.PI / 180;
+        cam.position.set(tgt.x, tgt.y + Math.sin(el) * d, tgt.z + Math.cos(el) * d); cam.lookAt(tgt); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+        const anc = new T.Vector3(0, -BASE_H, 0).project(cam), AX = (anc.x * 0.5 + 0.5) * S / ss, AY = (-anc.y * 0.5 + 0.5) * S / ss;
+        const keep = []; turn.children.forEach(o => { if (o !== B.group) { keep.push([o, 'v', o.visible]); o.visible = false; } });
+        const mats = new Map(); B.group.traverse(o => { if (o.isMesh) { keep.push([o, 'c', o.castShadow]); o.castShadow = true;
+          for (const m of [].concat(o.material || [])) if (!mats.has(m)) { mats.set(m, [m.colorWrite, m.depthWrite]); m.colorWrite = false; m.depthWrite = false; } } });   /* in the shadow map only (three's shadow pass tests the MAIN camera's layers, so colour/depth writes are switched off instead) */
+        sc.add(this.plane); const cells = [];
+        try { for (const yaw of [0, 45, 90, 135, 180, -135, -90, -45]) { turn.rotation.y = yaw * Math.PI / 180; turn.updateMatrixWorld(true); R.render(sc, cam);
+            let c = document.createElement('canvas'); c.width = c.height = S; c.getContext('2d').drawImage(R.domElement, 0, 0);
+            for (let k = ss; k > 1; k /= 2) { const h2 = document.createElement('canvas'); h2.width = Math.ceil(c.width / 2); h2.height = Math.ceil(c.height / 2); const g = h2.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(c, 0, 0, h2.width, h2.height); c = h2; }
+            cells.push(c); } }
+        finally { sc.remove(this.plane); turn.rotation.y = 0; turn.updateMatrixWorld(true);
+          for (const k of keep) { if (k[1] === 'v') k[0].visible = k[2]; else k[0].castShadow = k[2]; } for (const [m, v] of mats) { m.colorWrite = v[0]; m.depthWrite = v[1]; } }
+        /* crop to the union box round the anchor (like tok93's sheetSteps), with a 1 px blur for the penumbra */
+        let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1; for (const c of cells) { const W = c.width, d2 = c.getContext('2d').getImageData(0, 0, W, c.height).data;
+          for (let y = 0; y < c.height; y++) for (let x = 0; x < W; x++) if (d2[(y * W + x) * 4 + 3] > 4) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } }
+        if (x1 < 0) { x0 = Math.floor(AX); y0 = Math.floor(AY); x1 = x0 + 1; y1 = y0 + 1; }
+        x0 = Math.max(0, x0 - 3); y0 = Math.max(0, y0 - 3); x1 += 4; y1 += 4; const w = x1 - x0, h = y1 - y0;
+        const row = document.createElement('canvas'); row.width = w * 8; row.height = h; const g = row.getContext('2d'); g.filter = 'blur(0.7px)';
+        cells.forEach((c, i) => { g.save(); g.beginPath(); g.rect(i * w, 0, w, h); g.clip(); g.drawImage(c, x0, y0, w, h, i * w, 0, w, h); g.restore(); });
+        return { c: row, m: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1)] }; },
+      /* one class + set, re-lit + its shadow sheet → {url, meta, shUrl, shMeta, png, shPng} */
+      async sheet106(look, gear, set, pxmm, q) { const api = this.api; const t0 = performance.now(); api.apply({ look, gear, pose: api.presets[0][2] });
+        const sh = []; const orig = api.sheetAsync; const self = this;
+        api.sheetAsync = async function (so) { const r = await orig.call(this, so); sh.push(self.shadowRow(so.pxmm || pxmm, so.ss || 2)); return r; };
+        let r; try { r = await AN100L.render(api, set, { pxmm, ss: 2 }); } finally { api.sheetAsync = orig; }
+        const W = Math.max(...sh.map(x => x.c.width)), H = sh.reduce((s, x) => s + x.c.height + 1, 0); const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+        const meta = { v: r.meta.v, pxmm, set: set + '_sh', rows: {} }; let y = 0, i = 0;
+        for (const name of Object.keys(r.meta.rows)) for (let j = 0; j < r.meta.rows[name].length; j++) { const x = sh[i++]; g.drawImage(x.c, 0, y); (meta.rows[name] || (meta.rows[name] = [])).push([y, ...x.m]); y += x.c.height + 1; }
+        return { url: r.canvas.toDataURL('image/webp', q), png: r.canvas.toDataURL('image/png'), meta: r.meta, shUrl: cv.toDataURL('image/webp', q), shPng: cv.toDataURL('image/png'), shMeta: meta,
+          w: r.canvas.width, h: r.canvas.height, ms: Math.round(performance.now() - t0) }; },
     };
     window.AN100R_READY = true;
   } catch (e) { window.__err = String(e && e.stack || e); }
