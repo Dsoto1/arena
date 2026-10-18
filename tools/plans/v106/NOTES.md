@@ -98,3 +98,9 @@ you're targeting. That said, it went where I wanted each time." Found: the board
 - Answers (2026-10-18): G4a (the results box shows OUR fighter's face + name + result Won/Lost/Fell + purse; none of ours → the bout winner's
   face) · G5a (no rings under figures — only the highlighted tile under the active piece; fix the shadow-sheet speck artifacts; diagnose the
   flat dark beast). REPLACES the team/seat rings at the mini bases (v1.0 "team rings at mini bases", thinned in v1.03 346).
+- Aim tag % (his a1a a2a, 2026-10-18): today 396 shows only "≥1 hit die lands" = 1−0.5^n (75% vs a gladiator, 94% vs a beast) and ignores
+  blessings, gods, items, shields, armor, Fidelis, Focus!, Omnia Mutantur. NEW: the tag shows the chance to actually WOUND, computed from the
+  rules (no sampling): the same dice counts as doAttack/chAttack/tamedAttack + every active modifier the attack/hurt path applies — the
+  target's shield raise, armor/AP soak, blessings (Minerva etc.), Fidelis Constans, Achilles' shield, elixirs, the attacker's Focus! and
+  Omnia Mutantur when active this turn (a2a); likely damage added when the chance is high. Ranked online: no % (unchanged). The confirm
+  dialog shows the same number. Enumerate every modifier from 03-engine hurt()/04-rules doAttack and their wrappers (grep), list them.
