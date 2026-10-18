@@ -11,7 +11,7 @@
 if(!P105.off){
 let HOME=null;
 const rowOf=()=>document.querySelector('#mBody .pn100 .pn98go');
-const homeBack=()=>{const mb=document.getElementById('mboxEl');if(!HOME||!mb)return;if(HOME.parentNode!==mb)mb.insertBefore(HOME,mb.firstChild);HOME.classList.remove('pn105home')};
+const homeBack=()=>{const mb=document.getElementById('mboxEl');if(!HOME||!mb)return;if(HOME.classList.contains('sq105'))return; /* v1.05 391: Save & quit lives in the Manager rail (391 puts it home itself) */ if(HOME.parentNode!==mb)mb.insertBefore(HOME,mb.firstChild);HOME.classList.remove('pn105home')};
 function sync(){try{const mb=document.getElementById('mboxEl');if(!mb)return;
   const btn=HOME&&HOME.isConnected?HOME:(document.getElementById('mClose')||HOME);if(!btn)return;if(!btn.isConnected){mb.insertBefore(btn,mb.firstChild)}HOME=btn;
   const row=rowOf(),wide=window.innerWidth>600;

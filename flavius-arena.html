@@ -51145,7 +51145,7 @@ cbar89StallsSync=function(){return false};
 function arm94Issues(g){const E=g.eq94;if(!E)return {empty:[],dmg:0};const K=arm94Kit(g.cls);const empty=[];
   for(const h of ['R','L']){if(E[h]||arm94HandGone(g,h))continue;if(K[h]||(h==='R'&&!E.L))empty.push(h)}
   return {empty,dmg:E.a.filter(P=>P.dmg).length}}
-function arm94Sel(pm){const ros=rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a));let g=ros.find(x=>x.id===MGR.ar94);if(!g){g=ros[0]||null;MGR.ar94=g?g.id:null}return g}
+function arm94Sel(pm){const ros=(typeof arm105Own==='function'?arm105Own(pm):rosterOf(pm)).sort((a,b)=>effOvr(b)-effOvr(a));let g=ros.find(x=>x.id===MGR.ar94);if(!g){g=ros[0]||null;MGR.ar94=g?g.id:null}return g}
 function arm94Tile(g,P,where){const sel=AR94.sel===P.id;let fit='';if(g&&where==='sh'){const F=arm94Fit(g,P,'auto');fit=F.no?`<i class="no">⛔ ${F.no}</i>`:`<i class="ok">${F.rep.length?_T`✓ replaces ${esc(F.rep.map(arm94Name).join(', '))}`:_T`✓ fits ${esc(g.name.split(' ')[0])}`}</i>`}
   const dz=g&&where==='sh'&&!(arm94Fit(g,P,'auto').no);
   return `<div class="ar94t ${P.dmg?'dmg':''} ${sel?'sel':''} ${where==='sh'&&!dz?'dim':''}" data-ar94p="${P.id}" role="button" tabindex="0" aria-label="${esc(arm94Name(P))}"><span class="ar94art">${arm94Art(P,44)}</span><span class="ar94tn"><b>${P.dmg?'🩹 ':''}${esc(arm94Name(P))}</b><small>${arm94Meta(P)}</small>${fit}</span>${where==='sh'&&dz?`<button type="button" class="ar94q" data-ar94wear="${P.id}" title="${sx(g,_T`Put it on him`,_T`Put it on her`)}" aria-label="${sx(g,_T`Put it on him`,_T`Put it on her`)}">＋</button>`:''}</div>`}
@@ -51153,7 +51153,7 @@ function arm94HandHTML(g,h){const E=g.eq94;const P=E[h];const lbl=h==='R'?_T('Ri
   if(!P)return `<div class="ar94hand empty" data-ar94z="${h}"><div class="ar94hc">${gone?_T('No arm'):_T('Empty hand')}</div><small>${lbl}</small></div>`;
   return `<div class="ar94hand" data-ar94z="${h}"><div class="ar94hc ${AR94.sel===P.id?'sel':''}" data-ar94p="${P.id}" role="button" tabindex="0" title="${_T`Drag it away, or tap it then tap where it goes`}">${cardHTML('w:'+P.k,'md').replace(/ data-card="[^"]*"/g,'')}</div><small>${lbl} · <b>${esc(arm94Name(P))}</b> <button type="button" class="ar94x" data-ar94off="${P.id}" aria-label="${_T`Take it off`}">✕</button></small></div>`}
 function arm94HTML(){const pm=me(),w=W_();if(!pm||!w)return '';arm94Ensure(w);const H=arm94H(pm);const g=arm94Sel(pm);const all=arm94All(pm);const nDmg=all.filter(x=>x.P.dmg).length;
-  const own=rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a));
+  const own=(typeof arm105Own==='function'?arm105Own(pm):rosterOf(pm)).sort((a,b)=>effOvr(b)-effOvr(a));
   const chips=own.map(x=>{const I=arm94Issues(x);const loan=x.loanFrom&&x.loanFrom.mid!==pm.id;return `<button type="button" class="ar94g ${g&&x.id===g.id?'on':''}" data-ar94g="${x.id}" ${loan?`title="${sx(x,_T`On loan — his gear belongs to his own house`,_T`On loan — her gear belongs to her own house`)}"`:''}>${gArt(x,'xs')}<span><b>${esc(x.name)}</b><small>${esc(arm94Hands(x))}${I.empty.length?' ⚠':''}${I.dmg?' 🩹':''}${loan?' 🤝':''}</small></span></button>`}).join('');
   let stage='';if(g&&g.eq94){const E=g.eq94;const loan=g.loanFrom&&g.loanFrom.mid!==pm.id;let av='';try{av=avatarSVG(avatarFor73(E.a.filter(P=>ARM[P.k]).flatMap(P=>arm94Locs(P).filter(l=>!arm94Gone(g,l)).map(l=>[P.k,l])),'ar94_'+g.id))}catch(e){console.error(e)}
     const worn=E.a.map(P=>`<span class="ar94wr ${P.dmg?'dmg':''} ${AR94.sel===P.id?'sel':''}" data-ar94p="${P.id}" role="button" tabindex="0">${_T`${arm94Art(P,26)}<b>${P.dmg?'🩹 ':''}${esc(arm94Name(P))}</b><small>${(ARM[P.k]||{}).ap||0} AP</small>`}<button type="button" class="ar94x" data-ar94off="${P.id}" aria-label="${_T`Take it off`}">✕</button></span>`).join('');
@@ -76279,7 +76279,7 @@ if(!POT105.off&&typeof BUS!=='undefined')BUS.on('pot.hold',e=>{try{pot105Show(e)
 if(!P105.off){
 let HOME=null;
 const rowOf=()=>document.querySelector('#mBody .pn100 .pn98go');
-const homeBack=()=>{const mb=document.getElementById('mboxEl');if(!HOME||!mb)return;if(HOME.parentNode!==mb)mb.insertBefore(HOME,mb.firstChild);HOME.classList.remove('pn105home')};
+const homeBack=()=>{const mb=document.getElementById('mboxEl');if(!HOME||!mb)return;if(HOME.classList.contains('sq105'))return; /* v1.05 391: Save & quit lives in the Manager rail (391 puts it home itself) */ if(HOME.parentNode!==mb)mb.insertBefore(HOME,mb.firstChild);HOME.classList.remove('pn105home')};
 function sync(){try{const mb=document.getElementById('mboxEl');if(!mb)return;
   const btn=HOME&&HOME.isConnected?HOME:(document.getElementById('mClose')||HOME);if(!btn)return;if(!btn.isConnected){mb.insertBefore(btn,mb.firstChild)}HOME=btn;
   const row=rowOf(),wide=window.innerWidth>600;
@@ -77514,6 +77514,48 @@ ${P}.roomstat.wb105of.all{border-color:#ffe08a;box-shadow:0 0 0 1px #ffe08a88}
 @media (max-width:760px){${P}.wd100tt h2{font-size:20px}${P}.roomttl.wd100tt{flex:1 1 calc(100% - 70px)}${P}.wd100rt{flex:1 1 100%;justify-content:flex-start;margin:0}${P}.wd100rt .roomstat.rm100cnt{display:grid;margin:0;justify-items:start;text-align:left;min-width:0;padding:3px 10px}${P}.wd100rt .roomstat.wb105med{display:flex;flex-direction:row;justify-items:unset}${P}.wd100ico{display:grid}}
 @media (max-width:600px){${P}.wd100ico,${P}.wb105f{width:44px;height:44px}${P}.wd100ico svg{width:24px;height:24px}${P}.roomstat.wb105med .wb105n{display:none}${P}.roomstat.wb105med .wb105p small{display:none}${P}.roomstat.wb105med{padding:3px 8px;gap:4px}${P}.roomstat.wb105med .wb105m{font-size:15px}${P}.wd100rt .roomstat.rm100cnt .ptbox{font-size:18px}${P}.wd100rt .roomstat.rm100cnt:not(.wb105med)>span{display:inline}}
 `;document.head.appendChild(st)})();
+/* =====================================================================
+   391-V105B5A · v1.05 beta-5 batch A (his beta-4 notes B76–B78)
+   =====================================================================
+   · B76 The Armory (225 arm94Sel / arm94HTML chips) lists only fighters in the First team, Second team and Reserves (350 team104 'A'/'B'/'R'):
+     not a fighter lent out (team 'L'), not an injured one (g.inj, an Infirmary bed, 352 inj104, 319 r101Block). A fighter on loan TO you who sits in
+     one of your groups stays. 225 asks arm105Own(pm) instead of rosterOf(pm); the selection falls back to the first listed fighter.
+   · B77 The weekly "contract ends this week" task (88 weekChecklist, also the desk rows) shows one button per fighter that names him
+     ("✍ Renew Saxum Invictus") — never a bare "Renew" — for every fighter whose contract ends. Same data-mg="extend" handler.
+   · B78 The Manager's "Save & quit" (#mClose.saveq, 17 mgrCloseLabel) moves into the rail, directly below "End the week" (about 10 px gap);
+     on phones (the rail is the bottom bar) it ends the bar. The SAME element (#mClose, same handler) is moved: it goes home before the next
+     repaint of #mgrBody and before any modal() opens, so the window machinery never loses it.
+   Kill switch: localStorage flavius_v105b5aoff=1. Test tv105ac.
+   ===================================================================== */
+const V105B5A_OFF=(()=>{try{return localStorage.getItem('flavius_v105b5aoff')==='1'}catch(e){return false}})();
+/* ---- B76 ---- */
+function arm105Own(pm){const all=rosterOf(pm);if(V105B5A_OFF)return all;
+  return all.filter(g=>{try{if(g.inj||(typeof inj104==='function'&&inj104(g))||(typeof riv105Barred==='function'&&riv105Barred(g))||(typeof inBed76==='function'&&inBed76(g)))return false;
+    if(g.loanTo)return false;const t=typeof team104==='function'?team104(g,pm):'R';return t==='A'||t==='B'||t==='R'}catch(e){return true}})}
+if(!V105B5A_OFF){
+/* ---- B77 ---- */
+{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const m=me();if(!Array.isArray(I)||!m)return I;
+  const exp=rosterOf(m).filter(g=>g.contract&&g.contract.weeks<=1);
+  for(const x of I)if(x.ic==='📜'&&typeof x.btn==='string'&&x.btn.includes('data-mg="extend"')&&exp.length)
+    x.btn=exp.map(g=>`<button class="btn tksm" type="button" data-mg="extend" data-id="${g.id}" title="${esc(g.name)}">${_T`✍ Renew ${esc(g.name)}<small>${askWage(g)}/wk</small>`}</button>`).join('')}catch(e){console.error(e)}return I}}
+/* ---- B78 ---- */
+const SQ105={home:null,btn:null};
+function sq105Home(){try{const b=SQ105.btn||document.getElementById('mClose');if(!b||!SQ105.home)return;
+  if(b.parentNode!==SQ105.home.p){const n=SQ105.home.n&&SQ105.home.n.parentNode===SQ105.home.p?SQ105.home.n:null;SQ105.home.p.insertBefore(b,n)}b.classList.remove('sq105')}catch(e){console.error(e)}}
+function sq105Place(){try{const b=document.getElementById('mClose')||SQ105.btn;const rail=document.querySelector('#mgrBody .tabrow');if(!b||!rail||!rail.querySelector('.btn.endwk'))return;
+  if(!SQ105.home){SQ105.home={p:b.parentNode,n:b.nextSibling};SQ105.btn=b}
+  if(b.parentNode!==rail||rail.lastElementChild!==b)rail.appendChild(b);b.classList.add('sq105')}catch(e){console.error(e)}}
+{const base=mgrPaint;mgrPaint=function(el){sq105Home();const r=base.apply(this,arguments);sq105Place();return r}}
+/* 184's rail watcher swaps the live rail row back in after a repaint: take the button out first, put it back after the swap */
+{const base=rail90Fix;rail90Fix=function(){sq105Home();const r=base.apply(this,arguments);sq105Place();return r}}
+{const base=mgrCloseLabel;mgrCloseLabel=function(){const r=base.apply(this,arguments);sq105Place();return r}}
+{const base=modal;modal=function(){sq105Home();return base.apply(this,arguments)}}
+{const st=document.createElement('style');st.textContent=`
+#mgrBody .tabrow #mClose.sq105{position:static!important;float:none!important;display:block;width:100%!important;height:auto!important;min-height:34px;margin:11px 0 0!important;padding:6px 10px!important;border-radius:5px!important;font-size:13px;font-weight:600;white-space:normal;line-height:1.2;text-align:center}
+#mgrBody .tabrow #mClose.sq105[hidden]{display:none}
+@media (max-width:700px){#modal.full .railwrap #mClose.sq105{width:auto!important;flex:0 0 auto;margin:0 0 0 6px!important;min-height:0;font-size:12px;padding:6px 8px!important;white-space:nowrap}}`;
+  document.head.appendChild(st)}
+}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
