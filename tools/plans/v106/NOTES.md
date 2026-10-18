@@ -73,3 +73,10 @@ you're targeting. That said, it went where I wanted each time." Found: the board
 - U3a in v1.06 (the board release, with the lighting). Display/input only: no rule, dice or online-lockstep change.
 - His follow-up (2026-10-17): "Confirm attacks" is OFFLINE ONLY — never in Online matches (the setting is ignored/hidden there; turn timers).
   The hover preview (and the touch two-tap select) DO work in Online.
+
+## His calls 2026-10-18 (v1.05 shipped; "start 1.06")
+- I1 Infirmary: the BANNER shows both the injured count (a chip "⚕ N injured") and the Medicus hours chip (392 hrs105Chip); the RAIL tab keeps
+  only the injured count ("⚕ N", as today). Answers the open beta-5 question.
+- v1.06 order: (1) lighting — benchmark scene + baseline frame times + audit → mock-up (today vs v1.06a, one class re-baked) for his ok, THEN the
+  full bake/build; (2) Manager: season locks (d1a d2-123) + rival trade motives (t1a) + I1; (3) attack-target preview + offline Confirm attacks
+  (u1c u2a, Online hover only). (2)+(3) are decided → built now; lighting waits on the mock-up ok.
