@@ -775,3 +775,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   loses the Tabula + "Last week in the yard" (REPLACES 373's bottom strip; Same as last week → banner); the Wagers + Infirmary banners slim;
   ONE hours chip on banners + ONE rail pill (REPLACES the Yard plate .y105hrs, Recruiting's roomstat chip, the Infirmary Medicus box, the
   green/grey rail badges).
+- Decided 2026-10-18: his ok on the v1.06a lighting mock-up (https://claude.ai/artifact/5HKkQE1uKseEt3VHawxBCh) → full build.
