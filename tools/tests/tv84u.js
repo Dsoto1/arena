@@ -72,7 +72,7 @@ ok(o.prof==='themes','openSettings("profiles") lands on Themes');
 /* Tokens: no Armor section */
 await p.click('#setBody [data-stab="pieces"]');await W8(p,300);
 o.tok=await p.evaluate(()=>{const box=document.getElementById('setBody');return {arm:!!box.querySelector('[data-sarmor]'),txt:/🛡 Armor/.test(box.textContent),rows:box.querySelectorAll('[data-tokstyle]').length}});
-ok(!o.tok.arm&&!o.tok.txt&&o.tok.rows>=2,'Tokens: no Armor section '+JSON.stringify(o.tok));await shot(p,'set_tokens');
+ok(!o.tok.arm&&!o.tok.txt&&o.tok.rows===0,'Board & pieces: no Armor section, no token-style choice (v1.07: one 3D look) '+JSON.stringify(o.tok));await shot(p,'set_tokens');
 for(const t of ['help','audio']){await p.click(`#setBody [data-stab="${t}"]`);await W8(p,300);await shot(p,'set_'+t)}
 /* Saves: no tab any more (v0.98) — the footer line's 💾 Saves → the Saves window; Backups → the shelf */
 o.sv=await p.evaluate(()=>({btn:!!document.querySelector('#setBody .s98-foot [data-sv84]'),shelf:!!document.querySelector('#setBody #saveName'),tab:!!document.querySelector('#setBody [data-stab="saves"]')}));

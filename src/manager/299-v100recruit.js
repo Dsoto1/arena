@@ -49,7 +49,7 @@ const rc100Pl=k=>`background-image:url('${rc100Img('rec100_'+k+'.webp')}')`;
 const rc100Clip=s=>String(s==null?'':s).replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
 function rc100MiniK(g){try{const c=CLASSES[g&&g.cls];const r=c&&(c.clsRef||'');const k=String(r).startsWith('cls:')?r.slice(4):g&&g.cls;
   return ['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio'].includes(k)?k:'soldier'}catch(e){return 'soldier'}}
-const rc100Mini=(k,css,flip)=>`<img class="rc1mini" src="${rc100Img('mini_'+k+'.webp')}" style="${css}${flip?';transform:scaleX(-1)':''}" alt="" draggable="false" decoding="async">`;
+const rc100Mini=(k,css,flip)=>`<img class="rc1mini" src="${rc100Img(typeof st107Mini==='function'?st107Mini(k):'mini_'+k+'.webp')}" style="${css}${flip?';transform:scaleX(-1)':''}" alt="" draggable="false" decoding="async">`;
 function rc100Adv(k){try{const w=W_();return w?council83(w).find(a=>a.k===k)||null:null}catch(e){return null}}
 function rc100Face(a,px,css){if(!a)return '';let f='';try{f=face83(a,px)}catch(e){}return `<span class="rc1rd" style="width:${px}px;height:${px}px;${css||''}" title="${esc(a.name)} · ${esc(a.role)}">${f}</span>`}
 function rc100Port(g,css,sz){return `<span class="rc1rd rc1rp" style="${css||''}">${gArt(g,sz||'sm')}</span>`}

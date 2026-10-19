@@ -13,6 +13,7 @@ RETIRED|={'webpenc94.js'}
 RETIRED|={f for f in os.listdir(A) if f.startswith('beast100_')}
 # v1.0: the 3D crowd sheets stay on the site only (the standalone keeps today's painted crowd — 313-v100crowd falls back)
 RETIRED|={f for f in os.listdir(A) if f.startswith('crowd100_')}
+# v1.07 (400-v107tok): the still sheets still107_* (≈0.35 MB) ARE inlined — the standalone draws one still frame of the 3D figures
 for f in sorted(os.listdir(A)):
     if f in RETIRED or (f.startswith(('anim100_','anim106')) and f.endswith('.webp')): continue  # v1.06a: the shadow sheets (anim106_*, phone anim106p_*) go with the figure sheets: the standalone keeps the pillar/chest/rubble casts + contact shadows
     p=os.path.join(A,f);mt=mimetypes.guess_type(f)[0] or ('image/webp' if f.endswith('.webp') else 'application/octet-stream')

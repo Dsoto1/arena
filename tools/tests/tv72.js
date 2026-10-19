@@ -17,15 +17,14 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   r.wsys=!![...document.querySelectorAll('#mBody h4')].find(h=>/🔒 System weapons · \d+/.test(h.textContent));const cw=document.querySelector('[data-gs="cwsys"]');r.wcopy=!cw; /* v0.76: examples only, no Copy */
   CUR_MODAL&&CUR_MODAL.done(null);await W8(300);return r});
 o.b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};
-  openSettings('tokens');await W8(600);const row=document.querySelector('[data-tokstyle="mini3d"]');r.row=!!row&&row.querySelectorAll('img').length===8;
-  row.click();await W8(500);r.on=SETTINGS.mini3d===true&&tokenStyle()==='standee'&&STANDEE_SRC.hero==='assets/mini_hero.webp'&&STANDEE_SRC.zoraMini==='assets/mini_zora.webp';
-  const row2=document.querySelector('[data-tokstyle="mini3d"]');r.badge=!!row2&&row2.classList.contains('on')&&!document.querySelector('[data-tokstyle="standee"].on');
+  /* v1.07 (400-v107tok, his t1a): the 3D minis token style is retired — one look, the v1.0 3D figures; the minis stay in Credits → Prototype */
+  openSettings('tokens');await W8(600);r.row=!document.querySelector('[data-tokstyle]');SETTINGS.mini3d=true;SETTINGS.tokenStyle='standee';applySettings();
+  r.on=SETTINGS.mini3d===false&&tokenStyle()==='figure'&&STANDEE_SRC.hero!=='assets/mini_hero.webp';r.badge=true;
   CUR_MODAL&&CUR_MODAL.done(null);await W8(300);
   startEvent({ev:'democritus',loc:6,seats:[{cls:'soldier',cpu:false},{cls:'hero',cpu:true},{cls:'royalty',cpu:true},{cls:'venatore',cpu:true}],opts:{}});
   await W8(2800);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}await W8(1500);
-  r.img=!!MINI_IMG.pillar&&MINI_IMG.pillar.complete&&!!MINI_IMG.soldier&&MINI_IMG.soldier.naturalWidth>0&&!!MINI_IMG.ursa;r.scale=miniScale('ursa')<miniScale('hero');
-  S.over=true;openSettings('tokens');await W8(600);document.querySelector('[data-tokstyle="figure"]').click();await W8(400);
-  r.off=!SETTINGS.mini3d&&tokenStyle()==='figure'&&STANDEE_SRC.hero!=='assets/mini_hero.webp';CUR_MODAL&&CUR_MODAL.done(null);return r});
+  const d0=AN100.stats.draws+ST107.stats.p;for(let i=0;i<10;i++){draw();await W8(150)}r.img=AN100.stats.draws+ST107.stats.p>d0&&!Object.keys(MINI_IMG).some(k=>k!=='pillar');r.scale=miniScale('ursa')<miniScale('hero');
+  r.off=true;S.over=true;return r});
 const a=o.a,c=o.b;ok(a.fits,'round-2 fits baked');ok(a.scan>=27&&a.scan===a.drawn&&a.head,'system armor in both art styles');ok(!a.fitBtn&&a.fitBtnOn&&a.fitMode&&a.done,'fit tool merged');
-ok(a.wsys&&a.wcopy,'system weapons');ok(c.row&&c.on&&c.badge,'3D minis setting');ok(c.img&&c.scale,'3D minis on the board');ok(c.off,'back to figures');
+ok(a.wsys&&a.wcopy,'system weapons');ok(c.row&&c.on&&c.badge,'v1.07: no 3D minis setting, an old mini3d is ignored');ok(c.img&&c.scale,'the 3D figures on the board, no old minis loaded');ok(c.off,'back to figures');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();

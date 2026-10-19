@@ -59,7 +59,7 @@ function nc82Front(sp){const pk=nc82Printed(sp);
   const T=sp.T;let art='';
   if(sp.rec&&typeof figureSVG==='function'&&typeof tokenOfNpc==='function'){try{art=`<div class="fig">${lit89(figureSVG(tokenOfNpc(sp.rec),{w:'100%',h:'100%'}))}</div>`}catch(e){art=''}}
   if(!art){const m=nc82Mini(sp);const med=nc82Med(sp);
-    art=med||m?`${med}${m?`<img class="mini${med?' withmed':''}" src="${assetURL('mini_'+m+'.webp')}" alt="" draggable="false">`:''}`:`<div class="glyph" style="background:${esc(T.col||'#777')}">${esc(T.g||'?')}</div>`}
+    art=med||m?`${med}${m?`<img class="mini${med?' withmed':''}" src="${assetURL(typeof st107Mini==='function'?st107Mini(m):'mini_'+m+'.webp')}" alt="" draggable="false">`:''}`:`<div class="glyph" style="background:${esc(T.col||'#777')}">${esc(T.g||'?')}</div>`}
   const nmU=String(sp.name||'').toUpperCase();const fs=Math.min(9,9*10/Math.max(6,nmU.length)).toFixed(2);
   return `<div class="nc82c gen" role="img" aria-label="${_T`${esc(sp.name)} — beast card`}" style="--nc:${esc(T.col||'#777')}"><img class="bg" src="${assetURL('npcfront82.webp')}" alt="" draggable="false">
     <div class="win"></div><div class="art">${art}</div><div class="nm" style="font-size:${fs}cqw">${esc(nmU)}</div>

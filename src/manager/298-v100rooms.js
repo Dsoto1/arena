@@ -43,7 +43,7 @@ function rm100Face(g){try{return gArt(g,'xs').replace('viewBox="0 0 100 140"','v
 function rm100Adv(k,sz){try{const w=W_();const a=council83(w).find(x=>x.k===k);return a?{a,f:face83(a,sz)}:null}catch(e){return null}}
 const RM100_MINI=['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio','leo','leaena','ursa'];
 function rm100MiniK(g){const c=g&&g.cls;if(RM100_MINI.includes(c))return c;const C=CLASSES[c];const r=C&&(C.clsRef||C.base);const k=r&&String(r).replace(/^cls:/,'');return RM100_MINI.includes(k)?k:'soldier'}
-function rm100Mini(k,css){if(!RM100_MINI.includes(k))k='soldier';return `<img class="rm100mini" src="${typeof assetURL==='function'?assetURL('mini_'+k+'.webp'):'assets/mini_'+k+'.webp'}" style="${css||''}" alt="" draggable="false" decoding="async">`}
+function rm100Mini(k,css){if(!RM100_MINI.includes(k))k='soldier';return `<img class="rm100mini" src="${typeof assetURL==='function'?assetURL(typeof st107Mini==='function'?st107Mini(k):'mini_'+k+'.webp'):'assets/mini_'+k+'.webp'}" style="${css||''}" alt="" draggable="false" decoding="async">`}
 /* a painted plate: one of 294a's cached scenes (object-position = pos) + figures on top */
 function rm100Scn(k,pos){try{return `<span class="rm100pic" style="--op:${pos||'50% 50%'}">${typeof scene100==='function'?scene100(k,'tile','rm100sc'):''}</span>`}catch(e){return ''}}
 const rm100Art=(inner,cls)=>`<span class="rm100fr${cls?' '+cls:''}" aria-hidden="true">${inner}</span>`;

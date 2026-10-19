@@ -53,7 +53,7 @@ function bf100Seat(p,ri){
   const C=CLASSES[p.cls]||{};const col=C.color||p.color||'#c9a458';const k=typeof ptok81Cls==='function'?ptok81Cls(p.cls):null;
   const look=bf100Look(p);let face='';try{face=look&&typeof portraitHTML==='function'?portraitHTML({name:p.name,portrait:look,color:p.color},'md'):''}catch(e){}
   const tok=k?`<i style="background-image:url('${assetURL('ptokf81_'+k+'.webp')}')"></i>`:`<i class="bf100tc" style="background:${col}">${esc(String(C.name||'?').charAt(0))}</i>`;
-  let mini='';try{mini=k?`<span class="bf100mini" style="background-image:url('${assetURL('mini_'+k+'.webp')}')"></span>`:(typeof figureHTML==='function'&&typeof tokenForCls==='function'?`<span class="bf100mini bf100fig">${figureHTML(tokenForCls(p.cls),48)}</span>`:'')}catch(e){}
+  let mini='';try{mini=k?`<span class="bf100mini" style="background-image:url('${assetURL(typeof st107Mini==='function'?st107Mini(k):'mini_'+k+'.webp')}')"></span>`:(typeof figureHTML==='function'&&typeof tokenForCls==='function'?`<span class="bf100mini bf100fig">${figureHTML(tokenForCls(p.cls),48)}</span>`:'')}catch(e){}
   const out=!p.alive;const fr=BF100.fell.get(p);
   const tm=p.team!=null&&(EV().teams||EV().coop)&&String(p.team).length<=2?` <span class="bf100tag bf100team" style="background:${teamColor(String(p.team))}">${esc(String(p.team))}</span>`:'';
   const mine=bf100Mine(p);

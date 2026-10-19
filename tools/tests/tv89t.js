@@ -2,7 +2,7 @@
    bevelled base), drawn from a cached canvas (cache hit on the next frame), with a soft shadow; figureSVG / tokenImg / figureHTML
    elsewhere are unchanged; standee/minis tokens never pass through the 3D path; the Studio sculpt preview shows the lit figure. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage();await pg.route(/fonts\.g/,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message));
-await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_v107tokoff','1') /* v1.07: 400 retires the sculpted figures on the board — the 176 path is tested under its kill switch (custom beasts still use it) */});
 await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o=await pg.evaluate(async()=>{const r={};const L=(t,x,y,w,h,c,rr=0)=>({t,x,y,w,h,c,r:rr,o:1});
   const spec={kind:'human',body:'tunic',helm:'none',c1:'#2f6aa8',c2:'#d6ab4c',weapon:'none',shield:'none',baked:[L('star',50,100,14,14,'#e6b93a',30),L('line',50,118,30,6,'#5a3a20')],layers:[L('circle',40,90,10,10,'#000')]};

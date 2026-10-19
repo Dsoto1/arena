@@ -88,7 +88,7 @@ if(res.filter(x=>x.picks.length).length<1)miss.push('stands results with picks (
 if(!ST.C.pop||ST.A.pop||ST.B.pop||during.A||during.B)miss.push('the popup only on the ticket holder');
 if(diff||same<1)miss.push('one result applied in step ('+same+'/'+diff+')');if(ST.A.r||ST.B.r||ST.C.r)miss.push('no resync');
 if(!lk.A||!lk.A.token||!lk.A.token.l0)miss.push('the sculpt kept by cleanLook');
-if(tok.style!=='cylinder'||!tok.sc||!tok.marker||tok.cpuSc||!tok.humSc)miss.push('sculpted token on a cylinder screen ('+JSON.stringify(tok)+')');
+if(!['cylinder','figure'].includes(tok.style)/* v1.07: 400 pins the one 3D style */||!tok.sc||!tok.marker||tok.cpuSc||!tok.humSc)miss.push('sculpted token on a cylinder screen ('+JSON.stringify(tok)+')');
 if(sp1.refunded||!sp2.refunded||sp2.amt!==5||sp3.amt!==0)miss.push('refund by majority, once');if(ref.gain!==5||ref.heard!==5||ref.pot!==0||ref.paid!==0)miss.push('refund paid ('+JSON.stringify(ref)+')');
 if(!D.hitP1)miss.push('the locked tile hits whoever stands there');if(!D.empty)miss.push('a stone on empty sand misses');if(D.got!==1)miss.push('an offering on a gladiator\'s tile');if(!D.fl)miss.push('an offering on an empty tile lies on the floor');
 if(!D.poor)miss.push('CF checked when applied');if(!D.refund)miss.push('the refund line');if(D.cls.length<2)miss.push('a random starting class');if(!D.tokOK)miss.push('creator token in the look');
