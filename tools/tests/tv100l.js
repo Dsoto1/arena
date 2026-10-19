@@ -22,7 +22,7 @@ const pg=await open(1440,900);
 const A=await ev(pg,()=>{const q=s=>document.querySelector(s);const ban=q('.roomhd.b73-ludus.lu100ban');const card=ban&&ban.querySelector('.lu100mw[data-mg="tab"][data-id="night"]');const chips=card?[...card.querySelectorAll('.bc')].filter(c=>c.querySelector('u')) /* v1.0: 296 special chips carry no fighter */:[];
   const ros=rosterOf(me());const desk=q('#desk99.lu100tasks');const rows=desk?desk.querySelectorAll('.dk99tw>.dk99row').length:0;const tiles=q('.lu100tiles');
   const dr=desk.getBoundingClientRect(),tr=tiles.getBoundingClientRect();
-  return {ban:!!ban&&/Week 1 · Match Week/.test(ban.textContent)&&!!ban.querySelector('.lu100med')&&ban.textContent.includes(String(ludusTodo73())),card:!!card,
+  return {ban:!!ban&&/Week 1 · Match Week/.test(ban.textContent)&&!!ban.querySelector('.lu100med'), /* v1.05 (377): the banner no longer shows the "N this week" count; the old includes(todo) only matched a digit by chance */card:!!card,
     chips:chips.length===3&&chips.every((c,i)=>c.textContent.includes(ros[i+1].name)&&!!c.querySelector('u svg, u img')),dots:chips.map(c=>(c.querySelector('s.fd')||{}).className||''),
     rows,todo:ludusTodo73(),prog:(q('.lu100n2')||{}).textContent||'',hd:/Weekly tasks/.test(desk.querySelector('.dk99hd').textContent),
     pinned:Math.abs(dr.height-tr.height)<3&&Math.abs(dr.top-tr.top)<3,tiles:[...tiles.querySelectorAll(':scope>.lu100t')].map(t=>t.getAttribute('data-mg')+':'+(t.getAttribute('data-id')||'')),

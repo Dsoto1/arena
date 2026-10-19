@@ -14,7 +14,7 @@ const probe=async(pg)=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTime
   for(const g of ros){g.slot95=0;g.tm104='R'}st.tm104='A';rs.tm104='R';
   for(const g of [st,rs]){arm94EnsureG(w,g);g.eq94.R=null;g.eq94.L=null}
   const names=()=>weekChecklist().map(x=>x.txt).join('|');
-  const t=names();out.starter=t.includes('<b>'+esc(st.name)+'</b>');out.reserve=t.includes('<b>'+esc(rs.name)+'</b>');out.same=st!==rs;
+  const t=names();out.starter=t.includes('<b>'+esc(st.name)+'</b>');out.reserve=t.split('|').some(x=>x.includes('<b>'+esc(rs.name)+'</b>')&&/bare hands/.test(x)); /* only the empty-hands task: a reserve may still get an unrelated task (e.g. market-worthy) */out.same=st!==rs;
   out.empt=arm94Todo(pm).empty.map(g=>g.name);
   /* a reserve entered in a bout this week fights */
   if(w.night&&w.night.bouts&&w.night.bouts[0]){w.night.bouts[0].ents=[rs.id];out.enteredRes=names().includes('<b>'+esc(rs.name)+'</b>');w.night.bouts[0].ents=[]}

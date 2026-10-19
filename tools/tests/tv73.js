@@ -18,6 +18,7 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   /* plan + compare */
   MGR.cmp=[fa.id];MGR_REDRAW();await W8(200);r.plan=!document.querySelector('.rplan'); /* v1.01 (317 M): the recruiting plan line is gone */r.cmp=!!document.querySelector('.cmpc,.cmp102c');
   /* Sica */
+  if(w.night&&w.night.travel)w.night.travel.gone=true; /* v1.06 (397): away bouts are locked until Set off */
   const sm=sicaMgr(w);r.sica=!!sm&&rosterOf(sm).length===4&&rosterOf(sm).every(g=>gStats(g).str>=86);
   const bt=w.night.bouts.find(b=>b.ents.some(id=>isSicaG(gById(id))));if(bt){bt.sicaSpear=true;const c=boutCfg(bt,true);r.spear=!!c.syndSpear&&!isSicaG(gById(c.syndSpear))}else r.spear=true;
   for(const m of w.mgrs)m.wins=0;sm.wins=99;sm.bouts=99;r.noSuperbus=!leagueSort(w.mgrs.filter(m2=>!m2.sica)).slice(0,4).includes(sm);

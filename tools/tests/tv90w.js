@@ -43,6 +43,7 @@ const o=await pg.evaluate(async()=>{let sd=90;Math.random=()=>{sd=(sd*1664525+10
   const why=q('[data-cure90]');if(why)why.click();await W8(300);r.guide=!!q('.cg90 .careguide[open]');const x=q('[data-cg90x]');if(x)x.click();await W8(200);r.guideClose=!q('.cg90');
   B.restWk=null;ord87Set(B,'off');
   /* ---- 4 · fatigue bands in a bout ---- */
+  if(w.night.travel)w.night.travel.gone=true; /* v1.06 (397): an away bout is locked until Set off — the house has set off */
   const G=A;G.fat=10;const bo=w.night.bouts[bi];for(const k of w.night.bouts)k.ents=k.ents.filter(id=>id!==G.id);const o4=bo.ents.find(id=>!mine.has(id));bo.ents[bo.ents.indexOf(o4)]=G.id;
   r.seat=(boutCfg(bo,false).seats.find(s=>s.mgrGid===G.id)||{}).fat90==='fresh';
   const MV=mvMax;const rec=[];mvMax=function(p){const v=MV.apply(this,arguments);try{if(p&&p.mgrGid===G.id&&S){const f=p.fat90;p.fat90=null;const v0=MV.apply(this,arguments);p.fat90=f;rec.push([S.ri,f,v-v0,v0])}}catch(e){}return v};
