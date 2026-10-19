@@ -32,6 +32,9 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - Playwright "Execution context was destroyed" with no navigation = Chromium collected the awaited promise during a heavy sync step
   (tv102e, fixed by deferring t93Open). Other tests that await a long sync WebGL step inside page.evaluate can hit the same · fix the same
   way when one shows up.
+- 2026-10-19 · flaky in CI run 39182866366 (failed, then passed alone): tv96g ("weeklyGrowth adds the +0.2"), tv85r, tv76; builder runs under
+  load: tv91n, tv59 · watch in CI.
+- 2026-10-19 · tv105x and tv100l had checks that passed by chance (a fighter's name in an unrelated task; a digit somewhere in the banner) · narrowed.
 - tools/testslot.sh (the 2-at-a-time wrapper) hangs / exits 144 · builders run `node tools/smartreg.js -j 1` instead.
 - `node tools/smartreg.js --dry` sometimes starts a full run instead of printing the plan; smartreg runs of 5+ tests have hit 10-minute
   agent timeouts · run smaller groups.
