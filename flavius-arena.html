@@ -78771,7 +78771,10 @@ if(ST107.on){
     try{h=h.replace(/<h4 style="margin:0 0 4px">🗿[^<]*<\/h4><p class="rc-sub"[^>]*>[\s\S]*?<\/p>/,'').replace(/<button type="button" class="tokrow[^"]*" data-tokstyle="[^"]*">[\s\S]*?<\/button>/g,'')}catch(e){}return h}}
   /* Settings → Board & pieces: the "Gladiators & beasts" card goes */
   if(typeof set98Pieces==='function'){const base=set98Pieces;set98Pieces=function(){let h=base.apply(this,arguments);
-    try{if(typeof h==='string')h=h.replace(/<section class="s98-card[^"]*"[^>]*><h3><span class="ic">🗿<\/span>[\s\S]*?<\/section>/,'')}catch(e){}return h}}
+    try{if(typeof h==='string')h=h.replace(/<section class="s98-card[^"]*"[^>]*><h3><span class="ic">🗿<\/span>[\s\S]*?<\/section>/,'');
+      /* Blessings left + Editors in the box right (one grid2 row; stacks on phones via 246's grid2 rule) */
+      const m=/<\/section><\/div>\s*(<section class="s98-card[^"]*"[^>]*><h3><span class="ic">🎭<\/span>[\s\S]*<\/section>)<\/div>\s*$/.exec(h);
+      if(m){h=h.slice(0,m.index)+'</section>'+m[1]+'</div></div>';h=h.replace('<div class="s98-grid2">','<div class="s98-grid2 s98-edpair">')}}catch(e){}return h}}
   /* nothing loads the Magnus Edition minis on the board any more (Credits → Prototype only) */
   if(typeof mini8Img==='function'){mini8Img=function(){return null}}
 }
@@ -78855,7 +78858,8 @@ if(ST107.on&&typeof protoHTML==='function'){const base=protoHTML;protoHTML=funct
 (()=>{if(!ST107.on)return;const st=document.createElement('style');st.textContent=`
 .tkfig.st107{position:relative;vertical-align:bottom;line-height:0}.tkfig.st107>img{display:block;width:100%;height:100%;object-fit:contain;object-position:50% 100%}
 .mini8row{margin:14px 0 4px;text-align:center}.mini8row h4{margin:0 0 2px}.mini8line{display:flex;flex-wrap:wrap;gap:6px 10px;justify-content:center;align-items:flex-end;margin-top:6px}
-.mini8c{display:inline-block;background-repeat:no-repeat;background-position:0 0}`;document.head.appendChild(st)})();
+.mini8c{display:inline-block;background-repeat:no-repeat;background-position:0 0}
+.s98 .s98-edpair .s98-eds{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.s98 .s98-edpair .s98-eds .sponrow>div{flex:1}`;document.head.appendChild(st)})();
 /* =====================================================================
    402-v107city — v1.07 beta-1 note 1 (his, 2026-10-19; tools/plans/v106/NOTES.md "v1.07 beta 1 notes"): the CITY SQUARE WALKERS and the
    MAIN MENU SHOW wear the 3D figures too — nothing there draws the old flat figures any more. DISPLAY ONLY: rules, dice (RNG), S, saves
