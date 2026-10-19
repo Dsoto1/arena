@@ -124,3 +124,5 @@ you're targeting. That said, it went where I wanted each time." Found: the board
 - Download size (his 1a 2a 3c 4a, 2026-10-19; download = share/flavius-rule-arena-vX.YY.html via tools/mkshare.py, 69.7 MB / zip ~41 MB):
   1a language packs inlined as plain text, not base64 (no change in game); 2a the download's code stripped of comments/whitespace (site keeps
   readable code); 3c card-sheet images stay as they are; 4a Credits/Prototype art stays in the download.
+- v1.07 beta 2 notes (his, 2026-10-19): (1) the red aim outline (396) round a gladiator target is drawn slightly LARGER than the figure;
+  (2) the frame rate drops to ~4 fps while a popup / action prompt is open (e.g. the shield ask) — frame meter "slowest 415 ms".
