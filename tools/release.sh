@@ -48,6 +48,7 @@ cp share/arena_shot.webp tools/deploy/arena_shot.webp   # committed: flavius.sh 
 if [ "${SHARE:-0}" != "1" ]; then printf '\nREADY v%s — next: COMMIT with [full] + PUSH, wait for the GitHub regression to go green, then he runs bash flavius.sh beta and plays it; on his ok push release/v%s + main and he runs bash flavius.sh release (CLAUDE.md §6).\n' "$V" "$V"; exit 0; fi
 step "5 share build"
 python3 tools/mkshare.py "$V" | tail -1
+python3 tools/chkshare.py "share/flavius-rule-arena-v$V.html" | tail -1 | grep -q CHK_OK || { echo "share script check failed (tools/chkshare.py)"; exit 1; }
 mkdir -p /tmp/sharetest39 && cp "share/flavius-rule-arena-v$V.html" /tmp/sharetest39/
 sed "s/v0.54.html/v$V.html/" tools/tshare54.js > "/tmp/sharetest39/t$V.js"
 SM=$(cd /tmp/sharetest39 && node "t$V.js" 2>&1 | tail -1); echo "$SM"
