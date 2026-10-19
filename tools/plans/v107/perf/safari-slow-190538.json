@@ -1,0 +1,914 @@
+{
+ "kind": "flavius-perf",
+ "v": 1,
+ "game": "1.07",
+ "at": "2026-10-19T23:05:38.121Z",
+ "secs": 10.1,
+ "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.2 Safari/605.1.15",
+ "gpu": {
+  "vendor": "Apple Inc.",
+  "renderer": "Apple GPU"
+ },
+ "cores": 8,
+ "memGB": null,
+ "dpr": 2,
+ "view": {
+  "w": 1920,
+  "h": 990
+ },
+ "canvas": {
+  "w": 2060,
+  "h": 1418
+ },
+ "zoom": 1,
+ "light": "light",
+ "speed": "slow",
+ "anim": {
+  "fx": true
+ },
+ "event": {
+  "ev": null,
+  "round": 1,
+  "turns": 1,
+  "players": 4,
+  "cpu": 3,
+  "over": false,
+  "onl": false
+ },
+ "screen": "Match",
+ "frames": {
+  "n": 45,
+  "fps": 4.5,
+  "p50": 197,
+  "p95": 381,
+  "max": 643,
+  "over33": 45,
+  "over50": 45,
+  "intervals": [
+   192,
+   196,
+   196,
+   191,
+   194,
+   105,
+   106,
+   200,
+   99,
+   279,
+   259,
+   338,
+   122,
+   230,
+   98,
+   244,
+   147,
+   288,
+   197,
+   396,
+   191,
+   222,
+   143,
+   178,
+   381,
+   206,
+   220,
+   98,
+   214,
+   152,
+   305,
+   195,
+   391,
+   218,
+   203,
+   136,
+   352,
+   368,
+   100,
+   114,
+   104,
+   225,
+   643,
+   252,
+   184
+  ]
+ },
+ "areas": {
+  "draw": {
+   "calls": 77,
+   "ms": 414,
+   "perS": 41.1,
+   "max": 89
+  },
+  "render": {
+   "calls": 9,
+   "ms": 205,
+   "perS": 20.3,
+   "max": 100
+  },
+  "light": {
+   "calls": 77,
+   "ms": 9,
+   "perS": 0.9,
+   "max": 1
+  },
+  "cells": {
+   "calls": 924,
+   "ms": 2,
+   "perS": 0.2,
+   "max": 1
+  },
+  "clean": {
+   "calls": 850,
+   "ms": 188,
+   "perS": 18.7,
+   "max": 85
+  },
+  "faces": {
+   "calls": 81,
+   "ms": 0,
+   "perS": 0,
+   "max": 0
+  },
+  "save": {
+   "calls": 22,
+   "ms": 1,
+   "perS": 0.1,
+   "max": 1
+  },
+  "ai": {
+   "calls": 27,
+   "ms": 0,
+   "perS": 0,
+   "max": 0
+  },
+  "log": {
+   "calls": 2,
+   "ms": 0,
+   "perS": 0,
+   "max": 0
+  },
+  "stands": {
+   "calls": 77,
+   "ms": 35,
+   "perS": 3.5,
+   "max": 1
+  },
+  "bus": {
+   "calls": 90,
+   "ms": 216,
+   "perS": 21.4,
+   "max": 100
+  }
+ },
+ "slowFrames": [
+  {
+   "t": 1,
+   "ms": 102,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 103,
+   "ms": 192,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 1,
+    "cells": 0,
+    "draw": 4,
+    "bus": 0
+   }
+  },
+  {
+   "t": 295,
+   "ms": 196,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 4,
+    "bus": 0,
+    "save": 0
+   }
+  },
+  {
+   "t": 491,
+   "ms": 196,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 3,
+    "bus": 0
+   }
+  },
+  {
+   "t": 687,
+   "ms": 191,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 1,
+    "draw": 3,
+    "bus": 0
+   }
+  },
+  {
+   "t": 878,
+   "ms": 194,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 1,
+    "cells": 0,
+    "draw": 3,
+    "bus": 0
+   }
+  },
+  {
+   "t": 1072,
+   "ms": 105,
+   "areas": {
+    "save": 0,
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 1177,
+   "ms": 106,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 4,
+    "bus": 0
+   }
+  },
+  {
+   "t": 1283,
+   "ms": 200,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 1,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 1483,
+   "ms": 99,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 4,
+    "bus": 0
+   }
+  },
+  {
+   "t": 1582,
+   "ms": 279,
+   "areas": {
+    "ai": 0,
+    "faces": 0,
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 1,
+    "draw": 5,
+    "bus": 0,
+    "render": 13,
+    "save": 0
+   }
+  },
+  {
+   "t": 1861,
+   "ms": 259,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 3,
+    "bus": 0
+   }
+  },
+  {
+   "t": 2120,
+   "ms": 338,
+   "areas": {
+    "save": 0,
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 2458,
+   "ms": 122,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 2580,
+   "ms": 230,
+   "areas": {
+    "save": 0,
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 3,
+    "bus": 0
+   }
+  },
+  {
+   "t": 2810,
+   "ms": 98,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 1,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 2908,
+   "ms": 244,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 3152,
+   "ms": 147,
+   "areas": {
+    "save": 0,
+    "stands": 0,
+    "clean": 0,
+    "light": 1,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 3299,
+   "ms": 288,
+   "areas": {
+    "bus": 1,
+    "ai": 0,
+    "faces": 0,
+    "stands": 1,
+    "clean": 0,
+    "light": 1,
+    "cells": 0,
+    "draw": 7,
+    "render": 16,
+    "save": 0
+   }
+  },
+  {
+   "t": 3587,
+   "ms": 197,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 3,
+    "bus": 0
+   }
+  },
+  {
+   "t": 3784,
+   "ms": 396,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 5,
+    "bus": 0,
+    "save": 0
+   }
+  },
+  {
+   "t": 4180,
+   "ms": 191,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 4,
+    "bus": 0
+   }
+  },
+  {
+   "t": 4371,
+   "ms": 222,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 4593,
+   "ms": 143,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 4736,
+   "ms": 178,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 5,
+    "bus": 0,
+    "ai": 0,
+    "faces": 0,
+    "render": 13,
+    "save": 0
+   }
+  },
+  {
+   "t": 4914,
+   "ms": 381,
+   "areas": {
+    "stands": 2,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 4,
+    "bus": 0
+   }
+  },
+  {
+   "t": 5295,
+   "ms": 206,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 1,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 5501,
+   "ms": 220,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 5721,
+   "ms": 98,
+   "areas": {
+    "save": 0,
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 5819,
+   "ms": 214,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 3,
+    "bus": 0
+   }
+  },
+  {
+   "t": 6033,
+   "ms": 152,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 6185,
+   "ms": 305,
+   "areas": {
+    "bus": 0,
+    "ai": 0,
+    "faces": 0,
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 5,
+    "render": 14,
+    "save": 0
+   }
+  },
+  {
+   "t": 6490,
+   "ms": 195,
+   "areas": {
+    "stands": 1,
+    "clean": 1,
+    "light": 0,
+    "cells": 0,
+    "draw": 4,
+    "bus": 0
+   }
+  },
+  {
+   "t": 6685,
+   "ms": 391,
+   "areas": {
+    "stands": 2,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 4,
+    "bus": 0,
+    "save": 0
+   }
+  },
+  {
+   "t": 7076,
+   "ms": 218,
+   "areas": {
+    "stands": 1,
+    "clean": 1,
+    "light": 1,
+    "cells": 0,
+    "draw": 3,
+    "bus": 0
+   }
+  },
+  {
+   "t": 7294,
+   "ms": 203,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 3,
+    "bus": 0
+   }
+  },
+  {
+   "t": 7497,
+   "ms": 136,
+   "areas": {
+    "ai": 0,
+    "faces": 0,
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 7,
+    "bus": 1,
+    "render": 24,
+    "save": 0
+   }
+  },
+  {
+   "t": 7633,
+   "ms": 352,
+   "areas": {
+    "save": 1,
+    "bus": 13,
+    "log": 0,
+    "ai": 0,
+    "faces": 0,
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 6,
+    "render": 13
+   }
+  },
+  {
+   "t": 7985,
+   "ms": 368,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 8353,
+   "ms": 100,
+   "areas": {
+    "save": 0,
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 3,
+    "bus": 0
+   }
+  },
+  {
+   "t": 8453,
+   "ms": 114,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 8567,
+   "ms": 104,
+   "areas": {
+    "stands": 0,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  },
+  {
+   "t": 8671,
+   "ms": 225,
+   "areas": {
+    "bus": 89,
+    "log": 0,
+    "stands": 2,
+    "clean": 100,
+    "light": 0,
+    "cells": 0,
+    "draw": 174
+   }
+  },
+  {
+   "t": 8896,
+   "ms": 643,
+   "areas": {
+    "stands": 2,
+    "clean": 86,
+    "light": 1,
+    "cells": 0,
+    "draw": 96,
+    "bus": 112,
+    "ai": 0,
+    "faces": 0,
+    "render": 112
+   }
+  },
+  {
+   "t": 9539,
+   "ms": 252,
+   "areas": {
+    "save": 0,
+    "stands": 2,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 4,
+    "bus": 0
+   }
+  },
+  {
+   "t": 9791,
+   "ms": 184,
+   "areas": {
+    "stands": 1,
+    "clean": 0,
+    "light": 0,
+    "cells": 0,
+    "draw": 2,
+    "bus": 0
+   }
+  }
+ ],
+ "longTasks": [],
+ "longFrames": [],
+ "counts": {
+  "newCanvas": {
+   "n": 193,
+   "ms": 0,
+   "by": {
+    "?": 193
+   }
+  },
+  "canvasResize": {
+   "n": 386,
+   "ms": 0,
+   "by": {
+    "?": 386
+   }
+  },
+  "readback?": {
+   "n": 87,
+   "ms": 0,
+   "by": {
+    "?": 87
+   }
+  },
+  "getImageData": {
+   "n": 96,
+   "ms": 257.99999999989814,
+   "by": {
+    "?": 96
+   }
+  },
+  "imageLoad": {
+   "n": 1,
+   "ms": 0,
+   "by": {
+    "?": 1
+   }
+  },
+  "createImageBitmap(HTMLCanvasElement)": {
+   "n": 1,
+   "ms": 0,
+   "by": {
+    "?": 1
+   }
+  },
+  "createImageBitmap(ImageBitmap)": {
+   "n": 45,
+   "ms": 0,
+   "by": {
+    "?": 45
+   }
+  }
+ },
+ "layers": [
+  {
+   "name": "pieces",
+   "avg": 3.58,
+   "max": 866,
+   "cached": false
+  },
+  {
+   "name": "decals",
+   "avg": 1.48,
+   "max": 725,
+   "cached": false
+  },
+  {
+   "name": "stands",
+   "avg": 0.47,
+   "max": 279,
+   "cached": false
+  },
+  {
+   "name": "floor",
+   "avg": 0.47,
+   "max": 7,
+   "cached": false
+  },
+  {
+   "name": "flavius",
+   "avg": 0.17,
+   "max": 456,
+   "cached": false
+  },
+  {
+   "name": "walls",
+   "avg": 0.1,
+   "max": 348,
+   "cached": false
+  },
+  {
+   "name": "rim",
+   "avg": 0.02,
+   "max": 1,
+   "cached": false
+  },
+  {
+   "name": "highlights",
+   "avg": 0.02,
+   "max": 1,
+   "cached": false
+  },
+  {
+   "name": "bubbles",
+   "avg": 0.02,
+   "max": 1,
+   "cached": false
+  },
+  {
+   "name": "fx",
+   "avg": 0.02,
+   "max": 3,
+   "cached": false
+  },
+  {
+   "name": "tiles",
+   "avg": 0,
+   "max": 20,
+   "cached": false
+  },
+  {
+   "name": "overlays",
+   "avg": 0,
+   "max": 1,
+   "cached": false
+  },
+  {
+   "name": "crowdtop",
+   "avg": 0,
+   "max": 1,
+   "cached": false
+  },
+  {
+   "name": "duel",
+   "avg": 0,
+   "max": 1,
+   "cached": false
+  }
+ ],
+ "p107": {
+  "bm": 7,
+  "blob": 8,
+  "blobFail": 0,
+  "fallback": 0,
+  "static": 942,
+  "staticScaled": 0,
+  "rebuild": 0,
+  "pieces": 10778,
+  "figClip": 0,
+  "wrf": 295,
+  "fxSkip": 945
+ },
+ "p107b": {
+  "faces": 28,
+  "shownRO": 3,
+  "hold": 130
+ },
+ "note": "areas = inclusive ms (draw holds light, cells, stands, clean-ups; render may call draw); slowFrames.areas = ms in the frame before it"
+}
