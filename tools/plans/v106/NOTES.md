@@ -106,3 +106,15 @@ you're targeting. That said, it went where I wanted each time." Found: the board
   dialog shows the same number. Enumerate every modifier from 03-engine hurt()/04-rules doAttack and their wrappers (grep), list them.
   M1a (2026-10-18): Minerva's Push in the target's hand → the tag shows 0% and names Minerva (assumes the defender plays her). M2a: Omnia
   Mutantur in the attacker's hand counts (assumed played on the misses), not only once played.
+
+## Old token pieces retired (his t1a…t5a = 1a 2a 3a 4a 5a, 2026-10-19) — its own small release after v1.06 ships, BEFORE the v1.06b torches
+- 1a Settings → Board & pieces loses the token-style choice (3D minis / Figures / Standees / Cylinders): everyone sees the v1.0 3D figures.
+  Old saves with tokenStyle/mini3d → ignored (no SAVE_MIGRATIONS needed: per-browser setting).
+- 2a Fallback when 3D can't show (standalone download, sheets loading, no WebGL, a Studio/online figure still rendering): ONE STILL FRAME
+  cut from the 3D figure (idle, 8 facings), shipped in the game (small per-class still sheets, also inlined by mkshare) = N11a "always 3D".
+- 3a Every picture off the board (Play Now seats, Manager cards, Domus, results, stands, ~40 figureHTML/standeeHTML sites) shows a still of
+  the 3D figure — one look everywhere.
+- 4a His Magnus Edition minis (assets/minis8_*, ~0.8 MB) stay ONLY in Credits → Prototype as the record of the tabletop pieces.
+- 5a Own release + own beta (touches ~40 screens). REPLACES: v0.72 "3D minis" token style, v0.75 "3D minis replace standees" (minis =
+  standard look for the printed classes), the Figures / Cylinders token styles. Grep before building: tokenStyle, mini3d, minis8, figureHTML,
+  standeeHTML, 74-zora cylinder, 16-crowd, 132-v83arrows, 111-onlcore, 226-v94onltok, 222-v93token.

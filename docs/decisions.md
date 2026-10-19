@@ -299,7 +299,7 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   flicker (Reduce motion stops it); the square shows dusk before a night bout.
 - **TOKEN MODELLER (his picks 2026-10-06, after v0.91):** posable 3D tokens that look like the naked avatar (assets/avatar.png: skin, harness,
   belt, loincloth, sandal straps, ink outline) — the NEW STANDARD for every Studio + online character, shown wherever a character shows
-  (board, Studio, Play Now seats, Manager cards, Domus, results…); PRINTED classes keep his 3D minis. The 3D kitbash of his TTS minis was
+  (board, Studio, Play Now seats, Manager cards, Domus, results…); PRINTED classes keep his 3D minis [REPLACED 2026-10-19: 3D figures everywhere, his minis only in Credits → Prototype]. The 3D kitbash of his TTS minis was
   REJECTED. Rig = his pose app's joints (yellow spine/neck/head, blue/red sides, pink hands/pelvis); presets + drag joints; one or both feet
   pinned to the base (IK), stance kept on the base. Body needs real anatomy (deltoids/trapezius into the neck, ears, eyes, nose, mouth) —
   first mock (tools: /tmp r3d/rig.html) was a capsule mannequin. Gear = 3D shells attached to body segments (fit any pose), printed pieces
@@ -783,3 +783,7 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   economy each alone).
 - Decided 2026-10-18 (his g4a g5a): Match Week results box shows our fighter (face, name, result, purse); NO rings under figures on the board (only the active piece's highlighted tile) — REPLACES the v1.0 team rings at mini bases (thinned in v1.03).
 - Decided 2026-10-18 (his a1a a2a): the aim tag shows the chance to WOUND from the rules incl. blessings/shields/armor/saves and active Focus!/Omnia Mutantur (REPLACES 396's ≥1-die-hits %).
+- Decided 2026-10-19 (his 1a 2a 3a 4a 5a): the old token pieces are RETIRED — no token-style setting; everyone sees the 3D figures; when 3D
+  can't show, a still frame of the 3D figure (shipped, also in the download); every off-board picture = a 3D still; his Magnus minis only in
+  Credits → Prototype. Own release after v1.06, before the torches. REPLACES the v0.72 "3D minis" token style, v0.75 "3D minis replace
+  standees" (printed classes wear his minis) and the Figures / Standees / Cylinders choices (tools/plans/v106/NOTES.md "Old token pieces").
