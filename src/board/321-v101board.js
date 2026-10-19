@@ -192,27 +192,56 @@ function bs101Proc(img,sx,sy,sw,sh,f,ax,ay,ppm,mode){
 /* off: flood from the base's outline inward over the base's own colours (a tight tolerance on the flat top, a looser one on the wall: the figure's
    skin / leather is close to the cream top, its ink outline is not); then the outline ring of the base itself (a thin band along the silhouette) */
 function bs101Off(sg,src,c,g,W,H,cx,cyT,rx,ry,Tp){
+  /* v1.06 D1: every margin below was tuned on a cell where the base is rx≈22.5 px wide (1×, unzoomed); zoomed or on a 2× screen the cell is up-scaled,
+     the base's ink outline and rim are u times thicker and the fixed 1.5 / 3.5 px bands missed the cream top (the beige disc). u scales them all. */
+  const u=Math.max(1,rx/22.5);
   const id=sg.getImageData(0,0,W,H),d=id.data;
   const inCyl=(x,y,m)=>{const dx=x+0.5-cx,dy=y+0.5-cyT,a=rx+m,b=ry+m;if(Math.abs(dx)>a)return false;
     if((dx/a)**2+(dy/b)**2<=1)return true;const dy2=dy-Tp;if((dx/a)**2+(dy2/b)**2<=1)return true;return dy>=0&&dy<=Tp};
-  const top=[],wall=[];const smp=(L,x,y)=>{x=Math.round(x);y=Math.round(y);if(x<0||y<0||x>=W||y>=H)return;const i=(y*W+x)*4;if(d[i+3]>200)L.push([d[i],d[i+1],d[i+2]])};
+  /* the base's own colours = the MODE of what a ring of probes finds (the figure's legs / feet stand on the middle of the top and the old fixed probes
+     sometimes landed on skin, so the flood ate the shins); the fixed probes stay as the fallback */
+  const top=[],wall=[];const pxs=(L,x,y)=>{x=Math.round(x);y=Math.round(y);if(x<0||y<0||x>=W||y>=H)return;const i=(y*W+x)*4;if(d[i+3]>200)L.push([d[i],d[i+1],d[i+2]])};
+  const mode=L=>{if(L.length<3)return null;const h=new Map();for(const p of L){const k=(p[0]>>4)*256+(p[1]>>4)*16+(p[2]>>4);let e=h.get(k);if(!e){e={n:0,r:0,g:0,b:0};h.set(k,e)}e.n++;e.r+=p[0];e.g+=p[1];e.b+=p[2]}
+    let best=null;for(const e of h.values())if(!best||e.n>best.n)best=e;return best.n>=Math.max(3,L.length*0.3)?[best.r/best.n,best.g/best.n,best.b/best.n]:null};
+  {const tp=[];for(let k=0;k<24;k++){const t=k/24*Math.PI*2;for(const f of [0.78,0.9])pxs(tp,cx+f*rx*Math.cos(t),cyT+f*ry*Math.sin(t))}
+    const m=mode(tp);if(m)top.push(m);
+    for(const grp of [[-0.9,-0.7,-0.5,-0.3],[0.3,0.5,0.7,0.9]]){const wp=[];for(const fx of grp){const e=cyT+ry*Math.sqrt(1-fx*fx);for(const q of [0.3,0.5,0.7])pxs(wp,cx+fx*rx,e+Tp*q)}const w=mode(wp);if(w)wall.push(w)}}
+  if(!top.length||wall.length<2){top.length=0;wall.length=0;const smp=pxs;
   for(const s of [-1,1]){smp(top,cx+s*0.9*rx,cyT);smp(top,cx+s*0.62*rx,cyT-0.7*ry);smp(top,cx+s*0.8*rx,cyT+0.45*ry);smp(top,cx+s*0.5*rx,cyT+0.75*ry);
     smp(wall,cx+s*0.9*rx,cyT+Tp*0.5);smp(wall,cx+s*0.55*rx,cyT+ry*0.83+Tp*0.5);smp(wall,cx+s*0.3*rx,cyT+ry*0.95+Tp*0.5)}
-  smp(top,cx,cyT-0.8*ry);smp(wall,cx,cyT+ry*0.98+Tp*0.5);smp(wall,cx,cyT+ry*0.98+Tp*0.85);
-  if(top.length+wall.length<4)return false;const tT=10*10,tW=22*22;
+  smp(top,cx,cyT-0.8*ry);smp(wall,cx,cyT+ry*0.98+Tp*0.5);smp(wall,cx,cyT+ry*0.98+Tp*0.85)}
+  if(top.length+wall.length<3)return false;const tT=10*10,tW=22*22;
   const near=i=>{for(const p of top){const a=d[i]-p[0],b=d[i+1]-p[1],e=d[i+2]-p[2];if(a*a+b*b+e*e<=tT)return true}
     for(const p of wall){const a=d[i]-p[0],b=d[i+1]-p[1],e=d[i+2]-p[2];if(a*a+b*b+e*e<=tW)return true}return false};
   const seen=new Uint8Array(W*H),st=[];
-  const edge=(x,y)=>{for(const [a,b] of [[1,0],[-1,0],[0,1],[0,-1]]){const X=x+a,Y=y+b;if(X<0||Y<0||X>=W||Y>=H)return true;if(!inCyl(X,Y,1.5)||d[(Y*W+X)*4+3]<30)return true}return false};
-  const y0=Math.max(0,Math.floor(cyT-ry-4)),y1=Math.min(H,Math.ceil(cyT+ry+Tp+4)),x0=Math.max(0,Math.floor(cx-rx-4)),x1=Math.min(W,Math.ceil(cx+rx+4));
-  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){if(!inCyl(x,y,1.5))continue;const i=(y*W+x)*4;if(d[i+3]<30||!near(i)||!(edge(x,y)||!inCyl(x,y,-3.5)))continue;seen[y*W+x]=1;st.push(x,y)}
+  const edge=(x,y)=>{for(const [a,b] of [[1,0],[-1,0],[0,1],[0,-1]]){const X=x+a,Y=y+b;if(X<0||Y<0||X>=W||Y>=H)return true;if(!inCyl(X,Y,1.5*u)||d[(Y*W+X)*4+3]<30)return true}return false};
+  const y0=Math.max(0,Math.floor(cyT-ry-4*u)),y1=Math.min(H,Math.ceil(cyT+ry+Tp+4*u)),x0=Math.max(0,Math.floor(cx-rx-4*u)),x1=Math.min(W,Math.ceil(cx+rx+4*u));
+  /* no seeds along the BACK arc: the figure's thighs cross it and their skin is the cream's colour; the flood reaches the back of the top round the sides */
+  /* the top's own lip (a highlight line between the wall and the cream) blocks the flood from the wall: the cream's edge is a seed too */
+  const inTop=(x,y,m)=>{const dx=x+0.5-cx,dy=y+0.5-cyT,a=rx+m,b=ry+m;return (dx/a)**2+(dy/b)**2<=1};
+  const yS=cyT-0.3*ry;
+  for(let y=Math.max(y0,Math.floor(yS));y<y1;y++)for(let x=x0;x<x1;x++){if(!inCyl(x,y,1.5*u))continue;const i=(y*W+x)*4;if(d[i+3]<30||!near(i)||!(edge(x,y)||!inCyl(x,y,-3.5*u)||!inTop(x,y,-3.5*u)))continue;seen[y*W+x]=1;st.push(x,y)}
   let removed=0;while(st.length){const y=st.pop(),x=st.pop();d[(y*W+x)*4+3]=0;removed++;
-    for(const [a,b] of [[1,0],[-1,0],[0,1],[0,-1]]){const X=x+a,Y=y+b;if(X<x0||Y<y0||X>=x1||Y>=y1||seen[Y*W+X])continue;if(!inCyl(X,Y,1.5))continue;const i=(Y*W+X)*4;if(d[i+3]<30||!near(i))continue;seen[Y*W+X]=1;st.push(X,Y)}}
+    for(const [a,b] of [[1,0],[-1,0],[0,1],[0,-1]]){const X=x+a,Y=y+b;if(X<x0||Y<y0||X>=x1||Y>=y1||seen[Y*W+X])continue;if(!inCyl(X,Y,1.5*u))continue;const i=(Y*W+X)*4;if(d[i+3]<30||!near(i))continue;seen[Y*W+X]=1;st.push(X,Y)}}
   if(!removed)return false;
   /* the base's own outline / rim highlight: opaque pixels in the 3-px band along the silhouette that touch a removed pixel (5 passes) */
-  for(let pass=0;pass<5;pass++){const kill=[];for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const i=(y*W+x)*4;if(d[i+3]<30)continue;if(!inCyl(x,y,3)||inCyl(x,y,-4))continue;
+  /* the front half erodes from the removed pixels; along the BACK arc the thighs cross the rim (skin = the cream's colour, so erosion would bite 5 px
+     up each leg): there only a thin lip goes (its vertical run is < 4u opaque pixels; a leg's run is long) */
+  const band=[],bandB=[];for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){if(inCyl(x,y,3*u)&&!inCyl(x,y,-4*u)){if(y<cyT)bandB.push(x,y);else band.push(x,y)}}
+  for(let pass=0,np=Math.ceil(5*u);pass<np;pass++){const kill=[];for(let k=0;k<band.length;k+=2){const x=band[k],y=band[k+1],i=(y*W+x)*4;if(d[i+3]<30)continue;
       let t=false;for(let a=-1;a<=1&&!t;a++)for(let b=-1;b<=1;b++){if(!a&&!b)continue;const X=x+a,Y=y+b;if(X<0||Y<0||X>=W||Y>=H||d[(Y*W+X)*4+3]<30){t=true;break}}if(t)kill.push(i)}
+    if(!kill.length)break;for(const i of kill)d[i+3]=0}
+  {const kill=[];const lim=4*u;for(let k=0;k<bandB.length;k+=2){const x=bandB[k],y=bandB[k+1];if(d[(y*W+x)*4+3]<30)continue;let n=1;
+      for(let Y=y-1;Y>=0&&n<=lim&&d[(Y*W+x)*4+3]>=30;Y--)n++;for(let Y=y+1;Y<H&&n<=lim&&d[(Y*W+x)*4+3]>=30;Y++)n++;if(n<lim)kill.push((y*W+x)*4)}
     for(const i of kill)d[i+3]=0}
+  /* what is left of the base: thin arcs / specks lying wholly inside its footprint (the lip's highlight, the dotted ink ring) and the faint
+     anti-alias haze of the outline. A part joined to anything outside the footprint (the figure's body) stays. */
+  {const lab=new Int32Array(W*H);const inF=(x,y)=>inCyl(x,y,3*u);
+    for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const j=y*W+x;if(lab[j])continue;const a0=d[j*4+3];if(a0<30){if(a0&&inF(x,y))d[j*4+3]=0;continue}
+      const comp=[j];lab[j]=1;let area=0,ox=false,bx0=x,bx1=x,by0=y,by1=y;
+      for(let q=0;q<comp.length;q++){const k=comp[q],X=k%W,Y=(k/W)|0;area++;if(X<bx0)bx0=X;if(X>bx1)bx1=X;if(Y<by0)by0=Y;if(Y>by1)by1=Y;if(!inF(X,Y))ox=true;
+        for(let aa=-1;aa<=1;aa++)for(let bb=-1;bb<=1;bb++){const XX=X+bb,YY=Y+aa;if(XX<0||YY<0||XX>=W||YY>=H)continue;const kk=YY*W+XX;if(lab[kk]||d[kk*4+3]<30)continue;lab[kk]=1;comp.push(kk)}}
+      if(!ox&&area/((bx1-bx0+1)+(by1-by0+1))<2.5*u)for(const k of comp)d[k*4+3]=0}}
   g.putImageData(id,0,0);BS101.stats.off++;return true}
 function bs101Patch(){if(typeof ctx==='undefined')return;if(!BS101.nat)BS101.nat=CanvasRenderingContext2D.prototype.drawImage;
   if(ctx.drawImage===BS101.patched)return;
