@@ -12,6 +12,7 @@
      desk-z14-hover (the pointer sweeps the tiles round the acting fighter, a tile every 90 ms: 07-ui hover text + redraw) and
      desk-z14-nobase / desk-z2-nobase (Settings "Show token bases" off: 321's base clean-up), desk-z14-aim / desk-z2-aim (a human soldier mid-attack, the pointer moving between two beasts and the sand: 396's ring, outline, tag).
    Lighting: desk/hd Full, phone its default (Light), auto-drop off (flavius_light106auto=0) so a run never changes mode midway.
+   --speed fast|normal|slow (default normal): the CPU speed (beta 3: the all-CPU match at Fast).
      node tools/bench/live.js <page> [--secs 6] [--warm 3] [--only desk-flat,desk-z2] [--flush] [--profile] [--ls k=v,…] [--json FILE]
    The machine load (/proc/loadavg) is printed before and after; other jobs may share this box — compare like for like, several runs. */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path'),os=require('os');
@@ -46,7 +47,7 @@ const START=async cfg=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const clos
     for(const n of S.npcs)if(n.t==='zora'){n.r=0;n.c=12}
     const p=cur();p.attacks=0;p.hitTargets=new Set();p.armUses={R:0,L:0};const src=attackSources(p)[0];S.mode='atk'+src.arm+(src.thr?'T':'');
     SPEED='normal';render()}
-  else SPEED='normal';
+  else SPEED=cfg.speed||'normal';
   if(cfg.z>=1.9){CAM.z=cfg.z;S.zoomIn=true}else if(cfg.z>1)S.zoomIn=true;
   for(let i=0;i<10;i++){draw();await W8(40)}
   return {canv:[...document.querySelectorAll('canvas')].filter(c=>c.offsetParent||c.getClientRects().length).map(c=>(c.id||c.className||c.parentElement.className||'?').toString().slice(0,20)+':'+c.width+'x'+c.height),TW,dpr:devicePixelRatio,cv:[cv.width,cv.height],z:typeof duelCam==='function'?+duelCam().toFixed(2):1,light:typeof l106Mode==='function'?l106Mode():null,players:S.players.length}};
@@ -54,7 +55,7 @@ const START=async cfg=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const clos
 const PROBE=()=>{const P=window.PROBE107={on:false,c:{}};const where=()=>{const L=String(new Error().stack).split('\n').slice(3).map(s=>s.trim());const f=L.find(s=>/at \S+ \(http/.test(s))||L[0]||'';return f.replace(/\(https?:\/\/[^)]*:(\d+):\d+\)/,':$1')};
   const rec=(k,ms)=>{if(!P.on)return;const w=k+' '+where();const e=P.c[w]||(P.c[w]={n:0,ms:0});e.n++;e.ms+=ms};
   const cib=window.createImageBitmap;window.createImageBitmap=function(){const t=performance.now();const r=cib.apply(this,arguments);rec('createImageBitmap',performance.now()-t);return r};
-  for(const C of [CanvasRenderingContext2D,OffscreenCanvasRenderingContext2D]){const g=C.prototype.getImageData;C.prototype.getImageData=function(){const t=performance.now();const r=g.apply(this,arguments);if(arguments[2]*arguments[3]>4)rec('getImageData',performance.now()-t);return r}}
+  for(const C of [CanvasRenderingContext2D,OffscreenCanvasRenderingContext2D]){const g=C.prototype.getImageData;C.prototype.getImageData=function(){const t=performance.now();const r=g.apply(this,arguments);rec(arguments[2]*arguments[3]>4?'getImageData':'getImageData(tiny)',performance.now()-t);return r}}
   const ce=document.createElement;document.createElement=function(n){if(String(n).toLowerCase()==='canvas')rec('newCanvas',0);return ce.apply(this,arguments)};
   for(const k of ['width','height']){const d=Object.getOwnPropertyDescriptor(HTMLCanvasElement.prototype,k);Object.defineProperty(HTMLCanvasElement.prototype,k,{get:d.get,set(v){if(this!==window.cv)rec('canvas.'+k+'=',0);d.set.call(this,v)},configurable:true})}
   const fl=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,'filter');Object.defineProperty(CanvasRenderingContext2D.prototype,'filter',{get:fl.get,set(v){if(v&&v!=='none')rec('filter='+String(v).slice(0,20),0);fl.set.call(this,v)},configurable:true});
@@ -89,7 +90,7 @@ const POINTS=aim=>{const R=cv.getBoundingClientRect();const out=[];
   if(aim){for(const n of [window.__A,window.__B]){if(!n)continue;const m=center(n.r,n.c);out.push({x:R.left+m.x,y:R.top+m.y-TH*0.6})}const e=center(8,8);out.push({x:R.left+e.x,y:R.top+e.y});return out}
   const p=cur();if(!p||p.r==null)return out;for(const [dr,dc] of [[0,1],[1,0],[0,-1],[-1,0],[1,1],[-1,-1],[2,0],[0,2]]){const r=p.r+dr,c=p.c+dc;if(r<0||c<0||r>=N||c>=N)continue;const m=center(r,c);out.push({x:R.left+m.x,y:R.top+m.y})}return out};
 
-(async()=>{const serve=require(path.join(__dirname,'..','perf95','serve.js'));const url=await serve(PAGE);const b=await chromium.launch(flag('gpu')?{args:['--ignore-gpu-blocklist','--enable-gpu-rasterization','--enable-unsafe-swiftshader','--use-angle=swiftshader']}:{});
+(async()=>{const serve=require(path.join(__dirname,'..','perf95','serve.js'));const url=await serve(PAGE);const b=await chromium.launch(flag('gpu')?{args:['--use-gl=angle','--use-angle=swiftshader','--enable-gpu-rasterization','--ignore-gpu-blocklist','--enable-accelerated-2d-canvas','--enable-unsafe-swiftshader'],ignoreDefaultArgs:['--hide-scrollbars']}:{});
   const res={page:path.basename(PAGE),ls:LS,secs:SECS,warm:WARM,flush:FLUSH,load0:load(),at:new Date().toISOString(),runs:[]};const errs=[];
   console.log('load before',JSON.stringify(res.load0),FLUSH?'FLUSH':'');
   for(const cfg of CONFIGS){if(ONLY.length&&!ONLY.includes(cfg.name))continue;
@@ -97,7 +98,7 @@ const POINTS=aim=>{const R=cv.getBoundingClientRect();const out=[];
     const cx=await b.newContext(VIEWS[cfg.view]);await cx.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
     await cx.addInitScript(ls=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_first100off','1');for(const k in ls)localStorage.setItem(k,ls[k])},ls);
     const pg=await cx.newPage();pg.on('pageerror',e=>errs.push(cfg.name+': '+e.message));await pg.goto(url,{timeout:180000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:120000});
-    if(flag('probe'))await pg.evaluate(PROBE);const st=await pg.evaluate(START,cfg);if(flag('who'))await pg.evaluate(WHO);if(opt('fn',''))console.log('   wrapped',JSON.stringify(await pg.evaluate(FNWRAP,String(opt('fn','')).split(','))));await pg.waitForTimeout(WARM*1000);
+    if(flag('probe'))await pg.evaluate(PROBE);const st=await pg.evaluate(START,{...cfg,speed:opt('speed','normal')});if(flag('who'))await pg.evaluate(WHO);if(opt('fn',''))console.log('   wrapped',JSON.stringify(await pg.evaluate(FNWRAP,String(opt('fn','')).split(','))));await pg.waitForTimeout(WARM*1000);
     let cdp=null;if(PROF){cdp=await cx.newCDPSession(pg);await cdp.send('Profiler.enable');await cdp.send('Profiler.setSamplingInterval',{interval:250});await cdp.send('Profiler.start')}
     const CPUF=flag('cpu')&&!flag('trace')?path.join(os.tmpdir(),'live107c-'+process.pid+'.json'):null;if(CPUF)await b.startTracing(pg,{path:CPUF,categories:['devtools.timeline','disabled-by-default-devtools.timeline']});
     const TRF=flag('trace')?path.join(os.tmpdir(),'live107-'+process.pid+'.json'):null;if(TRF)await b.startTracing(pg,{path:TRF,categories:['devtools.timeline','disabled-by-default-devtools.timeline','blink','cc','gpu','skia','blink.canvas']});
@@ -140,6 +141,11 @@ const POINTS=aim=>{const R=cv.getBoundingClientRect();const out=[];
       for(const e of mainEv){const v=(e._td-(e._c||0))/1000;if(v>0){const k=e.name+(e.name==='FunctionCall'&&e.args&&e.args.data?' '+(e.args.data.functionName||'')+':'+(e.args.data.lineNumber||''):'');self[k]=(self[k]||0)+v}}
       if(flag('pcr')){const P=mainEv.filter(e=>/ProduceCanvasResource/.test(e.name)).slice(0,12);console.log('   PCR samples',JSON.stringify(P.map(e=>[Math.round(e.ts/1000)%100000,+(e.dur/1000).toFixed(1),e.args]))) ;
         const kids={};for(const e of mainEv){if(e.ts>=P[0].ts&&e.ts<=P[0].ts+P[0].dur&&e!==P[0]){kids[e.name]=(kids[e.name]||0)+e.dur/1000}}console.log('   inside first PCR',JSON.stringify(kids))}
+      if(flag('rb')){ /* --rb: the call chain of every blocking GPU read-back (ReadbackImagePixels / WaitForCmd / Finish) on the main thread */
+        const st2=[];for(const e of mainEv){while(st2.length&&st2[st2.length-1].ts+st2[st2.length-1].dur<=e.ts)st2.pop();st2.push(e);
+          if(/ReadbackImagePixels|CommandBufferHelper::Finish|GetImageData|WaitForCmd/.test(e.name)&&e.dur>2000)console.log('   RB',(e.dur/1000).toFixed(0)+'ms',st2.map(x=>x.name+(x.name==='RunTask'&&x.args?JSON.stringify(x.args).slice(0,160):'')+(x.args&&x.args.data?'['+(x.args.data.functionName||x.args.data.type||'')+':'+(x.args.data.lineNumber||'')+']':'')).join(' > ').slice(0,900))}}
+      if(flag('decodes')){const D={};for(const e of ev){if(e.ph!=='X'||!/Decode Image|ImageDecodeTask|Decode LazyPixelRef|GpuImageDecodeCache::DecodeImage|ImageFrameGenerator::decode$/.test(e.name))continue;const k=e.name+' '+JSON.stringify(e.args||{}).slice(0,160);const d=D[k]||(D[k]={n:0,ms:0});d.n++;d.ms+=e.dur/1000}
+        console.log(Object.entries(D).sort((x,y)=>y[1].ms-x[1].ms).slice(0,20).map(([k,v])=>'   DEC '+v.n+'x '+v.ms.toFixed(0)+'ms '+k).join('\n'))}
       r.self=Object.entries(self).sort((a,b)=>b[1]-a[1]).slice(0,30).map(([k,v])=>[k,+v.toFixed(0)]);
       r.trace=Object.entries(agg).sort((a,b)=>b[1].ms-a[1].ms).slice(0,40).map(([k,v])=>[k,v.n,+v.ms.toFixed(0)])}
     if(cdp){const {profile}=await cdp.send('Profiler.stop');const self={};const byId={};profile.nodes.forEach(n=>byId[n.id]=n);const dt=profile.timeDeltas;let tot=0;
@@ -148,6 +154,9 @@ const POINTS=aim=>{const R=cv.getBoundingClientRect();const out=[];
       /* inclusive (total) time per page function: each sample counts once for every distinct function on its stack */
       const par={};profile.nodes.forEach(n=>(n.children||[]).forEach(c=>par[c]=n.id));const inc={};
       profile.samples.forEach((id,i)=>{const seen=new Set();for(let x=id;x!=null;x=par[x]){const cf=byId[x].callFrame;if(!cf.url)continue;const kk=(cf.functionName||'(anon)')+' :'+(cf.lineNumber+1);if(seen.has(kk))continue;seen.add(kk);inc[kk]=(inc[kk]||0)+(dt[i]||0)}});
+      if(flag('natives')){const N={};profile.samples.forEach((id,i)=>{const n=byId[id];const f=n.callFrame.functionName;if(!/^(drawImage|getImageData|toBlob|toDataURL|createImageBitmap|putImageData|fillRect|clearRect|fill|stroke)$/.test(f))return;
+          const ch=[];for(let x=par[id];x!=null&&ch.length<4;x=par[x]){const cf=byId[x].callFrame;if(cf.url)ch.push((cf.functionName||'(anon)')+':'+(cf.lineNumber+1))}const k=f+' < '+ch.join(' < ');N[k]=(N[k]||0)+(dt[i]||0)});
+        console.log(Object.entries(N).sort((a,b)=>b[1]-a[1]).slice(0,15).map(([k,v])=>'   NATIVE '+(v/1000).toFixed(0)+'ms '+k).join('\n'))}
       r.incl=Object.entries(inc).sort((a,b)=>b[1]-a[1]).slice(0,45).map(([k,v])=>[k,+(v/1000).toFixed(0)])}
     res.runs.push({key:cfg.name+(FLUSH?' flush':''),cfg:cfg.name,st,...r,top});
     console.log((cfg.name+(FLUSH?' flush':'')).padEnd(22),`fps ${r.fps} frame p50 ${r.frame.p50} p95 ${r.frame.p95} max ${r.frame.max} (>25ms ${r.over25}, >50ms ${r.over50}/${r.n}) js p50 ${r.js.p50} p95 ${r.js.p95} max ${r.js.max} draws/frame ${r.drawsPerFrame} long ${r.long}/${r.longMs}ms TW ${r.TW} z ${r.z} light ${st.light}`);
