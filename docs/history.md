@@ -255,3 +255,9 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   mail 378, loans/rudis/seeds/home arenas 379–382, Rivalry Week pairs + free trip 383, starters warning by bouts 384, fallen stay signed 385,
   renewals OVR/form 386, tasks/project chips 387, slim banners everywhere 388/390/392 + one hours chip/rail pill 392, Armory list + Save & quit
   in the rail 391, recruiting jitter fix (378). docs/known-issues.md started. No server change.
+- **v1.06** one sun + target clarity + season locks (tools/plans/v106/NOTES.md, two betas): lighting 399 (one sun per arena, cast + contact
+  shadows, figures re-lit with shadow sheets, Settings Lighting Full/Light/Off with auto-drop), aim 396 (hover ring/crosshair, tag = chance to
+  WOUND from the rules incl. blessings/shields/armor/Focus!/Omnia, Minerva named at 0%, Confirm attacks offline only, no % in Ranked),
+  trade/loan deadline after week 8 + Superbus roster lock + no poaching 393, rival trade motives 394, Infirmary injured chip 395; beta-1 fixes
+  397 (bouts locked until Set off, sign plates, city edge fade, no city speed control) + 398 (no rings under figures, gold active tile, team chip,
+  Match Week results box, Moechus grey), beige base disc at zoom/2× fixed (321). Flaky tests hardened (tv92t, tv104d, tv105x, tv100l). No server change.

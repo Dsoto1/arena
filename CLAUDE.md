@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.05** (v1.05 live 2026-10-18). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.06** (v1.06 shipped 2026-10-19). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -181,7 +181,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -199,12 +199,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.03** fixes from his v1.02 notes (tools/plans/v103/NOTES.md, the first SMALL release + first beta): general 344 (square close buttons, Market
-  closed in a no-CF round, challenge start + abandon warning, one section switch per spectator — goldens re-recorded), Manager 345 (Superbus Week +
-  review, rivalry week locked, roster cap 15, loan asks shown as loans, Treated ✓, Vulso via the Recruiter, tiles), board 346 (smaller beasts re-rendered,
-  bases off everywhere, thinner rings, tunnel/Telemachus reasons, sharper cells, Gear designers in the frame). Pipeline: CLAUDE.md split into docs/,
-  release/vX.YY branches + main, flavius.sh beta, deploy-script CI, testlist CI (six tests that never ran now run), flaky tests hardened. No server change.
-
 - **v1.04** the Manager season rework (tools/plans/v104/NOTES.md, three betas): season shape 348 (byes 4 & 12, Rivalry Week 11, the Superbus
   playoffs: projected bracket from week 9, seeds 1–4 rest a round, final in week 12), careers 349 (ages 18–30, five career kinds, peaks and fades),
   roster 350 (cap, starters, layout), Infirmary + Recovery back in the ward with Medicus hours 351; beta fixes: roster 352, ludus + letters 353,
@@ -217,3 +211,10 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   mail 378, loans/rudis/seeds/home arenas 379–382, Rivalry Week pairs + free trip 383, starters warning by bouts 384, fallen stay signed 385,
   renewals OVR/form 386, tasks/project chips 387, slim banners everywhere 388/390/392 + one hours chip/rail pill 392, Armory list + Save & quit
   in the rail 391, recruiting jitter fix (378). docs/known-issues.md started. No server change.
+
+- **v1.06** one sun + target clarity + season locks (tools/plans/v106/NOTES.md, two betas): lighting 399 (one sun per arena, cast + contact
+  shadows, figures re-lit with shadow sheets, Settings Lighting Full/Light/Off with auto-drop), aim 396 (hover ring/crosshair, tag = chance to
+  WOUND from the rules incl. blessings/shields/armor/Focus!/Omnia, Minerva named at 0%, Confirm attacks offline only, no % in Ranked),
+  trade/loan deadline after week 8 + Superbus roster lock + no poaching 393, rival trade motives 394, Infirmary injured chip 395; beta-1 fixes
+  397 (bouts locked until Set off, sign plates, city edge fade, no city speed control) + 398 (no rings under figures, gold active tile, team chip,
+  Match Week results box, Moechus grey), beige base disc at zoom/2× fixed (321). Flaky tests hardened (tv92t, tv104d, tv105x, tv100l). No server change.

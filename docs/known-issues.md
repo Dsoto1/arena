@@ -5,10 +5,6 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
-- 2026-10-17 · a beast drawn as a flat dark silhouette on a grey disc (beta 2 screenshot) · FIXED for v1.06 beta 2 (398): Moechus's near-black
-  fur (#5c5856) re-rendered grey; the grey disc is the Lighting Off shadow disc · moves to history with v1.06.
-- 2026-10-18 · bases off: a beige base top under the figure when zoomed / on a 2× screen · FIXED for v1.06 beta 2 (321 bs101Off margins scale
-  with the cell, base colours from a ring of probes; test tv106h, every class at zoom 1/1.4/2 × DPR 1/2) · moves to history with v1.06.
 - 2026-10-18 · tools/art/anim100b/make.js l106 run today bakes DIFFERENT beast shadow sheets than the committed v1.06a ones (moechus/valencia:
   cell 56×18, anchor y 47 vs 58×28, y 11 — the shadow sits above its anchor); the lit sheets come out byte-identical. Check l106.js's shadow
   crop before any beast re-bake (398 kept the committed shadow sheets).
@@ -44,5 +40,4 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - A commit that only touches tools/deploy (e.g. release.sh's advert shot) starts no regression run · dispatch the full run by hand.
 
 ## Waiting on him
-- v1.05 shipped 2026-10-18 (release/v1.05 + main) → he runs `bash flavius.sh release`.
-- Infirmary rail tab shows "⚕ N" (fighters needing care), not Medicus hours — asked whether it should show hours.
+- v1.06 shipped 2026-10-19 (release/v1.06 + main) → he runs `bash flavius.sh release`.
