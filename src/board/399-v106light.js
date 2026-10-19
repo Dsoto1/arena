@@ -150,7 +150,16 @@ function l106Build(md,night,key,ds){const L=night?LIGHT106.night:LIGHT106.day,{c
     for(const it of casts){if(it.t==='solid')tg.drawImage(it.s.c,it.m.x+it.s.x0*it.k,it.m.y+it.s.y0*it.k,it.s.c.width*it.k,it.s.c.height*it.k);else{tg.globalAlpha=0.8;tg.drawImage(l106Soft(),it.x,it.y,it.w,it.h);tg.globalAlpha=1}}
     g.save();g.setTransform(1,0,0,1,0,0);g.globalAlpha=L.cast;g.drawImage(t,0,0);g.restore();t.width=t.height=0}
   for(const ct of conts)l106ContactAt(g,ct.x,ct.y,ct.rx,ct.ry,L);
-  const c0=center(0,0);L106.layer={key,c,rx:(x0-c0.x)/TW,ry:(y0-c0.y)/TW,rw:(x1-x0)/TW,rh:(y1-y0)/TW,casts:casts.length,conts:conts.length};L106.st.builds++;return L106.layer}
+  const c0=center(0,0);L106.layer={key,c,rx:(x0-c0.x)/TW,ry:(y0-c0.y)/TW,rw:(x1-x0)/TW,rh:(y1-y0)/TW,casts:casts.length,conts:conts.length,
+    ds,rects:R.map(([x,y,w,h])=>[(x-x0)*ds,(y-y0)*ds,w*ds,h*ds])};   /* v1.07: where it holds pixels (device px in the layer) */L106.st.builds++;return L106.layer}
+/* the static layer on the board (v1.07: its own function, so 401-v107perf can draw it in aligned pieces) */
+function l106DrawStatic(Ly,hp){const c0=center(0,0),X=c0.x+Ly.rx*TW,Y=c0.y+Ly.ry*TW,W=Ly.rw*TW,H=Ly.rh*TW;
+  /* contacts in the layer are not lifted; casts are: when highlights are up the lift is applied to the whole layer (the contacts sit off the tiles) */
+  l106Lifted(hp,(a,b)=>{ctx.globalAlpha=a;if(!b){ctx.drawImage(Ly.c,X,Y,W,H);return}
+    const x0=Math.max(X,b[0]),y0=Math.max(Y,b[1]),x1=Math.min(X+W,b[2]),y1=Math.min(Y+H,b[3]);if(x1<=x0||y1<=y0)return;const kx=Ly.c.width/W,ky=Ly.c.height/H;
+    ctx.drawImage(Ly.c,(x0-X)*kx,(y0-Y)*ky,(x1-x0)*kx,(y1-y0)*ky,x0,y0,x1-x0,y1-y0)})}
+/* the figures' + beasts' cast shadows (ops = [canvas, x, y, w, h]) — v1.07: its own function (401-v107perf) */
+function l106DrawFigs(ops,hp,L){l106Lifted(hp,(a,b)=>{ctx.globalAlpha=a*L.cast;for(const op of ops)if(l106Hit(op[1],op[2],op[3],op[4],b))ctx.drawImage(...op)})}
 /* a pillar being shoved: its shadow drawn live at the shove's offset */
 function l106MovingPillars(md,L,ds){for(const pl of S.pillars){if(!l106PilOK(pl)||!l106PilMoving(pl))continue;let o={dx:0,dy:0};try{if(typeof push100At==='function')o=push100At(pl)||o}catch(e){}
   const m=center(pl.r,pl.c),x=m.x+(o.dx||0),y=m.y+(o.dy||0);
@@ -220,17 +229,13 @@ function l106Pass(){const md=l106Mode();if(md==='off')return;const t0=performanc
   const hp=l106HLPath();
   /* 1 · the static layer */
   const key=l106Key(md,night,ds);let Ly=L106.layer;if(!Ly||Ly.key!==key){Ly=l106Build(md,night,key,ds);last.built=true}
-  if(Ly.c){const c0=center(0,0),X=c0.x+Ly.rx*TW,Y=c0.y+Ly.ry*TW,W=Ly.rw*TW,H=Ly.rh*TW;
-    /* contacts in the layer are not lifted; casts are: when highlights are up the lift is applied to the whole layer (the contacts sit off the tiles) */
-    l106Lifted(hp,(a,b)=>{ctx.globalAlpha=a;if(!b){ctx.drawImage(Ly.c,X,Y,W,H);return}
-      const x0=Math.max(X,b[0]),y0=Math.max(Y,b[1]),x1=Math.min(X+W,b[2]),y1=Math.min(Y+H,b[3]);if(x1<=x0||y1<=y0)return;const kx=Ly.c.width/W,ky=Ly.c.height/H;
-      ctx.drawImage(Ly.c,(x0-X)*kx,(y0-Y)*ky,(x1-x0)*kx,(y1-y0)*ky,x0,y0,x1-x0,y1-y0)});last.static=true}
+  if(Ly.c){l106DrawStatic(Ly,hp);last.static=true}
   l106MovingPillars(md,L,ds);const t1=performance.now();
   /* 2 · figures + beasts */
   if(md==='full'){const ops=[];
     for(const [p,npc] of pieces){let r=null;try{r=npc?l106BeastSh(p,ds,now):l106GladSh(p,ds)}catch(e){r=null}if(!r)continue;const m=center(p.r,p.c),o=npc?(r.dx||r.dy?{dx:r.dx,dy:r.dy}:l106Off(p,true)):l106Off(p,false);
       const x=m.x+o.dx,y=m.y+o.dy;ops.push([r.c,x+r.x,y+r.y,r.w,r.h]);last.figs.push({id:p.id,npc,key:r.key,x:Math.round(x),y:Math.round(y)})}
-    if(ops.length)l106Lifted(hp,(a,b)=>{ctx.globalAlpha=a*L.cast;for(const op of ops)if(l106Hit(op[1],op[2],op[3],op[4],b))ctx.drawImage(...op)});L106.st.figs+=ops.length}
+    if(ops.length)l106DrawFigs(ops,hp,L);L106.st.figs+=ops.length}
   const t2=performance.now();
   /* 3 · contact */
   ctx.save();for(const [p,npc] of pieces){const C=L106.cont.get(p);if(!C)continue;const m=center(p.r,p.c),o=npc?l106NpcOff(p,now):l106Off(p,false);
