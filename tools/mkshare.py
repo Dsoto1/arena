@@ -11,8 +11,8 @@ RETIRED|={'webpenc94.js'}
 # v1.0: the animated stand-in sheets (311-v100anim, ~6 MB) stay on the site; the standalone draws the still tokens
 # v1.0 animated 3D beasts (312-v100beasts): the standalone keeps today's minis (the download stays under 30 MiB)
 RETIRED|={f for f in os.listdir(A) if f.startswith('beast100_')}
-# v1.0: the 3D crowd sheets stay on the site only (the standalone keeps today's painted crowd — 313-v100crowd falls back)
-RETIRED|={f for f in os.listdir(A) if f.startswith('crowd100_')}
+# v1.07 (his a, 2026-10-19): the 3D crowd sheets crowd100_* (≈0.8 MB) ARE inlined now — townsfolk, lanista, doctore and the stands' crowd
+# in 3D in the standalone too (one look everywhere; v1.0 kept them site-only)
 # v1.07 (400-v107tok): the still sheets still107_* (≈0.35 MB) ARE inlined — the standalone draws one still frame of the 3D figures
 # v1.07 (402-v107city): the City Square walker sheets city107_* (≈0.6 MB) ARE inlined too — the standalone's gladiators / guards walk in 3D
 for f in sorted(os.listdir(A)):
