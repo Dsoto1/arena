@@ -1,0 +1,49 @@
+# v1.07 beta 4: his Safari reports replayed in Playwright WebKit (tools/bench/webkit.js; tools/plans/v107/PERF.md "beta 4").
+# MANUAL ONLY (Actions → webkit-bench → Run workflow); never on push. WebKit on Linux has no GPU: the fps are not a Mac's, but the
+# WebKit-only canvas / CSS costs and the board redraws show, with and without 406's fixes (the #perf= switches per run).
+name: webkit-bench
+on:
+  workflow_dispatch:
+    inputs:
+      ab:
+        description: "';'-separated #perf= variants ('' = as shipped)"
+        default: 'v107safarioff;'
+      configs:
+        description: 'pause,slow'
+        default: 'pause,slow'
+      secs:
+        description: 'seconds recorded per run'
+        default: '10'
+permissions:
+  contents: read
+concurrency:
+  group: webkit-bench
+  cancel-in-progress: false
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-1.56.1-webkit
+      - name: tools
+        timeout-minutes: 15
+        run: |
+          npm i --no-save --prefix /tmp/ci playwright@1.56.1 >/dev/null 2>&1
+          # apt inside --with-deps has hung on some runners: bound each try, retry twice (as regression.yml)
+          for i in 1 2 3; do timeout 240 npx --prefix /tmp/ci playwright install --with-deps webkit >/dev/null && break; echo "playwright install try $i failed"; sleep 5; done
+      - name: build
+        run: sh build.sh | tail -1
+      - name: bench
+        timeout-minutes: 25
+        env:
+          NODE_PATH: /tmp/ci/node_modules
+          AB: ${{ github.event.inputs.ab }}
+          CONFIGS: ${{ github.event.inputs.configs }}
+          SECS: ${{ github.event.inputs.secs }}
+        run: node tools/bench/webkit.js flavius-arena.html --browser webkit --configs "$CONFIGS" --ab "$AB" --secs "$SECS" --dpr 2 --w 1920 --h 990

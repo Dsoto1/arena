@@ -121,7 +121,7 @@ function rec107Stop(){const R=REC107;if(!R.on)return;const el=performance.now()-
     ua:navigator.userAgent,gpu:rec107Gpu(),cores:navigator.hardwareConcurrency||null,memGB:navigator.deviceMemory||null,dpr:window.devicePixelRatio||1,
     view:{w:innerWidth,h:innerHeight},canvas:typeof cv!=='undefined'&&cv?{w:cv.width,h:cv.height}:null,...g,
     frames:{n:fr.length,fps:+(fr.length*1000/el).toFixed(1),p50:q(.5),p95:q(.95),max:q(1),over33:fr.filter(x=>x>33.4).length,over50:fr.filter(x=>x>50).length,intervals:fr},
-    areas,slowFrames:R.slow,longTasks:R.long,longFrames:R.loaf,counts:R.c,layers:lay,p107:typeof P107!=='undefined'&&P107.st?{...P107.st}:null,p107b:{...P107B.st},
+    areas,slowFrames:R.slow,longTasks:R.long,longFrames:R.loaf,counts:R.c,layers:lay,p107:typeof P107!=='undefined'&&P107.st?{...P107.st}:null,p107b:{...P107B.st},...(typeof rec107Extra==='function'?rec107Extra():{}) /* 406: switches, page, p107s */,
     note:'areas = inclusive ms (draw holds light, cells, stands, clean-ups; render may call draw); slowFrames.areas = ms in the frame before it'};
   R.res=res;let top=Object.entries(areas).sort((a,b)=>b[1].ms-a[1].ms)[0];
   const lt=R.long.reduce((s,l)=>s+l.ms,0);

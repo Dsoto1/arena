@@ -165,3 +165,76 @@ longTasks[{t,ms,attr,areas}], longFrames[{t,ms,blocking,render,styleLayout,scrip
 getImageData, toBlob, toDataURL, convertToBlob, createImageBitmap(…), imageLoad, readback?: {n,ms,by{caller:n}}}, layers[], p107, p107b}`.
 Areas are inclusive (draw holds light / cells / stands / clean-ups; renders run inside BUS handlers). `pos` in a long frame's script = the character
 offset in the page (find it in flavius-arena.html). `node tools/bench/rec107.js <page> [--gpu]` prints the same digest here.
+
+---
+
+# beta 4: Safari reports (406-v107safari)
+His two recorder files (tools/plans/v107/perf/safari-paused-190439.json, safari-slow-190538.json): **Safari 26.6, macOS, "Apple GPU", DPR 2**,
+view 1920×990, board canvas 2060×1418, zoom 1, Lighting Light (auto-dropped), 4 seats / 3 CPU. Same Mac in **Chrome: fine** (~30 fps dips at Fast)
+→ WebKit-specific.
+
+## What the reports show
+- **Paused: 5 fps, p50 184 ms, every frame > 50 ms; Slow: 4.5 fps, p50 197 ms.** Our timed JS in those frames: draw 2–5 ms, nothing else.
+  Safari has no Long Tasks / LoAF API, so `longTasks: []` means nothing; the time is spent outside our JS.
+- **Paused, the board was drawn every frame** (82 draws in 51 frames; every slow frame holds a `draw`). Nothing moves on a paused board, so
+  something asked for a draw each frame. In Chromium, the same paused human turn draws 0 times — **except when the Guide's gold tile
+  (S.sugTile) is up: 29's `drawSugTile` pulses the ring by asking for a whole-board draw every animation frame**, forever (Chromium at DPR 2 on
+  this box: 15.7 fps, draw 678 ms/s, paused). The paused report is a human turn with the Guide on (ai 24 calls = the hint's scoring, 8 renders).
+- **Why a board draw costs ~100–200 ms in Safari but a few ms of JS:** WebKit's 2D canvas is drawn by CoreGraphics on the CPU (in Safari's GPU
+  process: the commands are recorded on the page's thread — our 2–3 ms — and rasterised later, outside our JS). That is the software path,
+  like this container's Chromium: at DPR 2 a full board raster here is ~43 ms (board.js `--ablate --dprs 2`: stands 15, walls 9, light 4,
+  sky 4, decals 4 …) and CG is slower than Skia for the board's ~15 board-sized layers with source-atop / destination-over / multiply, the
+  360 ImageBitmap pieces and ~740 fillRects. The cost follows the device pixels (2060×1418 = 2.9 M).
+- `cells` 992 calls / `clean` 909 in 10 s paused = one call per figure per draw (cache hits); the ms are in **5 bursts** (79–316 ms) at the
+  start, a hover (aim outline), and 3 renders. `getImageData` 113 × ~11 ms: on WebKit every canvas read waits for the GPU process to finish
+  its queue (the board rasters). `readback?` 100 ≈ every getImageData: Safari's `getContextAttributes()` does not report willReadFrequently.
+  Chromium (same scene, hovering 60 tiles, renders every 10 frames): 0 new canvases, 0 getImageData, TW and the fit stable → no churn;
+  Safari's bursts are the same rebuilds made slow by the waits. Not changed beyond W2/W1 (fewer draws to wait for, fewer pixels).
+- `canvasResize` 474 = 2 × `newCanvas` 234 (each new canvas gets width + height): **no resize loop**. 07's `draw()` sets cv.width/height
+  to the same size every draw (the recorder skipped those): W5.
+- `createImageBitmap(ImageBitmap)` 90 = 260's z99 cutting 2 holders into 256² pieces once (a re-keyed layer), not a loop.
+- `by: "?"` everywhere: the recorder could not read Safari's `fn@url` stack lines (fixed, W4).
+- CSS: in a match only 3 animations run (Chromium `getAnimations`): the two 10-px turn dots (`pulse` = transform + opacity) and the banner
+  (`ban`, ends). No backdrop-filter / filter animation on big elements during play; the hint button glow (`sugpulse`, a drop-shadow filter)
+  runs only on a suggested button. The report now lists them for Safari.
+
+## Hypotheses (the brief) → verdict
+- a. willReadFrequently canvases drawn every frame: **true in code** (405 Q5: ~10 in-memory cells drawn per board draw). On WebKit such a
+  canvas lives in the page's process and the board in the GPU process → each draw re-sends them. **W3** (WebKit only). Small next to the raster.
+- b. cell cache churn while paused: **not reproduced** (Chromium: 0 rebuilds in steady state, TW stable while hovering / rendering). The
+  paused cost is the **every-frame redraw by the Guide ring** (**W2**); the bursts are legit rebuilds slowed by WebKit's read waits.
+- c. CSS repaints: **not found during play** (3 animations, compositor-only). canvasResize 474 = new canvases, not resizes. The same-size reset
+  of #cv each draw → **W5** (WebKit only).
+- d. **The board's raster cost on WebKit (CPU CoreGraphics at DPR 2)** → **W1**: the board's device ratio capped at 1.5 on WebKit, to 1 once
+  the drawn frames stay slow.
+
+## Fixes (406-v107safari, kill switch `flavius_v107safarioff=1`; `flavius_v107safariforce=1` = the WebKit path in Chromium)
+- **W1** WebKit: `window.devicePixelRatio` capped (1.5; median drawn frame > 45 ms over 40 drawn frames → 1 for the visit; `flavius_v107dpr` fixed).
+- **W2** all browsers: the Guide's ring drawn still on the sand; the pulse is `#sug107` (CSS transform + opacity, compositor), only on a free tile.
+- **W3** WebKit: in-memory cells → ImageBitmap copies once they hold still (dropped on any change, closed when unused).
+- **W4** recorder: Safari stacks, `draw()` callers, `switches`, `page` {dprReal, dprUsed, canvases > 256 px, cssAnims + names, boardDraws,
+  drawsPerFrame, drawnPerFrame, drawnKinds (per board draw), tw, boardSizes, sugTile}, `p107s`.
+- **W5** WebKit: the board canvas set to its own size → `ctx.reset()` (same state + pixels, no new surface).
+
+## Chromium before / after (tools/bench/webkit.js --browser chromium, 1920×990 @2, Lighting Light, 8 s; software canvas = a CPU raster like CG)
+| run | fps | frame p95 | frames > 50 ms | draw ms/s |
+|---|---|---|---|---|
+| paused, Guide tile up, 406 off | 15.7 | 83.2 | 89/127 | 678 (129 draws) |
+| paused, Guide tile up, 406 on | 59.7 | 16.7 | 0/478 | 0 (0 draws) |
+| slow, 406 off (2 runs) | 29.1 / 32.9 | 100 / 83.4 | 47/233, 43/263 | 377 / 367 |
+| slow, 406 on (Chromium path) | 28.6 / 32.1 | 100 / 83.4 | 45/229, 44/257 | 375 / 370 |
+| slow, WebKit path forced, DPR 2 (no cap) | 30.7 | 83.4 | 47/246 | 376 (6.3 ms a draw) |
+| slow, WebKit path forced, cap 1.5 | 36.2 | 66.7 | 31/290 | 271 (3.9 ms a draw) |
+| slow, WebKit path forced, cap 1 | 43.4 | 33.4 | 9/347 | 109 (0.7 ms a draw) |
+W3 in Chromium (`#perf=v107bmall`): 31.6 / 16.0 fps vs 28.6 / 32.1 — noise on this box, not a win → WebKit only. **His Mac: not measured.
+Assumed, not measured.** He should send ⏺ 10 s again (paused with the Guide tile, and Slow) from Safari; the `page` block says what is drawn.
+
+## A/B without the console: `#perf=` (406 + 00b-perf)
+Open the game with `#perf=` and a comma list at the end of the address (e.g. `…/index.html#perf=v107safarioff`); for that load only, each
+name reads localStorage `flavius_<name>` as 1 (`key:value` → `flavius_<key>` = value). Nothing is saved; the report's `switches` lists them.
+Useful names: `v107safarioff` (all of 406), `v107dpr:2` (no Safari cap) / `v107dpr:1`, `w5off`, `v107bmall` (W3 in any browser),
+`v107safariforce`, `v107perf2off` (405), `v107perfoff` (401), `v107fixoff` (403), `v107corpseoff` (404), `v107tokoff` (400),
+`light106off` or `light106:off|light|full` (lighting), `light106auto:0`, `animoff` (Animations Off), `anim100off` (3D poses), `beasts100off`,
+`crowd100off`, `stand100off`, `layers93off`, `zoom99off`, `perf95off`, `perf92off`, `tiles96off`, `v103coff` (sharpen / bases).
+Bench: `node tools/bench/webkit.js flavius-arena.html --browser webkit|chromium --configs pause,slow --ab 'v107safarioff;'`;
+GitHub: Actions → **webkit-bench** → Run workflow (manual only; Playwright WebKit on Linux, no GPU).

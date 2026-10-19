@@ -8,6 +8,13 @@
      countdowns, self-clearing one-shots) is a real timer, untouched.
    • localStorage flavius_perf92off=1 turns the whole pass off (the soak test tv92p measures against it).
    • clearInterval / clearTimeout know the managed ids (a sweep may clear itself). */
+/* v1.07 beta 4 (406-v107safari): A/B kill switches for ONE page load, without the console: the page address ending in
+   #perf=v107perf2off,v107safarioff,light106:off reads localStorage flavius_<name> as '1' (or flavius_<key> as <value> for key:value)
+   for this load only — nothing is written. The list is PERF_SW (the recorder's report shows it as "switches"). Names: tools/plans/v107/PERF.md. */
+var PERF_SW=[];try{const m=/[#&]perf=([^&]*)/.exec(location.hash||'');if(m){const ov={};
+  for(const it of decodeURIComponent(m[1]).split(',').map(s=>s.trim()).filter(Boolean)){const i=it.indexOf(':');if(!/^[\w.-]+(:[\w.-]*)?$/.test(it))continue;
+    if(i<0)ov['flavius_'+it]='1';else ov['flavius_'+it.slice(0,i)]=it.slice(i+1);PERF_SW.push(it)}
+  if(PERF_SW.length){const gi=Storage.prototype.getItem;Storage.prototype.getItem=function(k){if(this===window.localStorage&&Object.prototype.hasOwnProperty.call(ov,k))return ov[k];return gi.apply(this,arguments)}}}}catch(e){}
 var PERF92={off:false,tasks:[],byId:new Map(),nextId:1e9,seq:1,lastAct:0,lastInput:0,idle:false,hidden:false,runs:0,hbAt:0,returns:0,
   real:{setInterval:window.setInterval.bind(window),clearInterval:window.clearInterval.bind(window),clearTimeout:window.clearTimeout.bind(window)}};
 try{PERF92.off=localStorage.getItem('flavius_perf92off')==='1'}catch(e){}
