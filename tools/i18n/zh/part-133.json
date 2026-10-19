@@ -1,0 +1,8 @@
+{
+ "⏺ {0} s": "⏺ 录制 {0} 秒",
+ "Record 10 s of play into a report file": "将10秒游戏录入报告文件",
+ "Recording… keep playing": "录制中… 请继续游戏",
+ "{0} fps · {1} {2} ms · {3} {4} ({5} ms)": "{0} fps · {1} {2} ms · {3} {4} ({5} ms)",
+ "long tasks": "长任务",
+ "most": "最多"
+}
