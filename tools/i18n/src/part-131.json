@@ -1,0 +1,86 @@
+[
+ {
+  "k": "is hidden from the governor",
+  "w": "319-v101rules.js:50"
+ },
+ {
+  "k": "Focus: +1 damage on the pot",
+  "w": "396-v106aim.js:84"
+ },
+ {
+  "k": "Herculean Vigor +{0}",
+  "w": "396-v106aim.js:84"
+ },
+ {
+  "k": "Focus!: you pick the spot",
+  "w": "396-v106aim.js:86"
+ },
+ {
+  "k": "Flavius Rule: you pick the spot",
+  "w": "396-v106aim.js:86"
+ },
+ {
+  "k": "Focus roll: the best of 3 location dice",
+  "w": "396-v106aim.js:87"
+ },
+ {
+  "k": "Omnia Mutantur played on the misses",
+  "w": "396-v106aim.js:92"
+ },
+ {
+  "k": "a pot breaks at 2 damage",
+  "w": "396-v106aim.js:95"
+ },
+ {
+  "k": "a focused bolt fells Tholo",
+  "w": "396-v106aim.js:98"
+ },
+ {
+  "k": "Chariot: you pick the wheel, the horse or a spot",
+  "w": "396-v106aim.js:114"
+ },
+ {
+  "k": "assumes {0} plays Minerva's Push (dodges)",
+  "w": "396-v106aim.js:120"
+ },
+ {
+  "k": "assumes {0} plays Fidelis Constans (−1 hit die)",
+  "w": "396-v106aim.js:120"
+ },
+ {
+  "k": "assumes {0} raises the {1} (absorbs {2})",
+  "w": "396-v106aim.js:121"
+ },
+ {
+  "k": "fists glance off armor",
+  "w": "396-v106aim.js:122"
+ },
+ {
+  "k": "{0}% to break",
+  "w": "396-v106aim.js:135"
+ },
+ {
+  "k": "{0}% to wound",
+  "w": "396-v106aim.js:135"
+ },
+ {
+  "k": "~{0} dmg",
+  "w": "396-v106aim.js:135"
+ },
+ {
+  "k": "Minerva",
+  "w": "396-v106aim.js:135"
+ },
+ {
+  "k": "Fell",
+  "w": "398-v106b1b.js:114"
+ },
+ {
+  "k": "no purse",
+  "w": "398-v106b1b.js:116"
+ },
+ {
+  "k": "🏆 Won the bout",
+  "w": "398-v106b1b.js:117"
+ }
+]
