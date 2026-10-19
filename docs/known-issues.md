@@ -7,8 +7,8 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 ## Game — open
 - 2026-10-17 · a beast drawn as a flat dark silhouette on a grey disc (beta 2 screenshot) · FIXED for v1.06 beta 2 (398): Moechus's near-black
   fur (#5c5856) re-rendered grey; the grey disc is the Lighting Off shadow disc · moves to history with v1.06.
-- 2026-10-18 · bases off: a gladiator's base TOP (a beige disc) stays under the figure when the board is zoomed in or on a 2× screen (321's
-  bs101Off flood misses the up-scaled cell; 1× unzoomed is clean) · seen while fixing G5, not fixed.
+- 2026-10-18 · bases off: a beige base top under the figure when zoomed / on a 2× screen · FIXED for v1.06 beta 2 (321 bs101Off margins scale
+  with the cell, base colours from a ring of probes; test tv106h, every class at zoom 1/1.4/2 × DPR 1/2) · moves to history with v1.06.
 - 2026-10-18 · tools/art/anim100b/make.js l106 run today bakes DIFFERENT beast shadow sheets than the committed v1.06a ones (moechus/valencia:
   cell 56×18, anchor y 47 vs 58×28, y 11 — the shadow sits above its anchor); the lit sheets come out byte-identical. Check l106.js's shadow
   crop before any beast re-bake (398 kept the committed shadow sheets).
@@ -27,8 +27,8 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - 2026-10-18 · tv101z (pre-baked board vs old paint) now runs with Lighting Off: with Full the shadow layer adds ~9.5k px of ≤24-level anti-alias differences between the two paths (none >24) · not a visual bug; revisit if the pre-bake ever draws shadows itself.
 - tv93a (contrast + a11y): one local run in 8 failed "focus did not return to btnRules" — likely Escape vs the 40 ms close debounce in the
   a11y93 focus return under load; not proven, not changed · watch in CI.
-- tv104d: failed once in several builder runs ("buildings promote", "recruiting scared"); the scared-offer sizing was fixed (beta 3) ·
-  watch in CI.
+- tv104d / tv92t (2026-10-19): made deterministic — tv104d holds Math.random off over its week ends (worn-down injury, Mors Omnibus) and pads
+  rival barracks; tv92t waits for the tab-ownership message instead of a fixed 400 ms · watch in CI.
 - Playwright "Execution context was destroyed" with no navigation = Chromium collected the awaited promise during a heavy sync step
   (tv102e, fixed by deferring t93Open). Other tests that await a long sync WebGL step inside page.evaluate can hit the same · fix the same
   way when one shows up.
