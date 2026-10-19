@@ -121,3 +121,6 @@ you're targeting. That said, it went where I wanted each time." Found: the board
 - v1.07 beta 1 notes (his, 2026-10-19): (1) convert the City Square walkers and the main menu show to the 3D figures too (the Studio
   class-card art stays for now); (2) FIX the frame rate, especially when zoomed (CLAUDE.md frame target: ≈16 ms a frame laptop / 30+ fps
   phone at Normal speed, zoomed and not — over that is a bug).
+- Download size (his 1a 2a 3c 4a, 2026-10-19; download = share/flavius-rule-arena-vX.YY.html via tools/mkshare.py, 69.7 MB / zip ~41 MB):
+  1a language packs inlined as plain text, not base64 (no change in game); 2a the download's code stripped of comments/whitespace (site keeps
+  readable code); 3c card-sheet images stay as they are; 4a Credits/Prototype art stays in the download.
