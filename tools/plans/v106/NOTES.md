@@ -127,3 +127,4 @@ you're targeting. That said, it went where I wanted each time." Found: the board
 - v1.07 beta 2 notes (his, 2026-10-19): (1) the red aim outline (396) round a gladiator target is drawn slightly LARGER than the figure;
   (2) the frame rate drops to ~4 fps while a popup / action prompt is open (e.g. the shield ask) — frame meter "slowest 415 ms".
 - (3) beast/NPC corpses on the sand (Tholo etc.) still drawn as the OLD token minis lying down (his screenshot 2026-10-19).
+- (4) beta 3 (his, 2026-10-19): 'all animations slow it down still'; Hand to CPU + CPU speed Fast → 0–10 fps on his laptop (GPU canvas). Fix + an in-game frame recorder (Record 10 s → report file).
