@@ -1,0 +1,26 @@
+[
+ {
+  "k": "{0} fps · {1} {2} ms · {3} {4} ({5} ms)",
+  "w": "405-v107perf2.js:128"
+ },
+ {
+  "k": "long tasks",
+  "w": "405-v107perf2.js:128"
+ },
+ {
+  "k": "most",
+  "w": "405-v107perf2.js:128"
+ },
+ {
+  "k": "⏺ {0} s",
+  "w": "405-v107perf2.js:138"
+ },
+ {
+  "k": "Recording… keep playing",
+  "w": "405-v107perf2.js:139"
+ },
+ {
+  "k": "Record 10 s of play into a report file",
+  "w": "405-v107perf2.js:139"
+ }
+]
