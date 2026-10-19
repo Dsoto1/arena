@@ -26,17 +26,20 @@ async function run(off){const pg=await b.newPage({viewport:{width:1440,height:90
     setInterval(()=>{const bx=document.getElementById('bubbles');if(bx&&bx.children.length&&SPEED==='fast'&&!T95.stop)T95.bubs++},200)});
   await b.startTracing(pg,{categories:['devtools.timeline','disabled-by-default-devtools.timeline']});
   await pg.waitForTimeout(SECS*1000);const buf=await b.stopTracing();
-  const ev=JSON.parse(buf.toString()).traceEvents;const dec=ev.filter(e=>e.name==='Decode Image'||e.name==='Decode LazyPixelRef');
+  const ev=JSON.parse(buf.toString()).traceEvents;const decAll=ev.filter(e=>e.name==='Decode Image'||e.name==='Decode LazyPixelRef');
+  /* v1.07: what is budgeted is MAIN-THREAD decoding (it stalls frames). 401's createImageBitmap(Blob) cut-outs and the raster workers decode on
+     ThreadPoolForegroundWorker threads: those are counted apart (dpsAll, a runaway guard) and not against the main-thread ceilings. */
+  const mainKey=new Set(ev.filter(e=>e.ph==='M'&&e.name==='thread_name'&&e.args&&e.args.name==='CrRendererMain').map(e=>e.pid+':'+e.tid));const dec=decAll.filter(e=>mainKey.has(e.pid+':'+e.tid));
   const r=await pg.evaluate(()=>{T95.stop=1;const f=T95.frames.slice(1).sort((a,b)=>a-b);const q=p=>f[Math.floor(f.length*p)]||0;
     const blob=[...document.querySelectorAll('#board [style*="blob:"],#board image[href^="blob:"],#npcPanel [style*="blob:"]')].length;
     return {fps:f.length,p50:q(.5),p95:q(.95),n:{...P95.n},cut:{made:CUT95.made,fail:CUT95.fail},blob,bubs:T95.bubs,turn:S.turnNo}});
-  r.dps=+(dec.length/SECS).toFixed(2);r.decMs=Math.round(dec.reduce((a,e)=>a+(e.dur||0)/1000,0));r.fps=Math.round(r.fps/SECS);r.p50=Math.round(r.p50);r.p95=Math.round(r.p95);
+  r.dps=+(dec.length/SECS).toFixed(2);r.dpsAll=+(decAll.length/SECS).toFixed(2);r.decMs=Math.round(dec.reduce((a,e)=>a+(e.dur||0)/1000,0));r.decMsAll=Math.round(decAll.reduce((a,e)=>a+(e.dur||0)/1000,0));r.fps=Math.round(r.fps/SECS);r.p50=Math.round(r.p50);r.p95=Math.round(r.p95);
   console.log('PERF '+(off?'OFF ':'ON  ')+JSON.stringify(r));return {pg,r}}
 const OFF=await run(true);await OFF.pg.close();const {pg,r}=await run(false);
 /* TWEAK: the ceilings. Measured v0.95 (http, all-CPU Fast, 4 shared cores): ON 5–11 small decodes/s = 15–60 ms of decoding a second,
    OFF 29–40/s = 700–1000 ms a second; frame p50 ON 51–60 ms vs OFF 83–120 (quiet machine), both ~2× on a loaded one */
-const dms=r.decMs/SECS,offDms=OFF.r.decMs/SECS;
-ok(r.dps<=25,'decodes/s '+r.dps+' > 25');ok(dms<=150,'decoding '+Math.round(dms)+' ms/s > 150');ok(dms<=Math.max(60,offDms*0.3),'decoding ON '+Math.round(dms)+' ms/s not under 30% of OFF '+Math.round(offDms));
+const dms=r.decMs/SECS,dmsAll=r.decMsAll/SECS,offDms=OFF.r.decMsAll/SECS;
+ok(r.dps<=25,'main-thread decodes/s '+r.dps+' > 25');ok(r.dpsAll<=90,'all decodes/s '+r.dpsAll+' > 90 (workers included)');ok(dms<=150,'main-thread decoding '+Math.round(dms)+' ms/s > 150');ok(dmsAll<=Math.max(60,offDms*0.3),'decoding ON '+Math.round(dmsAll)+' ms/s (all threads) not under 30% of OFF '+Math.round(offDms));
 ok(r.p50<=Math.max(160,OFF.r.p50*1.3),'frame p50 '+r.p50+' ms (OFF '+OFF.r.p50+')');
 ok(r.n.patched>0,'panels never patched');ok(r.n.deferred>0,'no render was coalesced at Fast');ok(r.n.kept>0,'no node kept by the patch');
 ok(r.cut.made>0,'no cut-outs made');ok(r.blob>0,'the fighter panel shows no cut-out');ok(r.bubs===0,'speech bubbles at Fast');
