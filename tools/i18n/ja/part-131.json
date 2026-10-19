@@ -1,0 +1,23 @@
+{
+ "is hidden from the governor": "は総督から隠されている",
+ "Focus: +1 damage on the pot": "Focus：壺に+1ダメージ",
+ "Herculean Vigor +{0}": "Herculean Vigor +{0}",
+ "Focus!: you pick the spot": "Focus!：狙う箇所を選べる",
+ "Flavius Rule: you pick the spot": "Flavius Rule：狙う箇所を選べる",
+ "Focus roll: the best of 3 location dice": "Focusロール：部位ダイス3つのうち最良",
+ "Omnia Mutantur played on the misses": "Omnia Mutanturを外れに使用",
+ "a pot breaks at 2 damage": "壺は2ダメージで割れる",
+ "a focused bolt fells Tholo": "Focusのボルトで Tholo を倒せる",
+ "Chariot: you pick the wheel, the horse or a spot": "Chariot：車輪・馬・任意の箇所を選べる",
+ "assumes {0} plays Minerva's Push (dodges)": "{0}がMinerva's Pushを使う（回避）と仮定",
+ "assumes {0} plays Fidelis Constans (−1 hit die)": "{0}がFidelis Constansを使う（命中ダイス-1）と仮定",
+ "assumes {0} raises the {1} (absorbs {2})": "{0}が{1}を構える（{2}吸収）と仮定",
+ "fists glance off armor": "拳は鎧に弾かれる",
+ "{0}% to break": "破壊率{0}%",
+ "{0}% to wound": "命中率{0}%",
+ "~{0} dmg": "~{0}ダメージ",
+ "Minerva": "Minerva",
+ "Fell": "戦死",
+ "no purse": "賞金なし",
+ "🏆 Won the bout": "🏆 試合に勝利"
+}

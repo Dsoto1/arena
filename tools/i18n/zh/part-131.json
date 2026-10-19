@@ -1,0 +1,23 @@
+{
+ "is hidden from the governor": "对总督隐藏",
+ "Focus: +1 damage on the pot": "Focus：对罐子+1伤害",
+ "Herculean Vigor +{0}": "Herculean Vigor +{0}",
+ "Focus!: you pick the spot": "Focus!：由你选择部位",
+ "Flavius Rule: you pick the spot": "Flavius Rule：由你选择部位",
+ "Focus roll: the best of 3 location dice": "Focus掷骰：3个部位骰取最佳",
+ "Omnia Mutantur played on the misses": "对未命中使用Omnia Mutantur",
+ "a pot breaks at 2 damage": "罐子受到2点伤害即碎",
+ "a focused bolt fells Tholo": "Focus弩箭可击杀Tholo",
+ "Chariot: you pick the wheel, the horse or a spot": "Chariot：可选车轮、马匹或任一部位",
+ "assumes {0} plays Minerva's Push (dodges)": "假设{0}使用Minerva's Push（闪避）",
+ "assumes {0} plays Fidelis Constans (−1 hit die)": "假设{0}使用Fidelis Constans（命中骰-1）",
+ "assumes {0} raises the {1} (absorbs {2})": "假设{0}举起{1}（吸收{2}）",
+ "fists glance off armor": "拳头被护甲弹开",
+ "{0}% to break": "{0}%几率击碎",
+ "{0}% to wound": "{0}%几率造成伤害",
+ "~{0} dmg": "~{0}伤害",
+ "Minerva": "Minerva",
+ "Fell": "阵亡",
+ "no purse": "无奖金",
+ "🏆 Won the bout": "🏆 赢得本场比赛"
+}
