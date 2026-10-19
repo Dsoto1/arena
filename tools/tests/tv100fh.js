@@ -72,6 +72,8 @@ const closeBrief=pg=>pg.evaluate(()=>{if(CUR_MODAL&&document.getElementById('mod
   await pg.evaluate(()=>{const ids=rosterOf(me()).filter(g=>!g.inj).map(g=>g.id);for(const i of [0,1,2]){const s=document.getElementById('ent'+i);if(!s)continue;const o=[...s.options].find(o=>ids.includes(o.value));if(o){s.value=o.value;document.querySelector(`[data-mg="enter"][data-id="${i}"]`).click();return}}});
   await pg.waitForTimeout(800);
   ok(await waitTip(pg,'g_sim',10000),'B sim tip after entering');
+  /* v1.06 G1 (397): an away week plays no bout before Set off — the guided week sets off first (as tv106e does) */
+  await pg.evaluate(()=>{const n=MGR.world.night;if(n&&n.travel&&n.travel.cost>0&&!n.travel.gone){n.travel.gone=true;MGR_REDRAW()}});await pg.waitForTimeout(500);
   await pg.evaluate(()=>{const b=document.querySelector('#mgrBody [data-mg="simall"]');if(b)b.click()});
   await pg.waitForFunction(()=>!MGR.busy&&MGR.world.night.bouts.every(b=>b.done),null,{timeout:60000}).catch(()=>{});
   /* settle verdicts the way the lesson test does (Thumb etc.) */
