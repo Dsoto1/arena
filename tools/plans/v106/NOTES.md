@@ -118,3 +118,6 @@ you're targeting. That said, it went where I wanted each time." Found: the board
 - 5a Own release + own beta (touches ~40 screens). REPLACES: v0.72 "3D minis" token style, v0.75 "3D minis replace standees" (minis =
   standard look for the printed classes), the Figures / Cylinders token styles. Grep before building: tokenStyle, mini3d, minis8, figureHTML,
   standeeHTML, 74-zora cylinder, 16-crowd, 132-v83arrows, 111-onlcore, 226-v94onltok, 222-v93token.
+- v1.07 beta 1 notes (his, 2026-10-19): (1) convert the City Square walkers and the main menu show to the 3D figures too (the Studio
+  class-card art stays for now); (2) FIX the frame rate, especially when zoomed (CLAUDE.md frame target: ≈16 ms a frame laptop / 30+ fps
+  phone at Normal speed, zoomed and not — over that is a bug).
