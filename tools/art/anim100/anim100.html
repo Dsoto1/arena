@@ -28,6 +28,12 @@ window.addEventListener('error', e => { window.__err = String(e.message); });
         const r = await AN100L.render(api, set, { pxmm, ss: 2, limb, light: cfg, shadow: { pxmm: shPx, ss: 2 } });
         return { url: r.canvas.toDataURL('image/webp', q), png: r.canvas.toDataURL('image/png'), meta: r.meta, shPng: r.sh.canvas.toDataURL('image/png'), shMeta: r.sh.meta,
           w: r.canvas.width, h: r.canvas.height, shW: r.sh.canvas.width, shH: r.sh.canvas.height, ms: Math.round(performance.now() - t0) }; },
+      /* v1.07 CITY (make.js city): the MOVE set (idle + walk, 8 facings) lit by the one sun, WITHOUT the base (the token's baseG hidden, as
+         tools/art/mm100 does) and without a shadow sheet — the City Square walkers (src/city/402-v107city.js). → {url, png, meta, w, h, ms} */
+      async sheetC(look, gear, pxmm, q, cfg) { const api = this.api; const t0 = performance.now(); api.apply({ look, gear, pose: api.presets[0][2] });
+        const bg = api._dbg.turn.children[0], v0 = bg.visible; bg.visible = false;
+        let r; try { r = await AN100L.render(api, 'move', { pxmm, ss: 2, light: cfg }); } finally { bg.visible = v0; }
+        return { url: r.canvas.toDataURL('image/webp', q), png: r.canvas.toDataURL('image/png'), meta: r.meta, w: r.canvas.width, h: r.canvas.height, ms: Math.round(performance.now() - t0) }; },
     };
     window.AN100R_READY = true;
   } catch (e) { window.__err = String(e && e.stack || e); }

@@ -11,6 +11,11 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - 2026-10-17 · 3D minis, beasts and crowd look soft/blurry (not drawn at devicePixelRatio) · v1.06 (E6a).
 
 ## Game — accepted limitations
+- 2026-10-19 · City Square (402): the townsfolk, your lanista and the doctore are 313's 3D crowd looks on the site, but the STANDALONE
+  download carries no crowd100_* sheets (mkshare; it keeps today's painted stands) → there they stay today's flat figures; the gladiators,
+  guards and yard pair are 3D there too (city107_* inlined). Beasts to the pens are only lion / bear / wolf / viper (the kinds with a 3D
+  figure); a Studio character in the square shows its own 3D token WITH its base (222 sheet). Inlining crowd100_s* (~0.7 MB base64) would
+  close the first · his call.
 - 2026-10-17 · Recruiting (B72, 378): after an action the options panel stays put; its bottom edge can end a few px below the view when a
   result line grows it. Keeping the foot visible costs a second scroll (the jitter he reported).
 - 2026-10-17 · Rivalry Week (383): a house with fewer than 2 fighters who can actually be entered loses 8 fame and the editor seats free

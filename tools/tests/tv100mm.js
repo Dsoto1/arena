@@ -1,5 +1,6 @@
 /* v1.0 MAIN MENU SHOW IN 3D (282-v100menu): the strips load and the 3D show draws (gladiators, beasts, Commodus, the duel),
-   frames change over the show, still picture under Reduce motion + Animations Off (no loop), the flat show with the kill switch,
+   frames change over the show, still picture under Reduce motion + Animations Off (no loop), the flat show with the kill switch
+   (v1.07 402-v107city: its figures are the 3D strips too, so the strips load — none without 402),
    288's cover pause still holds the 3D loop under a full-screen window. Shots → tools/plans/menu100/. */
 const {chromium}=require('playwright');const fs=require('fs');(async()=>{const b=await chromium.launch();const out={};const errs=[];const page=process.argv[2];
 fs.mkdirSync('tools/plans/menu100',{recursive:true});
@@ -38,7 +39,7 @@ for(const [tag,init] of [['calm',()=>{try{const s=JSON.parse(localStorage.getIte
   out[tag]=await pg.evaluate(()=>({on:MM100S.on,still:MM100S.still,raf:!!MM.raf,t:MM100S.t,drawn:MM100S.drawn}));await shot(pg,'still_'+tag);await ctx.close()}
 /* 3 · kill switch: today's flat show */
 {const {ctx,pg}=await open(()=>{try{localStorage.setItem('flavius_mm100off','1')}catch(e){}});await pg.waitForTimeout(1500);
-  out.off=await pg.evaluate(()=>({off:MM100S.off,on:MM100S.on,img:Object.keys(MM100S.img).length,raf:!!MM.raf}));await ctx.close()}
+  out.off=await pg.evaluate(()=>({off:MM100S.off,on:MM100S.on,img:Object.keys(MM100S.img).length,raf:!!MM.raf,v107:typeof V107C!=='undefined'&&V107C.on}));await ctx.close()}
 const f=out.frames;const ok=out.on&&!out.loaded.length&&Object.values(f).every(n=>n>0)&&f.bear>=8&&f.duel>=3&&out.walkMoves&&out.distinct>=10&&out.running&&out.cover.paused&&out.cover.resumed
-  &&out.calm.on&&out.calm.still&&!out.calm.raf&&out.calm.drawn>=8&&out.animoff.still&&!out.animoff.raf&&out.off.off&&!out.off.on&&out.off.img===0&&out.off.raf&&Math.max(...out.ms)<40;
+  &&out.calm.on&&out.calm.still&&!out.calm.raf&&out.calm.drawn>=8&&out.animoff.still&&!out.animoff.raf&&out.off.off&&!out.off.on&&(out.off.v107?out.off.img>0:out.off.img===0)&&out.off.raf&&Math.max(...out.ms)<40;
 console.log(JSON.stringify(out));console.log('ERRS',JSON.stringify(errs));console.log(ok&&!errs.length?'PASS':'FAIL');await b.close();process.exit(ok&&!errs.length?0:1)})();
