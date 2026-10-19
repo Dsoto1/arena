@@ -84,6 +84,9 @@ ok(t6.blit>0,'T6a cells drawn at their own size on device pixels '+JSON.stringif
 ok(t6.shMs<4,'T6b one sharpen of a 140×220 cell stays cheap '+JSON.stringify(t6));
 /* edge energy vs the kill switch, a 2× screen zoomed (cells up-scaled) */
 const edge=async ls=>{const p=await open(ls,2);await start(p);return p.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.zoomIn=true;CAM.z=null;CAM.fr=6;CAM.fc=5;for(let i=0;i<50;i++){draw();await W8(80)}
+  /* 303's card-quote / speech bubble is painted on the zoomed board and may still sit over a figure (its text alone adds ~+40 to the score):
+     cleared on both sides, so only the figures are measured */
+  if(typeof bbClear==='function'){bbClear();for(let i=0;i<4;i++){draw();await W8(80)}}
   const d=window.devicePixelRatio||1,g=cv.getContext('2d');const en=u=>{const m=center(u.r,u.c);const x=Math.round((m.x-TW*0.45)*d),y=Math.round((m.y-TW*1.5)*d),w=Math.round(TW*0.9*d),h=Math.round(TW*1.6*d);
     const D=g.getImageData(x,y,w,h).data;const L=new Float32Array(w*h);for(let i=0;i<w*h;i++)L[i]=0.3*D[i*4]+0.59*D[i*4+1]+0.11*D[i*4+2];let s=0,n=0;
     for(let yy=1;yy<h-1;yy++)for(let xx=1;xx<w-1;xx++){const i=yy*w+xx;const gx=L[i+1-w]+2*L[i+1]+L[i+1+w]-L[i-1-w]-2*L[i-1]-L[i-1+w],gy=L[i-1+w]+2*L[i+w]+L[i+1+w]-L[i-1-w]-2*L[i-w]-L[i+1-w];const mg=Math.hypot(gx,gy);if(mg>40){s+=mg;n++}}return s/Math.max(1,n)};
