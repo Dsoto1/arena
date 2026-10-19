@@ -14,7 +14,7 @@ const open=async(off)=>{const pg=await b.newPage({viewport:{width:1440,height:10
     window.CALM=(m)=>{const w=W_();w.week=5;m.coin=5000;for(const x of w.mgrs)msp(x).pts=10;msp(m).pts=10;
       for(const g of rosterOf(m)){g.inj=null;const K=c104Kind(g);g.age=Math.max(18,K.ps-2);g.contract.since=0}
       for(const g of rosterOf(me())){g.inj=null;g.contract.since=0;delete g.loanFrom}TR106.thin=0};
-    window.POOR=(m)=>{CALM(m);m.coin=10;const dear=rosterOf(m)[0];dear.contract.wage=40;const mine=rosterOf(me());for(const g of mine)g.contract.wage=Math.min(g.contract.wage,30);mine[0].contract.wage=5;return dear};
+    window.POOR=(m)=>{CALM(m);m.coin=10;const dear=rosterOf(m)[0];for(const g of rosterOf(m))g.contract.wage=Math.min(g.contract.wage,39);dear.contract.wage=40;const mine=rosterOf(me());for(const g of mine)g.contract.wage=Math.min(g.contract.wage,30);mine[0].contract.wage=5;return dear};
     window.H=w.mgrs.find(m=>!m.isPlayer&&!m.sica&&rosterOf(m).length>=3)});
   return pg};
 const ev=async(pg,f,a)=>{try{return await pg.evaluate(f,a)}catch(e){console.log('EVAL FAIL',String(e.message||e).slice(0,500));await b.close();process.exit(1)}};
@@ -43,7 +43,7 @@ const M=await ev(pg,async()=>{const w=W_(),pm=me();const m=H;const r={};
   /* gap: a lopsided squad lacking a class you have */
   CALM(m);TR106.thin=8;for(const g of rosterOf(m))g.cls='soldier';const mine=rosterOf(pm)[0];const c0=mine.cls;mine.cls='hero';r.gapc=tr106Motive(w,m,pm);const pc=tr106Plan(w,m,pm,0.5);r.pc=pc&&{why:pc.why106,want:gById(pc.gid).cls};TR106.thin=0;mine.cls=c0;
   /* sell high: a fighter of theirs about to fade, rated at least their average */
-  CALM(m);const top=[...rosterOf(m)].sort((a,b)=>effOvr(b)-effOvr(a))[0];const K=c104Kind(top);top.age=K.ps+K.pl+1;top.fame=90;for(const g of rosterOf(pm))g.age=19;
+  CALM(m);const top=[...rosterOf(m)].sort((a,b)=>effOvr(b)-effOvr(a))[0];const K=c104Kind(top);top.age=K.ps+K.pl+1;top.fame=150;for(const g of rosterOf(pm)){g.age=19;g.fame=0;g.pot=g.ovr}/* their fader must be worth about what they ask for; random ratings made this flaky */
   r.sell=tr106Motive(w,m,pm);const ps=tr106Plan(w,m,pm,0.5);r.ps=ps&&{why:ps.why106,give:ps.give&&ps.give[0]===top.id,dw:ps.dw106};
   /* youth: rebuilding (bottom third from week 3) and you have a prospect */
   CALM(m);msp(m).pts=0;for(const g of rosterOf(pm)){g.age=26;g.pot=g.ovr}const kid=rosterOf(pm)[0];kid.age=20;kid.pot=(kid.ovr||50)+15;r.youth=tr106Motive(w,m,pm);const py=tr106Plan(w,m,pm,0.5);r.py=py&&{why:py.why106,want:py.gid===kid.id,k:py.kind};
