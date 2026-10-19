@@ -60,7 +60,7 @@ ok(m1.tri===true||m1.tri==='nofixture','22 Triumviratus moved to the Undercard (
 ok(m1.compact,'4/27 Match Week buttons are one line');ok(m1.eagle,'5 the Golden Eagle chip sits on the Eagle bout only (none in most weeks)');
 /* ---- the board ---- */
 const m2=await p.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};try{const mc=document.getElementById('mClose');if(mc)mc.click()}catch(e){}await W8(400);while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(80)}try{menuHide()}catch(e){}
-  o.zora=STANDEE_SRC.zoraMini==='assets/zora99.webp';
+  o.zora=!!(ST107.on&&ST107.F.zora&&st107Mini('zora')==='still107f_zora.webp');
   SETTINGS.briefing=false;SPEED='fast';startEvent({ev:'democritus',loc:6,seats:['venatore','hero','royalty','soldier'].map((c,i)=>({cls:c,cpu:i!==0})),opts:{spect:0}});
   for(let i=0;i<200;i++){await W8(80);if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);if(S&&S.players&&S.players[0])break}
   SPEED='pause';const P0=S.players[0];
@@ -75,6 +75,6 @@ const m2=await p.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   if(n){const pk=pickNPC(P0,'Tame',x=>x.alive,'note');await W8(200);o.tok=!!document.querySelector('#modal .tok99, #mBody .tok99');if(CUR_MODAL)CUR_MODAL.done(null);await pk}else o.tok=true;
   return o});
 console.log(JSON.stringify(m2));
-ok(m2.zora,'10 Zora uses his TTS render');ok(m2.soul,'6 a killing soul steal places its HP without a window');ok(m2.eagle,'7 the Golden Eagle earns CF in a no-CF round '+(m2.eErr||''));
+ok(m2.zora,'10 Zora has a proper figure on the board (v107 3D figure / still, not the TTS mini)');ok(m2.soul,'6 a killing soul steal places its HP without a window');ok(m2.eagle,'7 the Golden Eagle earns CF in a no-CF round '+(m2.eErr||''));
 ok(m2.noAtk&&m2.canMove,'12 a tamed beast that attacked may still move');ok(m2.tok,'12 the tame picker shows the beast token round');
 console.log(JSON.stringify({miss,errs}));console.log(miss.length?'FAIL':'PASS');console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})()
