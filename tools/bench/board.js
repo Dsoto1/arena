@@ -9,7 +9,9 @@
              the canvas off the GPU path for the rest of the page's life.
    Configs: desk 1440×900 @1x and phone 390×844 @2x (mobile, touch) × day / night × flat / zoomed (Zoom in, camera on the soldier).
    Also prints the layer manager's per-layer averages (219 LAYERS93) and, when the v1.06a light pass runs, its own time (399 L106.st).
-     node tools/bench/board.js <page> [--frames 120] [--warm 20] [--ls key=val,key=val] [--shots DIR --tag NAME] [--only desk|phone] [--json FILE]
+     node tools/bench/board.js <page> [--frames 120] [--warm 20] [--ls key=val,key=val] [--shots DIR --tag NAME] [--only desk|phone|desk2x,…] [--json FILE]
+   v1.07: --ablate [--zooms 1,1.4,2] [--dprs 2] = the forced-flush cost of each layer / cached sub-layer (all on − that one off; LAYERS93.debugOff),
+   --dprs 2 adds a desk view at that devicePixelRatio (desk2x); a zoom of 1.9+ is a pinch (CAM.z), 1.4 is "Zoom in".
    --ls sets localStorage before load (e.g. flavius_light106=full|light|off forces the v1.06a Lighting mode, flavius_light106auto=0 keeps Full;
    desk defaults to Full, phone to Light). --shots saves a frozen-clock PNG
    of the board canvas per config + the overlay-contrast numbers (highlight pixels vs the same pixels without the highlight).
@@ -18,6 +20,7 @@
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path'),os=require('os');
 const A=process.argv.slice(2);const PAGE=path.resolve(A[0]||'flavius-arena.html');
 const opt=(k,d)=>{const i=A.indexOf('--'+k);return i>=0?A[i+1]:d};
+const ABL=A.includes('--ablate'),ZOOMS=String(opt('zooms','')).split(',').filter(Boolean).map(Number),DPRS=String(opt('dprs','')).split(',').filter(Boolean).map(Number);
 const FRAMES=+opt('frames',120),WARM=+opt('warm',20),SHOTS=opt('shots',''),TAG=opt('tag','run'),ONLY=opt('only',''),JSONF=opt('json','');
 const LS={};for(const kv of String(opt('ls','')).split(',').filter(Boolean)){const i=kv.indexOf('=');LS[kv.slice(0,i)]=kv.slice(i+1)}
 const load=()=>{const l=fs.readFileSync('/proc/loadavg','utf8').split(' ');return {l1:+l[0],l5:+l[1],l15:+l[2],cpus:os.cpus().length}};
@@ -47,7 +50,7 @@ const SCENE=async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));
   for(let i=0;i<10;i++){BENCH.tick();draw();await W8(60)}
   return {players:S.players.length,npcs:S.npcs.filter(n=>n.alive).length,pillars:S.pillars.length,TW,dpr:devicePixelRatio,cv:[cv.width,cv.height],
     an100:typeof AN100!=='undefined'?AN100.stats.cells:null,soldierSheet:(()=>{try{return !!an100Bm(an100SrcFor(sol,null),'move','idle')}catch(e){return false}})()}};
-const SET=async(mode)=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.night=!!mode.night;S.zoomIn=!!mode.zoom;
+const SET=async(mode)=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.night=!!mode.night;S.zoomIn=!!mode.zoom;try{CAM.z=mode.pz||null}catch(e){}
   const t0=performance.now();while(performance.now()-t0<1400){BENCH.tick();draw();await W8(30)} /* the zoom eases in/out over 1.1 s */
   return {TW,z:typeof DUEL!=='undefined'?+DUEL.z.toFixed(3):1,night:night91On()}};
 const MEASURE=async({n,warm,flush})=>{const raf=()=>new Promise(r=>requestAnimationFrame(r));const D=[],L=[];let painted=0;
@@ -76,14 +79,23 @@ const CONTRAST=()=>{const dpr=devicePixelRatio||1,g=cv.getContext('2d');const lu
   const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;const out=Object.values(rows).map(R=>({t:R.t,tile:tl(Math.floor(R.k/N),R.k%N),cr:+avg(R.cr).toFixed(3),Lon:+avg(R.on).toFixed(3),Loff:+avg(R.off).toFixed(3)}));
   return {tiles:out,meanCR:+avg(out.map(o=>o.cr)).toFixed(3),minCR:+Math.min(...out.map(o=>o.cr)).toFixed(3)}};
 
-(async()=>{const serve=require(path.join(__dirname,'..','perf95','serve.js'));const url=await serve(PAGE);const b=await chromium.launch();
+module.exports={SCENE,SET,MEASURE,FREEZE,THAW,VIEWS};
+if(require.main===module)(async()=>{const serve=require(path.join(__dirname,'..','perf95','serve.js'));const url=await serve(PAGE);const b=await chromium.launch();
   const res={page:path.basename(PAGE),ls:LS,frames:FRAMES,warm:WARM,load0:load(),at:new Date().toISOString(),runs:[]};const errs=[];
   console.log('load before',JSON.stringify(res.load0),'ls',JSON.stringify(LS));
-  for(const vk of Object.keys(VIEWS)){if(ONLY&&ONLY!==vk)continue;
+  if(DPRS.length)for(const d of DPRS)VIEWS['desk'+d+'x']={viewport:{width:1440,height:900},deviceScaleFactor:d};
+  for(const vk of Object.keys(VIEWS)){if(ONLY&&!ONLY.split(',').includes(vk))continue;
     const cx=await b.newContext(VIEWS[vk]);await cx.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
     await cx.addInitScript(ls=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_first100off','1');for(const k in ls)localStorage.setItem(k,ls[k])},LS);
     const pg=await cx.newPage();pg.on('pageerror',e=>errs.push(vk+': '+e.message));await pg.goto(url,{timeout:180000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:120000});
     const sc=await pg.evaluate(SCENE);console.log(vk,'scene',JSON.stringify(sc));
+    if(ABL){ /* --ablate: the forced-flush cost of each layer / cached sub-layer = (all on) − (that one off), per zoom (--zooms 1,1.4,2) */
+      const names=['stands','under','deco','tiles','walls','top','light','sky','floor','decals','wear','highlights','pieces','overlays','fx'];
+      for(const z of (ZOOMS.length?ZOOMS:[1,1.4,2])){const m=z<=1?{name:'z1'}:z<1.9?{name:'z'+z,zoom:1}:{name:'z'+z,zoom:1,pz:z};await pg.evaluate(SET,m);
+        const one=async off=>{await pg.evaluate(o=>{for(const k of o)LAYERS93.debugOff(k,true)},off);await pg.evaluate(SET,m);const r=await pg.evaluate(MEASURE,{n:Math.max(20,FRAMES>>1),warm:8,flush:true});await pg.evaluate(o=>{for(const k of o)LAYERS93.debugOff(k,false)},off);return r.p50};
+        const all=await one([]);const row={all};for(const k of names)row[k]=+(all-await one([k])).toFixed(1);const empty=await one(names);row.rest=empty;
+        console.log(vk,m.name,'flush p50 all',all,'ms · saved with each one off:',JSON.stringify(row));res.runs.push({key:vk+' '+m.name+' ablate',view:vk,ablate:row})}
+      await cx.close();continue}
     const modes=[{name:'day-flat'},{name:'day-zoom',zoom:1},{name:"night-flat",night:1},{name:'night-zoom',night:1,zoom:1}];
     const rows={};
     for(const flush of [false,true])for(const m of modes){const st=await pg.evaluate(SET,m);const r=await pg.evaluate(MEASURE,{n:FRAMES,warm:WARM,flush});
