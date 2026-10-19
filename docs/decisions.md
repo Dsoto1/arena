@@ -787,3 +787,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   can't show, a still frame of the 3D figure (shipped, also in the download); every off-board picture = a 3D still; his Magnus minis only in
   Credits → Prototype. Own release after v1.06, before the torches. REPLACES the v0.72 "3D minis" token style, v0.75 "3D minis replace
   standees" (printed classes wear his minis) and the Figures / Standees / Cylinders choices (tools/plans/v106/NOTES.md "Old token pieces").
+- Decided 2026-10-19 (his): the Sotonium family house and its word are removed quietly (no news, no What's new); old careers drop the house on load. Duckio stays.

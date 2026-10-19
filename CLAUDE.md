@@ -137,7 +137,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 
 - **Cheats:** never put code words in plain text anywhere in the page. Register with
   `cheatRegister('h'+hashStr('code:'+WORD), run, label)`; the reveal list `CHEAT_SHOW` stores char codes +7.
-  Current words: EDITOR12 (all editors), MUSIC (every theme, v0.85; the old 16-theme word is retired), LUDUS50 (+50 coin), CHARD / DUCKIO (bonus houses), ARMORFIT (the printed-set fit tool), LOBBY77 (Online preview), ONLSRV (shows the Online server box on the sign-in card). (Touch screens: holding the main menu version badge = the C key, 126.)
+  Current words: EDITOR12 (all editors), MUSIC (every theme, v0.85; the old 16-theme word is retired), LUDUS50 (+50 coin), DUCKIO (bonus house), ARMORFIT (the printed-set fit tool), LOBBY77 (Online preview), ONLSRV (shows the Online server box on the sign-in card). (Touch screens: holding the main menu version badge = the C key, 126.)
 
 ## 4. Conventions & gotchas
 - Never put code after a `//` comment on the same line — use `/* */` (build.sh guard).

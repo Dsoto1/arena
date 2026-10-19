@@ -1,11 +1,9 @@
 /* =====================================================================
    39-SOTONIUM · THE FAMILY HOUSES (v0.45, reworked v0.46)
    =====================================================================
-   Two special stables join a Manager-mode league only when their word is spoken at the version badge
-   (one word for each house — see the strategy guide's hidden list); speaking the word again takes the
-   house out of the system. Each house is run by a father with his famous child on the roster:
-     • Richardious Sotonium of Capua (brother of Virgilante Sotonium of Pompeii) — and his daughter,
-       THE GREAT ZELDINIUS SOTONIUM of Roma, an Amazonia of immense fame.
+   One special stable joins a Manager-mode league only when its word is spoken at the version badge
+   (see the strategy guide's hidden list); speaking the word again takes the house out of the system.
+   The house is run by a father with his famous child on the roster (the table is kept so more houses can be added):
      • Gaius Anatinus Duckio of Puteoli — and his son, SUPDUCUS PRAECLARUS.
    The child:
      • always receives clemency; no Fate, fever, war or maiming takes them; can never be poached;
@@ -16,15 +14,8 @@
    leaves, it ebbs and flows like any other stable. It never closes while its word stands.
    When a word is spoken again: the house disbands in every career as it loads — the child leaves with the
    father, the other fighters become free agents. */
-/* FAMILY_HOUSES — the two family houses: flag (localStorage switch), mgr (the father: name, ludus, city, colour, personality p, portrait parts, bio), child (the star: class, rating ovr/pot, fame, age, history line, out = the retirement news), visitor (the famous spectator entry). */
+/* FAMILY_HOUSES — the family house(s): flag (localStorage switch), mgr (the father: name, ludus, city, colour, personality p, portrait parts, bio), child (the star: class, rating ovr/pot, fame, age, history line, out = the retirement news), visitor (the famous spectator entry). */
 const FAMILY_HOUSES={
-  sotonium:{flag:'flavius_house_sotonium',mgr:{name:'Richardious Sotonium',ludus:_T('Ludus Sotonium'),city:'Capua',color:'#7a2a8a',
-      p:{ambition:62,cunning:48,honor:78,greed:35,show:74,discipline:70,risk:42},portrait:{hair:3,helm:'laurel',beard:true,bg:10},
-      bio:_T('Brother of Virgilante Sotonium of Pompeii and father of the Great Zeldinius. A Capuan of the old school: generous with bread, stubborn with his daughter, and never, ever for sale.')},
-    child:{name:'The Great Zeldinius Sotonium',cls:'amazonia',fem:true,city:'Roma',ovr:93,pot:98,fame:98,age:24,
-      hist:_T('fights for her father’s house, the Ludus Sotonium of Capua'),
-      out:childName=>_T`🗡 <b>${childName}</b> lays her sword at her father’s feet and <b>takes the rudis</b>. Every arena in the empire stands. Richardious Sotonium weeps openly in the editor’s box.`},
-    visitor:{n:'Richardious Sotonium',who:_T('lanista of Capua, brother of Virgilante Sotonium of Pompeii, father of the Great Zeldinius'),cls:'amazonia',line:_T('Richardious Sotonium of Capua takes his usual seat, a purple cloak over one shoulder and a story about his daughter ready for anyone within earshot.')}},
   duckio:{flag:'flavius_house_duckio',mgr:{name:'Gaius Anatinus Duckio',ludus:_T('Ludus Anatinus'),city:'Puteoli',color:'#2f8f7a',
       p:{ambition:70,cunning:55,honor:66,greed:40,show:82,discipline:58,risk:55},portrait:{hair:1,helm:'none',beard:true,bg:7},
       bio:_T('A Puteolan shipowner who made his fortune in the harbour and spends it on the sand. Waddles when he walks, and nobody laughs twice.')},
@@ -87,13 +78,19 @@ function sotoSeason(world){for(const k of Object.keys(FAMILY_HOUSES)){const m=ho
     if(typeof mnews==='function')mnews(FAMILY_HOUSES[k].child.out(esc(g.name)),'big')}}
 /* every career follows the words: houses join or leave as a career loads */
 /* wrap mgrMigrate and newWorld: every loaded or new career follows the switches (a new one saves if a house joined). */
-{const _mig=mgrMigrate;mgrMigrate=function(world){world=_mig(world);try{houseSync(world)}catch(e){console.error(e)}return world}}
+/* the retired house (key 'sotonium'): a saved career drops it silently on load — no news; same disbanding as houseRemove. */
+function houseDropQuiet(world,key){try{localStorage.removeItem('flavius_house_'+key)}catch(e){}
+  const m=world&&world.mgrs&&world.mgrs.find(x=>x.key===key);if(!m)return;
+  for(const g of(world.glads||[])){if(g.contract&&g.contract.mgr===m.id){if(g.starChild){g.alive=false;g.retired=true;g.contract=null}else{g.contract=null;g.unsigned=0}}
+    else if(g.starChild===key&&g.alive){g.alive=false;g.retired=true;g.contract=null}}
+  m.dead=true;m.gone=true;world.mgrs=world.mgrs.filter(x=>x!==m);
+  if(n9(world))for(const b of world.night.bouts)if(!b.done)b.ents=b.ents.filter(id=>{const g=gById(id);return g&&g.alive})}
+{const _mig=mgrMigrate;mgrMigrate=function(world){world=_mig(world);try{houseDropQuiet(world,'sotonium');houseSync(world)}catch(e){console.error(e)}return world}}
 {const _nw=newWorld;newWorld=function(choice){const w=_nw(choice);try{if(!w.tutorial){const n0=w.mgrs.length;houseSync(w);if(w.mgrs.length!==n0)saveWorld(true)}}catch(e){console.error(e)}return w}}
 /* the words at the version badge */
-if(typeof cheatRegister==='function'){const W1=String.fromCharCode(67,72,65,82,68),W2=String.fromCharCode(68,85,67,75,73,79);
-  cheatRegister(cheatKey(W1),()=>houseToggle('sotonium')?_T`🏛 <b>${W1}.</b> The Ludus Sotonium joins the league — Richardious and the Great Zeldinius. (Speak it again to remove them.)`:_T`🏛 <b>${W1}.</b> The Ludus Sotonium leaves the league.`,_T('House of Sotonium'));
+if(typeof cheatRegister==='function'){const W2=String.fromCharCode(68,85,67,75,73,79);
   cheatRegister(cheatKey(W2),()=>houseToggle('duckio')?_T`🦆 <b>${W2}.</b> The Ludus Anatinus joins the league — Gaius Anatinus Duckio and Supducus Praeclarus. (Speak it again to remove them.)`:_T`🦆 <b>${W2}.</b> The Ludus Anatinus leaves the league.`,_T('House of Duckio'))}
-if(typeof CHEAT_SHOW!=='undefined'){CHEAT_SHOW.push([[74,79,72,89,75],_T('🏛 The House of Sotonium — Richardious and the Great Zeldinius join Manager mode (again to remove)')],[[75,92,74,82,80,86],_T('🦆 The House of Duckio — Gaius Anatinus Duckio and Supducus Praeclarus join Manager mode (again to remove)')])}
+if(typeof CHEAT_SHOW!=='undefined'){CHEAT_SHOW.push([[75,92,74,82,80,86],_T('🦆 The House of Duckio — Gaius Anatinus Duckio and Supducus Praeclarus join Manager mode (again to remove)')])}
 /* the famous visitors — only while their house is in the system */
 if(typeof FAMOUS!=='undefined')for(const k of Object.keys(FAMILY_HOUSES)){const V=FAMILY_HOUSES[k].visitor;
   FAMOUS.push({n:V.n,who:V.who,mood:9,gate:()=>houseOn(k),
