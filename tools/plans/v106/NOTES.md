@@ -126,3 +126,4 @@ you're targeting. That said, it went where I wanted each time." Found: the board
   readable code); 3c card-sheet images stay as they are; 4a Credits/Prototype art stays in the download.
 - v1.07 beta 2 notes (his, 2026-10-19): (1) the red aim outline (396) round a gladiator target is drawn slightly LARGER than the figure;
   (2) the frame rate drops to ~4 fps while a popup / action prompt is open (e.g. the shield ask) — frame meter "slowest 415 ms".
+- (3) beast/NPC corpses on the sand (Tholo etc.) still drawn as the OLD token minis lying down (his screenshot 2026-10-19).
