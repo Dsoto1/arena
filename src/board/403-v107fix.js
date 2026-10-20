@@ -19,7 +19,9 @@
      nothing happens). Verified absent while a prompt is open (the brief's other suspects): no backdrop-filter / blur over the board,
      no box-shadow / filter animation on the window, no board redraw under it (0 draws per frame: modal() pauses the match), no aim /
      tooltip / bubble layout per frame, no render loop.
-   Kill switch localStorage flavius_v107fixoff=1 (both items back to the beta-2 path). Stats F107.st. Test tv107f.
+   • F3 (beta 4) THE OUTLINE FROM WHAT IS REALLY DRAWN: with bases off, 321 draws a base-less cell lower than the call 396 recorded, so
+     the ring floated above the figure and took the cut base in (bigger). The figure's NATIVE draw calls are recorded now (see F3 below).
+   Kill switch localStorage flavius_v107fixoff=1 (every item back to the beta-2 path). Stats F107.st. Test tv107f.
    ===================================================================== */
 const F107={off:(()=>{try{return localStorage.getItem('flavius_v107fixoff')==='1'}catch(e){return false}})(),
   cut:128 /* TWEAK: alpha that counts as the body's edge */,w:1.5 /* TWEAK: band width in CSS px */,st:{built:0,gutter:0}};
@@ -48,6 +50,32 @@ if(!F107.off&&typeof aim106Outline==='function'){const base=aim106Outline;
       sp={cv:out,ox:ox-o0[4],oy:oy-o0[5],ty};AIM106.oc.set(key,sp);AIM106.stats.built++;F107.st.built++;if(AIM106.oc.size>8)AIM106.oc.delete(AIM106.oc.keys().next().value)}
     ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=0.9*aim106Pulse();ctx.drawImage(sp.cv,Math.round(o0[4]+sp.ox),Math.round(o0[5]+sp.oy));ctx.restore();
     fig.outlined=true;fig.top=o0[5]+sp.oy+sp.ty}}
+/* ---------- F3 · the outline is built from the images REALLY drawn (beta-4 note: the ring floated above the figure, a bit too big) ----------
+   396's aim106Rec records each ctx.drawImage of the target figure BEFORE 321's own drawImage patch (bs101Patch) runs; with Settings →
+   bases off that patch swaps in the cell with the base cut out (bs101Proc) and draws it BS101.FAM.T·ppm LOWER (the feet on the tile floor,
+   v1.02 G6), so the outline was the old cell — base included (a bigger silhouette) — at the old height (it sat up by the base's thickness,
+   ≈ 3.5 mm: the head ring above the helmet). Now the native drawImage calls of that figure (BS101.nat, which every patched call ends in)
+   are what is recorded: image, source rect, dest rect, transform exactly as drawn this frame (glide / push / hit poses included, they are
+   on the transform); a call that never reaches BS101.nat (no 321 patch in place) keeps 396's record. Same cache key (it now names the
+   cut cell), same hit test (the body is the drawn one). */
+function f107Op(g,A){const img=A[0];if(!img||A.length<3)return null;let sx=0,sy=0,sw,sh,dx,dy,dw,dh;const W=img.width||img.naturalWidth||0,H=img.height||img.naturalHeight||0;
+  if(A.length>=9){sx=A[1];sy=A[2];sw=A[3];sh=A[4];dx=A[5];dy=A[6];dw=A[7];dh=A[8]}else if(A.length>=5){sw=W;sh=H;dx=A[1];dy=A[2];dw=A[3];dh=A[4]}else{sw=W;sh=H;dx=A[1];dy=A[2];dw=W;dh=H}
+  if(!(sw>0&&sh>0&&dw&&dh))return null;const m=g.getTransform();return {img,sx,sy,sw,sh,dx,dy,dw,dh,m:[m.a,m.b,m.c,m.d,m.e,m.f]}}
+if(!F107.off&&typeof aim106Rec==='function'){const base0=aim106Rec;
+  aim106Rec=function(base,self,args,u){
+    if(F107.off||!AIM106.rec||!u||typeof BS101==='undefined')return base0.apply(this,arguments);
+    const k=u.r*N+u.c,h=AIM106.tmap.get(k);if(!h||h.target.ref!==u)return base.apply(self,args);
+    if(typeof bs101Patch==='function'&&!AIM106.inRec)try{bs101Patch()}catch(e){}
+    const ops=[],prev=ctx.drawImage,nat0=BS101.nat;let depth=0,tap=0;
+    if(nat0)BS101.nat=function(){if(depth>0&&this===ctx){try{const o=f107Op(this,arguments);if(o){ops.push(o);tap++}}catch(e){}}return nat0.apply(this,arguments)};
+    AIM106.inRec=true;
+    ctx.drawImage=function(){let o=null;try{o=f107Op(this,arguments)}catch(e){}const t0=tap;depth++;
+      try{return prev.apply(this,arguments)}finally{depth--;if(tap===t0&&o)ops.push(o)}};
+    let r;try{r=base.apply(self,args)}finally{ctx.drawImage=prev;if(nat0)BS101.nat=nat0;AIM106.inRec=false}
+    AIM106.stats.rec++;F107.st.nat=(F107.st.nat|0)+tap;
+    const fig={u,k,ops,bb:aim106BB(ops)};AIM106.figs.push(fig);
+    try{const s=aim106Shown();if(s&&s.ref===u&&ops.length)aim106Outline(fig)}catch(e){console.error(e)}
+    return r}}
 /* ---------- F2 · the scrollbar's gutter stays while a window is open ---------- */
 function f107Gutter(){try{const html=document.documentElement,b=document.body;if(!b)return;
   const want=!F107.off&&b.classList.contains('modal-open')&&html.scrollHeight>html.clientHeight+1;
