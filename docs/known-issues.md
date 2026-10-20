@@ -5,6 +5,9 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-20 · beta 4: "a bear corpse 2–3 tiles big" (his screenshot, Safari 26 / Mac / DPR 2) is NOT reproduced in Chromium — every
+  system beast's corpse draws at the living scale (tv107g 5). 404 now checks the cut and the drawn size and falls back to the lying still
+  (console warning "404: the … corpse drew at …×"); confirm on his Safari in the next beta.
 - 2026-10-18 · tools/art/anim100b/make.js l106 run today bakes DIFFERENT beast shadow sheets than the committed v1.06a ones (moechus/valencia:
   cell 56×18, anchor y 47 vs 58×28, y 11 — the shadow sits above its anchor); the lit sheets come out byte-identical. Check l106.js's shadow
   crop before any beast re-bake (398 kept the committed shadow sheets).

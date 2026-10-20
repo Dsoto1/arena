@@ -16,6 +16,8 @@
    • LIGHT: the contact disc through fl104Sh (399's contact rule for figures; MINI_CUR is null in 'decals' → a plain contact disc).
      Same place and layer as 07's corpse ('decals', where 07 calls drawCorpseFig); the crew's cart (238) is untouched.
    • COST: one cached bitmap blit per corpse a frame, no filter per frame (the drained look is baked into the lying canvas).
+   • beta 4 (his note: a bear corpse 2–3 tiles big): every corpse is checked against the LIVING scale — the die frame's cut once per
+     (kind, facing), its drawn size (and a gladiator's fall frame) every frame; a mismatch → the lying still (see "beta 4" below).
    Kill switch localStorage flavius_v107corpseoff=1 → 07's corpse exactly. Test tv107g.
    ===================================================================== */
 /* the upright beasts (lie on their side like a gladiator); every other system beast is four-legged or a snake (flattened low) */
@@ -64,6 +66,35 @@ function cv107Lie(key,im,sx,sy,w,h,ax,ay,s,flat,side,B){const ds=cv107DS(),q=Mat
 function cv107Disc(x,y,rx,ry){try{ctx.save();ctx.fillStyle='rgba(0,0,0,.3)';if(typeof fl104Sh==='function')fl104Sh(x+2,y+3,rx,ry);else{ell(x,y,rx,ry);ctx.fill()}ctx.restore()}catch(e){}}
 function cv107DrawLie(e,m,s,rx,ry){cv107Disc(m.x,m.y,rx,ry);const k=s/e.k;ctx.drawImage(e.c,m.x-e.mx*k,m.y-e.my*k,e.c.width*k,e.c.height*k)}
 
+/* ---------------- beta 4 · the corpse at the LIVING beast's size (his note: a bear corpse drawn 2–3 tiles big) ----------------
+   Measured in Chromium (tv107g 5, every system beast, zoom 1 / 1.4 / 2, DPR 1 / 2, bases on / off, sheets / stills): the die4 cell is drawn
+   at exactly the living beast's px per sheet px, its visible body 0.8–1.0 × the living one, centred on its tile. Two checks keep it so on any
+   browser / wrapper, both cheap: (1) SANE — once per (beast, facing) the die4 cell cut from the act sheet is compared with the idle cell cut
+   from the move sheet (the same cut 312 makes, native size): a lying body has 0.7–1.0 × the standing one's visible pixels; a cut that
+   is not that (a mis-decoded / mis-cut sheet: a zoomed-in part of it fills the cell) never draws — the lying still does; (2) SIZE — the
+   die4 cell's draw call this frame is measured (device px): off the living scale (aw × bst100Scale × the screen ratio) by more than
+   15–18 % → that beast kind uses the lying still from the next frame on (CV107.bad). CV107.stats.insane / .bad count them. */
+CV107.bad=new Set();CV107.sane=new Map();CV107.stats.insane=0;CV107.stats.bad=0;CV107.lastSz=null;
+function cv107Alpha(im,x,y,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(im,x,y,w,h,0,0,w,h);
+  const d=g.getImageData(0,0,w,h).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>=128)n++;return n}
+function cv107Sane(k,face){const id=k+'|'+face;let v=CV107.sane.get(id);if(v!=null)return v;v=true;
+  try{const M=BEAST100_META[k],ia=bst100Img(k,1),im=bst100Img(k,0),r=M.ar.indexOf('die4'),r0=Math.max(0,M.ir.indexOf('idle0'));
+    if(ia&&im&&r>=0){const a=cv107Alpha(ia,face*M.aw[0],r*M.aw[1],M.aw[0],M.aw[1]),b=cv107Alpha(im,face*M.iw[0],r0*M.iw[1],M.iw[0],M.iw[1]);
+      const lin=b?Math.sqrt(a/b):0;v=a>0&&lin>0.6&&lin<1.45;   /* TWEAK: the sheets give 0.84–0.99 */
+      if(!v){CV107.stats.insane++;console.warn('404: the '+k+' die frame (facing '+face+') does not match its idle frame ('+lin.toFixed(2)+'×): the lying still is drawn')}}}
+  catch(e){v=true}   /* unreadable (file://): 312's cell as before */
+  CV107.sane.set(id,v);return v}
+/* the biggest image fn draws on ctx (device px), r = fn's result */
+/* (measured on ctx's own drawImage AND at 321's native call: 321's bs101Patch, run inside an100Cell, puts its own drawImage in place) */
+function cv107Size(fn){const own=Object.prototype.hasOwnProperty.call(ctx,'drawImage'),prev=ctx.drawImage,B=typeof BS101!=='undefined'?BS101:null,nat=B&&B.nat;let w=0,h=0;
+  const see=(g,A)=>{try{const img=A[0];if(g!==ctx||!img||img._l106)return;   /* 399's shadow sprites are not the body */
+    const n=A.length,dw=n>=9?A[7]:n>=5?A[3]:img.width,dh=n>=9?A[8]:n>=5?A[4]:img.height,t=g.getTransform(),k=Math.hypot(t.a,t.b);if(dw*k>w){w=dw*k;h=dh*k}}catch(e){}};
+  ctx.drawImage=function(){see(this,arguments);return prev.apply(this,arguments)};
+  if(nat)B.nat=function(){see(this,arguments);return nat.apply(this,arguments)};
+  let r=null;try{r=fn()}finally{if(nat)B.nat=nat;if(own)ctx.drawImage=prev;else delete ctx.drawImage}return {r,w,h}}
+function cv107Check(k,sz,exp){CV107.lastSz={k,w:sz.w,exp};if(!(exp>0)||!(sz.w>0))return;const q=sz.w/exp;
+  if(q<0.85||q>1.18){CV107.bad.add(k);CV107.stats.bad++;console.warn('404: the '+k+' corpse drew at '+q.toFixed(2)+'× the living scale: the lying still from now on')}}   /* TWEAK: tolerance */
+
 /* ---------------- beasts ---------------- */
 function cv107Beast(n,m){const k=typeof bst100Key==='function'?bst100Key(n):null;if(!k||!BEAST100_META[k]||!BEAST100_META[k].ar)return false;const M=BEAST100_META[k];
   const face=cv107BeastFace(n,k);
@@ -71,9 +102,10 @@ function cv107Beast(n,m){const k=typeof bst100Key==='function'?bst100Key(n):null
   try{const g=BST100.ghosts.find(x=>x.n===n&&x.S===S);if(g){const st=BST100.step*bst100K(),ai=BST100.img[k+'_act'];
     if(g.t0?performance.now()-g.t0<st*5:!(ai&&ai._bad)){CV107.stats.wait++;return true}}}catch(e){}   /* its sheet failed → the still below */
   const can3=typeof BST100!=='undefined'&&BST100.on&&!HEADLESS;
-  if(can3&&bst100Img(k,0)&&bst100Img(k,1)){const L=M.base?Math.min(M.base[0]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55:TW*MINI_BASE*0.55;
+  if(can3&&bst100Img(k,0)&&bst100Img(k,1)&&!CV107.bad.has(k)&&cv107Sane(k,face)){const L=M.base?Math.min(M.base[0]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55:TW*MINI_BASE*0.55;
     cv107Disc(m.x,m.y,L,L*(M.base?(M.base[1]/M.base[0])*0.75:0.5));
-    if(bst100Cell(k,face,{act:true,name:'die4'},m.x,m.y,null)!=null){CV107.stats.d3++;return true}}
+    const sz=cv107Size(()=>bst100Cell(k,face,{act:true,name:'die4'},m.x,m.y,null));
+    if(sz.r!=null){cv107Check(k,sz,M.aw[0]*bst100Scale(M)*cv107DS());CV107.stats.d3++;return true}}
   /* the still, lying */
   const im=typeof st107Img==='function'&&typeof ST107!=='undefined'&&ST107.on?st107Img(k):null;const me=M.iw,s=bst100Scale(M);
   const flat=!CV107_UP.includes(k);const rx=flat?TW*0.42:TW*0.34;
@@ -87,8 +119,9 @@ const cv107Lost=pl=>pl&&pl.sev?['rarm','larm','rleg','lleg'].filter(l=>pl.sev[l]
 function cv107Glad(pl,m,sp){let cls=pl.cls;try{if(typeof st107ClsOf==='function')cls=st107ClsOf({cls:pl.cls})}catch(e){}if(!cls||typeof ANIM100_META==='undefined'||!ANIM100_META[cls])return false;
   const gf=CV107.gface.get(pl.owner);const face=gf&&gf.S===S?gf.face:0;const lost=cv107Lost(pl);
   if(typeof AN100!=='undefined'&&AN100.on&&!HEADLESS&&lost.length<=1&&typeof an100Printed==='function'){const src=an100Printed(cls,lost[0]||'');
-    const R=src&&src.act&&src.act.meta.rows.fall;if(R&&an100Bm(src,'act','fall')){const keep=AN100.cur;AN100.cur={color:null};
-      try{if(an100Cell(src,{set:'act',name:'fall',i:R.length-1},face,m.x,m.y,null)!=null){CV107.stats.g3++;return true}}finally{AN100.cur=keep}}}
+    const R=src&&src.act&&src.act.meta.rows.fall;if(R&&!CV107.bad.has('g:'+cls)&&an100Bm(src,'act','fall')){const keep=AN100.cur;AN100.cur={color:null};
+      try{const sz=cv107Size(()=>an100Cell(src,{set:'act',name:'fall',i:R.length-1},face,m.x,m.y,null));
+        if(sz.r!=null){cv107Check('g:'+cls,sz,R[R.length-1][1]*TW*MINI_BASE/25.4/src.act.meta.pxmm*cv107DS());CV107.stats.g3++;return true}}finally{AN100.cur=keep}}}
   const im=typeof st107Img==='function'&&typeof ST107!=='undefined'&&ST107.on?st107Img(cls):null;const Mv=ANIM100_META[cls].move,r=Mv.rows.idle[0];
   if(!im){cv107Disc(m.x,m.y,TW*0.34,TW*0.13);CV107.stats.none++;return true}
   const s=TW*MINI_BASE/25.4/Mv.pxmm;const e=cv107Lie('g:'+cls,im,face*r[1],0,r[1],r[2],r[3],r[4],s,false,face<4?1:-1,{rx:12.75*Mv.pxmm,ry:6.4*Mv.pxmm,cy:r[4]-2.5*Mv.pxmm,rim:2.8*Mv.pxmm});cv107DrawLie(e,m,s,TW*0.34,TW*0.13);CV107.stats.lie++;return true}
