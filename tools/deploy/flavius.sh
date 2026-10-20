@@ -27,7 +27,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=8
+FSH_VER=9
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -194,8 +194,9 @@ gh_token(){ [ -f "$CONF" ] && . "$CONF"; if [ -z "${GH_TOKEN:-}" ]; then
 gh_api(){ curl -fsS -m 20 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$REPO/$1"; }
 # the branch carrying the release: the version asked for, else the highest version.json among the branches
 gh_pick(){ local want="${1:-}" b v best="" bestv="0"; local list; list=$(gh_api "branches?per_page=100" | python3 -c "import json,sys;[print(x['name']) for x in json.load(sys.stdin)]") || die "GitHub refused the token (or the repo is not reachable). Make a new token and run: GH_TOKEN= bash flavius.sh release"
+  # a letter release (1.08a) sorts after 1.08, before 1.09
   # from v1.02 every release is a branch release/vX.YY (made when the release is pushed): the newest one, or the one asked for (a rollback)
-  local rl; rl=$(printf '%s\n' $list | sed -n 's|^release/v\([0-9.]*\)$|\1|p' | sort -t. -k1,1n -k2,2n | tr '\n' ' ')
+  local rl; rl=$(printf '%s\n' $list | sed -n 's|^release/v\([0-9.]*[a-z]\{0,1\}\)$|\1|p' | sort -t. -k1,1n -k2,2n -k2,2 | tr '\n' ' ')
   if [ -n "$rl" ]; then if [ -n "$want" ]; then printf '%s\n' $rl | grep -qx "$want" || die "No release v$want on GitHub (releases there: $rl)"; echo "release/v$want $want"; return; fi
     local last; last=$(printf '%s\n' $rl | tail -1); echo "release/v$last $last"; return; fi
   for b in $list; do v=$(curl -fsS -m 20 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/$REPO/contents/version.json?ref=$b" 2>/dev/null | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p' || true)
