@@ -261,3 +261,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   trade/loan deadline after week 8 + Superbus roster lock + no poaching 393, rival trade motives 394, Infirmary injured chip 395; beta-1 fixes
   397 (bouts locked until Set off, sign plates, city edge fade, no city speed control) + 398 (no rings under figures, gold active tile, team chip,
   Match Week results box, Moechus grey), beige base disc at zoom/2× fixed (321). Flaky tests hardened (tv92t, tv104d, tv105x, tv100l). No server change.
+- **v1.07** one look for every fighter + frame rate (tools/plans/v106/NOTES.md "Old token pieces" + beta notes, five betas): old token pieces
+  retired 400 (3D figures everywhere, 3D stills as the fallback + off the board, minis only in Credits → Prototype, no token-style setting),
+  City Square walkers + menu show in 3D 402, 3D corpses 404, frame rate 401 (sheet rows decoded off-thread, light pass in pieces, no GPU
+  read-backs) + 405 (face JPEGs without read-back, render keeps panels in place, the ⏺ 10 s frame recorder) + 406 (Safari: Guide ring
+  without board redraws, board DPR 1.5 cap → 1, bitmap cells, #perf= switches), aim outline from the drawn cell 403 (bases off) + no
+  resize on popups, Settings editors beside Blessings, smaller download (text packs + stripped code), Sotonium house removed quietly.
+  No server change.

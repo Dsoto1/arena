@@ -46,4 +46,5 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - A commit that only touches tools/deploy (e.g. release.sh's advert shot) starts no regression run · dispatch the full run by hand.
 
 ## Waiting on him
-- v1.06 shipped 2026-10-19 (release/v1.06 + main) → he runs `bash flavius.sh release`.
+- v1.07 shipped 2026-10-20 (release/v1.07 + main) → he runs `bash flavius.sh release`.
+- Safari board sharpness (406 W1): built = cap 1.5× → 1× when slow (my pick a); his a/b/c answer still open. Safari fps unconfirmed on his Mac (send ⏺ 10 s reports).

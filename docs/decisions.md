@@ -788,3 +788,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   Credits → Prototype. Own release after v1.06, before the torches. REPLACES the v0.72 "3D minis" token style, v0.75 "3D minis replace
   standees" (printed classes wear his minis) and the Figures / Standees / Cylinders choices (tools/plans/v106/NOTES.md "Old token pieces").
 - Decided 2026-10-19 (his): the Sotonium family house and its word are removed quietly (no news, no What's new); old careers drop the house on load. Duckio stays.
+- Decided 2026-10-20: v1.07 = the token release (old pieces retired) + frame-rate work, shipped. Numbering (badge needs vX.YY): torches/materials = v1.08, Winter Quarters = v1.09 (REPLACES 'v1.06b' and 'v1.07 Winter Quarters'). Safari board DPR cap 1.5 shipped as the default pending his a/b/c.

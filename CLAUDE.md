@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.06** (v1.06 shipped 2026-10-19). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.07** (v1.07 shipped 2026-10-20). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -181,7 +181,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -199,13 +199,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.04** the Manager season rework (tools/plans/v104/NOTES.md, three betas): season shape 348 (byes 4 & 12, Rivalry Week 11, the Superbus
-  playoffs: projected bracket from week 9, seeds 1–4 rest a round, final in week 12), careers 349 (ages 18–30, five career kinds, peaks and fades),
-  roster 350 (cap, starters, layout), Infirmary + Recovery back in the ward with Medicus hours 351; beta fixes: roster 352, ludus + letters 353,
-  Infirmary/Yard + Capsarius 354, Superbus entry guards + one bracket 355, board floor marks under the figures 356 + 359, wooing on the
-  Recruiter's hours + ward/yard/letter fixes 357, Play Now row + regal bracket button + playoff Match Week 358. flavius.sh 7 (beta self-update).
-  No server change.
-
 - **v1.05** Match Week + Manager polish (tools/plans/v105/NOTES.md, five betas): Match Week rework 360 + slim banner 374/389 (square locked until
   Set off), your read 361, League seasons 362, Renown 363, careers start S1W1 365, Training Yard rework 373 + compact 388, letters = tasks vs
   mail 378, loans/rudis/seeds/home arenas 379–382, Rivalry Week pairs + free trip 383, starters warning by bouts 384, fallen stay signed 385,
@@ -218,3 +211,11 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   trade/loan deadline after week 8 + Superbus roster lock + no poaching 393, rival trade motives 394, Infirmary injured chip 395; beta-1 fixes
   397 (bouts locked until Set off, sign plates, city edge fade, no city speed control) + 398 (no rings under figures, gold active tile, team chip,
   Match Week results box, Moechus grey), beige base disc at zoom/2× fixed (321). Flaky tests hardened (tv92t, tv104d, tv105x, tv100l). No server change.
+
+- **v1.07** one look for every fighter + frame rate (tools/plans/v106/NOTES.md "Old token pieces" + beta notes, five betas): old token pieces
+  retired 400 (3D figures everywhere, 3D stills as the fallback + off the board, minis only in Credits → Prototype, no token-style setting),
+  City Square walkers + menu show in 3D 402, 3D corpses 404, frame rate 401 (sheet rows decoded off-thread, light pass in pieces, no GPU
+  read-backs) + 405 (face JPEGs without read-back, render keeps panels in place, the ⏺ 10 s frame recorder) + 406 (Safari: Guide ring
+  without board redraws, board DPR 1.5 cap → 1, bitmap cells, #perf= switches), aim outline from the drawn cell 403 (bases off) + no
+  resize on popups, Settings editors beside Blessings, smaller download (text packs + stripped code), Sotonium house removed quietly.
+  No server change.
