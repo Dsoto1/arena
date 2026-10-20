@@ -84,7 +84,7 @@ if(!P107S.off&&typeof HTMLCanvasElement!=='undefined'){const P=HTMLCanvasElement
         Object.defineProperty(c,'height',{configurable:true,get(){return dH.get.call(this)},set(v){bump(this);dH.set.call(this,v)}})}}}}catch(e){}return g};
   /* the board's own context (on the prototype: 321's bs101Patch puts its own ctx.drawImage over any instance wrapper and calls the
      prototype's): a held-still in-memory canvas → its bitmap copy (W3), and the recorder's count of what the board draws (W4) */
-  const C2=CanvasRenderingContext2D.prototype,di=C2.drawImage;
+  const C2=typeof CanvasRenderingContext2D!=='undefined'?CanvasRenderingContext2D.prototype:{} /* no canvas (tools/node rules runner) */,di=C2.drawImage;
   C2.drawImage=function(s){if(this!==ctx||!s)return di.apply(this,arguments);
     if(typeof REC107!=='undefined'&&REC107.on){let k=s instanceof HTMLCanvasElement?(s.__w107?'canvas(in memory)':'canvas'):s.constructor?s.constructor.name:'?';if(s.width*s.height>=512*512)k+=' big';W4.di[k]=(W4.di[k]||0)+1}
     if(s.__w107&&W3.on&&!P107S.off){let R=W3.rec.get(s);if(!R){R={bm:null,v:-1,seen:0,pend:false,used:0};W3.rec.set(s,R)}
