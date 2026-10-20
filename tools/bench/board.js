@@ -79,7 +79,7 @@ const CONTRAST=()=>{const dpr=devicePixelRatio||1,g=cv.getContext('2d');const lu
   const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;const out=Object.values(rows).map(R=>({t:R.t,tile:tl(Math.floor(R.k/N),R.k%N),cr:+avg(R.cr).toFixed(3),Lon:+avg(R.on).toFixed(3),Loff:+avg(R.off).toFixed(3)}));
   return {tiles:out,meanCR:+avg(out.map(o=>o.cr)).toFixed(3),minCR:+Math.min(...out.map(o=>o.cr)).toFixed(3)}};
 
-module.exports={SCENE,SET,MEASURE,FREEZE,THAW,VIEWS};
+module.exports={SCENE,SET,MEASURE,FREEZE,THAW,VIEWS,CONTRAST};
 if(require.main===module)(async()=>{const serve=require(path.join(__dirname,'..','perf95','serve.js'));const url=await serve(PAGE);const b=await chromium.launch();
   const res={page:path.basename(PAGE),ls:LS,frames:FRAMES,warm:WARM,load0:load(),at:new Date().toISOString(),runs:[]};const errs=[];
   console.log('load before',JSON.stringify(res.load0),'ls',JSON.stringify(LS));
