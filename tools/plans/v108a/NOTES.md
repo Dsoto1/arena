@@ -19,3 +19,9 @@ eagle 1, grunt 1, beast 1, cheer 2, rise 1, horn 1, fanfare 3, titulus 1, medal 
 - 25 files, ≈ 0.49 MB (well under the 3a budget). wolf 3 checked: CC-BY 4.0, be-steele's Malamute "Igor" (credited).
 - CC-BY authors to credit: SoundFlakes, F.M.Audio, CGEffex, nuFF3, tbsounddesigns, be-steele, PRINCEofWORMS, EvanBoyerman, lonemonk,
   _MC5_, tosha73 (all CC-BY 4.0).
+
+## Build (2026-10-20, held until v1.08 ships)
+Built as one commit b11fe0f (408-v108sfx + assets/sfx108_<key>.mp3 flat — mkshare can't take a sub-folder — + tsfx108), kept as
+tools/plans/v108a/sfx108.bundle so it does not ride into the v1.08 beta. To merge: `git fetch tools/plans/v108a/sfx108.bundle
+worktree-agent-a0e5f2433298314ea:v108a && git merge v108a` (or cherry-pick b11fe0f). file:// pages play the synth (no fetch); the site,
+beta and the download (inlined) play the recordings. Levels gain-matched to sound100/after.txt; unheard — check axe, rise, step on the beta.
