@@ -47,4 +47,4 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 
 ## Waiting on him
 - v1.07 shipped 2026-10-20 (release/v1.07 + main) → he runs `bash flavius.sh release`.
-- Safari board sharpness (406 W1): built = cap 1.5× → 1× when slow (my pick a); his a/b/c answer still open. Safari fps unconfirmed on his Mac (send ⏺ 10 s reports).
+- Safari board sharpness (406 W1): built = cap 1.5× → 1× when slow (my pick a); his a/b/c answer still open. Safari CONFIRMED on his Mac 2026-10-20 (v1.07, Slow): 52.6 / 55 fps, p50 17 ms (was 4.5 fps); the auto-drop went to 1× (tools/plans/v107/perf/safari-v107-*).
