@@ -139,3 +139,7 @@ Lighting Light (no torch shadows) · 5a moon shadow .16 as today · 6a raked san
 material (no runtime pass; a re-bake never ships bundled with other feature work → its own step/beta check, R4) · 8a depth as shown.
 Build must also fix: 189 night grade re-bake per zoom-ease frame (+1.3–6.8 ms, 14.8 Safari), torch shadow layer ~7 ms per 399 rebuild,
 then real-device fps on the beta (60 laptop / 30 phone, Safari).
+
+## Build (his go 2026-10-20)
+7a metal re-bake conflicts with R4 (a re-bake never ships bundled with feature work, decided 2026-10-18) → v1.08 ships torches + sand
+grain + planks + jug glint + depth WITHOUT metal; the metal sheet re-bake = its own release v1.08b (after v1.08a sounds), unless he pulls it in.
