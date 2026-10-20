@@ -79707,7 +79707,7 @@ function rec107Extra(){const o={switches:PERF_SWL.slice()};try{const fr=Math.max
 const V108={on:true,ab:true,kill:{torch:false,mat:false,depth:false},no:new Set(),sig:'',tl:null,tb:null,fr:[],spr:{},ng:null,
   mv:{k:'',at:-1e9},tlLog:[],settleT:0,fw:0,lastF:null,
   st:{bakeDay:0,bakeNight:0,nightReuse:0,dayMs:0,nightMs:0,dayMax:0,nightMax:0,tl:0,tlMs:0,tlSteps:0,tlStepMax:0,tlMergeMs:0,tlWait:0,
-    live:0,liveMax:0,figT:0,figN:0,figMax:0,pools:0,frames:0,frameMax:0}};
+    live:0,liveMax:0,figT:0,figN:0,figSkip:0,figMax:0,pools:0,frames:0,frameMax:0}};
 try{for(const k of ['torch','mat','depth'])V108.kill[k]=localStorage.getItem('flavius_v108'+k+'off')==='1'}catch(e){}
 /* TWEAK: the look (his picks 1a 3a 5a 6a 8a = the mock-up's values) and the cost guards */
 const V108K={pool:0.2,poolR:[1.7,1.5],poolIn:0.3,lit:0.72,litR:[2.9,2.5],warm:0.2,torchCast:0.45,torchR:5.0,torchH:1.4,kMin:0.9,kMax:1.7,
@@ -79861,13 +79861,18 @@ if(typeof LIGHT106!=='undefined'){
   if(typeof l106GladSh==='function'){const base=l106GladSh;l106GladSh=function(){const r=base.apply(this,arguments);if(r)V108.fr.push(r);return r}}
   if(typeof l106BeastSh==='function'){const base=l106BeastSh;l106BeastSh=function(){const r=base.apply(this,arguments);if(r)V108.fr.push(r);return r}}
   /* figures + beasts: ≤ 2 extra drawImage each (their alpha cut by 399's lift on a highlighted tile instead of a clip) */
-  if(typeof l106DrawFigs==='function'){const base=l106DrawFigs;l106DrawFigs=function(ops,hp,L){const r=base.apply(this,arguments);if(!v108TorchOn()||V108.fr.length!==ops.length)return r;
+  if(typeof l106DrawFigs==='function'){const base=l106DrawFigs;l106DrawFigs=function(ops,hp,L){const r=base.apply(this,arguments);if(!v108TorchOn())return r;
     const t0=performance.now();try{const T=ctx.getTransform();const items=[];
-      for(let i=0;i<ops.length;i++){const op=ops[i],R=V108.fr[i];const ax=op[1]-R.x,ay=op[2]-R.y;for(const n of v108Near(ax,ay)){const M=v108M(ax,ay,n.phi,n.k);items.push({op,M,a:V108K.torchCast*n.w,dev:v108Box(T.multiply(M),op[1],op[2],op[3],op[4])})}}
+      /* each op is paired with its pose record BY IDENTITY (the shadow-sheet cell canvas 399 cut for it: l106Cell → l106Mk, flagged _l106), never by
+         index — and only a true shadow cell with the record's own size is re-aimed; anything else (a stray op, a canvas that is not 399's cell) is skipped */
+      const by=new Map();for(const R of V108.fr)if(R&&R.c&&!by.has(R.c))by.set(R.c,R);let skip=0;
+      for(let i=0;i<ops.length;i++){const op=ops[i],R=by.get(op[0]);
+        if(!R||op[0]._l106!==1||Math.abs(op[3]-R.w)>0.01||Math.abs(op[4]-R.h)>0.01||!(op[3]>0)||op[3]>TW*4||op[4]>TW*4){skip++;continue}
+        const ax=op[1]-R.x,ay=op[2]-R.y;for(const n of v108Near(ax,ay)){const M=v108M(ax,ay,n.phi,n.k);items.push({op,M,a:V108K.torchCast*n.w,dev:v108Box(T.multiply(M),op[1],op[2],op[3],op[4])})}}
       ctx.save();
       if(hp){const b=hp.b,X=[b[0]*T.a+T.e,b[1]*T.d+T.f,b[2]*T.a+T.e,b[3]*T.d+T.f];for(const it of items){const q=it.dev;if(q[0]<X[2]&&q[0]+q[2]>X[0]&&q[1]<X[3]&&q[1]+q[3]>X[1])it.a*=1-LIGHT106.hlLift}}
       const ga=ctx.globalAlpha;for(const it of items){ctx.setTransform(T.multiply(it.M));ctx.globalAlpha=ga*it.a;ctx.drawImage(...it.op)}
-      ctx.restore();V108.st.figN=items.length}catch(e){console.error(e)}const ms=performance.now()-t0;V108.st.figT+=ms;v108Cost('fig',ms);return r}}
+      ctx.restore();V108.st.figN=items.length;V108.st.figSkip=skip}catch(e){console.error(e)}const ms=performance.now()-t0;V108.st.figT+=ms;v108Cost('fig',ms);return r}}
 
   /* ---- F2 · pillars / jugs / chest: 399's static layer + their torch shadows MERGED into one cached copy, built in pieces ---- */
   /* 399's key without its size step (field 2): the same pieces at another zoom */

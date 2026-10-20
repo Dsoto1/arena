@@ -97,6 +97,29 @@ ok(d7.med<1.5&&d7.p90<4,'7b zoom ease: our work a moving frame median < 1.5 ms, 
 ok(d7.after.sharp>=1&&d7.after.tl&&!d7.after.scaledLeft&&d7.after.steps>=1&&d7.after.stepMax<16,'7c the view holds: one sharp re-bake + the torch layer built in pieces (each < 16 ms) '+JSON.stringify(d7.after));
 await pg.context().close();
 
+/* ---- 8 · the torch re-aims ONLY true shadow cells, paired with their pose by identity (v1.08 beta-1: dark round discs under some figures) ----
+   fighters stand next to the rim torches (strong cast); the ops 399 hands to l106DrawFigs are captured: every one is a shadow-sheet cell (flagged _l106,
+   with its pose record), the torch draws items for them and skips none; then the same ops reversed (order must not matter), plus a rogue round disc (not a
+   cell) and a canvas flagged _l106 that no pose made = skipped, never re-aimed; with an op missing the others are still cast (not all dropped). */
+pg=await open();await start(pg);
+const d8=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));await T108.set({night:1,kill:[]});SETTINGS.calm=true;
+  const sp=v108Spots(),used=new Set();S.players.forEach((p,i)=>{const s=sp[(i*2+1)%sp.length];let best=null;for(let r=0;r<N;r++)for(let c=0;c<N;c++){const k=r*N+c;if(used.has(k)||S.pillars.some(q=>q.r===r&&q.c===c))continue;const d=Math.hypot(r-s.r,c-s.c);if(!best||d<best.d)best={d,r,c,k}}used.add(best.k);p.r=best.r;p.c=best.c;p._fr=null});
+  for(let i=0;i<30;i++){draw();await W8(40)}
+  const bb=l106DrawFigs;let cap=null;l106DrawFigs=function(o,hp,L){cap={ops:o.map(x=>x.slice()),L};return bb.apply(this,arguments)};draw();l106DrawFigs=bb;
+  const o={ops:cap?cap.ops.length:0,fr:V108.fr.length,flag:cap?cap.ops.every(x=>x[0]._l106===1):false,byId:cap?cap.ops.every(x=>V108.fr.some(R=>R.c===x[0])):false,full:l106Mode()==='full',torch:v108TorchOn(),n0:V108.st.figN,s0:V108.st.figSkip};
+  const run=ops=>{ctx.save();try{l106DrawFigs(ops,null,cap.L)}finally{ctx.restore()}return [V108.st.figN,V108.st.figSkip]};
+  const rev=run(cap.ops.slice().reverse());o.rev=rev;
+  const disc=document.createElement('canvas');disc.width=disc.height=64;const g=disc.getContext('2d');g.fillStyle='#000';g.beginPath();g.arc(32,32,30,0,7);g.fill();
+  const fake=document.createElement('canvas');fake.width=fake.height=64;fake._l106=1;fake.getContext('2d').fillRect(0,0,64,64);
+  const op0=cap.ops[0];o.rogue=run(cap.ops.concat([[disc,op0[1]+30,op0[2]+10,64,64],[fake,op0[1]-30,op0[2],64,64]]));
+  o.miss=run(cap.ops.slice(1));
+  draw();return o});
+ok(d8.full&&d8.torch&&d8.ops>=4&&d8.ops===d8.fr&&d8.flag&&d8.byId&&d8.n0>=d8.ops&&d8.s0===0,'8a night, Full, fighters at the torches: every op 399 draws is a shadow-sheet cell with its pose record; the torch casts them all '+JSON.stringify(d8));
+ok(d8.rev[0]===d8.n0&&d8.rev[1]===0,'8b the same ops in another order = the same torch casts (paired by identity, not index) '+JSON.stringify(d8.rev));
+ok(d8.rogue[0]===d8.n0&&d8.rogue[1]===2,'8c a round disc / a canvas no pose made among the ops is skipped, never re-aimed '+JSON.stringify(d8.rogue));
+ok(d8.miss[0]>0&&d8.miss[0]<d8.n0&&d8.miss[1]===0,'8d an op missing: the others are still cast (all-or-nothing is gone) '+JSON.stringify(d8.miss));
+await pg.context().close();
+
 /* ---- 6 · kill switches ---- */
 pg=await open({flavius_v108torchoff:'1',flavius_v108matoff:'1',flavius_v108depthoff:'1'});await start(pg);
 const d6=await pg.evaluate(async()=>{await T108.set({night:1});const p0=V108.st.pools;for(let i=0;i<3;i++)draw();
