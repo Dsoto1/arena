@@ -268,3 +268,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   without board redraws, board DPR 1.5 cap → 1, bitmap cells, #perf= switches), aim outline from the drawn cell 403 (bases off) + no
   resize on popups, Settings editors beside Blessings, smaller download (text packs + stripped code), Sotonium house removed quietly.
   No server change.
+
+- **v1.08** torchlight and texture (tools/plans/v108/MOCKUP.md, his 1a–8a, one beta): 409-v108light (from the 407 prototype) — night torch
+  pools baked into 189's grade + small flickering live pools and flames (still under Reduce motion / Animations Off), torch shadows cast away
+  from the two nearest rim lights in Lighting Full only (phones: pools only), sand grain, bench planks, jug glaze glint, depth (wall seam,
+  tread backs, lit far-wall cap, darker far stands); Lighting Off = the v1.07 board; zoom ease reuses the last night grade, torch shadow layer
+  built in pieces; torch casts only from 399's shadow cells, paired by identity (beta disc report, not reproduced). Metal → v1.08b re-bake (R4).
+  No server change.

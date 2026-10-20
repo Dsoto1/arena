@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.07** (v1.07 shipped 2026-10-20). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.08** (v1.08 shipped 2026-10-20). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -181,7 +181,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -199,12 +199,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.05** Match Week + Manager polish (tools/plans/v105/NOTES.md, five betas): Match Week rework 360 + slim banner 374/389 (square locked until
-  Set off), your read 361, League seasons 362, Renown 363, careers start S1W1 365, Training Yard rework 373 + compact 388, letters = tasks vs
-  mail 378, loans/rudis/seeds/home arenas 379–382, Rivalry Week pairs + free trip 383, starters warning by bouts 384, fallen stay signed 385,
-  renewals OVR/form 386, tasks/project chips 387, slim banners everywhere 388/390/392 + one hours chip/rail pill 392, Armory list + Save & quit
-  in the rail 391, recruiting jitter fix (378). docs/known-issues.md started. No server change.
-
 - **v1.06** one sun + target clarity + season locks (tools/plans/v106/NOTES.md, two betas): lighting 399 (one sun per arena, cast + contact
   shadows, figures re-lit with shadow sheets, Settings Lighting Full/Light/Off with auto-drop), aim 396 (hover ring/crosshair, tag = chance to
   WOUND from the rules incl. blessings/shields/armor/Focus!/Omnia, Minerva named at 0%, Confirm attacks offline only, no % in Ranked),
@@ -218,4 +212,11 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   read-backs) + 405 (face JPEGs without read-back, render keeps panels in place, the ⏺ 10 s frame recorder) + 406 (Safari: Guide ring
   without board redraws, board DPR 1.5 cap → 1, bitmap cells, #perf= switches), aim outline from the drawn cell 403 (bases off) + no
   resize on popups, Settings editors beside Blessings, smaller download (text packs + stripped code), Sotonium house removed quietly.
+  No server change.
+
+- **v1.08** torchlight and texture (tools/plans/v108/MOCKUP.md, his 1a–8a, one beta): 409-v108light (from the 407 prototype) — night torch
+  pools baked into 189's grade + small flickering live pools and flames (still under Reduce motion / Animations Off), torch shadows cast away
+  from the two nearest rim lights in Lighting Full only (phones: pools only), sand grain, bench planks, jug glaze glint, depth (wall seam,
+  tread backs, lit far-wall cap, darker far stands); Lighting Off = the v1.07 board; zoom ease reuses the last night grade, torch shadow layer
+  built in pieces; torch casts only from 399's shadow cells, paired by identity (beta disc report, not reproduced). Metal → v1.08b re-bake (R4).
   No server change.

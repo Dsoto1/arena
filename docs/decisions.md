@@ -797,3 +797,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   Lighting description stays as is. His idea: Settings due for a reorganisation (tab contents moved to where they belong) → backlog.
 - Decided 2026-10-20 (his 1b 2a 3a 4b 5a, tools/plans/v108b/NOTES.md): v1.08b = one figure re-bake (metal + 2× sheets for big screens,
   1× for phones; the download keeps 1×); Safari board 1.5× trial after v1.08b — REPLACES the open 406 sharpness question (shipped with a).
+- 2026-10-20: v1.08 SHIPPED (his "OK ship"): release/v1.08 + main at 0d12773; he runs bash flavius.sh release. Next: v1.08a sounds beta.
