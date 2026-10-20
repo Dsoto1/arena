@@ -32,3 +32,6 @@ tools/plans/**/*.jpeg
 tools/plans/**/*.webp
 tools/plans/**/*.gif
 !tools/plans/mock100/img3/*
+
+# Quaternius animation source files: never committed (licence: no redistribution as assets) — tools/plans/poser/NOTES.md
+tools/art/ual/

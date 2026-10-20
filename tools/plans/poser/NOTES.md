@@ -67,3 +67,21 @@ use it as the MUSCULAR type; ATHLETIC = same skeleton at ~7.5 heads, shoulders �
 - His answers (2026-10-17): Q1a body-first order (body → poses → armor/weapons → face/materials → render polish; REPLACES p4a's fit-first) ·
   Q2a soft matte shading everywhere, a THIN outline kept only on the board (readability at ~85 px; REPLACES the toon + ink look) ·
   Q3a a finer sculpt (≈ 2 mm) only for the close-up view; board sheets stay on the 4 mm grid.
+
+## Quaternius Universal Animation Library (his question 2026-10-20 → answers 1a 2a 3a)
+- 1a used INSIDE poser release B (pose audit + combat), replacing part of B's hand-made pose work: first a 4-clip test (walk, sword attack,
+  hit reaction, death) retargeted onto rig92 for one class, before/after contact sheet for him, then the roll-out.
+- 2a the source files are never committed: he uploads the zip to the cloud session at bake time; it lives git-ignored in tools/art/ual/
+  (.gitignore). Only derived pose data + baked sheets go into the repo/download.
+- 3a Standard (free) tier first; Source (.blend, all clips) only if the test shows clips we miss.
+- Licence: the zip's own License.txt says CC0 1.0; the site's Quaternius Asset License v1.0 (2026-08-28) says free + commercial + no credit,
+  but no redistribution of the assets as assets. Plan 2a satisfies both. Record it as "Quaternius (CC0 per the pack's License.txt)".
+- What the Standard zip holds (uploaded 2026-10-20): UAL1_Standard.glb / _RM.glb (root motion) + .fbx, one skin, 65 bones in Unreal-
+  mannequin naming (root pelvis spine_01-03 neck_01 Head clavicle/upperarm/lowerarm/hand_l|r + fingers, thigh/calf/foot/ball_l|r) →
+  maps cleanly onto rig92's pe/sp/ch/ne/he + limbs. 43 clips: A_TPose, Idle_Loop, Idle_Talking_Loop, Idle_Torch_Loop, Walk_Loop,
+  Walk_Formal_Loop, Jog_Fwd_Loop, Sprint_Loop, Crouch_Idle/Fwd_Loop, Roll, Jump_Start/Loop/Land, Sword_Idle, Sword_Attack, Punch_Jab,
+  Punch_Cross, Hit_Chest, Hit_Head, Death01, Push_Loop, PickUp_Table, Interact, Fixing_Kneeling, Sitting_*, Dance_Loop, Spell_Simple_*
+  (a throw-like cast), Pistol_* (unused), Driving_Loop, Swim_*.
+  Useful for us: walk/jog/sprint, idles, Sword_Idle/Attack, punches (cestus/bare fist), Hit_Chest/Head, Death01, Roll (dodge),
+  Crouch, Fixing_Kneeling (kneel/missio), Dance (victory?), Spell_Simple_Shoot (throw base), PickUp (floor weapon). Missing: shield
+  block/bash, net, trident/spear thrust, two-weapon, beasts → our presets stay for those.

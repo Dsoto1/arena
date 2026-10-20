@@ -789,3 +789,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   standees" (printed classes wear his minis) and the Figures / Standees / Cylinders choices (tools/plans/v106/NOTES.md "Old token pieces").
 - Decided 2026-10-19 (his): the Sotonium family house and its word are removed quietly (no news, no What's new); old careers drop the house on load. Duckio stays.
 - Decided 2026-10-20: v1.07 = the token release (old pieces retired) + frame-rate work, shipped. Numbering (badge needs vX.YY): torches/materials = v1.08, Winter Quarters = v1.09 (REPLACES 'v1.06b' and 'v1.07 Winter Quarters'). Safari board DPR cap 1.5 shipped as the default pending his a/b/c.
+- Decided 2026-10-20 (his 1a 2a 3a, tools/plans/poser/NOTES.md): Quaternius Universal Animation Library used inside poser release B (4-clip
+  retarget test on one class first); source files never committed (uploaded per bake, git-ignored tools/art/ual/); free Standard tier first.
