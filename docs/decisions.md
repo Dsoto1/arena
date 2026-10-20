@@ -791,3 +791,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - Decided 2026-10-20: v1.07 = the token release (old pieces retired) + frame-rate work, shipped. Numbering (badge needs vX.YY): torches/materials = v1.08, Winter Quarters = v1.09 (REPLACES 'v1.06b' and 'v1.07 Winter Quarters'). Safari board DPR cap 1.5 shipped as the default pending his a/b/c.
 - Decided 2026-10-20 (his 1a 2a 3a, tools/plans/poser/NOTES.md): Quaternius Universal Animation Library used inside poser release B (4-clip
   retarget test on one class first); source files never committed (uploaded per bake, git-ignored tools/art/ual/); free Standard tier first.
+- Decided 2026-10-20 (his 1a–8a on the v1.08 mock-up, tools/plans/v108/MOCKUP.md): night torches as shown (pools + flames flicker, shadows
+  still, phones pools only), night/moon as today, sand grain only, metal by a sheet re-bake (not a runtime pass), depth as shown.

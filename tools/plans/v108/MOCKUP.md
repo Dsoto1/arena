@@ -132,3 +132,10 @@ Looked at in every picture: gold active tile, move/attack tiles + cost digits, t
 - The forged scene has its pieces in the middle, so only 2 figure torch shadows draw there; a match with fighters at the edges draws up to
   2 per piece (~28 small drawImage, measured cheap in isolation but not in that layout).
 - Metal detection is a colour heuristic (grey steel / yellow bronze) on the baked sheets: it can catch pale cloth or gold trim; the re-bake fixes that.
+
+## His answers 2026-10-20: 1a 2a 3a 4a 5a 6a 7a 8a (all the picks)
+1a torch strength as shown · 2a pools + flames flicker, shadows still (Reduce motion: still) · 3a night darkness as today · 4a phones stay on
+Lighting Light (no torch shadows) · 5a moon shadow .16 as today · 6a raked sand = grain only · 7a metal = re-bake the figure sheets with a metal
+material (no runtime pass; a re-bake never ships bundled with other feature work → its own step/beta check, R4) · 8a depth as shown.
+Build must also fix: 189 night grade re-bake per zoom-ease frame (+1.3–6.8 ms, 14.8 Safari), torch shadow layer ~7 ms per 399 rebuild,
+then real-device fps on the beta (60 laptop / 30 phone, Safari).
