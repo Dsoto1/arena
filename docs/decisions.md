@@ -793,3 +793,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   retarget test on one class first); source files never committed (uploaded per bake, git-ignored tools/art/ual/); free Standard tier first.
 - Decided 2026-10-20 (his 1a–8a on the v1.08 mock-up, tools/plans/v108/MOCKUP.md): night torches as shown (pools + flames flicker, shadows
   still, phones pools only), night/moon as today, sand grain only, metal by a sheet re-bake (not a runtime pass), depth as shown.
+- Decided 2026-10-20 (his 1a 2a on the v1.08 build): Lighting Off = the v1.07 board (torches, sand grain, planks, depth all off); the
+  Lighting description stays as is. His idea: Settings due for a reorganisation (tab contents moved to where they belong) → backlog.

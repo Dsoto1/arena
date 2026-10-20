@@ -303,3 +303,8 @@ RELEASE PREP (2026-10-12): translations DONE (part-111, 1380 keys × 7, ceilings
   seasons (careful vs spendthrift house: treasury curve, inflation/starvation) → short report + proposed tweaks for his ok. AFTER v1.05 ships.
 - After v1.06 ships (his r1a r2a): seed every test world (ids, starters, names) so CI failures reproduce locally; regression.yml input
   `tests:` to re-run only named tests.
+
+## SETTINGS REORGANISATION (his idea 2026-10-20, while answering the v1.08 Lighting wording)
+Settings tabs have grown by accretion (Lighting, editors beside Blessings since v1.07, sound, speed, board options…): audit every row and move
+each to the tab it belongs to (look/board, sound, play/speed, accessibility, data/saves), fix descriptions (e.g. Lighting naming the v1.08
+torchlight). Mock-up first (old vs new tab map), NAME WHAT IS REPLACED (the v0.88 settings pass, v0.98 Settings mock-up, v1.07 editors move).
