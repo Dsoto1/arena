@@ -8,7 +8,8 @@
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');const B=require('./board.js');
 const A=process.argv.slice(2);const PAGE=path.resolve(A[0]||'flavius-arena.html');const opt=(k,d)=>{const i=A.indexOf('--'+k);return i>=0?A[i+1]:d};
 const VAR=String(opt('variants','torch,mat,depth,all,safari')).split(','),ONLY=opt('only',''),NB=+opt('blocks',8),NF=+opt('n',30),JSONF=opt('json','');
-const NO=String(opt('no','')).split(';');const LSV={torch:{flavius_v108proto:'torch'},mat:{flavius_v108proto:'mat'},depth:{flavius_v108proto:'depth'},all:{flavius_v108proto:'1'},safari:{flavius_v108proto:'1',flavius_v107safariforce:'1'}};
+const NO=String(opt('no','')).split(';');/* v1.08 build (409-v108light, on by default): an item alone = the other two killed */
+const LSV={torch:{flavius_v108matoff:'1',flavius_v108depthoff:'1'},mat:{flavius_v108torchoff:'1',flavius_v108depthoff:'1'},depth:{flavius_v108torchoff:'1',flavius_v108matoff:'1'},all:{},safari:{flavius_v107safariforce:'1'}};
 const VIEWS={...B.VIEWS,desk2x:{viewport:{width:1440,height:900},deviceScaleFactor:2}};
 const MODES=[{name:'day-flat'},{name:'day-zoom',zoom:1},{name:'night-flat',night:1},{name:'night-zoom',night:1,zoom:1}];
 const med=a=>{const s=a.slice().sort((x,y)=>x-y),m=s.length>>1;return s.length?(s.length%2?s[m]:(s[m-1]+s[m])/2):null};
@@ -32,7 +33,7 @@ const load=()=>+fs.readFileSync('/proc/loadavg','utf8').split(' ')[0];
             const q=(a,p)=>{const s=a.slice().sort((x,y)=>x-y);return s[Math.min(s.length-1,Math.floor(p*(s.length-1)))]};
             return {on:+med(on).toFixed(2),off:+med(off).toFixed(2),on95:+q(on,.95).toFixed(2),off95:+q(off,.95).toFixed(2),delta:+med(d).toFixed(2),dMean:+(d.reduce((a,b)=>a+b,0)/d.length).toFixed(2),n:d.length}},{n:NF*NB/2,flush});
           const st=await pg.evaluate(()=>JSON.parse(JSON.stringify(V108.st)));
-          const row={variant:v,view:vk,mode:m.name,pass:flush?'flush':'js',...r,load:[l0,load()],bake:{day:st.bakeDay,night:st.bakeNight,torchLayer:st.tlMs||0}};
+          const row={variant:v,view:vk,mode:m.name,pass:flush?'flush':'js',...r,load:[l0,load()],bake:{day:st.dayMs,night:st.nightMs,torchLayer:st.tlMs||0,tlStepMax:st.tlStepMax,frameMax:st.frameMax}};
           res.rows.push(row);console.log(`${v.padEnd(6)} ${vk.padEnd(6)} ${m.name.padEnd(10)} ${row.pass.padEnd(5)} off ${r.off} on ${r.on} (p95 ${r.off95} → ${r.on95}) Δ median ${r.delta} mean ${r.dMean} [${r.n} pairs] load ${row.load.join('→')}`)}}
       res.rows.push({variant:v,view:vk,info,scene:sc});await cx.close()}}
   console.log('ERRS',JSON.stringify(errs));if(JSONF)fs.writeFileSync(JSONF,JSON.stringify(res,null,1));await b.close();process.exit(errs.length?1:0)})().catch(e=>{console.error(e);process.exit(2)});

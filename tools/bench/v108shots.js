@@ -3,14 +3,15 @@
    hover on the bear (396's red ring / outline / tag) and one speech bubble, frozen clock + seeded Math.random, one PNG of the board per
    variant × view × mode, and the highlight-contrast numbers (board.js CONTRAST) per shot.
      node tools/bench/v108shots.js <page> --out DIR [--variants off,torch,mat,depth,all] [--only desk,phone] [--json FILE]
-   variant off = flag unset (today's board); torch/mat/depth = flavius_v108proto=<item>; all = flavius_v108proto=1.
+   variant off = flavius_v108torchoff/matoff/depthoff=1 (today's board); torch/mat/depth = that item only; all = the default.
    Also: --still = the torch flicker check (two frames 0.4 s apart, normal vs Reduce motion: pixels changed / identical). */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
 const B=require('./board.js');
 const A=process.argv.slice(2);const PAGE=path.resolve(A[0]||'flavius-arena.html');const opt=(k,d)=>{const i=A.indexOf('--'+k);return i>=0?A[i+1]:d};
 const OUT=opt('out','/tmp/v108shots'),VAR=String(opt('variants','off,torch,mat,depth,all')).split(','),ONLY=opt('only',''),JSONF=opt('json',''),STILL=A.includes('--still');
-const LSV={off:{},torch:{flavius_v108proto:'torch'},mat:{flavius_v108proto:'mat'},depth:{flavius_v108proto:'depth'},all:{flavius_v108proto:'1'},
-  safari:{flavius_v108proto:'1',flavius_v107safariforce:'1'},safarioff:{flavius_v107safariforce:'1'}};
+/* v1.08 build (409-v108light, on by default): off = all three kill switches, an item alone = the other two killed */
+const LSV={off:{flavius_v108torchoff:'1',flavius_v108matoff:'1',flavius_v108depthoff:'1'},torch:{flavius_v108matoff:'1',flavius_v108depthoff:'1'},mat:{flavius_v108torchoff:'1',flavius_v108depthoff:'1'},depth:{flavius_v108torchoff:'1',flavius_v108matoff:'1'},all:{},
+  safari:{flavius_v107safariforce:'1'},safarioff:{flavius_v107safariforce:'1',flavius_v108torchoff:'1',flavius_v108matoff:'1',flavius_v108depthoff:'1'}};
 const MODES=[{name:'day-flat'},{name:'day-zoom',zoom:1},{name:'night-flat',night:1},{name:'night-zoom',night:1,zoom:1}];
 /* the aim hover on the bear at F-6 (5,5) + a speech bubble over the hero */
 const EXTRA=async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const bear=S.npcs.find(n=>n.alive&&!n.out&&n.r===5&&n.c===5);
