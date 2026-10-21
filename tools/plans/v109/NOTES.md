@@ -15,3 +15,12 @@ retires the off-season page + its letters · v1.09a rooms 3, 4, 5, 7, 8 + goals 
 rudis asks after it.
 - 2026-10-21 his follow-up "1a (for now) 2a" (read as W1a, W2a): W1a = the Classic final IS the Saturnalia — FOR NOW; re-ask him before
   building v1.09b/v1.09c. W2a Carmina = opening ceremony before the race. Other W answers stay all-picks.
+
+## Build (2026-10-21) — HELD until v1.08c ships (roadmap Q1B)
+Commit 1439f82 (412-v109wq, tv109w; prototype 411 retired) kept as tools/plans/v109/wq109.bundle (branch worktree-agent-a1427da292d7f2094).
+Merge: `git fetch tools/plans/v109/wq109.bundle worktree-agent-a1427da292d7f2094:v109 && sh tools/ci/merge.sh v109`.
+Review before merging (builder's doubts): (1) the money ledger books coin changes by call-stack function name + line calibration —
+Chromium-verified; on Safari (his browser) unrecognised changes fall into "Senate & other" (sum stays exact) → test on his Safari beta, or
+replace with explicit booking at the ~200 coin sites over time; (2) the Ledger now pays in the winter (seal / Begin), so the off-season
+week's own wages leave the 10% tax-back; (3) Begin seals an unsealed Ledger; (4) stepper numbers 1–4 (rooms 1, 2, 6, 10); (5) room 1 =
+league top 3 + Superbus champion line; (6) fanfare on the first visit to room 1.
