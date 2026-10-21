@@ -9,6 +9,10 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - 2026-10-20 · beta 4: "a bear corpse 2–3 tiles big" (his screenshot, Safari 26 / Mac / DPR 2) is NOT reproduced in Chromium — every
   system beast's corpse draws at the living scale (tv107g 5). 404 now checks the cut and the drawn size and falls back to the lying still
   (console warning "404: the … corpse drew at …×"); confirm on his Safari in the next beta.
+  STILL OPEN on live v1.08b (his Safari 26.6, DPR 2, zoomed, night; bears). Not reproduced in Chromium even with flavius_v107safariforce=1 (+ dpr 1, +
+  x2force; WebKit is not installed here, so the real Safari path is untested). v1.08c hardening (unconfirmed): 404's guard no longer passes a
+  corpse it measured nothing for, and holds the body to an absolute size (CV107.maxTiles 2.6 / 3.2 tiles) besides the expected-scale test; flagged
+  → the lying still. Needs his Safari's console ("404: …" warnings) or a screenshot with the page's CV107.stats / lastSz.
 - 2026-10-18 · tools/art/anim100b/make.js l106 run today bakes DIFFERENT beast shadow sheets than the committed v1.06a ones (moechus/valencia:
   cell 56×18, anchor y 47 vs 58×28, y 11 — the shadow sits above its anchor); the lit sheets come out byte-identical. Check l106.js's shadow
   crop before any beast re-bake (398 kept the committed shadow sheets).

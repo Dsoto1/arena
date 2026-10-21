@@ -79280,8 +79280,18 @@ function cv107Size(fn){const own=Object.prototype.hasOwnProperty.call(ctx,'drawI
   ctx.drawImage=function(){see(this,arguments);return prev.apply(this,arguments)};
   if(nat)B.nat=function(){see(this,arguments);return nat.apply(this,arguments)};
   let r=null;try{r=fn()}finally{if(nat)B.nat=nat;if(own)ctx.drawImage=prev;else delete ctx.drawImage}return {r,w,h}}
-function cv107Check(k,sz,exp){CV107.lastSz={k,w:sz.w,exp};if(!(exp>0)||!(sz.w>0))return;const q=sz.w/exp;
-  if(q<0.85||q>1.18){CV107.bad.add(k);CV107.stats.bad++;console.warn('404: the '+k+' corpse drew at '+q.toFixed(2)+'× the living scale: the lying still from now on')}}   /* TWEAK: tolerance */
+function cv107Check(k,sz,exp){CV107.lastSz={k,w:sz.w,exp};if(!(exp>0))return false;
+  /* v1.08c (his Safari report, still open on v1.08b): the guard used to PASS a corpse it measured nothing for, and it only compared the
+     drawn size with an EXPECTED size built from the same meta / scale / device ratio the cell is cut with — a wrong expectation (a meta or a
+     ratio that changed under it) passed a huge body. Now (1) nothing measured (the cell went through a context / path the probe cannot see)
+     = not trusted, (2) the drawn body is also held to an absolute size: no corpse is wider than CV107.maxTiles tiles or taller than
+     CV107.maxTilesH (device px / (TW × the screen ratio)); either → the lying still (it is cut and sized from its own meta). */
+  const ds=cv107DS(),tw=(typeof TW!=='undefined'?TW:0)*ds;
+  if(!(sz.w>0)){CV107.bad.add(k);CV107.stats.blind++;console.warn('404: the '+k+' corpse drew nothing the probe could measure: the lying still from now on');return true}
+  const q=sz.w/exp,big=tw>0&&(sz.w>tw*CV107.maxTiles||sz.h>tw*CV107.maxTilesH);
+  if(q<0.85||q>1.18||big){CV107.bad.add(k);CV107.stats.bad++;console.warn('404: the '+k+' corpse drew at '+q.toFixed(2)+'× the living scale ('+(tw>0?(sz.w/tw).toFixed(2)+' tiles':'?')+' wide): the lying still from now on');return true}
+  return false}   /* TWEAK: tolerance */
+CV107.maxTiles=2.6;CV107.maxTilesH=3.2;CV107.stats.blind=0;
 
 /* ---------------- beasts ---------------- */
 function cv107Beast(n,m){const k=typeof bst100Key==='function'?bst100Key(n):null;if(!k||!BEAST100_META[k]||!BEAST100_META[k].ar)return false;const M=BEAST100_META[k];
@@ -79293,7 +79303,7 @@ function cv107Beast(n,m){const k=typeof bst100Key==='function'?bst100Key(n):null
   if(can3&&bst100Img(k,0)&&bst100Img(k,1)&&!CV107.bad.has(k)&&cv107Sane(k,face)){const L=M.base?Math.min(M.base[0]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55:TW*MINI_BASE*0.55;
     cv107Disc(m.x,m.y,L,L*(M.base?(M.base[1]/M.base[0])*0.75:0.5));
     const sz=cv107Size(()=>bst100Cell(k,face,{act:true,name:'die4'},m.x,m.y,null));
-    if(sz.r!=null){cv107Check(k,sz,M.aw[0]*bst100Scale(M)*cv107DS());CV107.stats.d3++;return true}}
+    if(sz.r!=null){if(!cv107Check(k,sz,M.aw[0]*bst100Scale(M)*cv107DS())){CV107.stats.d3++;return true}}}   /* flagged → the lying still, this frame already */
   /* the still, lying */
   const im=typeof st107Img==='function'&&typeof ST107!=='undefined'&&ST107.on?st107Img(k):null;const M1=typeof BST108X1!=='undefined'&&BST108X1[k]||M,me=M1.iw,s=bst100Scale(M1);   /* v1.08b: the still is cut from the 1× sheet (410 may hold the 2× meta) */
   const flat=!CV107_UP.includes(k);const rx=flat?TW*0.42:TW*0.34;
@@ -79309,7 +79319,7 @@ function cv107Glad(pl,m,sp){let cls=pl.cls;try{if(typeof st107ClsOf==='function'
   if(typeof AN100!=='undefined'&&AN100.on&&!HEADLESS&&lost.length<=1&&typeof an100Printed==='function'){const src=an100Printed(cls,lost[0]||'');
     const R=src&&src.act&&src.act.meta.rows.fall;if(R&&!CV107.bad.has('g:'+cls)&&an100Bm(src,'act','fall')){const keep=AN100.cur;AN100.cur={color:null};
       try{const sz=cv107Size(()=>an100Cell(src,{set:'act',name:'fall',i:R.length-1},face,m.x,m.y,null));
-        if(sz.r!=null){cv107Check('g:'+cls,sz,R[R.length-1][1]*TW*MINI_BASE/25.4/src.act.meta.pxmm*cv107DS());CV107.stats.g3++;return true}}finally{AN100.cur=keep}}}
+        if(sz.r!=null){if(!cv107Check('g:'+cls,sz,R[R.length-1][1]*TW*MINI_BASE/25.4/src.act.meta.pxmm*cv107DS())){CV107.stats.g3++;return true}}}finally{AN100.cur=keep}}}
   const im=typeof st107Img==='function'&&typeof ST107!=='undefined'&&ST107.on?st107Img(cls):null;const Mv=ANIM100_META[cls].move,r=Mv.rows.idle[0];
   if(!im){cv107Disc(m.x,m.y,TW*0.34,TW*0.13);CV107.stats.none++;return true}
   const s=TW*MINI_BASE/25.4/Mv.pxmm;const e=cv107Lie('g:'+cls,im,face*r[1],0,r[1],r[2],r[3],r[4],s,false,face<4?1:-1,{rx:12.75*Mv.pxmm,ry:6.4*Mv.pxmm,cy:r[4]-2.5*Mv.pxmm,rim:2.8*Mv.pxmm});cv107DrawLie(e,m,s,TW*0.34,TW*0.13);CV107.stats.lie++;return true}
