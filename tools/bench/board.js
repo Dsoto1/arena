@@ -24,7 +24,7 @@ const ABL=A.includes('--ablate'),ZOOMS=String(opt('zooms','')).split(',').filter
 const FRAMES=+opt('frames',120),WARM=+opt('warm',20),SHOTS=opt('shots',''),TAG=opt('tag','run'),ONLY=opt('only',''),JSONF=opt('json','');
 const LS={};for(const kv of String(opt('ls','')).split(',').filter(Boolean)){const i=kv.indexOf('=');LS[kv.slice(0,i)]=kv.slice(i+1)}
 const load=()=>{const l=fs.readFileSync('/proc/loadavg','utf8').split(' ');return {l1:+l[0],l5:+l[1],l15:+l[2],cpus:os.cpus().length}};
-const VIEWS={desk:{viewport:{width:1440,height:900},deviceScaleFactor:1},phone:{viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true}};
+const VIEWS={desk:{viewport:{width:1440,height:900},deviceScaleFactor:1},phone:{viewport:{width:390,height:844},deviceScaleFactor:+opt('phonedpr',2) /* v1.08c: --phonedpr 3 */,isMobile:true,hasTouch:true}};
 
 /* ---- in-page: the forged scene ---- */
 const SCENE=async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));

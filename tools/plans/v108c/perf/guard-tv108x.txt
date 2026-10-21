@@ -1,0 +1,12 @@
+ok   1 desktop 1600×1000 DPR 2: the 2× sheets, rows cut at k 2 {"on":true,"why":"big","k":2,"bmK":2,"x2":10}
+ok   1 the 2× file is fetched, not the 1× one ["anim100x2_slave_move.webp","anim100x2_soldier_move.webp","anim100x2_royalty_move.webp","anim100x2_hero_move.webp","beast100x2_glykon.webp","beast100x2_arenosus.webp","beast100x2_valencia.webp","beast100x2_moechus.webp","beast100x2_ursa.webp","beast100x2_brutum.webp","beast100_spider.webp","anim100x2_slave_act.webp"]
+ok   3a the 403 outline is drawn on a 2× figure {"red":2038,"onSolid":0,"far":0,"maxD":4.24,"built":1,"srcRect":[[112,176]]}
+ok   3b it hugs the body (every red pixel within 4.6 device px, none on the solid body) {"red":2038,"onSolid":0,"far":0,"maxD":4.24,"built":1,"srcRect":[[112,176]]}
+ok   6 bases off: the beast wears its 1× sheets again {"k":"glykon","x2":false,"imX2":false,"n":7}
+ok   5 kill switch flavius_x2off=1: 1× only {"st":{"on":false,"why":"off","k":0,"bmK":1,"x2":0},"req":[]}
+ok   2 soldier: the 2× cell is drawn at the 1× size (bbox within 1 CSS px, its top within 2) {"x2":{"k":2,"b":[172.5,233.5,227.5,313.5]},"x1":{"k":1,"b":[173.5,234.5,227,313]},"d":1}
+ok   2 hero: the 2× cell is drawn at the 1× size (bbox within 1 CSS px, its top within 2) {"x2":{"k":2,"b":[172.5,231.5,227.5,313.5]},"x1":{"k":1,"b":[173.5,233,227.5,313]},"d":1}
+ok   2 beast: the 2× cell is drawn at the 1× size (bbox within 1 CSS px, its top within 2) {"x2":{"k":"arenosus","x2":true,"b":[173.5,272.5,227,313.5]},"x1":{"k":"arenosus","x2":false,"b":[173,273,227,313.5]},"d":0.5}
+ok   4 a 390 px phone: 1× sheets only {"st":{"on":false,"why":"phone","k":0,"bmK":1,"x2":0},"req":["beast100_glykon.webp","beast100_valencia.webp","beast100_ursa.webp","beast100_brutum.webp","beast100_arenosus.webp","beast100_moechus.webp","beast100_spider.webp","anim100_royalty_move.webp"]}
+MISS []
+ERRS []

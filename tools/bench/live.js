@@ -13,7 +13,8 @@
      desk-z14-nobase / desk-z2-nobase (Settings "Show token bases" off: 321's base clean-up), desk-z14-aim / desk-z2-aim (a human soldier mid-attack, the pointer moving between two beasts and the sand: 396's ring, outline, tag).
    Lighting: desk/hd Full, phone its default (Light), auto-drop off (flavius_light106auto=0) so a run never changes mode midway.
    --speed fast|normal|slow (default normal): the CPU speed (beta 3: the all-CPU match at Fast).
-     node tools/bench/live.js <page> [--secs 6] [--warm 3] [--only desk-flat,desk-z2] [--flush] [--profile] [--ls k=v,…] [--json FILE]
+     node tools/bench/live.js <page> [--secs 6] [--warm 3] [--only desk-flat,desk-z2] [--flush] [--profile] [--mem] [--ls k=v,…] [--json FILE]
+   v1.08c: phone3-flat / phone3-z14 = a 390×844 phone at DPR 3; --mem = the figure pipeline's decoded picture memory (MEM below) per config.
    The machine load (/proc/loadavg) is printed before and after; other jobs may share this box — compare like for like, several runs. */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path'),os=require('os');
 const A=process.argv.slice(2);const PAGE=path.resolve(A[0]||'flavius-arena.html');
@@ -22,13 +23,15 @@ const SECS=+opt('secs',6),WARM=+opt('warm',3),ONLY=String(opt('only','')).split(
 const LS={flavius_light106auto:'0'};for(const kv of String(opt('ls','')).split(',').filter(Boolean)){const i=kv.indexOf('=');LS[kv.slice(0,i)]=kv.slice(i+1)}
 const load=()=>{const l=fs.readFileSync('/proc/loadavg','utf8').split(' ');return {l1:+l[0],cpus:os.cpus().length}};
 const VIEWS={desk:{viewport:{width:1440,height:900},deviceScaleFactor:1},hd:{viewport:{width:1440,height:900},deviceScaleFactor:2},
-  phone:{viewport:{width:844,height:390},deviceScaleFactor:2,isMobile:true,hasTouch:true}};
+  phone:{viewport:{width:844,height:390},deviceScaleFactor:2,isMobile:true,hasTouch:true},
+  phone3:{viewport:{width:390,height:844},deviceScaleFactor:3,isMobile:true,hasTouch:true}};   /* v1.08c: a 390-px phone at DPR 3 (portrait) */
 const CONFIGS=[
   {name:'desk-flat',view:'desk',z:1},{name:'desk-z14',view:'desk',z:1.4},{name:'desk-z2',view:'desk',z:2},
   {name:'desk-z14-hover',view:'desk',z:1.4,hover:1},{name:'desk-z14-aim',view:'desk',z:1.4,aim:1},{name:'desk-z2-aim',view:'desk',z:2,aim:1},
   {name:'desk-z14-nobase',view:'desk',z:1.4,nobase:1},{name:'desk-z2-nobase',view:'desk',z:2,nobase:1},
   {name:'hd-flat',view:'hd',z:1},{name:'hd-z14',view:'hd',z:1.4},{name:'hd-z2',view:'hd',z:2},
-  {name:'phone-flat',view:'phone',z:1},{name:'phone-z14',view:'phone',z:1.4},{name:'phone-z2',view:'phone',z:2}];
+  {name:'phone-flat',view:'phone',z:1},{name:'phone-z14',view:'phone',z:1.4},{name:'phone-z2',view:'phone',z:2},
+  {name:'phone3-flat',view:'phone3',z:1},{name:'phone3-z14',view:'phone3',z:1.4}];
 
 /* ---- in-page ---- */
 const START=async cfg=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const close=()=>{if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null)};
@@ -85,6 +88,21 @@ const READ=()=>{const B=window.BLIVE;B.stop=true;const el=(performance.now()-B.t
     js:{p50:q(js,.5),p95:q(js,.95),max:q(js,1),mean:+(js.reduce((a,b)=>a+b,0)/Math.max(1,js.length)).toFixed(2)},drawsPerFrame:+(dn.reduce((a,b)=>a+b,0)/Math.max(1,dn.length)).toFixed(2),
     long:B.long.length,longMs:Math.round(B.long.reduce((a,b)=>a+b,0)),turns:(S.turnNo|0)-(B.turn0|0),TW,z:typeof duelCam==='function'?+duelCam().toFixed(2):1,lay,
     errs:B.errs,p107:typeof P107!=='undefined'?JSON.stringify(P107.st):null,fxd:typeof B95!=='undefined'&&B95.fxCx&&B95.fxCx._p107?B95.fxCx._p107.dirty:null,who:window.WHO107?Object.entries(window.WHO107.c).sort((a,b)=>b[1]-a[1]).slice(0,14):null,fn:window.FN107?Object.entries(window.FN107.c).sort((a,b)=>b[1].ms-a[1].ms).map(([k,v])=>k+' '+v.n+'x '+v.ms.toFixed(1)+'ms'):null,cache:(()=>{try{return LAYERS93.report().rows.filter(r=>r.cached&&(r.misses||r.hits)).map(r=>r.name+' '+r.hits+'h/'+r.misses+'m paint '+r.paintMs)}catch(e){return null}})(),z99:(()=>{try{return B.z99+' → '+JSON.stringify(Z99.stats)}catch(e){return null}})(),probe:window.PROBE107?Object.entries(window.PROBE107.c).sort((a,b)=>b[1].n-a[1].n).slice(0,25).map(([k,v])=>[k,v.n,+v.ms.toFixed(1)]):null,l106:typeof L106!=='undefined'&&L106.st?{...L106.st}:null,p107:typeof P107!=='undefined'&&P107.st?{...P107.st}:null}};
+/* --mem (v1.08c): decoded picture memory held by the figure pipeline (MB = px × 4 / 1e6): sheets (<img> + per-row ImageBitmaps, 311 printed +
+   on-device, 312 beasts), pre-scaled cells (311 AN100CC, 312 BST100.cc), clean-ups (321 BS101 / 334 G6 / 346 B103), corpses (404), W3 copies (406),
+   every <canvas> on the page, and the JS heap (performance.memory). An estimate: the browser may hold more (GPU copies) or less (discarded decodes). */
+const MEM=()=>{const px=o=>{try{return o?(o.naturalWidth||o.width||0)*(o.naturalHeight||o.height||0):0}catch(e){return 0}};const mb=n=>+(n*4/1e6).toFixed(1);const out={};
+  try{let sh=0,bm=0,n=0;const seen=new Set();for(const M of [AN100.src,AN100.dev])if(M)for(const [,s] of M)for(const set of ['move','act']){const o=s[set];if(!o)continue;
+      for(const im of [o.img,o.whole])if(im&&!seen.has(im)){seen.add(im);sh+=px(im);n++}for(const k in (o.bm||{})){const b=o.bm[k];if(b&&b.bm&&!seen.has(b.bm)){seen.add(b.bm);bm+=px(b.bm)}}}
+    out.figSheets=mb(sh);out.figRowBitmaps=mb(bm);out.figSheetN=n}catch(e){}
+  try{let t=0;for(const k in BST100.img)t+=px(BST100.img[k]);out.beastSheets=mb(t)}catch(e){}
+  try{let t=0;for(const [,c] of AN100CC)t+=px(c);out.figCells=mb(t);out.figCellN=AN100CC.size}catch(e){}
+  try{let t=0;for(const [,e] of BST100.cc)t+=px(e&&e.c);out.beastCells=mb(t)}catch(e){}
+  try{let t=0;for(const [,e] of CV107.lie)t+=px(e&&e.c);out.corpses=mb(t)}catch(e){}
+  try{let t=0;for(const [,c] of G6.cache)t+=px(c&&c.c||c);for(const [,c] of B103.cache)t+=px(c&&c.c||c);out.beastClean=mb(t)}catch(e){}
+  try{let t=0;for(const c of W3.live){const R=W3.rec.get(c);if(R&&R.bm)t+=px(R.bm)}out.w3Bitmaps=mb(t)}catch(e){}
+  try{let t=0;for(const c of document.querySelectorAll('canvas'))t+=px(c);out.pageCanvases=mb(t)}catch(e){}
+  out.heapMB=performance.memory?Math.round(performance.memory.usedJSHeapSize/1e6):null;out.x2=typeof X108!=='undefined'?{on:X108.on,why:X108.why}:null;return out};
 /* the pointer's targets: tiles round the acting fighter (hover), or the two beasts' bodies and an empty tile (aim) */
 const POINTS=aim=>{const R=cv.getBoundingClientRect();const out=[];
   if(aim){for(const n of [window.__A,window.__B]){if(!n)continue;const m=center(n.r,n.c);out.push({x:R.left+m.x,y:R.top+m.y-TH*0.6})}const e=center(8,8);out.push({x:R.left+e.x,y:R.top+e.y});return out}
@@ -94,7 +112,7 @@ const POINTS=aim=>{const R=cv.getBoundingClientRect();const out=[];
   const res={page:path.basename(PAGE),ls:LS,secs:SECS,warm:WARM,flush:FLUSH,load0:load(),at:new Date().toISOString(),runs:[]};const errs=[];
   console.log('load before',JSON.stringify(res.load0),FLUSH?'FLUSH':'');
   for(const cfg of CONFIGS){if(ONLY.length&&!ONLY.includes(cfg.name))continue;
-    const ls={...LS};if(cfg.view!=='phone'&&!ls.flavius_light106)ls.flavius_light106='full';
+    const ls={...LS};if(!cfg.view.startsWith('phone')&&!ls.flavius_light106)ls.flavius_light106='full';
     const cx=await b.newContext(VIEWS[cfg.view]);await cx.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
     await cx.addInitScript(ls=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_first100off','1');for(const k in ls)localStorage.setItem(k,ls[k])},ls);
     const pg=await cx.newPage();pg.on('pageerror',e=>errs.push(cfg.name+': '+e.message));await pg.goto(url,{timeout:180000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:120000});
@@ -124,7 +142,7 @@ const POINTS=aim=>{const R=cv.getBoundingClientRect();const out=[];
       await cx.close();continue}
     const t0=Date.now();let k=0;
     while(Date.now()-t0<SECS*1000){if(cfg.hover||cfg.aim){const P=await pg.evaluate(POINTS,!!cfg.aim);if(P.length){const p=P[k++%P.length];await pg.mouse.move(p.x,p.y,{steps:3})}await pg.waitForTimeout(cfg.aim?160:90)}else await pg.waitForTimeout(250)}
-    const r=await pg.evaluate(READ);let top=null;if(flag('canv'))console.log('   canvases',JSON.stringify(st.canv));
+    const r=await pg.evaluate(READ);if(flag('mem')){r.mem=await pg.evaluate(MEM);console.log('   mem',JSON.stringify(r.mem))}let top=null;if(flag('canv'))console.log('   canvases',JSON.stringify(st.canv));
     if(CPUF){await b.stopTracing();const ev=JSON.parse(fs.readFileSync(CPUF)).traceEvents;fs.unlinkSync(CPUF);const tn={};const rp=new Set();
       for(const e of ev)if(e.ph==='M'&&e.name==='thread_name'){tn[e.pid+':'+e.tid]=e.args.name;if(e.args.name==='CrRendererMain')rp.add(e.pid)}
       /* CPU (thread) time of the renderer's top-level tasks: robust when other jobs share the box; ms per second and per frame */

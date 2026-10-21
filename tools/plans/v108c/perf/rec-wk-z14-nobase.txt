@@ -1,0 +1,26 @@
+plain speed normal z 1.4 dpr 1.5 light light · fps 11.6 p50 66.7 p95 183.3 max 350 >50ms 75/116 · turns 4
+areas ms/s: draw 444 (118x, max 256.6) · clean 79.7 (1654x, max 120.3) · render 40.2 (35x, max 30.1) · bus 22.4 (190x, max 25.1) · stands 15.1 (118x, max 16.1) · light 6.2 (118x, max 4.8) · cells 4.9 (3095x, max 7.3) · save 1.6 (40x, max 7.2) · log 1.1 (27x, max 1.1) · ai 1 (224x, max 4.1) · audio 0.5 (12x, max 3.2)
+long tasks 66 · 6048 ms
+   298 ms @538 {"stands":1.2,"clean":120.3,"draw":244.2}
+   288 ms @877 {"stands":1.2,"clean":181.7,"cells":1.7,"draw":256.6}
+   198 ms @4 {"clean":120.2,"cells":12.2,"draw":154.9}
+   194 ms @1175 {"clean":111.8,"draw":157.9}
+   164 ms @5691 {"stands":1.3,"light":4.7,"cells":8,"clean":28.2,"draw":80.1}
+   160 ms @1404 {"stands":1.1,"clean":7.4,"cells":1.1,"draw":68.6}
+   159 ms @5515 {"stands":1.1,"light":4.8,"clean":40.5,"draw":90.5}
+   158 ms @4591 {"cells":1.4,"clean":1,"draw":114.8}
+   LoAF 311 ms blocking 228 render 249 style+layout 1 scripts [{"ms":28,"fn":"","inv":"TimerHandler:setTimeout","type":"user-callback","pos":823652,"layout":0},{"ms":13,"fn":"a11ySync93","inv":"TimerHandler:setTimeout","type":"user-callback","pos":6239601,"layout":13},{"ms":245,"fn":"","inv":"FrameRequestCallback","type":"user-callback","pos":3330103,"layout":0}]
+   LoAF 308 ms blocking 226 render 267 style+layout 8 scripts [{"ms":8,"fn":"","inv":"TimerHandler:setInterval","type":"user-callback","pos":2094984,"layout":0},{"ms":5,"fn":"tick","inv":"TimerHandler:setTimeout","type":"user-callback","pos":24595,"layout":0},{"ms":257,"fn":"","inv":"FrameRequestCallback","type":"user-callback","pos":3330103,"layout":3}]
+   LoAF 216 ms blocking 57 render 40 style+layout 3 scripts [{"ms":12,"fn":"","inv":"TimerHandler:setTimeout","type":"user-callback","pos":6479996,"layout":0},{"ms":36,"fn":"","inv":"FrameRequestCallback","type":"user-callback","pos":3330103,"layout":4}]
+   LoAF 190 ms blocking 54 render 50 style+layout 2 scripts [{"ms":45,"fn":"","inv":"FrameRequestCallback","type":"user-callback","pos":3330103,"layout":0}]
+   LoAF 174 ms blocking 117 render 165 style+layout 4 scripts [{"ms":158,"fn":"","inv":"FrameRequestCallback","type":"user-callback","pos":3330103,"layout":0}]
+   count draw() 218x  [["http://127.0.0.1:33217/flavius-arena.html:29099:69",118],["http://127.0.0.1:33217/flavius-arena.html:15489:67",41],["render < render",35],["tick",14],["http://127.0.0.1:33217/flavius-arena.html:80205:86",3]]
+   count imageLoad 10x  [["Image.set < bst100Img",9],["Image.set < ftSprite",1]]
+   count newCanvas 110x  [["document.createElement < g6Proc",32],["document.createElement < bs101Proc",24],["document.createElement < b103Wall",12],["document.createElement < b103Scaled",12],["document.createElement < bst100CellCanvas",7]]
+   count canvasResize 222x  [["HTMLCanvasElement.set < g6Proc",64],["HTMLCanvasElement.set < bs101Proc",48],["HTMLCanvasElement.set < b103Wall",24],["HTMLCanvasElement.set < b103Scaled",24],["HTMLCanvasElement.set < bst100CellCanvas",14]]
+   count getImageData 95x 331.5ms [["CanvasRenderingContext2D.w < P.getImageData",95]]
+   count createImageBitmap(HTMLCanvasElement) 36x 1.6ms [["window.createImageBitmap < C2.drawImage",29],["window.createImageBitmap < z99Bits",4],["window.createImageBitmap < bs101Proc",3]]
+   count readback? 1x  [["P.getImageData < g6Readable",1]]
+   count createImageBitmap(Blob) 3x 2.4ms [["window.createImageBitmap < an100Bm",3]]
+   count createImageBitmap(ImageBitmap) 40x 17.5ms [["window.createImageBitmap < http://127.0.0.1:33217/flavius-arena.html:56197:59",40]]
+ERRS []

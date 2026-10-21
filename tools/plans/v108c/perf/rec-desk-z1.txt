@@ -1,0 +1,25 @@
+plain speed normal z 1 dpr 1 light full · fps 21.9 p50 16.7 p95 150 max 483.2 >50ms 50/220 · turns 4
+areas ms/s: draw 217.2 (144x, max 197.1) · render 128.2 (41x, max 120.2) · bus 103.6 (191x, max 177.1) · light 27.9 (144x, max 31.5) · stands 11.1 (144x, max 8.6) · cells 6.6 (5893x, max 7.4) · clean 2.5 (1156x, max 4.2) · log 1.1 (28x, max 1.3) · save 0.8 (43x, max 2.4) · ai 0.5 (262x, max 1.5) · audio 0.2 (13x, max 0.3)
+long tasks 27 · 2405 ms
+   228 ms @1888 {"light":10.3,"cells":2.9,"draw":197.1}
+   201 ms @1115 {"stands":8.6,"light":3.8,"cells":1.5,"draw":175.3,"bus":177.1}
+   180 ms @5640 {"light":3.9,"draw":131.5}
+   142 ms @3756 {"light":24.3,"cells":3.2,"draw":102.7,"render":139,"bus":139.1}
+   136 ms @5402 {"light":6.7,"draw":91.8}
+   118 ms @4695 {"draw":63.8,"render":70.6,"bus":70.6,"light":2.4,"clean":1.4}
+   99 ms @1392 {"light":7.9,"draw":27.8}
+   96 ms @3360 {"save":2.4,"stands":1.1,"draw":29.8,"render":85.7,"bus":85.7}
+   LoAF 509 ms blocking 194 render 8 style+layout 6 scripts [{"ms":8,"fn":"","inv":"TimerHandler:setTimeout","type":"user-callback","pos":6479996,"layout":0},{"ms":49,"fn":"","inv":"TimerHandler:setTimeout","type":"user-callback","pos":6479996,"layout":5},{"ms":20,"fn":"","inv":"TimerHandler:setInterval","type":"user-callback","pos":2094984,"layout":0},{"ms":33,"fn":"tick","inv":"TimerHandler:setTimeout","type":"user-callback","pos":24595,"layout":3}]
+   LoAF 282 ms blocking 98 render 60 style+layout 6 scripts [{"ms":10,"fn":"","inv":"TimerHandler:setTimeout","type":"user-callback","pos":6479996,"layout":0},{"ms":41,"fn":"","inv":"TimerHandler:setTimeout","type":"user-callback","pos":6479996,"layout":2},{"ms":8,"fn":"h100Frame","inv":"FrameRequestCallback","type":"user-callback","pos":7531811,"layout":8},{"ms":5,"fn":"an100Tick","inv":"FrameRequestCallback","type":"user-callback","pos":8388738,"layout":0}]
+   LoAF 246 ms blocking 137 render 144 style+layout 10 scripts [{"ms":42,"fn":"","inv":"TimerHandler:setTimeout","type":"user-callback","pos":6479996,"layout":9},{"ms":10,"fn":"a11ySync93","inv":"TimerHandler:setTimeout","type":"user-callback","pos":6239601,"layout":10},{"ms":7,"fn":"run","inv":"TimerHandler:setTimeout","type":"user-callback","pos":5047752,"layout":0},{"ms":131,"fn":"","inv":"FrameRequestCallback","type":"user-callback","pos":1302359,"layout":1}]
+   LoAF 245 ms blocking 96 render 8 style+layout 1 scripts [{"ms":31,"fn":"tick","inv":"TimerHandler:setTimeout","type":"user-callback","pos":24595,"layout":8},{"ms":10,"fn":"","inv":"TimerHandler:setTimeout","type":"user-callback","pos":1610964,"layout":5}]
+   LoAF 238 ms blocking 111 render 111 style+layout 8 scripts [{"ms":49,"fn":"tick","inv":"TimerHandler:setTimeout","type":"user-callback","pos":24595,"layout":3},{"ms":86,"fn":"tick","inv":"FrameRequestCallback","type":"user-callback","pos":2938522,"layout":2},{"ms":6,"fn":"","inv":"FrameRequestCallback","type":"user-callback","pos":1302359,"layout":0},{"ms":7,"fn":"","inv":"FrameRequestCallback","type":"user-callback","pos":7544080,"layout":3}]
+   count draw() 144x  [["http://127.0.0.1:39567/flavius-arena.html:15489:67",58],["render < render",41],["tick",17],["bst100Tick",12],["an100Tick",9]]
+   count newCanvas 54x  [["document.createElement < l106Mk",17],["document.createElement < bs101Proc",16],["document.createElement < bst100CellCanvas",13],["document.createElement < an100CellCanvas",4],["document.createElement < ftCanvas",2]]
+   count canvasResize 114x  [["HTMLCanvasElement.set < l106Mk",34],["HTMLCanvasElement.set < bs101Proc",32],["HTMLCanvasElement.set < bst100CellCanvas",26],["HTMLCanvasElement.set < an100CellCanvas",8],["HTMLCanvasElement.set < l106Build",6]]
+   count imageLoad 4x  [["Image.set < bst100Img",3],["Image.set < ftSprite",1]]
+   count createImageBitmap(HTMLCanvasElement) 7x 0.2ms [["window.createImageBitmap < z99Bits",7]]
+   count createImageBitmap(ImageBitmap) 56x 13.2ms [["window.createImageBitmap < http://127.0.0.1:39567/flavius-arena.html:56197:59",56]]
+   count createImageBitmap(Blob) 4x 4.4ms [["window.createImageBitmap < an100Bm",4]]
+   count getImageData 2x 58.2ms [["CanvasRenderingContext2D.w < P.getImageData",2]]
+ERRS []

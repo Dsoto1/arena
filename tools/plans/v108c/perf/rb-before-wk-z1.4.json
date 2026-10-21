@@ -1,0 +1,171 @@
+{
+ "secs": 15.1,
+ "draws": 295,
+ "getImageData": {
+  "n": 114,
+  "ms": 75.3,
+  "by": {
+   "g6Proc": {
+    "n": 20,
+    "ms": 65
+   },
+   "cl398": {
+    "n": 35,
+    "ms": 2.5
+   },
+   "b103Wall": {
+    "n": 15,
+    "ms": 0.9
+   },
+   "sh103Sharpen": {
+    "n": 24,
+    "ms": 4.8
+   },
+   "bs101Off": {
+    "n": 18,
+    "ms": 1.8
+   },
+   "cv107Alpha": {
+    "n": 2,
+    "ms": 0.3
+   }
+  }
+ },
+ "bs101": {
+  "proc": 18,
+  "hit": 1216,
+  "off": 18,
+  "taint": 0
+ },
+ "dpr": 1.5,
+ "tw": 78.39999999999999,
+ "webkit": true,
+ "miss": [
+  {
+   "t": 17721,
+   "img": "HTMLCanvasElement#1 105x148 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|105|148|rig|52.0|121.2|3.704"
+  },
+  {
+   "t": 19874,
+   "img": "HTMLCanvasElement#2 99x179 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|99|179|rig|49.0|152.2|3.704"
+  },
+  {
+   "t": 21081,
+   "img": "HTMLCanvasElement#3 99x180 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|99|180|rig|50.0|153.2|3.704"
+  },
+  {
+   "t": 21240,
+   "img": "HTMLCanvasElement#4 99x179 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|99|179|rig|49.2|151.8|3.704"
+  },
+  {
+   "t": 21845,
+   "img": "HTMLCanvasElement#1 105x148 sh",
+   "had": true,
+   "n": 1,
+   "key": "2|0|0|105|148|rig|53.0|121.2|3.704"
+  },
+  {
+   "t": 25512,
+   "img": "HTMLCanvasElement#5 105x152 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|105|152|rig|52.0|125.6|3.704"
+  },
+  {
+   "t": 25619,
+   "img": "HTMLCanvasElement#5 105x152 sh",
+   "had": true,
+   "n": 1,
+   "key": "2|0|0|105|152|rig|52.0|125.2|3.704"
+  },
+  {
+   "t": 25867,
+   "img": "HTMLCanvasElement#6 105x152 sh",
+   "had": true,
+   "n": 3,
+   "key": "2|0|0|105|152|rig|52.0|125.2|3.704"
+  },
+  {
+   "t": 26441,
+   "img": "HTMLCanvasElement#7 105x152 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|105|152|rig|52.0|125.2|3.704"
+  },
+  {
+   "t": 26503,
+   "img": "HTMLCanvasElement#7 105x152 sh",
+   "had": true,
+   "n": 1,
+   "key": "2|0|0|105|152|rig|52.5|125.4|3.704"
+  },
+  {
+   "t": 26614,
+   "img": "HTMLCanvasElement#8 105x152 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|105|152|rig|52.8|125.8|3.704"
+  },
+  {
+   "t": 28742,
+   "img": "HTMLCanvasElement#9 99x157 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|99|157|rig|49.5|130.2|3.704"
+  },
+  {
+   "t": 28804,
+   "img": "HTMLCanvasElement#9 99x157 sh",
+   "had": true,
+   "n": 1,
+   "key": "2|0|0|99|157|rig|49.0|131.0|3.704"
+  },
+  {
+   "t": 28892,
+   "img": "HTMLCanvasElement#10 99x156 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|99|156|rig|49.2|129.6|3.704"
+  },
+  {
+   "t": 29002,
+   "img": "HTMLCanvasElement#9 99x157 sh",
+   "had": true,
+   "n": 2,
+   "key": "2|0|0|99|157|rig|49.2|130.6|3.704"
+  },
+  {
+   "t": 29300,
+   "img": "HTMLCanvasElement#9 99x157 sh",
+   "had": true,
+   "n": 3,
+   "key": "2|0|0|99|157|rig|49.1|130.6|3.704"
+  },
+  {
+   "t": 29369,
+   "img": "HTMLCanvasElement#9 99x157 sh",
+   "had": true,
+   "n": 4,
+   "key": "2|0|0|99|157|rig|49.8|130.4|3.704"
+  },
+  {
+   "t": 29473,
+   "img": "HTMLCanvasElement#10 99x156 sh",
+   "had": true,
+   "n": 1,
+   "key": "2|0|0|99|156|rig|49.8|129.4|3.704"
+  }
+ ]
+}

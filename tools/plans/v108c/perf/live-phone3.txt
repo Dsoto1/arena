@@ -1,0 +1,13 @@
+load before {"l1":4.29,"cpus":4} 
+   mem {"figSheets":177.7,"figRowBitmaps":14.6,"figSheetN":16,"beastSheets":35.1,"figCells":1.4,"figCellN":39,"beastCells":1.3,"corpses":0,"beastClean":0,"w3Bitmaps":0,"pageCanvases":10.5,"heapMB":77,"x2":{"on":false,"why":"phone"}}
+phone3-flat            fps 36.3 frame p50 17.1 p95 77.3 max 120.4 (>25ms 74, >50ms 24/219) js p50 0 p95 12.7 max 59.3 draws/frame 0.69 long 6/412ms TW 28 z 1 light light
+   CPU (thread time) main 698 ms/s · per rAF frame 19.5 ms · compositor 19 ms/s · raster/decode pool 0 ms/s
+   layers {"rim":0.03,"stands":0.59,"tiles":0.44,"walls":0.25,"floor":0.09,"decals":1.4,"highlights":0.02,"pieces":2.39,"bubbles":0,"overlays":0.02,"crowdtop":0,"flavius":0.25,"fx":0.3,"duel":0.01} L106 0.24ms/pass (static 0.10 figs 0.00 contact 0.14) builds 2 P107 {"bm":6,"blob":3,"blobFail":0,"fallback":0,"static":152,"staticScaled":0,"rebuild":0,"pieces":608,"figClip":0,"wrf":49,"fxSkip":154}
+   caches ["stands/under 152h/0m paint 0","stands/deco 152h/0m paint 0","walls/top 152h/0m paint 0","walls/light 152h/0m paint 0","walls/sky 152h/0m paint 0","decals/wear 304h/0m paint 0"] z99 {"builds":0,"hits":0,"direct":0,"fallback":0,"lastMs":0,"bitmaps":24,"coalesced":0} → {"builds":0,"hits":0,"direct":0,"fallback":0,"lastMs":0,"bitmaps":24,"coalesced":0}
+   mem {"figSheets":177.7,"figRowBitmaps":13,"figSheetN":16,"beastSheets":35.1,"figCells":5.2,"figCellN":104,"beastCells":3.6,"corpses":0,"beastClean":0,"w3Bitmaps":0,"pageCanvases":10.5,"heapMB":68,"x2":{"on":false,"why":"phone"}}
+phone3-z14             fps 28.9 frame p50 29 p95 76 max 129.7 (>25ms 121, >50ms 31/175) js p50 17.2 p95 28.6 max 69.9 draws/frame 0.71 long 12/781ms TW 39.199999999999996 z 1.4 light light
+   CPU (thread time) main 849 ms/s · per rAF frame 29.6 ms · compositor 19 ms/s · raster/decode pool 0 ms/s
+   layers {"rim":0.04,"stands":0.79,"tiles":1.09,"walls":14.55,"floor":0.15,"decals":1.95,"highlights":0.02,"pieces":2.75,"bubbles":0.18,"overlays":0.01,"crowdtop":0,"flavius":0.1,"fx":0.27,"duel":0.01} L106 0.89ms/pass (static 0.73 figs 0.00 contact 0.16) builds 2 P107 {"bm":5,"blob":3,"blobFail":0,"fallback":0,"static":127,"staticScaled":0,"rebuild":0,"pieces":1133,"figClip":0,"wrf":82,"fxSkip":129}
+   caches ["stands/under 127h/0m paint 0","stands/deco 127h/0m paint 0","walls/top 127h/0m paint 0","walls/light 127h/0m paint 0","walls/sky 127h/0m paint 0","decals/wear 254h/0m paint 0"] z99 {"builds":1,"hits":87,"direct":12,"fallback":0,"lastMs":65.59999999962747,"bitmaps":32,"coalesced":3,"passes":4} → {"builds":2,"hits":213,"direct":12,"fallback":0,"lastMs":48.90000000037253,"bitmaps":36,"coalesced":10,"passes":4}
+load after {"l1":3.38,"cpus":4}
+ERRS []

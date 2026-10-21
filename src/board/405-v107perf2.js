@@ -80,7 +80,7 @@ function rec107Install(){const R=REC107;
   if(window.HTMLCanvasElement){rec107Count(HTMLCanvasElement.prototype,'toBlob','toBlob',true);rec107Count(HTMLCanvasElement.prototype,'toDataURL','toDataURL',true);
     for(const k of ['width','height'])rec107Setter(HTMLCanvasElement.prototype,k,'canvasResize',(el,v)=>el.id!=='cv'||+v!==el[k])}
   if(window.OffscreenCanvas)rec107Count(OffscreenCanvas.prototype,'convertToBlob','convertToBlob',true);
-  if(typeof window.createImageBitmap==='function'){const f=window.createImageBitmap;window.createImageBitmap=function(s){if(R.on)rec107Hit('createImageBitmap('+((s&&s.constructor&&s.constructor.name)||'?')+')');return f.apply(this,arguments)};
+  if(typeof window.createImageBitmap==='function'){const f=window.createImageBitmap;window.createImageBitmap=function(s){if(!R.on)return f.apply(this,arguments);const c=rec107Hit('createImageBitmap('+((s&&s.constructor&&s.constructor.name)||'?')+')'),t=performance.now();try{return f.apply(this,arguments)}finally{c.ms+=performance.now()-t}};   /* v1.08c: the synchronous part timed (412 sends cells to its worker this way) */
     R.undo.push(()=>{window.createImageBitmap=f})}
   if(window.HTMLImageElement)rec107Setter(HTMLImageElement.prototype,'src','imageLoad');
   /* read-back risks: a canvas NOT kept in memory read (getImageData / toBlob / toDataURL) or drawn into one that is — on a GPU page each
