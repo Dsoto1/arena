@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.08b',ic:'⚔',t:_T('Sharper fighters, real metal'),hi:[_T('Helmets, plates, greaves and blades catch the sun like metal'),_T('Gladiators and beasts are drawn twice as sharp on laptops and desktops'),_T('Fix: the red aim outline sits exactly on Zora and on zoomed figures')]},
   {v:'1.08a',ic:'🔊',t:_T('Real sounds in the arena'),hi:[_T('Recorded sounds for blows, blocks, falls, nets and footsteps, the beasts and the crowd'),_T('A thrown axe now has its own sound'),_T('Credits → Sound effects lists every sound and its author')]},
   {v:'1.08',ic:'🔥',t:_T('Torchlight and texture'),hi:[_T('Night bouts: warm torchlight pools along the walls, flickering flames, and pillar shadows cast away from the torches (Lighting Full)'),_T('Grain in the sand, planks on the benches and a glaze on the blessing jugs'),_T('More depth where the sand meets the walls and on the stands')]},
   {v:'1.07',ic:'🗿',t:_T('One look for every fighter'),hi:[_T('The 3D figures are now the only pieces: on the board, in the seats, on cards and in every list'),_T('When the 3D cannot load, a still of the same figure stands in — the download too'),_T('The tabletop minis live on in Credits → Prototype')]},
