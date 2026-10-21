@@ -801,3 +801,9 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-21: v1.08a SHIPPED (his "ship it for now, I'll keep listening"): release/v1.08a + main; sound tweaks from his listening go into a later build. Next: v1.08b (metal + 2× sheets).
 - Decided 2026-10-21 (his 1a 2a on the v1.08b build): metal blade highlight kept; Studio/online device-baked tokens stay 1× (printed classes + beasts 2× on big screens).
 - 2026-10-21: v1.08b SHIPPED (his "Just ship"): release/v1.08b + main. Next: the Safari 1.5× board trial (his 4b), then v1.09 Winter Quarters.
+- Decided 2026-10-21 (his "Go" on the Winter Quarters mock-up = all picks W1a–W21a, tools/plans/v109/NOTES.md): Winter Quarters rooms
+  REPLACE the off-season page (348 po104OffHTML, v1.04 N2a 2026-10-16), the podium/Season-in-review letter as the active screen (kept as the
+  archive copy), the Flavian Awards screen in the off-season (355 B23), the Quaestor's Ledger letter, winter advisor level-up letters
+  ("one level a season", 2026-10-16 → one free promotion a winter), the Recruiter's winter letters, the off-season team drill (2026-10-17)
+  and that week's checklist/tasks. Kept: rudis only after the Winter festival (2026-10-17), buildings in My Ludus (room 5 shows that card).
+  Split: v1.09 shell + rooms 1/2/6/10 → v1.09a rooms 3/4/5/7/8 + goals → v1.09b Winter Classic → v1.09c Saturnalia + rudis.
