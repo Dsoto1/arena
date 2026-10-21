@@ -100,14 +100,16 @@ out.off=await ev(pg,async(renId)=>{const W8=ms=>new Promise(r=>setTimeout(r,ms))
   r.log=(w.specialLog||[]).some(x=>/Superbus/.test(x.n)&&x.season===1);r.aw=((w.awardShow||{}).awards||[]).map(a=>a.tid);
   const L=(w.letters||[]).find(x=>x.key==='sr104-1');r.letter=!!L&&/TESTLINE104/.test(L.body)&&/League awards/.test(L.body);
   r.ren=(P.ren||[]).find(x=>x.gid===renId);
-  await ENS();MGR.tab='night';MGR_REDRAW();await W8(800);r.pod=document.querySelectorAll('.po104off .po104pod .po104p').length;r.offTxt=(document.querySelector('.po104off')||{}).textContent||'';
+  await ENS();MGR.tab='night';MGR_REDRAW();await W8(800);
+  /* v1.09 (412): the off-season page is Winter Quarters — room 1 shows the Superbus champion + the reach column, room 6 the renewals */
+  wqGo('awards');await W8(500);r.pod=document.querySelectorAll('.wq109 .wqsb').length+document.querySelectorAll('.wq109 .wqtbl td.sb.ch').length;r.offTxt=(document.querySelector('.wq109')||{}).textContent||'';wqGo('staff');await W8(500);
   r.rail=(document.querySelector('.mtabs [data-id="night"]')||{}).textContent||'';
   const g=gById(renId);const w0=g&&g.contract.weeks;const btn=document.querySelector(`[data-po104="ren|${renId}|y"]`);r.btn=!!btn;if(btn){btn.click();await W8(400)}
   r.signed=!!(g&&r.ren&&g.contract.wage===r.ren.wage&&g.contract.weeks===w0+12);return r},out.fin.renId);
-ok(out.off.ok&&out.off.week===12&&out.off.ph==='off'&&out.off.active&&out.off.bouts===0&&/Off-season/.test(out.off.rail),'off-season week '+JSON.stringify(out.off).slice(0,500));
+ok(out.off.ok&&out.off.week===12&&out.off.ph==='off'&&out.off.active&&out.off.bouts===0&&/Winter Quarters/.test(out.off.rail),'off-season week '+JSON.stringify(out.off).slice(0,500));
 ok(out.off.champ&&out.off.sb&&out.off.rev&&out.off.log,'the champion / Superbus review '+JSON.stringify(out.off).slice(0,500));
 ok(['aureus','lg104rec','tiro','iron_thumb','palm_roma'].every(t=>out.off.aw.includes(t)),'league awards '+JSON.stringify(out.off.aw));
-ok(out.off.hooks==='1'&&out.off.bus==='1'&&out.off.letter&&out.off.pod===4&&/Season 1 in review/.test(out.off.offTxt),'OFF104 hooks + letter + podium '+JSON.stringify(out.off).slice(0,600));
+ok(out.off.hooks==='1'&&out.off.bus==='1'&&out.off.letter&&out.off.pod===2&&/Awards night/.test(out.off.offTxt),'OFF104 hooks + letter + podium '+JSON.stringify(out.off).slice(0,600));
 ok(out.off.ren&&out.off.ren.kind==='raise'&&out.off.btn&&out.off.signed,'contract renewal '+JSON.stringify(out.off.ren));
 
 /* ---- the off-season ends: season 2, no old Superbus special ---- */
