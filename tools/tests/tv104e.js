@@ -28,6 +28,11 @@ out.b1=await ev(pg,()=>{const k=document.querySelector('.r104keep');const bs=[..
 ok(out.b1.open,'b1 open '+JSON.stringify(out.b1));ok(out.b1.noPt,'b1 no ptrain/medic');
 ok(['meal','word','kintix','bonus','raise','promise'].every(x=>out.b1.acts.includes(x))&&out.b1.acts.length===6,'b1 six '+JSON.stringify(out.b1.acts));
 ok(out.b1.oneRow,'b1 one row '+JSON.stringify(out.b1));
+/* v1.09 fix: a 22-character name on the first fighter still leaves the six plates in one row at 1440 px */
+await ev(pg,()=>{const g=rosterOf(me())[0];g.name='Maximilianus Valerianus Augustus Severus Pius';});await redraw(pg);
+out.b1long=await ev(pg,()=>{const bs=[...document.querySelectorAll('.r104keep .rm100keep .acts button[data-mg]')].filter(x=>!['extend','release'].includes(x.dataset.mg));
+  return {n:bs.length,rows:new Set(bs.map(x=>Math.round(x.getBoundingClientRect().top))).size,room:Math.round(document.querySelector('.r104keep').getBoundingClientRect().width),list:Math.round(document.querySelector('.r104 .rm100list').getBoundingClientRect().width),nm:rosterOf(me())[0].name}});
+ok(out.b1long.n===6&&out.b1long.rows===1,'b1 long name one row '+JSON.stringify(out.b1long));
 await pg.screenshot({path:path.join(shots,'e-1440.png')});
 try{await pg.locator('.r104keep').screenshot({path:path.join(shots,'e-keep.png')})}catch(e){}
 /* ---- B2 ---- */

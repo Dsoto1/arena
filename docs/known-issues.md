@@ -50,9 +50,8 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
   tv93a) rewritten with tools/tests/_wait.js (seeded worlds + semantic waits); local proof (smartreg -j 2, first try only): 12 of 15 at 20/20,
   tv93a 19/20 → fixed → 20/20 + 8/8, tv95c 17/20 (+18/20) → fixed → 8/8 so far, tv100z 19/20 (the one miss = smartreg's 400 s kill under
   load) + 20/20 · the GitHub `tests`+`repeat 20` dispatch is the release proof (8a); the old per-test entries are folded in here (history: list them at release).
-- 2026-10-21 · GAME (found by tv104e, not fixed — src/manager is v1.09's): B1's six Keeping-him plates fit one row only while the room
-  column is ≥ 560 px (352's container query); at 1440 px the roster list column takes 495–512 px by name length → room 541–567 px → the
-  plates wrap to 3 rows when a long name is on the roster. tv104e now seeds its recruits (names fixed), so the test no longer flips.
+- 2026-10-21 · FIXED (was: found by tv104e) B1's six Keeping-him plates wrapped to 3 rows at 1440 px when a long name widened the roster list
+  column (fold 541–567 px < the 560 px container query). 352's query now starts at 500 px; tv104e checks a long first-fighter name. Phones unchanged.
 - 2026-10-21 · tv104d's GO helper still sleeps 500 ms after MGR_REDRAW (kept: a blanket MGR_REDRAW→mgrDrawn swap broke tv104e / tv105o
   layout reads — deferred scroll + layout passes after the redraw) · replace per call with a state wait when one is touched.
 - 2026-10-21 · a CI FULL run commits tools/regstate.json + tools/regmap.json.gz back to the branch (absorb job, [skip ci]) → `git pull
