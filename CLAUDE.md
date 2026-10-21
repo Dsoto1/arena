@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.08** (v1.08 shipped 2026-10-20). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.08a** (v1.08a shipped 2026-10-21). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -181,7 +181,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -199,13 +199,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.06** one sun + target clarity + season locks (tools/plans/v106/NOTES.md, two betas): lighting 399 (one sun per arena, cast + contact
-  shadows, figures re-lit with shadow sheets, Settings Lighting Full/Light/Off with auto-drop), aim 396 (hover ring/crosshair, tag = chance to
-  WOUND from the rules incl. blessings/shields/armor/Focus!/Omnia, Minerva named at 0%, Confirm attacks offline only, no % in Ranked),
-  trade/loan deadline after week 8 + Superbus roster lock + no poaching 393, rival trade motives 394, Infirmary injured chip 395; beta-1 fixes
-  397 (bouts locked until Set off, sign plates, city edge fade, no city speed control) + 398 (no rings under figures, gold active tile, team chip,
-  Match Week results box, Moechus grey), beige base disc at zoom/2× fixed (321). Flaky tests hardened (tv92t, tv104d, tv105x, tv100l). No server change.
-
 - **v1.07** one look for every fighter + frame rate (tools/plans/v106/NOTES.md "Old token pieces" + beta notes, five betas): old token pieces
   retired 400 (3D figures everywhere, 3D stills as the fallback + off the board, minis only in Credits → Prototype, no token-style setting),
   City Square walkers + menu show in 3D 402, 3D corpses 404, frame rate 401 (sheet rows decoded off-thread, light pass in pieces, no GPU
@@ -220,3 +213,8 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   tread backs, lit far-wall cap, darker far stands); Lighting Off = the v1.07 board; zoom ease reuses the last night grade, torch shadow layer
   built in pieces; torch casts only from 399's shadow cells, paired by identity (beta disc report, not reproduced). Metal → v1.08b re-bake (R4).
   No server change.
+
+- **v1.08a** recorded sounds (tools/plans/v108a/NOTES.md, his picks from the "Arena Sound Picks" page, one beta): 408-v108sfx — 25 Freesound
+  recordings (CC0 / CC BY 4.0, ≈0.49 MB, assets/sfx108_*.mp3) replace the synth voice inside 314's routing (trims, Effects slider, mute, fold,
+  Fast rules unchanged; synth fallback; flavius_sfx108off), beasts per voice (bark = short slice), a NEW thrown-axe sound, Credits → Sound
+  effects; file:// pages keep the synth. flavius.sh FSH_VER 9 finds letter releases. No server change.
