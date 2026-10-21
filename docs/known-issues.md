@@ -13,6 +13,10 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - 2026-10-18 · tools/art/anim100b/make.js l106 run today bakes DIFFERENT beast shadow sheets than the committed v1.06a ones (moechus/valencia:
   cell 56×18, anchor y 47 vs 58×28, y 11 — the shadow sits above its anchor); the lit sheets come out byte-identical. Check l106.js's shadow
   crop before any beast re-bake (398 kept the committed shadow sheets).
+  CLASSIFIED + FIXED IN THE TOOL (v1.08c, tools/art/bakecheck.js): not crop(), not nondeterminism (two runs are identical, the lit sheets and
+  the class sheets re-render pixel-identical). l106.js `shadowCell` called `R2.setSize` only when the canvas WIDTH differed; a new renderer's
+  canvas is 300×150, so a cell with S = 300 (moechus, valencia) never got sized and rendered into 300×150. Now width AND height are tested;
+  `l106 moechus --check` alone matches the committed sheets. No asset changed; the fix reaches the game at the next beast re-bake.
 - 2026-10-17 · 3D minis, beasts and crowd look soft/blurry · figures + beasts: 2× sheets on big screens since v1.08b; Safari board still 1× when slow (1.5× trial waiting on his recordings); crowd + City walkers + Studio/online tokens stay 1×.
 
 ## Game — accepted limitations
@@ -44,8 +48,9 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - `node tools/smartreg.js --dry` sometimes starts a full run instead of printing the plan; smartreg runs of 5+ tests have hit 10-minute
   agent timeouts · run smaller groups.
 - tonl100a timed out at 100 s once when run by hand (passes in CI).
-- tools/i18n/prep.sh wraps code in 362-v105league.js and 364-v105contrast.js (also 373, 382 and an Error message in 311 — check every prep) ·
-  after every prep: `git diff src` and revert the wrong wraps.
+- (fixed in v1.08c) tools/i18n/prep.sh wrapped code (Error text, shader, console concat, CSS/font/HTML fragments, SFX credits, home names,
+  recorder keys): wrap.js now skips them and test ti18nwrap guards it. A NEW false-wrap shape → add a rule or an `i18n:skip-begin` /
+  `i18n:skip-end` comment pair (or a DATA_TABLES / DEV_LITERALS entry in wrap.js for a file you must not edit) plus a case in ti18nwrap.
 - A commit that only touches tools/deploy (e.g. release.sh's advert shot) starts no regression run · dispatch the full run by hand.
 
 ## Waiting on him

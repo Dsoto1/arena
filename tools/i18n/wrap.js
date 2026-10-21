@@ -7,17 +7,26 @@
      • `<div class="a">Some text ${n} <b>more</b></div>` → `<div class="a">${T`Some text ${n} <b>more</b>`}</div>`
        (runs of text between "hard" tags; inline tags b/i/em/strong/small/u/br/sup/sub/span-without-${} stay inside the key)
      • title="…" placeholder="…" aria-label="…" alt="…" data-tip="…" data-avtip="…" attribute values → ${T`…`}
-   Skips: names/ids (object keys n/name/id/k/…), comparisons, switch cases, selectors, storage keys, classList, regex,
+   Skips (v1.08c additions: new Error(...)/anything under throw, console.* even through + concatenation, property keys built with +,
+          shader / CSS-font / selector / open-tag fragments, the DATA_TABLES and DEV_LITERALS below, and
+          i18n:skip-begin ... i18n:skip-end comment pairs, next to the one-line i18n:skip marker):
+          names/ids (object keys n/name/id/k/…), comparisons, switch cases, selectors, storage keys, classList, regex,
           console/throw, already-tagged templates, files in SKIP_FILES (111-onlcore is shared with the server).
    _T() is identity in English (00-lang.js), so the English game is byte-for-byte the same text. */
 const fs=require('fs'),path=require('path'),ts=require('typescript');
 const ROOT=path.resolve(__dirname,'..','..');
 const MODE=process.argv.includes('--write')?'write':'list';
-const ONLY=process.argv.filter(a=>/\.js$/.test(a)&&!/wrap\.js$/.test(a));
+const ONLY=process.argv.filter(a=>/\.js$/.test(a)&&!/wrap\.js$/.test(a)&&process.argv[process.argv.indexOf(a)-1]!=='--fixture');
 const SKIP_FILES=new Set(['00-lang.js','00c-errlog.js','223a-v93srvtext.js','00-lang-es.js','111-onlcore.js','13-sim.js','14-names.js','148-v86lang.js','173-v89cjk.js','wip-armlevels.js','294a-v100scenes.js']);
 const build=fs.readFileSync(path.join(ROOT,'build.sh'),'utf8');
-const SP=require('../srcpath');const FILES=(build.match(/src\/[\w.\/-]+\.js/g)||[]).map(f=>path.basename(f)).filter(f=>!SKIP_FILES.has(f)).filter(f=>!ONLY.length||ONLY.some(o=>o.endsWith(f)));
+const FIX=(process.argv.indexOf('--fixture')>0?process.argv[process.argv.indexOf('--fixture')+1]:'');/* test only: scan this one file instead of src/ */
+const SP=require('../srcpath');const FILES=FIX?[path.basename(FIX)]:(build.match(/src\/[\w.\/-]+\.js/g)||[]).map(f=>path.basename(f)).filter(f=>!SKIP_FILES.has(f)).filter(f=>!ONLY.length||ONLY.some(o=>o.endsWith(f)));
 
+/* v1.08c: named data tables whose strings are names/credits (they stay English, like GAME_TERMS) — skipped wherever they are declared.
+   Use an i18n:skip-begin ... i18n:skip-end comment pair in a file you may edit; this list is for files owned by another area. */
+const DATA_TABLES=new Set(['SFX108_CREDITS','HOME_OVR105']);
+/* exact dev-only literals (recorder keys) that no marker can reach */
+const DEV_LITERALS=new Set(['canvas(in memory)','readback?']);
 const KEYSKIP=new Set(['id','k','key','cls','type','kind','img','src','ico','icon','col','color','colour','css','sel','slot','pt','eq','at','mode','tone','seal',
   'font','bg','music','theme','n','name','nm','short','city','loc','ev','cell','file','url','href','tag','code','cls2','clsRef','classRef','pal','fill','stroke',
   'face','hair','skin','eyes','shape','style','look','tok','token','art','thumb','frame','ver','v','fn','lead','mode2','root','prog','zone','end','reward',
@@ -40,7 +49,11 @@ const ATTRS=/^(title|placeholder|aria-label|alt|data-tip|data-avtip)$/i;
 function prose(text){
   const t=text.replace(/<[^>]*>/g,' ').replace(/\u0001/g,' § ').replace(/&[a-z#0-9]+;/gi,' ').trim();
   if(!t)return false;
-  if(/^[.#\[@:]/.test(t))return false;                       /* selectors, at-rules */
+  if(/^[.#\[@:]/.test(t))return false;
+  if(/\b(uniform|varying|attribute|precision)\s+(float|vec[234]|mat[234]|sampler2D|highp|mediump|lowp)\b|\bgl_[A-Z]\w+|\bvoid\s+main\s*\(/.test(t))return false; /* shader source */
+  if(/(^|,\s*)[\w -]*\b(serif|sans-serif|monospace|cursive|fantasy|system-ui)\s*$/i.test(t)||/^\d+(\.\d+)?(px|em|rem|pt)\s/.test(t))return false; /* CSS font families / shorthand */
+  if(/\[[\w-]+[\^$*|~]?=/.test(t)||/\{\s*[\w-]+\s*:/.test(t))return false; /* attribute selectors, {prop: */
+  if(/<[a-zA-Z][^>]*$/.test(t)||/(^|\s)[\w-]+=["'§]/.test(t))return false; /* a run that ends inside an open tag / is an attribute list */                       /* selectors, at-rules */
   if(/[{}]/.test(t)&&/:/.test(t)||/;/.test(t)&&/:/.test(t)&&!/[A-Za-z]{3,}\s+[A-Za-z]{3,}\s+[A-Za-z]{3,}/.test(t))return false; /* css */
   if(/^(https?:|data:|mailto:|\.\/|\/)/.test(t))return false;
   if(/^[\w-]+(\.[\w-]+)+$/.test(t))return false;             /* a.b.c */
@@ -58,25 +71,39 @@ function prose(text){
 
 function calleeName(call){const e=call.expression;if(ts.isIdentifier(e))return e.text;if(ts.isPropertyAccessExpression(e))return e.name.text;return ''}
 function calleeObj(call){const e=call.expression;if(ts.isPropertyAccessExpression(e)&&ts.isPropertyAccessExpression(e.expression))return e.expression.name.text;if(ts.isPropertyAccessExpression(e)&&ts.isIdentifier(e.expression))return e.expression.text;return ''}
+/* blocks marked  i18n:skip-begin … i18n:skip-end  (v1.08c) */
+const _rg={};
+function skipRange(node){
+  const sf=node.getSourceFile();let r=_rg[sf.fileName];
+  if(!r){r=_rg[sf.fileName]=[];const re=/i18n:skip-(begin|end)/g;let m,a=-1;
+    while((m=re.exec(sf.text))){if(m[1]==='begin')a=m.index;else if(a>=0){r.push([a,m.index]);a=-1}}}
+  const at=node.getStart();return r.some(x=>at>x[0]&&at<x[1])}
 /* is this literal node in a place where it is data, not display text? */
 function skipCtx(node){
   /* a line marked  i18n:skip  (in a comment) is code that uses the text as a key — never wrap it (v0.87) */
   try{const sf=node.getSourceFile();const ln=sf.getLineAndCharacterOfPosition(node.getStart()).line;const L=sf.text.split('\n')[ln]||'';if(/i18n:skip/.test(L))return true}catch(e){}
+  if(skipRange(node))return true;
+  if(node.text!==undefined&&DEV_LITERALS.has(node.text))return true;
+  for(let a=node.parent;a;a=a.parent){
+    if(ts.isThrowStatement(a))return true;                                  /* throw <anything> */
+    if(ts.isVariableDeclaration(a)&&a.name&&DATA_TABLES.has(a.name.text))return true;
+    if(ts.isFunctionLike(a)||ts.isBlock(a)||ts.isSourceFile(a))break}
   let p=node.parent,child=node;
   /* climb through parentheses / conditional branches / || && ?? / commas — they keep the same role */
-  while(p&&(ts.isParenthesizedExpression(p)||(ts.isConditionalExpression(p)&&child!==p.condition)||(ts.isBinaryExpression(p)&&[ts.SyntaxKind.BarBarToken,ts.SyntaxKind.AmpersandAmpersandToken,ts.SyntaxKind.QuestionQuestionToken].includes(p.operatorToken.kind))))
+  while(p&&(ts.isParenthesizedExpression(p)||(ts.isBinaryExpression(p)&&p.operatorToken.kind===ts.SyntaxKind.PlusToken)||(ts.isConditionalExpression(p)&&child!==p.condition)||(ts.isBinaryExpression(p)&&[ts.SyntaxKind.BarBarToken,ts.SyntaxKind.AmpersandAmpersandToken,ts.SyntaxKind.QuestionQuestionToken].includes(p.operatorToken.kind))))
     {child=p;p=p.parent}
   if(!p)return true;
   if(ts.isPropertyAssignment(p)){if(p.name===child)return true;const nm=p.name&&(p.name.text||p.name.escapedText||'');if(KEYSKIP.has(String(nm)))return true}
   if(ts.isPropertyAccessExpression(p)||ts.isElementAccessExpression(p)&&p.argumentExpression===child)return true;
   if(ts.isBinaryExpression(p)){const k=p.operatorToken.kind;if([ts.SyntaxKind.EqualsEqualsEqualsToken,ts.SyntaxKind.ExclamationEqualsEqualsToken,ts.SyntaxKind.EqualsEqualsToken,ts.SyntaxKind.ExclamationEqualsToken,ts.SyntaxKind.InKeyword,ts.SyntaxKind.InstanceOfKeyword].includes(k))return true;
-    if(k===ts.SyntaxKind.FirstAssignment||k===ts.SyntaxKind.EqualsToken){const L=p.left;if(ts.isPropertyAccessExpression(L)&&/^(id|className|key|src|href|type|name|value|tagName|cssText|dataset|font|fillStyle|strokeStyle|textBaseline|textAlign|globalCompositeOperation|lineCap|lineJoin|filter|cursor|display|background|color|transform|transition|animation|width|height|left|top|right|bottom|position|zIndex|opacity|pointerEvents|visibility|overflow|margin|padding|border)$/.test(L.name.text))return true;
+    if(k===ts.SyntaxKind.FirstAssignment||k===ts.SyntaxKind.EqualsToken){const L=p.left;if(ts.isPropertyAccessExpression(L)&&/^(id|className|key|src|href|type|name|value|tagName|cssText|dataset|font|fillStyle|strokeStyle|textBaseline|textAlign|globalCompositeOperation|lineCap|lineJoin|filter|cursor|display|background|color|transform|transition|animation|width|height|left|top|right|bottom|position|zIndex|opacity|fragmentShader|vertexShader|pointerEvents|visibility|overflow|margin|padding|border)$/.test(L.name.text))return true;
       if(ts.isElementAccessExpression(L))return true}}
   if(ts.isCaseClause(p)&&p.expression===child)return true;
   if(ts.isCallExpression(p)||ts.isNewExpression(p)){
     if(p.expression===child)return true;
     const nm=ts.isCallExpression(p)?calleeName(p):(ts.isIdentifier(p.expression)?p.expression.text:'');
     if(nm==='_T'||nm==='TX')return true;
+    if(/Error$/.test(nm))return true;                                      /* new Error('…'), TypeError, … */;
     if(CALLSKIP.has(nm)){const args=p.arguments||[];const idx=args.indexOf(child);
       if(ALLARGS.has(nm)||idx<=0)return true;
       if(nm==='replace'||nm==='replaceAll'||nm==='setAttribute'||nm==='setProperty'||nm==='cheatRegister'){/* the replacement / attribute value / label is display text */}
@@ -204,7 +231,7 @@ function doString(node,src,file){
 
 let total=0;const perFile={};
 for(const f of FILES){
-  const fp=SP.abs(f);const src=fs.readFileSync(fp,'utf8');src_global=src;
+  const fp=FIX||SP.abs(f);const src=fs.readFileSync(fp,'utf8');src_global=src;
   const sf=ts.createSourceFile(f,src,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
   edits.length=0;const k0=keys.length;
   (function visit(n){

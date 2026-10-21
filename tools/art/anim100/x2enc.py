@@ -9,13 +9,14 @@ Quality: libwebp method 6 (Chrome's canvas encoder is ~15% bigger); whole sheets
 import glob, json, os, sys
 import numpy as np
 from PIL import Image
-HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.abspath(os.path.join(HERE, '../../..')); A = os.path.join(ROOT, 'assets')
+HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.abspath(os.path.join(HERE, '../../..')); A = os.environ.get('BAKE_ASSETS') or os.path.join(ROOT, 'assets')   # v1.08c: make.js --check redirects both
+OUTD = os.environ.get('BAKE_OUT') or os.path.join(HERE, 'out')
 arg = lambda i, d: int(sys.argv[i]) if len(sys.argv) > i else d
 Q1, Q2, SQ1, SQ2 = arg(1, 80), arg(2, 72), arg(3, 60), arg(4, 55)
 LIMBS = ('_rarm_', '_larm_', '_rleg_', '_lleg_')
 tot = {'1': 0, '2': 0}; n = 0
 names = [a for a in sys.argv[5:]] or None
-for f in sorted(glob.glob(os.path.join(HERE, 'out/x2/*.png'))):
+for f in sorted(glob.glob(os.path.join(OUTD, 'x2/*.png'))):
     name = os.path.basename(f)[:-4]
     if names and name not in names: continue
     m = json.load(open(f[:-4] + '.json'))

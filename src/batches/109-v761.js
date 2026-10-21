@@ -11,8 +11,8 @@
      to reload. Saves are never overwritten by an older build.
    ===================================================================== */
 const NEWEST76='flavius_newestver',VERPOLL76=5*60*1000;
-(()=>{try{const n=localStorage.getItem(NEWEST76);if(!n||verCmp(n,GAME_VER)<0)localStorage.setItem(NEWEST76,GAME_VER)}catch(e){}})();
-function newerSeen76(){let n=null;try{const v=localStorage.getItem(NEWEST76);if(v&&verCmp(v,GAME_VER)>0)n=v}catch(e){}
+(()=>{try{const n=localStorage.getItem(NEWEST76);if(!n||verCmp(n,GAME_VERL)<0)localStorage.setItem(NEWEST76,GAME_VERL)}catch(e){}})();
+function newerSeen76(){let n=null;try{const v=localStorage.getItem(NEWEST76);if(v&&verCmp(v,GAME_VERL)>0)n=v}catch(e){}
   try{const w=typeof W_==='function'&&W_();if(w&&w.ver&&verCmp(w.ver,GAME_VER)>0&&(!n||verCmp(w.ver,n)>0))n=w.ver}catch(e){}return n}
 function updBar76(v,stale){if(typeof HEADLESS!=='undefined'&&HEADLESS)return;let b=document.getElementById('upd76');
   if(!b){b=document.createElement('div');b.id='upd76';b.setAttribute('role','status');document.body.appendChild(b)}
@@ -24,8 +24,10 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
   const live=typeof S!=='undefined'&&S&&!S.over&&S.phase!=='setup';
   if(live&&typeof ask76==='function'&&!(await ask76(_T('Reload now?'),_T('This match ends here unless it is saved.'),_T('Reload'),_T('Keep playing'))))return;
   location.reload()},true);
+/* v1.08c: version.json may carry a letter ('1.08b'); the bar only ever offers a version newer than THIS build's full version (GAME_VERL) */
+const verOffer76=v=>!!v&&/^\d+\.\d+[a-z]?$/.test(String(v))&&verCmp(v,GAME_VERL)>0;
 async function verPoll76(){if(!/^https?:$/.test(location.protocol))return;try{const r=await fetch('version.json',{cache:'no-store'});if(!r.ok)return;const j=await r.json();const v=j&&String(j.v||'');
-  if(v&&/^\d+\.\d+$/.test(v)&&verCmp(v,GAME_VER)>0){try{if(verCmp(localStorage.getItem(NEWEST76)||'0',v)<0)localStorage.setItem(NEWEST76,v)}catch(e){}updBar76(v,false)}}catch(e){}}
+  if(verOffer76(v)){try{if(verCmp(localStorage.getItem(NEWEST76)||'0',v)<0)localStorage.setItem(NEWEST76,v)}catch(e){}updBar76(v,false)}}catch(e){}}
 setTimeout(verPoll76,8000);setInterval(verPoll76,VERPOLL76);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')verPoll76()});
 /* the guard: an older build never writes over what a newer one saved */
 let blockSaid76=0;

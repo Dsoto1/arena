@@ -36,3 +36,5 @@ tools/plans/**/*.gif
 
 # Quaternius animation source files: never committed (licence: no redistribution as assets) — tools/plans/poser/NOTES.md
 tools/art/ual/
+tools/art/anim100/out/check/
+tools/art/anim100b/out/check/

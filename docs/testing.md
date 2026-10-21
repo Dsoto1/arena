@@ -84,6 +84,21 @@ injection (wrap `db.putRev` / `db.put` to throw like DynamoDB once).
 
 `node tools/i18n/check93.js` (keys across every language) and `tools/tests/tv93i.js` (pseudolocalized walk) — see [i18n.md](i18n.md).
 
+## Bake check (v1.08c)
+
+`node tools/art/bakecheck.js` (about 2–5 minutes; `sh build.sh` first) re-renders a small sample with the real bake scripts in their
+`--check` mode and compares it with the committed assets: one class move sheet (`anim100/make.js x2 soldier move --check`) and one beast
+(`anim100b/make.js l106 moechus --check`). Nothing committed is touched: sheets, encoder output and copies of the META blocks go to
+`tools/art/anim100/out/check/` and `tools/art/anim100b/out/check/` (ignored by the repo). Pass = META exactly equal AND pixels within a
+tolerance (the encoders are lossy and version-dependent; `BAKE_TOL_MEAN` 1.0, `BAKE_TOL_MAX` 64 per channel; bytes are not the goal,
+his 6a). `--twice` renders each sample twice and compares run 1 with run 2 (is the bake deterministic?); `--compare` only compares what
+is in out/check; `--versions` only rewrites `tools/art/BAKE_VERSIONS.json` (node, Playwright, Chromium, WebGL renderer, three.js, PIL,
+libwebp, numpy, commit). Run it before any re-bake and after a Playwright / Chromium / PIL bump; commit the versions file when it changes.
+Result on 2026-10-21 (Playwright 1.56.1, Chromium 141, SwiftShader, PIL 12.3.0 / libwebp 1.6.0): the class sheet and the lit beast sheets
+re-render PIXEL-IDENTICAL (max diff 0) and run 1 equals run 2 — the bake is deterministic here. The 2026-10-18 shadow-sheet difference
+was NOT `crop()` and not nondeterminism: see the note at the top of `tools/art/anim100b/l106.js` (`shadowCell` sized its renderer only when
+the WIDTH differed, and a new renderer's canvas is already 300 wide).
+
 ## Visual checks
 
 `node tools/shot_arena.js <page> <width> <out.png>`, or a short Playwright script that screenshots, then look at it. The

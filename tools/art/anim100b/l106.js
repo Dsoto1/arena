@@ -25,7 +25,9 @@ let R2 = null;
 export function shadowCell(THREE, scene, o) {
   if (!R2) { R2 = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); R2.outputColorSpace = THREE.SRGBColorSpace; R2.setClearColor(0x000000, 0); R2.setPixelRatio(1);
     R2.shadowMap.enabled = true; R2.shadowMap.type = THREE.PCFSoftShadowMap; }
-  if (R2.domElement.width !== o.S) R2.setSize(o.S, o.S, false);
+  /* v1.08c: test BOTH sides. A new WebGLRenderer's canvas is 300x150, so a cell of S = 300 (moechus, valencia) skipped setSize and rendered
+     into a 300x150 buffer: the shadow cell came out 56x18 with its anchor outside it (committed 58x28, 2026-10-18 report). */
+  if (R2.domElement.width !== o.S || R2.domElement.height !== o.S) R2.setSize(o.S, o.S, false);
   const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShadowMaterial({ opacity: 1, color: 0x000000 })); plane.scale.set(o.planeW, o.planeW, 1); plane.rotation.x = -Math.PI / 2; plane.position.y = o.planeY; plane.receiveShadow = true;
   const keep = []; for (const h of o.hide || []) { keep.push([h, 'v', h.visible]); h.visible = false; }
   const mats = new Map(); for (const root of o.casters) root.traverse(m => { if (!m.isMesh) return; const nc = (o.noCast || []).includes(m); keep.push([m, 'c', m.castShadow]); m.castShadow = !nc;

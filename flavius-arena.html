@@ -26278,11 +26278,16 @@ function guideDashHTML(){const S5=SIM50;const C=S5.cls;const cn=k=>CLASSES[k]?CL
 /* =====================================================================
    54-V51 · THE VERSION ON THE MENU, SAVES THAT UPGRADE, THE FIGHTER'S PANEL, THE LOG ON THE SAND
    ===================================================================== */
-const GAME_VER=(()=>{const m=/v(\d+\.\d+)/.exec(((document.querySelector('.brand .ed')||{}).textContent)||'');return m?m[1]:'0.51'})();
-const verCmp=(a,b)=>{const A=String(a||'0').split('.').map(Number),B=String(b||'0').split('.').map(Number);for(let i=0;i<Math.max(A.length,B.length);i++){const d=(A[i]||0)-(B[i]||0);if(d)return d<0?-1:1}return 0};
+/* v1.08c: GAME_VER stays NUMERIC (saves, resume, replays, SAVE_MIGRATIONS — a rollback never meets a letter);
+   GAME_VERL = the full badge version WITH its letter ('1.08b'), for display + the update notice + the recorder. */
+const GAME_VERL=(()=>{const m=/v(\d+\.\d+[a-z]?)(?![a-z0-9])/.exec(((document.querySelector('.brand .ed')||{}).textContent)||'');return m?m[1]:'0.51'})();
+const GAME_VER=(()=>{const m=/^(\d+\.\d+)/.exec(GAME_VERL);return m?m[1]:'0.51'})();
+/* '1.08b' -> [[1,8],'b']; order 1.08 < 1.08a < 1.08b < 1.09 < 1.10 (a letter only breaks a numeric tie; no letter < any letter) */
+const verParse=v=>{const m=/^(\d+(?:\.\d+)*)([a-z]?)/.exec(String(v||'0'));return m?[m[1].split('.').map(Number),m[2]]:[[0],'']};
+const verCmp=(a,b)=>{const [A,la]=verParse(a),[B,lb]=verParse(b);for(let i=0;i<Math.max(A.length,B.length);i++){const d=(A[i]||0)-(B[i]||0);if(d)return d<0?-1:1}return la===lb?0:(la<lb?-1:1)};
 
 /* ---------- the version button lives on the main menu (click it to speak a word of power) ---------- */
-function mmVerInstall(){const f=document.querySelector('#mainMenu .mmfoot');if(!f||f.querySelector('.mmver'))return;f.innerHTML=`${_T`© 2026 Flavius Rule ·`} <button type="button" class="mmlink" data-proto title="${_T`The prototype this game was distilled from`}">D.Soto</button> · <button type="button" class="mmver" title="${_T`Version — click for what is new`}">v${GAME_VER}</button>`}
+function mmVerInstall(){const f=document.querySelector('#mainMenu .mmfoot');if(!f||f.querySelector('.mmver'))return;f.innerHTML=`${_T`© 2026 Flavius Rule ·`} <button type="button" class="mmlink" data-proto title="${_T`The prototype this game was distilled from`}">D.Soto</button> · <button type="button" class="mmver" title="${_T`Version — click for what is new`}">v${GAME_VERL}</button>`}
 setTimeout(mmVerInstall,60);setTimeout(mmVerInstall,700);
 document.addEventListener('click',e=>{const b=e.target.closest('.mmver');if(!b)return;e.preventDefault();e.stopPropagation();if(typeof verNotes79==='function')verNotes79();else if(typeof cheatPrompt==='function')cheatPrompt()},true);
 {const _mq=typeof mmQuiet==='function'?mmQuiet:null;if(_mq)mmQuiet=function(){_mq();mmVerInstall()}}
@@ -31854,8 +31859,8 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
      to reload. Saves are never overwritten by an older build.
    ===================================================================== */
 const NEWEST76='flavius_newestver',VERPOLL76=5*60*1000;
-(()=>{try{const n=localStorage.getItem(NEWEST76);if(!n||verCmp(n,GAME_VER)<0)localStorage.setItem(NEWEST76,GAME_VER)}catch(e){}})();
-function newerSeen76(){let n=null;try{const v=localStorage.getItem(NEWEST76);if(v&&verCmp(v,GAME_VER)>0)n=v}catch(e){}
+(()=>{try{const n=localStorage.getItem(NEWEST76);if(!n||verCmp(n,GAME_VERL)<0)localStorage.setItem(NEWEST76,GAME_VERL)}catch(e){}})();
+function newerSeen76(){let n=null;try{const v=localStorage.getItem(NEWEST76);if(v&&verCmp(v,GAME_VERL)>0)n=v}catch(e){}
   try{const w=typeof W_==='function'&&W_();if(w&&w.ver&&verCmp(w.ver,GAME_VER)>0&&(!n||verCmp(w.ver,n)>0))n=w.ver}catch(e){}return n}
 function updBar76(v,stale){if(typeof HEADLESS!=='undefined'&&HEADLESS)return;let b=document.getElementById('upd76');
   if(!b){b=document.createElement('div');b.id='upd76';b.setAttribute('role','status');document.body.appendChild(b)}
@@ -31867,8 +31872,10 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
   const live=typeof S!=='undefined'&&S&&!S.over&&S.phase!=='setup';
   if(live&&typeof ask76==='function'&&!(await ask76(_T('Reload now?'),_T('This match ends here unless it is saved.'),_T('Reload'),_T('Keep playing'))))return;
   location.reload()},true);
+/* v1.08c: version.json may carry a letter ('1.08b'); the bar only ever offers a version newer than THIS build's full version (GAME_VERL) */
+const verOffer76=v=>!!v&&/^\d+\.\d+[a-z]?$/.test(String(v))&&verCmp(v,GAME_VERL)>0;
 async function verPoll76(){if(!/^https?:$/.test(location.protocol))return;try{const r=await fetch('version.json',{cache:'no-store'});if(!r.ok)return;const j=await r.json();const v=j&&String(j.v||'');
-  if(v&&/^\d+\.\d+$/.test(v)&&verCmp(v,GAME_VER)>0){try{if(verCmp(localStorage.getItem(NEWEST76)||'0',v)<0)localStorage.setItem(NEWEST76,v)}catch(e){}updBar76(v,false)}}catch(e){}}
+  if(verOffer76(v)){try{if(verCmp(localStorage.getItem(NEWEST76)||'0',v)<0)localStorage.setItem(NEWEST76,v)}catch(e){}updBar76(v,false)}}catch(e){}}
 setTimeout(verPoll76,8000);setInterval(verPoll76,VERPOLL76);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')verPoll76()});
 /* the guard: an older build never writes over what a newer one saved */
 let blockSaid76=0;
@@ -34557,7 +34564,7 @@ NET.on('net.back',()=>{if(document.getElementById('onl'))onlRefresh().then(onlRe
    The online parts of v0.79 live in 111-114 (shared rules, window, lockstep, socket) and server/.
    ===================================================================== */
 function verNotes79(){if(typeof modalBusy==='function'&&modalBusy())return;
-  return modal(_T`📜 What's new · v${GAME_VER}`,`${typeof whatsNewHTML==='function'?whatsNewHTML():''}`,[{label:_T('Version history'),value:'hist'},{label:_T('Close'),value:null,primary:1}],{close:null}).then(v=>{if(v==='hist'&&typeof showRules==='function')showRules('hist')})}
+  return modal(_T`📜 What's new · v${GAME_VERL}`,`${typeof whatsNewHTML==='function'?whatsNewHTML():''}`,[{label:_T('Version history'),value:'hist'},{label:_T('Close'),value:null,primary:1}],{close:null}).then(v=>{if(v==='hist'&&typeof showRules==='function')showRules('hist')})}
 function menuUp79(){const m=document.getElementById('mainMenu');return !!(m&&!m.hidden)}
 window.addEventListener('keydown',e=>{if(e.key!=='c'&&e.key!=='C')return;if(e.ctrlKey||e.metaKey||e.altKey||e.repeat)return;
   const t=document.activeElement;if(t&&(['INPUT','TEXTAREA','SELECT'].includes(t.tagName)||t.isContentEditable))return;
@@ -49676,7 +49683,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   return T.innerHTML}catch(e){console.error(e);return h}}}
 /* 216-v92errui — v0.92 the error log's viewer (00c-errlog keeps it): Settings → General → 🐞 Error log (N) opens a small window over
    Settings with the entries, newest first, 📋 Copy for a bug report (plain text with the version and browser) and 🗑 Clear. */
-function err92Text(){const L=ERR92.list.slice().reverse();return [`Flavius Rule ${typeof GAME_VER!=='undefined'?'v'+GAME_VER:''} · ${navigator.userAgent}`,...L.map(e=>`${e.t} [${e.kind}] ${e.where?e.where+' · ':''}${e.msg}${e.at?' — '+e.at:''}`)].join('\n')} /* i18n:skip */
+function err92Text(){const L=ERR92.list.slice().reverse();return [`Flavius Rule ${typeof GAME_VERL!=='undefined'?'v'+GAME_VERL:''} · ${navigator.userAgent}`,...L.map(e=>`${e.t} [${e.kind}] ${e.where?e.where+' · ':''}${e.msg}${e.at?' — '+e.at:''}`)].join('\n')} /* i18n:skip */
 function err92Open(){let p=document.getElementById('err92pop');if(p)p.remove();p=document.createElement('div');p.id='err92pop';const L=ERR92.list.slice().reverse();
   p.innerHTML=`<div class="err92b" role="dialog" aria-label="${esc(_T('Error log'))}"><div class="err92h"><b>${_T('🐞 Error log')}</b><small>${_T`${L.length} kept · stays on this device`}</small><button type="button" class="btn tksm" data-err92x aria-label="${esc(_T('Close'))}">✕</button></div>
     <div class="err92l">${L.length?L.map(e=>`<div class="err92e"><span class="err92k ${e.kind}">${esc(e.kind)}</span><span class="err92t">${esc(e.t)}${e.where?' · '+esc(e.where):''}</span><div>${esc(e.msg)}</div>${e.at?`<small>${esc(e.at)}</small>`:''}</div>`).join(''):`<p class="rc-sub">${_T('No errors logged. Good.')}</p>`}</div>
@@ -79538,15 +79545,15 @@ function rec107Stop(){const R=REC107;if(!R.on)return;const el=performance.now()-
     event:typeof S!=='undefined'&&S?{ev:(()=>{try{const e=EV();return e&&(e.id||e.name)||null}catch(x){return null}})(),round:S.ri,turns:(S.turnNo|0)-R.turn0,players:(S.players||[]).length,cpu:(S.players||[]).filter(p=>p.cpu).length,over:!!S.over,onl:!!S.onl}:null,
     screen:typeof fps100Screen==='function'?fps100Screen():null}}catch(e){}
   let lay=null;try{lay=LAYERS93.report().rows.filter(r=>r.n).sort((a,b)=>b.avg-a.avg).slice(0,14).map(r=>({name:r.name,avg:+r.avg.toFixed(2),max:+(r.max||0).toFixed(1),cached:!!r.cached}))}catch(e){}
-  const res={kind:'flavius-perf',v:1,game:typeof GAME_VER!=='undefined'?GAME_VER:null,at:new Date().toISOString(),secs:+(el/1000).toFixed(1),
+  const res={kind:'flavius-perf',v:1,game:typeof GAME_VERL!=='undefined'?GAME_VERL:null,at:new Date().toISOString(),secs:+(el/1000).toFixed(1),
     ua:navigator.userAgent,gpu:rec107Gpu(),cores:navigator.hardwareConcurrency||null,memGB:navigator.deviceMemory||null,dpr:window.devicePixelRatio||1,
     view:{w:innerWidth,h:innerHeight},canvas:typeof cv!=='undefined'&&cv?{w:cv.width,h:cv.height}:null,...g,
     frames:{n:fr.length,fps:+(fr.length*1000/el).toFixed(1),p50:q(.5),p95:q(.95),max:q(1),over33:fr.filter(x=>x>33.4).length,over50:fr.filter(x=>x>50).length,intervals:fr},
     areas,slowFrames:R.slow,longTasks:R.long,longFrames:R.loaf,counts:R.c,layers:lay,p107:typeof P107!=='undefined'&&P107.st?{...P107.st}:null,p107b:{...P107B.st},...(typeof rec107Extra==='function'?rec107Extra():{}) /* 406: switches, page, p107s */,
-    note:'areas = inclusive ms (draw holds light, cells, stands, clean-ups; render may call draw); slowFrames.areas = ms in the frame before it'};
+    note:'areas = inclusive ms (draw holds light, cells, stands, clean-ups; render may call draw); slowFrames.areas = ms in the frame before it'}; /* i18n:skip */
   R.res=res;let top=Object.entries(areas).sort((a,b)=>b[1].ms-a[1].ms)[0];
   const lt=R.long.reduce((s,l)=>s+l.ms,0);
-  R.line=_T`${res.frames.fps} fps · ${_T('slowest')} ${Math.round(res.frames.max)} ms · ${R.long.length} ${_T('long tasks')} (${lt} ms)`+(top?` · ${_T('most')}: ${top[0]} ${top[1].perS} ms/s`:'');
+  R.line=_T`${res.frames.fps} fps · ${_T('slowest')} ${Math.round(res.frames.max)} ms · ${R.long.length} ${_T('long tasks')} (${lt} ms)`+(top?` · ${_T('most')}: ${top[0]} ${top[1].perS} ms/s`:''); /* i18n:skip */
   try{const d=new Date(),p=n=>String(n).padStart(2,'0');const name=`flavius-perf-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.json`;
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(res,null,1)],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();
     setTimeout(()=>{try{URL.revokeObjectURL(a.href);a.remove()}catch(e){}},4000);R.file=name}catch(e){console.error(e)}
@@ -80015,8 +80022,8 @@ const SFX108_JIT={hit:1,step:1,block:1};
 const SFX108_DB={hit:-24.7,bighit:-23,block:-28.6,whoosh:-29.8,death:-25.7,cheer:-29.2,fanfare:-26.1,horn:-23.9,step:-32.8,net:-30.9,netwrap:-31.7,scrape:-31.6,crash:-23.5,
   rise:-31,titulus:-26.4,medal:-26.9,spear:-28.9,axe:-26,'v:lion':-24.1,'v:bear':-22.9,'v:wolf':-23.4,'v:snake':-24.8,'v:zora':-26.3,'v:grunt':-23.1,'v:beast':-24};
 const SFX108_VOICE={lion:'lion',bear:'bear',wolf:'wolf',snake:'snake',zora:'eagle',grunt:'grunt'};
-/* the credits (key, title, author, licence, freesound id) of the 25 files */
-const SFX108_CREDITS=[["hit","Tyrael - Sword Hit Flesh - 02.wav","SoundFlakes","CC BY 4.0",492239],["bighit","Punch","danlucaz","CC0",517744],["block","block3.wav","Empiremonkey","CC0",616493],["whoosh","Wooden Stick Swing 1_2","Joao_Janz","CC0",485277],["death","Body fall_02.wav","deleted_user_2104797","CC0",346694],["spear","Imperius - Spear Hit - 03.wav","SoundFlakes","CC BY 4.0",492250],["axe","Axe Throwing Hitting Flesh.wav","SoundFlakes","CC BY 4.0",492225],["net","Swirling Velvet Cloak 1.wav","F.M.Audio","CC BY 4.0",556760],["netwrap","rope leathery creaking.wav","vestibule-door","CC0",664929],["scrape","Scraping_gravel.MP3","CGEffex","CC BY 4.0",86987],["crash","Stone crash","discofield","CC0",711657],["step","Steps-Dirt_3b.OGG","nuFF3","CC BY 4.0",477394],["lion","S01-09_Short lion roars.wav","craigsmith","CC0",675443],["bear","BEARGrowl_03.wav","tbsounddesigns","CC BY 4.0",416859],["wolf","Igor-13C.aif","be-steele","CC BY 4.0",128023],["snake","Snake Hiss","xoiziox","CC0",553374],["eagle","Hawk/Eagle Cry (Distant)","PRINCEofWORMS","CC BY 4.0",571273],["grunt","ManlyGrunt02.wav","melisandepope","CC0",557131],["beast","Monster Snarl 2","EvanBoyerman","CC BY 4.0",753854],["cheer","Approx 800 Cheer and Clapping.wav","lonemonk","CC BY 4.0",72837],["rise","Murmur.wav","stewadosan","CC0",466767],["horn","war horn.wav","adharca","CC0",539956],["fanfare","Short Brass Fanfare 1.wav","_MC5_","CC BY 4.0",524849],["titulus","Brass Sting 1","nomiqbomi","CC0",578589],["medal","Tiny Hand Bell Ding","tosha73","CC BY 4.0",862762]];
+/* i18n:skip-begin */ /* the credits (key, title, author, licence, freesound id) of the 25 files */
+const SFX108_CREDITS=[["hit","Tyrael - Sword Hit Flesh - 02.wav","SoundFlakes","CC BY 4.0",492239],["bighit","Punch","danlucaz","CC0",517744],["block","block3.wav","Empiremonkey","CC0",616493],["whoosh","Wooden Stick Swing 1_2","Joao_Janz","CC0",485277],["death","Body fall_02.wav","deleted_user_2104797","CC0",346694],["spear","Imperius - Spear Hit - 03.wav","SoundFlakes","CC BY 4.0",492250],["axe","Axe Throwing Hitting Flesh.wav","SoundFlakes","CC BY 4.0",492225],["net","Swirling Velvet Cloak 1.wav","F.M.Audio","CC BY 4.0",556760],["netwrap","rope leathery creaking.wav","vestibule-door","CC0",664929],["scrape","Scraping_gravel.MP3","CGEffex","CC BY 4.0",86987],["crash","Stone crash","discofield","CC0",711657],["step","Steps-Dirt_3b.OGG","nuFF3","CC BY 4.0",477394],["lion","S01-09_Short lion roars.wav","craigsmith","CC0",675443],["bear","BEARGrowl_03.wav","tbsounddesigns","CC BY 4.0",416859],["wolf","Igor-13C.aif","be-steele","CC BY 4.0",128023],["snake","Snake Hiss","xoiziox","CC0",553374],["eagle","Hawk/Eagle Cry (Distant)","PRINCEofWORMS","CC BY 4.0",571273],["grunt","ManlyGrunt02.wav","melisandepope","CC0",557131],["beast","Monster Snarl 2","EvanBoyerman","CC BY 4.0",753854],["cheer","Approx 800 Cheer and Clapping.wav","lonemonk","CC BY 4.0",72837],["rise","Murmur.wav","stewadosan","CC0",466767],["horn","war horn.wav","adharca","CC0",539956],["fanfare","Short Brass Fanfare 1.wav","_MC5_","CC BY 4.0",524849],["titulus","Brass Sting 1","nomiqbomi","CC0",578589],["medal","Tiny Hand Bell Ding","tosha73","CC BY 4.0",862762]]; /* i18n:skip-end */
 
 const sfx108File=k=>'sfx108_'+k+'.mp3';
 function sfx108URL(k){const f=sfx108File(k);try{if(window.ASSET_DATA&&window.ASSET_DATA[f])return window.ASSET_DATA[f]}catch(e){}

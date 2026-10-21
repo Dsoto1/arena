@@ -10,12 +10,13 @@ from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.abspath(os.path.join(HERE, '../../..'))
 aq = int(sys.argv[1]) if len(sys.argv) > 1 else 55
 tot = {'d': 0, 'p': 0}; n = 0
-for f in sorted(glob.glob(os.path.join(HERE, 'out/l106/*.png')) + glob.glob(os.path.join(ROOT, 'tools/art/anim100b/out/l106/*.png'))):
+CK = os.environ.get('BAKE_OUT'); AD = os.environ.get('BAKE_ASSETS') or os.path.join(ROOT, 'assets')   # v1.08c: --check reads only its own out/check/l106
+for f in sorted(glob.glob(os.path.join(CK, 'l106/*.png')) if CK else glob.glob(os.path.join(HERE, 'out/l106/*.png')) + glob.glob(os.path.join(ROOT, 'tools/art/anim100b/out/l106/*.png'))):
     name = os.path.basename(f)[:-4]
     a = Image.open(f).convert('RGBA').getchannel('A')
     for k, pre, im in (('d', 'anim106_', a), ('p', 'anim106p_', a.resize((max(1, a.width // 2), max(1, a.height // 2)), Image.LANCZOS))):
         rgba = Image.merge('RGBA', [Image.new('L', im.size, 0)] * 3 + [im])
-        out = os.path.join(ROOT, 'assets', pre + name + '_sh.webp')
+        out = os.path.join(AD, pre + name + '_sh.webp')
         rgba.save(out, 'WEBP', quality=80, alpha_quality=aq, method=6)
         tot[k] += os.path.getsize(out)
     n += 1
