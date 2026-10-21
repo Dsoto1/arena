@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.08b** (v1.08b shipped 2026-10-21). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.08c** (v1.08c shipped 2026-10-21). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,13 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.08** torchlight and texture (tools/plans/v108/MOCKUP.md, his 1a–8a, one beta): 409-v108light (from the 407 prototype) — night torch
-  pools baked into 189's grade + small flickering live pools and flames (still under Reduce motion / Animations Off), torch shadows cast away
-  from the two nearest rim lights in Lighting Full only (phones: pools only), sand grain, bench planks, jug glaze glint, depth (wall seam,
-  tread backs, lit far-wall cap, darker far stands); Lighting Off = the v1.07 board; zoom ease reuses the last night grade, torch shadow layer
-  built in pieces; torch casts only from 399's shadow cells, paired by identity (beta disc report, not reproduced). Metal → v1.08b re-bake (R4).
-  No server change.
-
 - **v1.08a** recorded sounds (tools/plans/v108a/NOTES.md, his picks from the "Arena Sound Picks" page, one beta): 408-v108sfx — 25 Freesound
   recordings (CC0 / CC BY 4.0, ≈0.49 MB, assets/sfx108_*.mp3) replace the synth voice inside 314's routing (trims, Effects slider, mute, fold,
   Fast rules unchanged; synth fallback; flavius_sfx108off), beasts per voice (bark = short slice), a NEW thrown-axe sound, Credits → Sound
@@ -217,3 +210,9 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   re-render once), printed classes + severed sets + beasts baked at 2× (assets/anim100x2_* / beast100x2_*, 28.7 MB, 1× derived from the 2×
   render), loader 410-v108x2 (2× on http, not phone, ≥900 px, deviceMemory > 4; flavius_x2off / x2force; beasts 1× with bases off),
   download keeps 1×; Zora aim outline fix 403 F4 (ring key follows 346's late sharpen). Studio/online tokens stay 1×. No server change.
+
+- **v1.08c** stability & tooling (tools/plans/v108c/NOTES.md, his 1a–8a, one beta): CI waits on states not sleeps + seeded Manager worlds
+  (tools/tests/_wait.js; 15 flaky tests fixed), smartreg per-test staleness + machine-wide test slots + CI absorb job (regmap.json.gz committed
+  back after a full run — pull before pushing) + named/repeat dispatch; 412-v108cread (Safari: bases-off read-back in a Worker; flavius_rb108off);
+  404 corpse guard (absolute size cap); letter-aware version compare (GAME_VERL); i18n wrap fixes; bake --check; docs/render-caches.md +
+  tools/plans/v108c/BASELINE.md. Beta: z1.4 Safari 30.5 → 42.7 fps; createImageBitmap(canvas) ≈16 ms on Safari → v1.10. No server change.

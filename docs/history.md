@@ -5,3 +5,5 @@
   re-render once), printed classes + severed sets + beasts baked at 2× (assets/anim100x2_* / beast100x2_*, 28.7 MB, 1× derived from the 2×
   render), loader 410-v108x2 (2× on http, not phone, ≥900 px, deviceMemory > 4; flavius_x2off / x2force; beasts 1× with bases off),
   download keeps 1×; Zora aim outline fix 403 F4 (ring key follows 346's late sharpen). Studio/online tokens stay 1×. No server change.
+
+- **v1.08c** (2026-10-21) stability & tooling: see CLAUDE.md §7 entry of that date, tools/plans/v108c/NOTES.md and BASELINE.md. All 423 tests green on the [full] run 39646409572 (a first run hung on one shard without a log → CI shards REGSLOTS=0 + a 30-min bound that prints partial results).

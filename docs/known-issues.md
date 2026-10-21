@@ -5,6 +5,10 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-21 · OPEN (his v1.08c beta, Safari 26.6, 1.5× fixed, Lighting Light, bases off): figures showed NO shadows after load until he
+  switched Lighting off/on. Not new in v1.08c (399/401/409 byte-identical to v1.08b); not reproduced in Chromium with the WebKit path forced
+  (8 combos). Lead: the shadow layer canvas reused in place (399 l106Build) drawn empty by WebKit; the toggle forces a fresh one (409 v108Sig).
+  Next time: in the console run `L106.layer=null; draw()` — if shadows return, l106Build gets a fresh canvas each build (kill switch).
 - 2026-10-21 · v1.08c [full] run 39636433284: shard 6 hung 45 min (job cancelled, no log reachable); the same 53 tests ran clean here.
   Fixed what we could: CI shards now run with REGSLOTS=0 (the slot limit is for shared boxes) and smartreg is bounded at 30 min, printing
   partial results + live processes if it hangs again. Re-run 39646409572: 423/423 pass, 0 flaky.
