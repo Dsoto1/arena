@@ -16,3 +16,9 @@ allows, falls back to 1×; budgets: decode time per sheet off-thread (401), memo
 - Decoded memory at 2× (per printed class, move rows ≈ 9 MB; an action's rows ≈ 1–3 MB; a beast's idle/walk 8–36 MB, act 13–80 MB, decoded only when used): fine on ≥ 8 GB machines; navigator.deviceMemory ≤ 4 → 1×.
 
 ## His answers 2026-10-21 (on the build): 1a blade highlight kept as baked · 2a Studio/online device-baked tokens stay 1× (AN100_PX unchanged).
+
+## Safari 1.5× board trial (his 4b, "go" 2026-10-21) — no build needed
+406 W1 already supports a fixed board ratio per load: #perf=v107dpr:1.5 (1.5×, never drops), #perf=v107dpr:1 (today's dropped state).
+v1.08b's 410 loader uses the REAL device ratio, so Safari gets the 2× figure sheets either way. He records ⏺ 10 s in Safari on the live
+game for both (night bout, Normal speed, zoomed + not) and sends the JSON reports → decide: keep auto (1.5 → 1 when median > 45 ms), raise
+the drop threshold, or fixed 1.5×.
