@@ -97,9 +97,11 @@ if(V109WQ.on){
 {const base=qsClose;qsClose=function(w,pm){const r=base.apply(this,arguments);try{if(w&&w.qs&&w.qs.wq109paid&&w.qsDue&&w.qsDue.s===w.qs.s)w.qsDue=null}catch(e){console.error(e)}return r}}
 
 /* ---------------- Winter Quarters: state ---------------- */
-const WQ_R=()=>[{k:'over',i:'❄',n:_T('Winter Quarters'),s:_T('Overview')},{k:'awards',i:'🏆',n:_T('Awards night'),s:_T('Awards'),adv:'consilium'},
-  {k:'books',i:'⚖',n:_T('The Quaestor’s accounts'),s:_T('Accounts'),adv:'clerk'},{k:'staff',i:'✍',n:_T('Personnel'),s:_T('Personnel'),adv:'barracks'},
-  {k:'next',i:'📅',n:_T('Next season'),s:_T('Next season'),adv:'consilium'}];
+/* v1.09a hook (414-v109a): later rooms register WQ_X.rooms[k]=()=>def and WQ_X.sum[k]=w=>tile line, and splice their keys into WQ_K */
+const WQ_X={rooms:{},sum:{}};
+const WQ_R=()=>{const B={over:{k:'over',i:'❄',n:_T('Winter Quarters'),s:_T('Overview')},awards:{k:'awards',i:'🏆',n:_T('Awards night'),s:_T('Awards'),adv:'consilium'},
+  books:{k:'books',i:'⚖',n:_T('The Quaestor’s accounts'),s:_T('Accounts'),adv:'clerk'},staff:{k:'staff',i:'✍',n:_T('Personnel'),s:_T('Personnel'),adv:'barracks'},
+  next:{k:'next',i:'📅',n:_T('Next season'),s:_T('Next season'),adv:'consilium'}};return WQ_K.map(k=>B[k]||(WQ_X.rooms[k]?WQ_X.rooms[k]():null)).filter(Boolean)};
 const WQ_K=['over','awards','books','staff','next'];
 const wqLive=w=>{try{w=w||W_();return !!(V109WQ.on&&w&&!w.dead&&!w.tutorial&&typeof OFF104!=='undefined'&&OFF104.active(w))}catch(e){return false}};
 function wqState(w){let S=w.wq109;if(!S||S.s!==w.season){S=w.wq109={s:w.season,step:'over',v:{},sealed:null}}if(!WQ_K.includes(S.step))S.step='over';return S}
@@ -143,7 +145,7 @@ const wqSky=k=>{const h=wqH('sky'+k);const flakes=Array.from({length:26},(_,i)=>
   return `<svg viewBox="0 0 1200 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wqsk${k}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1c2638"/><stop offset=".65" stop-color="#3a3f52"/><stop offset="1" stop-color="#5b5560"/></linearGradient></defs><rect width="1200" height="120" fill="url(#wqsk${k})"/>
     <path d="M640 120V66h40v-8h300v8h40v54Z" fill="#2a2430" opacity=".9"/>${[0,1,2,3,4,5,6,7].map(i=>`<rect x="${700+i*38}" y="70" width="14" height="50" fill="#3c3442"/><rect x="${697+i*38}" y="66" width="20" height="5" fill="#d8dce8" opacity=".8"/>`).join('')}
     <path d="M0 108Q300 92 600 104T1200 100V120H0Z" fill="#dfe6f2" opacity=".85"/>${flakes}</svg>`};
-function wqBan(i,sub,chips,extra){const R=WQ_R()[i];const A=wqAdv(R.adv);const face=A?`<span class="rm100rd rm100adv" title="${esc(A.a.name+' · '+A.a.role)}">${A.f}</span>`:`<span class="rm100rd rm100adv cp105md" aria-hidden="true">${R.i}</span>`;
+function wqBan(i,sub,chips,extra){const L=WQ_R();const R=typeof i==='string'?L.find(r=>r.k===i)||L[0]:L[i];const A=wqAdv(R.adv);const face=A?`<span class="rm100rd rm100adv" title="${esc(A.a.name+' · '+A.a.role)}">${A.f}</span>`:`<span class="rm100rd rm100adv cp105md" aria-hidden="true">${R.i}</span>`;
   return `<div class="roomhd wq109ban rm100ban v101ban w104ban cp105ban cp105one">${wqSky(R.k)}${face}<div class="roomttl"><b>${R.i} ${esc(R.n)}</b><span>${sub}</span>${extra||''}</div>${chips||''}</div>`}
 function wqSay(k,txt){const A=wqAdv(k);if(!A)return '';return `<div class="rm100clerk wqsay"><span class="rm100rd">${A.f}</span><span class="rm100one"><b>${esc(A.a.name)}</b>, ${esc(A.a.role)}: “${txt}”</span></div>`}
 function wqStepper(w,cur){const R=WQ_R();return `<nav class="wq109st" aria-label="${esc(_T('Winter Quarters rooms'))}">${R.map((r,i)=>{if(!i)return `<button type="button" class="wqs ov${cur===0?' cur':''}" data-wq109="go|over" title="${esc(r.s)}" aria-label="${esc(r.s)}">❄</button>`;
@@ -158,8 +160,9 @@ function wqOver(w){const pm=me();const T=wqTable(w);const pos=T.indexOf(pm)+1;co
   let qt=0;try{const Q=wqQ(w,pm);qt=Q?wqQLines(Q).total:0}catch(e){}
   const sum={awards:_T`You finished #${pos} of ${T.length}`,books:S.sealed?_T`Ledger sealed · ${wqCoin('+'+S.sealed.t)}`:_T`The Ledger to seal · about ${wqCoin('+'+qt)}`,
     staff:ren?_T`${ren} contract ask${ren===1?'':'s'} waiting`:_T('No contract asks waiting'),next:_T`Season ${w.season+1}: the schedule`};
+  for(const k in WQ_X.sum){try{sum[k]=WQ_X.sum[k](w)}catch(e){console.error(e)}}
   const tiles=WQ_R().slice(1).map((R,j)=>{const i=j+1;const dn=wqDone(w,R.k);return `<button type="button" class="wqt${dn?' done':''}" data-wq109="go|${R.k}"><span class="n">${dn?'✓':i}</span><span class="ic">${R.i}</span><b>${esc(R.n)}</b><small>${esc(sum[R.k]||'')}</small></button>`}).join('');
-  return wqBan(0,_T`After season ${w.season} · the house's winter business, then season ${w.season+1}`,wqChip(`${WQ_R().length-1}`,_T('rooms'))+wqChip(`${ren}`,_T('asks waiting')))
+  return wqBan('over',_T`After season ${w.season} · the house's winter business, then season ${w.season+1}`,wqChip(`${WQ_R().length-1}`,_T('rooms'))+wqChip(`${ren}`,_T('asks waiting')))
     +`<div class="card2 wq109c"><p class="wqlead">${_T('The season is over. Walk the house through the winter: the awards, the books, the barracks — then the new season.')}</p><div class="wqtiles">${tiles}</div>
     <p class="rc-sub">${_T('No bouts and no league games in Winter Quarters. The rooms go in any order; the last one starts the season.')}</p></div>`}
 
@@ -173,7 +176,7 @@ function wqAwards(w){const pm=me();const P=wqP(w);const s=w.season;const T=wqTab
   const aw=A.map(a=>`<div class="wqaw${a.mine?' me':''}">${wqTr(trophyDef(a.tid),52)}<div><b>${esc(a.name)}</b><span class="rc-sub">${esc(a.desc||'')}</span><span class="wqwho">${esc(a.gname||a.mname||_T('not given'))}${a.ludus?` · ${esc(a.ludus)}`:''}</span><small>${esc(a.stat||'')}</small></div></div>`).join('')||`<p class="rc-sub">${_T('No awards this season.')}</p>`;
   const champ=P&&P.champ?`<div class="wqsb">${wqTr(trophyDef('palm_roma'),46)}<span>${_T`The Flavius Superbus: <b>${esc(po104Name(P.champ))}</b>`}</span></div>`:'';
   const acta=w.lastPaper?`<span class="wqbb"><button type="button" class="btn tksm" data-mg="paper">${_T('📜 The Acta Diurna')}</button></span>`:'';
-  return wqBan(1,_T`Season ${s} · the league's final table and its awards`,wqChip(`#${pos}`,_T('your place'))+wqChip(`${msp(pm,s).pts||0}`,_T('points')),acta)
+  return wqBan('awards',_T`Season ${s} · the league's final table and its awards`,wqChip(`#${pos}`,_T('your place'))+wqChip(`${msp(pm,s).pts||0}`,_T('points')),acta)
     +`<div class="wq2"><div class="card2 wq109c"><div class="sect">${_T('🏛 The final table')}</div><div class="wqpods">${pod}</div>${champ}
       <div class="wqtw"><table class="wqtbl"><thead><tr><th>#</th><th>${_T('Ludus')}</th><th>${_T('Pts')}</th><th>${_T('W–L')}</th><th>${_T('Superbus')}</th></tr></thead><tbody>${T.map(row).join('')}</tbody></table></div></div>
     <div class="card2 wq109c"><div class="sect">${_T('🏆 The Flavian Awards')}</div><div class="wqaws">${aw}</div>
@@ -192,7 +195,7 @@ function wqBooks(w){const pm=me();const S=wqState(w);const X=led109Sheet(w,pm);c
   if(S.sealed&&w.qsLast&&w.qsLast.season===w.season){const Q=w.qsLast;ledger=Q.lines.map(x=>`<div class="wqll"><span>${esc(x[0])}</span><b>${x[1]>0?'+':''}${x[1]}</b></div>`).join('')+`<div class="wqll tot"><span>${_T('Paid into your treasury')}</span><b>${wqCoin('+'+Q.total)}</b></div><div class="acts"><button type="button" class="btn tksm" disabled>${_T('✓ Sealed')}</button></div>`}
   else{const Q=wqQ(w,pm);const QL=Q?wqQLines(Q):{lines:[],total:0};ledger=QL.lines.map(x=>`<div class="wqll"><span>${esc(x[0])}</span><b>${x[1]>0?'+':''}${x[1]}</b></div>`).join('')+`<div class="wqll tot"><span>${_T('To your treasury')}</span><b>${wqCoin('+'+QL.total)}</b></div>
       <div class="acts"><button type="button" class="btn primary sd100 sd100p" data-wq109="seal">${_T('✍ Seal the Ledger')}</button></div><p class="rc-sub">${_T('Unsealed, the Quaestor seals it when the season begins.')}</p>`}
-  return wqBan(2,_T`Season ${w.season} · money in, money out, and what the Quaestor pays`,wqChip(`${X.start}→${X.now}`,_T('treasury'))+wqChip(`${net>=0?'+':''}${net}`,_T('the season')))
+  return wqBan('books',_T`Season ${w.season} · money in, money out, and what the Quaestor pays`,wqChip(`${X.start}→${X.now}`,_T('treasury'))+wqChip(`${net>=0?'+':''}${net}`,_T('the season')))
     +`<div class="wq2"><div class="card2 wq109c wqacc"><div class="sect">${_T('📈 In')} <span class="rc-sub">+${tin}</span></div>${IN.map(r=>bar(r,r[3],'i')).join('')||`<p class="rc-sub">${_T('Nothing yet.')}</p>`}
       <div class="sect">${_T('📉 Out')} <span class="rc-sub">−${tout}</span></div>${OUT.map(r=>bar(r,r[4],'o')).join('')||`<p class="rc-sub">${_T('Nothing yet.')}</p>`}${res}
       <p class="wqtot">${_T`Treasury <b>${X.start}</b> → <b>${X.now}</b>`} <span class="${net>=0?'up':'dn'}">${net>=0?'+':''}${net}</span></p>${part}</div>
@@ -214,7 +217,7 @@ function wqStaff(w){const pm=me();const P=wqP(w);const ros=rosterOf(pm).slice().
   const tr=ros.map(g=>{const c=g.contract||{};const wk=Math.max(0,c.weeks||0);let ph='';try{const x=c104Phase(g);ph={rise:_T('rising'),prime:_T('prime'),fade:_T('fading')}[x.ph]||''}catch(e){}
     return `<tr class="${wk<=8?'due':''}"><td class="nm">${wqArt(g)}<b>${esc(g.name)}</b></td><td>${wqGr(g)} ${effOvr(g)}</td><td>${wqAge(g)}</td><td>${esc(ph)}</td><td>${c.wage||0}</td><td>${wk<=8?`<span class="badge">${_T`${wk} wk`}</span>`:_T`${wk} wk`}</td></tr>`}).join('');
   const nAsk=wqOpen(w);
-  return wqBan(3,_T('Contracts and farewells — the barracks’ winter business'),wqChip(`${ros.length}`,_T('on the roster'))+wqChip(`${nAsk}`,_T('asks')))
+  return wqBan('staff',_T('Contracts and farewells — the barracks’ winter business'),wqChip(`${ros.length}`,_T('on the roster'))+wqChip(`${nAsk}`,_T('asks')))
     +`<div class="wq2"><div class="card2 wq109c"><div class="sect">${_T('✍ Contract renewals')}</div>${ren||`<p class="rc-sub">${_T('No contract asks this winter.')}</p>`}${ren?`<p class="rc-sub">${_T('Unanswered asks lapse when the season begins: raises keep the old terms, the others stay and sulk.')}</p>`:''}
       ${fw?`<div class="sect">${_T('🏺 Farewells')}</div>${fw}`:''}
       ${wqSay('barracks',nAsk?_T('Answer them here and the barracks stays quiet all season.'):_T('The barracks is settled for the winter.'))}</div>
@@ -230,7 +233,7 @@ function wqNext(w){const s=w.season+1;let fx=[];try{fx=seasonSchedule(s)||[]}cat
   const po=[12,13,14].map((n,i)=>`<div class="wqwk po"><span class="n">${n}</span><b>${[_T('Round 1'),_T('Semifinals'),_T('The final')][i]}</b><small>${_T('Superbus')}</small></div>`).join('');
   const r=wqReady();const open=wqOpen(w);const S=wqState(w);
   const notes=[open?_T`${open} contract ask${open===1?'':'s'} still open — they lapse.`:'',!S.sealed?_T('The Quaestor seals the Ledger and pays.'):'',_T('This week’s wages are paid; the empire moves on to week 1.')].filter(Boolean);
-  return wqBan(4,_T`Season ${s} · the road ahead`,wqChip('11 + 3',_T('weeks'))+wqChip(`${byes.filter(x=>x<=11).length}`,_T('bye')))
+  return wqBan('next',_T`Season ${s} · the road ahead`,wqChip('11 + 3',_T('weeks'))+wqChip(`${byes.filter(x=>x<=11).length}`,_T('bye')))
     +`<div class="card2 wq109c"><div class="sect">${_T('📅 The schedule')}</div><div class="wqwks">${wk.join('')}${po}<div class="wqwk wq"><span class="n">❄</span><b>${_T('Winter')}</b><small>${_T('Quarters')}</small></div></div></div>
     <div class="card2 wq109c wqbegin"><div class="sect">${_T`▶ Season ${s}`}</div><ul class="wqnotes">${notes.map(x=>`<li>${x}</li>`).join('')}</ul>${r.ok?'':`<p class="rc-sub wqwhy">${esc(r.why||'')}</p>`}
       ${wqSay('consilium',_T('The sand is raked, the banners are up. Say the word.'))}</div>`}
