@@ -14,3 +14,5 @@ allows, falls back to 1×; budgets: decode time per sheet off-thread (401), memo
 - Bytes: gladiator colour sheets 1× 9.65 → 9.60 MB (same names); NEW 2× gladiators 19.77 MB + 2× beasts 8.93 MB = 28.7 MB (budget ≈ 35). Shadow sheets anim106* unchanged (1×). Stills re-cut (+6 KB). The download: unchanged apart from the stills (mkshare skips anim100x2_* / beast100x2_*).
 - Device bake (Studio / online tokens, AN100L.render move + act with light + shadow, the device's path): soldier 153–156 s at 2.6 px/mm vs 168 s at 5.2 (×1.08); hero 166–168 s vs 181 s (×1.08). Kept at 1× by default (AN100_PX 2.6): the IndexedDB cache and the decoded rows would be 4× the bytes for a small sharpness gain on custom figures — his call.
 - Decoded memory at 2× (per printed class, move rows ≈ 9 MB; an action's rows ≈ 1–3 MB; a beast's idle/walk 8–36 MB, act 13–80 MB, decoded only when used): fine on ≥ 8 GB machines; navigator.deviceMemory ≤ 4 → 1×.
+
+## His answers 2026-10-21 (on the build): 1a blade highlight kept as baked · 2a Studio/online device-baked tokens stay 1× (AN100_PX unchanged).

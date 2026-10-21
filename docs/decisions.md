@@ -799,3 +799,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   1× for phones; the download keeps 1×); Safari board 1.5× trial after v1.08b — REPLACES the open 406 sharpness question (shipped with a).
 - 2026-10-20: v1.08 SHIPPED (his "OK ship"): release/v1.08 + main at 0d12773; he runs bash flavius.sh release. Next: v1.08a sounds beta.
 - 2026-10-21: v1.08a SHIPPED (his "ship it for now, I'll keep listening"): release/v1.08a + main; sound tweaks from his listening go into a later build. Next: v1.08b (metal + 2× sheets).
+- Decided 2026-10-21 (his 1a 2a on the v1.08b build): metal blade highlight kept; Studio/online device-baked tokens stay 1× (printed classes + beasts 2× on big screens).
