@@ -49,11 +49,13 @@ const LED109_FN={endWeek:'wages',rivalTrain:'wages',
   facBuild:'facilities',facWeek:'facilities',adv98Up:'facilities',
   quaestorLedger:'senate',friendGift:'senate',pg84Start:'senate',pg84Week:'senate',citySelect:'senate',cityTavern:'senate',cityLup:'senate',buyTicket:'senate'};
 /* lines inside endWeek / applyBout wrappers that are not what their function's name says (found by their text, before this module) */
+/* i18n:skip-begin (code lines matched by text, never translated) */
 const LED109_LN=[['const back=Math.round(wages/2);m.coin+=back;pre[m.id]=back','senate'],['for(const m of w.mgrs)m.coin-=pre[m.id]||0;return r','senate'],
   ['const g=gateShare(m);m.coin+=g;','purses'],["ADV100.consilCoin*(lv('consilium')-1)*snap.bouts",'senate'],["ADV100.clerkPct*(lv('clerk')-1)/100",'senate'],
   ['if(!back)continue;m.coin+=back;','senate'],['if(M){m.coin-=M.wage;','wages'],['m.coin+=DARL76.gate','purses'],['for(const d of due){m.coin+=d.amt;tot+=d.amt}','repairs'],
   ['m.coin+=p.pay;tnews(','senate'],['if(ex){pm.coin-=ex;','wages'],['betSettle(bt.bid,won,pay);me().coin+=pay','bets'],['m.coin+=won?Math.round(st*o)-st:-st','bets'],
   ['pm.coin=Math.max(pm.coin,wonL?60:25)','senate'],['pm2.coin-=40','bets'],['pm.coin+=B.amt;','senate']];
+/* i18n:skip-end */
 /* the clicked action (17's big click handler, 23's ludusClick) when the stack names no function */
 const LED109_ACT={scout:'recruiting',trial:'recruiting',cartbuy:'recruiting',sign:'recruiting',exfight:'purses',meal:'wages',bonus:'wages',heal:'repairs',medic:'repairs',
   surgeon:'repairs',bath:'repairs',asclepius:'repairs',bet:'bets',rig:'bets',loan:'loans',loanpayall:'loans',tradego:'sales',envoy:'senate',kintix:'senate',feast2:'senate',

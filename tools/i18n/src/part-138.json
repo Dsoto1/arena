@@ -1,0 +1,418 @@
+[
+ {
+  "k": "Winter Quarters",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: the off-season is now Winter Quarters, a set of rooms to visit before the new season",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Awards night, the Quaestor’s accounts with every coin of the season by category, Personnel, and Next season",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Seal the Quaestor’s Ledger in winter; Begin opens the new season",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Wages & upkeep",
+  "w": "413-v109wq.js:35"
+ },
+ {
+  "k": "Purses & prizes",
+  "w": "413-v109wq.js:35"
+ },
+ {
+  "k": "Sales & transfers",
+  "w": "413-v109wq.js:35"
+ },
+ {
+  "k": "Loans",
+  "w": "413-v109wq.js:36"
+ },
+ {
+  "k": "Travel",
+  "w": "413-v109wq.js:36"
+ },
+ {
+  "k": "Gear, repairs & care",
+  "w": "413-v109wq.js:36"
+ },
+ {
+  "k": "Facilities & council",
+  "w": "413-v109wq.js:37"
+ },
+ {
+  "k": "Senate & other",
+  "w": "413-v109wq.js:37"
+ },
+ {
+  "k": "Overview",
+  "w": "413-v109wq.js:98"
+ },
+ {
+  "k": "Awards night",
+  "w": "413-v109wq.js:98"
+ },
+ {
+  "k": "Awards",
+  "w": "413-v109wq.js:98"
+ },
+ {
+  "k": "The Quaestor’s accounts",
+  "w": "413-v109wq.js:99"
+ },
+ {
+  "k": "Accounts",
+  "w": "413-v109wq.js:99"
+ },
+ {
+  "k": "Personnel",
+  "w": "413-v109wq.js:99"
+ },
+ {
+  "k": "Next season",
+  "w": "413-v109wq.js:100"
+ },
+ {
+  "k": "Winter Quarters rooms",
+  "w": "413-v109wq.js:147"
+ },
+ {
+  "k": "▶ Begin season {0}",
+  "w": "413-v109wq.js:150"
+ },
+ {
+  "k": "Begin:",
+  "w": "413-v109wq.js:152"
+ },
+ {
+  "k": "You finished #{0} of {1}",
+  "w": "413-v109wq.js:157"
+ },
+ {
+  "k": "Ledger sealed · {0}",
+  "w": "413-v109wq.js:157"
+ },
+ {
+  "k": "The Ledger to seal · about {0}",
+  "w": "413-v109wq.js:157"
+ },
+ {
+  "k": "{0} contract ask{1} waiting",
+  "w": "413-v109wq.js:158"
+ },
+ {
+  "k": "No contract asks waiting",
+  "w": "413-v109wq.js:158"
+ },
+ {
+  "k": "Season {0}: the schedule",
+  "w": "413-v109wq.js:158"
+ },
+ {
+  "k": "After season {0} · the house's winter business, then season {1}",
+  "w": "413-v109wq.js:160"
+ },
+ {
+  "k": "rooms",
+  "w": "413-v109wq.js:160"
+ },
+ {
+  "k": "asks waiting",
+  "w": "413-v109wq.js:160"
+ },
+ {
+  "k": "The season is over. Walk the house through the winter: the awards, the books, the barracks — then the new season.",
+  "w": "413-v109wq.js:161"
+ },
+ {
+  "k": "No bouts and no league games in Winter Quarters. The rooms go in any order; the last one starts the season.",
+  "w": "413-v109wq.js:162"
+ },
+ {
+  "k": "Semifinal",
+  "w": "413-v109wq.js:165"
+ },
+ {
+  "k": "No awards this season.",
+  "w": "413-v109wq.js:171"
+ },
+ {
+  "k": "The Flavius Superbus: <b>{0}</b>",
+  "w": "413-v109wq.js:172"
+ },
+ {
+  "k": "Season {0} · the league's final table and its awards",
+  "w": "413-v109wq.js:174"
+ },
+ {
+  "k": "your place",
+  "w": "413-v109wq.js:174"
+ },
+ {
+  "k": "points",
+  "w": "413-v109wq.js:174"
+ },
+ {
+  "k": "🏛 The final table",
+  "w": "413-v109wq.js:175"
+ },
+ {
+  "k": "A season to remember. Build on it.",
+  "w": "413-v109wq.js:178"
+ },
+ {
+  "k": "Mid-table. The winter decides next year.",
+  "w": "413-v109wq.js:178"
+ },
+ {
+  "k": "A hard season. The winter is where houses are rebuilt.",
+  "w": "413-v109wq.js:178"
+ },
+ {
+  "k": "Before itemising",
+  "w": "413-v109wq.js:186"
+ },
+ {
+  "k": "Not itemised",
+  "w": "413-v109wq.js:186"
+ },
+ {
+  "k": "The books by category are kept from this season (week {0}); earlier weeks count in the treasury total only. Wages paid this season: {1}.",
+  "w": "413-v109wq.js:188"
+ },
+ {
+  "k": "Paid into your treasury",
+  "w": "413-v109wq.js:190"
+ },
+ {
+  "k": "✓ Sealed",
+  "w": "413-v109wq.js:190"
+ },
+ {
+  "k": "To your treasury",
+  "w": "413-v109wq.js:191"
+ },
+ {
+  "k": "✍ Seal the Ledger",
+  "w": "413-v109wq.js:192"
+ },
+ {
+  "k": "Unsealed, the Quaestor seals it when the season begins.",
+  "w": "413-v109wq.js:192"
+ },
+ {
+  "k": "Season {0} · money in, money out, and what the Quaestor pays",
+  "w": "413-v109wq.js:193"
+ },
+ {
+  "k": "the season",
+  "w": "413-v109wq.js:193"
+ },
+ {
+  "k": "📈 In",
+  "w": "413-v109wq.js:194"
+ },
+ {
+  "k": "📉 Out",
+  "w": "413-v109wq.js:195"
+ },
+ {
+  "k": "Treasury <b>{0}</b> → <b>{1}</b>",
+  "w": "413-v109wq.js:196"
+ },
+ {
+  "k": "🏛 The Quaestor’s Ledger",
+  "w": "413-v109wq.js:197"
+ },
+ {
+  "k": "We start the winter in credit.",
+  "w": "413-v109wq.js:198"
+ },
+ {
+  "k": "We start the winter short — watch the wages.",
+  "w": "413-v109wq.js:198"
+ },
+ {
+  "k": "Sign {0}",
+  "w": "413-v109wq.js:206"
+ },
+ {
+  "k": "Let {0} go",
+  "w": "413-v109wq.js:206"
+ },
+ {
+  "k": "retires at {0} · best {1} · {2} events, {3} wins",
+  "w": "413-v109wq.js:211"
+ },
+ {
+  "k": "a great of the sand",
+  "w": "413-v109wq.js:211"
+ },
+ {
+  "k": "rising",
+  "w": "413-v109wq.js:212"
+ },
+ {
+  "k": "prime",
+  "w": "413-v109wq.js:212"
+ },
+ {
+  "k": "fading",
+  "w": "413-v109wq.js:212"
+ },
+ {
+  "k": "Contracts and farewells — the barracks’ winter business",
+  "w": "413-v109wq.js:215"
+ },
+ {
+  "k": "on the roster",
+  "w": "413-v109wq.js:215"
+ },
+ {
+  "k": "asks",
+  "w": "413-v109wq.js:215"
+ },
+ {
+  "k": "No contract asks this winter.",
+  "w": "413-v109wq.js:216"
+ },
+ {
+  "k": "Unanswered asks lapse when the season begins: raises keep the old terms, the others stay and sulk.",
+  "w": "413-v109wq.js:216"
+ },
+ {
+  "k": "🏺 Farewells",
+  "w": "413-v109wq.js:217"
+ },
+ {
+  "k": "Answer them here and the barracks stays quiet all season.",
+  "w": "413-v109wq.js:218"
+ },
+ {
+  "k": "The barracks is settled for the winter.",
+  "w": "413-v109wq.js:218"
+ },
+ {
+  "k": "📜 Contracts",
+  "w": "413-v109wq.js:219"
+ },
+ {
+  "k": "Career",
+  "w": "413-v109wq.js:219"
+ },
+ {
+  "k": "Gold: the contract ends within 8 weeks.",
+  "w": "413-v109wq.js:220"
+ },
+ {
+  "k": "Rivalry Week",
+  "w": "413-v109wq.js:227"
+ },
+ {
+  "k": "{0} contract ask{1} still open — they lapse.",
+  "w": "413-v109wq.js:230"
+ },
+ {
+  "k": "The Quaestor seals the Ledger and pays.",
+  "w": "413-v109wq.js:230"
+ },
+ {
+  "k": "This week’s wages are paid; the empire moves on to week 1.",
+  "w": "413-v109wq.js:230"
+ },
+ {
+  "k": "Season {0} · the road ahead",
+  "w": "413-v109wq.js:231"
+ },
+ {
+  "k": "bye",
+  "w": "413-v109wq.js:231"
+ },
+ {
+  "k": "📅 The schedule",
+  "w": "413-v109wq.js:232"
+ },
+ {
+  "k": "Winter",
+  "w": "413-v109wq.js:232"
+ },
+ {
+  "k": "Quarters",
+  "w": "413-v109wq.js:232"
+ },
+ {
+  "k": "▶ Season {0}",
+  "w": "413-v109wq.js:233"
+ },
+ {
+  "k": "The sand is raked, the banners are up. Say the word.",
+  "w": "413-v109wq.js:234"
+ },
+ {
+  "k": "❄ Winter Quarters",
+  "w": "413-v109wq.js:256"
+ },
+ {
+  "k": "🏆 <b>Awards night</b> — your house finished #{0} of {1}.",
+  "w": "413-v109wq.js:272"
+ },
+ {
+  "k": "⚖ <b>The Quaestor’s Ledger</b> waits for your seal (about {0}).",
+  "w": "413-v109wq.js:272"
+ },
+ {
+  "k": "✍ <b>{0} contract ask{1}</b> in Personnel.",
+  "w": "413-v109wq.js:273"
+ },
+ {
+  "k": "🏺 Farewells: {0}.",
+  "w": "413-v109wq.js:273"
+ },
+ {
+  "k": "📅 <b>Season {0}</b> begins from the last room.",
+  "w": "413-v109wq.js:273"
+ },
+ {
+  "k": "Winter Quarters are open",
+  "w": "413-v109wq.js:274"
+ },
+ {
+  "k": "The season is over. The house goes into Winter Quarters — on the Match Week tab, room by room, in any order.",
+  "w": "413-v109wq.js:275"
+ },
+ {
+  "k": "❄ To Winter Quarters",
+  "w": "413-v109wq.js:275"
+ },
+ {
+  "k": "Awards night: seen",
+  "w": "413-v109wq.js:282"
+ },
+ {
+  "k": "<b>Awards night</b> waits in Winter Quarters",
+  "w": "413-v109wq.js:282"
+ },
+ {
+  "k": "The Quaestor’s Ledger is sealed",
+  "w": "413-v109wq.js:283"
+ },
+ {
+  "k": "<b>The Quaestor’s Ledger</b> waits for your seal",
+  "w": "413-v109wq.js:283"
+ },
+ {
+  "k": "<b>{0} contract ask{1}</b> wait in Personnel",
+  "w": "413-v109wq.js:284"
+ },
+ {
+  "k": "🏛 The Quaestor’s Ledger is sealed: {0}.",
+  "w": "413-v109wq.js:293"
+ },
+ {
+  "k": "arena · v1.09",
+  "w": "01-head.html"
+ }
+]
