@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.08a** (v1.08a shipped 2026-10-21). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.08b** (v1.08b shipped 2026-10-21). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -181,7 +181,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -199,14 +199,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.07** one look for every fighter + frame rate (tools/plans/v106/NOTES.md "Old token pieces" + beta notes, five betas): old token pieces
-  retired 400 (3D figures everywhere, 3D stills as the fallback + off the board, minis only in Credits → Prototype, no token-style setting),
-  City Square walkers + menu show in 3D 402, 3D corpses 404, frame rate 401 (sheet rows decoded off-thread, light pass in pieces, no GPU
-  read-backs) + 405 (face JPEGs without read-back, render keeps panels in place, the ⏺ 10 s frame recorder) + 406 (Safari: Guide ring
-  without board redraws, board DPR 1.5 cap → 1, bitmap cells, #perf= switches), aim outline from the drawn cell 403 (bases off) + no
-  resize on popups, Settings editors beside Blessings, smaller download (text packs + stripped code), Sotonium house removed quietly.
-  No server change.
-
 - **v1.08** torchlight and texture (tools/plans/v108/MOCKUP.md, his 1a–8a, one beta): 409-v108light (from the 407 prototype) — night torch
   pools baked into 189's grade + small flickering live pools and flames (still under Reduce motion / Animations Off), torch shadows cast away
   from the two nearest rim lights in Lighting Full only (phones: pools only), sand grain, bench planks, jug glaze glint, depth (wall seam,
@@ -218,3 +210,9 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   recordings (CC0 / CC BY 4.0, ≈0.49 MB, assets/sfx108_*.mp3) replace the synth voice inside 314's routing (trims, Effects slider, mute, fold,
   Fast rules unchanged; synth fallback; flavius_sfx108off), beasts per voice (bark = short slice), a NEW thrown-axe sound, Credits → Sound
   effects; file:// pages keep the synth. flavius.sh FSH_VER 9 finds letter releases. No server change.
+
+- **v1.08b** sharper fighters + real metal (tools/plans/v108b/NOTES.md, his 1b 2a 3a 4b 5a + 1a 2a, no beta notes): ONE re-bake — metal material in
+  311's ANIM100_LIB (AN100L.metal: steel/bronze picked by colour, tight sun highlight, darker cool/warm tone, rim; LIB VER 6 → device sheets
+  re-render once), printed classes + severed sets + beasts baked at 2× (assets/anim100x2_* / beast100x2_*, 28.7 MB, 1× derived from the 2×
+  render), loader 410-v108x2 (2× on http, not phone, ≥900 px, deviceMemory > 4; flavius_x2off / x2force; beasts 1× with bases off),
+  download keeps 1×; Zora aim outline fix 403 F4 (ring key follows 346's late sharpen). Studio/online tokens stay 1×. No server change.

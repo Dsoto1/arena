@@ -800,3 +800,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-20: v1.08 SHIPPED (his "OK ship"): release/v1.08 + main at 0d12773; he runs bash flavius.sh release. Next: v1.08a sounds beta.
 - 2026-10-21: v1.08a SHIPPED (his "ship it for now, I'll keep listening"): release/v1.08a + main; sound tweaks from his listening go into a later build. Next: v1.08b (metal + 2× sheets).
 - Decided 2026-10-21 (his 1a 2a on the v1.08b build): metal blade highlight kept; Studio/online device-baked tokens stay 1× (printed classes + beasts 2× on big screens).
+- 2026-10-21: v1.08b SHIPPED (his "Just ship"): release/v1.08b + main. Next: the Safari 1.5× board trial (his 4b), then v1.09 Winter Quarters.

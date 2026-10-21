@@ -1,6 +1,7 @@
 
 
-- **v1.08a** recorded sounds (tools/plans/v108a/NOTES.md, his picks from the "Arena Sound Picks" page, one beta): 408-v108sfx — 25 Freesound
-  recordings (CC0 / CC BY 4.0, ≈0.49 MB, assets/sfx108_*.mp3) replace the synth voice inside 314's routing (trims, Effects slider, mute, fold,
-  Fast rules unchanged; synth fallback; flavius_sfx108off), beasts per voice (bark = short slice), a NEW thrown-axe sound, Credits → Sound
-  effects; file:// pages keep the synth. flavius.sh FSH_VER 9 finds letter releases. No server change.
+- **v1.08b** sharper fighters + real metal (tools/plans/v108b/NOTES.md, his 1b 2a 3a 4b 5a + 1a 2a, no beta notes): ONE re-bake — metal material in
+  311's ANIM100_LIB (AN100L.metal: steel/bronze picked by colour, tight sun highlight, darker cool/warm tone, rim; LIB VER 6 → device sheets
+  re-render once), printed classes + severed sets + beasts baked at 2× (assets/anim100x2_* / beast100x2_*, 28.7 MB, 1× derived from the 2×
+  render), loader 410-v108x2 (2× on http, not phone, ≥900 px, deviceMemory > 4; flavius_x2off / x2force; beasts 1× with bases off),
+  download keeps 1×; Zora aim outline fix 403 F4 (ring key follows 346's late sharpen). Studio/online tokens stay 1×. No server change.
