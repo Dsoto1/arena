@@ -7,7 +7,7 @@ const {chromium}=require('playwright');const path=require('path');const page=pat
 (async()=>{const b=await chromium.launch();const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 const mk=async(o={})=>{const pg=await b.newPage({viewport:{width:1280,height:860},deviceScaleFactor:o.dpr||1});await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
   if(o.block)await pg.route(/anim100_|beast100_/,r=>r.abort());const reqs=[];pg.on('request',r=>reqs.push(r.url()));pg.reqs=reqs;pg.on('pageerror',e=>errs.push(e.message));
-  await pg.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');if(o.off)localStorage.setItem('flavius_v107corpseoff','1')},{off:!!o.off});
+  await pg.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');if(o.off)localStorage.setItem('flavius_v107corpseoff','1');for(const k in (o.ls||{}))localStorage.setItem(k,o.ls[k])},{off:!!o.off,ls:o.ls});
   await pg.goto(o.url||'file://'+page,{timeout:180000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:180000});return pg};
 const play=p=>p.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(null);await W8(120)}try{menuHide()}catch(e){}
   SETTINGS.briefing=false;startEvent({ev:'democritus',loc:6,seed:777,seats:[{cls:'soldier'},{cls:'hero',cpu:true},{cls:'royalty',cpu:true},{cls:'venatore',cpu:true}],opts:{spect:0}});
@@ -79,14 +79,19 @@ const sizes=p=>p.evaluate(async([z,nb,force])=>{const W8=ms=>new Promise(r=>setT
     return k?{lin:Math.sqrt(k),kpx:big.dw*Math.hypot(big.m[0],big.m[1])/(n.alive?M.iw[0]:M.aw[0]),offx:(X0+sx/k-tx)/tw,offy:(Y0+sy/k-ty)/tw}:null};
   const out=pairs.map(([a,d])=>{const A=body(rec.get(a),a),D=body(rec.get(d),d);return {t:a.t,A,D}});const st={...CV107.stats};const qs0=qs.slice();
   let forced=null;if(force){const bc=bst100Cell;bst100Cell=function(k,f,po,x,y){if(po&&po.name==='die4'&&k==='ursa'){ctx.save();ctx.translate(x,y);ctx.scale(2.5,2.5);ctx.translate(-x,-y);try{return bc.apply(this,arguments)}finally{ctx.restore()}}return bc.apply(this,arguments)};
-    const l0=CV107.stats.lie;for(let i=0;i<4;i++){draw();await W8(60)}bst100Cell=bc;forced={bad:[...CV107.bad],lie:CV107.stats.lie-l0}}
+    const l0=CV107.stats.lie;for(let i=0;i<4;i++){draw();await W8(60)}bst100Cell=bc;forced={bad:[...CV107.bad],lie:CV107.stats.lie-l0};
+    /* v1.08c: a die frame the probe cannot see (nothing measured) is not trusted either; and an absolute size cap (tiles) */
+    CV107.bad.delete('ursa');const b0=CV107.stats.blind;bst100Cell=function(k,f,po,x,y){if(po&&po.name==='die4'&&k==='ursa')return y;return bc.apply(this,arguments)};
+    for(let i=0;i<3;i++){draw();await W8(60)}bst100Cell=bc;forced.blind=CV107.bad.has('ursa')&&CV107.stats.blind>b0;
+    CV107.bad.delete('ursa');const big0=CV107.stats.bad,mt=CV107.maxTiles;CV107.maxTiles=0.3;for(let i=0;i<3;i++){draw();await W8(60)}CV107.maxTiles=mt;forced.cap=CV107.stats.bad>big0}
   cv107Check=ck;return {out,qs:qs0,st,forced}},[p.z,p.nb,!!p.force]);
 /* pixels are read back here: served over http (file:// taints the canvas) */
 const http=require('http'),fs=require('fs');const root=path.dirname(page);const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}
   r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL5='http://127.0.0.1:'+srv.address().port+'/'+path.basename(page);
-for(const C of [{dpr:1,z:1},{dpr:2,z:1,nb:true},{dpr:1,z:2},{dpr:2,z:2,force:true},{dpr:2,z:1,block:true}]){const p5=await mk({dpr:C.dpr,block:C.block,url:URL5});Object.assign(p5,C);const r=await sizes(p5);await p5.close();
-  const tag=`5 dpr ${C.dpr} zoom ${C.z}${C.nb?' bases off':''}${C.block?' sheets blocked':''}`;
+const WK={flavius_v107safariforce:'1'},WK1={flavius_v107safariforce:'1',flavius_v107dpr:'1'},WK2={flavius_v107safariforce:'1',flavius_x2force:'1'};
+for(const C of [{dpr:1,z:1},{dpr:2,z:1,nb:true},{dpr:1,z:2},{dpr:2,z:2,force:true},{dpr:2,z:1,block:true},{dpr:2,z:2,ls:WK,wk:'wk'},{dpr:2,z:2,ls:WK1,wk:'wk dpr1'},{dpr:2,z:1,ls:WK2,wk:'wk 2x'}]){const p5=await mk({dpr:C.dpr,block:C.block,url:URL5,ls:C.ls});Object.assign(p5,C);const r=await sizes(p5);await p5.close();
+  const tag=`5 dpr ${C.dpr} zoom ${C.z}${C.wk?' '+C.wk:''}${C.nb?' bases off':''}${C.block?' sheets blocked':''}`;
   for(const e of r.out){if(!e.A||!e.D){ok(false,tag+' '+e.t+': drawn '+JSON.stringify(e));continue}
     const k=e.D.kpx/e.A.kpx,l=e.D.lin/e.A.lin;
     if(!C.block)ok(k>0.85&&k<1.15,`${tag} ${e.t}: the corpse at the living scale (${k.toFixed(2)}×)`);
@@ -94,7 +99,8 @@ for(const C of [{dpr:1,z:1},{dpr:2,z:1,nb:true},{dpr:1,z:2},{dpr:2,z:2,force:tru
     ok(Math.abs(e.D.offx)<0.3&&Math.abs(e.D.offy)<0.3,`${tag} ${e.t}: the corpse on its own tile `+JSON.stringify(e.D))}
   const g=r.qs.filter(q=>q[0].startsWith('g:'));
   if(!C.block)ok(g.length&&g.every(q=>q[1]>0.85&&q[1]<1.15)&&r.qs.every(q=>q[1]>0.85&&q[1]<1.15),tag+': every drawn die / fall frame at the living scale '+JSON.stringify(r.qs.slice(-8)));
-  ok(r.st.bad===0&&r.st.insane===0,tag+': 404\'s checks quiet '+JSON.stringify(r.st));
+  ok(r.st.bad===0&&r.st.insane===0&&!r.st.blind,tag+': 404\'s checks quiet '+JSON.stringify(r.st));
+  if(C.force)ok(r.forced&&r.forced.blind&&r.forced.cap,tag+': an unmeasurable die frame / an over-size body → the lying still '+JSON.stringify(r.forced));
   if(C.force)ok(r.forced&&r.forced.bad.includes('ursa')&&r.forced.lie>0,tag+': a die frame drawn 2.5× → that kind lies as the still '+JSON.stringify(r.forced))}
 srv.close();await b.close();
 console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));process.exit(miss.length||errs.length?1:0)})().catch(e=>{console.error(e);process.exit(1)});
