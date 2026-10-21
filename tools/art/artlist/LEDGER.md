@@ -15,3 +15,7 @@ Generation ids (to fetch later, also in his Artlist history): chest 01a15e90-a75
 cup (Rodin) 01a15e90-ae50-709e-9d3a-511e2e9f7e74 · cup (Tripo) 01a15e90-b0a7-790b-b6e5-381f119ad414.
 Downloads work since he allowed the Artlist hosts (2026-10-21). Rodin GLBs ≈19k triangles, 3 JPEG maps (colour, normal, metal/rough), 1.1–1.8 MB each. Board test: toned to our palette + ink outline they sit fine at board size; as delivered they are too saturated.
 His answers 2026-10-21: 1a board stays drawn, models for large views only · 2a Rodin cup · 3b remaining 2,500 credits on hold.
+Shared rule (FutureBall session, user-approved, 2026-10-21): no generated reference images (130 credits). For image-to-3D, write him a short
+brief (object, view, must-show details); he finds a free photo (one object, clear background, no people or logos, direct .jpg/.png link).
+Uploading it costs nothing. Image-to-3D on Rodin Fast costs 300 credits (Tripo 900). Send 2–3 angles if the sides or back matter. Log each
+photo's source and licence; an unknown source = prototype only.
