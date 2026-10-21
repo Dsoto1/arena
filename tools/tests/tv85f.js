@@ -4,10 +4,10 @@
    a rival's denunciation, the Studio Faith field + chip. Screenshots go to $SHOTS when set. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const SH=process.env.SHOTS;const shot=async(n,el)=>{if(!SH)return;try{if(el){const h=await pg.$(el);if(h){await h.screenshot({path:SH+'/'+n+'.png'});return}}await pg.screenshot({path:SH+'/'+n+'.png'})}catch(e){}};
 const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
-const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);
+const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await __W.mgrDrawn();
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;MGR.tab='ludus';const w=W_(),m=me();const r={};
   /* 1. faith: deterministic, about 1 in 10, every fighter has one, no RNG */
   let n=0;for(let i=0;i<4000;i++)if(faithRoll85('g'+i.toString(36)+'x')==='christian')n++;r.rate=n/4000;
@@ -46,7 +46,9 @@ const o2=await pg.evaluate(async({eid,A,B,C,D})=>{const W8=ms=>new Promise(r=>se
   r.hid=r.hidSt==='hid'&&!r.inBout.length;
   r.noEnter=!document.querySelector(`#mgrBody option[value="${A}"]:not([disabled])`);if(!r.noEnter)r.dbgNE=[...document.querySelectorAll(`#mgrBody option[value="${A}"]:not([disabled])`)].map(o=>o.parentNode.id+'|'+o.textContent+'|'+(o.closest('.bout,.nightcard,tr')||{}).className).join(' ;; ');
   /* Face → ad bestias, simulated to the end, with the other condemned */
-  const rv=w.mgrs.find(x=>!x.isPlayer&&!x.dead);const rg=rosterOf(rv)[0];rg.faith='christian';E.cases.push({gid:rg.id,n:rg.name,mgr:rv.id,st:'face'});
+  /* v1.08c: a rival fighter with NO case yet — the edict at step 5 may already hold rosterOf(rv)[0] (set 'bribed' above), and
+     E.cases.find(gid) would then read that old case ("bribed instead of face", CI 2026-10-19/21) */
+  const rv=w.mgrs.find(x=>!x.isPlayer&&!x.dead&&rosterOf(x).some(g=>g.alive!==false&&!E.cases.some(c=>c.gid===g.id)));const rg=rosterOf(rv).find(g=>g.alive!==false&&!E.cases.some(c=>c.gid===g.id));rg.faith='christian';E.cases.push({gid:rg.id,n:rg.name,mgr:rv.id,st:'face'});
   for(const c of E.cases)if(c.mgr!==m.id&&c.gid!==rg.id&&c.st==='open')c.st='hid';
   MGR_REDRAW();await W8(300);document.querySelector(`#mgrBody [data-fa85="face|${eid}|${B}"]`).click();await W8(400);
   r.faced=E.cases.find(c=>c.gid===B).st==='face';MGR_REDRAW();await W8(300);r.bstBtns=!!document.querySelector(`#mgrBody [data-fa85="sim|${eid}|${B}"]`)&&!!document.querySelector(`#mgrBody [data-fa85="live|${eid}|${B}"]`);

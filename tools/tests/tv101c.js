@@ -7,9 +7,9 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const pg=await b.newPage({viewport:{width:1440,height:900}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_v106b1off','1');localStorage.setItem('flavius_v104doff','1') /* v1.04: 351-v104ward replaces this layout / these rules — tv104d covers them */});
-await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};const mark=ERR92.n;let sd=101;Math.random=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};
-  if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);
+  if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await __W.mgrDrawn();
   newWorld({type:'pre',key:MGR_PRE[0].key});const w=W_(),m=me(),n=w.night;w.welc99=1;MGR.view=null;MGR.tab='night';m.coin=900;MGR_REDRAW();await W8(700);
   const ros=()=>rosterOf(m).filter(g=>!g.lanista);const R0=ros();
   for(const g of R0){g.severed=[];delete g.inj;delete g.restWk}w.beds76=[];
@@ -69,11 +69,14 @@ const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   for(const g of all)g.contract=null;for(const g of sv)g.contract={mgr:m.id,wage:3,weeks:9,since:w.week};for(const g of extra)w.glads.splice(w.glads.indexOf(g),1);
   /* ---- M23 ---- */
   for(const g of rosterOf(m)){delete g.inj;g.severed=[]}
+  /* v1.08c: the nudge only names fighters who fight this week (387 fights105: on a bout or First team) — D (the 4th of the roster) does
+     not in every world; the subject is a fighter who fights (D when he does) */
+  {const D=typeof fights105==='function'&&!fights105(R0[3],m)?(R0.find(g=>fights105(g,m))||R0[3]):R0[3];
   const E2=D.eq94;const hands=[E2.R,E2.L];E2.R=null;E2.L=null;
   o.m23={before:arm94Todo(m).empty.some(g=>g.id===D.id)};
   w.beds76=[D.id];D.severed=['lleg'];o.m23.bed=!arm94Todo(m).empty.some(g=>g.id===D.id);
   o.m23.fit=!!arm94Fit(D,{id:'q',t:'w',k:'gladius'},'R').no;
-  E2.R=hands[0];E2.L=hands[1];w.beds76=[];D.severed=[];
+  E2.R=hands[0];E2.L=hands[1];w.beds76=[];D.severed=[]}
   /* ---- M29 ---- */
   const dmgP=arm94New(w,'a','galea');dmgP.dmg=1;arm94H(m).sh.push(dmgP);
   o.m29={open:weekChecklist().some(x=>x.ic==='🩹')};

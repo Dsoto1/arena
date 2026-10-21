@@ -3,8 +3,15 @@
 
    Usage: node tools/smartreg.js [--full] [-j 4] [--x 5] [--sample 0.05] [--dry] [tests...]
      --full    every test (releases ALWAYS use a full run — CLAUDE.md §6); also records fresh coverage maps
-     --dry     print the plan (who runs and why) without running anything
+     --dry     print the plan (who runs and why, and why a run would be FULL) and exit — never runs a test, never writes state
      tests...  run exactly these (still records their results)
+     -j N      workers (default 4; env REGJ sets the default)
+
+   TEST SLOTS (v1.08c, replaces tools/testslot.sh): every test process holds one of REGSLOTS (default 2) machine-wide slots —
+   /tmp/flavius-reg-slot-N held with flock(1), so a killed holder (agent timeout, SIGKILL) frees its slot at once (the kernel drops
+   the lock with the process). All smartreg runs on the box share the slots: two builders at -j 2 run 2 tests at a time between
+   them. A worker waiting prints "waiting for a test slot (slot N: pid P tv… since …)"; after REGSLOTWAIT seconds (default 1200)
+   the run gives up with exit 75. REGSLOTS=0 turns the limit off (CI shards: one runner each, the limit is their own -j).
 
    HOW A TEST IS CHOSEN (first reason wins; the reason prints in the plan):
      new       no history or no coverage map yet
@@ -12,14 +19,18 @@
                TypeScript parser's function boundaries, compared by text hash), or the top-level code (tables, wrapper
                installs — everything outside functions) of a src file changed when the test executed code in that file OR
                executed a function that file declares or (re)assigns at top level (so a new module's wrapper reaches the
-               tests that call the wrapped function), or a global file (build.sh, 01-head.html, the runner) or the test
-               file itself changed. Works on uncommitted edits. A removed src file makes the run FULL.
+               tests that call the wrapped function), or a global file (01-head.html, regcov.js) or the test file itself or a
+               tools/tests/_*.js helper it requires changed. Works on uncommitted edits. A removed src file or a changed build
+               order of the existing files makes the run FULL (a NEW module is not: its top-level shape reaches the tests that
+               run code it wraps). build.sh and smartreg.js are not global (v1.08c): build.sh only lists the files, whose own
+               shapes are compared; the runner changes no game code.
                Blind spot: a top-level line that mutates shared data (e.g. GLOSS.x.d = …) reaches only tests that ran
                code in that file — rotation, the fallback and the always-full release run cover it.
      warming   fewer than X consecutive passes (X = --x, default 5)
      flaky     failed and then passed on the same build at least once in its last 20 runs: never idles
      pinned    it escaped once (failed in a full run while idle); kept active for the next 10 runs
-     stale     the last full run is 7+ days old → this becomes a full run
+     stale     an idle test not run for 7+ days (v1.08c: per test, at most ceil(2 x sample x all) of the oldest a run;
+               before, a 7-day-old full run turned EVERY run into a full one)
      rotation  the idle tests that ran least recently, ceil(sample x idle) of them (at least 1): every idle test is
                re-checked within ~1/sample runs, catching drift no diff explains
      idle      skipped this run
@@ -37,16 +48,21 @@ const fs = require('fs'), path = require('path'), crypto = require('crypto'), { 
 const ROOT = path.resolve(__dirname, '..'), TD = path.join(__dirname, 'tests'), RD = path.join(__dirname, 'reg');
 /* the run tests a snapshot of the built page (beside assets/, so its relative art loads): you can keep building while it runs */
 const BUILT = path.join(ROOT, 'flavius-arena.html'), PAGE = path.join(ROOT, '.regpage.html');
-if (!process.argv.includes('--dry')) fs.copyFileSync(BUILT, PAGE);
-const PAGE0 = PAGE, STATE = path.join(__dirname, 'regstate.json'), MAP = path.join(__dirname, 'regmap.json');
-const GLOBAL = ['build.sh', 'src/core/01-head.html', 'tools/smartreg.js', 'tools/regcov.js'];
+const DRY0 = process.argv.includes('--dry');
+if (!DRY0) fs.copyFileSync(BUILT, PAGE);
+/* the coverage maps are committed gzipped (v1.08c: tools/regmap.json.gz, 11.7 MB → ~4 MB; the CI full run commits it back).
+   A plain tools/regmap.json is still read when there is no .gz (older branches); writes always go to the .gz. */
+const PAGE0 = PAGE, STATE = path.join(__dirname, 'regstate.json'), MAP = path.join(__dirname, 'regmap.json'), MAPGZ = MAP + '.gz', zlib = require('zlib');
+const GLOBAL = ['src/core/01-head.html', 'tools/regcov.js'];
 const arg = process.argv.slice(2);
 const opt = (k, d) => { const i = arg.indexOf(k); if (i < 0) return d; const v = arg[i + 1]; arg.splice(i, 2); return v; };
 const flag = k => { const i = arg.indexOf(k); if (i < 0) return false; arg.splice(i, 1); return true; };
-const J = +opt('-j', 4), X = +opt('--x', 5), SAMPLE = +opt('--sample', 0.05), FULL0 = flag('--full'), DRY = flag('--dry');
+const J = +opt('-j', +process.env.REGJ || 4), X = +opt('--x', 5), SAMPLE = +opt('--sample', 0.05), FULL0 = flag('--full'), DRY = flag('--dry');
 const ONLY = arg.filter(a => !a.startsWith('-'));
 const readJ = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
-const st = readJ(STATE, { run: 0, lastFull: 0, tests: {} }), MAPJ = readJ(MAP, { fh: [], t: {} });
+const readMap = () => { try { if (fs.existsSync(MAPGZ)) return JSON.parse(zlib.gunzipSync(fs.readFileSync(MAPGZ)).toString('utf8')); } catch (e) { console.log('WARNING: ' + MAPGZ + ' unreadable: ' + e.message); } return readJ(MAP, { fh: [], t: {} }); };
+const writeMap = m => { fs.writeFileSync(MAPGZ, zlib.gzipSync(JSON.stringify(m), { level: 9 })); try { fs.unlinkSync(MAP); } catch (e) {} };
+const st = readJ(STATE, { run: 0, lastFull: 0, tests: {} }), MAPJ = readMap();
 const map = MAPJ.t, FH = MAPJ.fh, FHI = new Map(FH.map((x, i) => [x, i]));
 const hash = f => { try { return crypto.createHash('sha1').update(fs.readFileSync(path.join(ROOT, f))).digest('hex').slice(0, 12); } catch (e) { return 'missing'; } };
 
@@ -94,7 +110,11 @@ const BUILD = (() => {
 })();
 const fileAt = off => { for (const [a, b, f] of BUILD.bounds) if (off >= a && off < b) return f; return null; };
 /* a t12 shard (t12a/b/c) is a 2-line stub that runs tools/tests/t12.js with its share of the events */
-const depsOf = t => [...GLOBAL, `tools/tests/${t}.js`, ...(/^t12[a-z]$/.test(t) ? ['tools/tests/t12.js'] : [])];
+/* helpers a test requires (tools/tests/_*.js, e.g. _wait.js, _st98.js) are its deps too; t12's shards reach them through t12.js */
+const HELP = {};
+const helpersOf = f => HELP[f] || (HELP[f] = (() => { let t = ''; try { t = fs.readFileSync(path.join(ROOT, f), 'utf8'); } catch (e) {}
+  return [...new Set([...t.matchAll(/['"`](?:\.\/)?(_[\w-]+)(?:\.js)?['"`]/g)].map(m => `tools/tests/${m[1]}.js`).filter(x => fs.existsSync(path.join(ROOT, x))))].sort(); })());
+const depsOf = t => { const own = [`tools/tests/${t}.js`, ...(/^t12[a-z]$/.test(t) ? ['tools/tests/t12.js'] : [])]; return [...GLOBAL, ...own, ...new Set(own.flatMap(helpersOf))]; };
 const HASH = {}; const h = f => HASH[f] || (HASH[f] = hash(f));
 for (const t of ALL) depsOf(t).forEach(h); /* hash now, so edits made during the run don't leak into its records */
 
@@ -102,22 +122,27 @@ function plan(full) {
   const tests = ONLY.length ? ONLY : ALL, P = [], idle = [];
   for (const t of tests) {
     const s = st.tests[t];
-    let why = null;
+    let why = null, cause = null, c;
     if (ONLY.length) why = 'asked';
     else if (full) why = 'full';
     else if (!s || !map[t]) why = 'new';
-    else if (depsOf(t).some(f => (s.deps || {})[f] !== h(f))) why = 'changed';
-    else if (ORDER.some(f => ((st.shapeSets || {})[s.sh] || s.shapes || {})[f] !== BUILD.shape[f] && (map[t].files.includes(f) || (map[t].names || []).some(nm => (BUILD.names[f] || new Set()).has(nm))))) why = 'changed';
-    else if (map[t].fi.some(i => !BUILD.all.has(FH[i]))) why = 'changed';
+    else if ((c = depsOf(t).find(f => (s.deps || {})[f] !== h(f)))) { why = 'changed'; cause = path.basename(c); }
+    else if ((c = ORDER.find(f => ((st.shapeSets || {})[s.sh] || s.shapes || {})[f] !== BUILD.shape[f] && (map[t].files.includes(f) || (map[t].names || []).some(nm => (BUILD.names[f] || new Set()).has(nm)))))) { why = 'changed'; cause = 'top level of ' + path.basename(c); }
+    else if (map[t].fi.some(i => !BUILD.all.has(FH[i]))) { why = 'changed'; cause = 'a function it ran'; }
     else if (s.streak < X) why = 'warming';
     else if ((s.flaky || []).some(r => r > st.run - 20)) why = 'flaky';
     else if ((s.pinUntil || 0) > st.run) why = 'pinned';
-    if (why) P.push({ t, why }); else idle.push(t);
+    if (why) P.push({ t, why, cause }); else idle.push(t);
   }
-  const n = idle.length ? Math.max(1, Math.ceil(idle.length * SAMPLE)) : 0;
-  const rot = [...idle].sort((a, b) => (st.tests[a].lastRun || 0) - (st.tests[b].lastRun || 0)).slice(0, n);
+  /* stale: idle tests not run for 7+ days, oldest first, capped (a long pause must not turn the next run into a full one) */
+  const at = t => st.tests[t].lastAt || st.lastFull || 0, old = Date.now() - 7 * 864e5;
+  const staleAll = idle.filter(t => at(t) < old).sort((a, b) => at(a) - at(b)), stale = staleAll.slice(0, Math.ceil(ALL.length * SAMPLE * 2));
+  for (const t of stale) P.push({ t, why: 'stale' });
+  const rest = idle.filter(t => !stale.includes(t));
+  const n = rest.length ? Math.max(1, Math.ceil(rest.length * SAMPLE)) : 0;
+  const rot = [...rest].sort((a, b) => (st.tests[a].lastRun || 0) - (st.tests[b].lastRun || 0)).slice(0, n);
   for (const t of rot) P.push({ t, why: 'rotation' });
-  return { P, idle: idle.filter(t => !rot.includes(t)) };
+  return { P, idle: rest.filter(t => !rot.includes(t)), staleN: staleAll.length };
 }
 
 /* per-test kill limit: 400 s, or 1.6x the test's recorded time + 60 s when it is slower. The whole t12 (asked by name only;
@@ -141,6 +166,43 @@ async function slotWS(i) {
 }
 async function slotsClose() { for (const s of slots) if (s && s.srv) { try { await s.srv.close(); } catch (e) {} s.srv = null; } }
 
+/* TEST SLOTS (see the header). A slot = a tiny holder process `flock -n /tmp/flavius-reg-slot-N sh -c 'read x'` that keeps the lock
+   while its stdin (a pipe from this runner) is open: the test ends → we close it; this runner dies however it dies → the pipe closes
+   → the holder exits → the kernel drops the lock. The test itself is NOT a child of the holder, so no test or browser process can
+   inherit the lock (a lock fd inherited by an orphan was the way to a forever-held slot). `timeout -s KILL` bounds every test, even
+   one orphaned by a killed runner. */
+const SLOTS = process.env.REGSLOTS == null || process.env.REGSLOTS === '' ? 2 : +process.env.REGSLOTS, SLOTWAIT = +(process.env.REGSLOTWAIT || 1200);
+const has = c => { try { require('child_process').execFileSync(c, ['--version'], { stdio: 'ignore' }); return true; } catch (e) { return false; } };
+const FLOCK = has('flock'), TIMEOUT = has('timeout');
+const slotFile = i => `/tmp/flavius-reg-slot-${i}`;
+function trySlot(i) {
+  const hd = spawn('flock', ['-n', '-E', '75', slotFile(i), 'sh', '-c', 'echo GOT; read x'], { stdio: ['pipe', 'pipe', 'ignore'] });
+  return new Promise(res => {
+    let done = false;
+    hd.stdout.on('data', d => { if (!done && /GOT/.test(String(d))) { done = true; res({ hd }); } });
+    hd.on('error', e => { if (!done) { done = true; res({ err: String(e) }); } });
+    hd.on('exit', code => { if (!done) { done = true; res(code === 75 ? null : { err: code }); } });
+  });
+}
+function slotWho(i) { try { const w = JSON.parse(fs.readFileSync(slotFile(i) + '.who', 'utf8')); return `slot ${i}: pid ${w.pid} ${w.test} since ${w.since.slice(11, 19)}`; } catch (e) { return `slot ${i}: ?`; } }
+async function slotTake(t, cmd, lim, o) {
+  const run = hd => { const c = TIMEOUT ? ['timeout', '-s', 'KILL', String(lim + 30), ...cmd] : cmd; const pr = spawn(c[0], c.slice(1), o);
+    const free = () => { if (hd) try { hd.stdin.end(); } catch (e) {} };
+    /* timeout(1) relays a TERM to the test; KILL it 5 s later if it is still there (a KILL to timeout itself would orphan the test) */
+    return { pr, out: '', kill: () => { try { pr.kill(TIMEOUT ? 'SIGTERM' : 'SIGKILL'); } catch (e) {} if (TIMEOUT) setTimeout(() => { try { if (pr.exitCode == null && pr.signalCode == null) pr.kill('SIGKILL'); } catch (e) {} }, 5000).unref(); }, free }; };
+  if (!SLOTS || !FLOCK) return run(null);
+  const t0 = Date.now(); let said = 0;
+  for (;;) {
+    for (let i = 0; i < SLOTS; i++) {
+      const r = await trySlot(i);
+      if (r && r.hd) { try { fs.writeFileSync(slotFile(i) + '.who', JSON.stringify({ pid: process.pid, test: t, since: new Date().toISOString(), root: ROOT })); } catch (e) {} return run(r.hd); }
+      if (r && r.err != null) { console.log(`WARNING: flock failed (${r.err}) — ${t} runs without a slot`); return run(null); }
+    }
+    if (Date.now() - t0 > SLOTWAIT * 1000) return null;
+    if (Date.now() - t0 > 10000 && Date.now() - said > 60000) { said = Date.now(); console.log(`waiting for a test slot for ${t} (${[...Array(SLOTS).keys()].map(slotWho).join(' · ')})`); }
+    await new Promise(r => setTimeout(r, Date.now() - t0 < 5000 ? 200 : 2000));
+  }
+}
 /* run a list of tests, J at a time, slowest first; coverage on unless cov === false; shared slot browsers unless share === false */
 function runAll(list, cov = true, share = true) {
   fs.mkdirSync(RD, { recursive: true });
@@ -156,16 +218,23 @@ function runAll(list, cov = true, share = true) {
         const t0 = Date.now(), cf = path.join(RD, t + '.cov.json'); try { fs.unlinkSync(cf); } catch (e) {}
         const env = { ...process.env, ...(cov ? { REGCOV: cf } : {}), ...(ws ? { REGWS: ws } : {}) };
         if (!ws) delete env.REGWS;
-        const pr = spawn('node', ['-r', path.join(__dirname, 'regcov.js'), path.join(TD, t + '.js'), PAGE], { cwd: TD, env });
-        let out = '';
+        const cmd = ['node', '-r', path.join(__dirname, 'regcov.js'), path.join(TD, t + '.js'), PAGE];
+        const sl = await slotTake(t, cmd, limitFor(t), { cwd: TD, env });
+        if (!sl) { console.log(`GAVE UP: no test slot free within ${SLOTWAIT} s (REGSLOTS=${SLOTS}) — another run holds them`); await slotsClose(); process.exit(75); }
+        const pr = sl.pr; let out = sl.out;
         pr.stdout.on('data', d => out += d); pr.stderr.on('data', d => out += d);
-        const kill = setTimeout(() => pr.kill('SIGKILL'), limitFor(t) * 1000);
-        pr.on('close', code => {
-          clearTimeout(kill); live--; free.push(slot);
+        const kill = setTimeout(() => sl.kill(), limitFor(t) * 1000);
+        /* 'close' waits for the pipes; a grandchild that kept them open would hang the run → 'exit' + 3 s also ends it */
+        let ended = false, ex = null;
+        pr.on('exit', code => { ex = setTimeout(() => end(code), 3000); });
+        const end = code => {
+          if (ended) return; ended = true; clearTimeout(ex);
+          clearTimeout(kill); sl.free(); live--; free.push(slot);
           const errs = /ERRS \[\s*\S/.test(out) && !/ERRS \[\]/.test(out);
           res[t] = { out, code: code == null ? 124 : code, pass: code === 0 && !errs, time: Math.round((Date.now() - t0) / 1000), cov: readJ(cf, null) };
           next();
-        });
+        };
+        pr.on('close', end);
       }
     };
     next();
@@ -174,7 +243,7 @@ function runAll(list, cov = true, share = true) {
 
 function record(t, r, run) {
   const s = st.tests[t] || (st.tests[t] = { streak: 0, runs: 0, fails: 0, flaky: [] });
-  s.runs++; s.lastRun = run; s.time = r.time;
+  s.runs++; s.lastRun = run; s.lastAt = Date.now(); s.time = r.time;
   if (r.pass && r.cov && r.cov.offs && r.cov.offs.length) {
     const files = [...new Set(r.cov.offs.map(fileAt).filter(Boolean))].sort();
     const fi = [...new Set(r.cov.offs.map(o => BUILD.fn.get(o)).filter(Boolean))].map(x => { let i = FHI.get(x); if (i == null) { i = FH.length; FH.push(x); FHI.set(x, i); } return i; });
@@ -188,13 +257,21 @@ function record(t, r, run) {
 
 (async () => {
   const run = ++st.run;
-  const full = FULL0 || !st.lastFull || Date.now() - st.lastFull > 7 * 864e5 || (st.order || '').split(' ').some(f => f && !ORDER.includes(f));
-  if (!full && !ONLY.length && !Object.keys(map).length) { console.log('No coverage map yet — run once with --full.'); }
-  const { P, idle } = plan(full);
+  /* FULL only for a reason that a per-test plan cannot cover; the reason is printed (v1.08c: no more silent 7-day escalation) */
+  const was = (st.order || '').split(' ').filter(Boolean), gone = was.filter(f => !ORDER.includes(f));
+  const kept = ORDER.filter(f => was.includes(f)), moved = was.filter(f => ORDER.includes(f)).some((f, i) => kept[i] !== f);
+  const fullWhy = FULL0 ? '--full' : !st.lastFull ? 'no full run recorded yet' : !Object.keys(map).length ? 'no coverage map (tools/regmap.json.gz)'
+    : gone.length ? 'src file(s) removed: ' + gone.slice(0, 5).join(' ') : moved ? 'build order of existing src files changed' : '';
+  const full = !ONLY.length && !!fullWhy;
+  const { P, idle, staleN } = plan(full);
   const why = {}; for (const x of P) (why[x.why] = why[x.why] || []).push(x.t);
   const head = `smartreg run ${run} · ${full ? 'FULL' : 'smart'} · ${P.length} of ${ALL.length} tests · ` + Object.entries(why).map(([k, v]) => `${k} ${v.length}`).join(', ') + ` · idle ${idle.length}`;
-  console.log(head); for (const [k, v] of Object.entries(why)) if (k !== 'full') console.log(`  ${k}: ${v.join(' ')}`);
-  if (DRY) { st.run--; return; }
+  console.log(head); if (full) console.log(`  FULL because: ${fullWhy}`); else if (fullWhy && ONLY.length) console.log(`  (a plan run would be FULL: ${fullWhy})`);
+  for (const [k, v] of Object.entries(why)) if (k !== 'full') console.log(`  ${k}: ${v.join(' ')}`);
+  { const by = {}; for (const x of P) if (x.cause) by[x.cause] = (by[x.cause] || 0) + 1;
+    const top = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 8); if (top.length) console.log('  changed by: ' + top.map(([k, n]) => `${k} ${n}`).join(', ')); }
+  if (staleN > (why.stale || []).length) console.log(`  (${staleN} idle tests are 7+ days old; the oldest ${(why.stale || []).length} run now)`);
+  if (DRY) { console.log('DRY: nothing run, no state written'); process.exit(0); }
   const res = await runAll(P.map(x => x.t));
   /* fallback: re-run each failure alone; real failures pull their idle domain in */
   const failed = Object.keys(res).filter(t => !res[t].pass), report = [];
@@ -228,7 +305,7 @@ function record(t, r, run) {
   txt += report.join('\n') + (report.length ? '\n' : '') + `SUMMARY pass ${Object.values(all).filter(r => r.pass).length} · fail ${real.length + Object.values(extra).filter(r => !r.pass).length} · flaky ${flakyNow.length} · skipped ${Math.max(0, ALL.length - Object.keys(all).length)}\nALLDONE\n`;
   fs.writeFileSync(path.join(__dirname, 'reg.txt'), txt);
   { const used = new Set(Object.values(st.tests).map(x => x.sh)); for (const k of Object.keys(st.shapeSets || {})) if (!used.has(k)) delete st.shapeSets[k]; }
-  fs.writeFileSync(STATE, JSON.stringify(st, null, 1)); fs.writeFileSync(MAP, JSON.stringify(MAPJ));
+  fs.writeFileSync(STATE, JSON.stringify(st, null, 1)); writeMap(MAPJ);
   console.log(report.join('\n')); console.log(txt.split('\n').slice(-3).join('\n'));
   await slotsClose();
   process.exit(real.length || Object.values(extra).some(r => !r.pass) ? 1 : 0);

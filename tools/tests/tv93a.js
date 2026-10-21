@@ -5,7 +5,7 @@
    the arena and the Manager. Prints the contrast numbers. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1400,height:900}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
-const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const T=require('./_wait');await T.boot(pg,{menu:false,seed:false});const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const fails=[];const note=[];const ok=(c,m)=>{if(!c)fails.push(m)};
 const until=async(fn,arg,ms=20000)=>{try{await pg.waitForFunction(fn,arg,{timeout:ms,polling:100});return true}catch(e){return false}};
@@ -101,7 +101,13 @@ const opener=await pg.evaluate(()=>{const b=['btnRules','btnSettings','btnHall']
 ok(!!opener,'no top-bar window button');
 if(opener){await pg.evaluate(id=>document.getElementById(id).focus(),opener);await pg.keyboard.press('Enter');
   ok(await until(()=>!document.getElementById('modal').hidden&&document.getElementById('mboxEl').contains(document.activeElement),null,6000),'window from '+opener+' without focus');
-  await pg.keyboard.press('Escape');ok(await until(id=>document.getElementById('modal').hidden&&document.activeElement&&document.activeElement.id===id,opener,6000),'focus did not return to '+opener+' (now '+(await pg.evaluate(()=>document.activeElement&&(document.activeElement.id||document.activeElement.tagName)))+')')}
+  /* v1.08c: Escape only once the window is filed in a11y93's stack with its opener and the 40 ms a11ySync93 debounce has run
+     (1 local run in 8 lost the focus return when Escape raced the debounce under load) */
+  ok(await T.until(pg,'window from '+opener+' filed in A93.stack, a11y sync settled',id=>!A93.syncT&&A93.stack.some(x=>x.el&&x.el.id==='mboxEl'&&x.opener&&x.opener.id===id),opener,6000),'window from '+opener+' not filed with its opener');
+  /* the focused control may carry a tooltip (52's focusin opens [data-tip]); Escape closes an open tooltip FIRST (WCAG 1.4.13, 52-v50:106)
+     — the 20x proof caught it: WAIT dump "modal still open, focus on a BUTTON". Close the tooltip, then Escape closes the window. */
+  for(let k=0;k<3&&await pg.evaluate(()=>typeof TT!=='undefined'&&TT.stack.length>0);k++){await pg.keyboard.press('Escape');await T.until(pg,'tooltip closed by Escape',()=>!TT.stack.length,null,3000)}
+  await pg.keyboard.press('Escape');ok(await T.until(pg,'focus back on '+opener+' (modal hidden, a11y sync done)',id=>document.getElementById('modal').hidden&&!A93.syncT&&document.activeElement&&document.activeElement.id===id,opener,6000),'focus did not return to '+opener+' (now '+(await pg.evaluate(()=>document.activeElement&&(document.activeElement.id||document.activeElement.tagName)))+')')}
 /* 8 · icon-only buttons have names (menu bar, arena, dock) */
 const unnamed=await pg.evaluate(()=>{const w=t=>/[\p{L}\p{N}]/u.test(t||'');return [...document.querySelectorAll('header.bar button,main.layout button,#actions [data-act]')].filter(e=>e.getClientRects().length&&!(w(e.getAttribute('aria-label'))||w(e.textContent)||e.hasAttribute('aria-labelledby'))).map(e=>e.id||e.outerHTML.slice(0,80))});
 ok(!unnamed.length,'buttons without a name: '+JSON.stringify(unnamed.slice(0,6)));

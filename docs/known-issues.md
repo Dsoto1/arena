@@ -39,23 +39,23 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
   re-measured with docs/economy.md after v1.05 ships (his E2a).
 
 ## Tests + tooling
-- 2026-10-18 · tv85f "Face → ad bestias runs to the end": under CPU throttle 4 the rival case once ended "bribed" instead of "face" (1 of 10) · timing; watch in CI.
+- 2026-10-21 · v1.08c builder A: the flaky set (tv106d tv100z tv104d tv104e tv105o tv95c tv85f tv85r tv76 tv96g tv101c tv98d tv91n tv59
+  tv93a) rewritten with tools/tests/_wait.js (seeded worlds + semantic waits); local proof (smartreg -j 2, first try only): 12 of 15 at 20/20,
+  tv93a 19/20 → fixed → 20/20 + 8/8, tv95c 17/20 (+18/20) → fixed → 8/8 so far, tv100z 19/20 (the one miss = smartreg's 400 s kill under
+  load) + 20/20 · the GitHub `tests`+`repeat 20` dispatch is the release proof (8a); the old per-test entries are folded in here (history: list them at release).
+- 2026-10-21 · GAME (found by tv104e, not fixed — src/manager is v1.09's): B1's six Keeping-him plates fit one row only while the room
+  column is ≥ 560 px (352's container query); at 1440 px the roster list column takes 495–512 px by name length → room 541–567 px → the
+  plates wrap to 3 rows when a long name is on the roster. tv104e now seeds its recruits (names fixed), so the test no longer flips.
+- 2026-10-21 · tv104d's GO helper still sleeps 500 ms after MGR_REDRAW (kept: a blanket MGR_REDRAW→mgrDrawn swap broke tv104e / tv105o
+  layout reads — deferred scroll + layout passes after the redraw) · replace per call with a state wait when one is touched.
+- 2026-10-21 · a CI FULL run commits tools/regstate.json + tools/regmap.json.gz back to the branch (absorb job, [skip ci]) → `git pull
+  --rebase` before the next push from a session.
 - 2026-10-18 · tv101z (pre-baked board vs old paint) now runs with Lighting Off: with Full the shadow layer adds ~9.5k px of ≤24-level anti-alias differences between the two paths (none >24) · not a visual bug; revisit if the pre-bake ever draws shadows itself.
-- tv93a (contrast + a11y): one local run in 8 failed "focus did not return to btnRules" — likely Escape vs the 40 ms close debounce in the
-  a11y93 focus return under load; not proven, not changed · watch in CI.
-- tv104d / tv92t (2026-10-19): made deterministic — tv104d holds Math.random off over its week ends (worn-down injury, Mors Omnibus) and pads
-  rival barracks; tv92t waits for the tab-ownership message instead of a fixed 400 ms · watch in CI.
 - Playwright "Execution context was destroyed" with no navigation = Chromium collected the awaited promise during a heavy sync step
   (tv102e, fixed by deferring t93Open). Other tests that await a long sync WebGL step inside page.evaluate can hit the same · fix the same
   way when one shows up.
-- 2026-10-20 · v1.08 full run 39475335064: tv106d (aim hover: nothing shown, hits []) failed twice on GitHub (normal + alone), passed on the job re-run and every local way (plain, 4 parallel, smartreg, Lighting Full); GitHub drew more frames (rec 756 vs 474) → timing between the hover and 409's frame-split layer build suspected; watch on the beta (hover a target at night). Flaky same run: tv95c, tv76. tv100z flaky under -j 2 (builder). Run 39491859097 (after the 409 identity fix): tv106d, tv100z (fast 4d, PACE96.depth 1), tv104d (match week warning) failed twice each; run 39495296888 on the next commit: all three passed (417 pass, flaky tv104e tv105y). GitHub-runner timing, cause unknown; tv106d prints DIAG106D (helper diag106, also at 5a) when the hover / first tap shows nothing. v1.08b: [full] run 39543023058 tv106d failed at 5a (touch first tap); run 39546646158 on the next commit all 417 passed (flaky tv104e tv95c tv100z tv85r). Still GitHub-only and intermittent.
-- 2026-10-19 · flaky in CI run 39182866366 (failed, then passed alone): tv96g ("weeklyGrowth adds the +0.2"), tv85r, tv76; builder runs under
-  load: tv91n, tv59; full run 39185815500 (beta 2): tv98d, tv85f, tv101c; v1.07 beta 3: tv101c (M23) again · watch in CI.
 - 2026-10-19 · tv95p now budgets MAIN-THREAD image decodes (≤25/s) + a 90/s all-thread guard: 401 moved most decodes to worker threads, which the old all-thread count still charged.
 - 2026-10-19 · tv105x and tv100l had checks that passed by chance (a fighter's name in an unrelated task; a digit somewhere in the banner) · narrowed.
-- tools/testslot.sh (the 2-at-a-time wrapper) hangs / exits 144 · builders run `node tools/smartreg.js -j 1` instead.
-- `node tools/smartreg.js --dry` sometimes starts a full run instead of printing the plan; smartreg runs of 5+ tests have hit 10-minute
-  agent timeouts · run smaller groups.
 - tonl100a timed out at 100 s once when run by hand (passes in CI).
 - (fixed in v1.08c) tools/i18n/prep.sh wrapped code (Error text, shader, console concat, CSS/font/HTML fragments, SFX credits, home names,
   recorder keys): wrap.js now skips them and test ti18nwrap guards it. A NEW false-wrap shape → add a rule or an `i18n:skip-begin` /

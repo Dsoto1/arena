@@ -6,7 +6,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const SH=process.argv[3]||'';
 const open=async(off)=>{console.log('open',Date.now()%100000);const pg=await b.newPage({viewport:{width:1440,height:900}});await pg.route(/fonts\./,r=>r.abort());pg.on('console',m=>{if(/^st /.test(m.text()))console.log(m.text())});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
   await pg.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');if(o)localStorage.setItem('flavius_v105recoff','1')},off?1:0);
-  await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+  await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
   await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));window.W8=W8;if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();for(let i=0;i<40&&typeof newWorld!=='function';i++)await W8(100);await W8(500);
     newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_(),pm=me();w.welc99=1;pm.coin=5000;for(let k=0;k<5&&CUR_MODAL;k++){CUR_MODAL.done(null);await W8(200)}
     if(!w.night&&typeof makeNight==='function')makeNight();w.week=6;MGR.tab='ludus';MGR_REDRAW();await W8(600)});return pg};
@@ -147,7 +147,7 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
     /* a real decision: a house asks to borrow a bench fighter */
     const R=w.mgrs.find(m=>!m.isPlayer&&!m.sica);const bench=depthOf(pm).bench[0]||rosterOf(pm)[rosterOf(pm).length-1];
     w.offers=[{id:'o1',kind:'loan',mid:R.id,gid:bench.id,fee:9,weeks:3,until:w.week+1}];
-    openManager();await W8(400);MGR.tab='ludus';MGR_REDRAW();await W8(500);
+    openManager();await __W.mgrDrawn();MGR.tab='ludus';MGR_REDRAW();await W8(500);
     const rows=[...document.querySelectorAll('#desk99 .dk99row')];
     const dueOf=t=>{const r=rows.find(x=>x.textContent.includes(t));return r?(r.querySelector('.due99')||{}).textContent||'':null};
     out.rowCount=rows.length;out.consDue=dueOf('Superbus');out.loanDue=dueOf(R.ludus);out.rowsTxt=rows.map(r=>r.textContent.slice(0,60));
@@ -166,7 +166,7 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
     const R=w.mgrs.find(m=>!m.isPlayer&&!m.sica);const g1=freeAgents()[0];g1.contract={mgr:R.id,wage:20,weeks:8,since:w.week};w.of104={[g1.id]:{wage:20,weeks:8,bonus:0,pledge:false,rudis:false,wk:w.week-1}};of104Answer(w,w.week); /* signed elsewhere */
     sendLetter(w,{key:'pj104-x',kind:'letter',from:'the Consilium',adv:'consilium',seal:'🏛',title:'The road to the Superbus',until:w.week+2,body:'<p>x</p><div class="acts"><button class="btn tksm" type="button" data-po104="bracket">The bracket</button></div>'});
     w.week=8; /* v1.06 (393): loan asks stop at the week-8 deadline */const bench=depthOf(pm).bench[0]||rosterOf(pm)[rosterOf(pm).length-1];w.offers=[{id:'o1',kind:'loan',mid:R.id,gid:bench.id,fee:9,weeks:3,until:w.week+1}];
-    openManager();await W8(400);MGR.tab='ludus';MGR_REDRAW();await W8(500);
+    openManager();await __W.mgrDrawn();MGR.tab='ludus';MGR_REDRAW();await W8(500);
     const rows=()=>[...document.querySelectorAll('#desk99 .dk99row')];const mail=()=>[...document.querySelectorAll('#desk99 .dk99lt>details.mail')];
     const info=[g1.name,'Superbus'];
     out.infoInTasks=info.filter(t=>rows().some(r=>r.textContent.includes(t)));
@@ -187,7 +187,7 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
   /* ---------- B59: "asks for a fight" clears when he is entered, returns when withdrawn ---------- */
   const r=await pg.evaluate(async()=>{const w=W_(),pm=me();const out={};if(!w.night||!w.night.bouts||!w.night.bouts.length){makeNight()}w.letters=[];
     const n=w.night;const bo=n.bouts.find(b=>!b.done);const g=rosterOf(pm).find(x=>!x.inj);for(const b2 of n.bouts)b2.ents=b2.ents.filter(x=>x!==g.id);g.wantFight={week:w.week};
-    openManager();await W8(400);MGR.tab='ludus';MGR_REDRAW();await W8(500);
+    openManager();await __W.mgrDrawn();MGR.tab='ludus';MGR_REDRAW();await W8(500);
     const ask=()=>[...document.querySelectorAll('#desk99 .dk99row')].some(r=>r.textContent.includes(g.name)&&/asks for a fight/.test(r.textContent));
     out.before=ask();
     bo.ents.push(g.id);MGR_REDRAW();await W8(400);out.entered=ask();out.keep=!!g.wantFight;
@@ -200,11 +200,13 @@ const shot=async(pg,n)=>{if(SH)try{await pg.screenshot({path:SH+'/'+n+'.png'})}c
 {const pg=await open(false);
   /* ---------- B54: Recruiting keeps the options panel in view ---------- */
   for(const vw of [1440,700]){await pg.setViewportSize({width:vw,height:900});
-  const r=await pg.evaluate(async()=>{const w=W_();const out={};me().coin=5000;openManager();await W8(500);MGR.tab='recruit';MGR.view=null;MGR_REDRAW();await W8(500);
+  const r=await pg.evaluate(async()=>{const w=W_();const out={};me().coin=5000;openManager();await __W.mgrDrawn();MGR.tab='recruit';MGR.view=null;MGR_REDRAW();await W8(500);
     const mb=document.getElementById('mBody');const rows=[...document.querySelectorAll('#mgrBody [data-mg="sel"]')];const row=rows[Math.min(rows.length-1,12)];row.scrollIntoView({block:'center'});await W8(200);
-    row.click();await W8(900);
     const card=()=>{const b=document.querySelector('#mgrBody [data-rec98a]');return b?b.closest('.card2'):null};
     const inView=()=>{const c=card();if(!c)return null;const r=c.getBoundingClientRect(),b=mb.getBoundingClientRect();return {top:Math.round(r.top-b.top),h:Math.round(r.height),box:Math.round(b.height),ok:r.top>=b.top-2&&(r.height>b.height?r.top<b.top+b.height*.5:r.bottom<=b.bottom+2)}};
+    /* v1.08c: 378's B54 scrolls once the page has re-drawn (MutationObserver → rAF → smooth scroll); under load that ends after a
+       fixed 900 ms → wait for the panel to come into view (4 s; a panel that never arrives still fails below, with the WAIT line) */
+    row.click();await __W.until(()=>{const v=inView();return v&&v.ok&&Math.abs(mb.scrollTop-(mb.__s54??-1))<1?true:(mb.__s54=mb.scrollTop,false)},'B54 options panel in view, scroll settled',4000);
     out.sel=inView();
     const t0=card().getBoundingClientRect().top;const s0=mb.scrollTop;
     const btn=document.querySelector('#mgrBody [data-rec98a="watch"]');btn.click();await W8(900);

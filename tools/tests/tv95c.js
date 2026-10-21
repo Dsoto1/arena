@@ -7,10 +7,10 @@
    · 10 phone 390: no sideways scroll · 11 no new entries in the 00c error log. SHOT=dir saves screenshots. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(String(e.message)));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown'),localStorage.setItem('flavius_v106b1off','1'),localStorage.setItem('flavius_v105yoff','1')});
-await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const W=ms=>pg.waitForTimeout(ms);const SHOT=process.env.SHOT||'';
 const mark=await pg.evaluate(()=>ERR92.n);
-await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));let sd=95;Math.random=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};window.__seed=s=>{sd=s};if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
+await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));let sd=95;Math.random=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};window.__seed=s=>{sd=s};if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await __W.mgrDrawn();
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;me().coin=3000;MGR.tab='ludus';MGR_REDRAW();await W8(400)});
 /* ---- 8a · starters: three slots, one bout each, the week is filled from them ---- */
 const r8=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};const R=rosterOf(m);
@@ -120,7 +120,9 @@ const r7=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   o.stripped=[h.eq94.R,h.eq94.L,...h.eq94.a,...h.eq94.o].filter(Boolean).length===0&&arm94H(m).sh.length===sh0+n0&&(h.re95||[]).length===n0;
   const P=arm94H(m).sh[0];const r=arm94Put(m,P.id,{g:h.id,z:'auto'});o.refused=!!r.no&&/hurt/.test(r.no);
   MGR.ar94=h.id;arm94Redraw();await W8(300);o.warn=!!document.querySelector('#ar94 .ar94warn')||(typeof arm105Own==='function'&&!arm105Own(m).includes(h)); /* v1.05 B76 (391): a hurt fighter is no longer listed in the Armory at all */
-  delete h.inj;MGR.tab='ludus';MGR_REDRAW();await W8(500);const it=[...document.querySelectorAll('#desk99 .dk99row .tx')].find(x=>/healed/.test(x.textContent));o.todo=!!it&&it.textContent.includes(h.name);
+  delete h.inj;MGR.tab='ludus';MGR_REDRAW();await W8(500);/* v1.08c: the desk may GROUP tasks of one kind (another empty-handed fighter that week → one "— 2 things" row whose sub-items are
+     not .tx lines; 2 of 20 runs) → find the task by its Re-equip button on the desk and read the row that holds it */
+  const rb=document.querySelector(`#desk99 [data-re95="${h.id}"]`),it=rb&&(rb.closest('.dk99row')||rb.parentElement);o.todo=!!it&&/healed/.test(it.textContent)&&it.textContent.includes(h.name);{const x=[...document.querySelectorAll('#desk99 .dk99row .tx')].find(x=>/healed/.test(x.textContent));o.oldTx=!!x&&x.textContent.includes(h.name)}if(!o.todo||!o.oldTx)o.desk=[...document.querySelectorAll('#desk99 .dk99row')].map(r=>r.textContent.replace(/\s+/g,' ').slice(0,90));
   const bt=document.querySelector(`[data-re95="${h.id}"]`);o.btn=!!bt;if(bt)bt.click();await W8(400);o.back=[h.eq94.R,h.eq94.L,...h.eq94.a,...h.eq94.o].filter(Boolean).length===n0&&!h.re95;o.dbg=[n0,[h.eq94.R,h.eq94.L,...h.eq94.a,...h.eq94.o].filter(Boolean).length,h.re95,h.eq94.h,m.id,!!h.inj];
   o.todoGone=![...document.querySelectorAll('#desk99 .dk99row .tx')].some(x=>/healed/.test(x.textContent)&&x.textContent.includes(h.name));return o});
 ok(r7.tab&&r7.notInRoster&&r7.inTab,'7 the Armory is its own tab, not in the Roster '+JSON.stringify(r7));ok(r7.stripped,'7 a hurt fighter\'s gear goes to the shelf at once '+JSON.stringify(r7));ok(r7.refused&&r7.warn,'7 only fit fighters can be equipped');

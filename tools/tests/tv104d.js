@@ -8,11 +8,11 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const open=async(W,H,off)=>{const pg=await b.newPage({viewport:{width:W,height:H}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
   await pg.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');if(o)localStorage.setItem('flavius_v104doff','1')},off?1:0);
-  await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+  await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
   await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));window.W8=W8;if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();for(let i=0;i<40&&typeof newWorld!=='function';i++)await W8(100);await W8(500);
     newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_(),pm=me();w.welc99=1;pm.coin=900;for(let k=0;k<5&&CUR_MODAL;k++){CUR_MODAL.done(null);await W8(200)}
     for(const g of rosterOf(pm)){g.inj=null;g.fat=10;g.restWk=null;g.severed=[];g.ord87=null;g.morale=80}
-    window.RM_MARK=typeof ERR92!=='undefined'?ERR92.n:0;menuHide();openManager('infirm');await W8(800);MGR.view=null;
+    window.RM_MARK=typeof ERR92!=='undefined'?ERR92.n:0;menuHide();openManager('infirm');await __W.mgrDrawn();MGR.view=null;
     window.J_END=async()=>{const w=W_();for(const bo of w.night.bouts)bo.done=true;w.pend=[];w.special=null;const hold=setInterval(()=>{if(CUR_MODAL)CUR_MODAL.done(null)},150);let r;try{r=await endWeek()}catch(e){r='ERR '+e}clearInterval(hold);await W8(300);return r};
     window.GO=async t=>{MGR.tab=t;MGR.view=null;MGR_REDRAW();await W8(500)}});return pg};
 const ev=(pg,f,a)=>pg.evaluate(f,a);
@@ -115,7 +115,7 @@ ok(mw,'match week warning');
 /* ---------- 390 px ---------- */
 const ph=await b.newPage({viewport:{width:390,height:844}});await ph.route(/fonts\./,r=>r.abort());ph.on('pageerror',e=>errs.push(e.message));
 await ph.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await ph.goto('file://'+process.argv[2]);await ph.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+await require('./_wait').boot(ph,{menu:false,seed:1});await ph.goto('file://'+process.argv[2]);await ph.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const p=await ph.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();for(let i=0;i<40&&typeof newWorld!=='function';i++)await W8(100);await W8(500);
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;W_().welc99=1;for(let k=0;k<5&&CUR_MODAL;k++){CUR_MODAL.done(null);await W8(200)}const g=rosterOf(me())[0];g.inj={until:W_().week+2,label:'a cut',pen:1};MGR.inf90=g.id;
   openManager('infirm');MGR.tab='infirm';MGR_REDRAW();await W8(800);const el=document.querySelector('.w104');const pl=document.querySelector('.w104plates');

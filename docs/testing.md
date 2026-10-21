@@ -9,13 +9,51 @@ are in CLAUDE.md §5 — read those first.
 ```sh
 sh build.sh                                # must print SYNTAX_OK
 node tools/smartreg.js tv93i tonl92        # named tests only (the normal way while building)
-node tools/smartreg.js --dry               # what a change-aware run would pick
-REGJ=1 node tools/smartreg.js <names>      # one worker (online tests are steadier alone)
+node tools/smartreg.js --dry               # what a change-aware run would pick (prints, never runs, writes nothing)
+REGJ=1 node tools/smartreg.js <names>      # one worker (online tests are steadier alone; same as -j 1)
 sh tools/runreg.sh                         # the plain full runner (the lead, at release)
 ```
 
 - `smartreg` tests a snapshot (`.regpage.html`), so you can keep building; it re-runs a failure alone (FLAKY when it then
-  passes), and keeps its state in `tools/regstate.json` / `tools/regmap.json` (commit them with a release).
+  passes), and keeps its state in `tools/regstate.json` / `tools/regmap.json.gz` (v1.08c: gzipped; a plain regmap.json is read
+  only when there is no .gz). A CI FULL run commits both back to the branch ("regression state from run N [skip ci]", the absorb
+  job + tools/ci/absorb.js), so pull before your next push; locally, `git checkout tools/regstate.json tools/regmap.json.gz` before
+  a commit.
+- `--dry` prints the plan, why a test runs (`changed by: …` names the file), and `FULL because: …` when a plan run would be full
+  (no full run recorded, no coverage map, a src file removed, the build order of existing files changed — nothing else). A test not
+  run for 7+ days is `stale` (the oldest few join a run); it no longer turns every run into a full one. build.sh and smartreg.js are
+  not global deps (a new module reaches the tests through its own top-level shape).
+- **Test slots (v1.08c, replaces tools/testslot.sh):** every test process smartreg starts holds one of `REGSLOTS` (default 2) slots
+  shared by every smartreg on the box (`flock` on /tmp/flavius-reg-slot-N, held by a tiny holder process; the kernel frees it when
+  the runner dies, even by SIGKILL). Over that limit a worker waits ("waiting for a test slot … slot 0: pid P tv… since …") and
+  gives up after `REGSLOTWAIT` s (default 1200, exit 75). `REGSLOTS=0` = no limit. Every test also runs under `timeout -s KILL`.
+- **CI by name:** Actions → regression → Run workflow with `tests` (names) and `repeat` (N): only those tests, each shard running
+  its share N times; the report prints `REPEAT <test> p/N` and fails on any first-try failure (the 20× flaky proof).
+
+## Waits and seeded worlds (tools/tests/_wait.js, v1.08c)
+
+A test never sleeps a fixed time before reading state; it waits for the state, and a wait that times out says which state it waited
+for: `WAIT <what> timed out after N ms {dump}` (S phase/turn/busy, SPEED, modal, PACE96, CAM, Z99F/Z100, AIM106 figs/tmap/raf,
+V108, A93 sync, MGR tab, the element at the point).
+
+```js
+const T=require('./_wait');
+await T.boot(pg,{seed:1});        // before goto: webdriver/firstrun init (menu:false leaves that to the test) + in-page __W
+await T.turnReady(pg);            // a human turn in action/choice, no window, not busy
+await T.boardIdle(pg);            // nothing pending: PACE96 depth/dirty/raf, CAM.raf, Z99F, Z100 settle, V108 torch build, AIM106 rAF
+await T.aimReady(pg,['__A','__B'],[pt]);   // the targets recorded in AIM106.figs (+ tmap) after the last drawLayers93, canvas on top at pt
+await T.popupSettled(pg);         // no window / ask dialog, the 40 ms a11y93 sync has run
+const m=await T.saveMark(pg); …; await T.saveDone(pg,m,'career');   // BUS 'save' since the mark
+await T.spritesReady(pg); await T.mgrDrawn(pg,'#mgrBody');
+/* inside pg.evaluate: await __W.mgrDrawn(), __W.turnReady(), __W.boardIdle(), __W.frames(2), __W.until(()=>cond,'what',ms) */
+```
+
+**Seeded worlds (R1, his 1a — test side only):** with `seed` set, `boot` seeds `Math.random` and wraps `newWorld` once the game
+script has run: during the call `Date.now` returns a fixed epoch (world id `c…` and fighter ids fixed), `Math.random` is a fresh
+seeded stream and the event dice RNG is put aside → the SAME world every run, whatever ran before. An event started without a seed
+gets one from the boot seed. A test that needs a later step deterministic (a week end) seeds `Math.random` itself around it (tv95c,
+tv104d). `seed:false` = waits only. A new Manager test boots with a seed; when a seeded world lacks what a test needs, pick the
+fighter / house by a property (as tv85f does), never by `[0]` of a random list.
 - A new test goes into `tools/tests/` and into the `DEFAULT` list of `tools/runreg.sh`.
 - Pass = the test prints `ERRS []` and exits 0. Convention: collect failed expectations in `MISS [...]`, page errors in `ERRS [...]`.
 - Tests that need the main menu set `navigator.webdriver=false` and `localStorage flavius_firstrun='shown'` in an init script,

@@ -6,10 +6,10 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const pg=await b.newPage({viewport:{width:1300,height:900}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_v104doff','1') /* v1.04: 351-v104ward replaces these rules — tv104d covers them */});
-await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};
 /* ---------- 1 · advisor levels by start type ---------- */
-o.lv=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
+o.lv=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await __W.mgrDrawn();
   const lv=()=>council83(W_()).map(a=>a.lv);const cm=d=>({type:'custom',mgr:{name:'T',ludus:'LT',city:'Roma',color:'#c0433a',p:{...MGR_PRESETS.balanced[1]},portrait:{},diff:d}});const r={};
   newWorld(cm('normal'));r.custom=lv();r.hCustom=rec98HrsMax(W_());r.xCustom=rec101Base(rec101Own(W_()))+4*(adv98Lv(W_())-1);
   newWorld(cm('easy'));r.easy=lv();r.hEasy=rec98HrsMax(W_());r.xEasy=rec101Base(rec101Own(W_()))+4*(adv98Lv(W_())-1);

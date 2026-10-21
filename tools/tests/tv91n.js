@@ -19,7 +19,7 @@ const settle=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,
 /* ======== 1. Play Now: the Night option, the look, the lights, the flicker ======== */
 {const ctx=await b.newContext({viewport:{width:1440,height:900}});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-  const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await pg.goto(URL0);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+  const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto(URL0);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
   /* the option in the setup, then Begin Event */
   const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}
     openSetup(true);for(let i=0;i<40&&!document.getElementById('oNight91');i++)await W8(100);const sel=document.getElementById('oNight91');const r={sel:!!sel,inOpts:!!(sel&&sel.closest('.optfold,.pn100opt'))};
@@ -85,7 +85,7 @@ const settle=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,
 /* ======== 2. Manager: the second bout, Match Week, the square at dusk ======== */
 {const ctx=await b.newContext({viewport:{width:1440,height:900}});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-  const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await pg.goto(URL0);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+  const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto(URL0);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
   const M=await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}catch(e){}window.travelOK=()=>true;window.travelBlock=()=>false;
     newWorld({type:'pre',key:MGR_PRE[0].key});const w=W_();me().coin=300;w.night.travel={cost:0,paid:true};w.night.god76=null;
     const n=w.night.bouts.filter(b=>b.tier!=='spc100').map(b=>!!boutCfg(b,true).night);/* v1.0: the week's specials sit on top of Bouts I-III */const d=document.createElement('div');d.innerHTML=nightHTML();const cards=[...d.querySelectorAll('.card2.bout:not(.spc100)')].slice(0,3);
@@ -107,7 +107,7 @@ const settle=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,
 /* ======== 3. Online: the host's Day/Night reaches both screens (mock, two windows) ======== */
 {const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_tally102off','1');localStorage.setItem('flavius_onlcd83','0');localStorage.removeItem('flavius_onltest89')});
-  const open=async(n,first)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);if(first)await p.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});return p};
+  const open=async(n,first)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await require('./_wait').boot(p,{menu:false,seed:false}); /* online windows: never two seats on one Math.random stream */await p.goto(URL0);if(first)await p.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});return p};
   const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});return ONL.acct.id},[name,cls]);
   const until=async(p,fn,arg,ms=20000)=>{for(let t0=Date.now();Date.now()-t0<ms;){if(await p.evaluate(fn,arg))return true;await p.waitForTimeout(150)}return false};
   const A=await open('A',true),B=await open('B');await setup(A,'Alpha','hero');await setup(B,'Beta','soldier');
