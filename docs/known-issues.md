@@ -5,13 +5,14 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-20 · v1.08 beta (his screenshot, Safari, night, Lighting Full): round dark DISC shadows under some figures (spearman, small figure, horned helm); not reproduced in Chromium; 409 hardened (torch casts only from 399 shadow cells, paired by identity, others skipped → V108.st.figSkip). Untested path: custom-gear device-rendered shadows. Ask him: discs gone on Lighting Light? custom characters?
 - 2026-10-20 · beta 4: "a bear corpse 2–3 tiles big" (his screenshot, Safari 26 / Mac / DPR 2) is NOT reproduced in Chromium — every
   system beast's corpse draws at the living scale (tv107g 5). 404 now checks the cut and the drawn size and falls back to the lying still
   (console warning "404: the … corpse drew at …×"); confirm on his Safari in the next beta.
 - 2026-10-18 · tools/art/anim100b/make.js l106 run today bakes DIFFERENT beast shadow sheets than the committed v1.06a ones (moechus/valencia:
   cell 56×18, anchor y 47 vs 58×28, y 11 — the shadow sits above its anchor); the lit sheets come out byte-identical. Check l106.js's shadow
   crop before any beast re-bake (398 kept the committed shadow sheets).
-- 2026-10-17 · 3D minis, beasts and crowd look soft/blurry (not drawn at devicePixelRatio) · v1.06 (E6a).
+- 2026-10-17 · 3D minis, beasts and crowd look soft/blurry · figures + beasts: 2× sheets on big screens since v1.08b; Safari board still 1× when slow (1.5× trial waiting on his recordings); crowd + City walkers + Studio/online tokens stay 1×.
 
 ## Game — accepted limitations
 - 2026-10-19 · City Square (402): beasts to the pens are only lion / bear / wolf / viper (the kinds with a 3D figure); a Studio character in
@@ -47,5 +48,4 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - A commit that only touches tools/deploy (e.g. release.sh's advert shot) starts no regression run · dispatch the full run by hand.
 
 ## Waiting on him
-- v1.07 shipped 2026-10-20 (release/v1.07 + main) → he runs `bash flavius.sh release`.
 - Safari board sharpness (406 W1): built = cap 1.5× → 1× when slow; ANSWERED 2026-10-20 (4b): try 1.5× after the v1.08b sharper sheets, measure on his Mac. Figures fuzzy (his note 2026-10-20) → v1.08b. Safari CONFIRMED on his Mac 2026-10-20 (v1.07, Slow): 52.6 / 55 fps, p50 17 ms (was 4.5 fps); the auto-drop went to 1× (tools/plans/v107/perf/safari-v107-*).
