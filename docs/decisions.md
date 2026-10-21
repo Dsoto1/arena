@@ -807,3 +807,9 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   ("one level a season", 2026-10-16 → one free promotion a winter), the Recruiter's winter letters, the off-season team drill (2026-10-17)
   and that week's checklist/tasks. Kept: rudis only after the Winter festival (2026-10-17), buildings in My Ludus (room 5 shows that card).
   Split: v1.09 shell + rooms 1/2/6/10 → v1.09a rooms 3/4/5/7/8 + goals → v1.09b Winter Classic → v1.09c Saturnalia + rudis.
+- Decided 2026-10-21 (his approved roadmap, tools/plans/ROADMAP.md, all recommended choices Q1B–Q9B, Q6C): next = v1.08c STABILITY &
+  TOOLING (CI semantic waits, i18n prep false wraps, smartreg --dry, testslot.sh, letter-version update parsing, bake reproducibility,
+  render/cache invalidation map, measured perf baselines) BEFORE shipping v1.09 Winter Quarters; then v1.10 arena foundation (one
+  invalidation owner, an Auto visual-quality profile keeping manual controls, small proven wrapper consolidation, budgets), v1.11 tactical UX,
+  v1.12 first hour, v1.13 Living Ludus + Annals as career memory, v1.14 Creator sharing (after definitions/versioning). Direction only:
+  each release still needs its NOTES plan + his go.
