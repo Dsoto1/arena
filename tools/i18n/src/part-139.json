@@ -1,0 +1,410 @@
+[
+ {
+  "k": "Winter Quarters: the house rooms",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Council review with one free promotion each winter, Renown & perks, and winter building works ready at week 1",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "A fresh intake of young tirones each winter, and a winter camp for the whole house",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Three Consilium goals a season, paid in Renown",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Council review",
+  "w": "414-v109a.js:38"
+ },
+ {
+  "k": "Council",
+  "w": "414-v109a.js:38"
+ },
+ {
+  "k": "Renown & perks",
+  "w": "414-v109a.js:39"
+ },
+ {
+  "k": "Winter market",
+  "w": "414-v109a.js:41"
+ },
+ {
+  "k": "Winter camp",
+  "w": "414-v109a.js:42"
+ },
+ {
+  "k": "Camp",
+  "w": "414-v109a.js:42"
+ },
+ {
+  "k": "Finish in the top {0} of the league",
+  "w": "414-v109a.js:64"
+ },
+ {
+  "k": "Win {0} bouts",
+  "w": "414-v109a.js:64"
+ },
+ {
+  "k": "A fighter of yours gains {0} overall",
+  "w": "414-v109a.js:64"
+ },
+ {
+  "k": "A tiro (20 or younger) wins a bout for the house",
+  "w": "414-v109a.js:64"
+ },
+ {
+  "k": "🎯 The Consilium's goals: {0} of {1} met{2}.",
+  "w": "414-v109a.js:76"
+ },
+ {
+  "k": "— +{0} Renown",
+  "w": "414-v109a.js:76"
+ },
+ {
+  "k": "Consilium goals",
+  "w": "414-v109a.js:77"
+ },
+ {
+  "k": "🔭 <b>The winter intake:</b> {0} tirones aged 18–20 come looking for a ludus.",
+  "w": "414-v109a.js:82"
+ },
+ {
+  "k": "🏛 {0} ({1}) is promoted to level {2}.",
+  "w": "414-v109a.js:93"
+ },
+ {
+  "k": "Finished #{0} of {1} · {2} pts",
+  "w": "414-v109a.js:96"
+ },
+ {
+  "k": "{0} graded signings · {1} tirones this winter",
+  "w": "414-v109a.js:96"
+ },
+ {
+  "k": "{0} rating band-ups · best fighter {1}",
+  "w": "414-v109a.js:97"
+ },
+ {
+  "k": "{0} wounds healed · {1} in the ward",
+  "w": "414-v109a.js:97"
+ },
+ {
+  "k": "Treasury {0} · wages {1} a week",
+  "w": "414-v109a.js:98"
+ },
+ {
+  "k": "Morale {0} · {1} contract asks",
+  "w": "414-v109a.js:98"
+ },
+ {
+  "k": "Top level.",
+  "w": "414-v109a.js:101"
+ },
+ {
+  "k": "Level 2 is bought: ⬆ Train in Your ludus.",
+  "w": "414-v109a.js:101"
+ },
+ {
+  "k": "⬆ level {0}",
+  "w": "414-v109a.js:103"
+ },
+ {
+  "k": "⬆ Promote to {0}",
+  "w": "414-v109a.js:103"
+ },
+ {
+  "k": "a great of the sand offers to stay, at level 3 — whoever holds that seat steps aside",
+  "w": "414-v109a.js:105"
+ },
+ {
+  "k": "One level a season: this promotion is his rise for season {0}.",
+  "w": "414-v109a.js:106"
+ },
+ {
+  "k": "One free promotion this winter, for an advisor who met his record. It counts as his rise for season {0}.",
+  "w": "414-v109a.js:106"
+ },
+ {
+  "k": "Season {0} · your advisors and their records",
+  "w": "414-v109a.js:107"
+ },
+ {
+  "k": "promoted",
+  "w": "414-v109a.js:107"
+ },
+ {
+  "k": "can rise",
+  "w": "414-v109a.js:107"
+ },
+ {
+  "k": "advisors",
+  "w": "414-v109a.js:107"
+ },
+ {
+  "k": "🏛 The Council",
+  "w": "414-v109a.js:108"
+ },
+ {
+  "k": "🏺 A great could stay",
+  "w": "414-v109a.js:109"
+ },
+ {
+  "k": "The council is stronger for the winter.",
+  "w": "414-v109a.js:110"
+ },
+ {
+  "k": "One of us has earned it. Choose.",
+  "w": "414-v109a.js:110"
+ },
+ {
+  "k": "No one has earned a laurel yet. Next winter.",
+  "w": "414-v109a.js:110"
+ },
+ {
+  "k": "The lanista’s name: Renown and perks",
+  "w": "414-v109a.js:114"
+ },
+ {
+  "k": "perk points",
+  "w": "414-v109a.js:114"
+ },
+ {
+  "k": "❄ Winter works: the {0} {1} — ready at week 1 of season {2}.",
+  "w": "414-v109a.js:121"
+ },
+ {
+  "k": "❄ Winter works: one project this winter, ready at week 1 of season {0}.",
+  "w": "414-v109a.js:121"
+ },
+ {
+  "k": "The buildings — one winter project",
+  "w": "414-v109a.js:122"
+ },
+ {
+  "k": "levels",
+  "w": "414-v109a.js:122"
+ },
+ {
+  "k": "building",
+  "w": "414-v109a.js:122"
+ },
+ {
+  "k": "The same buildings as Your ludus. In the season a level takes as many weeks as its number.",
+  "w": "414-v109a.js:123"
+ },
+ {
+  "k": "Your builders are on the {0} — one project at a time.",
+  "w": "414-v109a.js:129"
+ },
+ {
+  "k": "❄ Winter works begin on the {0} {1} ({2}) — ready at week 1.",
+  "w": "414-v109a.js:132"
+ },
+ {
+  "k": "🏗 The {0} {1} will be ready at week 1.",
+  "w": "414-v109a.js:133"
+ },
+ {
+  "k": "✍ Offer",
+  "w": "414-v109a.js:143"
+ },
+ {
+  "k": "The Recruiter’s pick",
+  "w": "414-v109a.js:144"
+ },
+ {
+  "k": "The winter intake — tirones looking for a ludus",
+  "w": "414-v109a.js:145"
+ },
+ {
+  "k": "tirones",
+  "w": "414-v109a.js:145"
+ },
+ {
+  "k": "🔭 The winter intake",
+  "w": "414-v109a.js:146"
+ },
+ {
+  "k": "No intake this winter.",
+  "w": "414-v109a.js:146"
+ },
+ {
+  "k": "Grades are your Recruiter’s read. Recruiting stays open for every free agent.",
+  "w": "414-v109a.js:147"
+ },
+ {
+  "k": "My pick: {0}. Young, and he fits the house.",
+  "w": "414-v109a.js:148"
+ },
+ {
+  "k": "Nothing here for us this winter.",
+  "w": "414-v109a.js:148"
+ },
+ {
+  "k": "Strength & stamina",
+  "w": "414-v109a.js:151"
+ },
+ {
+  "k": "Strength and Speed · fatigue cleared",
+  "w": "414-v109a.js:151"
+ },
+ {
+  "k": "Strength and Tactics",
+  "w": "414-v109a.js:152"
+ },
+ {
+  "k": "Mend & rest",
+  "w": "414-v109a.js:153"
+ },
+ {
+  "k": "fatigue cleared · +5 morale",
+  "w": "414-v109a.js:153"
+ },
+ {
+  "k": "Bond the house",
+  "w": "414-v109a.js:154"
+ },
+ {
+  "k": "+4 morale · +4 loyalty",
+  "w": "414-v109a.js:154"
+ },
+ {
+  "k": "⛺ The winter camp: {0}, {1} fighters.",
+  "w": "414-v109a.js:166"
+ },
+ {
+  "k": "morale +{0}",
+  "w": "414-v109a.js:173"
+ },
+ {
+  "k": "loyalty +{0}",
+  "w": "414-v109a.js:173"
+ },
+ {
+  "k": "in the ward",
+  "w": "414-v109a.js:173"
+ },
+ {
+  "k": "goes",
+  "w": "414-v109a.js:173"
+ },
+ {
+  "k": "stays in the ward",
+  "w": "414-v109a.js:173"
+ },
+ {
+  "k": "The house trains through the winter — one focus for everyone",
+  "w": "414-v109a.js:176"
+ },
+ {
+  "k": "go",
+  "w": "414-v109a.js:176"
+ },
+ {
+  "k": "⛺ The focus",
+  "w": "414-v109a.js:177"
+ },
+ {
+  "k": "✓ The camp is held",
+  "w": "414-v109a.js:178"
+ },
+ {
+  "k": "⛺ Hold the camp",
+  "w": "414-v109a.js:178"
+ },
+ {
+  "k": "Every fit fighter goes; the hurt stay in the ward. No drill injuries. Unheld, the camp runs when the season begins.",
+  "w": "414-v109a.js:179"
+ },
+ {
+  "k": "📜 The season turn, then the camp",
+  "w": "414-v109a.js:180"
+ },
+ {
+  "k": "Season turn (OVR)",
+  "w": "414-v109a.js:180"
+ },
+ {
+  "k": "Good work. They will feel it in week 1.",
+  "w": "414-v109a.js:181"
+ },
+ {
+  "k": "Give me a focus and I will have them ready.",
+  "w": "414-v109a.js:181"
+ },
+ {
+  "k": "Season {0}: {1} of {2} goals met · +{3} Renown.",
+  "w": "414-v109a.js:185"
+ },
+ {
+  "k": "🎯 The Consilium's goals for season {0}",
+  "w": "414-v109a.js:186"
+ },
+ {
+  "k": "+{0} Renown",
+  "w": "414-v109a.js:186"
+ },
+ {
+  "k": "Paid when the season ends. The Lanista Milestones still count apart.",
+  "w": "414-v109a.js:187"
+ },
+ {
+  "k": "The winter camp runs: {0}.",
+  "w": "414-v109a.js:188"
+ },
+ {
+  "k": "{0} promoted to level {1}",
+  "w": "414-v109a.js:191"
+ },
+ {
+  "k": "{0} advisor{1} can rise",
+  "w": "414-v109a.js:191"
+ },
+ {
+  "k": "No advisor ready to rise",
+  "w": "414-v109a.js:191"
+ },
+ {
+  "k": "Renown {0} · {1} perk point{2}",
+  "w": "414-v109a.js:192"
+ },
+ {
+  "k": "{0} ready at week 1",
+  "w": "414-v109a.js:193"
+ },
+ {
+  "k": "One winter project, ready at week 1",
+  "w": "414-v109a.js:193"
+ },
+ {
+  "k": "{0} tirones in the winter intake",
+  "w": "414-v109a.js:194"
+ },
+ {
+  "k": "Held: {0}",
+  "w": "414-v109a.js:195"
+ },
+ {
+  "k": "Choose a focus ({0})",
+  "w": "414-v109a.js:195"
+ },
+ {
+  "k": "Season {0}: the schedule and 3 goals",
+  "w": "414-v109a.js:196"
+ },
+ {
+  "k": "Not this one — one promotion a winter, for a met record.",
+  "w": "414-v109a.js:230"
+ },
+ {
+  "k": "⛺ The camp is held: {0} fighters.",
+  "w": "414-v109a.js:232"
+ },
+ {
+  "k": "arena · v1.09a",
+  "w": "01-head.html"
+ }
+]

@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.09a',ic:'🏛',t:_T('Winter Quarters: the house rooms'),hi:[_T('Council review with one free promotion each winter, Renown & perks, and winter building works ready at week 1'),_T('A fresh intake of young tirones each winter, and a winter camp for the whole house'),_T('Three Consilium goals a season, paid in Renown')]},
   {v:'1.09',ic:'❄',t:_T('Winter Quarters'),hi:[_T('Manager: the off-season is now Winter Quarters, a set of rooms to visit before the new season'),_T('Awards night, the Quaestor’s accounts with every coin of the season by category, Personnel, and Next season'),_T('Seal the Quaestor’s Ledger in winter; Begin opens the new season')]},
   {v:'1.08c',ic:'🛠',t:_T('Steadier under the hood'),hi:[_T('Smoother board on Safari when the figure bases are off'),_T('Fix: a fallen beast can no longer be drawn several tiles big')]},
   {v:'1.08b',ic:'⚔',t:_T('Sharper fighters, real metal'),hi:[_T('Helmets, plates, greaves and blades catch the sun like metal'),_T('Gladiators and beasts are drawn twice as sharp on laptops and desktops'),_T('Fix: the red aim outline sits exactly on Zora and on zoomed figures')]},
