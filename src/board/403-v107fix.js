@@ -21,6 +21,10 @@
      tooltip / bubble layout per frame, no render loop.
    • F3 (beta 4) THE OUTLINE FROM WHAT IS REALLY DRAWN: with bases off, 321 draws a base-less cell lower than the call 396 recorded, so
      the ring floated above the figure and took the cut base in (bigger). The figure's NATIVE draw calls are recorded now (see F3 below).
+   • F4 (v1.08b, his "zora outline was slightly off") THE OUTLINE FOLLOWS THE SHARPENED CELL: 346 sharpens an up-scaled cell IN PLACE (unsharp mask on RGB
+     and alpha) — when the budget is spent or the zoom is easing it draws the cell unsharpened and sharpens it a few frames later, on the SAME canvas. The
+     cache key named the canvas, so the ring built from the unsharpened alpha stayed (≈2 % of its pixels off the sharpened body, most on Zora, the biggest
+     cell, zoomed / DPR 2). The key now carries the cell's sharpen state (img._sh103), so the ring is rebuilt once when the cell is sharpened.
    Kill switch localStorage flavius_v107fixoff=1 (every item back to the beta-2 path). Stats F107.st. Test tv107f.
    ===================================================================== */
 const F107={off:(()=>{try{return localStorage.getItem('flavius_v107fixoff')==='1'}catch(e){return false}})(),
@@ -29,7 +33,7 @@ const F107={off:(()=>{try{return localStorage.getItem('flavius_v107fixoff')==='1
 if(!F107.off&&typeof aim106Outline==='function'){const base=aim106Outline;
   aim106Outline=function(fig){if(F107.off)return base.apply(this,arguments);
     const ops=fig.ops,o0=ops[0].m,dpr=window.devicePixelRatio||1;
-    const key=ops.map(o=>[aim106Id(o.img),o.sx,o.sy,o.sw,o.sh,o.dx.toFixed(1),o.dy.toFixed(1),o.dw.toFixed(1),o.dh.toFixed(1),o.m.slice(0,4).map(v=>v.toFixed(3)).join(','),(o.m[4]-o0[4]).toFixed(1),(o.m[5]-o0[5]).toFixed(1),(o0[4]%1).toFixed(1),(o0[5]%1).toFixed(1)].join(':')).join('|')+'#f107';
+    const key=ops.map(o=>[aim106Id(o.img),o.sx,o.sy,o.sw,o.sh,o.dx.toFixed(1),o.dy.toFixed(1),o.dw.toFixed(1),o.dh.toFixed(1),o.m.slice(0,4).map(v=>v.toFixed(3)).join(','),(o.m[4]-o0[4]).toFixed(1),(o.m[5]-o0[5]).toFixed(1),(o0[4]%1).toFixed(1),(o0[5]%1).toFixed(1),o.img._sh103||0].join(':')).join('|')+'#f107';
     let sp=AIM106.oc.get(key);
     if(!sp){const bb=fig.bb,R=Math.max(1.25,F107.w*dpr),pad=Math.ceil(R)+2,w=Math.ceil(bb.x1-bb.x0)+2*pad,h=Math.ceil(bb.y1-bb.y0)+2*pad;if(w<=0||h<=0||w>4096||h>4096)return;
       const ox=Math.floor(bb.x0)-pad,oy=Math.floor(bb.y0)-pad;
