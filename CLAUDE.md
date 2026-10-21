@@ -65,7 +65,7 @@ flavius/   (repo root; build.sh and tools/*.py resolve paths from their own loca
   share/                self-contained share builds (assets inlined as data URIs), flavius-rule-arena-vX.YY.html
   tools/
     release.sh          ONE COMMAND per release: sh tools/release.sh X.YY (version check → build → hygiene → full regression → share + smoke → zip)
-    smartreg.js         adaptive regression (change-aware; see §5); regcov.js = its coverage preload; regstate.json/regmap.json = its committed state
+    smartreg.js         adaptive regression (change-aware; see §5); regcov.js = its coverage preload; regstate.json/regmap.json.gz = its committed state
     runreg.sh           plain full regression runner (Playwright tests in tools/tests/)
     tests/*.js          one test per file; each takes the page path as argv[2]
     mkshare.py          python3 tools/mkshare.py 0.54  → share/flavius-rule-arena-v0.54.html (run from project root)
@@ -151,9 +151,10 @@ One global script; files are concatenated in order. Later modules patch earlier 
 
 ## 5. Testing
 - **While building:** `node tools/smartreg.js <names>` (only the tests your change reaches; `--dry` prints the plan). Never the whole suite locally.
-  smartreg is change-aware (V8 coverage maps tools/regstate.json + tools/regmap.json, committed with the release); a failure is re-run alone
-  (pass → FLAKY, never hidden). Pass = `exit=0` and `ERRS []`. Details: docs/testing.md.
-- Tests wait for `window.FLAVIUS_READY` after `goto`. Tests that need the main menu set `navigator.webdriver=false` and
+  smartreg is change-aware (V8 coverage maps tools/regstate.json + tools/regmap.json.gz; a CI full run commits them back with [skip ci] —
+  pull before pushing); a failure is re-run alone (pass → FLAKY, never hidden). It holds the 2 machine-wide test slots itself (REGSLOTS,
+  flock; testslot.sh is retired). Pass = `exit=0` and `ERRS []`. Details: docs/testing.md.
+- Tests wait for `window.FLAVIUS_READY` after `goto`, then wait for STATES, never fixed sleeps (tools/tests/_wait.js; Manager tests boot a seeded world). Tests that need the main menu set `navigator.webdriver=false` and
   `localStorage flavius_firstrun='shown'` in an init script.
 - `t12` plays every event (shards t12a/b/c). The replay goldens (`node tools/replay/check.js`, test treplay101) catch rule drift; re-record with
   `--update` ONLY after a deliberate rule/AI change. Rules in Node: tools/node (test tnode101).

@@ -8,13 +8,14 @@ const {chromium}=require('playwright');const fs=require('fs'),path=require('path
 const shots=path.resolve(__dirname,'../plans/v104/shots');try{fs.mkdirSync(shots,{recursive:true})}catch(e){}
 const open=async(W,H,off)=>{const pg=await b.newPage({viewport:{width:W,height:H}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
   await pg.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.removeItem('flavius_r104sort');if(o)localStorage.setItem('flavius_v104roff','1')},off?1:0);
-  await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+  await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
   await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();for(let i=0;i<40&&typeof newWorld!=='function';i++)await W8(100);await W8(500);
     newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_(),pm=me();w.welc99=1;pm.coin=3000;w.train='off';w.tplan=null;
     for(let k=0;k<5&&CUR_MODAL;k++){CUR_MODAL.done(null);await W8(200)}
-    for(let i=0;i<6;i++){const g=genGlad({ovr:46+i*6});if(!gById(g.id))w.glads.push(g);g.alive=true;g.contract={mgr:pm.id,wage:askWage(g),weeks:8+i,since:w.week}}
+    /* v1.08c: the six recruits from a seeded stream (a modal wait above lets cosmetic draws in): their names (rnd: the dice RNG put aside, Math.random seeded) set the list column width, and with it whether B1's six plates fit one row (560 px container query) */
+    const keepR=RNG;RNG=null;__W.seed(1041);for(let i=0;i<6;i++){const g=genGlad({ovr:46+i*6});if(!gById(g.id))w.glads.push(g);g.alive=true;g.contract={mgr:pm.id,wage:askWage(g),weeks:8+i,since:w.week}}RNG=keepR;
     for(const g of rosterOf(pm)){g.inj=null;g.fat=10;g.restWk=null;g.severed=[];g.contract.weeks=Math.max(g.contract.weeks,6);g.morale=80}
-    menuHide();openManager('roster');await W8(900);MGR.view=null});return pg};
+    menuHide();openManager('roster');await __W.mgrDrawn();MGR.view=null});return pg};
 const ev=(pg,f,a)=>pg.evaluate(f,a);
 const redraw=pg=>ev(pg,async()=>{MGR_REDRAW();await new Promise(r=>setTimeout(r,500))});
 

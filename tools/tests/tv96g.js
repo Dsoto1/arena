@@ -2,9 +2,9 @@
    deterministic from (world id, fighter id, absolute week); every house; shows in "From your Doctores"; no new entries in the error log. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(String(e.message)));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const mark=await pg.evaluate(()=>ERR92.n);
-const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
+const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await __W.mgrDrawn();
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_(),m=me();const o={};
   const cg=w.glads.filter(g=>g.alive&&g.contract);o.houses=new Set(cg.map(g=>g.contract.mgr)).size;
   let n=0,hit=0;const by={};for(let wk=1;wk<=60;wk++)for(const g of cg){n++;const k=grow96Roll(w,g,wk);if(k){hit++;by[k]=(by[k]||0)+1}}

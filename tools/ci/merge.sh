@@ -1,7 +1,8 @@
 #!/bin/sh
 # tools/ci/merge.sh <branch> — merge a builder agent's worktree branch and resolve the files every agent touches:
 #   build.sh: the agent's new module(s) are added just before src/core/08-setup.js; tools/runreg.sh: DEFAULT test lists united;
-#   CLAUDE.md: both sides kept; tools/regstate.json, tools/regmap.json, flavius-arena.html: ours (rebuilt / re-recorded).
+#   CLAUDE.md: both sides kept; tools/regstate.json, tools/regmap.json.gz, flavius-arena.html: ours (rebuilt / re-recorded);
+#   tools/regmap.json (the plain map before v1.08c's .gz): removed.
 # Any other conflict stops the script for a hand merge. Then rebuilds (SYNTAX_OK) and commits.
 set -e; B="$1"; [ -n "$B" ] || { echo "usage: sh tools/ci/merge.sh <branch>"; exit 2; }
 cd "$(dirname "$0")/../.."
@@ -12,13 +13,15 @@ git merge-base --is-ancestor "$B" HEAD 2>/dev/null || [ -f .git/MERGE_HEAD ] || 
 C=$(git diff --name-only --diff-filter=U)
 [ -z "$C" ] && { sh build.sh | tail -1; git add -A flavius-arena.html 2>/dev/null; git commit -qm "Merge $B [skip ci]" --allow-empty >/dev/null 2>&1 || true; echo "merged $B (no conflicts)"; exit 0; }
 python3 - "$B" <<'PY'
-import re,subprocess,sys
+import os,re,subprocess,sys
 B=sys.argv[1]
 files=subprocess.run(['git','diff','--name-only','--diff-filter=U'],capture_output=True,text=True).stdout.split()
 def side(f,s):return subprocess.run(['git','show',f':{s}:{f}'],capture_output=True,text=True).stdout
 left=[]
 for f in files:
-  if f in('tools/regstate.json','tools/regmap.json','flavius-arena.html'):
+  if f=='tools/regmap.json':
+    subprocess.run(['git','rm','-q','--cached','--ignore-unmatch',f]);os.path.exists(f) and os.remove(f);continue
+  if f in('tools/regstate.json','tools/regmap.json.gz','flavius-arena.html'):
     subprocess.run(['git','checkout','--ours',f]);continue
   t=open(f).read()
   if f=='build.sh':
@@ -45,5 +48,6 @@ for f in files:
 if left:print('HAND MERGE NEEDED:',' '.join(left));sys.exit(3)
 PY
 OUT=$(sh build.sh | tail -1); echo "$OUT"; [ "$OUT" = "SYNTAX_OK" ] || { echo "build failed after merge"; exit 1; }
-git add -A build.sh tools/runreg.sh CLAUDE.md tools/regstate.json tools/regmap.json flavius-arena.html
+git add -A build.sh tools/runreg.sh CLAUDE.md tools/regstate.json flavius-arena.html
+for f in tools/regmap.json.gz tools/regmap.json; do git add -A "$f" 2>/dev/null || true; done
 git commit -qm "Merge $B [skip ci]" && echo "merged $B"

@@ -1,7 +1,7 @@
 /* v0.59: Credits (D.Soto) + Prototype tab, the main-menu mute, Zora's mini, the turn sweep, Naumachia by the rulebook (layout, deck, boarding, water pinwheel), Chariot Racing (snake draft with chariot cards, tokens on the chariot), Rivalry Week (v1.04: byes 4 & 12, week-10 letter, week 11, three-bout card + background rivalries) */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 await pg.click('#mainMenu [data-proto]');await pg.waitForFunction(()=>!!document.querySelector('#protoBox h2')&&document.querySelectorAll('#protoBox .crl a').length>0,null,{timeout:30000}).catch(()=>{});await pg.waitForTimeout(200);
 o.cred=await pg.evaluate(()=>({h:document.querySelector('#protoBox h2').textContent,links:document.querySelectorAll('#protoBox .crl a').length,qr:!!document.querySelector('#protoBox .crqr')}));

@@ -102,8 +102,11 @@ const run=async(speed,zoom)=>{const q=await open();await start(q,11);
     SPEED=speed;const iv=setInterval(()=>{if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null)},200);
     await W8(1000);
     if(zoom){for(let k=0;k<5;k++){S.zoomIn=!S.zoomIn;draw();await W8(250)}S.zoomIn=true;draw()}
-    for(let i=0;i<900&&!(S.over||S.turnNo>5);i++)await W8(100);
-    offT();log=lb;clearInterval(iv);SPEED='pause';
+    /* v1.08c: pause AT a turn boundary (BUS turn.begin of turn 6, before any move starts). Pausing from a 100 ms poll could land
+       inside a CPU move's fast96Batch (Fast: PACE96.depth 1, the paused step never returns) → "4d nothing left pending" failed (CI). */
+    await new Promise(res=>{let done=false;const fin=()=>{if(done)return;done=true;SPEED='pause';offP();clearTimeout(tm);clearInterval(chk);res()};
+      const offP=BUS.on('turn.begin',e=>{if(e.turnNo>5)fin()});const tm=setTimeout(fin,90000);const chk=setInterval(()=>{if(S.over)fin()},100)});
+    offT();log=lb;clearInterval(iv);
     const o={L,R,turn:S.turnNo,zoomed:z99Zoomed()};
     for(let i=0;i<100&&(S.busy||CAM.raf||(typeof PACE96!=='undefined'&&PACE96.depth));i++)await W8(100);
     await W8(3000);const st0={...Z99.stats},t0=TILES96.builds,ar0=AR92.n;

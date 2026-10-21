@@ -3,13 +3,13 @@
    house medicus, temple offerings, kitchen/shrine rooms, contract clauses, Darling of the Arena, rival letters) */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown'),localStorage.setItem('flavius_v105yoff','1');localStorage.setItem('flavius_v104doff','1') /* v1.04: 351-v104ward replaces this layout / these rules — tv104d covers them */});
-await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await require('./_wait').boot(pg,{menu:false,seed:1});await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 /* A · the save hub */
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);const r={};
   menuHide();startEvent({ev:'democritus',loc:6,seats:[{cls:'hero',cpu:false},{cls:'soldier',cpu:true}],opts:{spect:0}});await W8(2500);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(150)}
   matchSlotPut('2',matchSnapshot('Test match'));S.over=true;
-  openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;saveWorld(true);await W8(600);if(CUR_MODAL)CUR_MODAL.done(null);await W8(400);
+  openManager();await __W.mgrDrawn();newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;saveWorld(true);await W8(600);if(CUR_MODAL)CUR_MODAL.done(null);await W8(400);
   menuShow();await W8(900);r.cont=!document.querySelector('#mainMenu [data-mm="continue"]')&&document.querySelector('#mainMenu [data-mm="saves"]').parentElement===document.querySelector('#mainMenu [data-mm="settings"]').parentElement; /* no Continue on the menu; Saves beside Settings */r.saves=!!document.querySelector('#mainMenu [data-mm="saves"]');
   savesHub76('matches');await W8(700);r.hub=!!document.querySelector('[data-hub76="careers"]');document.querySelector('[data-hub76="careers"]').click();await W8(500);r.car=!!document.querySelector('[data-hubcar]');
   if(CUR_MODAL)CUR_MODAL.done(null);await W8(400);return r});
@@ -20,7 +20,7 @@ await pg.click('[data-pick76="1"]');await pg.waitForTimeout(400);await pg.click(
 await pg.click('[data-who76="2:0"]');await pg.waitForTimeout(400);o.b.you=await pg.evaluate(()=>!CFG.seats[2].cpu);
 const d0=await pg.evaluate(()=>CFG.seats[3].diff);await pg.click('[data-mind76="3"]');await pg.waitForTimeout(400);o.b.mind=await pg.evaluate(d=>CFG.seats[3].diff!==d,d0);
 /* C, D, F, G · Manager */
-o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
+o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await __W.mgrDrawn();newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
   const w=W_(),m=me();m.coin=500;const ros=rosterOf(m);const r={};const q=s=>document.querySelector(s);const home=travelHome(m);const away=[1,2,3,4,5,6,7,8,9,10,11,12].find(i=>i!==home&&LOCATIONS[i]);
   const mine=new Set(ros.map(g=>g.id));for(const b of w.night.bouts)b.ents=b.ents.filter(id=>!mine.has(id));
   /* G · the ward and its beds */

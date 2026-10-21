@@ -1,16 +1,24 @@
 # Regression on GitHub Actions (tools/ci/plan.js decides full / smart / skip within the minute budget in tools/ci/budget.json).
 # Each shard: build the page, run its tests with smartreg (-j 2, shared browsers, failures re-run alone → FLAKY), upload reg.txt.
-# The report job merges the shards into one summary + a CIRESULT line (read from the logs by tools/ci/absorb.js).
+# The report job merges the shards into one summary + a CIRESULT line. A FULL run then commits the shards' smartreg state back to the
+# branch (absorb job, tools/ci/absorb.js, his 3a 2026-10-21): tools/regstate.json + tools/regmap.json.gz, "[skip ci]", rebased/retried.
+# workflow_dispatch: mode (auto | smart | full) or tests (names) + repeat (each shard runs its share N times — the flaky-test proof).
 name: regression
 on:
   push:
     branches: ['claude/**']   # main + release/vX.YY only ever receive commits that already passed here
-    paths-ignore: ['CLAUDE.md', 'docs/**', 'tools/deploy/**', '.github/workflows/deploycheck.yml', 'tools/art/**', 'tools/plans/**', 'share/**', 'tools/regstate.json', 'tools/regmap.json', 'tools/reg.txt', 'site/**']
+    paths-ignore: ['CLAUDE.md', 'docs/**', 'tools/deploy/**', '.github/workflows/deploycheck.yml', 'tools/art/**', 'tools/plans/**', 'share/**', 'tools/regstate.json', 'tools/regmap.json', 'tools/regmap.json.gz', 'tools/reg.txt', 'site/**']
   workflow_dispatch:
     inputs:
       mode:
         description: 'auto | smart | full'
         default: 'auto'
+      tests:
+        description: 'run only these tests (space-separated names); overrides mode'
+        default: ''
+      repeat:
+        description: 'with tests: run each N times (pass counts in the report)'
+        default: '1'
 concurrency:
   group: regression-${{ github.ref }}
   cancel-in-progress: true
@@ -24,6 +32,7 @@ jobs:
     outputs:
       mode: ${{ steps.p.outputs.mode }}
       matrix: ${{ steps.p.outputs.matrix }}
+      repeat: ${{ steps.p.outputs.repeat }}
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 2 }
@@ -35,6 +44,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           EVENT: ${{ github.event_name }}
           INPUT_MODE: ${{ github.event.inputs.mode }}
+          INPUT_TESTS: ${{ github.event.inputs.tests }}
+          INPUT_REPEAT: ${{ github.event.inputs.repeat }}
           COMMIT_MSG: ${{ github.event.head_commit.message }}
           NODE_PATH: /tmp/ci/node_modules
         run: node tools/ci/testlist.js && node tools/ci/plan.js   # testlist: every test file must be in runreg DEFAULT
@@ -68,16 +79,25 @@ jobs:
           NODE_PATH: /tmp/ci/node_modules
           CI_SHARD: ${{ matrix.shard }}
           REGNOEXPAND: '1'
+          REPEAT: ${{ needs.plan.outputs.repeat }}
         run: |
-          rc=0; node tools/smartreg.js -j 2 ${{ matrix.tests }} || rc=$?
+          rc=0; n=${REPEAT:-1}; : > /tmp/regall.txt
+          for i in $(seq 1 "$n"); do
+            node tools/smartreg.js -j 2 ${{ matrix.tests }} || rc=$?
+            cat tools/reg.txt >> /tmp/regall.txt
+          done
+          if [ "$n" -gt 1 ]; then cp /tmp/regall.txt tools/reg.txt; fi
           awk '/^== /{b=$0"\n";next}{b=b $0"\n"}/^exit=/{if($0!="exit=0"||b~/ERRS \[[^\]]/)printf "%s",b}' tools/reg.txt | tail -c 20000
           grep -E '^(FLAKY|SUMMARY)' tools/reg.txt || true
           exit $rc
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: reg-${{ matrix.shard }}
-          path: tools/reg.txt
+          name: reg-${{ matrix.shard }}-${{ github.run_attempt }}   # per attempt: a re-run of failed jobs must not read the old attempt's file as its own
+          path: |
+            tools/reg.txt
+            tools/regstate.json
+            tools/regmap.json.gz
           retention-days: 7
   server:
     needs: plan
@@ -99,3 +119,38 @@ jobs:
       - uses: actions/download-artifact@v4
         with: { path: /tmp/reg }
       - run: node tools/ci/report.js /tmp/reg "${{ needs.plan.outputs.mode }}"
+  absorb:
+    # his 3a: a FULL run commits the shards' smartreg state back ([skip ci]: no new run; paths-ignore covers the files too).
+    # Re-applied on the branch's newest commit and retried, so it never overwrites a concurrent push.
+    needs: [plan, test]
+    if: always() && needs.plan.outputs.mode == 'full' && needs.test.result != 'cancelled' && github.ref_type == 'branch' && startsWith(github.ref_name, 'claude/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: '${{ github.sha }}', fetch-depth: 1 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - uses: actions/download-artifact@v4
+        with: { path: /tmp/reg }
+      - name: commit regression state
+        env:
+          BR: ${{ github.ref_name }}
+        run: |
+          node tools/ci/absorb.js --order > /tmp/order.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for i in 1 2 3 4 5; do
+            if ! git fetch --depth=1 origin "$BR"; then sleep $((i*5)); continue; fi
+            git reset -q --hard FETCH_HEAD
+            node tools/ci/absorb.js /tmp/reg full /tmp/order.txt || exit 0
+            git add -A tools/regstate.json tools/regmap.json.gz
+            git rm -q --cached --ignore-unmatch tools/regmap.json
+            if git diff --cached --quiet; then echo 'absorb: nothing new'; exit 0; fi
+            git commit -q -m "regression state from run ${{ github.run_id }} [skip ci]"
+            if git push origin "HEAD:refs/heads/$BR"; then echo "absorb: pushed (try $i)"; exit 0; fi
+            sleep $((i*5))
+          done
+          echo 'absorb: could not push after 5 tries (the branch kept moving)'; exit 1

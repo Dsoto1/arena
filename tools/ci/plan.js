@@ -1,5 +1,7 @@
 /* tools/ci/plan.js — decides what the GitHub Actions regression runs (see budget.json). Prints GitHub outputs:
-   mode=full|smart|skip, matrix={"include":[{shard,tests}]}, why=<text>. Minutes used this billing cycle = the billable
+   mode=full|smart|named|skip, matrix={"include":[{shard,tests}]}, repeat=N, why=<text>. v1.08c: smart = exactly the tests smartreg's
+   --dry plan names (FULL only when its header says FULL — "stale" is a per-test reason now, not a full run); named = the dispatch
+   input `tests` (+ `repeat`, R2 2026-10-18): only those, each shard running its share N times. Minutes used this billing cycle = the billable
    Linux time of this repo's workflow runs since the cycle started (GET /actions/runs + /timing, GITHUB_TOKEN actions:read). */
 const fs=require('fs'),path=require('path'),{execSync}=require('child_process');
 const R=path.join(__dirname,'..','..');const B=JSON.parse(fs.readFileSync(path.join(__dirname,'budget.json'),'utf8'));
@@ -19,22 +21,28 @@ const tm=t=>Math.max(20,((st.tests[t]||{}).time||60));
 function shard(tests,n){const s=[...Array(n)].map((_,i)=>({shard:i+1,t:[],load:0}));for(const t of [...tests].sort((a,b)=>tm(b)-tm(a))){const m=s.reduce((a,b)=>a.load<=b.load?a:b);m.t.push(t);m.load+=tm(t)/B.jobs}
   return s.filter(x=>x.t.length).map(x=>({shard:x.shard,tests:x.t.join(' '),est:Math.round(x.load)}))}
 function smartPlan(){let out='';try{out=execSync('node tools/smartreg.js --dry',{cwd:R,encoding:'utf8',timeout:120000})}catch(e){out=String(e.stdout||'')}
+  const head=out.split('\n').find(l=>l.startsWith('smartreg run'))||'';console.log('smartreg --dry: '+head);
+  if(!head){console.log('no plan from smartreg --dry → every test\n'+out.slice(0,2000));return ALL}
   const t=[];for(const line of out.split('\n')){const m=line.match(/^\s+(warming|changed|new|flaky|pinned|stale|rotation|full):\s+(.+)$/);if(m)t.push(...m[2].trim().split(/\s+/))}
-  if(/· FULL ·|stale/.test(out.split('\n')[0]||''))return ALL;return [...new Set(t)].filter(x=>ALL.includes(x))}
+  if(/· FULL ·/.test(head)){console.log((out.match(/FULL because:.*/)||[''])[0]);return ALL}return [...new Set(t)].filter(x=>ALL.includes(x))}
 (async()=>{const ev=process.env.EVENT||'push',want=(process.env.INPUT_MODE||'auto'),msg=process.env.COMMIT_MSG||'';
   let chg='';try{chg=execSync('git diff --name-only HEAD~1 HEAD',{cwd:R,encoding:'utf8'})}catch(e){}
   const release=/\[full\]/i.test(msg)||/^version\.json$/m.test(chg);
   const U=await usedMin().catch(e=>({used:0,today:0,err:String(e)}));
   const left=B.month_cap-U.used,daysLeft=Math.max(1,Math.ceil((cycleEnd()-now)/864e5)),allow=Math.max(0,Math.floor((left-B.reserve)/daysLeft));
   let mode,tests,why;const exclusive=day<=B.exclusive_until;
-  if(want==='full'||exclusive||release){mode='full';tests=ALL;why=want==='full'?'manual full run':exclusive?`exclusive week (until ${B.exclusive_until})`:'release'}
+  const named=(process.env.INPUT_TESTS||'').trim().split(/\s+/).filter(Boolean),repeat=Math.max(1,Math.min(50,parseInt(process.env.INPUT_REPEAT||'1',10)||1));
+  if(named.length&&ev==='workflow_dispatch'){const bad=named.filter(x=>!ALL.includes(x)&&!fs.existsSync(path.join(R,'tools','tests',x+'.js')));if(bad.length)console.log('unknown tests ignored: '+bad.join(' '));
+    mode='named';tests=named.filter(x=>!bad.includes(x));why=`named tests${repeat>1?' ×'+repeat:''}`}
+  else if(want==='full'||exclusive||release){mode='full';tests=ALL;why=want==='full'?'manual full run':exclusive?`exclusive week (until ${B.exclusive_until})`:'release'}
   else{mode='smart';tests=want==='smart'||want==='auto'?smartPlan():ALL;why='spread: tests this change reaches'}
-  let n=mode==='full'?B.shards_full:Math.max(1,Math.min(B.shards_full,Math.ceil(tests.reduce((a,t)=>a+tm(t),0)/B.jobs/B.shard_target_s)));
-  const sh=shard(tests,n);const cost=sh.reduce((a,s)=>a+Math.ceil(s.est/60)+B.setup_min,0);
+  const rep1=mode==='named'?repeat:1;
+  let n=mode==='full'?B.shards_full:Math.max(1,Math.min(B.shards_full,tests.length,Math.ceil(rep1*tests.reduce((a,t)=>a+tm(t),0)/B.jobs/B.shard_target_s)));
+  const sh=shard(tests,n);const cost=sh.reduce((a,s)=>a+Math.ceil(rep1*s.est/60)+B.setup_min,0);
   if(!tests.length){mode='skip';why='nothing this change reaches'}
   else if(B.public){/* public repo: minutes are free */}
   else if(cost>left-(mode==='full'&&release?0:B.reserve)){mode='skip';why=`over the cycle budget (left ${left} min, needs ~${cost})`}
   else if(mode==='smart'&&U.today+cost>allow&&!exclusive){mode='skip';why=`over today's allowance (${U.today}+${cost} > ${allow} min/day) — run it locally`}
   const sum=`mode ${mode} · ${why} · ${tests.length} tests in ${sh.length} shards · est ${cost} min · used this cycle ${U.used}/${B.month_cap} (today ${U.today}) · allowance ${allow}/day for ${daysLeft} days${U.err?' · usage unknown: '+U.err:''}`;
-  console.log(sum);const o=process.env.GITHUB_OUTPUT;if(o){fs.appendFileSync(o,`mode=${mode}\nmatrix=${JSON.stringify({include:sh.map(s=>({shard:s.shard,tests:s.tests}))})}\nwhy=${sum}\n`)}
+  console.log(sum);const o=process.env.GITHUB_OUTPUT;if(o){fs.appendFileSync(o,`mode=${mode}\nrepeat=${rep1}\nmatrix=${JSON.stringify({include:sh.map(s=>({shard:s.shard,tests:s.tests}))})}\nwhy=${sum}\n`)}
   if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,`### Regression plan\n${sum}\n`)})();
