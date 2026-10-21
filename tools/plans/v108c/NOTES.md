@@ -238,3 +238,9 @@ tolerance, tool versions recorded · 7a fix the bs101Off read-back in v1.08c, th
 proof holds the release.
 Builders: A = CI + smartreg + testslot + flaky tests (items 1, 3, 4) · B = i18n prep + letter versions + bake check (items 2, 5, 6) ·
 C = Safari read-back + baselines + cache map doc (items 0, 7, 8) after the corpse fix lands.
+
+## Beta (2026-10-21, his Safari 26.6, 1.5× fixed, Lighting Light, bases off)
+Recordings: z1 22.3 fps p95 122 ms · z1.4 42.7 fps p95 55 ms (v1.08b z1.4: 30.5 / 95). 412 works on Safari (worker on, 0 fail, 0 sync; main-thread
+bs101Off reads 18 → 2–3). New cost: createImageBitmap(canvas) ≈ 16 ms a call on Safari (≈0.45 s / 10 s at z1) → v1.10 Auto quality.
+His answers: 1a figures show no shadows after load until Lighting is switched off/on → bug, investigating (new in v1.08c or not decides
+whether it holds the ship) · 2a ship v1.08c; the copy cost + z1 slow frames go to v1.10.
