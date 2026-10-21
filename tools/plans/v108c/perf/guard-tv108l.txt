@@ -1,0 +1,20 @@
+ok   0 a paused match on Pompeii, Lighting Full, all three v1.08 items on {"human":true,"pillars":12,"mode":"full","sig":"111"}
+ok   1 the prototype (407) and its runtime metal pass are not in the build {"proto":"undefined","metal":"undefined","knob":false,"cell":false,"beast":false,"st":false,"flag":true}
+ok   2 night: the sand by the rim torches is warmer than with flavius_v108torchoff (R−B) {"tiles":14,"on":33,"off":6.3,"torches":9,"lights":9,"night":true}
+ok   3a day: the torch item changes no pixel (no pools by day) {"same":true,"again":true,"matDepth":true,"pools":0,"night":false}
+ok   3b day: the board carries the baked grain / planks / depth (differs with mat + depth killed) {"same":true,"again":true,"matDepth":true,"pools":0,"night":false}
+ok   4a Lighting Off = none of v1.08 (pixels identical to all three killed) {"offItems":[false,false,false],"offSame":true,"light":{"mode":"light","tl":false,"lastF":true,"items":true},"full":{"mode":"full","tl":true,"merged":16,"steps":6}}
+ok   4b Light = the pools + flames, no torch shadow layer {"mode":"light","tl":false,"lastF":true,"items":true}
+ok   4c Full = the torch shadows of the pillars merged into the static layer {"mode":"full","tl":true,"merged":16,"steps":6}
+ok   5a the flames flicker normally {"fSame":false,"pSame":false,"flick":true}
+ok   5b Reduce motion: flicker factors and a pool's pixels identical 0.4 s apart {"fSame":true,"pSame":true,"flick":false}
+ok   7a zoom ease at night: the grade additions laid in scaled (not re-painted a frame: ≤ 1 sharp re-bake while moving), no torch-layer step while moving {"draws":44,"moving":28,"twSteps":23,"reuse":24,"mvSharp":0,"mvSteps":0,"med":0.3,"p90":2.5,"after":{"sharp":1,"tl":true,"steps":2,"stepMax":2,"scaledLeft":false}}
+ok   7b zoom ease: our work a moving frame median < 1.5 ms, p90 < 4 ms {"med":0.3,"p90":2.5}
+ok   7c the view holds: one sharp re-bake + the torch layer built in pieces (each < 16 ms) {"sharp":1,"tl":true,"steps":2,"stepMax":2,"scaledLeft":false}
+ok   8a night, Full, fighters at the torches: every op 399 draws is a shadow-sheet cell with its pose record; the torch casts them all {"ops":4,"fr":4,"flag":true,"byId":true,"full":true,"torch":true,"n0":4,"s0":0,"rev":[4,0],"rogue":[4,2],"miss":[3,0]}
+ok   8b the same ops in another order = the same torch casts (paired by identity, not index) [4,0]
+ok   8c a round disc / a canvas no pose made among the ops is skipped, never re-aimed [4,2]
+ok   8d an op missing: the others are still cast (all-or-nothing is gone) [3,0]
+ok   6 kill switches flavius_v108torchoff / matoff / depthoff = 189's own pools, nothing baked {"kill":{"torch":true,"mat":true,"depth":true},"sig":"000","items":[false,false,false],"pools":0,"torches":9,"bakes":0}
+MISS []
+ERRS []

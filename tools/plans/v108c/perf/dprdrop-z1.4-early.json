@@ -1,0 +1,204 @@
+{
+ "z": 1.4,
+ "night": "1",
+ "light": "full",
+ "bases": "on",
+ "before": {
+  "dpr": 1,
+  "cv": "970x611",
+  "tw": 78.4,
+  "dropped": true,
+  "stats": {
+   "d3": 559,
+   "g3": 0,
+   "lie": 22,
+   "wait": 16,
+   "none": 0,
+   "base": 0,
+   "built": 3,
+   "insane": 0,
+   "bad": 0,
+   "blind": 0
+  },
+  "bad": [],
+  "beasts": [
+   {
+    "t": "bear",
+    "live": {
+     "css": "101x90.0",
+     "src": "101x90",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "110x120.0",
+     "src": "110x120",
+     "kind": "HTMLCanvasElement"
+    }
+   },
+   {
+    "t": "wolf",
+    "live": {
+     "css": "71x63.0",
+     "src": "71x63",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "73x69.0",
+     "src": "73x69",
+     "kind": "HTMLCanvasElement"
+    }
+   },
+   {
+    "t": "lion",
+    "live": {
+     "css": "150x113.0",
+     "src": "150x113",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "182x159.0",
+     "src": "182x159",
+     "kind": "HTMLCanvasElement"
+    }
+   },
+   {
+    "t": "tholo",
+    "live": {
+     "css": "95x115.0",
+     "src": "95x115",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "157x170.0",
+     "src": "157x170",
+     "kind": "HTMLCanvasElement"
+    }
+   },
+   {
+    "t": "snake",
+    "live": {
+     "css": "65x60.0",
+     "src": "65x60",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "79x66.0",
+     "src": "79x66",
+     "kind": "HTMLCanvasElement"
+    }
+   },
+   {
+    "t": "zora",
+    "live": {
+     "css": "91x102.0",
+     "src": "91x102",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "91x105.0",
+     "src": "91x105",
+     "kind": "HTMLCanvasElement"
+    }
+   }
+  ]
+ },
+ "after": {
+  "dpr": 1,
+  "cv": "970x611",
+  "tw": 78.4,
+  "dropped": true,
+  "stats": {
+   "d3": 853,
+   "g3": 0,
+   "lie": 22,
+   "wait": 16,
+   "none": 0,
+   "base": 0,
+   "built": 3,
+   "insane": 0,
+   "bad": 0,
+   "blind": 0
+  },
+  "bad": [],
+  "beasts": [
+   {
+    "t": "bear",
+    "live": {
+     "css": "101x90.0",
+     "src": "101x90",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "110x120.0",
+     "src": "110x120",
+     "kind": "HTMLCanvasElement"
+    }
+   },
+   {
+    "t": "wolf",
+    "live": {
+     "css": "71x63.0",
+     "src": "71x63",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "73x69.0",
+     "src": "73x69",
+     "kind": "HTMLCanvasElement"
+    }
+   },
+   {
+    "t": "lion",
+    "live": {
+     "css": "150x113.0",
+     "src": "150x113",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "182x159.0",
+     "src": "182x159",
+     "kind": "HTMLCanvasElement"
+    }
+   },
+   {
+    "t": "tholo",
+    "live": {
+     "css": "95x115.0",
+     "src": "95x115",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "157x170.0",
+     "src": "157x170",
+     "kind": "HTMLCanvasElement"
+    }
+   },
+   {
+    "t": "snake",
+    "live": {
+     "css": "65x60.0",
+     "src": "65x60",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "79x66.0",
+     "src": "79x66",
+     "kind": "HTMLCanvasElement"
+    }
+   },
+   {
+    "t": "zora",
+    "live": {
+     "css": "91x102.0",
+     "src": "91x102",
+     "kind": "HTMLCanvasElement"
+    },
+    "dead": {
+     "css": "91x105.0",
+     "src": "91x105",
+     "kind": "HTMLCanvasElement"
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,491 @@
+{
+ "page": "flavius-arena.html",
+ "ls": {
+  "flavius_light106auto": "0",
+  "flavius_v107safariforce": "1",
+  "flavius_v107dpr": "1.5"
+ },
+ "secs": 6,
+ "warm": 3,
+ "flush": false,
+ "load0": {
+  "l1": 3.38,
+  "cpus": 4
+ },
+ "at": "2026-10-21T13:09:27.044Z",
+ "runs": [
+  {
+   "key": "desk-z14-nobase",
+   "cfg": "desk-z14-nobase",
+   "st": {
+    "canv": [
+     "cv:970x611",
+     "fx95:970x611"
+    ],
+    "TW": 78.39999999999999,
+    "dpr": 1,
+    "cv": [
+     970,
+     611
+    ],
+    "z": 1.4,
+    "light": "full",
+    "players": 8
+   },
+   "fps": 37.1,
+   "frame": {
+    "p50": 21.3,
+    "p95": 54.9,
+    "max": 123.2
+   },
+   "over25": 83,
+   "over50": 17,
+   "n": 224,
+   "js": {
+    "p50": 4.1,
+    "p95": 13.7,
+    "max": 71.3,
+    "mean": 5.38
+   },
+   "drawsPerFrame": 0.71,
+   "long": 5,
+   "longMs": 383,
+   "turns": 3,
+   "TW": 78.39999999999999,
+   "z": 1.4,
+   "lay": {
+    "rim": 0.04,
+    "stands": 1.13,
+    "tiles": 0.95,
+    "walls": 0.29,
+    "floor": 0.83,
+    "decals": 2.88,
+    "highlights": 0.03,
+    "pieces": 3.53,
+    "bubbles": 0.02,
+    "overlays": 0.03,
+    "crowdtop": 0,
+    "flavius": 0,
+    "fx": 0.33,
+    "duel": 0.01
+   },
+   "errs": [],
+   "p107": {
+    "bm": 6,
+    "blob": 3,
+    "blobFail": 0,
+    "fallback": 0,
+    "static": 163,
+    "staticScaled": 0,
+    "rebuild": 0,
+    "pieces": 577,
+    "figClip": 0,
+    "wrf": 119,
+    "fxSkip": 164
+   },
+   "fxd": true,
+   "who": null,
+   "fn": null,
+   "cache": [
+    "stands/under 163h/0m paint 0",
+    "stands/deco 163h/0m paint 0",
+    "walls/top 163h/0m paint 0",
+    "walls/light 163h/0m paint 0",
+    "walls/sky 163h/0m paint 0",
+    "decals/wear 323h/5m paint 0.3"
+   ],
+   "z99": "{\"builds\":1,\"hits\":95,\"direct\":12,\"fallback\":0,\"lastMs\":68.20000000018626,\"bitmaps\":32,\"coalesced\":3,\"passes\":4} → {\"builds\":2,\"hits\":257,\"direct\":12,\"fallback\":0,\"lastMs\":48.5,\"bitmaps\":41,\"coalesced\":3,\"passes\":4}",
+   "probe": null,
+   "l106": {
+    "ms": 137.2000000011176,
+    "n": 163,
+    "tStatic": 38.60000000055879,
+    "tFig": 77,
+    "tCont": 21.600000000558794,
+    "builds": 2,
+    "figs": 2236,
+    "contacts": 2291
+   },
+   "mem": {
+    "figSheets": 710.7,
+    "figRowBitmaps": 52.7,
+    "figSheetN": 16,
+    "beastSheets": 35.1,
+    "figCells": 2.1,
+    "figCellN": 100,
+    "beastCells": 0.1,
+    "corpses": 0,
+    "beastClean": 3.3,
+    "w3Bitmaps": 2.1,
+    "pageCanvases": 6.4,
+    "heapMB": 72,
+    "x2": {
+     "on": true,
+     "why": "big"
+    }
+   },
+   "cpu": {
+    "mainPerS": 821,
+    "compPerS": 34,
+    "poolPerS": 0,
+    "mainPerFrame": 22.3
+   },
+   "top": null
+  },
+  {
+   "key": "hd-flat",
+   "cfg": "hd-flat",
+   "st": {
+    "canv": [
+     "cv:1455x917",
+     "fx95:1455x917"
+    ],
+    "TW": 56,
+    "dpr": 1.5,
+    "cv": [
+     1455,
+     917
+    ],
+    "z": 1,
+    "light": "full",
+    "players": 8
+   },
+   "fps": 26.1,
+   "frame": {
+    "p50": 17.2,
+    "p95": 146.3,
+    "max": 200.3
+   },
+   "over25": 49,
+   "over50": 35,
+   "n": 158,
+   "js": {
+    "p50": 0,
+    "p95": 76.2,
+    "max": 158,
+    "mean": 13.66
+   },
+   "drawsPerFrame": 0.36,
+   "long": 31,
+   "longMs": 2601,
+   "turns": 2,
+   "TW": 56,
+   "z": 1,
+   "lay": {
+    "rim": 0.04,
+    "stands": 1.03,
+    "tiles": 0.22,
+    "walls": 0.44,
+    "floor": 2.14,
+    "decals": 25.19,
+    "highlights": 0.02,
+    "pieces": 8.13,
+    "bubbles": 0,
+    "overlays": 0.02,
+    "crowdtop": 0.01,
+    "flavius": 0.27,
+    "fx": 0.25,
+    "duel": 0.02
+   },
+   "errs": [],
+   "p107": {
+    "bm": 2,
+    "blob": 2,
+    "blobFail": 0,
+    "fallback": 0,
+    "static": 57,
+    "staticScaled": 0,
+    "rebuild": 0,
+    "pieces": 228,
+    "figClip": 0,
+    "wrf": 20
+   },
+   "fxd": true,
+   "who": null,
+   "fn": null,
+   "cache": [
+    "stands/under 57h/0m paint 0",
+    "stands/deco 57h/0m paint 0",
+    "walls/top 57h/0m paint 0",
+    "walls/light 57h/0m paint 0",
+    "walls/sky 57h/0m paint 0",
+    "decals/wear 111h/3m paint 0.3"
+   ],
+   "z99": "{\"builds\":0,\"hits\":0,\"direct\":0,\"fallback\":0,\"lastMs\":0,\"bitmaps\":15,\"coalesced\":0} → {\"builds\":0,\"hits\":0,\"direct\":0,\"fallback\":0,\"lastMs\":0,\"bitmaps\":15,\"coalesced\":0}",
+   "probe": null,
+   "l106": {
+    "ms": 69.19999999925494,
+    "n": 57,
+    "tStatic": 12.199999995529652,
+    "tFig": 48.60000000335276,
+    "tCont": 8.400000000372529,
+    "builds": 0,
+    "figs": 798,
+    "contacts": 798
+   },
+   "mem": {
+    "figSheets": 710.7,
+    "figRowBitmaps": 31.4,
+    "figSheetN": 16,
+    "beastSheets": 118.7,
+    "figCells": 0.9,
+    "figCellN": 27,
+    "beastCells": 1,
+    "corpses": 0,
+    "beastClean": 0,
+    "w3Bitmaps": 1.7,
+    "pageCanvases": 12.4,
+    "heapMB": 45,
+    "x2": {
+     "on": true,
+     "why": "big"
+    }
+   },
+   "cpu": {
+    "mainPerS": 597,
+    "compPerS": 25,
+    "poolPerS": 0,
+    "mainPerFrame": 23.1
+   },
+   "top": null
+  },
+  {
+   "key": "hd-z14",
+   "cfg": "hd-z14",
+   "st": {
+    "canv": [
+     "cv:1455x917",
+     "fx95:1455x917"
+    ],
+    "TW": 78.39999999999999,
+    "dpr": 1.5,
+    "cv": [
+     1455,
+     917
+    ],
+    "z": 1.4,
+    "light": "full",
+    "players": 8
+   },
+   "fps": 12.7,
+   "frame": {
+    "p50": 68.6,
+    "p95": 154,
+    "max": 245.2
+   },
+   "over25": 71,
+   "over50": 57,
+   "n": 80,
+   "js": {
+    "p50": 22,
+    "p95": 58.5,
+    "max": 135.8,
+    "mean": 27.41
+   },
+   "drawsPerFrame": 0.86,
+   "long": 49,
+   "longMs": 3881,
+   "turns": 2,
+   "TW": 78.39999999999999,
+   "z": 1.4,
+   "lay": {
+    "rim": 0.1,
+    "stands": 1.09,
+    "tiles": 0.21,
+    "walls": 21.36,
+    "floor": 0.6,
+    "decals": 1.82,
+    "highlights": 0.04,
+    "pieces": 4.56,
+    "bubbles": 0.03,
+    "overlays": 0.03,
+    "crowdtop": 0.01,
+    "flavius": 0,
+    "fx": 0.31,
+    "duel": 0.03
+   },
+   "errs": [],
+   "p107": {
+    "bm": 3,
+    "blob": 2,
+    "blobFail": 0,
+    "fallback": 0,
+    "static": 72,
+    "staticScaled": 0,
+    "rebuild": 0,
+    "pieces": 360,
+    "figClip": 0,
+    "wrf": 24
+   },
+   "fxd": true,
+   "who": null,
+   "fn": null,
+   "cache": [
+    "stands/under 72h/0m paint 0",
+    "stands/deco 72h/0m paint 0",
+    "walls/top 72h/0m paint 0",
+    "walls/light 72h/0m paint 0",
+    "walls/sky 72h/0m paint 0",
+    "decals/wear 141h/3m paint 7.3"
+   ],
+   "z99": "{\"builds\":1,\"hits\":47,\"direct\":8,\"fallback\":0,\"lastMs\":114.3999999994412,\"bitmaps\":24,\"coalesced\":3,\"passes\":4} → {\"builds\":1,\"hits\":119,\"direct\":8,\"fallback\":0,\"lastMs\":114.3999999994412,\"bitmaps\":24,\"coalesced\":3,\"passes\":4}",
+   "probe": null,
+   "l106": {
+    "ms": 78.30000000353903,
+    "n": 72,
+    "tStatic": 10.900000005029142,
+    "tFig": 54.19999999925494,
+    "tCont": 13.199999999254942,
+    "builds": 0,
+    "figs": 1008,
+    "contacts": 1008
+   },
+   "mem": {
+    "figSheets": 710.7,
+    "figRowBitmaps": 32.7,
+    "figSheetN": 16,
+    "beastSheets": 132.8,
+    "figCells": 3.4,
+    "figCellN": 70,
+    "beastCells": 2.8,
+    "corpses": 0,
+    "beastClean": 0,
+    "w3Bitmaps": 3,
+    "pageCanvases": 12.4,
+    "heapMB": 72,
+    "x2": {
+     "on": true,
+     "why": "big"
+    }
+   },
+   "cpu": {
+    "mainPerS": 716,
+    "compPerS": 22,
+    "poolPerS": 0,
+    "mainPerFrame": 59
+   },
+   "top": null
+  },
+  {
+   "key": "hd-z2",
+   "cfg": "hd-z2",
+   "st": {
+    "canv": [
+     "cv:1455x917",
+     "fx95:1455x917"
+    ],
+    "TW": 112,
+    "dpr": 1.5,
+    "cv": [
+     1455,
+     917
+    ],
+    "z": 2,
+    "light": "full",
+    "players": 8
+   },
+   "fps": 2.9,
+   "frame": {
+    "p50": 92.4,
+    "p95": 1511.3,
+    "max": 3351.4
+   },
+   "over25": 31,
+   "over50": 30,
+   "n": 35,
+   "js": {
+    "p50": 42.9,
+    "p95": 80.4,
+    "max": 283.5,
+    "mean": 52.65
+   },
+   "drawsPerFrame": 0.89,
+   "long": 28,
+   "longMs": 2500,
+   "turns": 2,
+   "TW": 112,
+   "z": 2,
+   "lay": {
+    "rim": 0.06,
+    "stands": 2.23,
+    "tiles": 0.3,
+    "walls": 24.24,
+    "floor": 2.19,
+    "decals": 17.26,
+    "highlights": 0.04,
+    "pieces": 10.45,
+    "bubbles": 0.41,
+    "overlays": 0.02,
+    "crowdtop": 0,
+    "flavius": 0.43,
+    "fx": 0.24,
+    "duel": 0.02
+   },
+   "errs": [],
+   "p107": {
+    "bm": 1,
+    "blob": 1,
+    "blobFail": 0,
+    "fallback": 0,
+    "static": 34,
+    "staticScaled": 0,
+    "rebuild": 0,
+    "pieces": 394,
+    "figClip": 0,
+    "wrf": 10
+   },
+   "fxd": true,
+   "who": null,
+   "fn": null,
+   "cache": [
+    "stands/under 33h/1m paint 1.3",
+    "stands/deco 33h/1m paint 0.1",
+    "walls/top 33h/1m paint 3.2",
+    "walls/light 33h/1m paint 1",
+    "walls/sky 34h/0m paint 0",
+    "decals/wear 66h/2m paint 15.7"
+   ],
+   "z99": "{\"builds\":1,\"hits\":43,\"direct\":1,\"fallback\":0,\"lastMs\":121.5,\"bitmaps\":36,\"coalesced\":1,\"passes\":4} → {\"builds\":1,\"hits\":77,\"direct\":1,\"fallback\":0,\"lastMs\":121.5,\"bitmaps\":44,\"coalesced\":1,\"passes\":4}",
+   "probe": null,
+   "l106": {
+    "ms": 540.9999999990687,
+    "n": 34,
+    "tStatic": 349.1000000014901,
+    "tFig": 182.29999999515712,
+    "tCont": 9.600000002421439,
+    "builds": 0,
+    "figs": 476,
+    "contacts": 476
+   },
+   "mem": {
+    "figSheets": 710.7,
+    "figRowBitmaps": 24.3,
+    "figSheetN": 16,
+    "beastSheets": 118.7,
+    "figCells": 2.7,
+    "figCellN": 35,
+    "beastCells": 2.1,
+    "corpses": 0,
+    "beastClean": 0,
+    "w3Bitmaps": 4,
+    "pageCanvases": 12.4,
+    "heapMB": 45,
+    "x2": {
+     "on": true,
+     "why": "big"
+    }
+   },
+   "cpu": {
+    "mainPerS": 117,
+    "compPerS": 8,
+    "poolPerS": 0,
+    "mainPerFrame": 88.6
+   },
+   "top": null
+  }
+ ],
+ "load1": {
+  "l1": 7.99,
+  "cpus": 4
+ }
+}

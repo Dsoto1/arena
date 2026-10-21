@@ -1,0 +1,208 @@
+{
+ "day": {
+  "on": true,
+  "tiers": 4,
+  "loc": 6,
+  "rot": 0,
+  "walls": {
+   "n": 2,
+   "want": [
+    "1,2,3,4,5,6,·,7,8,9,10,11,12",
+    "L,K,J,I,H,G,·,F,E,D,C,B,A"
+   ],
+   "got": [
+    "1,2,3,4,5,6,·,7,8,9,10,11,12",
+    "L,K,J,I,H,G,·,F,E,D,C,B,A"
+   ],
+   "same": true,
+   "back": true
+  },
+  "cover": {
+   "n": 189,
+   "kinds": {
+    "tile": 169,
+    "piece": 12,
+    "beast": 6,
+    "spect": 2
+   },
+   "bad": []
+  },
+  "fires": 4,
+  "ms": {
+   "on": 3.9124999998603016,
+   "off": 3.6124999998137355
+  },
+  "drains": 4,
+  "jugs": 12,
+  "pots": 12,
+  "eagle": 1,
+  "neck": true,
+  "eagleTok": true,
+  "zoom": {
+   "z": 1.4,
+   "det": true,
+   "w0": 86.8,
+   "w1": 86.8,
+   "cy": 39.6,
+   "cx": 485,
+   "wd": 970
+  },
+  "back": true,
+  "drainsOff": 0
+ },
+ "turns": [
+  {
+   "k": 0,
+   "walls": {
+    "n": 2,
+    "want": [
+     "1,2,3,4,5,6,·,7,8,9,10,11,12",
+     "L,K,J,I,H,G,·,F,E,D,C,B,A"
+    ],
+    "got": [
+     "1,2,3,4,5,6,·,7,8,9,10,11,12",
+     "L,K,J,I,H,G,·,F,E,D,C,B,A"
+    ],
+    "same": true,
+    "back": true
+   },
+   "bad": []
+  },
+  {
+   "k": 1,
+   "walls": {
+    "n": 2,
+    "want": [
+     "12,11,10,9,8,7,·,6,5,4,3,2,1",
+     "L,K,J,I,H,G,·,F,E,D,C,B,A"
+    ],
+    "got": [
+     "12,11,10,9,8,7,·,6,5,4,3,2,1",
+     "L,K,J,I,H,G,·,F,E,D,C,B,A"
+    ],
+    "same": true,
+    "back": true
+   },
+   "bad": []
+  },
+  {
+   "k": 2,
+   "walls": {
+    "n": 2,
+    "want": [
+     "12,11,10,9,8,7,·,6,5,4,3,2,1",
+     "A,B,C,D,E,F,·,G,H,I,J,K,L"
+    ],
+    "got": [
+     "12,11,10,9,8,7,·,6,5,4,3,2,1",
+     "A,B,C,D,E,F,·,G,H,I,J,K,L"
+    ],
+    "same": true,
+    "back": true
+   },
+   "bad": []
+  },
+  {
+   "k": 3,
+   "walls": {
+    "n": 2,
+    "want": [
+     "1,2,3,4,5,6,·,7,8,9,10,11,12",
+     "A,B,C,D,E,F,·,G,H,I,J,K,L"
+    ],
+    "got": [
+     "1,2,3,4,5,6,·,7,8,9,10,11,12",
+     "A,B,C,D,E,F,·,G,H,I,J,K,L"
+    ],
+    "same": true,
+    "back": true
+   },
+   "bad": []
+  }
+ ],
+ "night": {
+  "night": true,
+  "tiers": 3,
+  "rot": 2,
+  "walls": {
+   "n": 2,
+   "want": [
+    "12,11,10,9,8,7,·,6,5,4,3,2,1",
+    "A,B,C,D,E,F,·,G,H,I,J,K,L"
+   ],
+   "got": [
+    "12,11,10,9,8,7,·,6,5,4,3,2,1",
+    "A,B,C,D,E,F,·,G,H,I,J,K,L"
+   ],
+   "same": true,
+   "back": true
+  },
+  "bad": [],
+  "fires": 4,
+  "ms": {
+   "on": 5.012499999953434,
+   "off": 4.0625
+  }
+ },
+ "naumachia": {
+  "ev": "naumachia",
+  "on": true,
+  "walls": {
+   "n": 2,
+   "want": [
+    "1,2,3,4,5,6,·,7,8,9,10,11,12",
+    "L,K,J,I,H,G,·,F,E,D,C,B,A"
+   ],
+   "got": [
+    "1,2,3,4,5,6,·,7,8,9,10,11,12",
+    "L,K,J,I,H,G,·,F,E,D,C,B,A"
+   ],
+   "same": true,
+   "back": true
+  },
+  "bad": []
+ },
+ "chariot": {
+  "ev": "chariot",
+  "on": true,
+  "walls": {
+   "n": 2,
+   "want": [
+    "1,2,3,4,5,6,·,7,8,9,10,11,12",
+    "L,K,J,I,H,G,·,F,E,D,C,B,A"
+   ],
+   "got": [
+    "1,2,3,4,5,6,·,7,8,9,10,11,12",
+    "L,K,J,I,H,G,·,F,E,D,C,B,A"
+   ],
+   "same": true,
+   "back": true
+  },
+  "bad": []
+ },
+ "pen": {
+  "pen": true,
+  "lud": true,
+  "mat": "Plaster",
+  "tiers": 3,
+  "walls": {
+   "n": 2,
+   "want": [
+    "1,2,3,4,5,6,·,7,8,9,10,11,12",
+    "L,K,J,I,H,G,·,F,E,D,C,B,A"
+   ],
+   "got": [
+    "1,2,3,4,5,6,·,7,8,9,10,11,12",
+    "L,K,J,I,H,G,·,F,E,D,C,B,A"
+   ],
+   "same": true,
+   "back": true
+  },
+  "fires": 0,
+  "bad": [],
+  "z": 1.8,
+  "badZoom": []
+ }
+}
+MISS []
+ERRS []

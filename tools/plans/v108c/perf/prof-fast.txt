@@ -1,0 +1,66 @@
+  8839ms (program) :-1
+  1107ms drawImage :-1
+   723ms (idle) :-1
+   457ms set font :-1
+   451ms getImageData :-1
+   406ms set innerHTML :-1
+   239ms (garbage collector) :-1
+   117ms getClientRects :-1
+   110ms a11yLift93 flavius-aren:50418
+    98ms matchMedia :-1
+    95ms querySelector :-1
+    95ms querySelectorAll :-1
+    87ms fillRect :-1
+    81ms createObjectURL :-1
+    68ms render flavius-aren:12806
+    58ms draw flavius-aren:49817
+    57ms fill :-1
+    56ms insertAdjacentHTML :-1
+    45ms createImageBitmap :-1
+    45ms lineTo :-1
+    44ms set fillStyle :-1
+    42ms save :-1
+    41ms drawLayers93 flavius-aren:49861
+    35ms ellipse :-1
+    35ms acceptNode flavius-aren:40979
+    32ms insignia100.bmp flavius-aren:64627
+    30ms drawPot flavius-aren:47700
+    27ms morph95Kids flavius-aren:52161
+    27ms z99Draw flavius-aren:56182
+    25ms BS101.patched.ctx.drawImage flavius-aren:69527
+{
+ "SCEN": {
+  "speed": "fast",
+  "spect": 1,
+  "secs": 15
+ },
+ "fps": "24",
+ "p50": "29",
+ "p95": "100",
+ "over50": 90,
+ "long": 42,
+ "longMs": 3831,
+ "round": 1,
+ "turns": 19,
+ "spect": 0,
+ "fn": {
+  "avatarSVG": "3.4/s 0.4ms avg 0.1%",
+  "boardHTML": "3.4/s 1.9ms avg 0.6%",
+  "renderTurnInd": "3.4/s 0.3ms avg 0.1%",
+  "computeHL": "18.7/s 0.0ms avg 0.0%",
+  "drawStands": "18.7/s 0.7ms avg 1.3%",
+  "drawFX": "18.7/s 0.1ms avg 0.3%",
+  "renderBubbles": "19.0/s 0.0ms avg 0.0%",
+  "draw": "34.7/s 0.1ms avg 0.2%",
+  "sideApply": "3.4/s 0.3ms avg 0.1%",
+  "render": "12.0/s 5.4ms avg 6.5%",
+  "caption": "11.0/s 0.3ms avg 0.3%",
+  "log": "11.0/s 0.4ms avg 0.5%",
+  "spectatorsAct": "0.3/s 0.2ms avg 0.0%"
+ },
+ "lay": "rim:undefined stands:undefined stands/under:4.9 stands/deco:2.7 tiles:undefined walls:undefined walls/top:9.5 walls/light:3.3 walls/sky:3.7 floor:undefined decals:undefined decals/wear:3.3 highlights:undefined pieces:undefined",
+ "busyPct": 98,
+ "layout": 345,
+ "style": 901,
+ "script": 4589
+}

@@ -1,0 +1,6 @@
+PERF OFF {"fps":13,"p50":74,"p95":293,"n":{"render":0,"patched":0,"deferred":0,"kept":0,"added":0},"cut":{"made":0,"fail":0},"blob":0,"bubs":0,"turn":15,"dps":3,"dpsAll":37,"decMs":1416,"decMsAll":15498}
+PERF ON  {"fps":31,"p50":38,"p95":101,"n":{"render":202,"patched":118,"deferred":143,"kept":5885,"added":829},"cut":{"made":217,"fail":0},"blob":18,"bubs":0,"turn":25,"dps":3.33,"dpsAll":22.33,"decMs":1616,"decMsAll":3578}
+SAME {"bad":[],"at":"","len":55312}
+SLEEP {"fastMs":667,"held":true,"afterPause":1422,"plain":639}
+ERRS []
+ALL OK

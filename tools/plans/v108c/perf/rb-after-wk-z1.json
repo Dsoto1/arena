@@ -1,0 +1,284 @@
+{
+ "secs": 15,
+ "draws": 207,
+ "getImageData": {
+  "n": 86,
+  "ms": 133.8,
+  "by": {
+   "g6Proc": {
+    "n": 24,
+    "ms": 113.2
+   },
+   "cl398": {
+    "n": 40,
+    "ms": 2.6
+   },
+   "b103Wall": {
+    "n": 16,
+    "ms": 0.6
+   },
+   "cv107Alpha": {
+    "n": 2,
+    "ms": 17.2
+   },
+   "bs101Off": {
+    "n": 4,
+    "ms": 0.2
+   }
+  }
+ },
+ "bs101": {
+  "proc": 24,
+  "hit": 1627,
+  "off": 24,
+  "taint": 0
+ },
+ "rb108": {
+  "async": 20,
+  "done": 20,
+  "thin": 0,
+  "interim": 29,
+  "sync": 0,
+  "noPrev": 4,
+  "busy": 0,
+  "fail": 0,
+  "late": 0,
+  "stale": 0
+ },
+ "dpr": 1.5,
+ "tw": 56,
+ "webkit": true,
+ "miss": [
+  {
+   "t": 16567,
+   "img": "HTMLCanvasElement#1 75x106 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|75|106|rig|37.5|86.8|2.646"
+  },
+  {
+   "t": 16610,
+   "img": "HTMLCanvasElement#1 75x106 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|75|106|rig|37.5|86.8|2.646"
+  },
+  {
+   "t": 16632,
+   "img": "HTMLCanvasElement#1 75x106 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|75|106|rig|37.5|86.8|2.646"
+  },
+  {
+   "t": 18807,
+   "img": "HTMLCanvasElement#2 71x128 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|128|rig|35.5|108.8|2.646"
+  },
+  {
+   "t": 18862,
+   "img": "HTMLCanvasElement#2 71x128 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|128|rig|35.5|108.8|2.646"
+  },
+  {
+   "t": 18923,
+   "img": "HTMLCanvasElement#2 71x128 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|128|rig|35.5|108.8|2.646"
+  },
+  {
+   "t": 18947,
+   "img": "HTMLCanvasElement#2 71x128 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|128|rig|35.5|108.8|2.646"
+  },
+  {
+   "t": 18972,
+   "img": "HTMLCanvasElement#2 71x128 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|128|rig|35.5|108.8|2.646"
+  },
+  {
+   "t": 20015,
+   "img": "HTMLCanvasElement#3 71x129 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|129|rig|35.5|109.8|2.646"
+  },
+  {
+   "t": 20067,
+   "img": "HTMLCanvasElement#3 71x129 sh",
+   "had": true,
+   "n": 1,
+   "key": "2|0|0|71|129|rig|35.5|109.3|2.646"
+  },
+  {
+   "t": 20112,
+   "img": "HTMLCanvasElement#3 71x129 sh",
+   "had": true,
+   "n": 2,
+   "key": "2|0|0|71|129|rig|35.2|109.7|2.646"
+  },
+  {
+   "t": 20135,
+   "img": "HTMLCanvasElement#3 71x129 sh",
+   "had": true,
+   "n": 2,
+   "key": "2|0|0|71|129|rig|35.3|109.2|2.646"
+  },
+  {
+   "t": 20188,
+   "img": "HTMLCanvasElement#4 71x128 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|128|rig|35.5|108.8|2.646"
+  },
+  {
+   "t": 20241,
+   "img": "HTMLCanvasElement#4 71x128 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|128|rig|35.5|108.8|2.646"
+  },
+  {
+   "t": 20266,
+   "img": "HTMLCanvasElement#4 71x128 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|128|rig|35.5|108.8|2.646"
+  },
+  {
+   "t": 24499,
+   "img": "HTMLCanvasElement#5 75x109 sh",
+   "had": true,
+   "n": 1,
+   "key": "2|0|0|75|109|rig|37.5|89.9|2.646"
+  },
+  {
+   "t": 24535,
+   "img": "HTMLCanvasElement#5 75x109 sh",
+   "had": true,
+   "n": 2,
+   "key": "2|0|0|75|109|rig|37.5|90.3|2.646"
+  },
+  {
+   "t": 25171,
+   "img": "HTMLCanvasElement#6 75x109 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|75|109|rig|37.5|89.8|2.646"
+  },
+  {
+   "t": 25215,
+   "img": "HTMLCanvasElement#7 73x109 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|73|109|rig|36.4|89.9|2.646"
+  },
+  {
+   "t": 25245,
+   "img": "HTMLCanvasElement#8 72x109 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|72|109|rig|36.2|89.9|2.646"
+  },
+  {
+   "t": 25311,
+   "img": "HTMLCanvasElement#9 71x110 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|110|rig|35.3|90.9|2.646"
+  },
+  {
+   "t": 25338,
+   "img": "HTMLCanvasElement#10 75x109 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|75|109|rig|37.5|89.8|2.646"
+  },
+  {
+   "t": 25362,
+   "img": "HTMLCanvasElement#10 75x109 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|75|109|rig|37.5|89.8|2.646"
+  },
+  {
+   "t": 27253,
+   "img": "HTMLCanvasElement#11 71x112 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|112|rig|35.5|92.8|2.646"
+  },
+  {
+   "t": 27329,
+   "img": "HTMLCanvasElement#11 71x112 sh",
+   "had": true,
+   "n": 1,
+   "key": "2|0|0|71|112|rig|35.9|93.5|2.646"
+  },
+  {
+   "t": 27377,
+   "img": "HTMLCanvasElement#11 71x112 sh",
+   "had": true,
+   "n": 2,
+   "key": "2|0|0|71|112|rig|35.6|92.8|2.646"
+  },
+  {
+   "t": 27411,
+   "img": "HTMLCanvasElement#12 71x112 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|112|rig|35.5|92.8|2.646"
+  },
+  {
+   "t": 27600,
+   "img": "HTMLCanvasElement#11 71x112 sh",
+   "had": true,
+   "n": 3,
+   "key": "2|0|0|71|112|rig|35.8|93.0|2.646"
+  },
+  {
+   "t": 27640,
+   "img": "HTMLCanvasElement#11 71x112 sh",
+   "had": true,
+   "n": 4,
+   "key": "2|0|0|71|112|rig|35.2|93.6|2.646"
+  },
+  {
+   "t": 27663,
+   "img": "HTMLCanvasElement#11 71x112 sh",
+   "had": true,
+   "n": 4,
+   "key": "2|0|0|71|112|rig|35.2|93.1|2.646"
+  },
+  {
+   "t": 27822,
+   "img": "HTMLCanvasElement#13 71x112 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|112|rig|35.5|92.8|2.646"
+  },
+  {
+   "t": 27883,
+   "img": "HTMLCanvasElement#14 71x112 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|112|rig|35.9|93.0|2.646"
+  },
+  {
+   "t": 27949,
+   "img": "HTMLCanvasElement#15 71x113 sh",
+   "had": false,
+   "n": 0,
+   "key": "2|0|0|71|113|rig|35.7|93.9|2.646"
+  }
+ ]
+}
