@@ -813,3 +813,7 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   invalidation owner, an Auto visual-quality profile keeping manual controls, small proven wrapper consolidation, budgets), v1.11 tactical UX,
   v1.12 first hour, v1.13 Living Ludus + Annals as career memory, v1.14 Creator sharing (after definitions/versioning). Direction only:
   each release still needs its NOTES plan + his go.
+- Decided 2026-10-21 (his 1a–8a + go on tools/plans/v108c/NOTES.md): v1.08c builds — seeded test worlds test-side; GAME_VER stays numeric,
+  letter shown via GAME_VERL + update notice; CI full run commits the coverage state; testslot.sh retired (slot limit in smartreg); v1.10
+  invalidation owner = LAYERS93 generations + per-canvas revision; bakes: meta exact + pixel tolerance + versions recorded; bs101Off
+  read-back fixed in v1.08c; a test still flaky at 20× holds the release.

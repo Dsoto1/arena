@@ -229,3 +229,12 @@ any figure or beast re-bake (6 changes no asset; a crop fix applies at the next 
 7. 0b bs101Off read-back (≈ 28 ms a call on Safari, bases off): a) in v1.08c as a FIX, then the Safari 1.5× retry ★ · b) leave it for
    v1.10 Auto quality.
 8. A flaky test still failing after its rewrite at the 20× proof: a) the release waits for it ★ · b) ship v1.08c and list it in known-issues.
+
+## His answers 2026-10-21: 1a 2a 3a 4a 5a 6a 7a 8a + GO
+1a seeded test worlds in the tests only · 2a saves stay numeric, the letter for display + the update notice (GAME_VERL) · 3a the CI full
+run commits regstate + gzipped regmap with [skip ci] · 4a retire testslot.sh, slot limit inside smartreg · 5a v1.10 invalidation owner =
+LAYERS93 generations + a universal per-canvas revision (v1.08c: the map + proposal only) · 6a bake target: meta exact, pixels within
+tolerance, tool versions recorded · 7a fix the bs101Off read-back in v1.08c, then the Safari 1.5× retry · 8a a test still flaky at the 20×
+proof holds the release.
+Builders: A = CI + smartreg + testslot + flaky tests (items 1, 3, 4) · B = i18n prep + letter versions + bake check (items 2, 5, 6) ·
+C = Safari read-back + baselines + cache map doc (items 0, 7, 8) after the corpse fix lands.
