@@ -13,3 +13,5 @@ Acta from its banner · W20a the Cup on a Tituli plinth, 3-win replica = its own
 Releases (his go on the split): v1.09 shell + rooms 1 Awards, 2 Accounts (category ledger starts counting), 6 Personnel, 10 Next season,
 retires the off-season page + its letters · v1.09a rooms 3, 4, 5, 7, 8 + goals · v1.09b THE WINTER CLASSIC · v1.09c the Saturnalia finale +
 rudis asks after it.
+- 2026-10-21 his follow-up "1a (for now) 2a" (read as W1a, W2a): W1a = the Classic final IS the Saturnalia — FOR NOW; re-ask him before
+  building v1.09b/v1.09c. W2a Carmina = opening ceremony before the race. Other W answers stay all-picks.
