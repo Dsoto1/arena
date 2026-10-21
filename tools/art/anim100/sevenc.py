@@ -9,9 +9,10 @@ from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.abspath(os.path.join(HERE, '../../..'))
 q = int(sys.argv[1]) if len(sys.argv) > 1 else 65
 tot = 0
-for f in sorted(glob.glob(os.path.join(HERE, 'out/sev/*.png'))):
+OUTD = os.environ.get('BAKE_OUT') or os.path.join(HERE, 'out'); AD = os.environ.get('BAKE_ASSETS') or os.path.join(ROOT, 'assets')   # v1.08c: --check redirects
+for f in sorted(glob.glob(os.path.join(OUTD, 'sev/*.png'))):
     name = os.path.basename(f)[:-4]
-    out = os.path.join(ROOT, 'assets', 'anim100_' + name + '.webp')
+    out = os.path.join(AD, 'anim100_' + name + '.webp')
     Image.open(f).convert('RGBA').save(out, 'WEBP', quality=q, method=6)
     tot += os.path.getsize(out)
 print('severed sheets re-encoded at q%d: %d KB' % (q, tot // 1024))

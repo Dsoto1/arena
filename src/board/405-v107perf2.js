@@ -117,15 +117,15 @@ function rec107Stop(){const R=REC107;if(!R.on)return;const el=performance.now()-
     event:typeof S!=='undefined'&&S?{ev:(()=>{try{const e=EV();return e&&(e.id||e.name)||null}catch(x){return null}})(),round:S.ri,turns:(S.turnNo|0)-R.turn0,players:(S.players||[]).length,cpu:(S.players||[]).filter(p=>p.cpu).length,over:!!S.over,onl:!!S.onl}:null,
     screen:typeof fps100Screen==='function'?fps100Screen():null}}catch(e){}
   let lay=null;try{lay=LAYERS93.report().rows.filter(r=>r.n).sort((a,b)=>b.avg-a.avg).slice(0,14).map(r=>({name:r.name,avg:+r.avg.toFixed(2),max:+(r.max||0).toFixed(1),cached:!!r.cached}))}catch(e){}
-  const res={kind:'flavius-perf',v:1,game:typeof GAME_VER!=='undefined'?GAME_VER:null,at:new Date().toISOString(),secs:+(el/1000).toFixed(1),
+  const res={kind:'flavius-perf',v:1,game:typeof GAME_VERL!=='undefined'?GAME_VERL:null,at:new Date().toISOString(),secs:+(el/1000).toFixed(1),
     ua:navigator.userAgent,gpu:rec107Gpu(),cores:navigator.hardwareConcurrency||null,memGB:navigator.deviceMemory||null,dpr:window.devicePixelRatio||1,
     view:{w:innerWidth,h:innerHeight},canvas:typeof cv!=='undefined'&&cv?{w:cv.width,h:cv.height}:null,...g,
     frames:{n:fr.length,fps:+(fr.length*1000/el).toFixed(1),p50:q(.5),p95:q(.95),max:q(1),over33:fr.filter(x=>x>33.4).length,over50:fr.filter(x=>x>50).length,intervals:fr},
     areas,slowFrames:R.slow,longTasks:R.long,longFrames:R.loaf,counts:R.c,layers:lay,p107:typeof P107!=='undefined'&&P107.st?{...P107.st}:null,p107b:{...P107B.st},...(typeof rec107Extra==='function'?rec107Extra():{}) /* 406: switches, page, p107s */,
-    note:'areas = inclusive ms (draw holds light, cells, stands, clean-ups; render may call draw); slowFrames.areas = ms in the frame before it'};
+    note:'areas = inclusive ms (draw holds light, cells, stands, clean-ups; render may call draw); slowFrames.areas = ms in the frame before it'}; /* i18n:skip */
   R.res=res;let top=Object.entries(areas).sort((a,b)=>b[1].ms-a[1].ms)[0];
   const lt=R.long.reduce((s,l)=>s+l.ms,0);
-  R.line=_T`${res.frames.fps} fps · ${_T('slowest')} ${Math.round(res.frames.max)} ms · ${R.long.length} ${_T('long tasks')} (${lt} ms)`+(top?` · ${_T('most')}: ${top[0]} ${top[1].perS} ms/s`:'');
+  R.line=_T`${res.frames.fps} fps · ${_T('slowest')} ${Math.round(res.frames.max)} ms · ${R.long.length} ${_T('long tasks')} (${lt} ms)`+(top?` · ${_T('most')}: ${top[0]} ${top[1].perS} ms/s`:''); /* i18n:skip */
   try{const d=new Date(),p=n=>String(n).padStart(2,'0');const name=`flavius-perf-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.json`;
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(res,null,1)],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();
     setTimeout(()=>{try{URL.revokeObjectURL(a.href);a.remove()}catch(e){}},4000);R.file=name}catch(e){console.error(e)}

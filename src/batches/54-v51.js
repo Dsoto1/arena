@@ -1,11 +1,16 @@
 /* =====================================================================
    54-V51 · THE VERSION ON THE MENU, SAVES THAT UPGRADE, THE FIGHTER'S PANEL, THE LOG ON THE SAND
    ===================================================================== */
-const GAME_VER=(()=>{const m=/v(\d+\.\d+)/.exec(((document.querySelector('.brand .ed')||{}).textContent)||'');return m?m[1]:'0.51'})();
-const verCmp=(a,b)=>{const A=String(a||'0').split('.').map(Number),B=String(b||'0').split('.').map(Number);for(let i=0;i<Math.max(A.length,B.length);i++){const d=(A[i]||0)-(B[i]||0);if(d)return d<0?-1:1}return 0};
+/* v1.08c: GAME_VER stays NUMERIC (saves, resume, replays, SAVE_MIGRATIONS — a rollback never meets a letter);
+   GAME_VERL = the full badge version WITH its letter ('1.08b'), for display + the update notice + the recorder. */
+const GAME_VERL=(()=>{const m=/v(\d+\.\d+[a-z]?)(?![a-z0-9])/.exec(((document.querySelector('.brand .ed')||{}).textContent)||'');return m?m[1]:'0.51'})();
+const GAME_VER=(()=>{const m=/^(\d+\.\d+)/.exec(GAME_VERL);return m?m[1]:'0.51'})();
+/* '1.08b' -> [[1,8],'b']; order 1.08 < 1.08a < 1.08b < 1.09 < 1.10 (a letter only breaks a numeric tie; no letter < any letter) */
+const verParse=v=>{const m=/^(\d+(?:\.\d+)*)([a-z]?)/.exec(String(v||'0'));return m?[m[1].split('.').map(Number),m[2]]:[[0],'']};
+const verCmp=(a,b)=>{const [A,la]=verParse(a),[B,lb]=verParse(b);for(let i=0;i<Math.max(A.length,B.length);i++){const d=(A[i]||0)-(B[i]||0);if(d)return d<0?-1:1}return la===lb?0:(la<lb?-1:1)};
 
 /* ---------- the version button lives on the main menu (click it to speak a word of power) ---------- */
-function mmVerInstall(){const f=document.querySelector('#mainMenu .mmfoot');if(!f||f.querySelector('.mmver'))return;f.innerHTML=`${_T`© 2026 Flavius Rule ·`} <button type="button" class="mmlink" data-proto title="${_T`The prototype this game was distilled from`}">D.Soto</button> · <button type="button" class="mmver" title="${_T`Version — click for what is new`}">v${GAME_VER}</button>`}
+function mmVerInstall(){const f=document.querySelector('#mainMenu .mmfoot');if(!f||f.querySelector('.mmver'))return;f.innerHTML=`${_T`© 2026 Flavius Rule ·`} <button type="button" class="mmlink" data-proto title="${_T`The prototype this game was distilled from`}">D.Soto</button> · <button type="button" class="mmver" title="${_T`Version — click for what is new`}">v${GAME_VERL}</button>`}
 setTimeout(mmVerInstall,60);setTimeout(mmVerInstall,700);
 document.addEventListener('click',e=>{const b=e.target.closest('.mmver');if(!b)return;e.preventDefault();e.stopPropagation();if(typeof verNotes79==='function')verNotes79();else if(typeof cheatPrompt==='function')cheatPrompt()},true);
 {const _mq=typeof mmQuiet==='function'?mmQuiet:null;if(_mq)mmQuiet=function(){_mq();mmVerInstall()}}
