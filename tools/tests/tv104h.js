@@ -99,9 +99,11 @@ out.off=await ev(pg,async()=>{const w=W_();const r={};r.ok1=await PW(true);r.ph1
   /* 17's endweek: ok → MGR.tab = the awards (unseen) or the paper → redraw */
   await SIMS();let ok2;const hold=setInterval(()=>{if(CUR_MODAL)CUR_MODAL.done(null)},150);try{ok2=await endWeek()}finally{clearInterval(hold)}r.ok2=ok2;
   if(ok2){MGR.confirmEnd=false;MGR.tab=w.awardShow&&!w.awardShow.seen?'awards':'paper';MGR.awI=0;MGR_REDRAW()}await W8(700);
-  r.ph=OFF104.phase(w);r.tab=MGR.tab;const off=document.querySelector('#mgrBody .po104off');r.page=!!off;
-  r.awBtn=!!(off&&off.querySelector('[data-mg="tab"][data-id="awards"]'));r.paperBtn=!!(off&&off.querySelector('[data-mg="paper"]'));
-  const bk=off&&off.querySelector('.v104sbr .v104tr');r.tree=!!bk;r.champ=!!(bk&&bk.querySelector('.v104ch.on'));r.btns=document.querySelectorAll('#mgrBody [data-po104="bracket"]').length;
+  r.ph=OFF104.phase(w);r.tab=MGR.tab;
+  /* v1.09 (412): the off-season page is Winter Quarters (overview first); the awards are room 1 (the Acta from its banner), the finished bracket = room 1's Superbus column */
+  const off=document.querySelector('#mgrBody .wq109');r.page=!!(off&&off.dataset.wq109step==='over');r.awBtn=!!(off&&off.querySelector('[data-wq109="go|awards"]'));
+  wqGo('awards');await W8(500);const a1=document.querySelector('#mgrBody .wq109');r.paperBtn=!!(a1&&a1.querySelector('.wq109ban [data-mg="paper"]'));
+  r.tree=document.querySelectorAll('#mgrBody .wq109 .wqtbl td.sb').length>=12;r.champ=!!(a1&&a1.querySelector('.wqtbl td.sb.ch')&&a1.querySelector('.wqsb'));r.btns=document.querySelectorAll('#mgrBody [data-po104="bracket"]').length;
   r.tbl=TBL()===window.T11;
   /* the standings page still shows the season */
   MGR.tab='league';MGR_REDRAW();await W8(600);r.lgRows=document.querySelectorAll('#mgrPane .wd100r').length;r.lgSb=!!document.querySelector('.roomhd.b73-league [data-v104s="sb"]');
