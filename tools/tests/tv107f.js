@@ -81,6 +81,26 @@ const live=pg=>pg.evaluate(async scn=>{const out={};const T=S.players[1];const r
 for(const [dpr,z,nb] of [[1,1,true],[2,2,true],[2,1,false],[1,2,false]]){const pg=await open(dpr);const P=await aim(pg,z,{live:true,nb});ok(!P.err,'4 live aim set up '+JSON.stringify(P));if(P.err){await pg.context().close();continue}
   const r=await live(pg);for(const sc in r)ok(r[sc].n>=3&&r[sc].bad===0,`4 live dpr ${dpr} zoom ${z} bases ${nb?'off':'on'} ${sc}: the ring hugs the figure drawn THIS frame `+JSON.stringify(r[sc]));
   await pg.context().close()}
+/* 5 · (v1.08b, "zora outline was slightly off") Zora, the biggest cell: 346 sharpens an up-scaled cell in place, a few frames AFTER the first draw
+   when the zoom is easing / the budget is spent. The ring cached from the unsharpened alpha stayed (key = canvas). Now the key carries the sharpen
+   state: after the zoom settles, the cached ring equals one built from scratch (≤ 0.5 % of its pixels differ) and still hugs the body (≤ band + 2 px). */
+const zora=(pg,z)=>pg.evaluate(async z=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));SETTINGS.briefing=false;SETTINGS.calm=false;
+  startEvent({ev:'democritus',loc:6,seed:777,seats:[{cls:'soldier'},{cls:'hero',cpu:true},{cls:'royalty',cpu:true},{cls:'venatore',cpu:true}],opts:{spect:0}});
+  await W8(1200);SPEED='snap';for(let i=0;i<160&&!(humanTurn()&&(S.phase==='action'||S.phase==='choice')&&!CUR_MODAL);i++){await W8(150);if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null)}
+  if(S.phase==='choice'){await takeChoice(cur(),'coin');await W8(200)}while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(150)}SPEED='pause';
+  XRAY='off';const pl=[[6,4],[11,11],[12,11],[11,12]];S.players.forEach((p,i)=>{p.r=pl[i][0];p.c=pl[i][1]});
+  const Z=S.npcs.find(n=>n.t==='zora');if(!Z)return {err:'no zora'};for(const n of S.npcs)if(n!==Z){n.r=0;n.c=0}
+  Z.alive=true;Z.out=false;Z.r=6;Z.c=5;Z.hp=99;Z.aggro=null;const p=cur();p.attacks=0;p.hitTargets=new Set();p.armUses={R:0,L:0};const src=attackSources(p)[0];S.mode='atk'+src.arm+(src.thr?'T':'');
+  render();for(let i=0;i<10;i++){draw();await W8(40)}
+  const sel=()=>{AIM106.sel={k:Z.r*N+Z.c,r:Z.r,c:Z.c,ref:Z,body:true};AIM106.t0=performance.now()-5000};
+  const sig=()=>{const sp=[...AIM106.oc.values()].pop();if(!sp)return null;const c=sp.cv;return {w:c.width,h:c.height,d:c.getContext('2d').getImageData(0,0,c.width,c.height).data}};
+  const mx=V103C.sharpMax;V103C.sharpMax=0;CAM.z=z*0.8;S.zoomIn=true;AIM106.oc.clear();sel();draw();V103C.sharpMax=mx;await W8(800);for(let i=0;i<10;i++){sel();draw();await W8(30)}
+  const settled=sig();AIM106.oc.clear();sel();draw();const fresh=sig();
+  if(!settled||!fresh||settled.w!==fresh.w||settled.h!==fresh.h)return {err:'sprites',a:settled&&[settled.w,settled.h],b:fresh&&[fresh.w,fresh.h]};
+  let red=0,diff=0;for(let i=3;i<fresh.d.length;i+=4){if(fresh.d[i]>60)red++;if((fresh.d[i]>60)!==(settled.d[i]>60))diff++}
+  return {red,diff,dpr:devicePixelRatio}},z);
+for(const [dpr,z] of [[1,2],[1.5,2]]){const pg=await open(dpr);const r=await zora(pg,z);
+  ok(!r.err&&r.red>100&&r.diff<=r.red*0.005,`5 Zora dpr ${dpr} zoom ${z}: the cached ring = a fresh one (sharpened cell; first built with the sharpen skipped) `+JSON.stringify(r));await pg.context().close()}
 /* 2 · a window in a match on a page with a real scrollbar */
 const win=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));SETTINGS.briefing=false;
   startEvent({ev:'democritus',loc:6,seed:4242,seats:['soldier','hero','royalty','venatore'].map(c=>({cls:c,cpu:true})),opts:{spect:0}});await W8(2500);
