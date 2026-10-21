@@ -5,6 +5,7 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-21 · CONFIRMED on live v1.08b (his screenshot, Mac Safari 26.6, DPR 2, zoomed, night): bear corpses 2–3 tiles big and blurry; the 404 size guard does not catch it. Suspect the WebKit path (406 W3 bitmap copies / 346 scaled cells / 410 2× beast meta) — fix in progress for v1.08c. Same screenshot: live figures soft when zoomed because Safari's board runs at 1× (406 W1); his 4 recordings (tools/plans/v107/perf/safari-v108b-*): 1.5× zoomed 30.5 fps p95 95 ms vs 1× zoomed 42.9 fps → keep the auto rule; retry 1.5× after v1.08c removes the bs101Off read-back (~28 ms each on Safari).
 - 2026-10-20 · v1.08 beta (his screenshot, Safari, night, Lighting Full): round dark DISC shadows under some figures (spearman, small figure, horned helm); not reproduced in Chromium; 409 hardened (torch casts only from 399 shadow cells, paired by identity, others skipped → V108.st.figSkip). Untested path: custom-gear device-rendered shadows. Ask him: discs gone on Lighting Light? custom characters?
 - 2026-10-20 · beta 4: "a bear corpse 2–3 tiles big" (his screenshot, Safari 26 / Mac / DPR 2) is NOT reproduced in Chromium — every
   system beast's corpse draws at the living scale (tv107g 5). 404 now checks the cut and the drawn size and falls back to the lying still
