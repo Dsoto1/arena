@@ -38,7 +38,7 @@ ok(L1.l106>0,'1 the light pass ran '+L1.l106);
 await pg.context().close();
 
 /* ---- 2 + 3 · the same look, on and off; zoom 2 makes read-back cells in memory ---- */
-pg=await open(LS);await pg.evaluate(SCENE);
+pg=await open({...LS,flavius_x2off:'1'});await pg.evaluate(SCENE);   /* v1.08b: the 1× sheets (phones, the download) — 410's 2× cells are not up-scaled at zoom 2, so 3 needs the 1× path */
 const PAIR=()=>{const read=()=>cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;
   P107.off=false;BENCH.tick();draw();draw();const on=read();P107.off=true;BENCH.tick();draw();draw();const off=read();P107.off=false;draw();
   let mx=0,n8=0;for(let i=0;i<on.length;i+=4)for(let k=0;k<3;k++){const d=Math.abs(on[i+k]-off[i+k]);if(d>mx)mx=d;if(d>8){n8++;break}}

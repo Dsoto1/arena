@@ -142,6 +142,7 @@ ok(g5.seen.coin&&g5.seen.cf&&g5.seen.trophy,'G5 coin, CF and trophy fly in '+JSO
 
 /* ---- G6 · token bases off for beasts ---- */
 const g6=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};const k='leo';
+  SETTINGS.bases101=false;applySettings();   /* v1.08b: with bases off a beast wears its 1× sheets (410) — load those first; they stay for the rest */
   let im=null;for(let i=0;i<80;i++){im=bst100Img(k,0);if(im&&im.complete&&im.naturalWidth)break;await W8(100)}
   const M=BEAST100_META[k],me=M.iw,row=M.ir.indexOf('idle0');
   SETTINGS.bases101=true;applySettings();const a=bst100Cell(k,2,{name:'idle0'},100,100,{});

@@ -3,7 +3,7 @@
    BEAST100_META swapped to the 2× meta; (2) a 2× figure is drawn at the SAME size as the 1× one (311's an100Cell / 312's bst100Cell on the
    board canvas at DPR 2: the strongly changed pixels' bbox within 1 CSS px of the x2off page's, its top within 2: a 1-px-thin crest tip reads stronger at 2×); (3) 403's red aim outline still hugs a 2× figure
    (as tv107f 1a/1b); (4) a 390 px phone (DPR 3, touch) never asks for a 2× file (X108.why 'phone'); (5) kill switch flavius_x2off=1:
-   no 2× file, X108.why 'off'; no console errors.
+   no 2× file, X108.why 'off'; (6) bases off: a 2× beast goes back to 1×; no console errors.
    node tools/tests/tv108x.js <ABSOLUTE page path> → ERRS [] and exit 0. */
 const http=require('http'),fs=require('fs'),path=require('path');
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);
@@ -66,6 +66,10 @@ if(!P.err){await pg.mouse.move(P.x,P.y,{steps:3});await W(400);const m=await mea
   ok(!m.err&&m.red>20&&m.built>=1,'3a the 403 outline is drawn on a 2× figure '+JSON.stringify(m));
   ok(!m.err&&m.maxD<=lim&&m.far===0&&m.onSolid<=m.red*0.02,'3b it hugs the body (every red pixel within '+lim+' device px, none on the solid body) '+JSON.stringify(m))}
 const S2=await sizes(pg);
+/* 6 · bases off: a 2× beast goes back to its 1× sheets (334 / 346 cut the base with rules tuned on 1×) */
+const B6=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const k=Object.keys(BST108X1)[0];if(!k)return {err:'no 2x beast'};
+  SETTINGS.bases101=false;let im=bst100Img(k,0);for(let i=0;i<80&&!im;i++){await W8(100);im=bst100Img(k,0)}const r={k,x2:!!BEAST100_META[k].x2,imX2:!!(im&&im._x2),n:X108.st.beastNoBase};SETTINGS.bases101=true;return r});
+ok(!B6.err&&!B6.x2&&!B6.imX2&&B6.n>=1,'6 bases off: the beast wears its 1× sheets again '+JSON.stringify(B6));
 await pg.context().close();
 /* ---- 5 · kill switch, same screen; 2 · the same drawn size ---- */
 pg=await open(DESK,{flavius_x2off:'1'});const P5=await aim(pg);const S1=await sizes(pg);
