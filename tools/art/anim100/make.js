@@ -41,6 +41,15 @@ function l106Meta() { const s = fs.readFileSync(L106SRC, 'utf8'); const i = s.in
 function l106Write(m) { const { s, i, j } = l106Meta(); const lines = Object.keys(m).sort().map(k => JSON.stringify(k) + ':' + JSON.stringify(m[k]));
   fs.writeFileSync(L106SRC, s.slice(0, i + L106A.length) + '\nconst L106_META={\n' + lines.join(',\n') + '\n};\n' + s.slice(j)); }
 const PX = +(process.env.AN100_PX || 2.6), Q = +(process.env.AN100_Q || 0.8);
+/* `x2` = v1.08b ONE RE-BAKE, BOTH SIZES (tools/plans/v108b/NOTES.md, his 2a): each colour sheet (move / act, or with `sev` the 32 severed sets) is
+   rendered ONCE lit by 399's one sun with the METAL material (311's AN100L.metal) at 2× (AN108X_PX, default 5.2 px/mm; the ink at 1.7 sheet px
+   = today's 0.85 on screen) and NO shadow (assets/anim106*_sh stay as baked: soft by design, the silhouette did not change); x2enc.py then
+   repacks it (every 2× cell exactly twice a 1× cell), box-filters the 1× sheet out of it and encodes both with libwebp method 6:
+   assets/anim100x2_<cls>[_<limb>]_<set>.webp (big screens, 410-v108x2) + assets/anim100_<…>.webp (phones, the download, every fallback),
+   ANIM100_META[cls][set] (or .sev[limb][set]) = the 1× meta + x2:1. ~10–15 s a sheet on SwiftShader (2× costs about what 1× did: vertex bound).
+   node tools/art/anim100/make.js x2 [cls…] [move|act]  ·  node tools/art/anim100/make.js x2 sev [cls…] [limb…]
+   Env AN108X_Q="q1 q2 sq1 sq2" (default "80 72 60 55"). Then python3 tools/art/still107/make.py (the stills are cut from the 1× move sheets). */
+const X2 = process.argv.includes('x2'); const X2PX = +(process.env.AN108X_PX || 5.2);
 /* `city` = v1.07 CITY SQUARE WALKERS (src/city/402-v107city.js): the move set (idle + walk) of each class lit by 399's one sun, WITHOUT the base,
    no shadow sheet, at AN107C_PX px/mm (default 2.0 — the square's figures are ~40 css px tall) → assets/city107_<cls>.webp + CITY107_META in 402.
    node tools/art/anim100/make.js city [cls…] */
@@ -96,6 +105,19 @@ async function partsFromGame(browser) {
         console.log(('city ' + k).padEnd(18), (kb.toFixed(1) + ' KB').padStart(9), `${r.w}x${r.h}`, Math.round((Date.now() - t0) / 1000) + ' s');
         if (errs.length) { console.log('  errors', errs.slice(0, 3)); errs.length = 0; } }
       return; }
+    if (X2) { const LT = l106Cfg(); const XD = path.join(OUT, 'x2'); fs.mkdirSync(XD, { recursive: true }); const jobs = [];
+      for (const k of list) { if (SEV) { for (const limb of limbs) for (const set of ['move', 'act']) jobs.push([k, limb, set]); } else for (const set of l106Sets) jobs.push([k, '', set]); }
+      const done = []; const t00 = Date.now();
+      for (const [k, limb, set] of jobs) { const t0 = Date.now(); const look = Object.assign({}, LOOK[k], { cloth: parts[k].cloth });
+        const r = await pg.evaluate(([l, g, s, px, c, lb]) => AN100R.sheetX(l, g, s, px, c, lb || undefined, 1.7), [look, parts[k].gear, set, X2PX, LT, limb]);
+        const nm = k + (limb ? '_' + limb : '') + '_' + set; save(path.join(XD, nm + '.png'), r.png); fs.writeFileSync(path.join(XD, nm + '.json'), JSON.stringify(r.meta)); done.push([k, limb, set, nm]);
+        rep['x2_' + nm] = { w: r.w, h: r.h, ms: Date.now() - t0 }; fs.writeFileSync(RP, JSON.stringify(rep, null, 1));
+        console.log(('x2 ' + nm).padEnd(26), `${r.w}x${r.h}`, Math.round((Date.now() - t0) / 1000) + ' s'); if (errs.length) { console.log('  errors', errs.slice(0, 3)); errs.length = 0; } }
+      const QS = (process.env.AN108X_Q || '80 72 60 55').split(/\s+/);
+      console.log(require('child_process').execFileSync('python3', [path.join(HERE, 'x2enc.py'), ...QS, ...done.map(d => d[3])]).toString().trim());
+      for (const [k, limb, set, nm] of done) { const m1 = JSON.parse(fs.readFileSync(path.join(XD, nm + '.meta1.json'))); m1.x2 = 1; M[k] = M[k] || {};
+        if (limb) { M[k].sev = M[k].sev || {}; M[k].sev[limb] = M[k].sev[limb] || {}; M[k].sev[limb][set] = m1; } else M[k][set] = m1; }
+      writeMeta(M); rep.x2Ms = Date.now() - t00; fs.writeFileSync(RP, JSON.stringify(rep, null, 1)); console.log('x2 bake', Math.round((Date.now() - t00) / 1000), 's'); return; }
     if (L106) { /* v1.06a: lit colour sheets (over anim100_*) + ground-shadow sheets (anim106_*_sh, anim106p_*_sh) */
       const LT = l106Cfg(); console.log('light', JSON.stringify(LT)); const LM = l106Meta().m; const SHD = path.join(OUT, 'l106'), PRV = path.join(OUT, 'sev'); fs.mkdirSync(SHD, { recursive: true }); fs.mkdirSync(PRV, { recursive: true });
       const jobs = []; for (const k of list) { if (SEV) { for (const limb of limbs) for (const set of ['move', 'act']) jobs.push([k, limb, set]); } else for (const set of l106Sets) jobs.push([k, '', set]); }

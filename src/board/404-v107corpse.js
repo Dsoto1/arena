@@ -107,9 +107,9 @@ function cv107Beast(n,m){const k=typeof bst100Key==='function'?bst100Key(n):null
     const sz=cv107Size(()=>bst100Cell(k,face,{act:true,name:'die4'},m.x,m.y,null));
     if(sz.r!=null){cv107Check(k,sz,M.aw[0]*bst100Scale(M)*cv107DS());CV107.stats.d3++;return true}}
   /* the still, lying */
-  const im=typeof st107Img==='function'&&typeof ST107!=='undefined'&&ST107.on?st107Img(k):null;const me=M.iw,s=bst100Scale(M);
+  const im=typeof st107Img==='function'&&typeof ST107!=='undefined'&&ST107.on?st107Img(k):null;const M1=typeof BST108X1!=='undefined'&&BST108X1[k]||M,me=M1.iw,s=bst100Scale(M1);   /* v1.08b: the still is cut from the 1× sheet (410 may hold the 2× meta) */
   const flat=!CV107_UP.includes(k);const rx=flat?TW*0.42:TW*0.34;
-  const bw=M.base||[25.4,25.4],B=M.base?{rx:bw[0]/2*M.px,ry:bw[1]/4*M.px,cy:me[3],rim:BST100_BASE_MM*M.px}:null;
+  const bw=M1.base||[25.4,25.4],B=M1.base?{rx:bw[0]/2*M1.px,ry:bw[1]/4*M1.px,cy:me[3],rim:BST100_BASE_MM*M1.px}:null;
   if(!im){cv107Disc(m.x,m.y,rx,rx*0.4);CV107.stats.none++;return true}
   const lf=flat&&face%4===0?face+2:face;   /* a four-legged body seen side-on (front / back views read as standing) */
   const e=cv107Lie('b:'+k,im,lf*me[0],0,me[0],me[1],me[2],me[3],s,flat,face<4?1:-1,B);cv107DrawLie(e,m,s,rx,rx*0.4);CV107.stats.lie++;return true}

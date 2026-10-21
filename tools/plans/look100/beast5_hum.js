@@ -180,7 +180,7 @@ window.LOOK100.humanoid3 = async function (key, o = {}) {
   const rows = [X.GLAD_ROWS[0], X.GLAD_ROWS[1], X.GLAD_ROWS[2], X.GLAD_ROWS[4], X.FALL_ROWS[0]];
   let fr = rows.flatMap(([k, fs]) => fs.map((s, i) => ({ k: k === 'fall' ? 'die' : k, i, s }))); if (o.only) fr = fr.filter(x => o.only.includes(x.k + x.i));
   let clothMs = 0;
-  const S = await X.renderFrames(fr, { set: (x) => { X.setFrame(x.s); const t = performance.now(); cloth.update(x.k, x.i); clothMs += performance.now() - t; }, box: 6.4, ty: 0.85, yaws: o.yaws, l106: o.l106 || null });
+  const S = await X.renderFrames(fr, { set: (x) => { X.setFrame(x.s); const t = performance.now(); cloth.update(x.k, x.i); clothMs += performance.now() - t; }, box: 6.4, ty: 0.85, yaws: o.yaws, l106: o.l106 || null, pxmm: 3.143 * (o.pxk || 1), outlinePx: 0.85 * (o.pxk || 1) });   /* v1.08b: o.pxk 2 = the 2× sheets (tools/art/anim100b/make.js x2) */
   B.group.scale.set(1, 1, 1); cloth.kill(); for (const m of extra) K.kill(m); X.setFrame({ p: [0, 0, 0], j: {}, f: {} });
   const rowsN = fr.map(x => x.k + x.i); const w = X.enc(S.canvas, 'image/webp', 0.8);
   const parts = o.only ? [] : splitSheet4(S, rowsN, [[key, /^(idle|walk)/], [key + '_act', /^(attack|hit|die)/]]);

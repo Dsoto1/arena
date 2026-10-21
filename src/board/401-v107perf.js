@@ -35,8 +35,8 @@ if(!P107.off&&typeof an100Bm==='function'){const base=an100Bm;an100Bm=function(s
     if(typeof HTMLImageElement==='undefined'||!(src instanceof HTMLImageElement))return base.apply(this,arguments);
     const url=src.currentSrc||src.src,bl=p107Blob(url);if(bl===false){P107.st.fallback++;return base.apply(this,arguments)}if(!bl)return null;
     const R=o.meta.rows[name],y0=R[0][0],y1=R[R.length-1][0]+R[R.length-1][2],w=Math.max(...R.map(r=>r[1]*8));
-    o.bm[name]=1;
-    createImageBitmap(bl,0,y0,w,y1-y0).then(bm=>{if(o.bm[name]!==1){try{bm.close()}catch(x){}return}o.bm[name]={bm,y0};AN100.stats.bm++;P107.st.bm++;an100Kick(true)},
+    o.bm[name]=1;const k=o.k||1;   /* v1.08b (410): a 2× sheet — the 1× rect × k */
+    createImageBitmap(bl,0,y0*k,w*k,(y1-y0)*k).then(bm=>{if(o.bm[name]!==1){try{bm.close()}catch(x){}return}o.bm[name]={bm,y0,k};AN100.stats.bm++;P107.st.bm++;an100Kick(true)},
       ()=>{if(o.bm[name]===1)delete o.bm[name];const e=P107.blob.get(url);if(e)e.b=false;P107.st.blobFail++;an100Kick(true)});
     return null}catch(e){return base.apply(this,arguments)}}}
 if(!P107.off&&typeof an100Trim==='function'){const base=an100Trim;an100Trim=function(){const r=base.apply(this,arguments);try{for(const [k,e] of P107.blob)if(e.b)P107.blob.delete(k)}catch(e){}return r}}

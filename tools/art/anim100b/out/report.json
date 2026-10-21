@@ -61,5 +61,61 @@
   "kb": 548.4,
   "decodedMB": 18.04,
   "ms": 1557456
- }
+ },
+ "x2_leo": {
+  "kb": 1206.5,
+  "decodedMB": 116.11,
+  "ms": 96417
+ },
+ "x2_leaena": {
+  "kb": 1035.6,
+  "decodedMB": 87.67,
+  "ms": 65260
+ },
+ "x2_ursa": {
+  "kb": 844,
+  "decodedMB": 55.68,
+  "ms": 93039
+ },
+ "x2_brutum": {
+  "kb": 765.4,
+  "decodedMB": 55.68,
+  "ms": 102306
+ },
+ "x2_valencia": {
+  "kb": 461.4,
+  "decodedMB": 22.2,
+  "ms": 74706
+ },
+ "x2_moechus": {
+  "kb": 417.4,
+  "decodedMB": 22.2,
+  "ms": 79616
+ },
+ "x2_glykon": {
+  "kb": 506.5,
+  "decodedMB": 21.26,
+  "ms": 58314
+ },
+ "x2_arenosus": {
+  "kb": 505.5,
+  "decodedMB": 21.26,
+  "ms": 42023
+ },
+ "x2_zora": {
+  "kb": 704.5,
+  "decodedMB": 43.24,
+  "ms": 87622
+ },
+ "x2_tholo": {
+  "kb": 1115,
+  "decodedMB": 91.01,
+  "ms": 558503
+ },
+ "x2_commodus": {
+  "kb": 1160,
+  "decodedMB": 70.51,
+  "ms": 618709
+ },
+ "x2TotalKB": 8722
 }

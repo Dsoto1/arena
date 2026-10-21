@@ -102,10 +102,10 @@ const G6={cache:new Map(),pal:{},max:160,read:null,stats:{proc:0,hit:0,fail:0}};
 const g6Mode=()=>{try{return !V102C.off&&typeof bs101Mode==='function'&&bs101Mode()===2}catch(e){return false}};
 function g6Readable(im){if(G6.read!=null)return G6.read;try{const c=document.createElement('canvas');c.width=c.height=2;const g=c.getContext('2d');g.drawImage(im,0,0,2,2);g.getImageData(0,0,1,1);G6.read=true}catch(e){G6.read=false}return G6.read}
 /* the base's oval as the camera sees it (ground ellipse a×b turned to the facing, squeezed to half height) — fitted on the sheets: turn = 90° − yaw */
-function g6Geom(M,face){const yaw=(typeof MINI_YAW!=='undefined'?MINI_YAW[face]:0)||0,phi=(90-yaw)*Math.PI/180,a=M.base[0]/2*M.px+2.5,b=M.base[1]/2*M.px+2.5,c=Math.cos(phi),s=Math.sin(phi);
+function g6Geom(M,face){const yaw=(typeof MINI_YAW!=='undefined'?MINI_YAW[face]:0)||0,phi=(90-yaw)*Math.PI/180,x2=M.x2?2:1 /* v1.08b (410): a 2× sheet — the px margins scale too */,a=M.base[0]/2*M.px+2.5*x2,b=M.base[1]/2*M.px+2.5*x2,c=Math.cos(phi),s=Math.sin(phi);
   /* A = diag(1,.5)·R·diag(a,b); inverse for the inside test */
   const A=[[c*a,-s*b],[0.5*s*a,0.5*c*b]],det=A[0][0]*A[1][1]-A[0][1]*A[1][0];
-  return {A,inv:[[A[1][1]/det,-A[0][1]/det],[-A[1][0]/det,A[0][0]/det]],T:BST100_BASE_MM*M.px+2}}
+  return {A,inv:[[A[1][1]/det,-A[0][1]/det],[-A[1][0]/det,A[0][0]/det]],T:BST100_BASE_MM*M.px+2*x2}}
 function g6Proc(im,M,me,face,row){
   const key=im.src.slice(-70)+'|'+face+'|'+row;let c=G6.cache.get(key);if(c!==undefined){G6.stats.hit++;return c}
   c=null;try{const W=me[0],H=me[1],cx=me[2],cy=me[3];const src=document.createElement('canvas');src.width=W;src.height=H;const sg=src.getContext('2d');sg.drawImage(im,face*W,row*H,W,H,0,0,W,H);
@@ -117,7 +117,7 @@ function g6Proc(im,M,me,face,row){
     const pt=(t,k,oy)=>{const A=G.A;/* a point on the unit circle → screen */
       return [cx+k*(A[0][0]*Math.cos(t)+A[0][1]*Math.sin(t)),cy+oy+k*(A[1][0]*Math.cos(t)+A[1][1]*Math.sin(t))]};
     /* wall / rim samples only where the empty background lies just outside (the beast never covers those) */
-    const out=(p,q)=>{const vx=p[0]-cx,vy=p[1]-(cy+q),l=Math.hypot(vx,vy)||1,X=Math.round(p[0]+vx/l*3),Y=Math.round(p[1]+vy/l*3);return X<0||Y<0||X>=W||Y>=H||d[(Y*W+X)*4+3]<30};
+    const o3=M.x2?6:3,out=(p,q)=>{const vx=p[0]-cx,vy=p[1]-(cy+q),l=Math.hypot(vx,vy)||1,X=Math.round(p[0]+vx/l*o3),Y=Math.round(p[1]+vy/l*o3);return X<0||Y<0||X>=W||Y>=H||d[(Y*W+X)*4+3]<30};
     /* the wall / rim: walk IN from the empty background along the oval's normal to the first solid pixel and take the one just inside it (the figure scale / sheet may move the oval by a pixel or two, so no fixed ring radius) */
     const solid=(x,y)=>{x=Math.round(x);y=Math.round(y);return x>=0&&y>=0&&x<W&&y<H&&d[(y*W+x)*4+3]>200};
     const empty=(x,y)=>{x=Math.round(x);y=Math.round(y);return x<0||y<0||x>=W||y>=H||d[(y*W+x)*4+3]<30};

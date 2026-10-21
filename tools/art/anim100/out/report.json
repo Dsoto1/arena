@@ -579,5 +579,406 @@
   "h": 359,
   "cells": 32,
   "ms": 3974
+ },
+ "x2_soldier_move": {
+  "w": 1168,
+  "h": 1919,
+  "ms": 21437
+ },
+ "x2Ms": 1157860,
+ "x2_soldier_act": {
+  "w": 2016,
+  "h": 9893,
+  "ms": 86802
+ },
+ "x2_hero_move": {
+  "w": 1104,
+  "h": 1971,
+  "ms": 18829
+ },
+ "x2_hero_act": {
+  "w": 2000,
+  "h": 9996,
+  "ms": 104330
+ },
+ "x2_slave_move": {
+  "w": 1152,
+  "h": 2240,
+  "ms": 26749
+ },
+ "x2_slave_act": {
+  "w": 2144,
+  "h": 10730,
+  "ms": 163803
+ },
+ "x2_royalty_move": {
+  "w": 1104,
+  "h": 1978,
+  "ms": 33548
+ },
+ "x2_royalty_act": {
+  "w": 1856,
+  "h": 9810,
+  "ms": 136470
+ },
+ "x2_amazonia_move": {
+  "w": 1104,
+  "h": 1834,
+  "ms": 26655
+ },
+ "x2_amazonia_act": {
+  "w": 1872,
+  "h": 9419,
+  "ms": 145735
+ },
+ "x2_veteranus_move": {
+  "w": 1168,
+  "h": 1868,
+  "ms": 27655
+ },
+ "x2_veteranus_act": {
+  "w": 2016,
+  "h": 9754,
+  "ms": 144556
+ },
+ "x2_venatore_move": {
+  "w": 1104,
+  "h": 2199,
+  "ms": 25208
+ },
+ "x2_venatore_act": {
+  "w": 2144,
+  "h": 10635,
+  "ms": 143368
+ },
+ "x2_damnatio_move": {
+  "w": 1104,
+  "h": 1840,
+  "ms": 30039
+ },
+ "x2_damnatio_act": {
+  "w": 1872,
+  "h": 9250,
+  "ms": 149058
+ },
+ "x2_soldier_rarm_move": {
+  "w": 1104,
+  "h": 1065,
+  "ms": 16954
+ },
+ "x2_soldier_rarm_act": {
+  "w": 1680,
+  "h": 722,
+  "ms": 11083
+ },
+ "x2_soldier_larm_move": {
+  "w": 1168,
+  "h": 1065,
+  "ms": 14751
+ },
+ "x2_soldier_larm_act": {
+  "w": 1840,
+  "h": 756,
+  "ms": 13381
+ },
+ "x2_soldier_rleg_move": {
+  "w": 1248,
+  "h": 1073,
+  "ms": 14921
+ },
+ "x2_soldier_rleg_act": {
+  "w": 1840,
+  "h": 761,
+  "ms": 10862
+ },
+ "x2_soldier_lleg_move": {
+  "w": 1104,
+  "h": 1073,
+  "ms": 15260
+ },
+ "x2_soldier_lleg_act": {
+  "w": 1840,
+  "h": 754,
+  "ms": 13418
+ },
+ "x2_hero_rarm_move": {
+  "w": 1104,
+  "h": 1095,
+  "ms": 17986
+ },
+ "x2_hero_rarm_act": {
+  "w": 1936,
+  "h": 754,
+  "ms": 13555
+ },
+ "x2_hero_larm_move": {
+  "w": 1104,
+  "h": 1095,
+  "ms": 17117
+ },
+ "x2_hero_larm_act": {
+  "w": 1776,
+  "h": 761,
+  "ms": 10728
+ },
+ "x2_hero_rleg_move": {
+  "w": 1168,
+  "h": 1101,
+  "ms": 14399
+ },
+ "x2_hero_rleg_act": {
+  "w": 1936,
+  "h": 766,
+  "ms": 13153
+ },
+ "x2_hero_lleg_move": {
+  "w": 1104,
+  "h": 1102,
+  "ms": 16512
+ },
+ "x2_hero_lleg_act": {
+  "w": 1936,
+  "h": 759,
+  "ms": 11532
+ },
+ "x2_slave_rarm_move": {
+  "w": 1136,
+  "h": 1022,
+  "ms": 15458
+ },
+ "x2_slave_rarm_act": {
+  "w": 2080,
+  "h": 714,
+  "ms": 9528
+ },
+ "x2_slave_larm_move": {
+  "w": 1104,
+  "h": 1245,
+  "ms": 11964
+ },
+ "x2_slave_larm_act": {
+  "w": 1904,
+  "h": 836,
+  "ms": 10827
+ },
+ "x2_slave_rleg_move": {
+  "w": 1312,
+  "h": 1254,
+  "ms": 14108
+ },
+ "x2_slave_rleg_act": {
+  "w": 2080,
+  "h": 823,
+  "ms": 10508
+ },
+ "x2_slave_lleg_move": {
+  "w": 1104,
+  "h": 1217,
+  "ms": 14663
+ },
+ "x2_slave_lleg_act": {
+  "w": 2080,
+  "h": 845,
+  "ms": 10539
+ },
+ "x2_royalty_rarm_move": {
+  "w": 1104,
+  "h": 1100,
+  "ms": 12823
+ },
+ "x2_royalty_rarm_act": {
+  "w": 1728,
+  "h": 732,
+  "ms": 10092
+ },
+ "x2_royalty_larm_move": {
+  "w": 1104,
+  "h": 1100,
+  "ms": 12973
+ },
+ "x2_royalty_larm_act": {
+  "w": 1728,
+  "h": 732,
+  "ms": 10923
+ },
+ "x2_royalty_rleg_move": {
+  "w": 1104,
+  "h": 1115,
+  "ms": 12417
+ },
+ "x2_royalty_rleg_act": {
+  "w": 1728,
+  "h": 733,
+  "ms": 10003
+ },
+ "x2_royalty_lleg_move": {
+  "w": 1104,
+  "h": 1112,
+  "ms": 12644
+ },
+ "x2_royalty_lleg_act": {
+  "w": 1728,
+  "h": 734,
+  "ms": 9716
+ },
+ "x2_amazonia_rarm_move": {
+  "w": 1104,
+  "h": 1020,
+  "ms": 14073
+ },
+ "x2_amazonia_rarm_act": {
+  "w": 1536,
+  "h": 694,
+  "ms": 10989
+ },
+ "x2_amazonia_larm_move": {
+  "w": 1104,
+  "h": 1020,
+  "ms": 13853
+ },
+ "x2_amazonia_larm_act": {
+  "w": 1552,
+  "h": 710,
+  "ms": 10809
+ },
+ "x2_amazonia_rleg_move": {
+  "w": 1104,
+  "h": 1029,
+  "ms": 13842
+ },
+ "x2_amazonia_rleg_act": {
+  "w": 1552,
+  "h": 717,
+  "ms": 10427
+ },
+ "x2_amazonia_lleg_move": {
+  "w": 1104,
+  "h": 1029,
+  "ms": 13607
+ },
+ "x2_amazonia_lleg_act": {
+  "w": 1552,
+  "h": 711,
+  "ms": 10854
+ },
+ "x2_veteranus_rarm_move": {
+  "w": 1104,
+  "h": 1038,
+  "ms": 13690
+ },
+ "x2_veteranus_rarm_act": {
+  "w": 1600,
+  "h": 705,
+  "ms": 10749
+ },
+ "x2_veteranus_larm_move": {
+  "w": 1168,
+  "h": 1038,
+  "ms": 12968
+ },
+ "x2_veteranus_larm_act": {
+  "w": 1840,
+  "h": 744,
+  "ms": 9944
+ },
+ "x2_veteranus_rleg_move": {
+  "w": 1248,
+  "h": 1050,
+  "ms": 13471
+ },
+ "x2_veteranus_rleg_act": {
+  "w": 1840,
+  "h": 749,
+  "ms": 10108
+ },
+ "x2_veteranus_lleg_move": {
+  "w": 1104,
+  "h": 1050,
+  "ms": 12688
+ },
+ "x2_veteranus_lleg_act": {
+  "w": 1840,
+  "h": 742,
+  "ms": 10037
+ },
+ "x2_venatore_rarm_move": {
+  "w": 1104,
+  "h": 1042,
+  "ms": 12507
+ },
+ "x2_venatore_rarm_act": {
+  "w": 1616,
+  "h": 706,
+  "ms": 10461
+ },
+ "x2_venatore_larm_move": {
+  "w": 1104,
+  "h": 1223,
+  "ms": 12214
+ },
+ "x2_venatore_larm_act": {
+  "w": 1936,
+  "h": 837,
+  "ms": 10348
+ },
+ "x2_venatore_rleg_move": {
+  "w": 1168,
+  "h": 1240,
+  "ms": 12361
+ },
+ "x2_venatore_rleg_act": {
+  "w": 1920,
+  "h": 820,
+  "ms": 10201
+ },
+ "x2_venatore_lleg_move": {
+  "w": 1104,
+  "h": 1191,
+  "ms": 13084
+ },
+ "x2_venatore_lleg_act": {
+  "w": 1952,
+  "h": 844,
+  "ms": 9700
+ },
+ "x2_damnatio_rarm_move": {
+  "w": 1104,
+  "h": 1022,
+  "ms": 14151
+ },
+ "x2_damnatio_rarm_act": {
+  "w": 1536,
+  "h": 698,
+  "ms": 10921
+ },
+ "x2_damnatio_larm_move": {
+  "w": 1104,
+  "h": 1022,
+  "ms": 12535
+ },
+ "x2_damnatio_larm_act": {
+  "w": 1536,
+  "h": 697,
+  "ms": 10298
+ },
+ "x2_damnatio_rleg_move": {
+  "w": 1104,
+  "h": 1032,
+  "ms": 12883
+ },
+ "x2_damnatio_rleg_act": {
+  "w": 1536,
+  "h": 698,
+  "ms": 9918
+ },
+ "x2_damnatio_lleg_move": {
+  "w": 1104,
+  "h": 1032,
+  "ms": 12893
+ },
+ "x2_damnatio_lleg_act": {
+  "w": 1536,
+  "h": 697,
+  "ms": 10137
  }
 }

@@ -25,6 +25,7 @@ city_sealed.png
 /*.png
 .perf100-boot.html
 tools/art/anim100/out/sev/
+tools/art/anim100/out/x2/
 # screenshots and mock-up pictures stay out of git (his call 2026-10-13); recruit100's source plates are the exception
 tools/plans/**/*.png
 tools/plans/**/*.jpg

@@ -537,7 +537,7 @@ window.BEAST300 = {
     if (opt.only) frames = frames.filter(f => opt.only.includes(f.n));
     if (opt.h) h = opt.h;
     if (opt.diag) frames = frames.filter(f => f.n === 'idle0');
-    const r = await sheet(build, frames, { split: opt.diag || opt.only ? null : B.split, base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: (B.sc || 1) * (SIZE102[key] || 1) * (SIZE103[key] || 1), sx: SLIM103[key] || 1, pxmm: opt.diag ? 6 / (B.sc || 1) * 1.2 : (B.base ? DRAWN(B.base) : PXMM), l106: opt.l106 || null });
+    const r = await sheet(build, frames, { split: opt.diag || opt.only ? null : B.split, base: B.base, rim: B.rim, box: B.box, ty: B.ty, h, sc: (B.sc || 1) * (SIZE102[key] || 1) * (SIZE103[key] || 1), sx: SLIM103[key] || 1, pxmm: (opt.diag ? 6 / (B.sc || 1) * 1.2 : (B.base ? DRAWN(B.base) : PXMM)) * (opt.pxk || 1), ink: 0.85 * (opt.pxk || 1), l106: opt.l106 || null });   /* v1.08b: opt.pxk 2 = the 2× sheets (anim100b/make.js x2) */
     window.BSHEET = window.BSHEET || {}; BSHEET[key] = r;
     const parts = r.parts.map(p => { const e = enc(p.canvas); return { name: p.name, meta: p.meta, rows: p.rows, kb: +(e.bytes / 1024).toFixed(1), webp: e.url, decodedMB: +(p.meta[0] * p.meta[1] * 4 * 8 * p.rows.length / 1048576).toFixed(2) }; });
     const w8 = enc(r.canvas); const idleWalk = frames.filter(f => /^(idle|walk)/.test(f.n)).length;

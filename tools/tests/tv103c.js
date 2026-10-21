@@ -34,7 +34,7 @@ const t1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   const h=k=>{const M=BEAST100_META[k];return M.iw[3]*bst100Scale(M)/gH};const r={};for(const k of ks)r[k]=+h(k).toFixed(2);
   const lw=BEAST100_META.leo.iw[0]/BEAST100_META.leo.iw[1];
   /* v1.02's heights above the base (BEAST100_META iw[3]) */const OLD={leo:141,leaena:119,ursa:106.1,brutum:106.1,valencia:58.5,moechus:58.5};
-  const rel=ks.map(k=>[k,+(BEAST100_META[k].iw[3]/OLD[k]).toFixed(3),/^(valencia|moechus)$/.test(k)?0.92:0.86]);return {bad,r,lw:+lw.toFixed(2),rel}});
+  const rel=ks.map(k=>[k,+(BEAST100_META[k].iw[3]/(BEAST100_META[k].x2?2:1)/OLD[k]).toFixed(3),   /* v1.08b: a 2× sheet (410) counts in 1× px *//^(valencia|moechus)$/.test(k)?0.92:0.86]);return {bad,r,lw:+lw.toFixed(2),rel}});
 ok(!t1.bad.length,'T1a the six re-rendered beasts decode to their meta '+JSON.stringify(t1.bad));
 ok(t1.rel.every(x=>x[1]<=x[2]),'T1b every re-rendered figure is shorter than in v1.02 (height above the base: lions/bears ≤0.86, wolves ≤0.92) '+JSON.stringify(t1.rel));
 ok(t1.lw<1.35,'T1c the lion is slimmer: cell width/height '+t1.lw+' (v1.02: 1.37)');
