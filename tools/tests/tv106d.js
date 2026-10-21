@@ -41,12 +41,13 @@ const state=pg=>pg.evaluate(()=>{const s=aim106Shown();return {shown:s?s.ref.nam
   hits:[...cur().hitTargets],aKey:'n'+window.__A.id}});
 const W=ms=>new Promise(r=>setTimeout(r,ms));
 
+const diag106=async(pg,tag,P)=>{const dg=await pg.evaluate(async()=>{let n=0;const b=draw;draw=function(){n++;return b.apply(this,arguments)};await new Promise(r=>setTimeout(r,1000));draw=b;
+  return {draws1s:n,figs:AIM106.figs.length,tmap:AIM106.tmap&&AIM106.tmap.size,hov:!!AIM106.hov,rec:AIM106.rec,st:AIM106.stats,v108:typeof V108!=='undefined'?{st:V108.st,tb:!!V108.tb,tl:!!V108.tl}:null,l106:typeof l106Mode==='function'?l106Mode():null,night:night91On(),pace:{depth:PACE96.depth,dirty:PACE96.dirty},mode:S.mode,speed:SPEED,dpr:devicePixelRatio,ua:navigator.userAgent.slice(-40)}});const at=P&&P.A?await pg.evaluate(([x,y])=>{try{const R=cv.getBoundingClientRect();const t=typeof aim106Tile==='function'?aim106Tile(x-R.left,y-R.top):null;return {tile:t,figs:AIM106.figs.map(f=>({k:f.k,ops:f.ops.length,bb:f.bb&&[f.bb.x0,f.bb.y0,f.bb.x1,f.bb.y1].map(Math.round)}))}}catch(e){return {err:String(e)}}},[P.A.x,P.A.y]):null;console.log('DIAG106D '+tag+' '+JSON.stringify(dg)+' AT '+JSON.stringify(at))};
 let pg=await open();const st=await start(pg);ok(st.human&&st.on&&/^atk/.test(st.mode)&&st.hl.length>=2,'0 human aims at two targets '+JSON.stringify(st));
 let P=await pts(pg);ok(!P.err&&P.A&&P.both&&P.onlyB,'0b points found '+JSON.stringify(P));
 /* 1 · hover */
 await pg.mouse.move(P.far.x,P.far.y);await W(120);await pg.mouse.move(P.A.x,P.A.y);await W(200);
-let s1=await state(pg);if(s1.shown!==P.names[0]){const dg=await pg.evaluate(async()=>{let n=0;const b=draw;draw=function(){n++;return b.apply(this,arguments)};await new Promise(r=>setTimeout(r,1000));draw=b;
-  return {draws1s:n,figs:AIM106.figs.length,tmap:AIM106.tmap&&AIM106.tmap.size,hov:!!AIM106.hov,rec:AIM106.rec,st:AIM106.stats,v108:typeof V108!=='undefined'?{st:V108.st,tb:!!V108.tb,tl:!!V108.tl}:null,l106:typeof l106Mode==='function'?l106Mode():null,night:night91On(),pace:{depth:PACE96.depth,dirty:PACE96.dirty},mode:S.mode,speed:SPEED,dpr:devicePixelRatio,ua:navigator.userAgent.slice(-40)}});console.log('DIAG106D '+JSON.stringify(dg))}ok(s1.shown===P.names[0]&&s1.cursor==='crosshair'&&s1.tag.startsWith(P.names[0]+' · ')&&/\d+% to wound/.test(s1.tag),'1 hover A: shown + crosshair + tag '+JSON.stringify(s1));
+let s1=await state(pg);if(s1.shown!==P.names[0])await diag106(pg,'1',P);ok(s1.shown===P.names[0]&&s1.cursor==='crosshair'&&s1.tag.startsWith(P.names[0]+' · ')&&/\d+% to wound/.test(s1.tag),'1 hover A: shown + crosshair + tag '+JSON.stringify(s1));
 ok(/ · 94% to wound · ~\d+ dmg$/.test(s1.tag),'1b chance to wound a beast (4 dice, no defences) = 1-(1/2)^4 = 94% + the likely damage '+s1.tag);
 ok(await pg.evaluate(()=>aim106Line({p:0,avg:0,notes:[],minerva:true})===`0% to wound · Minerva`&&aim106Line({p:62,avg:3,notes:[]})===`62% to wound · ~3 dmg`),'1c M1a: Minerva in the target’s hand → 0% and her name');
 const ringDrawn=await pg.evaluate(()=>{let n=0;const o=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){if(String(this.strokeStyle)==='#ff3b2a')n++;return o.apply(this,arguments)};try{draw()}finally{CanvasRenderingContext2D.prototype.stroke=o}return n});
@@ -101,7 +102,7 @@ ok(cost.on-cost.off<=1,'8 draw cost hover on vs off ≤ +1 ms '+JSON.stringify(c
 await pg.context().close();
 /* 5 · touch */
 pg=await open({},true);const st5=await start(pg);P=await pts(pg);ok(st5.on&&P.A,'5 touch setup');
-await pg.touchscreen.tap(P.A.x,P.A.y);await W(300);let t1=await state(pg);ok(t1.sel===P.names[0]&&t1.shown===P.names[0]&&t1.hits.length===0,'5a first tap selects (no strike) '+JSON.stringify(t1));
+await pg.touchscreen.tap(P.A.x,P.A.y);await W(300);let t1=await state(pg);if(t1.sel!==P.names[0])await diag106(pg,'5a',P);ok(t1.sel===P.names[0]&&t1.shown===P.names[0]&&t1.hits.length===0,'5a first tap selects (no strike) '+JSON.stringify(t1));
 await pg.touchscreen.tap(P.far.x,P.far.y);await W(300);let t2=await state(pg);ok(!t2.sel&&t2.hits.length===0,'5b tap elsewhere cancels '+JSON.stringify(t2));
 await pg.touchscreen.tap(P.A.x,P.A.y);await W(250);await pg.touchscreen.tap(P.A.x,P.A.y);
 await pg.waitForFunction(()=>cur().hitTargets.size>0,null,{timeout:8000}).catch(()=>{});const t3=await state(pg);
