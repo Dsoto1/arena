@@ -292,3 +292,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   back after a full run — pull before pushing) + named/repeat dispatch; 412-v108cread (Safari: bases-off read-back in a Worker; flavius_rb108off);
   404 corpse guard (absolute size cap); letter-aware version compare (GAME_VERL); i18n wrap fixes; bake --check; docs/render-caches.md +
   tools/plans/v108c/BASELINE.md. Beta: z1.4 Safari 30.5 → 42.7 fps; createImageBitmap(canvas) ≈16 ms on Safari → v1.10. No server change.
+
+- **v1.09** Winter Quarters, part 1 (tools/plans/v109/NOTES.md + MOCKUP.md, his "Go" = all picks W1a–W21a, one beta): 413-v109wq — the
+  Manager off-season becomes Winter Quarters: shell + rooms 1 Awards night, 2 the Quaestor's accounts (a per-season money ledger by
+  category: one accessor on the player's mgr.coin books each change by the code that made it; old saves "itemised from week N"), 6 Personnel,
+  10 Next season; the Quaestor's Ledger pays on Seal or Begin (qsClose guard: no double pay); one "Winter Quarters are open" letter; prototype
+  411 retired; kill switch flavius_v109wqoff. Also 352 plates stay one row with long names. Next: v1.09a rooms 3/4/5/7/8 + goals, v1.09b the
+  Winter Classic, v1.09c Saturnalia (re-ask W1 before b/c). No server change.

@@ -5,6 +5,7 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-21 · flaky on the v1.09 [full] run 39680497469 (passed on the alone re-run): tv96f, tv100p — watch; fix if they repeat.
 - 2026-10-21 · OPEN (his v1.08c beta, Safari 26.6, 1.5× fixed, Lighting Light, bases off): figures showed NO shadows after load until he
   switched Lighting off/on. Not new in v1.08c (399/401/409 byte-identical to v1.08b); not reproduced in Chromium with the WebKit path forced
   (8 combos). Lead: the shadow layer canvas reused in place (399 l106Build) drawn empty by WebKit; the toggle forces a fresh one (409 v108Sig).
