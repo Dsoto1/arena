@@ -5,6 +5,9 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-21 · v1.08c [full] run 39636433284: shard 6 hung 45 min (job cancelled, no log reachable); the same 53 tests ran clean here.
+  Fixed what we could: CI shards now run with REGSLOTS=0 (the slot limit is for shared boxes) and smartreg is bounded at 30 min, printing
+  partial results + live processes if it hangs again. Re-run 39646409572: 423/423 pass, 0 flaky.
 - 2026-10-21 · corpse leads checked for v1.08c (builder C + lead): the DPR-drop hypothesis is ruled out in Chromium (every cache keys on the
   device scale; tools/bench/dprdrop.js). 410's 1×/2× beast meta mix-up needs the bases setting toggled mid-visit, and the bug was already
   in v1.08 beta 4, BEFORE 410 existed → not the cause. Still unreproduced; his beta console data (CV107.stats, CV107.lastSz, "404:") decides.
