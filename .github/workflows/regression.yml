@@ -79,11 +79,14 @@ jobs:
           NODE_PATH: /tmp/ci/node_modules
           CI_SHARD: ${{ matrix.shard }}
           REGNOEXPAND: '1'
+          REGSLOTS: '0'   # one runner per shard: its own -j is the limit (smartreg header)
           REPEAT: ${{ needs.plan.outputs.repeat }}
         run: |
           rc=0; n=${REPEAT:-1}; : > /tmp/regall.txt
           for i in $(seq 1 "$n"); do
-            node tools/smartreg.js -j 2 ${{ matrix.tests }} || rc=$?
+            # bounded below the job limit so a hang still prints its partial results instead of a log-less cancel
+            timeout -s TERM 1800 node tools/smartreg.js -j 2 ${{ matrix.tests }} || rc=$?
+            if [ "$rc" = 124 ]; then echo "HUNG: smartreg passed 30 min; partial results:"; grep -E '^(== |exit=)' tools/reg.txt | tail -20; ps -eo etime,args | grep -E 'tests/|smartreg|flock' | grep -v grep | cut -c1-200; fi
             cat tools/reg.txt >> /tmp/regall.txt
           done
           if [ "$n" -gt 1 ]; then cp /tmp/regall.txt tools/reg.txt; fi
