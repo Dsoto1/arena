@@ -5,7 +5,7 @@
    B1 · KEEPING HIM = SIX. REPLACES the eight plates of 17-manager's card (meal, word, kintix, bonus, raise, promise + Personal trainer + Medicus):
         data-mg="ptrain" (stays in the Training Yard as "Own doctore") and data-mg="medic" (stays in the Infirmary) are cut from the roster's
         .rm100keep tray; the fold (350's details.r104keep) is OPEN by default (R104.keepOpen starts true; his own fold/unfold is remembered while
-        the page lives); the six plates sit in ONE row where the right side is wide enough (container query on the fold).
+        the page lives); the six plates sit in ONE row where the fold is at least 500px wide (v1.09 fix, was 560: a long name widened the list column and wrapped the plates to 3 rows at 1440) (container query on the fold).
    B2 · THE LIST NO LONGER STRETCHES. REPLACES 350's `minmax(0,1fr)` name column (the empty gap between name and tier): the rows become ONE
         grid (.r104rows) whose rows/header/groups are SUBGRIDS, so the name column is `fit-content(210px)` of the longest name (ellipsis beyond) and
         every row lines up; tier/OVR/W-L/wage/fatigue/weeks/menu follow it; the list column is capped (max 540px) so the selected side gets the room.
@@ -131,7 +131,7 @@ body.r104dnd .r104g:not([data-r104g="I"]):not([data-r104g="L"]) .r104gh b::after
 @container r104l (max-width:360px){.r104 .r104rows{grid-template-columns:20px 22px minmax(0,1fr) 24px 34px 36px}}
 /* B1 · six plates in one row where there is room */
 .r104keep{container:r104k/inline-size}
-@container r104k (min-width:560px){
+@container r104k (min-width:500px){
   .r104keep .rm100keep .acts.v101plts{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
   .r104keep .rm100keep .btn.v101plt{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;gap:3px;padding:6px 4px;min-height:0;align-content:start;align-items:start}
   .r104keep .rm100keep .btn.v101plt .v101pi{width:28px;height:28px}
