@@ -832,3 +832,9 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-22 free assets (his 4a 5a 6 7a): floor/walls/benches get real CC0/CC-BY textures painted to the illustrated look, mock-up first; CC-BY allowed with a new Credits tab; v1.10a = chariot + stands fixes + art clean-up.
 - 2026-10-22 arena clean-up scope (his clarification): structure and depth behind/under the stands (arches, façade, stairs, ground) — REPLACES the same day's 4a (retexture floor/walls/benches).
 - 2026-10-22 The Amphitheatre (his 11a–15a): offline 3D bake around the board (tasteful, few lights), one design recoloured per arena, own release after v1.10a, render approved by him first; REPLACES mock-up options A/B/C.
+- 2026-10-22 his 1a 2a 3a 4a after his Safari GL recordings: (1a) WebGL DROPPED for now — planes-only ran at half speed, full GL only
+  matched today; REPLACES the same day's "WebGL board renderer as v1.11" (and its cache-redesign replacement stays undone). (2a) v1.11 =
+  "Safari 2D fixes": figure-sheet baking (311 alphaBox/shadowRow getImageData) before the match / off the main thread, pots + benches cached as
+  pictures, the 40–80 ms cells/clean bursts; then he records again. (3a) The Amphitheatre render APPROVED; its own release after v1.11; liberty
+  to clean up and improve the bottom-left / bottom-right corners (looked strange); he checks night speed on the beta. (4a) v1.10a shipped
+  from 5daf00c (the commit the full run tested; only tv104a's test changed after).

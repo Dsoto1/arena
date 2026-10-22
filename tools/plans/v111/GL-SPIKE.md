@@ -161,3 +161,6 @@ Verdict: NO-GO for WebGL now. Planes only is HALF speed (steady ~42 ms frames wi
 transparent 2D canvas costs Safari a lot to composite); the full spike only matches the baseline. What the recordings DO show:
 getImageData 0.8–1.0 s per 10 s (311 sheetSteps alphaBox + shadowRow during the match) and `cells`/`clean` bursts of 40–80 ms
 in the slow frames → the cheap 2D fixes are the next step.
+
+**His 1a (2026-10-22): dropped.** 419-v111gl and tv111gl are out of the build; the module is at commit 4e155f2 (to bench it again,
+check that commit out). tools/bench/gl111.js and this note stay. Next: v1.11 "Safari 2D fixes" (his 2a).
