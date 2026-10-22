@@ -19,3 +19,5 @@ Shared rule (FutureBall session, user-approved, 2026-10-21): no generated refere
 brief (object, view, must-show details); he finds a free photo (one object, clear background, no people or logos, direct .jpg/.png link).
 Uploading it costs nothing. Image-to-3D on Rodin Fast costs 300 credits (Tripo 900). Send 2–3 angles if the sides or back matter. Log each
 photo's source and licence; an unknown source = prototype only.
+2026-10-22 Meshy connected in this session (meshy-cli 0.4.0, device sign-in approved by him; balance 3,120 Meshy credits). Prefix meshy commands
+with NODE_USE_ENV_PROXY=1. Same rules as Artlist: exact price + his go before any generation. The sign-in lasts until the container is recycled.
