@@ -320,3 +320,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   w.wc109.fest, champion → wcSettle; Play Now Hall/Annals/crowd untouched (.wc109 guard). Rudis asks (380) open after the festival, answered
   in room 10 (Begin twice when asks appear). Small direct edits: 415 window.wc109Final, 380 window.rudis105Ask. Kill switch flavius_v109coff.
   Winter Quarters complete. No server change.
+
+- **v1.10** Auto quality + Safari fixes (tools/plans/v110/NOTES.md, his 1a–6a + follow-ups 1a–4a, one beta): 417-v110auto — Settings →
+  Board & pieces: Quality Auto/High/Medium/Low first, Lighting (By quality/Full/Light/Off) under it; Auto = one 4-rung ladder from device
+  facts + runtime frame shares (down after 5 s ≥60% late, up after 20 s calm, doubling hysteresis, steps only on quiet frames); desktops
+  floor at Medium; Safari starts 1× sheets (2× after 30 s on time); DPR≥3 phones capped 2×; absorbs 399's auto-drop, 406 W1's drop, 410's
+  memory gate; lite84 "Light board" folded into Low (setting removed); window.Q110 + recorder q110. 399 l106Build fresh canvas (Safari
+  shadows, fixed blind; flavius_l106freshoff). Kill switch flavius_v110autooff. Beta: Safari still 31 fps Full / 53 Off → WebGL spike next.

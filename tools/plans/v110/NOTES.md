@@ -21,3 +21,6 @@ separate setting) · (4a) Quality stays the first card of Board & pieces.
 - 🆕 "try and get some free assets to clean this arena up" (he added domains + keys to the cloud env). Reachable CC0 sources checked:
   Poly Haven (api + dl), ambientCG, Kenney, Quaternius, Freesound. Not reachable: OpenGameArt, Sketchfab, Pixabay, Pexels, Unsplash,
   Wikimedia. New env keys are not visible in this running session (needs a new session).
+2026-10-22 his 1a 2a 3a (+ 2 Safari recordings, tools/plans/v110/perf/): v1.10 shipped; WebGL spike next. Recordings: Auto stayed High
+(webkit start, DPR 1.5, 1× sheets): Lighting Full 31 fps p95 92 ms — cells/clean ≈73 ms/s + device sheet baking in the match (311 grab/halve/
+alphaBox/shadowRow: 336 getImageData ≈740 ms/10 s); Lighting Off 53 fps p95 40. Auto did not step (late share under 60%). Q4–Q7 (assets) open.

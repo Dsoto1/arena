@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.09c** (v1.09c shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.10** (v1.10 shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,13 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.09a** Winter Quarters, the house rooms (tools/plans/v109/NOTES.md, his picks W9a W10a W11c W12a W13a W14a, one beta): 414-v109a —
-  rooms 3 Council review (one free winter promotion for an advisor who met his record; replaces the off-season level-up + retired-great
-  letters), 4 Renown & perks (the Lanista card, second door), 5 Facilities (a winter project is ready at week 1, every house), 7 Winter
-  market (8–12 tirones aged 18–20 each winter, hashed — never the dice), 8 Winter camp (one house focus ≈ one team-drill week, after the
-  season turn, no injuries; runs at Begin if never held), Consilium goals in room 10 (3 a season, ≤55 Renown, new Renown source). 413 gained
-  a room registry (WQ_X / WQ_K). Kill switch flavius_v109aoff. CI: tv91c/tv96f/tv100an timing fixed in the tests. No server change.
-
 - **v1.09b** THE WINTER CLASSIC (tools/plans/v109/NOTES.md, W1a confirmed 2026-10-22 + W3a W5a W6a W15a W16a W17a W18a W20a, one beta):
   415-v109b — room 9 (enter one fighter or sit out; Begin needs the answer), seeds = 348 P.seeds, Sica wildcard keeps the empty seat's seed,
   rivals sit out by hash when best fighter hurt / purse low; Day I 5·8·9·12 + 6·7·10·11 (top 2), Day II 1·4 / 2·3 + qualifiers (top 2) →
@@ -220,3 +213,10 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   w.wc109.fest, champion → wcSettle; Play Now Hall/Annals/crowd untouched (.wc109 guard). Rudis asks (380) open after the festival, answered
   in room 10 (Begin twice when asks appear). Small direct edits: 415 window.wc109Final, 380 window.rudis105Ask. Kill switch flavius_v109coff.
   Winter Quarters complete. No server change.
+
+- **v1.10** Auto quality + Safari fixes (tools/plans/v110/NOTES.md, his 1a–6a + follow-ups 1a–4a, one beta): 417-v110auto — Settings →
+  Board & pieces: Quality Auto/High/Medium/Low first, Lighting (By quality/Full/Light/Off) under it; Auto = one 4-rung ladder from device
+  facts + runtime frame shares (down after 5 s ≥60% late, up after 20 s calm, doubling hysteresis, steps only on quiet frames); desktops
+  floor at Medium; Safari starts 1× sheets (2× after 30 s on time); DPR≥3 phones capped 2×; absorbs 399's auto-drop, 406 W1's drop, 410's
+  memory gate; lite84 "Light board" folded into Low (setting removed); window.Q110 + recorder q110. 399 l106Build fresh canvas (Safari
+  shadows, fixed blind; flavius_l106freshoff). Kill switch flavius_v110autooff. Beta: Safari still 31 fps Full / 53 Off → WebGL spike next.

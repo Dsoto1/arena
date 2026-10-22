@@ -828,3 +828,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-22 v1.10 follow-up (his 1a 2a 3a 4a): Auto never goes below Medium on desktops; DPR≥3 phones capped at 2× always — REPLACES 6a
   ("when zoomed", same day); lite84's "Light board for older phones" setting is folded into Quality Low — REPLACED (v0.84 setting removed);
   Quality = first card of Board & pieces.
+- 2026-10-22 his 1a 2a 3a: a WebGL board renderer as its own release (v1.11) after a 2–3 day spike that measures Safari; REPLACES v1.10a's cache-invalidation redesign (the new renderer owns it) and moves Tactical UX to v1.12. v1.10 shipped as is.
