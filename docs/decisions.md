@@ -843,3 +843,8 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   forecourt/low wall/goods (approved earlier the same day). Fires: only the two big braziers on the stair's flanking pillars (+ the few
   elsewhere). The board moves up a little to show the whole stair ONLY when the Amphitheatre is on and the window is tall enough; phones and
   short windows keep today's framing.
+- 2026-10-22 Amphitheatre corners + glow (his 1a 2a 3a): the bottom corners get ground + a Roman city (paving at the façade's foot → street
+  level, a few rooftops/cypresses/a low colonnade, soft haze to the edges; at night dark with a few warm windows) — MOCK-UP FIRST; if he
+  doesn't like it, fallback = ground only fading to warm haze (c), possibly with the view raised so less shows below. REPLACES the same day's
+  "plain background beyond the façade" (1a). Stair glow: two small warm pools on the top steps, ~1/3 of pass 7, none on the façade. Scope:
+  only the bottom corners and below the stair.
