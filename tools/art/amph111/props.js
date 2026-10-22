@@ -122,7 +122,7 @@ window.AMPH111_PROPS = function (THREE, MAT, add, T, rnd) {
     const tongue = (h, r) => new THREE.LatheGeometry(Array.from({ length: 11 }, (_, i) => { const t = i / 10; return new THREE.Vector2(r * Math.pow(Math.sin(Math.PI * Math.min(1, t * 1.35)), 0.7) * Math.pow(1 - t, 0.55) + (t === 0 ? 0 : 0), h * t); }), 10);
     for (const [dx, dz, h, r, k, tz] of [[0, 0, 0.62, 0.2, 'flame', 0], [0.1, 0.04, 0.4, 0.12, 'flame', 0.25], [-0.1, -0.02, 0.44, 0.13, 'flame', -0.2], [0, 0.07, 0.36 * (o.core || 1), 0.12 * (o.core || 1), 'flameCore', 0]])
       add(tongue(h * s, r * s), k, M4(F, x + dx * s, fy - 0.03 * s, z + dz * s, 0, 1, 1, 1, 0, tz), 'fire');
-    const p = V3(x, fy + 0.22 * s + (o.lift || 0), z + (o.dz || 0)).applyMatrix4(F); return { x: p.x, y: p.y, z: p.z, s: s * (o.light || 1), shadow: !!o.shadow };
+    const p = V3(x, fy + 0.22 * s + (o.lift || 0), z + (o.dz || 0)).applyMatrix4(F); return { x: p.x, y: p.y, z: p.z, s: s * (o.light == null ? 1 : o.light), shadow: !!o.shadow };
   };
   /* ---------- the static crowd on the far rows ---------- */
   out.crowd = (rows, LH, UEND) => {

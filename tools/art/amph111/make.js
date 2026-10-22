@@ -5,6 +5,8 @@
    the game's (OX, OY) and one tile = TW. Rendered at 2× (cfg ss) with no MSAA, then box-filtered down → every layer's alpha is its exact
    coverage, so the layers ADD back together ('lighter') without seams.
      node tools/art/amph111/make.js [--out DIR] [--tw 112] [--pass N] [--overview 1.6] [--assets]
+     --variant ground | p7 | city   (pass 8: ground = HIS PICK (c), the default — paving + steps fading into a dark haze + the 2a stair pools; p7 = pass 7; city = his 1a ground + Roman city in the bottom
+       corners + the 2a stair pools; both still reproducible)
    Writes DIR/<layer>.png (stone, bench, cloth — luminance, tinted per arena in the game — fixed, fire, glow (night, opaque black)) and
    DIR/meta.json (TW0, the frame in TW: xl xr yt yb, sizes). --assets also encodes assets/amph111_<layer>.webp + assets/amph111.json.
    The frame (in TW, around the game's OX/OY): xl = xr = 11.5, yt = 3.6, yb = 10.9 — the canvas never shows more (07-ui draw: OY = 2.7 TW,
@@ -32,7 +34,7 @@ const PORT = 20000 + Math.floor(Math.random() * 20000);
     for (const night of [false, true]) {
       const ls = LAYERS.filter(l => (l === 'glow') === night); if (!ls.length) continue;
       const r = await pg.evaluate(cfg => window.AMPH111.render(cfg).then(r => ({ out: r.out, W: r.W, H: r.H, meta: r.meta, tris: r.tris })),
-        Object.assign({ tw0: TW0, ss: SS, layers: ls, night, look: LOOK, overview: OVER || 0, inkA: +opt('ink', 0.55), post: +opt('post', 0) }, FR));
+        Object.assign({ tw0: TW0, ss: SS, layers: ls, night, look: LOOK, variant: opt('variant', 'ground'), overview: OVER || 0, inkA: +opt('ink', 0.55), post: +opt('post', 0) }, FR));
       for (const k of Object.keys(r.out)) { fs.writeFileSync(path.join(OUT, k + '_ss.png'), Buffer.from(r.out[k].split(',')[1], 'base64')); }
       Object.assign(res, { W: r.W, H: r.H, meta: r.meta, tris: r.tris });
     }
