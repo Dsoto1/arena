@@ -13,3 +13,11 @@ phone@3 zoomed js 23–27 ms vs 3.5–5 at @2; 2× sheets ≈711 MB decoded.
 Build follow-up questions 2026-10-22, his 1a 2a 3a 4a go: (1a) on desktops Auto stops at Medium (Low only when picked) · (2a) phones with
 DPR ≥3 capped at 2× ALWAYS (REPLACES 6a's "only when zoomed") · (3a) lite84 "Light board for older phones" folded into Low (REPLACES the
 separate setting) · (4a) Quality stays the first card of Board & pieces.
+
+## His beta notes 2026-10-22 (with a Chariot Racing screenshot)
+- Safari 20–40 fps (60 when quiet) vs Chrome ~120 → asked: WebGL board renderer spike (Q1–Q3 open).
+- FIX: Chariot Racing — the gladiators/tokens on the chariots still use the old pieces (not the v1.07 3D stills).
+- FIX: bottom (front) stands — bench planks show through the seated spectators.
+- 🆕 "try and get some free assets to clean this arena up" (he added domains + keys to the cloud env). Reachable CC0 sources checked:
+  Poly Haven (api + dl), ambientCG, Kenney, Quaternius, Freesound. Not reachable: OpenGameArt, Sketchfab, Pixabay, Pexels, Unsplash,
+  Wikimedia. New env keys are not visible in this running session (needs a new session).
