@@ -128,6 +128,48 @@ below the board for the whole stair when the window is tall enough (phones / sho
 - Sizes: 7 files 416 KB (stone 212, fixed 77, glow 50, bench 49, cloth 13, fire 11, front 4.5) — less than pass 6 (448 KB) though the
   frame grew to 2576×1624: the ground plane is gone.
 
+## Pass 8 — MOCK-UP: filling the bottom corners (his note on pass 7 + picks 1a 2a 3a; decisions 2026-10-22 "corners + glow")
+His note: "the glow of the stair is strong; the bottom right and left corners are really bland … looks odd empty floating / seeing night
+sky". Picks: 1a ground + a Roman city ONLY in the two bottom corners and below the stair (3a: above the far stands unchanged), MOCK-UP
+FIRST, with his fallback (c) ground only (+ a raised-view version) to compare; 2a two small warm pools on the stair's top steps at ~1/3.
+Built behind a VARIANT switch: `make.js --variant p7|city|ground` (scene.js opt.variant; default p7 — re-baked and compared: byte-identical
+to the committed pass 7 files). Raised view = (c) with 419's framing kill switch in a tall window (today's 724 px canvas): render-only.
+Review page: scratchpad amph111-review.html, new top section "Pass 8 mock-up: filling the bottom corners".
+
+### 8a — first build
+- Built ('city'): a paved terrace at the façade's foot (2.0 deep, a plaza square under the stair big enough for the lions), three steps
+  down to a street plane that covers everything below the near façades out to the canvas edges (no night sky can show); a sidewalk;
+  per corner a low portico, 4–6 houses (terracotta hip roofs with tile courses drawn in code, plaster walls in the stone layer so they take
+  each arena's colour), cypresses and umbrella pines; a handful of lit windows (5 in 8c) as glow-only meshes. HAZE (amph111.html hz8): the city + ground
+  materials mix toward a haze colour with the distance out from the façade and toward the canvas sides, and the ink lines fade by the same
+  factor (the normal pass writes 1 − haze into alpha; the post pass scales the ink with it). 'ground': the paving + steps + street only,
+  the haze dark. 2a: the two pillar lights (pass 7c) are off; two spot lights straight down on the top steps, no shadow.
+- Bug: the pillar lights stayed on (props.js `o.light || 1` turned 0 into 1) → `o.light == null ? 1 : o.light`.
+- Compared with pass 7 and his picture: the corners are no longer empty, but most of the city sat OFF the canvas — a 1440 window shows only
+  ±7.6 TW (canvas 970 px), not the bake's ±11.5; the visible corner is a small triangle (x − z ≥ −5.8, x + z ≤ 12.3 at street level in the
+  near frame). The pools were 1/5 of pass 7 (top steps 12 vs 63 in the glow layer).
+
+### 8b — the city moved into view, calmer paving, haze toward the bottom
+- Changed: the buildings regrouped right by the plaza and the street (each corner: a portico on the sidewalk, 5 houses, 3 cypresses, 3 pines;
+  in short windows only the nearest roofs show); terrace 1.4 deep, steps 0.25; a calmer paving texture (luminance contrast ×0.32 instead of
+  0.55: the marbled veins read dark and busy); the haze also grows toward the canvas BOTTOM (sy 8.4 → 11.2 TW) so the city fades out at the
+  bottom edge; pools 5.0 aimed at the top steps → 21.5 vs pass 7's 63 (≈1/3), lower steps 0.2, lions 0, façade 0.
+- Compared: day reads as ground + a quiet town in a warm haze, lower contrast than the stands; night dark blue-grey with a handful of
+  windows; (c) a dark warm band round the stair. Left: umbrella pines read as khaki discs; on Syracusae the roofs' haze (warm) did not
+  match the cool walls/ground.
+
+### 8c — final mock-up
+- Changed: darker pine/cypress greens, smaller pine canopies; the fixed layer's haze colour more neutral (#c0b7a6) so it suits warm and cool
+  arenas.
+- Compared with pass 7 and his picture (tall 1440×1200 at 1× and 2×, 1440×900, day + night, Roma + Syracusae): the bottom corners are
+  paving → steps → street → a few roofs/portico/trees fading into haze; nothing floats, no night sky below the arena; the stair's light is
+  two small pools on the top steps, the lions and façade unlit. His picture's ground is a plain cream floor (no city) — (c) is closer to
+  that by layout, (a) is what he asked for now.
+- Sizes: (a) 488 KB (stone 272, fixed 98, glow 41, others as pass 7) vs pass 7 416; (c) 440 KB. Same frame (2576×1624): same memory and the
+  same one-off composite. Per frame: 0 by day (cached under layer); night glow blits 18 pieces / 35% of the frame for (a), 14 / 31% for (c),
+  15 / 33% for pass 7. Contrast read-back identical to pass 7 in every view.
+- assets/amph111_* now hold (a) (the preview is off by default); 419 is unchanged (same frame + front box).
+
 ## Method
 - Projection: an orthographic camera 30° down / 45° round = the game's 2:1 iso; world X/Z = the board's columns/rows (1 unit = 1 tile),
   so tile corner (0,0) is the game's (OX, OY) and K = TW/√2 px per view unit; heights: 1 unit = 0.612 TW. The frame is 11.5 TW either side

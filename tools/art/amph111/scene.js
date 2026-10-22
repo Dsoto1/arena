@@ -19,6 +19,7 @@
    ===================================================================== */
 window.AMPH111_BUILD = function (THREE, TEX, opt) {
   opt = opt || {};
+  const VAR = opt.variant || 'p7';                           /* pass 8 mock-up: 'p7' (approved pass 7, reproducible) | 'city' (his 1a) | 'ground' (his fallback c) */
   const E0 = -2.45, E1 = 15.45, GX = 0.47, M = 6.5;          /* footprint (3-tier), the grand arenas' extra, the board's middle */
   const e0 = E0 - GX, e1 = E1 + GX, LH = (e1 - e0) / 2;      /* the grand outline: everything built outside it */
   const GROUND = -2.6;                                       /* the ground around the building (near side cut-away) */
@@ -307,6 +308,84 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
     meta.towers = meta.towers || []; meta.towers.push({ c, top: H + 0.16, z: z0 + R * 0.4 });
   }
 
+  /* ================= PASS 8 (his 1a / fallback c): GROUND + A ROMAN CITY in the two bottom corners and below the stair ONLY (3a: the far
+     side stays as is). Paving at the façade's foot (a terrace, a wider plaza under the stair for the lions), three steps down to the street,
+     then (variant 'city') a sidewalk, a low portico, a few houses with terracotta hip roofs, cypresses and umbrella pines. Everything
+     here uses the HAZED materials (amph111.html hz8): it fades into a soft haze with the distance from the façade and toward the canvas
+     edges, and its ink lines fade with it, so it stays low contrast and the eye stays on the sand (VISUAL POLISH RULE). The few lit
+     windows are 'night' meshes: drawn only into the glow layer. ================= */
+  if (VAR !== 'p7') {
+    const a = E1 - 3, far = -40, TR = 1.4, CP = E1 - 2.6, CQ = E1 + 5.0, YS = GROUND - 0.6;   /* terrace depth; the plaza square under the stair */
+    const Lp = o => [[far, a], [a, a], [a, far], [E1 + TR + o, far], [E1 + TR + o, CP - o], [CQ + o, CP - o], [CQ + o, CQ + o], [CP - o, CQ + o], [CP - o, E1 + TR + o], [far, E1 + TR + o]];
+    prism(null, 'gPave', Lp(0), GROUND - 0.25, GROUND);
+    for (let k = 1; k <= 3; k++) prism(null, 'gPave', Lp(k * 0.25), GROUND - 0.25 - k * 0.2, GROUND - k * 0.2);
+    prism(null, 'gStreet', [[far, a], [a, a], [a, far], [70, far], [70, 70], [far, 70]], YS - 0.3, YS);
+    meta.ground = { TR, CP, CQ, YS };
+    if (VAR === 'city') {
+      /* in a near side's frame: x toward the bottom corner (mirrored on nearR), z outward (the façade is z −0.47), y up */
+      const bx = (F, s, key, x0, x1, y0, y1, z0, z1) => box(F, key, Math.min(s * x0, s * x1), Math.max(s * x0, s * x1), y0, y1, z0, z1);
+      const hip = (F, s, x0, x1, z0, z1, y, h) => { const o = 0.14, w = x1 - x0 + 2 * o, d = z1 - z0 + 2 * o, g = new THREE.ConeGeometry(Math.SQRT1_2, 1, 4, 1);
+        g.rotateY(Math.PI / 4); g.translate(0, 0.5, 0); put(g, 'cRoof', T(F, s * (x0 + x1) / 2, y, (z0 + z1) / 2, 0, w, h, d)); };
+      const gable = (F, s, x0, x1, z0, z1, y, h) => { const o = 0.12, g = new THREE.CylinderGeometry(1, 1, 1, 3, 1); g.rotateZ(Math.PI / 2); g.rotateX(-Math.PI / 2); g.translate(0, 0.5, 0);
+        put(g, 'cRoof', T(F, s * (x0 + x1) / 2, y, (z0 + z1) / 2, 0, x1 - x0 + 2 * o, h / 1.5, (z1 - z0 + 2 * o) / 2 / 0.866)); };
+      const cypress = (F, s, x, z, y, k) => { const H = 2.3 * k, prof = Array.from({ length: 12 }, (_, i) => { const t = i / 11; return new THREE.Vector2(i === 0 ? 0.03 : 0.27 * k * Math.pow(Math.sin(Math.PI * Math.min(1, 0.1 + t * 1.25)), 0.7) * (1 - 0.82 * t), H * t); });
+        put(new THREE.LatheGeometry(prof, 10), 'cLeaf', T(F, s * x, y + 0.15, z)); cyl(F, 'cTrunk', s * x, y, y + 0.2, z, 0.05, 0.05, 6); };
+      const pine = (F, s, x, z, y, k) => { const H = 2.2 * k; cyl(F, 'cTrunk', s * x, y, y + H, z, 0.07, 0.05, 7);
+        for (const [dx, dz, dy, r, key] of [[0, 0, 0, 0.8, 'cLeaf'], [0.42, 0.18, -0.1, 0.52, 'cLeaf'], [-0.38, -0.14, -0.06, 0.54, 'cLeaf'], [0.06, 0.04, 0.1, 0.55, 'cLeafLt']])
+          put(new THREE.SphereGeometry(1, 12, 7), key, T(F, s * (x + dx * k), y + H + dy * k, z + dz * k, 0, r * k, r * 0.3 * k, r * 0.85 * k)); };
+      const WIN = [];
+      const house = (F, s, x0, x1, z0, z1, h, rh, wins) => {
+        bx(F, s, 'cWall', x0, x1, YS + 0.1, YS + 0.1 + h, z0, z1);
+        bx(F, s, 'cWall', x0 - 0.05, x1 + 0.05, YS + 0.1 + h - 0.08, YS + 0.1 + h, z0 - 0.05, z1 + 0.05);   /* a thin eaves band */
+        hip(F, s, x0, x1, z0, z1, YS + 0.1 + h, rh);
+        for (const [wx, lit] of wins || []) { const y0 = YS + 0.1 + h * 0.5, y1 = y0 + 0.36;
+          bx(F, s, 'cDark', wx - 0.13, wx + 0.13, y0, y1, z1, z1 + 0.02);
+          if (lit) WIN.push([F, s, wx, y0, y1, z1]); }
+        /* a door on the outward face */
+        bx(F, s, 'cDark', (x0 + x1) / 2 + 0.35, (x0 + x1) / 2 + 0.75, YS + 0.1, YS + 0.1 + Math.min(0.9, h * 0.6), z1, z1 + 0.02);
+      };
+      const portico = (F, s, x0, x1, z0, z1, h) => {
+        bx(F, s, 'cWall', x0, x1, YS + 0.1, YS + 0.1 + h, z0, z0 + 0.22);                                 /* the back wall */
+        bx(F, s, 'cWall', x0, x1, YS + 0.1, YS + 0.2, z0, z1);                                             /* its floor (two steps) */
+        bx(F, s, 'cWall', x0 - 0.06, x1 + 0.06, YS + 0.1, YS + 0.15, z1 - 0.05, z1 + 0.12);
+        for (let x = x0 + 0.2; x <= x1 - 0.15; x += 0.62) cyl(F, 'cWall', s * x, YS + 0.2, YS + 0.1 + h - 0.12, z1 - 0.22, 0.08, 0.065, 10);
+        bx(F, s, 'cWall', x0 - 0.04, x1 + 0.04, YS + 0.1 + h - 0.14, YS + 0.1 + h + 0.02, z0, z1 - 0.06);  /* architrave */
+        gable(F, s, x0, x1, z0, z1 - 0.06, YS + 0.1 + h + 0.02, 0.5);
+      };
+      /* the two corners: nearL (s = 1) and nearR (s = −1, mirrored, a different arrangement). Only a small triangle of each corner is on a
+         canvas (±7.6 TW wide at 1440, its bottom 10.65 TW below OY tall / 8.6 short): x − z ≥ −5.8 and x + z ≤ 12.3 at street level, and
+         the plaza under the stair starts at x 5.6 — so the few buildings sit right by the plaza and the street; tops of the nearer ones
+         rise into the short framing too. */
+      for (const [side, s] of [['nearL', 1], ['nearR', -1]]) {
+        const F = SIDES[side];
+        /* the sidewalk the blocks stand on (a kerb toward the street) */
+        bx(F, s, 'gPave', -18, 5.45, YS - 0.2, YS + 0.1, 3.05, 16);
+        if (s > 0) {
+          portico(F, s, -3.2, 2.6, 3.25, 4.45, 1.25);
+          house(F, s, 3.1, 5.3, 3.3, 5.3, 1.3, 0.65, [[3.8, 1]]);
+          house(F, s, -0.6, 2.6, 5.2, 7.2, 1.6, 0.75, [[0.2, 0], [1.7, 1]]);
+          house(F, s, 3.2, 5.4, 6.1, 7.9, 1.25, 0.6, [[4.3, 0]]);
+          house(F, s, -4.4, -1.4, 5.0, 6.9, 1.45, 0.7, [[-3.4, 0], [-2.2, 0]]);
+          house(F, s, 0.6, 3.4, 8.3, 10.2, 1.4, 0.7, [[1.6, 0]]);
+          cypress(F, s, 2.85, 3.45, YS + 0.1, 0.9); cypress(F, s, -3.6, 3.45, YS + 0.1, 0.95); cypress(F, s, -1.0, 5.6, YS + 0.1, 1.0);
+          pine(F, s, 2.9, 7.7, YS + 0.1, 0.9); pine(F, s, -2.6, 7.9, YS + 0.1, 1.0); pine(F, s, 5.2, 9.4, YS + 0.1, 0.8);
+        } else {
+          house(F, s, -2.6, 0.6, 3.3, 5.0, 1.5, 0.7, [[-1.8, 0], [-0.3, 1]]);
+          portico(F, s, 1.1, 5.3, 3.25, 4.4, 1.2);
+          house(F, s, 2.6, 5.4, 5.2, 7.1, 1.35, 0.65, [[3.6, 1]]);
+          house(F, s, -1.6, 1.8, 6.0, 8.0, 1.55, 0.75, [[-0.7, 0]]);
+          house(F, s, -5.6, -3.2, 4.2, 6.0, 1.3, 0.65, [[-4.6, 0]]);
+          house(F, s, 2.2, 4.8, 8.6, 10.4, 1.4, 0.7, [[3.0, 1]]);
+          cypress(F, s, 0.95, 3.5, YS + 0.1, 0.95); cypress(F, s, 2.1, 5.45, YS + 0.1, 0.85); cypress(F, s, -2.9, 5.3, YS + 0.1, 1.0);
+          pine(F, s, 0.4, 9.0, YS + 0.1, 0.95); pine(F, s, 5.3, 8.1, YS + 0.1, 0.8); pine(F, s, -4.4, 7.4, YS + 0.1, 1.0);
+        }
+      }
+      /* the handful of warm windows (night only) */
+      for (const [F, s, wx, y0, y1, z1] of WIN) box(F, 'win', s * wx - 0.11, s * wx + 0.11, y0 + 0.03, y1 - 0.03, z1 + 0.025, z1 + 0.035);
+      meta.windows = WIN.length;
+    }
+  }
+
   /* ================= BUILD the merged meshes ================= */
   const MAT = opt.materials(THREE, TEX);
   for (const k of Object.keys(BK)) {
@@ -336,7 +415,11 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
   for (const pl of meta.pillars) front(() => P.banner(DB, pl.x, 0.12, pl.front + 0.01, 0.7, 1.55));
   /* braziers (a few, at key points): the landing (2), the tower tops, the two vomitoria on the far sides */
   meta.fires = [];
-  for (const pl of meta.pillars) meta.fires.push(front(() => P.brazier(DB, pl.x, pl.top - 0.75 * 1.25, pl.z, 1.25, { gold: 1, core: 1.45, light: 0.75, lift: -0.6, dz: 1.0, shadow: 1 }), 1));   /* the stem sinks into the pillar: a wide bowl on its top */   /* pass 7 (his 2a): the two big braziers on the stair's pillars */
+  for (const pl of meta.pillars) meta.fires.push(front(() => P.brazier(DB, pl.x, pl.top - 0.75 * 1.25, pl.z, 1.25, { gold: 1, core: 1.45, light: VAR === 'p7' ? 0.75 : 0, lift: -0.6, dz: 1.0, shadow: 1 }), 1));
+  /* pass 8 (his 2a): instead of the pillar lights, two small warm pools on the stair's top steps (spot lights straight down, no shadow):
+     about a third of pass 7's light there, gone before the lions, nothing on the façade */
+  meta.pools = [];
+  if (VAR !== 'p7') for (const sx of [-1, 1]) { const p = V3(sx * 0.55, 1.1, -0.5).applyMatrix4(DB), t = V3(sx * 0.55, -0.8, -0.15).applyMatrix4(DB); meta.pools.push({ x: p.x, y: p.y, z: p.z, tx: t.x, ty: t.y, tz: t.z }); }   /* the stem sinks into the pillar: a wide bowl on its top */   /* pass 7 (his 2a): the two big braziers on the stair's pillars */
   for (const side of ['farL', 'farR']) { const s = side === 'farR' ? 1 : -1; meta.fires.push(P.brazier(SIDES[side], -s * UEND + s * (0.9 + 1.6 * 4), Y_POD + 0.28, V_POD + 0.06, 0.75)); }
   for (const t of meta.towers) meta.fires.push(P.brazier(DIAG[t.c], 0, t.top, t.z, 1.25));
   /* the crowd on the far rows (baked, static) */

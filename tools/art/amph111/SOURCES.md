@@ -15,6 +15,8 @@ kite_shield — all CC0) — none used.
 | crates, barrels | assets/stands_wood81.webp | the game's own bench wood (v0.81) | tinted #c79a66 |
 | vault + bay linings | tools/art/arena110/vault_brick.webp | Poly Haven "Medieval Red Brick" · Rob Tuytel · **CC0** · https://polyhaven.com/a/medieval_red_brick (prepared in v1.10a, see tools/art/arena110/SOURCES.md) | darkened #8c7a70 |
 | ground / plaza | tools/art/arena110/ground_paving.webp | Poly Haven "Stone Pavers" · Amal Kumar · **CC0** · https://polyhaven.com/a/stone_pavers (prepared in v1.10a) | darkened #6f665a, slabs ×1.5 larger |
+| pass 8 (variants city / ground): terrace, steps, street | tools/art/arena110/ground_paving.webp | as above | luminance, contrast ×0.32 (calmer), tinted with the arena's stone; hazed |
+| pass 8 city: roof tiles | drawn in code (amph111.html roofC) | — | tile courses, luminance, coloured #a07462 |
 | the eagle on the banners | drawn in code (amph111.html eagleCanvas) | — | gold eagle with spread wings in a laurel ring |
 
 Outputs: assets/amph111_{stone,bench,cloth,fixed,fire,glow}.webp + assets/amph111.json (the frame), written by make.js --assets (enc.py).

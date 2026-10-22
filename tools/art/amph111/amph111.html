@@ -42,7 +42,27 @@
     const base = '../../../';
     const [stone, wood, brick, paving] = await Promise.all([base + 'assets/stone100_6_roma.webp', base + 'assets/stands_wood81.webp', '../arena110/vault_brick.webp', '../arena110/ground_paving.webp'].map(load));
     const tx = (cv, rep) => { const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
-    const TEX = { stone: tx(texCanvas(stone, 'lum', 0.8, 1.1)), bench: tx(texCanvas(stone, 'lum', 0.3, 1.15)), wood: tx(texCanvas(wood)), brick: tx(texCanvas(brick)), paving: tx(texCanvas(paving)), paveL: tx(texCanvas(paving, 'lum', 0.55, 0.97)), eagle: tx(eagleCanvas()) };
+    const roofC = document.createElement('canvas'); roofC.width = roofC.height = 128; { const g = roofC.getContext('2d'); g.fillStyle = '#a9a9a9'; g.fillRect(0, 0, 128, 128);
+      /* pass 8: terracotta tile courses (luminance; the roof colour is the material's) */
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) { const v = 150 + ((r * 37 + c * 61) % 7) * 9; g.fillStyle = `rgb(${v},${v},${v})`; g.fillRect(c * 16 + (r % 2) * 8, r * 16, 14, 13); g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(c * 16 + (r % 2) * 8, r * 16 + 12, 14, 3); } }
+    const TEX = { roof: null, stone: tx(texCanvas(stone, 'lum', 0.8, 1.1)), bench: tx(texCanvas(stone, 'lum', 0.3, 1.15)), wood: tx(texCanvas(wood)), brick: tx(texCanvas(brick)), paving: tx(texCanvas(paving)), paveL: tx(texCanvas(paving, 'lum', 0.55, 0.97)), eagle: tx(eagleCanvas()) };
+    TEX.roof = tx(roofC); TEX.paveS = tx(texCanvas(paving, 'lum', 0.32, 1.0));   /* pass 8: a calmer paving (lower contrast) */
+    /* PASS 8 HAZE (scene.js 'city' / 'ground'): the ground + city materials fade toward a haze colour with the distance out from the near
+       façade (world max(X, Z) − E1) and toward the canvas' left/right edges (|X − Z| / 2 in TW). One function for the colour (here) and the
+       ink (the normal pass writes 1 − haze into alpha; the post pass scales the ink by it). Per layer: the stone-layer haze is a luminance
+       (tinted per arena in the game), the fixed layer's a colour; the glow layer fades to black. */
+    const V8 = cfg.variant || 'p7';
+    const HZ = V8 === 'ground' ? { a: 0.95, h0: 1.0, h1: 7.0, b: 0.8, c: 0.3, m: 0.95, ls: 0.24, fx: '#3a2c20' } : { a: 0.5, h0: 2.5, h1: 9.0, b: 0.5, c: 0.5, m: 0.82, ls: 0.8, fx: '#c0b7a6' };
+    const HZF = `float hz8(vec3 w){ float dz = max(w.x, w.z) - 15.45; float sx = abs(w.x - w.z) * 0.5;   /* sx, and below sy: the point's place on the canvas in TW from (OX, OY) */
+      return clamp(${HZ.a.toFixed(3)} * smoothstep(${HZ.h0.toFixed(2)}, ${HZ.h1.toFixed(2)}, dz) + ${HZ.b.toFixed(3)} * smoothstep(6.4, 10.0, sx) + ${HZ.c.toFixed(3)} * smoothstep(8.4, 11.2, (w.x + w.z) * 0.25 - 0.612 * w.y), 0.0, ${HZ.m.toFixed(3)}); }`;
+    const HU = { stone: { value: new THREE.Color(HZ.ls, HZ.ls, HZ.ls) }, fixed: { value: new THREE.Color(HZ.fx) } };
+    const HZC = { stone: new THREE.Color(HZ.ls, HZ.ls, HZ.ls), fixed: new THREE.Color(HZ.fx) };
+    const hz = (m, layer) => { const u = HU[m.layer] || HU.fixed; m.mat.side = THREE.DoubleSide; m.mat.onBeforeCompile = sh => { sh.uniforms.hzCol = u;
+        sh.vertexShader = 'varying vec3 vW8;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n vW8 = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+        sh.fragmentShader = 'varying vec3 vW8; uniform vec3 hzCol;\n' + HZF + '\n' + sh.fragmentShader.replace('#include <dithering_fragment>', 'gl_FragColor.rgb = mix(gl_FragColor.rgb, hzCol, hz8(vW8));\n#include <dithering_fragment>'); };
+      const ck = 'hz8_' + (hz.n = (hz.n || 0) + 1); m.mat.customProgramCacheKey = () => ck;   /* one program per material: onBeforeCompile (and its uniform) runs for each */ m.hz = 1; return m; };
+    const HNRM = new THREE.ShaderMaterial({ side: THREE.DoubleSide, vertexShader: 'varying vec3 vN; varying vec3 vW8; void main(){ vN = normalize(normalMatrix * normal); vW8 = (modelMatrix * vec4(position, 1.0)).xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: 'varying vec3 vN; varying vec3 vW8;\n' + HZF + '\nvoid main(){ vec3 n = normalize(vN) * (gl_FrontFacing ? 1.0 : -1.0); gl_FragColor = vec4(n * 0.5 + 0.5, 1.0 - hz8(vW8)); }' });
     const S = THREE.DoubleSide;
     const std = (o, layer) => ({ mat: new THREE.MeshStandardMaterial(Object.assign({ roughness: 0.92, metalness: 0 }, o)), layer: layer || 'fixed' });
     const materials = () => ({
@@ -55,15 +75,24 @@
       brick: std({ map: TEX.brick, color: '#8c7a70', side: S }), dark: std({ color: '#3a2a1e', side: S, roughness: 1 }), ground: std({ map: TEX.paveL, color: '#9a938a' }, 'stone'), pave: std({ map: TEX.paveL, color: '#ffffff' }, 'stone'),
       crowd: std({ color: '#ffffff', roughness: 0.95 }), leaf: std({ color: '#3d5a2c' }), leafLt: std({ color: '#62813a' }), terra: std({ color: '#a65a3a' }), plaster: std({ color: '#ffffff' }, 'stone'),
       flame: { mat: new THREE.MeshBasicMaterial({ color: '#ff7a22' }), layer: 'fire' }, flameCore: { mat: new THREE.MeshBasicMaterial({ color: '#ffd977' }), layer: 'fire' },
-      hold: { mat: new THREE.MeshBasicMaterial({ color: '#000000' }), layer: 'hold' }
+      hold: { mat: new THREE.MeshBasicMaterial({ color: '#000000' }), layer: 'hold' },
+      /* pass 8: the ground + the city (hazed); 'win' = the lit windows, only in the glow layer */
+      gPave: hz(std({ map: TEX.paveS, color: V8 === 'ground' ? new THREE.Color(0.86, 0.86, 0.86) : new THREE.Color(1.12, 1.12, 1.12) }, 'stone')),
+      gStreet: hz(std({ map: TEX.paveS, color: V8 === 'ground' ? new THREE.Color(0.7, 0.7, 0.7) : new THREE.Color(0.95, 0.95, 0.95) }, 'stone')),
+      cWall: hz(std({ map: TEX.stone, color: new THREE.Color(0.92, 0.92, 0.92) }, 'stone')),
+      cRoof: hz(std({ map: TEX.roof, color: '#a07462' })), cDark: hz(std({ color: '#5a4636', roughness: 1 })), cTrunk: hz(std({ color: '#6a5442' })),
+      cLeaf: hz(std({ color: '#3f5038' })), cLeafLt: hz(std({ color: '#566a45' })),
+      win: { mat: new THREE.MeshBasicMaterial({ color: '#ffb466' }), layer: 'night' }
     });
-    const built = window.AMPH111_BUILD(THREE, TEX, { materials });
+    let MATS = null;
+    const built = window.AMPH111_BUILD(THREE, TEX, { materials: (...a) => (MATS = materials(...a)), variant: V8 });
     const scene = built.scene;
     const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, premultipliedAlpha: false, preserveDrawingBuffer: true });
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setClearColor(0x000000, 0);
     document.body.appendChild(renderer.domElement); renderer.domElement.style.width = '50%';
-    R = { renderer, scene, meta: built.meta, TEX };
+    scene.traverse(o => { if (o.isMesh && MATS[o.name] && MATS[o.name].hz) o.userData.nmat = HNRM; });
+    R = { renderer, scene, meta: built.meta, TEX, HU, HZC };
     return R;
   }
   /* ---------- lights ---------- */
@@ -81,7 +110,9 @@
     } else {
       /* night = only the fires (the game's grade darkens the base; this layer is ADDED after it) */
       for (const b of R.meta.lamps || []) { const p = new THREE.PointLight('#ff9a48', (L.fire || 9) * 0.45, 2.8, 1.4); p.position.set(b.x, b.y, b.z); R.scene.add(p); }
-      for (const f of R.meta.fires) { const p = new THREE.PointLight(L.fireCol || '#ff9a48', (L.fire || 9) * f.s, 7.5 * f.s, 1.6); p.position.set(f.x, f.y, f.z); p.castShadow = !!f.shadow; if (f.shadow) { p.shadow.mapSize.set(1024, 1024); p.shadow.bias = -0.002; p.shadow.camera.near = 0.05; } R.scene.add(p); }
+      for (const q of R.meta.pools || []) { const sp = new THREE.SpotLight(L.poolCol || '#ffa050', L.pool || 5.0, 3.4, 0.4, 1, 2); sp.position.set(q.x, q.y, q.z);
+        const tg = new THREE.Object3D(); tg.position.set(q.tx, q.ty, q.tz); tg.userData.isLightTarget = 1; R.scene.add(tg); sp.target = tg; R.scene.add(sp); }
+      for (const f of R.meta.fires) { if (!f.s) continue; const p = new THREE.PointLight(L.fireCol || '#ff9a48', (L.fire || 9) * f.s, 7.5 * f.s, 1.6); p.position.set(f.x, f.y, f.z); p.castShadow = !!f.shadow; if (f.shadow) { p.shadow.mapSize.set(1024, 1024); p.shadow.bias = -0.002; p.shadow.camera.near = 0.05; } R.scene.add(p); }
       R.scene.add(new THREE.AmbientLight('#000000', 0));
     }
   }
@@ -95,7 +126,7 @@
         e = max(e, smoothstep(nTh, nTh + 0.35, 1.0 - dot(n0, Nn(o))) * 0.7); }
       vec3 col = c.rgb;
       if (post > 0.0) { float l = dot(col, vec3(0.299,0.587,0.114)); float q = (floor(l * 6.0 + 0.5) / 6.0); col = mix(col, col * (q / max(l, 0.02)), post); }
-      col *= 1.0 - inkA * e;
+      col *= 1.0 - inkA * e * texture2D(tNrm, vUv).a;   /* pass 8: alpha = 1 − haze (1 everywhere else) */
       gl_FragColor = vec4(col, c.a); }`;
   async function render(cfg) {
     const R = await setup(cfg);
@@ -110,7 +141,7 @@
     /* normals + depth of the whole scene (ink) */
     const rtN = new THREE.WebGLRenderTarget(W, H, { depthTexture: new THREE.DepthTexture(W, H, THREE.FloatType) });
     const nm = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
-    for (const m of meshes) m.material = nm;
+    for (const m of meshes) { m.material = m.userData.nmat || nm; m.visible = m.userData.layer !== 'night'; }
     r.setRenderTarget(rtN); r.setClearColor(0x808080, 1); r.clear(); r.render(R.scene, cam);
     const HOLD = new THREE.MeshBasicMaterial({ colorWrite: false });
     const BLACK = new THREE.MeshBasicMaterial({ color: 0 });
@@ -120,8 +151,9 @@
     const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post); const qs = new THREE.Scene(); qs.add(quad); const qc = new THREE.Camera();
     const out = {};
     for (const layer of cfg.layers) {
+      R.HU.stone.value.copy(layer === 'glow' ? new THREE.Color(0, 0, 0) : R.HZC.stone); R.HU.fixed.value.copy(layer === 'glow' ? new THREE.Color(0, 0, 0) : R.HZC.fixed);
       for (const m of meshes) {
-        const L = m.userData.layer;
+        const L = m.userData.layer; m.visible = L !== 'night' || layer === 'glow';
         if (layer === 'front') m.material = m.userData.front ? (m.userData.white = m.userData.white || new THREE.MeshBasicMaterial({ color: 0xffffff, map: m.userData.mat.alphaTest ? m.userData.mat.map : null, alphaTest: m.userData.mat.alphaTest || 0, side: m.userData.mat.side })) : HOLD;
         else if (layer === 'glow') m.material = L === 'hold' ? BLACK : m.userData.mat;
         else if (layer === 'all') m.material = L === 'hold' ? HOLD : m.userData.mat;
@@ -135,7 +167,7 @@
       r.setRenderTarget(null); r.setClearColor(0x000000, 0); r.clear(); r.render(qs, qc);
       out[layer] = r.domElement.toDataURL('image/png');
     }
-    for (const m of meshes) m.material = m.userData.mat;
+    for (const m of meshes) { m.material = m.userData.mat; m.visible = true; }
     rtN.dispose(); rtC.dispose();
     return { out, W, H, meta: R.meta, tris: r.info.render.triangles };
   }
