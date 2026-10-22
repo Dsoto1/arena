@@ -151,6 +151,52 @@ window.AMPH111_PROPS = function (THREE, MAT, add, T, rnd) {
     for (const m of [mb, mh]) { m.userData.layer = 'fixed'; m.castShadow = true; m.receiveShadow = true; add.scene.add(m); }
     return items.length;
   };
+  /* ---------- PASS 9 (his 1a, 2026-10-22): the far rows' crowd = OUR spectators — the live crowd's own sprites (313-v100crowd, the
+     production rig92 token pre-rendered in tools/art/crowd100), seated, facing the sand (farL down-right = facing 3, farR down-left = 0),
+     each a quad in the camera plane anchored on the bench just behind its front edge (inset: the slab hides the thighs + most of the
+     shins, which would read as stilts on these deep rows),
+     tinted by 313's rule (tunic = robe mixed with a home-city wool). Size: f × the inner stands' seated head height (0.459 TW). Same seats
+     as pass 8 (the same seeded occupancy: clustered, thinner up high, a few empty seats); one merged mesh, one atlas. ---------- */
+  out.crowdSprites = (rows, LH, UEND, o) => {
+    const C = window.AMPH111_CROWD; o = Object.assign({ f: 0.85, pitch: 0.4, fans: 0.6, inset: 0.12, full: 0.62 }, window.AMPH111_CROWD_OPT || {}, o || {});
+    const RT = V3(Math.SQRT1_2, 0, -Math.SQRT1_2), UP = V3(-0.35355, 0.86603, -0.35355), TO = V3(0.61237, 0.5, 0.61237);
+    const NRM = TO.clone().multiplyScalar(0.6).add(V3(0, 0.8, 0)).normalize();
+    const pick = (list) => { const tot = list.reduce((a, l) => a + l[1], 0); let r = rnd() * tot; for (const l of list) { if ((r -= l[1]) < 0) return l[0]; } return list[0][0]; };
+    const items = [];
+    for (const R of rows) {
+      const top = R.s * (LH + R.v - R.cut);
+      const x0 = Math.min(-R.s * UEND, top) + 0.25, x1 = Math.max(-R.s * UEND, top) - 0.25;
+      for (let x = x0; x < x1; x += o.pitch) {
+        const ax = [-6.4, -1.4].map(a => a * -R.s); if (ax.some(a => Math.abs(x - a) < 0.45)) continue;
+        if (Math.abs(x - 3.6 * -R.s) < 0.9 && R.i >= 0 && R.i <= 3) continue;            /* the vomitorium */
+        const n = 0.5 + 0.5 * Math.sin(x * 1.3 + R.i * 2.1) * Math.sin(x * 0.37 + R.i);
+        if (rnd() > o.full + 0.3 * n - R.i * 0.03) continue;   /* pass 9c: fuller than pass 8 (≈ 3 in 4 seats), still clustered + thinner up high */
+        const k = pick(C.looks), pr = rnd(), row = pr < 0.03 ? 'sitcheer' : pr < 0.06 ? 'sitfist' : 'sit';
+        const pal = rnd() < o.fans ? C.FANS : C.ROBES;   /* live: most of the house are fans in their fighter's colour, the rest in their robe */
+        const t = C.tintOf(pal[Math.floor(rnd() * pal.length)], C.WOOL[Math.floor(rnd() * C.WOOL.length)]);
+        items.push({ R, x: x + (rnd() - 0.5) * 0.08, cell: C.cell(k, row, R.s > 0 ? 0 : 3, t), sc: 0.96 + rnd() * 0.08 });
+      }
+    }
+    const tex = C.finish(MAT.crowdSpr.mat);
+    const n = items.length, P = new Float32Array(n * 18), U = new Float32Array(n * 12), N = new Float32Array(n * 18);
+    const pxW = o.f * 0.459 / C.hs0 * Math.SQRT2;   /* camera-plane units per native sprite px */
+    items.forEach((it, i) => {
+      const c = it.cell, [, , w, h, ax, ay] = c.r, s = pxW * it.sc;
+      const A = V3(it.x, it.R.y, it.R.edge + o.inset).applyMatrix4(it.R.F).addScaledVector(TO, 0.03);
+      const q = (u, v) => A.clone().addScaledVector(RT, (u * w - ax) * s).addScaledVector(UP, (ay - v * h) * s);
+      const p00 = q(0, 1), p10 = q(1, 1), p11 = q(1, 0), p01 = q(0, 0);   /* v = 1 is the image bottom */
+      const quad = [[p00, c.u0, c.v0], [p10, c.u1, c.v0], [p11, c.u1, c.v1], [p00, c.u0, c.v0], [p11, c.u1, c.v1], [p01, c.u0, c.v1]];
+      quad.forEach(([p, u, v], j) => { P.set([p.x, p.y, p.z], (i * 6 + j) * 3); U.set([u, v], (i * 6 + j) * 2); N.set([NRM.x, NRM.y, NRM.z], (i * 6 + j) * 3); });
+    });
+    const G = new THREE.BufferGeometry(); G.setAttribute('position', new THREE.BufferAttribute(P, 3)); G.setAttribute('uv', new THREE.BufferAttribute(U, 2)); G.setAttribute('normal', new THREE.BufferAttribute(N, 3));
+    const m = new THREE.Mesh(G, MAT.crowdSpr.mat); m.userData.layer = 'fixed'; m.castShadow = true; m.receiveShadow = true;
+    /* the ink pass: the cut-out silhouette (alpha-tested), facing the camera; alpha = how much ink its own edge pixels take */
+    m.userData.nmat = new THREE.ShaderMaterial({ side: THREE.DoubleSide, uniforms: { map: { value: tex }, ink: { value: o.ink == null ? 0.5 : o.ink } },
+      vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: 'uniform sampler2D map; uniform float ink; varying vec2 vUv; void main(){ if (texture2D(map, vUv).a < 0.5) discard; gl_FragColor = vec4(0.5, 0.5, 1.0, ink); }' });
+    add.scene.add(m);
+    return { n, cells: C.stats.cells, atlas: C.stats.atlas };
+  };
   function mergeG(list) {
     const gs = list.map(g => g.index ? g.toNonIndexed() : g); let n = 0; for (const g of gs) n += g.attributes.position.count;
     const P = new Float32Array(n * 3), N = new Float32Array(n * 3); let o = 0;

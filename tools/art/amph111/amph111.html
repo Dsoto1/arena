@@ -64,6 +64,7 @@
     const HNRM = new THREE.ShaderMaterial({ side: THREE.DoubleSide, vertexShader: 'varying vec3 vN; varying vec3 vW8; void main(){ vN = normalize(normalMatrix * normal); vW8 = (modelMatrix * vec4(position, 1.0)).xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
       fragmentShader: 'varying vec3 vN; varying vec3 vW8;\n' + HZF + '\nvoid main(){ vec3 n = normalize(vN) * (gl_FrontFacing ? 1.0 : -1.0); gl_FragColor = vec4(n * 0.5 + 0.5, 1.0 - hz8(vW8)); }' });
     const S = THREE.DoubleSide;
+    const CS = Object.assign({ d: 0.35, e: 0.72 }, cfg.cs || {});   /* pass 9 crowd light: diffuse share, emissive share */
     const std = (o, layer) => ({ mat: new THREE.MeshStandardMaterial(Object.assign({ roughness: 0.92, metalness: 0 }, o)), layer: layer || 'fixed' });
     const materials = () => ({
       stone: std({ map: TEX.stone, color: '#ffffff' }, 'stone'), lion: std({ map: TEX.stone, color: new THREE.Color(1.45, 1.45, 1.45) }, 'stone'),
@@ -73,7 +74,10 @@
       gold: std({ color: '#d8ae52', roughness: 0.45 }), bronze: std({ color: '#8c5e30', roughness: 0.55 }), iron: std({ color: '#8b8f96', roughness: 0.5 }), ironDark: std({ color: '#4c4f55', roughness: 0.6 }),
       red: std({ color: '#a8322c', side: S }), skin: std({ color: '#c99a74' }), wood: std({ map: TEX.wood, color: '#c79a66' }), woodDark: std({ color: '#5c3d24' }),
       brick: std({ map: TEX.brick, color: '#8c7a70', side: S }), dark: std({ color: '#3a2a1e', side: S, roughness: 1 }), ground: std({ map: TEX.paveL, color: '#9a938a' }, 'stone'), pave: std({ map: TEX.paveL, color: '#ffffff' }, 'stone'),
-      crowd: std({ color: '#ffffff', roughness: 0.95 }), leaf: std({ color: '#3d5a2c' }), leafLt: std({ color: '#62813a' }), terra: std({ color: '#a65a3a' }), plaster: std({ color: '#ffffff' }, 'stone'),
+      crowd: std({ color: '#ffffff', roughness: 0.95 }),
+      /* pass 9: the sprite crowd (map + emissiveMap = the atlas, set by AMPH111_CROWD.finish): mostly its own painted light (emissive), a
+         little lit diffuse so the bake's sun + shadows still reach it; the night (glow) render switches the emissive off */
+      crowdSpr: std({ color: new THREE.Color(CS.d, CS.d, CS.d), emissive: '#ffffff', emissiveIntensity: CS.e, alphaTest: 0.5, side: S, roughness: 1 }), leaf: std({ color: '#3d5a2c' }), leafLt: std({ color: '#62813a' }), terra: std({ color: '#a65a3a' }), plaster: std({ color: '#ffffff' }, 'stone'),
       flame: { mat: new THREE.MeshBasicMaterial({ color: '#ff7a22' }), layer: 'fire' }, flameCore: { mat: new THREE.MeshBasicMaterial({ color: '#ffd977' }), layer: 'fire' },
       hold: { mat: new THREE.MeshBasicMaterial({ color: '#000000' }), layer: 'hold' },
       /* pass 8: the ground + the city (hazed); 'win' = the lit windows, only in the glow layer */
@@ -84,6 +88,48 @@
       cLeaf: hz(std({ color: '#3f5038' })), cLeafLt: hz(std({ color: '#566a45' })),
       win: { mat: new THREE.MeshBasicMaterial({ color: '#ffb466' }), layer: 'night' }
     });
+    /* PASS 9 (his 1a, 2026-10-22): the upper-tier crowd = the LIVE crowd's own sprites (assets/crowd100_s0..s5.webp, the production rig92
+       token pre-rendered by tools/art/crowd100; meta = 313-v100crowd's CROWD100_META), tinted exactly as 313 cr100Sprite does (the tunic
+       mask multiplied by cr100Tint(mix(robe, home wool, 0.4))). props.js asks for cells with CROWD.cell(); CROWD.finish() packs only the
+       cells used into one atlas texture. cfg.crowd === 'prim' = the pass 8 primitive figures (for the before/after review). */
+    if (cfg.crowd !== 'prim') {
+      const src = await (await fetch(base + 'src/stands/313-v100crowd.js')).text();
+      const m = /const CROWD100_META=([\s\S]*?);\s*\/\* CROWD100_META:END/.exec(src); if (!m) throw new Error('CROWD100_META not found');
+      const CM = JSON.parse(m[1]).a; const SK = ['s0', 's1', 's2', 's3', 's4', 's5'];
+      const SH = await Promise.all(SK.map(k => load(base + 'assets/crowd100_' + k + '.webp')));
+      /* 313's tint rules (cr100Hex / cr100Mix / cr100Tint), copied */
+      const hex = c => { const q = /^#?([0-9a-f]{6})$/i.exec(String(c || '')); return q ? parseInt(q[1], 16) : 0xe8dcc0; };
+      const mix = (a, b, f) => { const A = hex(a), B = hex(b); const ch = s => Math.round(((A >> s) & 255) * (1 - f) + ((B >> s) & 255) * f); return '#' + ((1 << 24) | (ch(16) << 16) | (ch(8) << 8) | ch(0)).toString(16).slice(1); };
+      const tint = c => { const v = hex(c); const q = s => Math.min(255, Math.round((((v >> s) & 255) >> 4 << 4 | 8) * 1.24)); return 'rgb(' + q(16) + ',' + q(8) + ',' + q(0) + ')'; };
+      const ROBES = ['#7a2230', '#4b2a5a', '#c9b27a', '#3f5a3a', '#2f4a6b', '#a86a2a', '#e8dcc0', '#5a4636', '#8a3b1c', '#35606a'];   /* 16-crowd ROBES */
+      const WOOL = ['#efe3cc', '#e6d2a8', '#b8926a', '#e8dcc0', '#d9c9a3', '#e9d7b0', '#cdb08a', '#e0d4b8', '#d8c39a', '#c9a67a', '#d4b48c', '#e4d6bf'];   /* 16-crowd CITY_TUNIC */
+      const FANS = ['#c0433a', '#4f7fc4', '#4f9a57', '#d4b13c', '#cfc6b4', '#dc7a34', '#8a5cc0', '#9a8f84'];   /* 02-data CLASSES[].color: a fan wears their fighter's colour (16-crowd allegCol) */
+      const used = new Map(); let atlas = null;
+      const CROWD = window.AMPH111_CROWD = {
+        meta: CM, ROBES, WOOL, FANS, tintOf: (robe, wool) => tint(mix(robe, wool, 0.4)),
+        /* look weights = the live crowd's (96 spectators × 5 arenas, 2026-10-22 dump: s2 37% · s5 21% · s4 16% · s0 15% · s1 5% · s3 5%) */
+        looks: [['s2', 37], ['s5', 21], ['s4', 16], ['s0', 15], ['s1', 5], ['s3', 5]],
+        hs0: (() => { const s = CM.s0.r.sit; return s.reduce((a, c) => a + (c[5] - c[7]), 0) / s.length; })(),
+        cell(k, row, fi, t) { const key = k + '|' + row + '|' + fi + '|' + t; let c = used.get(key); if (!c) { const M = CM[k]; const r = M.r[row][fi]; c = { key, k, row, fi, t, r, u0: 0, v0: 0, u1: 0, v1: 0 }; used.set(key, c); } return c; },
+        finish(mat) {
+          /* shelf-pack the used cells (2 px gaps, no mip bleed), each drawn + tinted like cr100Sprite at native size */
+          const cells = [...used.values()].sort((a, b) => b.r[3] - a.r[3]); const AW = 2048; let x = 0, y = 0, rh = 0;
+          for (const c of cells) { const w = c.r[2], h = c.r[3]; if (x + w + 2 > AW) { x = 0; y += rh + 2; rh = 0; } c.ax = x; c.ay = y; x += w + 2; rh = Math.max(rh, h); }
+          const AH = y + rh + 2; atlas = document.createElement('canvas'); atlas.width = AW; atlas.height = AH; const g = atlas.getContext('2d');
+          for (const c of cells) {
+            const M = CM[c.k], im = SH[SK.indexOf(c.k)], [sx, sy, w, h] = c.r;
+            const o = document.createElement('canvas'); o.width = w; o.height = h; const og = o.getContext('2d'); og.drawImage(im, sx, sy, w, h, 0, 0, w, h);
+            if (M.mx && c.t) { const t = document.createElement('canvas'); t.width = w; t.height = h; const tg = t.getContext('2d'); tg.drawImage(im, sx + M.mx, sy, w, h, 0, 0, w, h);
+              tg.globalCompositeOperation = 'source-in'; tg.fillStyle = c.t; tg.fillRect(0, 0, w, h); og.globalCompositeOperation = 'multiply'; og.drawImage(t, 0, 0); og.globalCompositeOperation = 'source-over'; }
+            g.drawImage(o, c.ax, c.ay);
+            c.u0 = c.ax / AW; c.u1 = (c.ax + w) / AW; c.v1 = 1 - c.ay / AH; c.v0 = 1 - (c.ay + h) / AH;
+          }
+          const t = new THREE.CanvasTexture(atlas); t.colorSpace = THREE.SRGBColorSpace; t.generateMipmaps = false; t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter;
+          mat.map = t; mat.emissiveMap = t; mat.needsUpdate = true; CROWD.stats = { cells: cells.length, atlas: AW + 'x' + AH }; return t;
+        }
+      };
+    } else window.AMPH111_CROWD = null;
+    window.AMPH111_CROWD_OPT = cfg.copt || null;
     let MATS = null;
     const built = window.AMPH111_BUILD(THREE, TEX, { materials: (...a) => (MATS = materials(...a)), variant: V8 });
     const scene = built.scene;
@@ -92,7 +138,7 @@
     renderer.setClearColor(0x000000, 0);
     document.body.appendChild(renderer.domElement); renderer.domElement.style.width = '50%';
     scene.traverse(o => { if (o.isMesh && MATS[o.name] && MATS[o.name].hz) o.userData.nmat = HNRM; });
-    R = { renderer, scene, meta: built.meta, TEX, HU, HZC };
+    R = { renderer, scene, meta: built.meta, TEX, HU, HZC, MATS, CS };
     return R;
   }
   /* ---------- lights ---------- */
@@ -137,6 +183,7 @@
     if (cfg.overview) { cam.left *= cfg.overview; cam.right *= cfg.overview; cam.top *= cfg.overview; cam.bottom *= cfg.overview; cam.updateProjectionMatrix(); }
     const r = R.renderer; r.setPixelRatio(1); r.setSize(W, H, false);
     lightsFor(R, cfg);
+    if (R.MATS.crowdSpr) R.MATS.crowdSpr.mat.emissiveIntensity = cfg.night ? 0 : R.CS.e;
     const meshes = []; R.scene.traverse(o => { if (o.isMesh) { meshes.push(o); if (!o.userData.mat) o.userData.mat = o.material; } });
     /* normals + depth of the whole scene (ink) */
     const rtN = new THREE.WebGLRenderTarget(W, H, { depthTexture: new THREE.DepthTexture(W, H, THREE.FloatType) });

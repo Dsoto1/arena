@@ -1,7 +1,7 @@
 # amph111 — sources of the amphitheatre bake (v1.11 art, tools/plans/v111/AMPH.md)
 
 **Nothing new was downloaded for this bake.** Every shape is built in code (scene.js, props.js: arches, piers, vaults, rows, stairs,
-cornices, towers, Flavius's box, crates, barrels, rack, cage, gates, braziers, banners, lions, guards, the seated crowd) and rendered
+cornices, towers, Flavius's box, crates, barrels, rack, cage, gates, braziers, banners, lions, guards; the seated crowd until pass 8 — since pass 9 it is the live crowd's sprites, see the table) and rendered
 with the game's own three.js build. Props from Kenney / Quaternius and Poly Haven models were considered and not used: at the bake's size
 (a barrel is ~20 px on a 1440 desktop) primitive shapes in the game's flat colours read better than scanned or low-poly models, and they
 need no licence bookkeeping. Poly Haven's model list was checked (lion_head, marble_bust_01, wooden_crate_01, Barrel_01, wine_barrel_01,
@@ -17,6 +17,7 @@ kite_shield — all CC0) — none used.
 | ground / plaza | tools/art/arena110/ground_paving.webp | Poly Haven "Stone Pavers" · Amal Kumar · **CC0** · https://polyhaven.com/a/stone_pavers (prepared in v1.10a) | darkened #6f665a, slabs ×1.5 larger |
 | pass 8 (variants city / ground): terrace, steps, street | tools/art/arena110/ground_paving.webp | as above | luminance, contrast ×0.32 (calmer), tinted with the arena's stone; hazed |
 | pass 8 city: roof tiles | drawn in code (amph111.html roofC) | — | tile courses, luminance, coloured #a07462 |
+| pass 9: the upper-tier crowd | assets/crowd100_s0..s5.webp + 313-v100crowd CROWD100_META | the game's own live-crowd sprites (v1.0, tools/art/crowd100, rig92 token) | tinted by 313's rule in the bake page; quads in the camera plane |
 | the eagle on the banners | drawn in code (amph111.html eagleCanvas) | — | gold eagle with spread wings in a laurel ring |
 
 Outputs: assets/amph111_{stone,bench,cloth,fixed,fire,glow}.webp + assets/amph111.json (the frame), written by make.js --assets (enc.py).

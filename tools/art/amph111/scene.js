@@ -159,7 +159,7 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
       const v0 = vRow(i), y = yRow(i);
       prism(F, 'stone', farPoly(F, s, v0, V_GAL + 0.01, CUT), Y_POD - 0.1, y);
       prism(F, 'bench', farPoly(F, s, v0 - 0.03, v0 + RD * 0.6, CUT), y, y + 0.07);
-      RED_ROWS.push({ side, F, s, v: v0 + RD * 0.28, y: y + 0.07, cut: CUT, i });
+      RED_ROWS.push({ side, F, s, v: v0 + RD * 0.28, y: y + 0.07, cut: CUT, i, edge: v0 - 0.03 });   /* edge: the bench slab's front (pass 9: the sprite crowd sits on it) */
     }
     /* aisles (scalaria): narrow stairs up the rows, half-height steps */
     for (const ax of [-6.4, -1.4]) {
@@ -423,6 +423,6 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
   for (const side of ['farL', 'farR']) { const s = side === 'farR' ? 1 : -1; meta.fires.push(P.brazier(SIDES[side], -s * UEND + s * (0.9 + 1.6 * 4), Y_POD + 0.28, V_POD + 0.06, 0.75)); }
   for (const t of meta.towers) meta.fires.push(P.brazier(DIAG[t.c], 0, t.top, t.z, 1.25));
   /* the crowd on the far rows (baked, static) */
-  P.crowd(RED_ROWS, LH, UEND);
+  meta.crowd = window.AMPH111_CROWD ? P.crowdSprites(RED_ROWS, LH, UEND) : P.crowd(RED_ROWS, LH, UEND);   /* pass 9: the live crowd's sprites (P.crowd = the pass 8 primitives, --crowd prim) */
   return { scene, meta, rnd };
 };

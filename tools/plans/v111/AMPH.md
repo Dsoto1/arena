@@ -180,6 +180,31 @@ Review page: scratchpad amph111-review.html, new top section "Pass 8 mock-up: fi
 - Tests: tv111am rewritten to the new rule (flag on: layers load, framing = flag off in tall/short/phone, tile clicks right, no errors);
   tv111am tv91r tv66 tv100z tv101z pass.
 
+### 9 — the upper-tier crowd = our spectators (v1.11b, his pick 1a 2026-10-22)
+- Source: the LIVE crowd's own sprites — assets/crowd100_s0..s5.webp (the production rig92 token pre-rendered by tools/art/crowd100, 6 looks,
+  seated poses, 4 facings, the tunic key mask) with 313-v100crowd's CROWD100_META (read from the source file by the bake page). The rig92
+  token itself was not put in the bake scene: it is an ES-module three build with skinning + outline shells (a second three instance in the
+  page); the sprites ARE what the inner stands draw, so the same pixels at a smaller size. Tint = 313's rule copied (cr100Tint(mix(colour,
+  home-city wool, 0.4)), multiplied through the mask): 60% fans in the 8 class colours (16-crowd allegCol), 40% in the 10 ROBES; wool = one
+  of the 12 CITY_TUNIC. Looks weighted like a live house (96 spectators × 5 arenas dump: s2 37 · s5 21 · s4 16 · s0 15 · s1 5 · s3 5 %).
+  Poses: sit 94%, sitfist 3%, sitcheer 3%; facing the sand (farL = facing 3 down-right, farR = 0 down-left) like 313's far stands.
+- Build (props.js crowdSprites, amph111.html AMPH111_CROWD): each figure a quad in the camera plane, one merged mesh + one atlas of only
+  the cells used (2048×951, 260 cells); seeded + deterministic (scene rnd). Light: MeshStandard, emissive 0.72 (its own painted light) +
+  diffuse 0.35 (the bake's sun + shadows still reach it; the night/glow render turns the emissive off, so only the fires light them).
+  Ink: an alpha-tested normal/depth material, so the outline follows the cut-out (its own edge pixels take half the ink).
+  make.js --crowd prim re-bakes pass 8's figures; --copt '{"f","pitch","fans","inset","full","ink"}' / --cs '{"d","e"}' tune it.
+- 9a: anchored at the bench's front edge, robe colours only. Compared with the inner stands (zoomed Roma): the shins hung down the deep
+  risers like stilts; dark and orange-heavy (the ROBES dyes are dark; the live house is mostly fans in bright class colours).
+- 9b: anchor 0.12 inside the bench (the slab hides thighs + shins — they sit ON the bench), 60% fans; size 0.85 × the inner stands'
+  seated head height (0.39 TW). Read right, but sparse (pass 8 occupancy).
+- 9c (final): fuller (≈ 3 seats in 4, still clustered and thinner up high, a few empty seats; aisles + vomitorium kept), emissive
+  0.62 → 0.72. 319 figures. Checked 1440×900 1× and 2×, zoomed day/night, 390 phone, Roma + arenas 0 and 3 day/night: the same people as
+  the inner stands, smaller; 419's vignette (darker + less saturated away from the sand) keeps them quieter than the inner stands and board.
+- Sizes: assets/amph111_* 474 KB (pass 8: 440): fixed 77 → 109, stone 246 → 251 (their shadows), bench 49 → 46, glow 40 → 39. Same frame
+  + front box (419 unchanged), 0 per frame by day, night glow unchanged in shape.
+- Left: one size on every row (ortho bake, no per-row shrink); fans wear the class colours, not this match's fighters (a bake can't follow
+  the match); no stand-ups / cheering waves up there (static).
+
 ## Method
 - Projection: an orthographic camera 30° down / 45° round = the game's 2:1 iso; world X/Z = the board's columns/rows (1 unit = 1 tile),
   so tile corner (0,0) is the game's (OX, OY) and K = TW/√2 px per view unit; heights: 1 unit = 0.612 TW. The frame is 11.5 TW either side
