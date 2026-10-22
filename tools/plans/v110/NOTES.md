@@ -29,3 +29,8 @@ illustrated look · (5a) before/after mock-up page first, he picks, then a beta 
 Credits page · (7a) v1.10a = F1 chariot pieces + F2 front-stand benches + the art clean-up; WebGL (v1.11) after.
 2026-10-22 his clarification of 4: the clean-up means fleshing out the EMPTY SPACES BEHIND AND UNDER THE STANDS — real structure and depth
 (substructure arches, outer façade, stairs, ground around the base) — not retexturing floor/walls/benches. REPLACES this morning's 4a scope.
+2026-10-22 his concept image (tools/plans/v110/ref/arena-concept.jpg, not committed — images under tools/plans are gitignored; copy kept in the
+scratchpad): a full amphitheatre around the board — multi-level travertine arcades on all sides, upper seating tiers with crowd, red banners
+with gold eagles, torches/braziers everywhere, Flavius's box with two guards and braziers, a central stair at the front flanked by lions,
+storage bays under the stands (crates, barrels, weapon racks, cages), corner towers with lion heads; warm torchlit palette. He crossed out
+the seated people in the low front corners (ignore those). "This is what I was imagining." → REPLACES mock-up options A/B/C (Q8–Q10).
