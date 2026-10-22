@@ -28,3 +28,4 @@ league top 3 + Superbus champion line; (6) fanfare on the first visit to room 1.
 ## v1.09 shipped 2026-10-21 (release/v1.09). v1.09a — his "go ahead with v1.09a" 2026-10-21
 Builder (lead's model) on 414-v109a: rooms 3 Council (W9a), 4 Renown, 5 Facilities (W10a), 7 Winter market (W11c fresh intake),
 8 Winter camp (W12a W13a), Consilium goals in room 10 (W14a); kill switch flavius_v109aoff; test tv109a.
+v1.09a shipped 2026-10-22 (release/v1.09a). Next: v1.09b THE WINTER CLASSIC — re-ask W1 ("for now": the Classic final IS the Saturnalia) first.

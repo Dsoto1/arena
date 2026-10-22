@@ -299,3 +299,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   10 Next season; the Quaestor's Ledger pays on Seal or Begin (qsClose guard: no double pay); one "Winter Quarters are open" letter; prototype
   411 retired; kill switch flavius_v109wqoff. Also 352 plates stay one row with long names. Next: v1.09a rooms 3/4/5/7/8 + goals, v1.09b the
   Winter Classic, v1.09c Saturnalia (re-ask W1 before b/c). No server change.
+
+- **v1.09a** Winter Quarters, the house rooms (tools/plans/v109/NOTES.md, his picks W9a W10a W11c W12a W13a W14a, one beta): 414-v109a —
+  rooms 3 Council review (one free winter promotion for an advisor who met his record; replaces the off-season level-up + retired-great
+  letters), 4 Renown & perks (the Lanista card, second door), 5 Facilities (a winter project is ready at week 1, every house), 7 Winter
+  market (8–12 tirones aged 18–20 each winter, hashed — never the dice), 8 Winter camp (one house focus ≈ one team-drill week, after the
+  season turn, no injuries; runs at Begin if never held), Consilium goals in room 10 (3 a season, ≤55 Renown, new Renown source). 413 gained
+  a room registry (WQ_X / WQ_K). Kill switch flavius_v109aoff. CI: tv91c/tv96f/tv100an timing fixed in the tests. No server change.

@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.09** (v1.09 shipped 2026-10-21). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.09a** (v1.09a shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,12 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.08b** sharper fighters + real metal (tools/plans/v108b/NOTES.md, his 1b 2a 3a 4b 5a + 1a 2a, no beta notes): ONE re-bake — metal material in
-  311's ANIM100_LIB (AN100L.metal: steel/bronze picked by colour, tight sun highlight, darker cool/warm tone, rim; LIB VER 6 → device sheets
-  re-render once), printed classes + severed sets + beasts baked at 2× (assets/anim100x2_* / beast100x2_*, 28.7 MB, 1× derived from the 2×
-  render), loader 410-v108x2 (2× on http, not phone, ≥900 px, deviceMemory > 4; flavius_x2off / x2force; beasts 1× with bases off),
-  download keeps 1×; Zora aim outline fix 403 F4 (ring key follows 346's late sharpen). Studio/online tokens stay 1×. No server change.
-
 - **v1.08c** stability & tooling (tools/plans/v108c/NOTES.md, his 1a–8a, one beta): CI waits on states not sleeps + seeded Manager worlds
   (tools/tests/_wait.js; 15 flaky tests fixed), smartreg per-test staleness + machine-wide test slots + CI absorb job (regmap.json.gz committed
   back after a full run — pull before pushing) + named/repeat dispatch; 412-v108cread (Safari: bases-off read-back in a Worker; flavius_rb108off);
@@ -218,3 +212,10 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   10 Next season; the Quaestor's Ledger pays on Seal or Begin (qsClose guard: no double pay); one "Winter Quarters are open" letter; prototype
   411 retired; kill switch flavius_v109wqoff. Also 352 plates stay one row with long names. Next: v1.09a rooms 3/4/5/7/8 + goals, v1.09b the
   Winter Classic, v1.09c Saturnalia (re-ask W1 before b/c). No server change.
+
+- **v1.09a** Winter Quarters, the house rooms (tools/plans/v109/NOTES.md, his picks W9a W10a W11c W12a W13a W14a, one beta): 414-v109a —
+  rooms 3 Council review (one free winter promotion for an advisor who met his record; replaces the off-season level-up + retired-great
+  letters), 4 Renown & perks (the Lanista card, second door), 5 Facilities (a winter project is ready at week 1, every house), 7 Winter
+  market (8–12 tirones aged 18–20 each winter, hashed — never the dice), 8 Winter camp (one house focus ≈ one team-drill week, after the
+  season turn, no injuries; runs at Begin if never held), Consilium goals in room 10 (3 a season, ≤55 Renown, new Renown source). 413 gained
+  a room registry (WQ_X / WQ_K). Kill switch flavius_v109aoff. CI: tv91c/tv96f/tv100an timing fixed in the tests. No server change.
