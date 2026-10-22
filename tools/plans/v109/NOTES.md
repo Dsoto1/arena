@@ -32,3 +32,4 @@ v1.09a shipped 2026-10-22 (release/v1.09a). Next: v1.09b THE WINTER CLASSIC — 
 2026-10-22 W1 re-asked before v1.09b → his "OK next" = W1a CONFIRMED (no longer "for now"): the Classic final IS the Saturnalia.
 v1.09b builder started (415-v109b): entry, seeding W3a, rivals W16a, Days I–II as Match Week bouts W17a, clemency, prizes W15a, the Cup +
 Hall plates + replica W20a; Day III provisional until v1.09c brings the Saturnalia.
+v1.09b shipped 2026-10-22 (release/v1.09b). Next: v1.09c the Saturnalia finale (W1a W2a W4a) — waits for his go.

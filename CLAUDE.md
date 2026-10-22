@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.09a** (v1.09a shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.09b** (v1.09b shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,12 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.08c** stability & tooling (tools/plans/v108c/NOTES.md, his 1a–8a, one beta): CI waits on states not sleeps + seeded Manager worlds
-  (tools/tests/_wait.js; 15 flaky tests fixed), smartreg per-test staleness + machine-wide test slots + CI absorb job (regmap.json.gz committed
-  back after a full run — pull before pushing) + named/repeat dispatch; 412-v108cread (Safari: bases-off read-back in a Worker; flavius_rb108off);
-  404 corpse guard (absolute size cap); letter-aware version compare (GAME_VERL); i18n wrap fixes; bake --check; docs/render-caches.md +
-  tools/plans/v108c/BASELINE.md. Beta: z1.4 Safari 30.5 → 42.7 fps; createImageBitmap(canvas) ≈16 ms on Safari → v1.10. No server change.
-
 - **v1.09** Winter Quarters, part 1 (tools/plans/v109/NOTES.md + MOCKUP.md, his "Go" = all picks W1a–W21a, one beta): 413-v109wq — the
   Manager off-season becomes Winter Quarters: shell + rooms 1 Awards night, 2 the Quaestor's accounts (a per-season money ledger by
   category: one accessor on the player's mgr.coin books each change by the code that made it; old saves "itemised from week N"), 6 Personnel,
@@ -219,3 +213,10 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   market (8–12 tirones aged 18–20 each winter, hashed — never the dice), 8 Winter camp (one house focus ≈ one team-drill week, after the
   season turn, no injuries; runs at Begin if never held), Consilium goals in room 10 (3 a season, ≤55 Renown, new Renown source). 413 gained
   a room registry (WQ_X / WQ_K). Kill switch flavius_v109aoff. CI: tv91c/tv96f/tv100an timing fixed in the tests. No server change.
+
+- **v1.09b** THE WINTER CLASSIC (tools/plans/v109/NOTES.md, W1a confirmed 2026-10-22 + W3a W5a W6a W15a W16a W17a W18a W20a, one beta):
+  415-v109b — room 9 (enter one fighter or sit out; Begin needs the answer), seeds = 348 P.seeds, Sica wildcard keeps the empty seat's seed,
+  rivals sit out by hash when best fighter hurt / purse low; Day I 5·8·9·12 + 6·7·10·11 (top 2), Day II 1·4 / 2·3 + qualifiers (top 2) →
+  four finalists; Day III PROVISIONAL = one simulated Democritus in wc109Final (v1.09c puts the Saturnalia there; must end in wcSettle).
+  Bout tier wc109 with clemency (no death/wound/records/points, limbs back). Prizes Cup + 60 coin + 5 morale/loyalty + 20 Renown; Tituli
+  plinth with plates, replica after 3 wins. Kill switch flavius_v109boff. No server change.

@@ -306,3 +306,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   market (8–12 tirones aged 18–20 each winter, hashed — never the dice), 8 Winter camp (one house focus ≈ one team-drill week, after the
   season turn, no injuries; runs at Begin if never held), Consilium goals in room 10 (3 a season, ≤55 Renown, new Renown source). 413 gained
   a room registry (WQ_X / WQ_K). Kill switch flavius_v109aoff. CI: tv91c/tv96f/tv100an timing fixed in the tests. No server change.
+
+- **v1.09b** THE WINTER CLASSIC (tools/plans/v109/NOTES.md, W1a confirmed 2026-10-22 + W3a W5a W6a W15a W16a W17a W18a W20a, one beta):
+  415-v109b — room 9 (enter one fighter or sit out; Begin needs the answer), seeds = 348 P.seeds, Sica wildcard keeps the empty seat's seed,
+  rivals sit out by hash when best fighter hurt / purse low; Day I 5·8·9·12 + 6·7·10·11 (top 2), Day II 1·4 / 2·3 + qualifiers (top 2) →
+  four finalists; Day III PROVISIONAL = one simulated Democritus in wc109Final (v1.09c puts the Saturnalia there; must end in wcSettle).
+  Bout tier wc109 with clemency (no death/wound/records/points, limbs back). Prizes Cup + 60 coin + 5 morale/loyalty + 20 Renown; Tituli
+  plinth with plates, replica after 3 wins. Kill switch flavius_v109boff. No server change.
