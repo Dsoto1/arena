@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.11a',ic:'🏛',t:_T('The Amphitheatre'),hi:[_T('A full amphitheatre now surrounds the arena: arcades, upper tiers with a crowd, Flavius\'s box and a grand stair'),_T('Each arena wears it in its own stone and colours, by day and by night')]},
   {v:'1.11',ic:'🧭',t:_T('Safari speed'),hi:[_T('Safari: the arena draws much less each frame for smoother play, same picture')]},
   {v:'1.10a',ic:'🏇',t:_T('Chariots and stands'),hi:[_T('Chariot Racing: the riders are 3D figures like every other event'),_T('Fix: spectators no longer have the bench planks showing through them')]},
   {v:'1.10',ic:'⚙',t:_T('Auto quality'),hi:[_T('Settings → Board & pieces: Quality Auto / High / Medium / Low; Lighting stays under it'),_T('Auto keeps the board smooth on your device and steps up when it can'),_T('Safari: smoother start and the shadows show from the first frame')]},

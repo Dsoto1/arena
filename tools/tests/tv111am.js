@@ -28,10 +28,10 @@ const frame=pg=>pg.evaluate(()=>{draw();return {TW,OX,OY,H:+(cv.height/(devicePi
 const same=(a,b)=>a.TW===b.TW&&a.OX===b.OX&&a.OY===b.OY&&a.H===b.H;
 const F={};
 /* (1) flag off: the reference framing in the three windows */
-for(const [k,v] of [['tall',TALL],['short',SHORT],['phone',PHONE]]){const {c,pg}=await open({},v);F[k]=await frame(pg);await c.close()}
+for(const [k,v] of [['tall',TALL],['short',SHORT],['phone',PHONE]]){const {c,pg}=await open({flavius_amph111off:'1'},v);F[k]=await frame(pg);await c.close()}
 ok(!F.tall.on&&!F.short.on&&!F.phone.on,'(1) flag off: the module installs nothing '+JSON.stringify(F.tall));
 /* (2) flag on, tall window */
-{const {c,pg}=await open({flavius_amph111:'1'},TALL);
+{const {c,pg}=await open({},TALL);
   const L=await pg.waitForFunction(()=>{draw();const k=['stone','bench','cloth','fixed','fire','glow','front'];return k.every(n=>AMPH111.img[n]&&AMPH111.img[n].naturalWidth>0)&&k.map(n=>n+':'+AMPH111.img[n].naturalWidth+'x'+AMPH111.img[n].naturalHeight).join(' ')},null,{timeout:60000}).then(h=>h.jsonValue()).catch(()=>null);
   ok(!!L,'(2) every bake layer loads: '+L);
   const f=await frame(pg);
@@ -46,7 +46,7 @@ ok(!F.tall.on&&!F.short.on&&!F.phone.on,'(1) flag off: the module installs nothi
   ok(T.length===got.length&&T.every((t,i)=>got[i][0]===t[0]&&got[i][1]===t[1]),'(4) clicks select the right tiles '+JSON.stringify(got));
   await c.close()}
 /* (3) no offset: short window, phone */
-{const {c,pg}=await open({flavius_amph111:'1'},SHORT);const f=await frame(pg);ok(f.on&&same(f,F.short),'(3) short window: framing = flag off '+JSON.stringify(f)+' vs '+JSON.stringify(F.short));await c.close()}
-{const {c,pg}=await open({flavius_amph111:'1'},PHONE);const f=await frame(pg);ok(f.on&&same(f,F.phone),'(3) phone: framing = flag off '+JSON.stringify(f)+' vs '+JSON.stringify(F.phone));await c.close()}
+{const {c,pg}=await open({},SHORT);const f=await frame(pg);ok(f.on&&same(f,F.short),'(3) short window: framing = flag off '+JSON.stringify(f)+' vs '+JSON.stringify(F.short));await c.close()}
+{const {c,pg}=await open({},PHONE);const f=await frame(pg);ok(f.on&&same(f,F.phone),'(3) phone: framing = flag off '+JSON.stringify(f)+' vs '+JSON.stringify(F.phone));await c.close()}
 ok(!errs.length,'(5) no console errors');
 console.log('ERRS',JSON.stringify(errs.slice(0,6)));console.log(miss.length?'FAILED '+miss.length:'ALL OK');await b.close();srv.close();process.exit(miss.length||errs.length?1:0)})().catch(e=>{console.error(e);process.exit(2)});

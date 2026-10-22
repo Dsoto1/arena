@@ -1,8 +1,8 @@
 /* =====================================================================
    419-V111AMPH · v1.11 art PREVIEW — THE AMPHITHEATRE (his concept 2026-10-22; tools/plans/v111/AMPH.md, decisions 11a–14a)
    =====================================================================
-   OFF BY DEFAULT. localStorage flavius_amph111=1 (read once at load) turns the preview on; without it NOTHING here is installed
-   (no wrapper, no image load) — the game is byte-for-byte today's behaviour. It is for his approval on the beta, not shipped on.
+   ON since v1.11a (his "release it", 2026-10-22). Kill switch localStorage flavius_amph111off=1 (read once at load): then NOTHING here
+   is installed (no wrapper, no image load) — the game is byte-for-byte v1.11's behaviour. (Before v1.11a it was an opt-in preview.)
    DISPLAY ONLY: no rules, no dice, nothing in S, saves or the online hash, no text (no i18n).
    WHAT: the baked 3D surround (tools/art/amph111: three.js, rendered offline at the game's exact 2:1 projection, tile corner (0,0) =
    (OX, OY), one tile = TW) painted FIRST in 192's cached 'under' layer, so the board, its walls/plaques, the inner stands, the live
@@ -22,7 +22,7 @@
    growth and its kill switch flavius_amph111frameoff are gone).
    ===================================================================== */
 const AMPH111={on:false,img:{},meta:null,comp:null,key:'',ms:0};
-try{AMPH111.on=localStorage.getItem('flavius_amph111')==='1'}catch(e){}
+AMPH111.on=true;try{AMPH111.on=localStorage.getItem('flavius_amph111off')!=='1'}catch(e){}
 if(AMPH111.on&&typeof ar91Under==='function'){
   const L5=['stone','bench','cloth','fixed','fire','glow'];
   /* the frame (tw0, xl, yt, w, h) — same numbers as assets/amph111.json (make.js writes both) */
@@ -73,6 +73,11 @@ if(AMPH111.on&&typeof ar91Under==='function'){
     for(const r of out){r.w=Math.min(r.w,M.w-r.x);r.h=Math.min(r.h,M.h-r.y)}
     return (AMPH111.cells=out)}
   if(typeof night91Sand==='function'){const base=night91Sand;night91Sand=function(){const r=base.apply(this,arguments);
-    try{if(night91On()&&!skip()&&ready()){const M=AMPH111.meta,s=TW/M.tw0,x0=OX-M.xl*TW,y0=OY-M.yt*TW,im=AMPH111.img.glow;ctx.save();ctx.globalCompositeOperation='lighter';
-      for(const c of amphCells())if(c.w>0&&c.h>0)ctx.drawImage(im,c.x,c.y,c.w,c.h,x0+c.x*s,y0+c.y*s,c.w*s,c.h*s);ctx.restore()}}catch(e){console.error(e)}return r}}
+    try{if(night91On()&&!skip()&&ready()){const M=AMPH111.meta,s=TW/M.tw0,x0=OX-M.xl*TW,y0=OY-M.yt*TW,G=amphGlowAt(s);ctx.save();ctx.globalCompositeOperation='lighter';
+      /* v1.11a: the lit cells come from a copy pre-scaled to this TW × device pixels, so each night frame is a 1:1 copy (scaling the
+         2576-px bake every frame cost ~16 ms on a CPU raster, tv91r) */
+      for(const c of amphCells())if(c.w>0&&c.h>0)ctx.drawImage(G.c,c.x*G.k,c.y*G.k,c.w*G.k,c.h*G.k,x0+c.x*s,y0+c.y*s,c.w*s,c.h*s);ctx.restore()}}catch(e){console.error(e)}return r}}
+  function amphGlowAt(s){const M=AMPH111.meta,t=ctx.getTransform?ctx.getTransform():{a:1},k=s*(Math.abs(t.a)||1),key=k.toFixed(4)+'|'+AMPH111.key;
+    if(AMPH111.gc&&AMPH111.gk===key)return AMPH111.gc;const c=document.createElement('canvas');c.width=Math.max(1,Math.round(M.w*k));c.height=Math.max(1,Math.round(M.h*k));
+    c.getContext('2d').drawImage(AMPH111.img.glow,0,0,c.width,c.height);AMPH111.gc={c,k:c.width/M.w};AMPH111.gk=key;return AMPH111.gc}
 }
