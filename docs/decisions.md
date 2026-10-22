@@ -831,3 +831,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-22 his 1a 2a 3a: a WebGL board renderer as its own release (v1.11) after a 2–3 day spike that measures Safari; REPLACES v1.10a's cache-invalidation redesign (the new renderer owns it) and moves Tactical UX to v1.12. v1.10 shipped as is.
 - 2026-10-22 free assets (his 4a 5a 6 7a): floor/walls/benches get real CC0/CC-BY textures painted to the illustrated look, mock-up first; CC-BY allowed with a new Credits tab; v1.10a = chariot + stands fixes + art clean-up.
 - 2026-10-22 arena clean-up scope (his clarification): structure and depth behind/under the stands (arches, façade, stairs, ground) — REPLACES the same day's 4a (retexture floor/walls/benches).
+- 2026-10-22 The Amphitheatre (his 11a–15a): offline 3D bake around the board (tasteful, few lights), one design recoloured per arena, own release after v1.10a, render approved by him first; REPLACES mock-up options A/B/C.

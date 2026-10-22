@@ -75,7 +75,9 @@ function q110Cap(){const why=[];let r=0;
     else{const mem=navigator.deviceMemory;if(mem&&mem<=4){r=Math.max(r,mem<=2?2:1);why.push('memory '+mem+' GB')}
       const cores=navigator.hardwareConcurrency||0;if(!Q110.webkit&&cores&&cores<=2){r=Math.max(r,2);why.push(cores+' cores')}}
     if(Q110.webkit)why.push('webkit');
+/* i18n:skip-begin (Auto's internal reasons: recorder/debug text, not UI) */
     let drop=false;try{drop=localStorage.getItem('flavius_light106drop')==='1'}catch(e){}if(drop){r=Math.max(r,1);why.push('slow before')}}catch(e){}
+/* i18n:skip-end */
   return {r,why:why.join(', ')||'desktop'}}
 
 /* ---------- the board's device ratio (406 W1's lever, every browser) ---------- */
@@ -131,11 +133,15 @@ function q110Feed(dt,t){if(Q110.off||Q110.mode!=='auto'||!(dt>0)||dt>250)return;
 function q110Win(t,ms){let n=0,late=0;const s0=(t-ms)/1000;for(let i=Q110.bk.length-1;i>=0;i--){const b=Q110.bk[i];if(b.s<s0)break;n+=b.n;late+=b.late}return {n,late,share:n?late/n:0}}
 function q110Judge(t){if(Q110.pend||Q110.mode!=='auto')return;if(t-Q110.lastStep<Q110K.gap)return;const r=Q110.rung;
   const w=q110Win(t,Q110K.win);
+/* i18n:skip-begin (Auto's internal reasons: recorder/debug text, not UI) */
   if(r<q110MaxRung()&&w.n>=Q110K.min&&w.share>=Q110K.share){q110Pend(r+1,'slow frames ('+Math.round(w.share*100)+'% late)',t);return}
+/* i18n:skip-end */
   if(r>0){const dn=Q110.downs[r-1]||0;if(dn>=Q110K.maxDowns)return;const need=Math.min(Q110K.maxWait,Q110K.upWin*Math.pow(2,Math.max(0,dn-1)));
     if(t-Q110.lastStep<need)return;const u=q110Win(t,need);if(u.n>=Q110K.upMin&&u.share<=Q110K.upShare)q110Pend(r-1,'headroom',t);return}
   if(!Q110.x2ok&&t-Q110.lastStep>=Q110K.x2Win){const u=q110Win(t,Q110K.x2Win);if(u.n>=Q110K.x2Min&&u.share<=Q110K.upShare){Q110.x2ok=true;q110Refresh();
+/* i18n:skip-begin (Auto's internal reasons: recorder/debug text, not UI) */
     Q110.steps.push({t:Math.round(t),x2:true,why:'2× sheets: frames keep up'});Q110.why='2× sheets: frames keep up'}}}
+/* i18n:skip-end */
 function q110Pend(to,why,t){Q110.pend={to,why,t};q110Poll()}
 /* quiet: nothing animating on the sand now */
 function q110Quiet(strict){try{if(typeof fxRAF!=='undefined'&&fxRAF)return false;if(typeof AN100!=='undefined'&&AN100.raf)return false;
