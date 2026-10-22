@@ -113,7 +113,7 @@ ok(out.off.hooks==='1'&&out.off.bus==='1'&&out.off.letter&&out.off.pod===2&&/Awa
 ok(out.off.ren&&out.off.ren.kind==='raise'&&out.off.btn&&out.off.signed,'contract renewal '+JSON.stringify(out.off.ren));
 
 /* ---- the off-season ends: season 2, no old Superbus special ---- */
-out.s2=await ev(pg,async()=>{const w=W_();const r={};r.ok=await PW();r.season=w.season;r.wk=wkOf(w.week);r.abs=w.week;r.special=!!w.special;r.due=!!w.finaleDue;r.phase=w.po104.phase;
+out.s2=await ev(pg,async()=>{const w=W_();const r={};r.ok=await PW();/* v1.09c (416): when the Saturnalia makes rudis asks, Begin stops in room 10 first; PW settles them and begins again */for(let g=0;g<3&&w.season===1;g++)r.ok=await PW();r.season=w.season;r.wk=wkOf(w.week);r.abs=w.week;r.special=!!w.special;r.due=!!w.finaleDue;r.phase=w.po104.phase;
   r.news=(w.news||[]).some(n=>/set for Roma|invited to the Flavius Superbus/.test(String(n.t||n.h||n.txt||JSON.stringify(n))));r.ar=!!((w.archives||[]).find(a=>a.season===1)||{}).finale;r.bye=BYE_WKS.join();r.riv=RIVAL_WK;return r});
 ok(out.s2.ok&&out.s2.season===2&&out.s2.wk===1&&out.s2.abs===13&&!out.s2.special&&!out.s2.due&&out.s2.phase==='done'&&!out.s2.news&&out.s2.bye==='4,12'&&out.s2.riv===11,'season 2 '+JSON.stringify(out.s2));
 
