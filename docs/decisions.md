@@ -861,3 +861,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   along the tower to the ground, ending at the tower's arched doorway (no steps into thin air); (2a) the corner towers in the façade's cream
   stone with arched windows per storey, a cornice between storeys and one banner, calm; (3a) tower + ground haze reach the canvas edge so no sky
   shows at any window width, both corners. Also v1.11c: settings that don't survive a reload (his report: panel says one thing, game loads another).
+- 2026-10-22 his call: v1.11c (settings persist on reload, Amphitheatre side corners, Safari follow-up from his v1.11b recording: zoomed cache, sharpen off the main thread, aim masks cached) ships when the full run is green, no beta.
