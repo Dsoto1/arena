@@ -1,0 +1,142 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>amph111 bake</title></head>
+<body style="margin:0;background:#222">
+<p style="color:#ccc;font:12px monospace">amph111 — the amphitheatre bake (driven by make.js; the game's own three93.js, r169)</p>
+<script src="../../../assets/three93.js"></script>
+<script>window.THREE = window.THREE93;</script>
+<script src="props.js"></script>
+<script src="scene.js"></script>
+<script>
+/* window.AMPH111.render(cfg) → { layer: dataURL } . cfg: {tw0, ss, xl, xr, yt, yb, layers:[...], night, look} */
+(function () {
+  const load = src => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('img ' + src)); im.src = src; });
+  /* a texture as luminance (the stone / bench tint layers) or as is; k = contrast around the mean, b = brightness */
+  function texCanvas(im, mode, k, b) {
+    const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight; const g = c.getContext('2d'); g.drawImage(im, 0, 0);
+    if (mode === 'lum') {
+      const d = g.getImageData(0, 0, c.width, c.height), a = d.data; let s = 0; for (let i = 0; i < a.length; i += 4) s += 0.299 * a[i] + 0.587 * a[i + 1] + 0.114 * a[i + 2]; const m = s / (a.length / 4);
+      for (let i = 0; i < a.length; i += 4) { const L = 0.299 * a[i] + 0.587 * a[i + 1] + 0.114 * a[i + 2]; const v = Math.max(0, Math.min(255, (210 + (L - m) * k) * b)); a[i] = a[i + 1] = a[i + 2] = v; }
+      g.putImageData(d, 0, 0);
+    }
+    return c;
+  }
+  function eagleCanvas() {
+    /* a gold eagle with spread wings in a laurel ring (alpha), drawn once */
+    const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d'); g.translate(128, 128);
+    g.strokeStyle = '#f2d27a'; g.lineWidth = 9; g.beginPath(); g.arc(0, 8, 96, Math.PI * 0.62, Math.PI * 2.38); g.stroke();
+    g.fillStyle = '#f2d27a';
+    for (let i = 0; i < 9; i++) for (const s of [-1, 1]) { const a = Math.PI * (0.62 + i * 0.09) ; const x = Math.cos(a) * 96 * s * -1, y = Math.sin(a) * 96 + 8; g.save(); g.translate(s > 0 ? -x : x, y); g.rotate(a + (s > 0 ? 0 : Math.PI)); g.beginPath(); g.ellipse(0, 0, 14, 6, 0.6, 0, Math.PI * 2); g.fill(); g.restore(); }
+    g.beginPath();
+    g.moveTo(0, -62); g.quadraticCurveTo(14, -60, 16, -44); g.lineTo(30, -40); g.lineTo(16, -34); g.lineTo(12, -18);
+    /* right wing */
+    g.lineTo(40, -40); g.lineTo(92, -70); g.lineTo(84, -46); g.lineTo(98, -42); g.lineTo(80, -24); g.lineTo(90, -16); g.lineTo(66, -4); g.lineTo(70, 6); g.lineTo(26, 6);
+    g.lineTo(18, 36); g.lineTo(34, 64); g.lineTo(10, 54); g.lineTo(0, 72); g.lineTo(-10, 54); g.lineTo(-34, 64); g.lineTo(-18, 36);
+    g.lineTo(-26, 6); g.lineTo(-70, 6); g.lineTo(-66, -4); g.lineTo(-90, -16); g.lineTo(-80, -24); g.lineTo(-98, -42); g.lineTo(-84, -46); g.lineTo(-92, -70); g.lineTo(-40, -40);
+    g.lineTo(-12, -18); g.lineTo(-14, -40); g.quadraticCurveTo(-12, -60, 0, -62); g.closePath(); g.fill();
+    g.strokeStyle = '#8a6420'; g.lineWidth = 3; g.stroke();
+    return c;
+  }
+  let R = null;
+  async function setup(cfg) {
+    if (R) return R;
+    const base = '../../../';
+    const [stone, wood, brick, paving] = await Promise.all([base + 'assets/stone100_6_roma.webp', base + 'assets/stands_wood81.webp', '../arena110/vault_brick.webp', '../arena110/ground_paving.webp'].map(load));
+    const tx = (cv, rep) => { const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+    const TEX = { stone: tx(texCanvas(stone, 'lum', 0.8, 1.1)), bench: tx(texCanvas(stone, 'lum', 0.3, 1.15)), wood: tx(texCanvas(wood)), brick: tx(texCanvas(brick)), paving: tx(texCanvas(paving)), paveL: tx(texCanvas(paving, 'lum', 0.55, 0.97)), eagle: tx(eagleCanvas()) };
+    const S = THREE.DoubleSide;
+    const std = (o, layer) => ({ mat: new THREE.MeshStandardMaterial(Object.assign({ roughness: 0.92, metalness: 0 }, o)), layer: layer || 'fixed' });
+    const materials = () => ({
+      stone: std({ map: TEX.stone, color: '#ffffff' }, 'stone'), lion: std({ map: TEX.stone, color: '#ffffff' }, 'stone'),
+      bench: std({ map: TEX.bench, color: '#ffffff' }, 'bench'), cloth: std({ color: '#ffffff', side: S, roughness: 1 }, 'cloth'),
+      cushion: std({ color: '#5a2f6a' }), eagle: std({ map: TEX.eagle, color: '#ffffff', alphaTest: 0.5, transparent: false, side: S, roughness: 0.5 }),
+      gold: std({ color: '#d8ae52', roughness: 0.45 }), bronze: std({ color: '#8c5e30', roughness: 0.55 }), iron: std({ color: '#8b8f96', roughness: 0.5 }), ironDark: std({ color: '#4c4f55', roughness: 0.6 }),
+      red: std({ color: '#a8322c', side: S }), skin: std({ color: '#c99a74' }), wood: std({ map: TEX.wood, color: '#c79a66' }), woodDark: std({ color: '#5c3d24' }),
+      brick: std({ map: TEX.brick, color: '#8c7a70', side: S }), dark: std({ color: '#3a2a1e', side: S, roughness: 1 }), ground: std({ map: TEX.paveL, color: '#9a938a' }, 'stone'), pave: std({ map: TEX.paveL, color: '#ffffff' }, 'stone'),
+      crowd: std({ color: '#ffffff', roughness: 0.95 }), plaster: std({ color: '#ffffff' }, 'stone'),
+      flame: { mat: new THREE.MeshBasicMaterial({ color: '#ff7a22' }), layer: 'fire' }, flameCore: { mat: new THREE.MeshBasicMaterial({ color: '#ffd977' }), layer: 'fire' },
+      hold: { mat: new THREE.MeshBasicMaterial({ color: '#000000' }), layer: 'hold' }
+    });
+    const built = window.AMPH111_BUILD(THREE, TEX, { materials });
+    const scene = built.scene;
+    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, premultipliedAlpha: false, preserveDrawingBuffer: true });
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.setClearColor(0x000000, 0);
+    document.body.appendChild(renderer.domElement); renderer.domElement.style.width = '50%';
+    R = { renderer, scene, meta: built.meta, TEX };
+    return R;
+  }
+  /* ---------- lights ---------- */
+  function lightsFor(R, cfg) {
+    const old = R.scene.children.filter(o => o.isLight || o.userData.isLightTarget); for (const o of old) R.scene.remove(o);
+    const L = cfg.look || {};
+    const sunDir = new THREE.Vector3(-0.554, 0.819, 0.149).normalize(); /* 399 LIGHT106_SUN az 30 el 55 (shadows fall lower right) */
+    if (!cfg.night) {
+      const sun = new THREE.DirectionalLight(L.sunCol || '#ffe8c4', L.sun || 2.7); const tgt = new THREE.Object3D(); tgt.position.set(6.5, 0, 6.5); tgt.userData.isLightTarget = 1; R.scene.add(tgt); sun.target = tgt;
+      sun.position.copy(tgt.position).addScaledVector(sunDir, 60); sun.castShadow = true;
+      const sc = sun.shadow.camera; sc.left = -36; sc.right = 36; sc.top = 36; sc.bottom = -36; sc.near = 1; sc.far = 140; sun.shadow.mapSize.set(4096, 4096); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03; sun.shadow.radius = 3;
+      R.scene.add(sun);
+      R.scene.add(new THREE.HemisphereLight(L.sky || '#f2e8d8', L.gnd || '#a3825c', L.amb || 2.1));
+      for (const b of R.meta.lamps || []) { const p = new THREE.PointLight('#ffa65a', L.lamp || 9, 3.6, 1.2); p.position.set(b.x, b.y, b.z); R.scene.add(p); }
+    } else {
+      /* night = only the fires (the game's grade darkens the base; this layer is ADDED after it) */
+      for (const b of R.meta.lamps || []) { const p = new THREE.PointLight('#ff9a48', (L.fire || 9) * 0.45, 2.8, 1.4); p.position.set(b.x, b.y, b.z); R.scene.add(p); }
+      for (const f of R.meta.fires) { const p = new THREE.PointLight(L.fireCol || '#ff9a48', (L.fire || 9) * f.s, 7.5 * f.s, 1.6); p.position.set(f.x, f.y, f.z); p.castShadow = false; R.scene.add(p); }
+      R.scene.add(new THREE.AmbientLight('#000000', 0));
+    }
+  }
+  /* ---------- the post pass: ink lines from depth + normal edges, a soft posterise ---------- */
+  const POST_VS = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
+  const POST_FS = `precision highp float; varying vec2 vUv; uniform sampler2D tCol, tNrm, tDep; uniform vec2 px; uniform float inkW, inkA, post, dTh, nTh;
+    float D(vec2 o){ return texture2D(tDep, vUv + o * px).r; } vec3 Nn(vec2 o){ return texture2D(tNrm, vUv + o * px).rgb * 2.0 - 1.0; }
+    void main(){ vec4 c = texture2D(tCol, vUv); float d0 = D(vec2(0.)); vec3 n0 = Nn(vec2(0.)); float e = 0.0;
+      for (int i = 0; i < 4; i++) { vec2 o = i==0?vec2(inkW,0.):i==1?vec2(-inkW,0.):i==2?vec2(0.,inkW):vec2(0.,-inkW);
+        float dd = D(o) - d0; e = max(e, smoothstep(dTh, dTh * 2.5, abs(dd)) * (dd > 0.0 ? 1.0 : 0.55));
+        e = max(e, smoothstep(nTh, nTh + 0.35, 1.0 - dot(n0, Nn(o))) * 0.7); }
+      vec3 col = c.rgb;
+      if (post > 0.0) { float l = dot(col, vec3(0.299,0.587,0.114)); float q = (floor(l * 6.0 + 0.5) / 6.0); col = mix(col, col * (q / max(l, 0.02)), post); }
+      col *= 1.0 - inkA * e;
+      gl_FragColor = vec4(col, c.a); }`;
+  async function render(cfg) {
+    const R = await setup(cfg);
+    const ss = cfg.ss || 2, tw = cfg.tw0 * ss; const K = tw / Math.SQRT2;
+    const W = Math.round((cfg.xl + cfg.xr) * tw), H = Math.round((cfg.yt + cfg.yb) * tw);
+    const cam = new THREE.OrthographicCamera(-cfg.xl * tw / K, cfg.xr * tw / K, cfg.yt * tw / K, -cfg.yb * tw / K, 0.1, 400);
+    const el = Math.PI / 6; cam.position.set(Math.cos(el) * Math.SQRT1_2 * 150, Math.sin(el) * 150, Math.cos(el) * Math.SQRT1_2 * 150); cam.up.set(0, 1, 0); cam.lookAt(0, 0, 0); cam.updateProjectionMatrix();
+    if (cfg.overview) { cam.left *= cfg.overview; cam.right *= cfg.overview; cam.top *= cfg.overview; cam.bottom *= cfg.overview; cam.updateProjectionMatrix(); }
+    const r = R.renderer; r.setPixelRatio(1); r.setSize(W, H, false);
+    lightsFor(R, cfg);
+    const meshes = []; R.scene.traverse(o => { if (o.isMesh) { meshes.push(o); if (!o.userData.mat) o.userData.mat = o.material; } });
+    /* normals + depth of the whole scene (ink) */
+    const rtN = new THREE.WebGLRenderTarget(W, H, { depthTexture: new THREE.DepthTexture(W, H, THREE.FloatType) });
+    const nm = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
+    for (const m of meshes) m.material = nm;
+    r.setRenderTarget(rtN); r.setClearColor(0x808080, 1); r.clear(); r.render(R.scene, cam);
+    const HOLD = new THREE.MeshBasicMaterial({ colorWrite: false });
+    const BLACK = new THREE.MeshBasicMaterial({ color: 0 });
+    const rtC = new THREE.WebGLRenderTarget(W, H, { depthBuffer: true, type: THREE.UnsignedByteType });
+    const post = new THREE.ShaderMaterial({ vertexShader: POST_VS, fragmentShader: POST_FS, depthTest: false, depthWrite: false, transparent: false,
+      uniforms: { tCol: { value: rtC.texture }, tNrm: { value: rtN.texture }, tDep: { value: rtN.depthTexture }, px: { value: new THREE.Vector2(1 / W, 1 / H) }, inkW: { value: cfg.inkW || 2.0 * ss / 2 }, inkA: { value: cfg.inkA == null ? 0.55 : cfg.inkA }, post: { value: cfg.post || 0 }, dTh: { value: cfg.dTh || 0.0006 }, nTh: { value: cfg.nTh || 0.35 } } });
+    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post); const qs = new THREE.Scene(); qs.add(quad); const qc = new THREE.Camera();
+    const out = {};
+    for (const layer of cfg.layers) {
+      for (const m of meshes) {
+        const L = m.userData.layer;
+        if (layer === 'glow') m.material = L === 'hold' ? BLACK : m.userData.mat;
+        else if (layer === 'all') m.material = L === 'hold' ? HOLD : m.userData.mat;
+        else m.material = (L === layer) ? m.userData.mat : (m.userData.mat.alphaTest ? (m.userData.hold = m.userData.hold || new THREE.MeshBasicMaterial({ map: m.userData.mat.map, alphaTest: m.userData.mat.alphaTest, side: m.userData.mat.side, colorWrite: false })) : HOLD);
+        m.renderOrder = (m.material === HOLD || m.material === m.userData.hold) ? -1 : 0;   /* holdouts first: depth-only can't erase colour drawn before it */
+      }
+      r.setRenderTarget(rtC); r.setClearColor(0x000000, layer === 'glow' ? 1 : 0); r.clear(); r.render(R.scene, cam);
+      post.uniforms.inkA.value = layer === 'glow' || layer === 'fire' ? 0 : (cfg.inkA == null ? 0.55 : cfg.inkA);
+      post.uniforms.post.value = layer === 'glow' || layer === 'fire' ? 0 : (cfg.post || 0);
+      r.setRenderTarget(null); r.setClearColor(0x000000, 0); r.clear(); r.render(qs, qc);
+      out[layer] = r.domElement.toDataURL('image/png');
+    }
+    for (const m of meshes) m.material = m.userData.mat;
+    rtN.dispose(); rtC.dispose();
+    return { out, W, H, meta: R.meta, tris: r.info.render.triangles };
+  }
+  window.AMPH111 = { render };
+})();
+</script>
+</body></html>
