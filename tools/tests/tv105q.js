@@ -34,11 +34,13 @@ out.c=await ev(pg,async()=>{const w=W_(),pm=me();const g=gById(window.__id=roste
   w.mgrs.forEach((m,i)=>{const s=msp(m,1);s.pts=40-i*3;s.w=12-i;s.b=14;s.ev=14});
   const P=po104New(w);P.sf=[{k:[P.seeds[0],P.seeds[3]],adv:[P.seeds[0]],pl:null},{k:[P.seeds[1],P.seeds[2]],adv:[P.seeds[1]],pl:null}];P.fin={k:[P.seeds[0],P.seeds[1]],pl:null};P.champ=P.seeds[0];P.phase='fin';P.paid={r1:1,sf:1,fin:1};w.po104=P;w.night.po104='fin';w.week=12;
   po104OffStart(w,P);
-  const r={act:OFF104.active(w),win:rudis105Window(w),pend:(w.pend||[]).filter(p=>p.t==='rudis'&&p.gid===g.id).length,def:!!g.rudis105,buy:(w.pend||[]).filter(p=>p.t==='buyfree').length};
+  /* v1.09c (416, W4a): the ask waits for the Saturnalia — sit the Winter Classic out, play it, then the ask is made (shown in room 10) */
+  let early=null;if(window.V109C&&V109C.on){early=(w.pend||[]).filter(p=>p.t==='rudis').length;wc109Answer(w,'out');await wc109Finish(w);wc109Asks(w,w.wc109);try{wqVisit(w,'next')}catch(e){}}
+  const r={early,act:OFF104.active(w),win:rudis105Window(w),pend:(w.pend||[]).filter(p=>p.t==='rudis'&&p.gid===g.id).length,def:!!g.rudis105,buy:(w.pend||[]).filter(p=>p.t==='buyfree').length};
   MGR.tab='night';MGR_REDRAW();await W8(800);r.box=!!document.querySelector('#pendbox');
   /* answerable */
   const pi=w.pend.findIndex(p=>p.t==='rudis'&&p.gid===g.id);if(pi>=0){settlePending(pi,'stay');}r.left=(w.pend||[]).filter(p=>p.t==='rudis'&&p.gid===g.id).length;return r});
-ok(out.c.act&&out.c.win&&out.c.pend===1&&!out.c.def&&out.c.box&&out.c.left===0,'off-season: request made, shown, answerable '+JSON.stringify(out.c));
+ok(!out.c.early&&out.c.act&&out.c.win&&out.c.pend===1&&!out.c.def&&out.c.box&&out.c.left===0,'off-season: request made, shown, answerable '+JSON.stringify(out.c));
 /* a pending ask already in a save stays answerable outside the window */
 out.d=await ev(pg,()=>{const w=W_(),pm=me();const g=rosterOf(pm)[0];w.po104=null;w.night.po104=null;w.pend=[{t:'rudis',gid:g.id,bi:-1,f:55}];const m=settlePending(0,'stay');return [typeof m,w.pend.length]});
 ok(out.d[0]==='string'&&out.d[1]===0,'old pending ask stays answerable '+JSON.stringify(out.d));
