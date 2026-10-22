@@ -3,10 +3,8 @@
        ST110.stats.riders counts them, the trace carries each racer id), 311's AN100 draw counter grows, the chariot disc under a rider is
        drawn wider than the old 0.86 tile (the mini's base would hide it), the horse / wheel token drawers are untouched; a normal
        event is unchanged (no riders counted, an100On true as before);
-   (2) F2 front stands: st110Front() is true for the screen-front sections only (193's nearSec91), false for the back; one draw paints
-       the front benches' plank seams live BEFORE the crowd (trace: planks then crowd), 409's baked pass skips exactly those sections
-       (their seams are not in the light layer: a re-bake with st110Front off paints more seam strokes than with it on), and the back
-       stands still get their baked seams;
+   (2) F2 all stands: st110Front() is true for ALL 8 sections; one draw paints every bench's plank seams live BEFORE the crowd
+       (trace: planks then crowd, tiers of all 8 sections), 409's baked pass paints 0 seam strokes with 418 on (a re-bake with 418 off paints many);
    (3) the draw stays in budget (the live seams ≈ 0.1 ms);
    (4) kill switch flavius_v110boff=1: an100On false in the chariot, st110Front false, no live seams = v1.10 exactly.
    Phone width (390 px) runs the same checks. */
@@ -29,22 +27,22 @@ for(const w of [1440,390]){
   const pg=await open(w,false);
   /* ---- a normal event: front / back sections, the order of one draw, the baked pass ---- */
   out['n'+w]=await pg.evaluate(async()=>{await T110.start('democritus',6);
-    const fr=[0,1,2,3,4,5,6,7].map(si=>!!st110Front(si)),near=[0,1,2,3,4,5,6,7].map(si=>!!nearSec91(si));
+    const fr=[0,1,2,3,4,5,6,7].map(si=>!!st110Front(si));
     ST110.trace=[];const r0=ST110.stats.riders;draw();const tr=ST110.trace;ST110.trace=null;
     const iP=tr.findIndex(e=>e.planks!=null),iC=tr.findIndex(e=>e.crowd);
     /* the baked pass: count the seam strokes a re-bake paints with 418 on and off (a recording 2d context) */
-    const count=()=>{let n=0;const g=document.createElement('canvas').getContext('2d');const ms=g.moveTo;g.moveTo=function(){n++;return ms.apply(this,arguments)};try{v108Static(g,false)}catch(e){}return n};
+    const count=()=>{let n=0;const g=document.createElement('canvas').getContext('2d');const ms=g.stroke;g.stroke=function(){if(/^rgba\(28, 10, 6/.test(g.strokeStyle))n++;return ms.apply(this,arguments)};try{v108Static(g,false)}catch(e){}return n};
     const on=count();const k=ST110.on;ST110.on=false;const off=count();ST110.on=k;
     /* the draw time */
     const t=[];for(let i=0;i<25;i++){const a=performance.now();draw();t.push(performance.now()-a)}t.sort((a,b)=>a-b);
-    return {fr,near,planks:tr.find(e=>e.planks!=null)||null,order:iP>=0&&iC>=0&&iP<iC,iP,iC,riders:ST110.stats.riders-r0,on,off,med:t[12],p90:t[22],liveMs:ST110.stats.ms,an:an100On(),evKey:S.evKey}});
+    return {fr,planks:tr.find(e=>e.planks!=null)||null,order:iP>=0&&iC>=0&&iP<iC,iP,iC,riders:ST110.stats.riders-r0,on,off,med:t[12],p90:t[22],liveMs:ST110.stats.ms,an:an100On(),evKey:S.evKey}});
   const n=out['n'+w];
-  ok(n.fr.some(x=>x)&&n.fr.some(x=>!x)&&n.fr.every((x,i)=>x===n.near[i]),w+' front sections = nearSec91 ('+n.fr+')');
-  ok(n.planks&&n.planks.planks>=3,w+' live seams painted for the front tiers '+JSON.stringify(n.planks));
+  ok(n.fr.length===8&&n.fr.every(x=>x),w+' all 8 sections are live ('+n.fr+')');
+  ok(n.planks&&n.planks.planks>=8*3,w+' live seams painted for all 8 sections\' tiers '+JSON.stringify(n.planks));
   ok(n.order,w+' the front benches\' seams come before the crowd (trace '+n.iP+' < '+n.iC+')');
-  ok(n.on>0&&n.off>n.on,w+' the baked pass skips the front sections (strokes '+n.on+' < '+n.off+')');
+  ok(n.off>n.on&&n.on===0,w+' the baked pass paints 0 seam strokes with 418 on (strokes '+n.on+', off '+n.off+')');
   ok(n.riders===0&&n.an===true,w+' a classic event: no chariot riders counted, an100On true');
-  ok(n.med<16,w+' draw median '+n.med.toFixed(1)+' ms');
+  ok(n.med<16&&n.liveMs<1.5,w+' draw median '+n.med.toFixed(1)+' ms, live seams '+n.liveMs.toFixed(2)+' ms');
   /* ---- Chariot Racing ---- */
   out['c'+w]=await pg.evaluate(async()=>{await T110.start('chariot',12);AN100.trace=[];ST110.trace=[];const r0=ST110.stats.riders,d0=AN100.stats.draws+ST107.stats.p;
     const wide=[];const bt=chTokFlat;chTokFlat=function(art,x,y,wd){wide.push(+(wd/TW).toFixed(2));return bt.apply(this,arguments)};
