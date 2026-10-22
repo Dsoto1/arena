@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.11',ic:'🧭',t:_T('Safari speed'),hi:[_T('Safari: the arena draws much less each frame for smoother play, same picture')]},
   {v:'1.10a',ic:'🏇',t:_T('Chariots and stands'),hi:[_T('Chariot Racing: the riders are 3D figures like every other event'),_T('Fix: spectators no longer have the bench planks showing through them')]},
   {v:'1.10',ic:'⚙',t:_T('Auto quality'),hi:[_T('Settings → Board & pieces: Quality Auto / High / Medium / Low; Lighting stays under it'),_T('Auto keeps the board smooth on your device and steps up when it can'),_T('Safari: smoother start and the shadows show from the first frame')]},
   {v:'1.09c',ic:'✦',t:_T('The Saturnalia finale'),hi:[_T('The Winter Classic ends in the Saturnalia: Carmina, a chariot race and Democritus for the four finalists'),_T('The best festival finish takes the Cup'),_T('Freedom asks now come after the Saturnalia, in Next season')]},
