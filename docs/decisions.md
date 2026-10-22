@@ -821,3 +821,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-21 Artlist 3D trial (his 1a 2a 3b): board jugs + chest stay drawn in code; the AI models are for LARGE views only (winner screen,
   loot window, Winter Quarters prize case). Cup = the Rodin one (tools/art/artlist/models/cup_rodin.glb); the Tripo cup stays only in his
   Artlist history. The remaining Flavius credits (2,500) are on hold — no more generations until he asks.
+- 2026-10-22 v1.09c ("just ship" = my picks): the Winter Classic Cup goes to the highest Crowd Favour after Democritus (Play Now's festival rule); the Saturnalia stays Day III inside room 9 (no extra stepper step).

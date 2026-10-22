@@ -313,3 +313,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   four finalists; Day III PROVISIONAL = one simulated Democritus in wc109Final (v1.09c puts the Saturnalia there; must end in wcSettle).
   Bout tier wc109 with clemency (no death/wound/records/points, limbs back). Prizes Cup + 60 coin + 5 morale/loyalty + 20 Renown; Tituli
   plinth with plates, replica after 3 wins. Kill switch flavius_v109boff. No server change.
+
+- **v1.09c** THE SATURNALIA FINALE (tools/plans/v109/NOTES.md, W1a W2a W4a; "just ship" = picks: Cup = highest CF after Democritus,
+  no separate stepper step): 416-v109c — wc109Final becomes the Saturnalia: chariot race (chPvp:false; 10-meta runCarmina opens it as the
+  ceremony) + Classic · Democritus as two wc109 bouts (415 clemency), carry via the real continueFestival (CF, coin, +4 boon, order) in
+  w.wc109.fest, champion → wcSettle; Play Now Hall/Annals/crowd untouched (.wc109 guard). Rudis asks (380) open after the festival, answered
+  in room 10 (Begin twice when asks appear). Small direct edits: 415 window.wc109Final, 380 window.rudis105Ask. Kill switch flavius_v109coff.
+  Winter Quarters complete. No server change.
