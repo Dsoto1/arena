@@ -72,7 +72,9 @@ const s4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
 ok(!s4.alive&&s4.fall>=2,'4 the fallen gladiator plays the fall row '+JSON.stringify(s4));
 /* ---- 5 Fast: CPU still (flash only), own animates ---- */
 const s5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const P=S.players[0],Q=S.players[1];SPEED='fast';AN100.trace=[];
-  await hurt(Q,'chest',1,{type:'env'},'Test');await hurt(P,'chest',1,{type:'env'},'Test');await __samp(900);
+  /* the hit flash lasts 170 ms from the blow: the board is drawn by hand WHILE the blows land (a loaded machine used to let the flash run out before the first sample) */
+  let hd=false;const hs=(async()=>{await hurt(Q,'chest',1,{type:'env'},'Test');await hurt(P,'chest',1,{type:'env'},'Test');hd=true})();
+  while(!hd){draw();await W8(10)}await hs;await __samp(900);
   const q=__poses(Q.id,AN100.trace),p=__poses(P.id,AN100.trace),fl=AN100.trace.some(x=>x.id===Q.id&&x.flash);AN100.trace=null;SPEED='normal';
   return {cpu:[...new Set(q)],own:[...new Set(p)].filter(x=>!/^idle/.test(x)).length,fl}});
 ok(s5.cpu.length&&s5.cpu.every(x=>x==='idle:0')&&s5.fl,'5a Fast: the CPU stays on its still cell, with the hit flash '+JSON.stringify(s5));
