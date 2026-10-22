@@ -5,6 +5,9 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-22 · v1.09a CI round: three timing tests failed in turn on GitHub and were fixed IN THE TESTS (game unchanged, v1.08c measures
+  the same): tv91c (whole-ring pixel count + re-deal small crowds), tv96f (1–2 heavy software-raster draw steps allowed, hard cap 250 ms),
+  tv100an (draw while the blows land; the 170 ms flash ran out). Green run 39721994919: 424 pass, flaky tv100ae — watch.
 - 2026-10-21 · flaky on the v1.09 [full] run 39680497469 (passed on the alone re-run): tv96f, tv100p — watch; fix if they repeat.
 - 2026-10-21 · OPEN (his v1.08c beta, Safari 26.6, 1.5× fixed, Lighting Light, bases off): figures showed NO shadows after load until he
   switched Lighting off/on. Not new in v1.08c (399/401/409 byte-identical to v1.08b); not reproduced in Chromium with the WebKit path forced
