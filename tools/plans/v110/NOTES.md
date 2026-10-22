@@ -34,3 +34,7 @@ scratchpad): a full amphitheatre around the board — multi-level travertine arc
 with gold eagles, torches/braziers everywhere, Flavius's box with two guards and braziers, a central stair at the front flanked by lions,
 storage bays under the stands (crates, barrels, weapon racks, cages), corner towers with lion heads; warm torchlit palette. He crossed out
 the seated people in the low front corners (ignore those). "This is what I was imagining." → REPLACES mock-up options A/B/C (Q8–Q10).
+2026-10-22 his 11a 12a 13a 14a 15a + "fewer torches and lights — tasteful; borrow heavily but don't overdo it; compare the render to the
+image after each pass and try again (max 5)": the Amphitheatre = an offline three.js bake at the board's exact camera (code-built
+architecture + CC0 props/textures), day + night layers drawn around the board; inner live spectators stay, upper tiers baked crowd; one
+design recoloured per arena; own release after v1.10a with a first render for his ok; before the WebGL decision.
