@@ -7,11 +7,11 @@
       311's drawPlayer wrapper → 311 animated figure when its sheet is loaded, 400's still (the idle cell facing the rider) when it is
       not. The chariot token (chtok.webp disc under the rider, 76 / 84), the horse and wheel tokens and the rider's tile are untouched
       (no new art exists for the chtok discs — they stay). ST110.stats.riders counts the racer draws that went through the figure path.
-   F2 · FRONT-STAND SPECTATORS COVER THEIR BENCH. 409's bench plank seams are baked into 192's LIGHT layer, which 192's night91Sand wrapper
+   F2 · SEATED SPECTATORS COVER THEIR BENCH (all 8 sections; first the 4 front ones, then the back stands too). 409's bench plank seams are baked into 192's LIGHT layer, which 192's night91Sand wrapper
       lays over EVERYTHING drawn before it with source-atop — including the spectators 16-crowd / 193 / 313 draw in the 'stands' layer —
       so on the screen-front stands the dark seams ran across the seated figures. The seams of the FRONT sections (193's nearSec91) are
       now painted live in drawStands, right after the benches and the deco (ar91Deco) and before the spectators (a wrapper on ar91Deco);
-      409's baked pass skips those sections (one small direct edit: st110Front(si)). The back stands keep the baked seams exactly.
+      409's baked pass skips those sections (one small direct edit: st110Front(si)). FOLLOW-UP: the back stands had the same bug, so ALL 8 sections are live now and 409 bakes no seams (measured cost in the test report).
       Same strokes, colours and widths as 409 (V108K.plank; the nosing in the day tone — at night the grade dims it with the scene).
       Cost: ~12 clipped quads of ≈14 strokes a frame (≈0.1 ms, ST110.stats.ms), nothing cached, nothing new to invalidate.
    Kill switch: localStorage flavius_v110boff=1 → v1.10 exactly (old riders, baked seams over the front spectators). Test tv110b.
@@ -33,10 +33,10 @@ if(typeof chRideTok==='function'&&typeof chTokFlat==='function'){const base=chRi
   return base.apply(this,arguments)}}
 
 /* ---------------- F2 · the front stands' plank seams under the spectators ---------------- */
-/* st110Front — section si is one of the screen-front stands (193's own test: its seats lie below the sand's middle) */
-function st110Front(si){try{if(!ST110.on||HEADLESS||typeof nearSec91!=='function')return false;
-  if(typeof v108Item!=='function'||!v108Item('mat')||!v108Arena()||v108Lud())return false;return !!nearSec91(si)}catch(e){return false}}
-/* st110Planks — 409's section 3 "plank seams + lit nosing" for the front sections, drawn live (clipped to each bench tier) */
+/* st110Front — section si has its seams painted live (ALL 8 sections since the follow-up: the back stands had the same bug; the name stays) */
+function st110Front(si){try{if(!ST110.on||HEADLESS)return false;
+  if(typeof v108Item!=='function'||!v108Item('mat')||!v108Arena()||v108Lud())return false;return si>=0&&si<8}catch(e){return false}}
+/* st110Planks — 409's section 3 "plank seams + lit nosing" for all sections, drawn live (clipped to each bench tier) */
 function st110Planks(){if(!ST110.on||HEADLESS||typeof SECTIONS==='undefined'||typeof secQuad!=='function'||typeof ctx==='undefined')return;
   if(typeof v108Item!=='function'||!v108Item('mat')||!v108Arena()||v108Lud())return;const t0=performance.now();
   const tiers=typeof ar91Tiers==='function'?ar91Tiers():3;let n=0;
