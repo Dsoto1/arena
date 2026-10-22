@@ -27,3 +27,5 @@ alphaBox/shadowRow: 336 getImageData ≈740 ms/10 s); Lighting Off 53 fps p95 40
 2026-10-22 his 4a 5a 6 7a: (4a) clean up floor, walls and benches with real stone/sand/brick/wood textures, painted over to keep the
 illustrated look · (5a) before/after mock-up page first, he picks, then a beta · (6) CC-BY is fine too — credits go in a new tab on the
 Credits page · (7a) v1.10a = F1 chariot pieces + F2 front-stand benches + the art clean-up; WebGL (v1.11) after.
+2026-10-22 his clarification of 4: the clean-up means fleshing out the EMPTY SPACES BEHIND AND UNDER THE STANDS — real structure and depth
+(substructure arches, outer façade, stairs, ground around the base) — not retexturing floor/walls/benches. REPLACES this morning's 4a scope.
