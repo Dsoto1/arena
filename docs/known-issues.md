@@ -5,6 +5,7 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-22 · small: the Quality button "High" reuses an older plural key (es "Altos", fr "Hautes") while Medium/Low are singular — give it its own key in the next pass.
 - 2026-10-22 · v1.09a CI round: three timing tests failed in turn on GitHub and were fixed IN THE TESTS (game unchanged, v1.08c measures
   the same): tv91c (whole-ring pixel count + re-deal small crowds), tv96f (1–2 heavy software-raster draw steps allowed, hard cap 250 ms),
   tv100an (draw while the blows land; the 170 ms flash ran out). Green run 39721994919: 424 pass, flaky tv100ae — watch.
