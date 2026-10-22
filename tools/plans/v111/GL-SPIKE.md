@@ -149,3 +149,15 @@ Full / Off recordings point at — but ~60 % of the 2D raster (≈1100 path / re
 - both ≈ 31 fps → **NO-GO for WebGL now**: the cost is the vector work; do the cheap 2D fixes first (jugs and benches cached as
   sprites, sheet baking off-thread) and re-record.
 - only the full `gl111` helps → GO for the staged plan in §6.
+
+## His Safari recordings (2026-10-22, v1.10a beta, 4-CPU Democritus, Lighting Full, DPR 1.5)
+| run | fps | p50 ms | p95 ms |
+|---|---|---|---|
+| planes only (`gl111,gl111lv:1`) ×2 | 14.9 / 13.4 | 45 / 57 | 151 / 152 |
+| planes + sprites (`gl111`) | 27.2 | 17 | 130 |
+| baseline (no hash) | 26.3 | 17 | 140 |
+
+Verdict: NO-GO for WebGL now. Planes only is HALF speed (steady ~42 ms frames with only ~3 ms of JS: a WebGL canvas under a
+transparent 2D canvas costs Safari a lot to composite); the full spike only matches the baseline. What the recordings DO show:
+getImageData 0.8–1.0 s per 10 s (311 sheetSteps alphaBox + shadowRow during the match) and `cells`/`clean` bursts of 40–80 ms
+in the slow frames → the cheap 2D fixes are the next step.
