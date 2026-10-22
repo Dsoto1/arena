@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.11b',ic:'👥',t:_T('A fuller house'),hi:[_T('The Amphitheatre\'s upper tiers are filled with the same spectators as the stands, all facing the sand')]},
   {v:'1.11a',ic:'🏛',t:_T('The Amphitheatre'),hi:[_T('A full amphitheatre now surrounds the arena: arcades, upper tiers with a crowd, Flavius\'s box and a grand stair'),_T('Each arena wears it in its own stone and colours, by day and by night')]},
   {v:'1.11',ic:'🧭',t:_T('Safari speed'),hi:[_T('Safari: the arena draws much less each frame for smoother play, same picture')]},
   {v:'1.10a',ic:'🏇',t:_T('Chariots and stands'),hi:[_T('Chariot Racing: the riders are 3D figures like every other event'),_T('Fix: spectators no longer have the bench planks showing through them')]},

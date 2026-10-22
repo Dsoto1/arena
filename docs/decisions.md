@@ -856,3 +856,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   of the static bake (no per-frame cost).
 - 2026-10-22 his call: ship v1.11a when the full run is green; the upper-tier crowd (our spectators, facing the sand per side) goes into v1.11b.
 - 2026-10-22 v1.11b (his 1a 2a): upper-tier crowd pass 9d approved (faces the sand); the live INNER far stands get the same facing fix (cells 0/3 swapped per side, 313's comment corrected); v1.11b ships when the full run is green, no beta.
+- 2026-10-22 CORRECTION to the line above: the live inner stands already face the sand (321 G4 reverses CROWD100_META's cells at load; only the offline bake read the raw meta). No inner-stands change; v1.11b = the upper-tier crowd (pass 9d) only. REPLACES the 'inner stands too' part of his 1a.
