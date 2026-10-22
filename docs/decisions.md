@@ -838,3 +838,8 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   pictures, the 40–80 ms cells/clean bursts; then he records again. (3a) The Amphitheatre render APPROVED; its own release after v1.11; liberty
   to clean up and improve the bottom-left / bottom-right corners (looked strange); he checks night speed on the beta. (4a) v1.10a shipped
   from 5daf00c (the commit the full run tested; only tv104a's test changed after).
+- 2026-10-22 Amphitheatre near sides (his picture of the front + 1a 2a 3a): a carved façade straight under the near stands (arched doorways,
+  piers with eagle banners, potted cypress + ivy), the grand stair + two lions at the front corner, plain background beyond — REPLACES pass 6's
+  forecourt/low wall/goods (approved earlier the same day). Fires: only the two big braziers on the stair's flanking pillars (+ the few
+  elsewhere). The board moves up a little to show the whole stair ONLY when the Amphitheatre is on and the window is tall enough; phones and
+  short windows keep today's framing.
