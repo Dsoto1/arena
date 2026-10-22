@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.10a** (v1.10a shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.11** (v1.11 shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,13 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.09c** THE SATURNALIA FINALE (tools/plans/v109/NOTES.md, W1a W2a W4a; "just ship" = picks: Cup = highest CF after Democritus,
-  no separate stepper step): 416-v109c — wc109Final becomes the Saturnalia: chariot race (chPvp:false; 10-meta runCarmina opens it as the
-  ceremony) + Classic · Democritus as two wc109 bouts (415 clemency), carry via the real continueFestival (CF, coin, +4 boon, order) in
-  w.wc109.fest, champion → wcSettle; Play Now Hall/Annals/crowd untouched (.wc109 guard). Rudis asks (380) open after the festival, answered
-  in room 10 (Begin twice when asks appear). Small direct edits: 415 window.wc109Final, 380 window.rudis105Ask. Kill switch flavius_v109coff.
-  Winter Quarters complete. No server change.
-
 - **v1.10** Auto quality + Safari fixes (tools/plans/v110/NOTES.md, his 1a–6a + follow-ups 1a–4a, one beta): 417-v110auto — Settings →
   Board & pieces: Quality Auto/High/Medium/Low first, Lighting (By quality/Full/Light/Off) under it; Auto = one 4-rung ladder from device
   facts + runtime frame shares (down after 5 s ≥60% late, up after 20 s calm, doubling hysteresis, steps only on quiet frames); desktops
@@ -218,3 +211,11 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   riders are 3D figures (an100On wrap), bench seams drawn under the spectators in all 8 stand sections (small direct edit in 409 marked v1.10a
   (418)); kill switch flavius_v110boff. Shipped from 5daf00c (full run green except tv104a, a test flaw fixed after). Then: WebGL spike no-go
   on Safari (his 1a, GL-SPIKE.md), v1.11 = Safari 2D fixes (2a), the Amphitheatre approved for after v1.11 (3a). No server change.
+
+- **v1.11** Safari 2D fixes (his 2a after the WebGL no-go, "just ship" without a beta recording): 420-v111safari, WebKit path only
+  (406 P107S.webkit / flavius_v107safariforce): S1 records the board context's still layers per range (M rim→sky, split R1/R2 when the crowd
+  walks, D floor→static shadows) and replays one cached blit when the call list matches (flushes to live drawing on anything it can't
+  reproduce); S2 jug sprites (drawPot LRU 48); S3 Z99.bmOn=false (no 256² ImageBitmap pieces); S4 blank #fx95 hidden; S5 device figure bakes
+  wait for a quiet board (311 an100Pump yield, window.an111Yield). Recorder block v111 + areas sharpen/thin/cellmk. Here: ~3× cheaper board
+  draw, ~1,200 → 37 calls, pixel diff ≤ 8/255. Kill switch flavius_v111soff (#perf=v111soff). Test tv111s. Also carries the Amphitheatre
+  preview (419-v111amph, OFF unless flavius_amph111=1). WebGL spike dropped (GL-SPIKE.md). Safari fps still to be recorded. No server change.
