@@ -170,6 +170,16 @@ Review page: scratchpad amph111-review.html, new top section "Pass 8 mock-up: fi
   15 / 33% for pass 7. Contrast read-back identical to pass 7 in every view.
 - assets/amph111_* now hold (a) (the preview is off by default); 419 is unchanged (same frame + front box).
 
+### 8 final — his pick: (c) ground only + the raised view (2026-10-22; REPLACES pass 7's 3a "grow the canvas for the whole stair")
+- assets/amph111_* = the 'ground' bake (paving at the façade's foot, three steps down to street level, fading into a dark warm haze; the 2a
+  stair pools), make.js's default variant is now `ground` (p7 and city stay reproducible with --variant).
+- 419: the tall-window ar91View canvas growth and its kill switch flavius_amph111frameoff are removed — the framing (canvas height, TW, OX,
+  OY) is today's in every window; in tall windows the stair's foot and the lions sit below the canvas edge like on a 1440×900 desktop.
+- Sizes: 7 files 440 KB (stone 246, fixed 77, bench 49, glow 40, cloth 13, fire 11, front 4.5) vs pass 7's 416 KB; same frame, same
+  memory; 0 per frame by day; night glow 14 pieces / 31% of the frame (pass 7: 15 / 33%).
+- Tests: tv111am rewritten to the new rule (flag on: layers load, framing = flag off in tall/short/phone, tile clicks right, no errors);
+  tv111am tv91r tv66 tv100z tv101z pass.
+
 ## Method
 - Projection: an orthographic camera 30° down / 45° round = the game's 2:1 iso; world X/Z = the board's columns/rows (1 unit = 1 tile),
   so tile corner (0,0) is the game's (OX, OY) and K = TW/√2 px per view unit; heights: 1 unit = 0.612 TW. The frame is 11.5 TW either side
