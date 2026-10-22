@@ -1,5 +1,5 @@
 {
- "run": 380,
+ "run": 381,
  "lastFull": 1792675363566,
  "tests": {
   "tseed4": {
@@ -7136,18 +7136,34 @@
    }
   },
   "tv110a": {
+   "streak": 2,
+   "runs": 2,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 381,
+   "lastAt": 1792687088404,
+   "time": 101,
+   "lastPass": 381,
+   "deps": {
+    "src/core/01-head.html": "378d3d59de51",
+    "tools/regcov.js": "1b122005f465",
+    "tools/tests/tv110a.js": "d54e657eaea3"
+   }
+  },
+  "tv111gl": {
    "streak": 1,
    "runs": 1,
    "fails": 0,
    "flaky": [],
-   "lastRun": 380,
-   "lastAt": 1792675039937,
-   "time": 78,
-   "lastPass": 380,
+   "lastRun": 381,
+   "lastAt": 1792687088404,
+   "time": 178,
+   "lastPass": 381,
    "deps": {
-    "src/core/01-head.html": "783daecb8394",
+    "src/core/01-head.html": "378d3d59de51",
     "tools/regcov.js": "1b122005f465",
-    "tools/tests/tv110a.js": "d54e657eaea3"
+    "tools/tests/tv111gl.js": "876a4b8e664b",
+    "tools/tests/_wait.js": "d92f7cf9505f"
    }
   }
  },
