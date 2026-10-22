@@ -24,3 +24,6 @@ separate setting) · (4a) Quality stays the first card of Board & pieces.
 2026-10-22 his 1a 2a 3a (+ 2 Safari recordings, tools/plans/v110/perf/): v1.10 shipped; WebGL spike next. Recordings: Auto stayed High
 (webkit start, DPR 1.5, 1× sheets): Lighting Full 31 fps p95 92 ms — cells/clean ≈73 ms/s + device sheet baking in the match (311 grab/halve/
 alphaBox/shadowRow: 336 getImageData ≈740 ms/10 s); Lighting Off 53 fps p95 40. Auto did not step (late share under 60%). Q4–Q7 (assets) open.
+2026-10-22 his 4a 5a 6 7a: (4a) clean up floor, walls and benches with real stone/sand/brick/wood textures, painted over to keep the
+illustrated look · (5a) before/after mock-up page first, he picks, then a beta · (6) CC-BY is fine too — credits go in a new tab on the
+Credits page · (7a) v1.10a = F1 chariot pieces + F2 front-stand benches + the art clean-up; WebGL (v1.11) after.

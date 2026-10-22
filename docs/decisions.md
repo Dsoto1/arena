@@ -829,3 +829,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   ("when zoomed", same day); lite84's "Light board for older phones" setting is folded into Quality Low — REPLACED (v0.84 setting removed);
   Quality = first card of Board & pieces.
 - 2026-10-22 his 1a 2a 3a: a WebGL board renderer as its own release (v1.11) after a 2–3 day spike that measures Safari; REPLACES v1.10a's cache-invalidation redesign (the new renderer owns it) and moves Tactical UX to v1.12. v1.10 shipped as is.
+- 2026-10-22 free assets (his 4a 5a 6 7a): floor/walls/benches get real CC0/CC-BY textures painted to the illustrated look, mock-up first; CC-BY allowed with a new Credits tab; v1.10a = chariot + stands fixes + art clean-up.
