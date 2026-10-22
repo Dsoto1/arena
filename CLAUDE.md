@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.11** (v1.11 shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.11a** (v1.11a shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,13 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.10** Auto quality + Safari fixes (tools/plans/v110/NOTES.md, his 1a–6a + follow-ups 1a–4a, one beta): 417-v110auto — Settings →
-  Board & pieces: Quality Auto/High/Medium/Low first, Lighting (By quality/Full/Light/Off) under it; Auto = one 4-rung ladder from device
-  facts + runtime frame shares (down after 5 s ≥60% late, up after 20 s calm, doubling hysteresis, steps only on quiet frames); desktops
-  floor at Medium; Safari starts 1× sheets (2× after 30 s on time); DPR≥3 phones capped 2×; absorbs 399's auto-drop, 406 W1's drop, 410's
-  memory gate; lite84 "Light board" folded into Low (setting removed); window.Q110 + recorder q110. 399 l106Build fresh canvas (Safari
-  shadows, fixed blind; flavius_l106freshoff). Kill switch flavius_v110autooff. Beta: Safari still 31 fps Full / 53 Off → WebGL spike next.
-
 - **v1.10a** Chariots and stands (tools/plans/v110/NOTES.md, his 14a: fixes first, the Amphitheatre after): 418-v110b — Chariot Racing
   riders are 3D figures (an100On wrap), bench seams drawn under the spectators in all 8 stand sections (small direct edit in 409 marked v1.10a
   (418)); kill switch flavius_v110boff. Shipped from 5daf00c (full run green except tv104a, a test flaw fixed after). Then: WebGL spike no-go
@@ -219,3 +212,11 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   wait for a quiet board (311 an100Pump yield, window.an111Yield). Recorder block v111 + areas sharpen/thin/cellmk. Here: ~3× cheaper board
   draw, ~1,200 → 37 calls, pixel diff ≤ 8/255. Kill switch flavius_v111soff (#perf=v111soff). Test tv111s. Also carries the Amphitheatre
   preview (419-v111amph, OFF unless flavius_amph111=1). WebGL spike dropped (GL-SPIKE.md). Safari fps still to be recorded. No server change.
+
+- **v1.11a** THE AMPHITHEATRE (tools/plans/v111/AMPH.md passes 1–8, decisions 11a–15a + his picks to pass 8 c, "release it"):
+  419-v111amph ON by default (kill switch flavius_amph111off) — an offline three.js bake (tools/art/amph111, the game's exact 2:1 projection,
+  frame (OX−11.5·TW, OY−3.6·TW) scaled TW/112) painted into 192's cached under/deco layers: far-side arcaded podium + 6 upper rows with a
+  static crowd + gallery/attic, Flavius's box with 2 guards, near-side façade (doorways, banner piers, cypress/ivy) and the grand stair
+  (2 braziers, small light pools), ground-only paving fading to haze; today's framing everywhere; recoloured per arena (stone/bench/banner
+  tints); night = lit cells of a pre-scaled glow copy (tv91r budget); zoom fills uncovered strips (ar91Blit; tv100z). Skipped in the ludus,
+  Quality Low, Lighting Off. Assets ≈ 440 KB. Tests tv111am, tv100r (both surround on/off). Upper crowd → our spectators in v1.11b. No server change.
