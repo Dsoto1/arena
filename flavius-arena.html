@@ -73578,7 +73578,7 @@ function po104OffStart(w,P){const n=w.night;n.po104='off';P.phase='off';
   try{if(typeof BUS!=='undefined')BUS.emit('season.offseason',{w,season:P.s})}catch(e){}
   P.extra=lines;
   try{const R=po104Review(w,P);P.rev=R;sendLetter(w,{key:'sr104-'+P.s,kind:'letter',from:_T('the Clerk'),seal:'📜',title:_T`Season ${P.s} in review`,body:po104RevHTML(R,true)})}catch(e){console.error(e)}
-  if(typeof mnews==='function')mnews(_T`🌿 <b>The off-season.</b> No bouts this week: contracts, awards and recruiting before season ${P.s+1}.`,'big')}
+  if(typeof mnews==='function')mnews((typeof V109B!=='undefined'&&V109B.on)?_T`🌿 <b>The off-season.</b> No league games this week: the Winter Classic, contracts, awards and recruiting before season ${P.s+1}.`:_T`🌿 <b>The off-season.</b> No bouts this week: contracts, awards and recruiting before season ${P.s+1}.`,'big')}   /* v1.09b: the Winter Classic is played this week */
 function po104Review(w,P){const pm=me();const S=w.sr104&&w.sr104.s===P.s?w.sr104:{ids:rosterOf(pm).map(g=>g.id),coin:pm.coin,fame:pm.fame||0,wins:pm.wins||0,bouts:pm.bouts||0};
   const now=rosterOf(pm).map(g=>g.id);const came=now.filter(id=>!S.ids.includes(id)).map(gById).filter(Boolean).map(g=>g.name);
   const went=S.ids.filter(id=>!now.includes(id)).map(id=>{const g=gById(id);if(!g)return null;const m2=g.contract?mgrById(g.contract.mgr):null;

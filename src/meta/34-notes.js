@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.09b',ic:'🏆',t:_T('The Winter Classic'),hi:[_T('A winter knockout for the houses: enter one fighter, fight, watch or simulate, no deaths and no league points'),_T('The Cup, 60 coin, morale and Renown for the winner, and a plate in the Hall'),_T('Win it three times for the replica')]},
   {v:'1.09a',ic:'🏛',t:_T('Winter Quarters: the house rooms'),hi:[_T('Council review with one free promotion each winter, Renown & perks, and winter building works ready at week 1'),_T('A fresh intake of young tirones each winter, and a winter camp for the whole house'),_T('Three Consilium goals a season, paid in Renown')]},
   {v:'1.09',ic:'❄',t:_T('Winter Quarters'),hi:[_T('Manager: the off-season is now Winter Quarters, a set of rooms to visit before the new season'),_T('Awards night, the Quaestor’s accounts with every coin of the season by category, Personnel, and Next season'),_T('Seal the Quaestor’s Ledger in winter; Begin opens the new season')]},
   {v:'1.08c',ic:'🛠',t:_T('Steadier under the hood'),hi:[_T('Smoother board on Safari when the figure bases are off'),_T('Fix: a fallen beast can no longer be drawn several tiles big')]},

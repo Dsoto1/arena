@@ -1,0 +1,330 @@
+[
+ {
+  "k": "The Winter Classic",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "A winter knockout for the houses: enter one fighter, fight, watch or simulate, no deaths and no league points",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "The Cup, 60 coin, morale and Renown for the winner, and a plate in the Hall",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Win it three times for the replica",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "🌿 <b>The off-season.</b> No league games this week: the Winter Classic, contracts, awards and recruiting before season {0}.",
+  "w": "348-v104season.js:216"
+ },
+ {
+  "k": "Winter Classic",
+  "w": "415-v109b.js:42"
+ },
+ {
+  "k": "Hiberna",
+  "w": "415-v109b.js:43"
+ },
+ {
+  "k": "Three Winter Classic Cups: the replica the house keeps.",
+  "w": "415-v109b.js:46"
+ },
+ {
+  "k": "🏆 The Winter Classic Cup comes home: {0}, +{1} morale and loyalty for the house, +{2} Renown.",
+  "w": "415-v109b.js:103"
+ },
+ {
+  "k": "won the Winter Classic {0} (season {1}){2}",
+  "w": "415-v109b.js:106"
+ },
+ {
+  "k": "🏆 <b>{0}</b>{1} wins <b>the Winter Classic</b> — the Cup travels to its new holder.",
+  "w": "415-v109b.js:107"
+ },
+ {
+  "k": "Three Winter Classic Cups",
+  "w": "415-v109b.js:108"
+ },
+ {
+  "k": "🏆 {0} enters the Winter Classic for the house.",
+  "w": "415-v109b.js:114"
+ },
+ {
+  "k": "🏆 Your house sits the Winter Classic out.",
+  "w": "415-v109b.js:114"
+ },
+ {
+  "k": "Winter Classic · clemency",
+  "w": "415-v109b.js:126"
+ },
+ {
+  "k": "{0} is spared — the Winter Classic's clemency",
+  "w": "415-v109b.js:126"
+ },
+ {
+  "k": "Answer the Winter Classic first: enter a fighter or sit it out.",
+  "w": "415-v109b.js:147"
+ },
+ {
+  "k": "🏆 <b>The Winter Classic</b> — seed #{0}: enter a fighter or sit it out.",
+  "w": "415-v109b.js:157"
+ },
+ {
+  "k": "🏆 <b>The Winter Classic</b> — your house is not seeded; watch and bet.",
+  "w": "415-v109b.js:157"
+ },
+ {
+  "k": "an invited free agent",
+  "w": "415-v109b.js:161"
+ },
+ {
+  "k": "Day I",
+  "w": "415-v109b.js:162"
+ },
+ {
+  "k": "Day II",
+  "w": "415-v109b.js:162"
+ },
+ {
+  "k": "Day III",
+  "w": "415-v109b.js:162"
+ },
+ {
+  "k": "wildcard",
+  "w": "415-v109b.js:166"
+ },
+ {
+  "k": "provisional",
+  "w": "415-v109b.js:173"
+ },
+ {
+  "k": "Winter champions",
+  "w": "415-v109b.js:175"
+ },
+ {
+  "k": "The Winter Classic Cup",
+  "w": "415-v109b.js:176"
+ },
+ {
+  "k": "travels to each new winner",
+  "w": "415-v109b.js:176"
+ },
+ {
+  "k": "Projected · seeded by the final league table · seeds 1–4 rest on Day I.",
+  "w": "415-v109b.js:178"
+ },
+ {
+  "k": "The Cup",
+  "w": "415-v109b.js:179"
+ },
+ {
+  "k": "Day I · Bout {0}",
+  "w": "415-v109b.js:187"
+ },
+ {
+  "k": "Day II · Semifinal {0}",
+  "w": "415-v109b.js:187"
+ },
+ {
+  "k": "Day III · The final",
+  "w": "415-v109b.js:187"
+ },
+ {
+  "k": "Bet {0}×",
+  "w": "415-v109b.js:191"
+ },
+ {
+  "k": "▶ Simulate the final",
+  "w": "415-v109b.js:192"
+ },
+ {
+  "k": "⏳ Waiting its turn — the bouts run in order.",
+  "w": "415-v109b.js:193"
+ },
+ {
+  "k": "⚔ Fight it yourself",
+  "w": "415-v109b.js:194"
+ },
+ {
+  "k": "▶ Simulate",
+  "w": "415-v109b.js:194"
+ },
+ {
+  "k": "⚡ Simulate {0}",
+  "w": "415-v109b.js:199"
+ },
+ {
+  "k": "For now the final is one simulated bout of the four finalists (provisional).",
+  "w": "415-v109b.js:201"
+ },
+ {
+  "k": "▶ Day III · the final",
+  "w": "415-v109b.js:201"
+ },
+ {
+  "k": "🏆 <b>{0}</b> ({1}) wins the Winter Classic.",
+  "w": "415-v109b.js:202"
+ },
+ {
+  "k": "⚔ The bouts · {0}",
+  "w": "415-v109b.js:204"
+ },
+ {
+  "k": "Your house is not among the twelve seeds this winter. Watch the bouts and bet on them.",
+  "w": "415-v109b.js:206"
+ },
+ {
+  "k": "Seed <b>{0}</b>",
+  "w": "415-v109b.js:207"
+ },
+ {
+  "k": "✍ {0} fights for the house",
+  "w": "415-v109b.js:207"
+ },
+ {
+  "k": "Your house sits it out",
+  "w": "415-v109b.js:208"
+ },
+ {
+  "k": "Your seat: {0}",
+  "w": "415-v109b.js:208"
+ },
+ {
+  "k": "Sit it out",
+  "w": "415-v109b.js:209"
+ },
+ {
+  "k": "✍ Enter",
+  "w": "415-v109b.js:212"
+ },
+ {
+  "k": "✓ The replica is yours",
+  "w": "415-v109b.js:216"
+ },
+ {
+  "k": "{0} of 3",
+  "w": "415-v109b.js:216"
+ },
+ {
+  "k": "{0} of 3 for the replica",
+  "w": "415-v109b.js:216"
+ },
+ {
+  "k": "Held by <b>{0}</b> · Winter Classic {1}",
+  "w": "415-v109b.js:217"
+ },
+ {
+  "k": "Not yet won.",
+  "w": "415-v109b.js:217"
+ },
+ {
+  "k": "One plate a winter. Three wins: a replica for the house’s own Tituli.",
+  "w": "415-v109b.js:218"
+ },
+ {
+  "k": "🕊 Clemency: no deaths, no severe wounds",
+  "w": "415-v109b.js:221"
+ },
+ {
+  "k": "🦾 Lost limbs regrow free",
+  "w": "415-v109b.js:221"
+ },
+ {
+  "k": "📊 No league points, no lifetime records",
+  "w": "415-v109b.js:221"
+ },
+ {
+  "k": "✋ Optional — sitting out costs nothing",
+  "w": "415-v109b.js:221"
+ },
+ {
+  "k": "The winner: the Cup · {0} · +{1} morale and loyalty for the house · +{2} Renown. Three wins: a replica for your Tituli.",
+  "w": "415-v109b.js:222"
+ },
+ {
+  "k": "best fighter hurt",
+  "w": "415-v109b.js:223"
+ },
+ {
+  "k": "short of coin",
+  "w": "415-v109b.js:223"
+ },
+ {
+  "k": "🏆 The bracket",
+  "w": "415-v109b.js:225"
+ },
+ {
+  "k": "🏛 The Cup in the Hall",
+  "w": "415-v109b.js:225"
+ },
+ {
+  "k": "Sitting out: {0}.",
+  "w": "415-v109b.js:226"
+ },
+ {
+  "k": "Empty seats go to Sica’s Syndicate as the wildcard, then to invited free agents. Four fighters a bout; the top 2 go on.",
+  "w": "415-v109b.js:226"
+ },
+ {
+  "k": "The winter knockout · one fighter per house · seeded by the final table",
+  "w": "415-v109b.js:227"
+ },
+ {
+  "k": "houses",
+  "w": "415-v109b.js:227"
+ },
+ {
+  "k": "your seed",
+  "w": "415-v109b.js:227"
+ },
+ {
+  "k": "Won by {0}",
+  "w": "415-v109b.js:231"
+ },
+ {
+  "k": "Enter a fighter or sit it out",
+  "w": "415-v109b.js:232"
+ },
+ {
+  "k": "Entered: {0}",
+  "w": "415-v109b.js:232"
+ },
+ {
+  "k": "Not seeded · watch and bet",
+  "w": "415-v109b.js:232"
+ },
+ {
+  "k": "🏆 The Winter Classic waits for your answer.",
+  "w": "415-v109b.js:236"
+ },
+ {
+  "k": "🏆 The Winter Classic’s remaining bouts are simulated.",
+  "w": "415-v109b.js:236"
+ },
+ {
+  "k": "No league games in Winter Quarters — only the Winter Classic. The rooms go in any order; the last one starts the season.",
+  "w": "415-v109b.js:238"
+ },
+ {
+  "k": "The Winter Classic: answered",
+  "w": "415-v109b.js:241"
+ },
+ {
+  "k": "<b>The Winter Classic</b> waits for your answer",
+  "w": "415-v109b.js:241"
+ },
+ {
+  "k": "the travelling cup",
+  "w": "415-v109b.js:246"
+ },
+ {
+  "k": "That fighter cannot go.",
+  "w": "415-v109b.js:254"
+ },
+ {
+  "k": "arena · v1.09b",
+  "w": "01-head.html"
+ }
+]
