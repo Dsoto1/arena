@@ -94,14 +94,14 @@ const run=async(mode)=>{const vp=mode==='p'?{width:390,height:844}:{width:844,he
   await P.evaluate(()=>{const b=document.querySelector('#onl [data-onl="mkroom"][data-v="0"]');if(b)b.click()});await W(2500);await check('onl_room',['#mClose']);await close();
   await ctx.close()};
 await run('p');await run('l');
-/* the Light board on a sharp 390-px phone (DPR 3), Auto */
+/* the Light board on a 390-px DPR-3 phone: v1.10 folded it into Quality (Low ⇒ on; Auto only at rung 3) */
 {const vp={width:390,height:844};const ctx=await b.newContext({viewport:vp,screen:vp,isMobile:true,hasTouch:true,deviceScaleFactor:3});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});const P=await ctx.newPage();P.on('pageerror',e=>errs.push('lite:'+e.message));
   await P.goto(URL0,{timeout:90000});await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
-  const L=await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}catch(e){}SETTINGS.lite84='auto';
+  const L=await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}catch(e){}SETTINGS.quality110='low';applySettings();
     startEvent({ev:'democritus',loc:6,seats:[{cls:'hero',cpu:false},{cls:'soldier',cpu:true},{cls:'slave',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
     for(let i=0;i<30;i++){if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await new Promise(r=>setTimeout(r,100))}SPEED='pause';return {lite:lite84On(),dpr:devicePixelRatio}});
-  ok(L.lite&&L.dpr===3,'the Light board engages on a 390-px DPR-3 phone '+JSON.stringify(L));await ctx.close()}
+  ok(L.lite,'the Light board engages on a 390-px phone with Quality Low '+JSON.stringify(L));await ctx.close()}
 /* desktop keeps its look: windows are not full-screen, no lite board at DPR 1 */
 {const ctx=await b.newContext({viewport:{width:1400,height:900}});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});const P=await ctx.newPage();P.on('pageerror',e=>errs.push('desk:'+e.message));

@@ -101,7 +101,6 @@ function set98Pieces(base){const T=set98T(base('tokens'));const G=set98T(base('g
     +pic('tokens',img('pillar98_tokens.webp'),_T('Token rounds'),_T('The printed Blessing tokens, face up. A knocked-off token flips to its offering.'),_T('Token rounds on a pillar'));
   const sp=String((typeof THEME!=='undefined'&&THEME.spike)||SET98_SPIKE.iron).toLowerCase()===SET98_SPIKE.bronze?'bronze':'iron';
   const spike=`<div class="seg s98-seg">${[['iron',_T('Iron')],['bronze',_T('Bronze')]].map(([k,l])=>`<button type="button" data-spike98="${k}" class="${sp===k?'on':''}">${l}</button>`).join('')}</div>`;
-  const lite=set98Seg(G,'[data-lite84]');
   let eds='',won='';try{const S2=set98T(typeof sponsorSettingsHTML==='function'?sponsorSettingsHTML():'');const dev=S2.querySelector('.card2');const list=S2.querySelector('.sponlist');
     if(list)for(const r of list.querySelectorAll('.sponrow')){const sl=r.querySelector('select[data-spcity]');const li=sl?+sl.dataset.spcity:-1;const box=sl&&sl.parentElement;if(!box)continue;
       box.querySelectorAll('.rc-sub').forEach(x=>x.remove());const u=typeof CITY_SPONSORS!=='undefined'&&CITY_SPONSORS[li];const unl=typeof cityUnlocked==='function'&&cityUnlocked(li);
@@ -110,7 +109,7 @@ function set98Pieces(base){const T=set98T(base('tokens'));const G=set98T(base('g
     const n=LOCATIONS.filter((L,i)=>L&&HALL_LOCS.includes(i)).length,all=LOCATIONS.filter(Boolean).length;won=_T`${n} / ${all} cities won · win a match at a city to unlock its editor`}catch(e){}
   return `<div class="s98-sec"><h2>${_T('Board & pieces')}</h2><p>${_T('How gladiators, Blessings and the editor in the box look.')}</p></div><div class="s98-stack"><div class="s98-grid2">
     ${set98Card('🗿',_T('Gladiators & beasts'),`<div class="s98-pics">${tok}</div><p class="s98-note">${_T('Your own creations always wear their own 3D tokens.')}</p>`)}
-    ${set98Card('🏺',_T('Blessings on pillars'),`<div class="s98-pics">${pots}</div><div class="s98-rows" style="margin-top:10px">${set98Row(_T('Floor spikes'),_T('The metal of the 3D spike caps.'),spike)}${set98Row(_T('Light board for older phones'),_T('Skips the sand grain and scars. Auto: on sharp phone screens.'),lite)}</div>`)}</div>
+    ${set98Card('🏺',_T('Blessings on pillars'),`<div class="s98-pics">${pots}</div><div class="s98-rows" style="margin-top:10px">${set98Row(_T('Floor spikes'),_T('The metal of the 3D spike caps.'),spike)}</div>`)}</div>
     ${eds?set98Card('🎭',_T('Editors in the box'),eds,{small:won}):''}</div>`}
 
 function set98Themes(base){const T=set98T(base('themes'));

@@ -6,10 +6,12 @@
    (4) Auto with stubbed frame times: sustained slow frames → one rung down (only after a commit, at a quiet moment), no second step inside
        the gap; sustained headroom → back up; after a second drop the climb waits twice as long (hysteresis);
    (5) WebKit forced (flavius_v107safariforce=1): the board at 1.5×, 1× sheets at the start, 2× only after on-time frames;
-   (6) a phone at DPR 3: Auto starts on Light, the board at 3× unzoomed and 2× zoomed;
+   (6) a phone at DPR 3: Auto starts on Light, the board at 2× unzoomed AND zoomed (follow-up 2a);
    (7) kill switch flavius_v110autooff=1: v1.09c (no Quality card, 399's three Lighting buttons, no Q110 lever on the ratio);
    (8) settings migration: an explicit old Lighting choice stays the override; an old Full + 399's slow drop → Auto decides (starts ≥ rung 1);
    (9) 5a: l106Build gives a NEW layer canvas each build (flavius_l106freshoff=1 → reused); (10) the recorder report carries q110.
+   (11) follow-up 1a: desktop Auto floors at Medium under forced slow frames, a phone still reaches Low; 3a: Quality drives the Light board
+       (Low ⇒ lite84 on, High / Medium ⇒ off, Auto rung 3 ⇒ on), the old control is gone, migration (old ON + no Quality ⇒ Low; chosen Quality kept).
    node tools/tests/tv110a.js <ABSOLUTE page path> → ERRS [] and exit 0. */
 const http=require('http'),fs=require('fs'),path=require('path');
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);
@@ -30,18 +32,18 @@ const LEV=()=>({mode:Q110.mode,tier:Q110.tier,rung:Q110.n,light:l106Pref(),dpr:d
 const CARD=()=>{const t=document.createElement('div');t.innerHTML=settingsHTML('pieces');document.body.appendChild(t);window.__q=t;
   const st=t.querySelector('.s98-stack'),first=st&&st.firstElementChild;
   return {first:!!(first&&first.querySelector('[data-q110]')),q:[...t.querySelectorAll('[data-q110]')].map(x=>x.dataset.q110+(x.classList.contains('on')?'*':'')),
-    l:[...t.querySelectorAll('[data-light106]')].map(x=>x.dataset.light106+(x.classList.contains('on')?'*':'')),cards:t.querySelectorAll('section.s98-card [data-light106]').length?[...new Set([...t.querySelectorAll('[data-light106]')].map(x=>x.closest('section')))].length:0}};
+    lite:t.querySelectorAll('[data-lite84]').length,l:[...t.querySelectorAll('[data-light106]')].map(x=>x.dataset.light106+(x.classList.contains('on')?'*':'')),cards:t.querySelectorAll('section.s98-card [data-light106]').length?[...new Set([...t.querySelectorAll('[data-light106]')].map(x=>x.closest('section')))].length:0}};
 try{
   /* ---- 1 · Settings + defaults ---- */
   let pg=await open();
   const d1=await pg.evaluate(`(${CARD})()`);
-  ok(d1.first&&d1.q.join()==='auto*,high,medium,low'&&d1.l.join()==='q*,full,light,off'&&d1.cards===1,'1a Quality is the first card, Auto on; Lighting under it (By quality on); one Lighting group '+JSON.stringify(d1));
+  ok(d1.first&&d1.q.join()==='auto*,high,medium,low'&&d1.l.join()==='q*,full,light,off'&&d1.cards===1&&d1.lite===0,'1a Quality is the first card, Auto on; Lighting under it (By quality on); one Lighting group '+JSON.stringify(d1));
   const l1=await pg.evaluate(`(${LEV})()`);
   ok(l1.mode==='auto'&&l1.tier==='high'&&l1.rung==='high'&&l1.light==='full'&&l1.dpr===2&&l1.x2===true&&l1.crowd==='full'&&l1.p>0&&l1.stand===true,'1b desktop Auto = High: Full, 2×, ratio 2, full crowd '+JSON.stringify(l1));
   /* ---- 2 · presets ---- */
-  const d2=await pg.evaluate(`(()=>{const L=${LEV};const t=window.__q;const out={};for(const k of ['medium','low','high','auto']){t.querySelector('[data-q110="'+k+'"]').click();out[k]=L();out[k].on=[...t.querySelectorAll('[data-q110].on')].map(x=>x.dataset.q110).join();out[k].saved=JSON.parse(localStorage.getItem('flavius_settings')).quality110}return out})()`);
+  const d2=await pg.evaluate(`(()=>{const L=${LEV};const t=window.__q;const out={};for(const k of ['medium','low','high','auto']){t.querySelector('[data-q110="'+k+'"]').click();out[k]=L();out[k].on=[...t.querySelectorAll('[data-q110].on')].map(x=>x.dataset.q110).join();out[k].saved=JSON.parse(localStorage.getItem('flavius_settings')).quality110;out[k].lite=lite84On()}return out})()`);
   ok(d2.medium.light==='light'&&d2.medium.dpr===1.5&&d2.medium.x2===false&&d2.medium.crowd==='react'&&d2.medium.p===0&&d2.medium.stand===false&&d2.medium.on==='medium'&&d2.medium.saved==='medium','2a Medium: Light, 1.5×, 1× sheets, the crowd reacts only '+JSON.stringify(d2.medium));
-  ok(d2.low.light==='off'&&d2.low.dpr===1&&d2.low.x2===false&&d2.low.crowd==='still'&&d2.low.cheer===false&&d2.low.walk===false,'2b Low: Off, 1×, 1× sheets, a still crowd '+JSON.stringify(d2.low));
+  ok(d2.low.light==='off'&&d2.low.dpr===1&&d2.low.x2===false&&d2.low.crowd==='still'&&d2.low.cheer===false&&d2.low.walk===false&&d2.low.lite===true&&d2.medium.lite===false&&d2.high.lite===false,'2b (3a Low ⇒ Light board on; Medium / High ⇒ off) Low: Off, 1×, 1× sheets, a still crowd '+JSON.stringify(d2.low));
   ok(d2.high.light==='full'&&d2.high.dpr===2&&d2.high.x2===true&&d2.high.crowd==='full'&&d2.high.p===l1.p&&d2.high.stand===true,'2c High: Full, 2×, 2× sheets, the full crowd back '+JSON.stringify(d2.high));
   ok(d2.auto.mode==='auto'&&d2.auto.light==='full','2d back to Auto '+JSON.stringify(d2.auto));
   /* ---- 3 · manual Lighting overrides the preset ---- */
@@ -65,6 +67,15 @@ try{
   ok(d4.inGap===null,'4b no second step inside the gap '+JSON.stringify(d4.inGap));
   ok(d4.upPend===0&&d4.up==='high','4c sustained headroom → back up '+JSON.stringify(d4));
   ok(d4.down2==='high-light'&&d4.downs[0]===2&&d4.notYet===null&&d4.later===0&&d4.up2==='high','4d hysteresis: after a second drop the climb waits twice as long '+JSON.stringify(d4));
+  /* ---- 11 · follow-up 1a: desktop floor at Medium; a phone reaches Low (3a: rung 3 ⇒ Light board) ---- */
+  const d11=await pg.evaluate(()=>{const K=Q110K;let t=3e7;const o={};const reset=r=>{Q110.rung=r;Q110.refresh();Q110.lastStep=-1e9;Q110.quietUntil=0;Q110.bk=[];Q110.downs=[0,0,0];Q110.pend=null};
+    const slow=()=>{const e=t+3000;for(;t<e;t+=50)Q110.feed(40,t)};
+    o.desk=Q110.phone;reset(1);slow();o.to2=Q110.pend&&Q110.pend.to;Q110.commit();o.r2=Q110.n;o.lite2=lite84On();
+    t+=K.gap+K.settle;slow();o.deskPend=Q110.pend;o.deskRung=Q110.n;
+    Q110.phone=true;reset(2);slow();o.phPend=Q110.pend&&Q110.pend.to;Q110.commit();o.phRung=Q110.n;o.phLite=lite84On();
+    Q110.phone=false;reset(0);SETTINGS.quality110='auto';Q110.refresh();o.lite0=lite84On();return o});
+  ok(d11.desk===false&&d11.to2===2&&d11.r2==='medium'&&d11.lite2===false&&d11.deskPend===null&&d11.deskRung==='medium','11a desktop Auto never steps below Medium '+JSON.stringify(d11));
+  ok(d11.phPend===3&&d11.phRung==='low'&&d11.phLite===true&&d11.lite0===false,'11b a phone reaches Low (Light board on at rung 3, off above) '+JSON.stringify(d11));
   /* ---- 10 · the recorder report ---- */
   const d10=await pg.evaluate(()=>{const o=rec107Extra();return o.q110&&{mode:o.q110.mode,tier:o.q110.tier,steps:o.q110.steps.length,dpr:o.q110.dpr}});
   ok(d10&&d10.mode==='auto'&&d10.steps>=4&&d10.dpr.real===2,'10 the recorder report carries q110 '+JSON.stringify(d10));
@@ -86,7 +97,7 @@ try{
   /* ---- 6 · a phone at DPR 3 ---- */
   pg=await open({},{viewport:{width:390,height:844},deviceScaleFactor:3,isMobile:true,hasTouch:true});
   const d6=await pg.evaluate(()=>{const o={rung:Q110.n,light:l106Pref(),phone:Q110.phone};const z=AR91.z;AR91.z=1;o.unz=devicePixelRatio;AR91.z=2;o.zoom=devicePixelRatio;AR91.z=z;return o});
-  ok(d6.phone&&d6.rung==='high-light'&&d6.light==='light'&&d6.unz===3&&d6.zoom===2,'6 phone DPR 3: Auto starts on Light; the board 3× unzoomed, 2× zoomed '+JSON.stringify(d6));
+  ok(d6.phone&&d6.rung==='high-light'&&d6.light==='light'&&d6.unz===2&&d6.zoom===2,'6 phone DPR 3: Auto starts on Light; the board 2× unzoomed AND zoomed (follow-up 2a) '+JSON.stringify(d6));
   await pg.context().close();
   /* ---- 7 · kill switch ---- */
   pg=await open({flavius_v110autooff:'1'});
@@ -99,7 +110,15 @@ try{
   /* ---- 8 · settings migration ---- */
   pg=await open({flavius_settings:JSON.stringify({light106:'off'})});
   const d8=await pg.evaluate(()=>({mode:Q110.mode,set:SETTINGS.light106,light:l106Pref(),v:SETTINGS.q110v}));
-  ok(d8.mode==='auto'&&d8.set==='off'&&d8.light==='off'&&d8.v===1,'8a an explicit old Lighting choice stays the override under Auto '+JSON.stringify(d8));
+  ok(d8.mode==='auto'&&d8.set==='off'&&d8.light==='off'&&d8.v===2,'8a an explicit old Lighting choice stays the override under Auto '+JSON.stringify(d8));
+  await pg.context().close();
+  pg=await open({flavius_settings:JSON.stringify({lite84:'on'})});
+  const d8c=await pg.evaluate(()=>({mode:Q110.mode,q:SETTINGS.quality110,lite:lite84On(),v:SETTINGS.q110v}));
+  ok(d8c.mode==='low'&&d8c.lite===true&&d8c.v===2,'8c old Light board ON + no Quality chosen → Quality Low '+JSON.stringify(d8c));
+  await pg.context().close();
+  pg=await open({flavius_settings:JSON.stringify({lite84:'on',quality110:'high'})});
+  const d8d=await pg.evaluate(()=>({mode:Q110.mode,lite:lite84On(),v:SETTINGS.q110v}));
+  ok(d8d.mode==='high'&&d8d.lite===false&&d8d.v===2,'8d old Light board ON + Quality High chosen → Quality stays, Light board off '+JSON.stringify(d8d));
   await pg.context().close();
   pg=await open({flavius_settings:JSON.stringify({light106:'full'}),flavius_light106drop:'1'});
   const d8b=await pg.evaluate(()=>({mode:Q110.mode,set:'light106' in SETTINGS,light:l106Pref(),rung:Q110.n,cap:Q110.cap}));

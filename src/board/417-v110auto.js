@@ -10,8 +10,14 @@
        Medium = Lighting Light, 1× sheets, the board at ≤ 1.5× (WebKit: 1×), the crowd reacts to blows only (no walk-in, no idle bursts,
                 no stand-ups).
        Low    = Lighting Off, 1× sheets, the board at 1×, a still crowd (moods on the faces, no arm-waving).
-     Phones at a device ratio ≥ 3 (6a): the board is capped at 2× while zoomed, in every preset.
-   • AUTO (2a 4a 6a): ONE controller, a ladder of four rungs — 0 High · 1 High with Lighting Light · 2 Medium · 3 Low.
+     Phones at a device ratio ≥ 3 (follow-up 2a, 2026-10-22): the board is capped at 2× ALWAYS, zoomed or not, in every preset
+     (REPLACES 6a's "only when zoomed").
+     LIGHT BOARD (follow-up 3a): the old separate setting "Light board for older phones" (138 lite84, v0.84: sand grain, scars, wear)
+     is REPLACED by Quality: Low turns it on, High / Medium turn it off, Auto turns it on at rung 3. The control is gone from
+     Settings (246); the flag SETTINGS.lite84 stays — the modules that read lite84On() are untouched — but Quality now writes it
+     ('on' / 'off', in q110Refresh). Migration (q110v 2): a player who had lite84 'on' and had not chosen a Quality (none or the
+     default Auto) gets Quality Low; one who chose High / Medium / Low keeps it.
+   • AUTO (2a 4a 6a; follow-up 1a: on DESKTOPS Auto never steps below Medium, rung 2 — Low only when picked; phones keep the full ladder): ONE controller, a ladder of four rungs — 0 High · 1 High with Lighting Light · 2 Medium · 3 Low.
        START from capability: desktop → 0; a phone (399's l106Phone) → 1 (= today's phone default, Light); navigator.deviceMemory ≤ 4 GB
        (410's old memory gate, now an INPUT) → ≥ 1, ≤ 2 GB → 2; hardwareConcurrency ≤ 2 (not WebKit: it reports a fixed number) → 2;
        399's old "frames were slow" drop (flavius_light106drop) → ≥ 1. Headless test browsers: the phone rule only (no runtime stepping
@@ -48,6 +54,7 @@ const Q110K={slowMs:17.5,slowPh:34,win:5000,min:40,share:0.6,upWin:20000,upMin:1
 const Q110_R=[{n:'high',tier:'high',light:'full',crowd:'full',dpr:'top'},{n:'high-light',tier:'high',light:'light',crowd:'full',dpr:'top'},
   {n:'medium',tier:'medium',light:'light',crowd:'react',dpr:'mid'},{n:'low',tier:'low',light:'off',crowd:'still',dpr:'low'}];
 const Q110_P={high:0,medium:2,low:3};
+const q110MaxRung=()=>Q110.phone?3:2;   /* follow-up 1a: desktops floor at Medium */
 if(!Q110.off){try{Q110.webkit=typeof P107S!=='undefined'&&!P107S.off&&!!P107S.webkit}catch(e){}
   try{SETTINGS_DEF.quality110='auto'}catch(e){}}
 
@@ -55,10 +62,11 @@ if(!Q110.off){try{Q110.webkit=typeof P107S!=='undefined'&&!P107S.off&&!!P107S.we
 function q110Mode(){let v='auto';try{v=SETTINGS.quality110||'auto'}catch(e){}return Q110_P[v]!=null?v:'auto'}
 /* the levers now: {n, tier, light, crowd, dpr, x2} */
 function q110Refresh(){const m=Q110.mode=q110Mode();const r=m==='auto'?Q110.rung:Q110_P[m];const R=Q110_R[r];
-  Q110.lv={...R,x2:m==='auto'?Q110.x2ok:m==='high'};Q110.tier=R.tier;Q110.n=R.n;return Q110.lv}
+  Q110.lv={...R,x2:m==='auto'?Q110.x2ok:m==='high'};Q110.tier=R.tier;Q110.n=R.n;
+  /* follow-up 3a: Quality drives the Light board flag (Low, or Auto at rung 3) */
+  try{SETTINGS.lite84=(m==='low'||(m==='auto'&&r===3))?'on':'off'}catch(e){}return Q110.lv}
 const q110Lv=()=>Q110.lv||q110Refresh();
 const q110Phone=()=>{try{return typeof l106Phone==='function'?l106Phone():Math.min(innerWidth||9999,(screen&&screen.width)||9999)<=700}catch(e){return false}};
-const q110Zoomed=()=>{try{return typeof ar91Zoomed==='function'&&ar91Zoomed()}catch(e){return false}};
 
 /* ---------- capability: the rung Auto starts on ---------- */
 function q110Cap(){const why=[];let r=0;
@@ -77,7 +85,7 @@ function q110BaseDpr(r){if(!Q110.webkit||typeof W1==='undefined')return r;return
 function q110DprCap(r){if(Q110.raw)return q110BaseDpr(r);const L=q110Lv();let c=Infinity;const wk=Q110.webkit&&typeof W1!=='undefined';
   if(L.dpr==='top')c=wk?W1.cap:Infinity;else if(L.dpr==='mid')c=wk?W1.low:1.5;else c=1;
   if(wk&&W1.fixed)c=W1.fixed;
-  if(Q110.phone&&r>=3&&q110Zoomed())c=Math.min(c,2);   /* 6a */
+  if(Q110.phone&&r>=3)c=Math.min(c,2);   /* follow-up 2a: always, not only zoomed */
   return c}
 if(!Q110.off){(()=>{let o=window,d=null;while(o&&!(d=Object.getOwnPropertyDescriptor(o,'devicePixelRatio')))o=Object.getPrototypeOf(o);
   const wk=Q110.webkit&&typeof W1!=='undefined'&&W1.real;if(!wk&&(!d||!d.get))return;
@@ -123,7 +131,7 @@ function q110Feed(dt,t){if(Q110.off||Q110.mode!=='auto'||!(dt>0)||dt>250)return;
 function q110Win(t,ms){let n=0,late=0;const s0=(t-ms)/1000;for(let i=Q110.bk.length-1;i>=0;i--){const b=Q110.bk[i];if(b.s<s0)break;n+=b.n;late+=b.late}return {n,late,share:n?late/n:0}}
 function q110Judge(t){if(Q110.pend||Q110.mode!=='auto')return;if(t-Q110.lastStep<Q110K.gap)return;const r=Q110.rung;
   const w=q110Win(t,Q110K.win);
-  if(r<3&&w.n>=Q110K.min&&w.share>=Q110K.share){q110Pend(r+1,'slow frames ('+Math.round(w.share*100)+'% late)',t);return}
+  if(r<q110MaxRung()&&w.n>=Q110K.min&&w.share>=Q110K.share){q110Pend(r+1,'slow frames ('+Math.round(w.share*100)+'% late)',t);return}
   if(r>0){const dn=Q110.downs[r-1]||0;if(dn>=Q110K.maxDowns)return;const need=Math.min(Q110K.maxWait,Q110K.upWin*Math.pow(2,Math.max(0,dn-1)));
     if(t-Q110.lastStep<need)return;const u=q110Win(t,need);if(u.n>=Q110K.upMin&&u.share<=Q110K.upShare)q110Pend(r-1,'headroom',t);return}
   if(!Q110.x2ok&&t-Q110.lastStep>=Q110K.x2Win){const u=q110Win(t,Q110K.x2Win);if(u.n>=Q110K.x2Min&&u.share<=Q110K.upShare){Q110.x2ok=true;q110Refresh();
@@ -147,8 +155,12 @@ Q110.feed=q110Feed;Q110.judge=q110Judge;Q110.commit=q110Commit;Q110.refresh=()=>
 if(!Q110.off){
   Q110.phone=q110Phone();const C=q110Cap();Q110.rung=Q110.start=C.r;Q110.cap=C.why;Q110.why='start: '+C.why;Q110.x2ok=C.r===0&&!Q110.webkit;
   /* settings migration (once): 399's old drop under an explicit Full = Auto decides now; any other explicit Lighting choice stays as the override */
-  try{if(!SETTINGS.q110v){SETTINGS.q110v=1;let drop=false;try{drop=localStorage.getItem('flavius_light106drop')==='1'}catch(e){}
-    if(drop&&SETTINGS.light106==='full')delete SETTINGS.light106;if(!SETTINGS.quality110)SETTINGS.quality110='auto';try{lsSet('settings',SETTINGS)}catch(e){}}}catch(e){}
+  try{if((SETTINGS.q110v|0)<2){const v0=SETTINGS.q110v|0;SETTINGS.q110v=2;
+    /* follow-up 3a: an explicit old Light board ON becomes Quality Low, only if no Quality was chosen yet */
+    if(SETTINGS.lite84==='on'&&(!SETTINGS.quality110||SETTINGS.quality110==='auto'))SETTINGS.quality110='low';
+    if(!v0){let drop=false;try{drop=localStorage.getItem('flavius_light106drop')==='1'}catch(e){}
+    if(drop&&SETTINGS.light106==='full')delete SETTINGS.light106;if(!SETTINGS.quality110)SETTINGS.quality110='auto'}
+    try{lsSet('settings',SETTINGS)}catch(e){}}}catch(e){}
   q110Refresh();q110Crowd();
   /* samples: the two frames after a board draw (both commit what the draw asked for) */
   {const base=draw;draw=function(){const r=base.apply(this,arguments);try{Q110.lastDraw=performance.now();

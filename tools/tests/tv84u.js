@@ -25,7 +25,7 @@ const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`u84u_${
 const {ctx,p}=await mk();
 await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await W8(p,400);
 await p.evaluate(()=>openSettings('general'));await W8(p,600);
-/* v0.98: Settings full screen with a rail (246-v98ui): Language first on General; text size / colour-blind / confirm on Accessibility; Light board on Board & pieces */
+/* v0.98: Settings full screen with a rail (246-v98ui): Language first on General; text size / colour-blind / confirm on Accessibility; Quality (was Light board) on Board & pieces */
 o.gen=await p.evaluate(async()=>{const box=document.getElementById('setBody');const first=box.querySelector('.s98-main').querySelector('.s98-lang');
   const pg=async k=>{box.querySelector(`[data-stab="${k}"]`).click();await new Promise(r=>setTimeout(r,250))};const lang=first?[...first.querySelectorAll('select[data-lang84] option')].map(x=>x.value):[],langTxt=first?first.textContent:'';
   const tabs=[...box.querySelectorAll('[data-stab]')].map(x=>x.dataset.stab);const lessons=!!box.querySelector('[data-lessonsmenu]');const rst=!!box.querySelector('[data-rst84]');
@@ -35,7 +35,7 @@ o.gen=await p.evaluate(async()=>{const box=document.getElementById('setBody');co
 ok(JSON.stringify(o.gen.tabs)===JSON.stringify(['general','help','pieces','themes','audio','access']),'the rail: no Profiles, no Saves '+JSON.stringify(o.gen.tabs));
 ok(/s98-lang/.test(o.gen.first||'')&&o.gen.lang[0]==='en'&&o.gen.lang.includes('es')&&/stay English in every language/.test(o.gen.langTxt),'🌐 Language row first (English, then the built-in languages) '+JSON.stringify(o.gen.lang));
 ok(!o.gen.lessons,'no lesson-buttons row');ok(o.gen.ts&&o.gen.tsOld===0,'one text-size control (100 / 115 / 130)');ok(o.gen.cvdSel&&!o.gen.cvdBox,'colour-blind is a select');
-ok(o.gen.ce,'Confirm before End turn (off by default)');ok(o.gen.rst,'Restore all defaults');ok(o.gen.lite,'Light board lives in Board & pieces');
+ok(o.gen.ce,'Confirm before End turn (off by default)');ok(o.gen.rst,'Restore all defaults');ok(!o.gen.lite,'Light board setting is gone (folded into Quality Low, v1.10)');
 await shot(p,'set_general');
 /* text size */
 o.ts=await p.evaluate(async()=>{document.querySelector('[data-ts98="115"]').click();await new Promise(r=>setTimeout(r,250));const on=document.querySelector('[data-ts98].on');

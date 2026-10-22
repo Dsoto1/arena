@@ -34,7 +34,7 @@ const s1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   o.potImgs=[...box().querySelectorAll('.s98-pic img')].map(i=>i.complete&&i.naturalWidth>0);
   box().querySelector('[data-spike98="bronze"]').click();await W8(250);o.bronze=String(THEME.spike).toLowerCase()===SET98_SPIKE.bronze&&!!box().querySelector('[data-spike98="bronze"].on');
   box().querySelector('[data-spike98="iron"]').click();await W8(250);o.iron=String(THEME.spike).toLowerCase()===SET98_SPIKE.iron;
-  const l0=SETTINGS.lite84||'auto';box().querySelector('[data-lite84="on"]').click();await W8(100);o.lite=SETTINGS.lite84==='on';box().querySelector(`[data-lite84="${l0}"]`).click();
+  const q0=SETTINGS.quality110||'auto';box().querySelector('[data-q110="low"]').click();await W8(100);o.lite=SETTINGS.lite84==='on'&&!box().querySelector('[data-lite84]');box().querySelector(`[data-q110="${q0}"]`).click();
   const st0=(box().querySelector('.s98-tok.on')||{dataset:{}}).dataset.tokstyle;const other=[...box().querySelectorAll('[data-tokstyle]')].map(x=>x.dataset.tokstyle).find(x=>x!==st0);
   if(other){box().querySelector(`[data-tokstyle="${other}"]`).click();await W8(300);o.tok=!!box().querySelector(`.s98-tok.on[data-tokstyle="${other}"]`)&&(SETTINGS.tokenStyle===other||!!SETTINGS.mini3d===(other==='mini3d'));box().querySelector(`[data-tokstyle="${st0}"]`).click();await W8(300)}else o.tok=!box().querySelector('[data-tokstyle]')&&tokenStyle()==='figure'; /* v1.07 (400): the token-style choice is retired — one 3D look */
   o.eds=box().querySelectorAll('.s98-eds select[data-spcity]').length;
