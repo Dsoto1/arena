@@ -20,7 +20,9 @@ const start=async(calm)=>pg.evaluate(async(calm)=>{const W8=ms=>new Promise(r=>s
   const off=live.filter(s=>{const d=crowd91Drawn(s);return !d||!Number.isFinite(d.x)||Math.hypot(d.x-s._x,d.y-s._y)>1}).length;
   const seatOK=live.every(s=>{const a=SEAT91.get(s);if(!a)return false;const p=seatXY91(s.sec,a.slot);return Math.abs(p.x-s._x)<0.01&&Math.abs(p.y-s._y)<0.01});
   return {n:live.length,off,seatOK,rot:S.rotation,ri:S.ri}},calm);
-const A=await start(false);out.walkStart=A;
+/* v1.09a flaky fix: the crowd size is random (24..65 for opts.spect 48); with < ~28 no section holds the 4 spectators check 5 needs
+   (secs=0, spread 0.00). Re-deal the event (bounded) until the crowd is big enough, instead of sampling whatever came up. */
+let A=await start(false);for(let t=0;t<10&&A.n<40;t++)A=await start(false);out.walkStart=A;
 ok(A.n>=20,'0 spectators seated '+A.n);ok(A.seatOK,'6 sp._x/_y are the seat at once');ok(A.off>=A.n*0.3,`6 at the start most are still walking (${A.off}/${A.n})`);
 await pg.waitForTimeout(2600);
 if(SHOT)await pg.screenshot({path:path.join(SHOT,'tv91c_walk.png')});
@@ -38,7 +40,10 @@ const L=await pg.evaluate(()=>{const g=cv.getContext('2d');const RING=['#8fe07a'
   const backOK=seen.every(x=>x.back===nearSecs.includes(x.sec));const nBack=seen.filter(x=>x.back).length,nFront=seen.length-nBack;
   const h=seen.find(x=>x.human);const r1=seen.find(x=>x.id===live[1].id),r2=seen.find(x=>x.id===live[2].id);
   /* gold at the human's feet */
-  const T=CR91.T;let gold=0;if(h){for(const dx of [-0.17,0.17]){const p=T.transformPoint(new DOMPoint(h.x+dx*TW,h.y+TW*0.01));const d=g.getImageData(Math.round(p.x)-2,Math.round(p.y)-2,5,5).data;for(let i=0;i<d.length;i+=4)if(d[i]>190&&d[i+1]>150&&d[i+2]<160&&d[i]-d[i+2]>60)gold++}}
+  /* v1.09a flaky fix: the ring is a ~2 px stroke (TW*0.17 x TW*0.06 ellipse) at a fractional position, and the human is whichever spectator is
+     live[0] (random seat, so a neighbour's sprite may cover its sides). Two 5x5 windows at the left/right tips hit anti-aliased or covered
+     pixels in ~1 run in 4 (gold=1). Count strict-gold pixels over the whole ring footprint instead (always 4..23 over 30 runs; none = no ring). */
+  const T=CR91.T;let gold=0;if(h){const p=T.transformPoint(new DOMPoint(h.x,h.y+TW*0.01));const d=g.getImageData(Math.round(p.x)-14,Math.round(p.y)-5,29,11).data;for(let i=0;i<d.length;i+=4)if(d[i]>190&&d[i+1]>150&&d[i+2]<160&&d[i]-d[i+2]>60)gold++}
   /* even seating: in each section with 4+ spectators, the seats span most of the bench */
   const spread=[];for(let si=0;si<8;si++){const xs=live.filter(s=>s.sec===si).map(s=>seatXY91(si,SEAT91.get(s).slot).al);if(xs.length<4)continue;spread.push((Math.max(...xs)-Math.min(...xs))/5.25)}
   /* today's packing (16-crowd seatPos k: 4 rows × 6 columns from one end) for the same counts */
@@ -51,7 +56,7 @@ const L=await pg.evaluate(()=>{const g=cv.getContext('2d');const RING=['#8fe07a'
   let t0=performance.now();for(let i=0;i<20;i++)draw();const frame=(performance.now()-t0)/20;
   return {ring,backOK,nBack,nFront,human:!!h,gold,laurel:!!(r1&&r1.laurel),plain:!!(r2&&!r2.laurel),spread:avg(spread),old:avg(old),secs:spread.length,hov,name:s0.name,crowdMs:CR91.last,frame,hits:CR91.hits,miss:CR91.miss}});
 out.look=L;ok(L.ring===0,'2 no coloured mood ring drawn ('+L.ring+')');ok(L.backOK&&L.nBack>0&&L.nFront>0,`1 near stands back-facing, far stands facing (${L.nBack}/${L.nFront})`);
-ok(L.human&&L.gold>=2,'3 a gold ring at the human spectator\'s feet ('+L.gold+')');ok(L.laurel&&L.plain,'4 a regular wears the laurel, a stranger does not');
+ok(L.human&&L.gold>=4,'3 a gold ring at the human spectator\'s feet ('+L.gold+')');ok(L.laurel&&L.plain,'4 a regular wears the laurel, a stranger does not');
 ok(L.secs>0&&L.spread>=0.55&&L.spread>L.old+0.15,`5 seats spread over the section (${L.spread.toFixed(2)} vs packed ${L.old.toFixed(2)})`);
 ok(L.hov.includes(L.name),'4 the hover line names the spectator: '+L.hov);
 ok(L.crowdMs<25,'per-frame crowd cost '+L.crowdMs.toFixed(2)+' ms');
