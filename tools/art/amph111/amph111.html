@@ -42,7 +42,7 @@
     const base = '../../../';
     const [stone, wood, brick, paving] = await Promise.all([base + 'assets/stone100_6_roma.webp', base + 'assets/stands_wood81.webp', '../arena110/vault_brick.webp', '../arena110/ground_paving.webp'].map(load));
     const tx = (cv, rep) => { const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
-    const TEX = { stone: tx(texCanvas(stone, 'lum', 0.8, 1.1)), bench: tx(texCanvas(stone, 'lum', 0.3, 1.15)), wood: tx(texCanvas(wood)), brick: tx(texCanvas(brick)), paving: tx(texCanvas(paving)), eagle: tx(eagleCanvas()) };
+    const TEX = { stone: tx(texCanvas(stone, 'lum', 0.8, 1.1)), bench: tx(texCanvas(stone, 'lum', 0.3, 1.15)), wood: tx(texCanvas(wood)), brick: tx(texCanvas(brick)), paving: tx(texCanvas(paving)), paveL: tx(texCanvas(paving, 'lum', 0.55, 0.97)), eagle: tx(eagleCanvas()) };
     const S = THREE.DoubleSide;
     const std = (o, layer) => ({ mat: new THREE.MeshStandardMaterial(Object.assign({ roughness: 0.92, metalness: 0 }, o)), layer: layer || 'fixed' });
     const materials = () => ({
@@ -51,7 +51,7 @@
       cushion: std({ color: '#5a2f6a' }), eagle: std({ map: TEX.eagle, color: '#ffffff', alphaTest: 0.5, transparent: false, side: S, roughness: 0.5 }),
       gold: std({ color: '#d8ae52', roughness: 0.45 }), bronze: std({ color: '#8c5e30', roughness: 0.55 }), iron: std({ color: '#8b8f96', roughness: 0.5 }), ironDark: std({ color: '#4c4f55', roughness: 0.6 }),
       red: std({ color: '#a8322c', side: S }), skin: std({ color: '#c99a74' }), wood: std({ map: TEX.wood, color: '#c79a66' }), woodDark: std({ color: '#5c3d24' }),
-      brick: std({ map: TEX.brick, color: '#8c7a70', side: S }), dark: std({ color: '#21160f', side: S, roughness: 1 }), ground: std({ map: TEX.paving, color: '#6f665a' }),
+      brick: std({ map: TEX.brick, color: '#8c7a70', side: S }), dark: std({ color: '#3a2a1e', side: S, roughness: 1 }), ground: std({ map: TEX.paveL, color: '#9a938a' }, 'stone'), pave: std({ map: TEX.paveL, color: '#ffffff' }, 'stone'),
       crowd: std({ color: '#ffffff', roughness: 0.95 }), plaster: std({ color: '#ffffff' }, 'stone'),
       flame: { mat: new THREE.MeshBasicMaterial({ color: '#ff7a22' }), layer: 'fire' }, flameCore: { mat: new THREE.MeshBasicMaterial({ color: '#ffd977' }), layer: 'fire' },
       hold: { mat: new THREE.MeshBasicMaterial({ color: '#000000' }), layer: 'hold' }

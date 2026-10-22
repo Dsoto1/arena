@@ -25,7 +25,7 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
   let seed = 1234567; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
   /* ---------- geometry buckets: merged per material, world-space box UVs ---------- */
   const BK = {};
-  const UVS = { stone: 4.4, bench: 4.4, cloth: 1, wood: 1.6, brick: 2.2, ground: 14, dark: 4, iron: 1, gold: 1, bronze: 1, red: 1, skin: 1, plaster: 4.4, hold: 1, fire: 1, lion: 4.4, cushion: 4.4 };
+  const UVS = { pave: 5, stone: 4.4, bench: 4.4, cloth: 1, wood: 1.6, brick: 2.2, ground: 14, dark: 4, iron: 1, gold: 1, bronze: 1, red: 1, skin: 1, plaster: 4.4, hold: 1, fire: 1, lion: 4.4, cushion: 4.4 };
   function boxUV(g, s) {
     const p = g.attributes.position, n = g.attributes.normal, uv = new Float32Array(p.count * 2);
     for (let i = 0; i < p.count; i += 3) {
@@ -215,7 +215,7 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
   const NV = 0.02, BAY = 2.2, AW = 1.5, AY = -1.25;                 /* facade plane (outward of the grand outline), bay pitch, arch width, spring */
   const LAND = 3.3;                                                 /* the landing at the bottom corner: this far out at the stands' level */
   meta.near = { NV, BAY, AW, AY, LAND };
-  const PROPS = [], PLAZA = [];
+  const PROPS = [], GROUP = [], WALLFIRE = [];
   for (const side of ['nearL', 'nearR']) {
     const F = SIDES[side], s = side === 'nearL' ? 1 : -1;            /* s: which x end is the bottom corner */
     const xb = s * (LH + NV), xo = -s * (UEND);                         /* bottom-corner end, outer end */
@@ -232,15 +232,20 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
     xs.forEach((x, k) => { bayInside(F, 'brick', x - AW / 2, x + AW / 2, GROUND, AY, NV - 1.7, NV, 'dark'); PROPS.push({ side, F, x, k, n: xs.length }); });
     /* pilaster strips on the piers */
     for (let k = 0; k <= xs.length; k++) { const x = k < xs.length ? xs[k] - s * BAY / 2 : xs[xs.length - 1] + s * BAY / 2; box(F, 'stone', x - 0.16, x + 0.16, GROUND + 0.22, -0.32, NV + 0.5, NV + 0.58); }
-    /* the plaza in front: a low balustrade 4.3 out (frames the bottom corners), a few goods waiting outside */
+    /* PASS 6 — the forecourt (his note: the bottom corners looked strange): one paved court in front of the arcade, closed by a
+       tidy low wall 3.4 out that runs from the tower into the landing (it leaves the canvas at the bottom, never ends in view),
+       a pier block on the wall in line with every second pier, ONE neat group of goods per side against a pier, a fire on the wall */
     {
-      const zb = NV + 4.3, xe = xb - s * 4.6;
+      const zb = NV + 3.4, xe = xb + s * 0.6;
       const xa2 = Math.min(xo, xe), xz2 = Math.max(xo, xe);
-      box(F, 'stone', xa2, xz2, GROUND, GROUND + 0.16, zb - 0.16, zb + 0.16);
-      box(F, 'stone', xa2, xz2, GROUND + 0.62, GROUND + 0.72, zb - 0.13, zb + 0.13);
-      for (let x = xa2 + 0.15; x < xz2; x += 0.32) cyl(F, 'stone', x, GROUND + 0.16, GROUND + 0.62, zb, 0.055, 0.075, 8);
-      for (let x = xa2; x <= xz2 + 0.01; x += (xz2 - xa2) / 4) box(F, 'stone', x - 0.14, x + 0.14, GROUND, GROUND + 0.86, zb - 0.16, zb + 0.16);
-      PLAZA.push({ side, F, x: xo + s * 4.2, z: NV + 2.0 }, { side, F, x: xo + s * 9.3, z: NV + 2.3, kind: 'barrels' });
+      box(F, 'pave', xa2, xz2, GROUND, GROUND + 0.03, NV + 0.5, zb);                                   /* the court's paving */
+      box(F, 'stone', xa2, xz2, GROUND, GROUND + 0.08, NV + 0.5, NV + 0.85);                          /* a kerb along the arcade */
+      box(F, 'stone', xa2, xz2, GROUND, GROUND + 0.5, zb - 0.15, zb + 0.15);                          /* the low wall */
+      box(F, 'stone', xa2, xz2, GROUND + 0.5, GROUND + 0.6, zb - 0.2, zb + 0.2);                      /* its coping */
+      for (let k = 0; k <= xs.length; k += 2) { const x = k < xs.length ? xs[k] - s * BAY / 2 : xs[xs.length - 1] + s * BAY / 2;
+        box(F, 'stone', x - 0.22, x + 0.22, GROUND, GROUND + 0.78, zb - 0.22, zb + 0.22); box(F, 'stone', x - 0.27, x + 0.27, GROUND + 0.78, GROUND + 0.86, zb - 0.27, zb + 0.27); }
+      GROUP.push({ side, F, x: xs[3] + s * BAY / 2, z: NV + 0.95, kind: side === 'nearL' ? 'goods' : 'stores' });
+      WALLFIRE.push({ F, x: s * 6.82, z: zb });
     }
   }
   /* ================= THE LANDING + GRAND STAIR (bottom corner) + LIONS ================= */
@@ -256,7 +261,7 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
     for (const sx of [-1, 1]) {
       /* cheek walls + the lion plinths at the top of the flight */
       box(F, 'stone', sx * W - (sx > 0 ? 0 : 0.42), sx * W + (sx > 0 ? 0.42 : 0), GROUND, 0.12, z0 - 0.02, z0 + n * run);
-      const px = sx * 2.6, pz = 1.0;
+      const px = sx * 2.6, pz = 0.3;   /* pass 6: further back, so the canvas bottom never cuts the lions */
       box(F, 'stone', px - 0.42, px + 0.42, -0.05, 0.32, pz - 0.62, pz + 0.62);
       box(F, 'stone', px - 0.48, px + 0.48, 0.32, 0.4, pz - 0.68, pz + 0.68);
       meta.lionAt = meta.lionAt || []; meta.lionAt.push({ F: 'bottom', x: px, y: 0.4, z: pz, face: sx });
@@ -301,13 +306,13 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
   PROPS.forEach((b, i) => {
     const F = b.F, x = b.x, k = b.k; const y = GROUND;
     /* a few bays only (not cluttered): which ones get what */
-    const plan = { nearL: { 1: 'crates', 3: 'rack', 5: 'barrels' }, nearR: { 1: 'barrels', 3: 'cage', 5: 'crates' } }[b.side][k];
-    if (!plan) { if (k % 2 === 0) P.gate(F, x, y, NV - 0.25, AW, AY); return; }
+    const plan = { nearL: { 3: 'rack', 5: 'barrels' }, nearR: { 3: 'cage', 5: 'crates' } }[b.side][k];
+    if (!plan) { P.gate(F, x, y, NV - 0.25, AW, AY); return; }
     P[plan](F, x, y, NV - 0.45);
     const lp = V3(x, AY + 0.35, NV - 0.9).applyMatrix4(F); (meta.lamps = meta.lamps || []).push({ x: lp.x, y: lp.y, z: lp.z }); b.lamp = 1;
   });
   for (const b of PROPS) if (b.lamp) P.brazier(b.F, b.x + 0.5, GROUND, NV - 1.3, 0.5);   /* the little fire that lights each stocked bay */
-  for (const q of PLAZA) P[q.kind || 'crates'](q.F, q.x, GROUND, q.z);
+  for (const q of GROUP) P[q.kind](q.F, q.x, GROUND + 0.03, q.z);
   /* the lions */
   for (const l of meta.lionAt) P.lion(DIAG[l.F], l.x, l.y, l.z, l.face);
   /* the guards at Flavius's box */
@@ -319,7 +324,7 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
   for (const side of ['nearL', 'nearR']) { const F = SIDES[side], s = side === 'nearL' ? 1 : -1; const x = -s * UEND + s * (1.5 + 2 * BAY + BAY / 2); P.banner(F, x, -0.34, NV + 0.62, 0.78, 1.55); }
   /* braziers (a few, at key points): the landing (2), the tower tops, the two vomitoria on the far sides */
   meta.fires = [];
-  for (const sx of [-1, 1]) meta.fires.push(P.brazier(DIAG.bottom, sx * 3.7, 0.0, 0.05, 1.0));
+  for (const w of WALLFIRE) meta.fires.push(P.brazier(w.F, w.x, GROUND + 0.6, w.z, 0.85));   /* pass 6: the forecourt fires sit on its wall */
   for (const side of ['farL', 'farR']) { const s = side === 'farR' ? 1 : -1; meta.fires.push(P.brazier(SIDES[side], -s * UEND + s * (0.9 + 1.6 * 4), Y_POD + 0.28, V_POD + 0.06, 0.75)); }
   for (const t of meta.towers) meta.fires.push(P.brazier(DIAG[t.c], 0, t.top, t.z, 1.25));
   /* the crowd on the far rows (baked, static) */

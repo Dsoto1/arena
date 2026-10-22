@@ -29,6 +29,9 @@ window.AMPH111_PROPS = function (THREE, MAT, add, T, rnd) {
   }
   out.crates = (F, x, y, z) => { crate(F, x - 0.3, y, z - 0.25, 1.1, 0.2); crate(F, x + 0.32, y, z - 0.1, 1, -0.15); crate(F, x - 0.2, y + 0.55, z - 0.3, 0.85, 0.5); crate(F, x + 0.25, y, z + 0.55, 0.8, 0.4); };
   out.barrels = (F, x, y, z) => { barrel(F, x - 0.3, y, z - 0.3, 1.05); barrel(F, x + 0.22, y, z - 0.15, 1); barrel(F, x + 0.05, y, z + 0.5, 0.95, true, 0.5); };
+  /* pass 6: tidy groups on the forecourt, square to the arcade (no scatter) */
+  out.goods = (F, x, y, z) => { crate(F, x - 0.56, y, z, 1.05, 0); crate(F, x, y, z, 1.05, 0); crate(F, x - 0.28, y + 0.53, z, 0.95, 0); barrel(F, x + 0.6, y, z + 0.02, 1); barrel(F, x + 1.08, y, z + 0.02, 1); };
+  out.stores = (F, x, y, z) => { barrel(F, x - 1.0, y, z, 1); barrel(F, x - 0.52, y, z, 1); barrel(F, x - 0.04, y, z, 1); crate(F, x + 0.55, y, z, 1.05, 0); crate(F, x + 0.55, y + 0.53, z, 0.9, 0); };
   out.rack = (F, x, y, z) => {
     /* a wooden weapon rack against the back: two posts, two rails, spears + two shields leaning */
     const zb = z - 0.55;

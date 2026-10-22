@@ -71,6 +71,17 @@ crowd on the upper tiers), 13a (one design, per-arena stone + banner colours), 1
     lions are simple at this size.
   - readability: the highlight contrast read-back is identical to today in every view and arena measured (bench CONTRAST).
 
+## Pass 6 — the bottom corners (his approval 3a + note "bottom left and right looks strange … take liberty to clean that up")
+- Before: a dark brown void, a balustrade cut on a slant, goods scattered on the plaza, the lions and the landing fires half cut
+  by the canvas bottom.
+- Changed: a paved FORECOURT in front of the arcade (paving in the stone layer, so it takes each arena's stone tint and stays
+  light), a kerb along the arcade, ONE tidy low wall with coping 3.4 out running from the tower into the landing (it leaves the canvas
+  at the bottom, it never ends in view), pier blocks on it in line with every second arcade pier; one deliberate group of goods per side,
+  square to the arcade against a pier (left: crates + barrels, right: barrels + stacked crates); the two landing fires moved onto the
+  wall (they light the forecourt at night); the lions moved back 0.7 so the canvas bottom never cuts them; every empty bay gets an iron
+  grille and the bay interiors are a warm dark brown, not black. The ground beyond the wall is the same paving, dimmed by the vignette.
+- Checked: desk 1440 at 1× and 2×, a wide canvas, a 390 phone, zoomed, day + night, Roma + Syracusae + Capua.
+
 ## Method
 - Projection: an orthographic camera 30° down / 45° round = the game's 2:1 iso; world X/Z = the board's columns/rows (1 unit = 1 tile),
   so tile corner (0,0) is the game's (OX, OY) and K = TW/√2 px per view unit; heights: 1 unit = 0.612 TW. The frame is 11.5 TW either side
