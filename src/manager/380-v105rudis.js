@@ -51,6 +51,7 @@ if(!V105RUDIS_OFF){
       else if(Math.random()<.5){g.purse-=price;x.coin+=price;ghist(g,_T`bought their freedom from ${x.ludus} for ${coinAmt87(price)}`);g.alive=false;g.freed2=true;g.contract=null;try{libertyEntry(g,x,_T('the Gate of Life'),_T('bought their freedom'))}catch(e){}mnews(_T`👛 <b>${esc(g.name)}</b> buys their freedom from ${esc(x.ludus)} for ${coinAmt87(price)}.`)}
       break}}
     return n};
+  window.rudis105Ask=ask105; /* v1.09c (416): the asks are made after the Saturnalia */
   if(typeof OFF104!=='undefined')OFF104.on((w,ctx)=>{if(!rudis105Window(w))return;const n=ask105(w);if(n&&ctx&&ctx.add)ctx.add(_T`${n} freedom ask${n===1?'':'s'} waiting`)});
   /* the off-season page shows the pending verdicts (they block the week's end) */
   {const base=nightHTML;nightHTML=function(){const h=base.apply(this,arguments);

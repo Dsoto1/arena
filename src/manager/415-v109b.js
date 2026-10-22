@@ -117,9 +117,9 @@ window.wc109Answer=wc109Answer;window.wc109Ensure=wcEnsure;window.wc109Out=wc109
 /* every bout left: Days I–II, then Day III (Begin; and any endWeek of that week) */
 async function wc109Finish(w){const C=wcEnsure(w);if(!C)return null;if(!C.st){C.st='out';C.auto=1}if(!C.seats)wcBuild(w,C);
   for(let guard=0;guard<8;guard++){const L=wcBouts(w,C).filter(([b])=>!b.done&&b.wc109.d<3);if(!L.length)break;const [b,bi]=L[0];await runBoutSim(bi);if(b.done)wcSettle(w,C,b);else break}
-  if(C.champ==null&&C.fin)await wc109Final(w,C);return C}
+  if(C.champ==null&&C.fin)await window.wc109Final(w,C);return C} /* v1.09c (416): window.wc109Final = the Saturnalia */
 window.wc109Finish=wc109Finish;
-window.WC109T={pay:wcPay,settle:wcSettle,bouts:wcBouts,seats:wc109Seats}; /* test hooks */
+window.WC109T={pay:wcPay,settle:wcSettle,bouts:wcBouts,seats:wc109Seats,bout:wcBout,s:wcS,m:wcM,cup:WC109_CUP}; /* test hooks + 416-v109c */
 
 /* ---------------- clemency, no points, no records (Manager-only) ---------------- */
 {const base=leagueFate;leagueFate=function(glad,row,mgr,bout){if(!(bout&&bout.wc109))return base.apply(this,arguments);
@@ -158,7 +158,7 @@ function wcRestore(b,S){const win=new Set((b.res&&b.res.winners)||[]);
   return r}}
 
 /* ---------------- room 9 ---------------- */
-const wcName=s=>{if(!s||!s.k)return _T('an invited free agent');if(s.k.startsWith('o:')){const g=gById(s.k.slice(2));return g?g.name:_T('an invited free agent')}return po104Name(s.k)};
+const wcName=s=>{if(!s||!s.k)return _T('an invited free agent');if(s.k.startsWith('o:')){const g=gById(s.k.slice(2));return g?g.name:_T('an invited free agent')}return po104Name(s.k)};WC109T.name=wcName;
 const WC109_D=()=>['',_T('Day I'),_T('Day II'),_T('Day III')];
 function wcTree(w,C){const mk='m:'+me().id;const proj=!C.seats;const seats=C.seats||wc109Seats(w,C,C.st||'in');const D=C.d||{};
   const ph=t=>`<div class="v104e ph"><span class="sd"></span><span class="fl"></span><b>${t}</b><span class="pl"></span></div>`;
@@ -256,7 +256,7 @@ document.addEventListener('click',async e=>{const b=e.target&&e.target.closest&&
   else if(a==='view')C.view=v==='hall'?'hall':'br';
   else if(a==='day'||a==='final'){MGR.busy=true;try{if(a==='day'){const d=(wcBouts(w,C).find(([x])=>!x.done)||[{wc109:{}}])[0].wc109.d;
         for(let g=0;g<4;g++){const L=wcBouts(w,C,d).filter(([x])=>!x.done);if(!L.length)break;await runBoutSim(L[0][1]);if(L[0][0].done)wcSettle(w,C,L[0][0]);else break}}
-      else await wc109Final(w,C)}catch(x){console.error(x)}finally{MGR.busy=false}}
+      else await window.wc109Final(w,C)}catch(x){console.error(x)}finally{MGR.busy=false}}
   try{saveWorld()}catch(x){}if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
 
 {const st=document.createElement('style');st.textContent=`

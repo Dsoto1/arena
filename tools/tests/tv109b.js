@@ -2,8 +2,8 @@
    Room 9 sits between Camp and Next season and renders (rules, prize, seed, picker, the Superbus-tree bracket); Begin is blocked until the
    Classic is answered (W5a); rivals with a low purse sit out by a hash — the same for the same world, no dice used (W16a); Sica's wildcard
    takes the first empty seat's seed (W3a); Enter with one fighter → Day I bouts (tier wc109); a forced deadly result is met with clemency
-   (nobody dies, no wound, the lost limb regrows, no pending verdict, no records, no league points); Days I–II simulate, Day III (provisional)
-   gives the Cup; the prizes (+60 coin, +5 morale/loyalty, +20 Renown) and the replica after three wins; the Tituli plinth with plates;
+   (nobody dies, no wound, the lost limb regrows, no pending verdict, no records, no league points); Days I–II simulate, Day III (v1.09c: the
+   Saturnalia, 416 / tv109c) gives the Cup; the prizes (+60 coin, +5 morale/loyalty, +20 Renown) and the replica after three wins; the Tituli plinth with plates;
    Begin → season 2; sit-out + Begin simulates the rest; phones 390 px; kill switch flavius_v109boff=1 → v1.09a. */
 const {chromium}=require('playwright');const T=require('./_wait');
 (async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const out={};
@@ -96,7 +96,7 @@ out.days=await ev(pg,async()=>{const w=W_(),pm=me();const C=w.wc109;const R0=REC
     pend:(w.pend||[]).length,won:!!document.querySelector('.wc109won'),champBox:!!document.querySelector('.wc109bk .v104ch.on'),ready:weekReady().ok,d3:WC109T.bouts(w,C,3).map(([x])=>x.ev+':'+x.ents.length)}});
 const D=out.days;
 ok(D.d2===2&&D.fin.length===4&&D.btn,'Days I–II played: two semifinals, four finalists '+JSON.stringify(D));
-ok(D.inFin&&D.paid&&D.h===1&&D.hk===D.sk&&D.d3.join()==='democritus:4','Day III (provisional, one simulated bout) gives the Cup, one plate '+JSON.stringify(D));
+ok(D.inFin&&D.paid&&D.h===1&&D.hk===D.sk&&D.d3.join()==='chariot:4,democritus:4','Day III (v1.09c: the Saturnalia = race + Democritus) gives the Cup, one plate '+JSON.stringify(D));
 ok(D.same&&D.alive&&D.pend===0&&D.won&&D.champBox&&D.ready,'no records / points changed, nobody died, no verdicts; Begin allowed '+JSON.stringify(D));
 
 /* ---------------- the prizes (forged win for the house) + the replica after three ---------------- */
