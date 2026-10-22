@@ -95,7 +95,7 @@ function v108Static(g,night){const mat=v108Item('mat'),dep=v108Item('depth');if(
   if(typeof SECTIONS!=='undefined'&&typeof secQuad==='function'&&!v108Lud()){const tiers=typeof ar91Tiers==='function'?ar91Tiers():3;
     for(let si=0;si<8;si++){for(let t=0;t<tiers;t++){const d0=1.35+t*0.47,d1=d0+0.47;const Q=secQuad(si,d0,d1).map(([r,c])=>{const p=pt(r,c);return {x:p.x,y:p.y-t*TW*0.08}});
       if(dep)v108Band(g,Q[3],Q[2],v108Lerp(Q[3],Q[0],0.42),v108Lerp(Q[2],Q[1],0.42),night?'rgba(2,4,14,':'rgba(24,8,4,',V108K.aoTier*(night?0.8:1));
-      if(mat){g.save();v108Poly(g,Q);g.clip();g.lineWidth=Math.max(0.7,TW*0.014);g.strokeStyle=`rgba(28,10,6,${V108K.plank})`;g.beginPath();
+      if(mat&&!(typeof st110Front==='function'&&st110Front(si))){ /* v1.10a (418): the front stands' seams are painted live under the spectators */g.save();v108Poly(g,Q);g.clip();g.lineWidth=Math.max(0.7,TW*0.014);g.strokeStyle=`rgba(28,10,6,${V108K.plank})`;g.beginPath();
         for(const f of [1/3,2/3]){const A=v108Lerp(Q[0],Q[3],f),B=v108Lerp(Q[1],Q[2],f);g.moveTo(A.x,A.y);g.lineTo(B.x,B.y)}
         for(let row=0;row<3;row++){const f0=row/3,f1=(row+1)/3;for(let u=(row%2?0.55:0.15)+((si*3+t)%4)*0.07;u<1;u+=0.24){const A=v108Lerp(v108Lerp(Q[0],Q[1],u),v108Lerp(Q[3],Q[2],u),f0),B=v108Lerp(v108Lerp(Q[0],Q[1],u),v108Lerp(Q[3],Q[2],u),f1);g.moveTo(A.x,A.y);g.lineTo(B.x,B.y)}}
         g.stroke();const A=v108Lerp(Q[0],Q[3],0.05),B=v108Lerp(Q[1],Q[2],0.05);g.strokeStyle=night?'rgba(170,185,235,.16)':'rgba(255,214,180,.26)';g.lineWidth=Math.max(0.8,TW*0.018);g.beginPath();g.moveTo(A.x,A.y);g.lineTo(B.x,B.y);g.stroke();g.restore()}}}}
