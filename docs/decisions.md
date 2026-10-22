@@ -848,3 +848,6 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   doesn't like it, fallback = ground only fading to warm haze (c), possibly with the view raised so less shows below. REPLACES the same day's
   "plain background beyond the façade" (1a). Stair glow: two small warm pools on the top steps, ~1/3 of pass 7, none on the façade. Scope:
   only the bottom corners and below the stair.
+- 2026-10-22 Amphitheatre pass 8 (his c): GROUND ONLY (paving + steps fading into a dark warm haze, no city) with TODAY'S FRAMING in every
+  window — REPLACES the same day's 3a (canvas grows down in tall windows to show the whole stair; the stair's foot/lions are below the edge
+  again) and the city mock-up (1a). Stair glow: the 2a pools (~1/3 of pass 7).
