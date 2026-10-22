@@ -327,3 +327,8 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   floor at Medium; Safari starts 1× sheets (2× after 30 s on time); DPR≥3 phones capped 2×; absorbs 399's auto-drop, 406 W1's drop, 410's
   memory gate; lite84 "Light board" folded into Low (setting removed); window.Q110 + recorder q110. 399 l106Build fresh canvas (Safari
   shadows, fixed blind; flavius_l106freshoff). Kill switch flavius_v110autooff. Beta: Safari still 31 fps Full / 53 Off → WebGL spike next.
+
+- **v1.10a** Chariots and stands (tools/plans/v110/NOTES.md, his 14a: fixes first, the Amphitheatre after): 418-v110b — Chariot Racing
+  riders are 3D figures (an100On wrap), bench seams drawn under the spectators in all 8 stand sections (small direct edit in 409 marked v1.10a
+  (418)); kill switch flavius_v110boff. Shipped from 5daf00c (full run green except tv104a, a test flaw fixed after). Then: WebGL spike no-go
+  on Safari (his 1a, GL-SPIKE.md), v1.11 = Safari 2D fixes (2a), the Amphitheatre approved for after v1.11 (3a). No server change.

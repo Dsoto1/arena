@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.10** (v1.10 shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.10a** (v1.10a shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,13 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.09b** THE WINTER CLASSIC (tools/plans/v109/NOTES.md, W1a confirmed 2026-10-22 + W3a W5a W6a W15a W16a W17a W18a W20a, one beta):
-  415-v109b — room 9 (enter one fighter or sit out; Begin needs the answer), seeds = 348 P.seeds, Sica wildcard keeps the empty seat's seed,
-  rivals sit out by hash when best fighter hurt / purse low; Day I 5·8·9·12 + 6·7·10·11 (top 2), Day II 1·4 / 2·3 + qualifiers (top 2) →
-  four finalists; Day III PROVISIONAL = one simulated Democritus in wc109Final (v1.09c puts the Saturnalia there; must end in wcSettle).
-  Bout tier wc109 with clemency (no death/wound/records/points, limbs back). Prizes Cup + 60 coin + 5 morale/loyalty + 20 Renown; Tituli
-  plinth with plates, replica after 3 wins. Kill switch flavius_v109boff. No server change.
-
 - **v1.09c** THE SATURNALIA FINALE (tools/plans/v109/NOTES.md, W1a W2a W4a; "just ship" = picks: Cup = highest CF after Democritus,
   no separate stepper step): 416-v109c — wc109Final becomes the Saturnalia: chariot race (chPvp:false; 10-meta runCarmina opens it as the
   ceremony) + Classic · Democritus as two wc109 bouts (415 clemency), carry via the real continueFestival (CF, coin, +4 boon, order) in
@@ -220,3 +213,8 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   floor at Medium; Safari starts 1× sheets (2× after 30 s on time); DPR≥3 phones capped 2×; absorbs 399's auto-drop, 406 W1's drop, 410's
   memory gate; lite84 "Light board" folded into Low (setting removed); window.Q110 + recorder q110. 399 l106Build fresh canvas (Safari
   shadows, fixed blind; flavius_l106freshoff). Kill switch flavius_v110autooff. Beta: Safari still 31 fps Full / 53 Off → WebGL spike next.
+
+- **v1.10a** Chariots and stands (tools/plans/v110/NOTES.md, his 14a: fixes first, the Amphitheatre after): 418-v110b — Chariot Racing
+  riders are 3D figures (an100On wrap), bench seams drawn under the spectators in all 8 stand sections (small direct edit in 409 marked v1.10a
+  (418)); kill switch flavius_v110boff. Shipped from 5daf00c (full run green except tv104a, a test flaw fixed after). Then: WebGL spike no-go
+  on Safari (his 1a, GL-SPIKE.md), v1.11 = Safari 2D fixes (2a), the Amphitheatre approved for after v1.11 (3a). No server change.
