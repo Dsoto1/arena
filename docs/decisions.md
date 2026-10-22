@@ -822,3 +822,6 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   loot window, Winter Quarters prize case). Cup = the Rodin one (tools/art/artlist/models/cup_rodin.glb); the Tripo cup stays only in his
   Artlist history. The remaining Flavius credits (2,500) are on hold — no more generations until he asks.
 - 2026-10-22 v1.09c ("just ship" = my picks): the Winter Classic Cup goes to the highest Crowd Favour after Democritus (Play Now's festival rule); the Saturnalia stays Day III inside room 9 (no extra stepper step).
+- 2026-10-22 v1.10 (his 1a–6a): Quality Auto/High/Medium/Low becomes the first setting; Lighting Full/Light/Off stays under it as advanced
+  — REPLACES Lighting as the only quality choice (v1.06). Auto absorbs 406 W1's Safari board drop and 410's 2× gate (Safari starts 1×,
+  phones capped at 2× zoomed). Split: v1.10 Auto + Safari fixes, v1.10a cache invalidation + budgets, wrapper cleanup later.
