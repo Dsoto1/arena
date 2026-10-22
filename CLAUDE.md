@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.11a** (v1.11a shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.11b** (v1.11b shipped 2026-10-22). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,11 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.10a** Chariots and stands (tools/plans/v110/NOTES.md, his 14a: fixes first, the Amphitheatre after): 418-v110b — Chariot Racing
-  riders are 3D figures (an100On wrap), bench seams drawn under the spectators in all 8 stand sections (small direct edit in 409 marked v1.10a
-  (418)); kill switch flavius_v110boff. Shipped from 5daf00c (full run green except tv104a, a test flaw fixed after). Then: WebGL spike no-go
-  on Safari (his 1a, GL-SPIKE.md), v1.11 = Safari 2D fixes (2a), the Amphitheatre approved for after v1.11 (3a). No server change.
-
 - **v1.11** Safari 2D fixes (his 2a after the WebGL no-go, "just ship" without a beta recording): 420-v111safari, WebKit path only
   (406 P107S.webkit / flavius_v107safariforce): S1 records the board context's still layers per range (M rim→sky, split R1/R2 when the crowd
   walks, D floor→static shadows) and replays one cached blit when the call list matches (flushes to live drawing on anything it can't
@@ -220,3 +215,8 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   (2 braziers, small light pools), ground-only paving fading to haze; today's framing everywhere; recoloured per arena (stone/bench/banner
   tints); night = lit cells of a pre-scaled glow copy (tv91r budget); zoom fills uncovered strips (ar91Blit; tv100z). Skipped in the ludus,
   Quality Low, Lighting Off. Assets ≈ 440 KB. Tests tv111am, tv100r (both surround on/off). Upper crowd → our spectators in v1.11b. No server change.
+
+- **v1.11b** A fuller house (his 1a 2a, no beta): the Amphitheatre's upper tiers (pass 9d, tools/plans/v111/AMPH.md) seat 319 of OUR
+  spectators — the live crowd's sprite sheets (crowd100_s0..s5, CROWD100_META) as camera-facing cut-outs baked in amph111_fixed, tinted by 313's
+  rule, top-left rows cell 0 / top-right cell 3 (the bake reads the raw meta; 321 G4 reverses it in-game, so the inner stands were already
+  right and are unchanged). make.js --crowd sprite|prim. Assets ≈ 498 KB, no per-frame cost. No server change.

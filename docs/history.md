@@ -346,3 +346,7 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   (2 braziers, small light pools), ground-only paving fading to haze; today's framing everywhere; recoloured per arena (stone/bench/banner
   tints); night = lit cells of a pre-scaled glow copy (tv91r budget); zoom fills uncovered strips (ar91Blit; tv100z). Skipped in the ludus,
   Quality Low, Lighting Off. Assets ≈ 440 KB. Tests tv111am, tv100r (both surround on/off). Upper crowd → our spectators in v1.11b. No server change.
+- **v1.11b** A fuller house (his 1a 2a, no beta): the Amphitheatre's upper tiers (pass 9d, tools/plans/v111/AMPH.md) seat 319 of OUR
+  spectators — the live crowd's sprite sheets (crowd100_s0..s5, CROWD100_META) as camera-facing cut-outs baked in amph111_fixed, tinted by 313's
+  rule, top-left rows cell 0 / top-right cell 3 (the bake reads the raw meta; 321 G4 reverses it in-game, so the inner stands were already
+  right and are unchanged). make.js --crowd sprite|prim. Assets ≈ 498 KB, no per-frame cost. No server change.
