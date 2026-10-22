@@ -4,7 +4,8 @@
    (3) Light = contact shadows only (no cast in the static layer, no figure shadows); (4) Full = cast shadows too (pillars + figures + beasts);
    (5) the static layer is CACHED: no rebuild across idle frames, one rebuild after a pillar topples (S.pillars / S.rubble like 05 doTopple);
    (6) the shadow under each figure follows the pose it is drawn in THIS frame (an attack: 311's AN100.keys = 399's L106.last.figs key, frame by frame);
-   (7) Full drops to Light by itself under a slow frame meter (288 F100 frames > 16 ms, sustained), one toast; not under fast frames; Full again clears it;
+   (7) Full drops to Light by itself under a slow frame meter (288 F100 frames > 16 ms, sustained), one toast; not under fast frames; Full again clears it
+       (v1.10: on the 417 kill-switch page — under Auto 399 never drops by itself, 7d);
    (8) highlight contrast (a move tile in a pillar's shadow) within 0.01 of Off (mean + min); (9) kill switch flavius_light106off=1 = Off, no Settings row.
    node tools/tests/tv106l.js <ABSOLUTE page path> → ERRS [] and exit 0. */
 const http=require('http'),fs=require('fs'),path=require('path');
@@ -40,7 +41,7 @@ const d1=await pg.evaluate(()=>{const h=settingsHTML('pieces');const t=document.
   const r={pref:l106Pref(),btns:[...t.querySelectorAll('[data-light106]')].map(x=>x.dataset.light106+(x.classList.contains('on')?'*':''))};
   t.querySelector('[data-light106="light"]').click();r.afterLight=SETTINGS.light106;t.querySelector('[data-light106="off"]').click();r.afterOff=SETTINGS.light106;
   t.querySelector('[data-light106="full"]').click();r.afterFull=SETTINGS.light106;r.on=[...t.querySelectorAll('[data-light106].on')].map(x=>x.dataset.light106);t.remove();return r});
-ok(d1.pref==='full'&&d1.btns.join()==='full*,light,off','1a desktop starts on Full; the row has Full / Light / Off '+JSON.stringify(d1));
+ok(d1.pref==='full'&&d1.btns.join()==='q*,full,light,off','1a desktop starts on Full; the row has By quality (v1.10, 417) / Full / Light / Off '+JSON.stringify(d1));
 ok(d1.afterLight==='light'&&d1.afterOff==='off'&&d1.afterFull==='full'&&d1.on.join()==='full','1b the buttons set SETTINGS.light106 '+JSON.stringify(d1));
 const ph=await open({},{viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
 const d2=await ph.evaluate(()=>({pref:l106Pref(),phone:l106Phone()}));ok(d2.pref==='light'&&d2.phone,'1c a phone starts on Light '+JSON.stringify(d2));await ph.context().close();
@@ -84,8 +85,10 @@ const c6b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,m
   return {seen:[...new Set(seen.map(x=>x.join('=')))],eq:seen.every(x=>x[0]===x[1])}});
 ok(c6b.eq&&c6b.seen.some(s=>/^attack/.test(s)),'6c a beast'+"'"+'s shadow follows its attack poses '+JSON.stringify(c6b));
 
-/* ---- 7 · Full → Light under a slow frame meter ---- */
-const c7=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const toasts=[];const oT=mToast;mToast=function(m){toasts.push(String(m));return oT.apply(this,arguments)};
+/* ---- 7 · Full → Light under a slow frame meter (v1.10: 399's own drop is Auto's rung 1 now — checked on the 417 kill-switch page;
+   under Auto 399 never drops by itself, 7d) ---- */
+const pk=await open({flavius_v110autooff:'1'});await start(pk);
+const c7=await pk.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const toasts=[];const oT=mToast;mToast=function(m){toasts.push(String(m));return oT.apply(this,arguments)};
   try{L106.noAuto=false;SETTINGS.fps100=true;applySettings();L106.frame=Math.max(L106.frame,1000);
     const feed=dt=>{const now=performance.now();F100.fr=[];for(let i=0;i<120;i++)F100.fr.push({t:now-3000+i*25,dt})};
     feed(15);draw();const fast=l106Mode();
@@ -96,6 +99,10 @@ const c7=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
 ok(c7.fast==='full','7a fast frames keep Full '+JSON.stringify(c7));
 ok(c7.slow==='light'&&c7.auto==='light'&&c7.stored==='1'&&c7.toasts===1,'7b sustained slow frames drop Full to Light, one toast '+JSON.stringify(c7));
 ok(c7.note&&c7.back==='full'&&c7.cleared===null,'7c Settings says why; picking Full again clears the drop '+JSON.stringify(c7));
+await pk.context().close();
+const c7d=await pg.evaluate(()=>{const F=F100.on;SETTINGS.fps100=true;applySettings();const now=performance.now();F100.fr=[];for(let i=0;i<120;i++)F100.fr.push({t:now-3000+i*25,dt:31});L106.frame=Math.max(L106.frame,1000);
+  draw();draw();const r={mode:l106Mode(),auto:L106.auto,noAuto:L106.noAuto,stored:localStorage.getItem('flavius_light106drop')};F100.fr=[];SETTINGS.fps100=F;applySettings();return r});
+ok(c7d.mode==='full'&&c7d.auto===null&&c7d.noAuto===true&&c7d.stored===null,'7d under v1.10 Auto 399 never drops by itself (Auto owns the step) '+JSON.stringify(c7d));
 
 /* ---- 8 · highlight contrast in a pillar's shadow: Full within 0.01 of Off ---- */
 const CR=()=>pg.evaluate(()=>{const dpr=devicePixelRatio||1,g=cv.getContext('2d');const lum=([r,gg,bb])=>{const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};return 0.2126*f(r)+0.7152*f(gg)+0.0722*f(bb)};

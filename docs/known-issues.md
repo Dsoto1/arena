@@ -9,6 +9,11 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
   the same): tv91c (whole-ring pixel count + re-deal small crowds), tv96f (1–2 heavy software-raster draw steps allowed, hard cap 250 ms),
   tv100an (draw while the blows land; the 170 ms flash ran out). Green run 39721994919: 424 pass, flaky tv100ae — watch.
 - 2026-10-21 · flaky on the v1.09 [full] run 39680497469 (passed on the alone re-run): tv96f, tv100p — watch; fix if they repeat.
+- 2026-10-22 · v1.10 (417 5a): FIXED BLIND, confirm on his Safari — 399's l106Build now draws every static shadow layer into a FRESH canvas
+  (what the Lighting off/on toggle did); kill switch flavius_l106freshoff=1. If shadows still go missing after load: the next lead is the
+  W3 bitmap copies of 399's contact sprite (406, createImageBitmap of a canvas on WebKit).
+- 2026-10-22 · v1.10 (417): Safari now starts on 1× sheets (Auto, 4a) and gets 2× only after 30 s of on-time frames at High — the 711 MB
+  item below applies only from then on; Q110.x2ok / X108.why in his recording show which.
 - 2026-10-21 · OPEN (his v1.08c beta, Safari 26.6, 1.5× fixed, Lighting Light, bases off): figures showed NO shadows after load until he
   switched Lighting off/on. Not new in v1.08c (399/401/409 byte-identical to v1.08b); not reproduced in Chromium with the WebKit path forced
   (8 combos). Lead: the shadow layer canvas reused in place (399 l106Build) drawn empty by WebKit; the toggle forces a fresh one (409 v108Sig).
