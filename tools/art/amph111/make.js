@@ -7,8 +7,8 @@
      node tools/art/amph111/make.js [--out DIR] [--tw 112] [--pass N] [--overview 1.6] [--assets]
    Writes DIR/<layer>.png (stone, bench, cloth — luminance, tinted per arena in the game — fixed, fire, glow (night, opaque black)) and
    DIR/meta.json (TW0, the frame in TW: xl xr yt yb, sizes). --assets also encodes assets/amph111_<layer>.webp + assets/amph111.json.
-   The frame (in TW, around the game's OX/OY): xl = xr = 11.5, yt = 3.6, yb = 8.9 — the canvas never shows more (07-ui draw: OY = 2.7 TW,
-   the canvas ends ≤ 8.6 TW below OY; on very wide canvases the game fills past ±11.5 TW with its own dark edge).
+   The frame (in TW, around the game's OX/OY): xl = xr = 11.5, yt = 3.6, yb = 10.9 — the canvas never shows more (07-ui draw: OY = 2.7 TW,
+   the canvas ends ≤ 8.6 TW below OY, or 10.65 with 419's tall-window stair framing; on very wide canvases the game fills past ±11.5 TW with its own dark edge).
    ===================================================================== */
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
@@ -17,8 +17,8 @@ const HERE = __dirname, ROOT = path.resolve(HERE, '../../..');
 const A = process.argv.slice(2), opt = (k, d) => { const i = A.indexOf('--' + k); return i >= 0 ? A[i + 1] : d; };
 const OUT = path.resolve(opt('out', path.join(HERE, 'out'))); fs.mkdirSync(OUT, { recursive: true });
 const TW0 = +opt('tw', 112), SS = +opt('ss', 2), OVER = +opt('overview', 0);
-const FR = { xl: 11.5, xr: 11.5, yt: 3.6, yb: 8.9 };
-const LAYERS = (opt('layers', 'stone,bench,cloth,fixed,fire,glow,all')).split(',');
+const FR = { xl: 11.5, xr: 11.5, yt: 3.6, yb: 10.9 };   /* pass 7: 2 TW more below for the grand stair (shown when the window is tall enough) */
+const LAYERS = (opt('layers', 'stone,bench,cloth,fixed,fire,front,glow,all')).split(',');
 const LOOK = JSON.parse(opt('look', '{}'));
 const PORT = 20000 + Math.floor(Math.random() * 20000);
 (async () => {

@@ -82,10 +82,56 @@ crowd on the upper tiers), 13a (one design, per-arena stone + banner colours), 1
   grille and the bay interiors are a warm dark brown, not black. The ground beyond the wall is the same paving, dimmed by the vignette.
 - Checked: desk 1440 at 1× and 2×, a wide canvas, a 390 phone, zoomed, day + night, Roma + Syracusae + Capua.
 
+## Pass 7 — the near/front sides (his picture of the front + 1a 2a 3a; REPLACES pass 6's forecourt, low wall and goods)
+Target: a carved façade straight under the near stands (arched doorways, piers with red eagle banners, potted cypress + ivy), the grand
+stair at the front corner with two lions at its foot, fires ONLY on the two pillars flanking the stair, plain background beyond, and room
+below the board for the whole stair when the window is tall enough (phones / short windows unchanged).
+
+### 7a — first build
+- Built: the near sides rebuilt on the game's 3-tier outline (E1): a wall with plain arched doorways (dark brick vaults) every 2.0, piers
+  with base + capital, a two-step cornice under the stands' edge, a plinth course; banners on every second pier, a potted cypress + ivy
+  on the others; the stair continues the game's own 4-step corner flight (192 cuts the corner at X + Z = 28.57 and draws down to
+  y −0.49): 11 steps to the ground, cheek walls, two pillars, lions on plinths at the foot. The ground plane, the forecourt, the low wall,
+  the goods, the bay props/lamps and the grilles are gone; the holdout follows the game's real outline (its bottom corner cut).
+- Framing: a taller canvas in tall windows (below).
+- Compared with his picture: the layout reads right (façade, doorways, banners, greenery, the stair between pillars, lions), BUT
+  - the façade is a dull grey: the sun (az 30) barely touches the two near faces, and the recede vignette darkens them further; his
+    façade is a light, warm cream;
+  - the pillars' tops and braziers are INVISIBLE: anything of ours that rises above the stands' level near the corner is painted over
+    by the game's own corner floor (the bake is drawn under the game);
+  - the lions are dark lumps.
+
+### 7b — front pieces + brighter near stone
+- Changed: the near façade, stair, pillars and lions get a brighter stone albedo (×1.45; still tinted per arena), wider pillars (1.1)
+  that end just above the stands' level with a wide bowl on top; a 'front' coverage mask (pillars + braziers + their banners, a 382×302
+  box) — 419 paints the composite through it once more at the end of 192's cached 'deco' layer, so the pillars stand IN FRONT of the
+  game's stands corner like his picture (0 cost per frame).
+- Compared with his picture: façade colour, the pillars with braziers at the stair top, banners on the pillar fronts and the stair
+  now match his composition; the flames read red (bronze bowl, small yellow heart); NIGHT: a hard-edged orange rectangle on the game's
+  floor beside each brazier (the brazier light on our abutment top, which the game paints over by day but the glow is added on top).
+
+### 7c — final
+- Changed: gilded bowls and a larger yellow heart (his picture's gold braziers); the two night lights moved in front of the pillars, a
+  little below their tops, with shadows (the braziers themselves cast none) — no light lands on surfaces the game paints over, the
+  hard rectangle is gone (the light sits level with the pillar tops, so they do not blow out); the stair, the pillar faces and the near piers take the warm pool.
+- Compared with his picture (tall 1440×1200 at 1× and 2×, 2560×1440, Roma + Syracusae + Capua, day + night, zoomed):
+  - same: the façade under the stands, doorways, piers with banners, cypress + ivy, the stair between two pillars with gold braziers and
+    banners, lions at its foot, a plain background beyond, fires only at the stair (+ the existing podium and tower ones).
+  - different: his façade is taller and more ornate (lion heads, relief panels, a brazier on most piers — not wanted, 2a); his lions
+    are detailed sculptures, ours are simple seated shapes; his stair is a little wider; our doorways are darker; the near banners are
+    every second pier (his: most piers) to keep it calm. The pillars stop just above the stands' level (taller ones would cover the
+    corner spectators).
+- Framing (3a): see FRAMING in 419's header. The board itself does not move (Flavius's banner already touches the canvas top, so it
+  cannot go up): the canvas grows DOWN to OY + 10.65·TW when the window's fit budget (innerHeight − fitReserve(), 07-ui's fitH) holds
+  it — e.g. 1440×1200 (TW 64: canvas 724 → 855 px) and 2560×1440 / 1600×1300 (TW 68: 769 → 908 px); 1440×900, 1920×1080, 2200×1000,
+  1512×982, 1280×720, phones and landscape phones keep today's framing exactly (tv111am).
+- Sizes: 7 files 416 KB (stone 212, fixed 77, glow 50, bench 49, cloth 13, fire 11, front 4.5) — less than pass 6 (448 KB) though the
+  frame grew to 2576×1624: the ground plane is gone.
+
 ## Method
 - Projection: an orthographic camera 30° down / 45° round = the game's 2:1 iso; world X/Z = the board's columns/rows (1 unit = 1 tile),
   so tile corner (0,0) is the game's (OX, OY) and K = TW/√2 px per view unit; heights: 1 unit = 0.612 TW. The frame is 11.5 TW either side
-  of OX, 3.6 TW above and 8.9 TW below OY (07-ui draw: OY = 2.7 TW, the canvas ends ≤ 8.6 TW below it). In the game the composite is drawn
+  of OX, 3.6 TW above and 10.9 TW below OY (8.9 before pass 7) (07-ui draw: OY = 2.7 TW, the canvas ends ≤ 8.6 TW below it). In the game the composite is drawn
   at (OX − 11.5·TW, OY − 3.6·TW) scaled TW/112, so every size and zoom lines up with no per-view bake.
 - Alignment check: the game's footprint is a holdout in the bake (transparent there); composited in the real game (Playwright, the bench
   scene) its edges sit on the stands' outline on every side, at 1×, 2×, phone and zoomed.

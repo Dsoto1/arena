@@ -110,19 +110,19 @@ window.AMPH111_PROPS = function (THREE, MAT, add, T, rnd) {
     for (const sx of [-1, 1]) add(SPH(0.05, 8, 6), 'gold', B.clone().multiply(new THREE.Matrix4().makeTranslation(sx * (w / 2 + 0.12), 0, 0)));
   };
   /* ---------- a brazier: stone pedestal, bronze bowl, flame (fire layer) — returns the light point (world) ---------- */
-  out.brazier = (F, x, y, z, s) => {
-    s = s || 1;
+  out.brazier = (F, x, y, z, s, o) => {
+    s = s || 1; o = o || {};   /* o (pass 7): gold = a gilded bowl, core = the yellow heart's size, light = the night light's strength, lift/dz = where it sits, shadow = it casts shadows */
     add(CYL(0.2 * s, 0.17 * s, 0.1 * s, 14), 'stone', M4(F, x, y + 0.05 * s, z));
     add(CYL(0.13 * s, 0.11 * s, 0.62 * s, 14), 'stone', M4(F, x, y + 0.41 * s, z));
     add(CYL(0.16 * s, 0.2 * s, 0.07 * s, 14), 'stone', M4(F, x, y + 0.75 * s, z));
     const bowl = new THREE.LatheGeometry([[0.0, 0], [0.12, 0.0], [0.22, 0.08], [0.3, 0.2], [0.33, 0.26], [0.3, 0.27], [0.0, 0.24]].map(([r, h]) => new THREE.Vector2(r * s, h * s)), 18);
-    add(bowl, 'bronze', M4(F, x, y + 0.78 * s, z));
+    add(bowl, o.gold ? 'gold' : 'bronze', M4(F, x, y + 0.78 * s, z));
     const fy = y + 1.03 * s;
     /* teardrop tongues (lathe: round belly, drawn-out tip), an orange body and a yellow heart in front */
     const tongue = (h, r) => new THREE.LatheGeometry(Array.from({ length: 11 }, (_, i) => { const t = i / 10; return new THREE.Vector2(r * Math.pow(Math.sin(Math.PI * Math.min(1, t * 1.35)), 0.7) * Math.pow(1 - t, 0.55) + (t === 0 ? 0 : 0), h * t); }), 10);
-    for (const [dx, dz, h, r, k, tz] of [[0, 0, 0.62, 0.2, 'flame', 0], [0.1, 0.04, 0.4, 0.12, 'flame', 0.25], [-0.1, -0.02, 0.44, 0.13, 'flame', -0.2], [0, 0.07, 0.36, 0.12, 'flameCore', 0]])
+    for (const [dx, dz, h, r, k, tz] of [[0, 0, 0.62, 0.2, 'flame', 0], [0.1, 0.04, 0.4, 0.12, 'flame', 0.25], [-0.1, -0.02, 0.44, 0.13, 'flame', -0.2], [0, 0.07, 0.36 * (o.core || 1), 0.12 * (o.core || 1), 'flameCore', 0]])
       add(tongue(h * s, r * s), k, M4(F, x + dx * s, fy - 0.03 * s, z + dz * s, 0, 1, 1, 1, 0, tz), 'fire');
-    const p = V3(x, fy + 0.22 * s, z).applyMatrix4(F); return { x: p.x, y: p.y, z: p.z, s };
+    const p = V3(x, fy + 0.22 * s + (o.lift || 0), z + (o.dz || 0)).applyMatrix4(F); return { x: p.x, y: p.y, z: p.z, s: s * (o.light || 1), shadow: !!o.shadow };
   };
   /* ---------- the static crowd on the far rows ---------- */
   out.crowd = (rows, LH, UEND) => {
@@ -157,5 +157,23 @@ window.AMPH111_PROPS = function (THREE, MAT, add, T, rnd) {
     for (const g of gs) { P.set(g.attributes.position.array, o * 3); N.set(g.attributes.normal.array, o * 3); o += g.attributes.position.count; }
     const G = new THREE.BufferGeometry(); G.setAttribute('position', new THREE.BufferAttribute(P, 3)); G.setAttribute('normal', new THREE.BufferAttribute(N, 3)); return G;
   }
+  /* ---------- PASS 7: the façade's greenery (his front picture) — a potted cypress, ivy up a pier ---------- */
+  out.cypress = (F, x, y, z, s) => {
+    s = s || 1;
+    const pot = [[0, 0], [0.15, 0], [0.18, 0.05], [0.22, 0.28], [0.26, 0.31], [0.25, 0.35], [0, 0.35]].map(([r, h]) => new THREE.Vector2(r * s, h * s));
+    add(new THREE.LatheGeometry(pot, 16), 'terra', M4(F, x, y, z));
+    /* a tall flame-shaped tree: a fat lower third drawn out to a point */
+    const H = 1.55 * s, prof = Array.from({ length: 14 }, (_, i) => { const t = i / 13; return new THREE.Vector2(i === 0 ? 0.04 * s : 0.25 * s * Math.pow(Math.sin(Math.PI * Math.min(1, 0.1 + t * 1.25)), 0.7) * (1 - 0.8 * t), H * t); });
+    add(new THREE.LatheGeometry(prof, 12), 'leaf', M4(F, x, y + 0.3 * s, z));
+    for (let i = 0; i < 7; i++) { const t = 0.12 + i * 0.11, r = 0.2 * s * (1 - t * 0.8); const a = rnd() * 6.28;
+      add(SPH(0.1 * s * (1 - t * 0.6), 8, 6), 'leafLt', M4(F, x + Math.cos(a) * r * 0.6, y + 0.3 * s + H * t, z + Math.abs(Math.sin(a)) * r * 0.7 + 0.04, 0, 1, 1.5, 0.8)); }
+  };
+  out.ivy = (F, x, y0, y1, z, w) => {
+    /* leafy clumps up the pier's face (frame z = the face), thicker at the foot, a few spilling round the capital */
+    const n = Math.round((y1 - y0) / 0.09);
+    for (let i = 0; i < n; i++) { const t = i / n, yy = y0 + (y1 - y0) * t, spread = w * (0.55 - 0.3 * t) + 0.05;
+      for (let j = 0; j < (t < 0.3 ? 2 : 1); j++) add(SPH(0.075 + rnd() * 0.05, 7, 5), rnd() < 0.35 ? 'leafLt' : 'leaf', M4(F, x + (rnd() - 0.5) * spread + Math.sin(t * 9) * 0.06, yy, z + 0.02, 0, 1, 1, 0.5)); }
+    for (let j = 0; j < 4; j++) add(SPH(0.08, 7, 5), 'leaf', M4(F, x + (j - 1.5) * 0.12, y1 + 0.05 + rnd() * 0.06, z + 0.04, 0, 1, 0.8, 0.6));
+  };
   return out;
 };
