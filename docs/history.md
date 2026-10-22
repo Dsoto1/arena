@@ -339,3 +339,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   wait for a quiet board (311 an100Pump yield, window.an111Yield). Recorder block v111 + areas sharpen/thin/cellmk. Here: ~3× cheaper board
   draw, ~1,200 → 37 calls, pixel diff ≤ 8/255. Kill switch flavius_v111soff (#perf=v111soff). Test tv111s. Also carries the Amphitheatre
   preview (419-v111amph, OFF unless flavius_amph111=1). WebGL spike dropped (GL-SPIKE.md). Safari fps still to be recorded. No server change.
+- **v1.11a** THE AMPHITHEATRE (tools/plans/v111/AMPH.md passes 1–8, decisions 11a–15a + his picks to pass 8 c, "release it"):
+  419-v111amph ON by default (kill switch flavius_amph111off) — an offline three.js bake (tools/art/amph111, the game's exact 2:1 projection,
+  frame (OX−11.5·TW, OY−3.6·TW) scaled TW/112) painted into 192's cached under/deco layers: far-side arcaded podium + 6 upper rows with a
+  static crowd + gallery/attic, Flavius's box with 2 guards, near-side façade (doorways, banner piers, cypress/ivy) and the grand stair
+  (2 braziers, small light pools), ground-only paving fading to haze; today's framing everywhere; recoloured per arena (stone/bench/banner
+  tints); night = lit cells of a pre-scaled glow copy (tv91r budget); zoom fills uncovered strips (ar91Blit; tv100z). Skipped in the ludus,
+  Quality Low, Lighting Off. Assets ≈ 440 KB. Tests tv111am, tv100r (both surround on/off). Upper crowd → our spectators in v1.11b. No server change.

@@ -3,7 +3,8 @@
    arenas, turned, zoomed 2.4×, at night and on a 390 px phone); the band is painted on all 12; Capua wears the gilt parapet; the four
    palette changes are in and every arena preset keeps its text pairs WCAG AA (the default Arena theme untouched); the sand's near
    edge shows the same pixels with the look on and off (the rail never shows over the sand); kill switch flavius_arena100off=1 =
-   the bare 192 functions, pixel-identical baked layers; the cached frame stays within the draw-time budget. SHOT=dir saves shots. */
+   the bare 192 functions, pixel-identical baked layers (v1.11a 419: checked with the Amphitheatre surround off, and on = AMPH111.under
+   + the bare 192 functions); the cached frame stays within the draw-time budget. SHOT=dir saves shots. */
 const http=require('http'),fs=require('fs'),path=require('path');
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
@@ -71,19 +72,23 @@ const D=await open();
   ok(ms.on<=ms.off*1.3+2,'1 cached frame within budget '+JSON.stringify(ms))}
 
 /* ======== 2. kill switch: the bare 192 functions, pixel-identical baked layers; palettes as 266 left them ======== */
-{const K=await open({ls:{flavius_arena100off:'1'}});
-  const r=await K.pg.evaluate(async()=>{const o={};o.on=A100X.on;o.blood=THEME_PRESETS.loc9.v.blood;o.base=JSON.stringify(BASE_THEME);const res=[];
+/* v1.11a (419): run twice — the Amphitheatre surround off (the bare 192 functions alone) and on (its default: 419's wrapper adds AMPH111.under
+   under the bare 192 painter, so the fresh paint is AMPH111.under + the bare functions) */
+for(const amph of [false,true]){const K=await open({ls:amph?{flavius_arena100off:'1'}:{flavius_arena100off:'1',flavius_amph111off:'1'}});
+  const r=await K.pg.evaluate(async()=>{const o={};o.on=A100X.on;o.amph=!!(typeof AMPH111!=='undefined'&&AMPH111.on);o.blood=THEME_PRESETS.loc9.v.blood;o.base=JSON.stringify(BASE_THEME);const res=[];
     for(const [loc,rot] of [[6,0],[4,1],[9,0]]){await T100.start(loc);ROT89.k=rot;await T100.settle();AR91.ver++;draw();const A=T100.hash(['under','top','light','deco']);
       const W={};for(const [n,f] of [['ar91Mat','mat'],['ar91Tex','tex'],['ar91Fill','fill'],['ar91Face','face'],['ar91TopPaint','top'],['ar91Under','under']]){W[n]=window[n];window[n]=A100X.B[f]}
+      if(o.amph){const bu=A100X.B.under;window.ar91Under=function(g){AMPH111.under(g);return bu.apply(this,arguments)}}
       AR91.ver++;draw();const B=T100.hash(['under','top','light','deco']);for(const n in W)window[n]=W[n];
       res.push({loc,rot,same:JSON.stringify(A)===JSON.stringify(B),A,B})}ROT89.k=0;o.res=res;o.mat=ar91Mat().n;return o});
-  out.kill=r;ok(!r.on,'2 kill switch read');ok(r.blood==='#7e6526','2 palettes as 266 left them');ok(r.base===out.pal.base,'2 the default Arena theme is the same with and without the look');
-  for(const x of r.res)ok(x.same,`2 arena ${x.loc} turn ${x.rot}: layers identical to the bare 192 functions ${JSON.stringify([x.A,x.B])}`);ok(!/^stone100/.test(r.mat),'2 the old stone');
+  const tag=amph?' (surround on)':'';out['kill'+(amph?'A':'')]=r;ok(r.amph===amph,'2 surround '+(amph?'on':'off')+' as asked');ok(!r.on,'2 kill switch read');ok(r.blood==='#7e6526','2 palettes as 266 left them');ok(r.base===out.pal.base,'2 the default Arena theme is the same with and without the look');
+  for(const x of r.res)ok(x.same,`2 arena ${x.loc} turn ${x.rot}: layers identical to the bare 192 functions${tag} ${JSON.stringify([x.A,x.B])}`);ok(!/^stone100/.test(r.mat),'2 the old stone');
   await K.ctx.close()}
+ok(out.kill&&out.killA&&out.kill.res.every((x,i)=>x.A.under!==out.killA.res[i].A.under),'2 the surround is in the cached under layer when on');
 
 /* ======== 3. phone 390 px ======== */
 {const Ph=await open({phone:true});const r=await Ph.pg.evaluate(async()=>{await T100.start(5);await T100.settle();return {geo:T100.geo(),w:document.documentElement.scrollWidth,vw:innerWidth}});out.phone=r;
   ok(r.geo.ok,'3 phone: rail ends on piers '+JSON.stringify(r.geo.bad));ok(r.w<=r.vw+1,'3 phone: no horizontal scroll');if(SHOT)await Ph.pg.screenshot({path:path.join(SHOT,'tv100r_phone.png')});await Ph.ctx.close()}
 
-console.log(JSON.stringify({f1:out.f1,f2:out.f2,ms:out.ms,clear:out.clear,phone:out.phone&&out.phone.geo,kill:out.kill&&out.kill.res.map(x=>x.same)}));
+console.log(JSON.stringify({f1:out.f1,f2:out.f2,ms:out.ms,clear:out.clear,phone:out.phone&&out.phone.geo,kill:out.kill&&out.kill.res.map(x=>x.same),killA:out.killA&&out.killA.res.map(x=>x.same)}));
 console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs.slice(0,6)));await b.close();srv.close();process.exit(miss.length||errs.length?1:0)})();
