@@ -1,0 +1,14 @@
+{
+ "Auto quality": "自動品質",
+ "Settings → Board & pieces: Quality Auto / High / Medium / Low; Lighting stays under it": "設定 → ボードと駒：品質 自動 / 高 / 中 / 低。照明はその下にあります",
+ "Auto keeps the board smooth on your device and steps up when it can": "自動はお使いの端末でボードを滑らかに保ち、可能なら品質を上げます",
+ "Safari: smoother start and the shadows show from the first frame": "Safari：起動がより滑らかになり、最初のフレームから影が表示されます",
+ "Medium": "中",
+ "Low": "低",
+ "High: sharpest board, full shadows and crowd. Medium: lighter shadows, calmer crowd. Low: the fastest.": "高：最もくっきりしたボード、フルの影と観衆。中：軽めの影、控えめな観衆。低：最速。",
+ "Auto picks for this device and adjusts while you play.": "自動はこの端末に合わせて選び、プレイ中に調整します。",
+ "Now: {0}.": "現在：{0}。",
+ "Quality": "品質",
+ "By quality": "品質に合わせる",
+ "arena · v1.10": "arena · v1.10"
+}

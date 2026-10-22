@@ -1,0 +1,50 @@
+[
+ {
+  "k": "Auto quality",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Settings → Board & pieces: Quality Auto / High / Medium / Low; Lighting stays under it",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Auto keeps the board smooth on your device and steps up when it can",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Safari: smoother start and the shadows show from the first frame",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Medium",
+  "w": "417-v110auto.js:184"
+ },
+ {
+  "k": "Low",
+  "w": "417-v110auto.js:184"
+ },
+ {
+  "k": "High: sharpest board, full shadows and crowd. Medium: lighter shadows, calmer crowd. Low: the fastest.",
+  "w": "417-v110auto.js:185"
+ },
+ {
+  "k": "Auto picks for this device and adjusts while you play.",
+  "w": "417-v110auto.js:186"
+ },
+ {
+  "k": "Now: {0}.",
+  "w": "417-v110auto.js:186"
+ },
+ {
+  "k": "Quality",
+  "w": "417-v110auto.js:188"
+ },
+ {
+  "k": "By quality",
+  "w": "417-v110auto.js:191"
+ },
+ {
+  "k": "arena · v1.10",
+  "w": "01-head.html"
+ }
+]

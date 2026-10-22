@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.10',ic:'⚙',t:_T('Auto quality'),hi:[_T('Settings → Board & pieces: Quality Auto / High / Medium / Low; Lighting stays under it'),_T('Auto keeps the board smooth on your device and steps up when it can'),_T('Safari: smoother start and the shadows show from the first frame')]},
   {v:'1.09c',ic:'✦',t:_T('The Saturnalia finale'),hi:[_T('The Winter Classic ends in the Saturnalia: Carmina, a chariot race and Democritus for the four finalists'),_T('The best festival finish takes the Cup'),_T('Freedom asks now come after the Saturnalia, in Next season')]},
   {v:'1.09b',ic:'🏆',t:_T('The Winter Classic'),hi:[_T('A winter knockout for the houses: enter one fighter, fight, watch or simulate, no deaths and no league points'),_T('The Cup, 60 coin, morale and Renown for the winner, and a plate in the Hall'),_T('Win it three times for the replica')]},
   {v:'1.09a',ic:'🏛',t:_T('Winter Quarters: the house rooms'),hi:[_T('Council review with one free promotion each winter, Renown & perks, and winter building works ready at week 1'),_T('A fresh intake of young tirones each winter, and a winter camp for the whole house'),_T('Three Consilium goals a season, paid in Renown')]},

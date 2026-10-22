@@ -1,0 +1,14 @@
+{
+ "Auto quality": "Qualidade automática",
+ "Settings → Board & pieces: Quality Auto / High / Medium / Low; Lighting stays under it": "Configurações → Tabuleiro e peças: Qualidade Auto / Alta / Média / Baixa; a Iluminação fica abaixo",
+ "Auto keeps the board smooth on your device and steps up when it can": "Auto mantém o tabuleiro fluido no seu dispositivo e sobe quando pode",
+ "Safari: smoother start and the shadows show from the first frame": "Safari: início mais fluido e as sombras aparecem desde o primeiro quadro",
+ "Medium": "Média",
+ "Low": "Baixa",
+ "High: sharpest board, full shadows and crowd. Medium: lighter shadows, calmer crowd. Low: the fastest.": "Alta: tabuleiro mais nítido, sombras completas e público. Média: sombras mais leves, público mais calmo. Baixa: a mais rápida.",
+ "Auto picks for this device and adjusts while you play.": "Auto escolhe para este dispositivo e se ajusta enquanto você joga.",
+ "Now: {0}.": "Agora: {0}.",
+ "Quality": "Qualidade",
+ "By quality": "Pela qualidade",
+ "arena · v1.10": "arena · v1.10"
+}
