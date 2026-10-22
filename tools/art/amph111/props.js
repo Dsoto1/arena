@@ -152,13 +152,15 @@ window.AMPH111_PROPS = function (THREE, MAT, add, T, rnd) {
     return items.length;
   };
   /* ---------- PASS 9 (his 1a, 2026-10-22): the far rows' crowd = OUR spectators — the live crowd's own sprites (313-v100crowd, the
-     production rig92 token pre-rendered in tools/art/crowd100), seated, facing the sand (farL down-right = facing 3, farR down-left = 0),
-     each a quad in the camera plane anchored on the bench just behind its front edge (inset: the slab hides the thighs + most of the
-     shins, which would read as stilts on these deep rows),
+     production rig92 token pre-rendered in tools/art/crowd100), seated, facing the sand — pass 9d: farL (top-left) faces down-right = sheet
+     cell 0, farR (top-right) faces down-left = cell 3 (tools/art/crowd100 renders cell i at YAWS[i] = 45/135/−135/−45, and yaw 45 turns
+     the rig's +z front toward +x = screen down-right; 313's comment "0 = down-left" is the other way round),
+     each a quad in the camera plane anchored at the bench's front edge (9d: facing the sand the knees come over the edge and the shins
+     hang down the riser to the row below, as seated people do; 9b's inset only worked while they faced along the row),
      tinted by 313's rule (tunic = robe mixed with a home-city wool). Size: f × the inner stands' seated head height (0.459 TW). Same seats
      as pass 8 (the same seeded occupancy: clustered, thinner up high, a few empty seats); one merged mesh, one atlas. ---------- */
   out.crowdSprites = (rows, LH, UEND, o) => {
-    const C = window.AMPH111_CROWD; o = Object.assign({ f: 0.85, pitch: 0.4, fans: 0.6, inset: 0.12, full: 0.62 }, window.AMPH111_CROWD_OPT || {}, o || {});
+    const C = window.AMPH111_CROWD; o = Object.assign({ f: 0.85, pitch: 0.4, fans: 0.6, inset: -0.02, full: 0.62, ink: 0 }, window.AMPH111_CROWD_OPT || {}, o || {});
     const RT = V3(Math.SQRT1_2, 0, -Math.SQRT1_2), UP = V3(-0.35355, 0.86603, -0.35355), TO = V3(0.61237, 0.5, 0.61237);
     const NRM = TO.clone().multiplyScalar(0.6).add(V3(0, 0.8, 0)).normalize();
     const pick = (list) => { const tot = list.reduce((a, l) => a + l[1], 0); let r = rnd() * tot; for (const l of list) { if ((r -= l[1]) < 0) return l[0]; } return list[0][0]; };
@@ -174,7 +176,7 @@ window.AMPH111_PROPS = function (THREE, MAT, add, T, rnd) {
         const k = pick(C.looks), pr = rnd(), row = pr < 0.03 ? 'sitcheer' : pr < 0.06 ? 'sitfist' : 'sit';
         const pal = rnd() < o.fans ? C.FANS : C.ROBES;   /* live: most of the house are fans in their fighter's colour, the rest in their robe */
         const t = C.tintOf(pal[Math.floor(rnd() * pal.length)], C.WOOL[Math.floor(rnd() * C.WOOL.length)]);
-        items.push({ R, x: x + (rnd() - 0.5) * 0.08, cell: C.cell(k, row, R.s > 0 ? 0 : 3, t), sc: 0.96 + rnd() * 0.08 });
+        items.push({ R, x: x + (rnd() - 0.5) * 0.08, cell: C.cell(k, row, R.s > 0 ? 3 : 0, t), sc: 0.96 + rnd() * 0.08 });
       }
     }
     const tex = C.finish(MAT.crowdSpr.mat);
@@ -190,8 +192,10 @@ window.AMPH111_PROPS = function (THREE, MAT, add, T, rnd) {
     });
     const G = new THREE.BufferGeometry(); G.setAttribute('position', new THREE.BufferAttribute(P, 3)); G.setAttribute('uv', new THREE.BufferAttribute(U, 2)); G.setAttribute('normal', new THREE.BufferAttribute(N, 3));
     const m = new THREE.Mesh(G, MAT.crowdSpr.mat); m.userData.layer = 'fixed'; m.castShadow = true; m.receiveShadow = true;
-    /* the ink pass: the cut-out silhouette (alpha-tested), facing the camera; alpha = how much ink its own edge pixels take */
-    m.userData.nmat = new THREE.ShaderMaterial({ side: THREE.DoubleSide, uniforms: { map: { value: tex }, ink: { value: o.ink == null ? 0.5 : o.ink } },
+    /* the ink pass: the alpha-tested cut-out writes depth (so the stone's own ink lines never cross a figure) and alpha = ink. 9d: ink 0
+       = no bake ink on or round a figure (amph111.html's post pass skips alpha-0 neighbours): the sprites carry their own painted outline,
+       as in the live stands; the depth ink drew a grey halo round the hanging legs */
+    m.userData.nmat = new THREE.ShaderMaterial({ side: THREE.DoubleSide, uniforms: { map: { value: tex }, ink: { value: o.ink || 0 } },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
       fragmentShader: 'uniform sampler2D map; uniform float ink; varying vec2 vUv; void main(){ if (texture2D(map, vUv).a < 0.5) discard; gl_FragColor = vec4(0.5, 0.5, 1.0, ink); }' });
     add.scene.add(m);

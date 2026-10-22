@@ -125,7 +125,7 @@
             c.u0 = c.ax / AW; c.u1 = (c.ax + w) / AW; c.v1 = 1 - c.ay / AH; c.v0 = 1 - (c.ay + h) / AH;
           }
           const t = new THREE.CanvasTexture(atlas); t.colorSpace = THREE.SRGBColorSpace; t.generateMipmaps = false; t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter;
-          mat.map = t; mat.emissiveMap = t; mat.needsUpdate = true; CROWD.stats = { cells: cells.length, atlas: AW + 'x' + AH }; return t;
+          mat.map = t; mat.emissiveMap = t; mat.needsUpdate = true; CROWD.stats = { cells: cells.length, atlas: AW + 'x' + AH }; CROWD.atlas = atlas; return t;
         }
       };
     } else window.AMPH111_CROWD = null;
@@ -168,6 +168,7 @@
     float D(vec2 o){ return texture2D(tDep, vUv + o * px).r; } vec3 Nn(vec2 o){ return texture2D(tNrm, vUv + o * px).rgb * 2.0 - 1.0; }
     void main(){ vec4 c = texture2D(tCol, vUv); float d0 = D(vec2(0.)); vec3 n0 = Nn(vec2(0.)); float e = 0.0;
       for (int i = 0; i < 4; i++) { vec2 o = i==0?vec2(inkW,0.):i==1?vec2(-inkW,0.):i==2?vec2(0.,inkW):vec2(0.,-inkW);
+        if (texture2D(tNrm, vUv + o * px).a < 0.004) continue;   /* pass 9d: alpha 0 = the sprite crowd: no ink against it */
         float dd = D(o) - d0; e = max(e, smoothstep(dTh, dTh * 2.5, abs(dd)) * (dd > 0.0 ? 1.0 : 0.55));
         e = max(e, smoothstep(nTh, nTh + 0.35, 1.0 - dot(n0, Nn(o))) * 0.7); }
       vec3 col = c.rgb;

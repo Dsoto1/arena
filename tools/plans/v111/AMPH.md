@@ -191,7 +191,7 @@ Review page: scratchpad amph111-review.html, new top section "Pass 8 mock-up: fi
 - Build (props.js crowdSprites, amph111.html AMPH111_CROWD): each figure a quad in the camera plane, one merged mesh + one atlas of only
   the cells used (2048×951, 260 cells); seeded + deterministic (scene rnd). Light: MeshStandard, emissive 0.72 (its own painted light) +
   diffuse 0.35 (the bake's sun + shadows still reach it; the night/glow render turns the emissive off, so only the fires light them).
-  Ink: an alpha-tested normal/depth material, so the outline follows the cut-out (its own edge pixels take half the ink).
+  Ink (9a–9c): an alpha-tested normal/depth material, so the outline follows the cut-out (its own edge pixels take half the ink; 9d: off).
   make.js --crowd prim re-bakes pass 8's figures; --copt '{"f","pitch","fans","inset","full","ink"}' / --cs '{"d","e"}' tune it.
 - 9a: anchored at the bench's front edge, robe colours only. Compared with the inner stands (zoomed Roma): the shins hung down the deep
   risers like stilts; dark and orange-heavy (the ROBES dyes are dark; the live house is mostly fans in bright class colours).
@@ -202,6 +202,16 @@ Review page: scratchpad amph111-review.html, new top section "Pass 8 mock-up: fi
   the inner stands, smaller; 419's vignette (darker + less saturated away from the sand) keeps them quieter than the inner stands and board.
 - Sizes: assets/amph111_* 474 KB (pass 8: 440): fixed 77 → 109, stone 246 → 251 (their shadows), bench 49 → 46, glow 40 → 39. Same frame
   + front box (419 unchanged), 0 per frame by day, night glow unchanged in shape.
+- 9d (his note on 9c: "those spectators need to face the proper direction"): 9c used 313's far-stand cells (top-right = cell 0,
+  top-left = 3), but the sheets render cell i at tools/art/crowd100 YAWS[i] = 45/135/−135/−45 and yaw 45 turns the rig's +z front to +x
+  = screen DOWN-RIGHT (checked: the walk cells, the bake's projection of the camera right/up vectors, a marked atlas proving the bake does
+  not mirror, and the occlusion: with cell 0 on the top-right rows the knees went ALONG the bench and the slab hid them). So 9c faced along
+  the rows. Now top-left = cell 0 (down-right), top-right = cell 3 (down-left): every figure faces the sand. Facing the sand the knees
+  come over the bench's front edge, so 9b's inset (which cut the thighs with red slab wedges) is gone: anchored at the edge (−0.02), the
+  shins hang down the riser to the row below. The bake's depth ink is off for the crowd (props ink 0 writes normal-alpha 0; the post pass
+  skips alpha-0 neighbours): it drew grey halos round the hanging legs; the sprites keep their own painted outline, as live.
+  Sizes: assets/amph111_* 498 KB (fixed 109 → 136: the legs). NOTE for 313 (not changed here): the inner far stands use the same cells as
+  9c (top-right 0, top-left 3; its comment says 0 = down-left), so by the rig's yaw they face along their rows too — worth a look.
 - Left: one size on every row (ortho bake, no per-row shrink); fans wear the class colours, not this match's fighters (a bake can't follow
   the match); no stand-ups / cheering waves up there (static).
 
