@@ -851,3 +851,6 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-22 Amphitheatre pass 8 (his c): GROUND ONLY (paving + steps fading into a dark warm haze, no city) with TODAY'S FRAMING in every
   window — REPLACES the same day's 3a (canvas grows down in tall windows to show the whole stair; the stair's foot/lions are below the edge
   again) and the city mock-up (1a). Stair glow: the 2a pools (~1/3 of pass 7).
+- 2026-10-22 Amphitheatre upper-tier crowd (his 1a): v1.11a ships with the simple baked seated shapes; the NEXT release rebakes the upper tiers
+  with our current spectator models (313 3D crowd / the stands' spectators), shrunk to that distance, same colours and clothes, still part
+  of the static bake (no per-frame cost).
