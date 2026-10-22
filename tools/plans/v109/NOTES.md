@@ -29,3 +29,6 @@ league top 3 + Superbus champion line; (6) fanfare on the first visit to room 1.
 Builder (lead's model) on 414-v109a: rooms 3 Council (W9a), 4 Renown, 5 Facilities (W10a), 7 Winter market (W11c fresh intake),
 8 Winter camp (W12a W13a), Consilium goals in room 10 (W14a); kill switch flavius_v109aoff; test tv109a.
 v1.09a shipped 2026-10-22 (release/v1.09a). Next: v1.09b THE WINTER CLASSIC — re-ask W1 ("for now": the Classic final IS the Saturnalia) first.
+2026-10-22 W1 re-asked before v1.09b → his "OK next" = W1a CONFIRMED (no longer "for now"): the Classic final IS the Saturnalia.
+v1.09b builder started (415-v109b): entry, seeding W3a, rivals W16a, Days I–II as Match Week bouts W17a, clemency, prizes W15a, the Cup +
+Hall plates + replica W20a; Day III provisional until v1.09c brings the Saturnalia.
