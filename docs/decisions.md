@@ -825,3 +825,6 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-22 v1.10 (his 1a–6a): Quality Auto/High/Medium/Low becomes the first setting; Lighting Full/Light/Off stays under it as advanced
   — REPLACES Lighting as the only quality choice (v1.06). Auto absorbs 406 W1's Safari board drop and 410's 2× gate (Safari starts 1×,
   phones capped at 2× zoomed). Split: v1.10 Auto + Safari fixes, v1.10a cache invalidation + budgets, wrapper cleanup later.
+- 2026-10-22 v1.10 follow-up (his 1a 2a 3a 4a): Auto never goes below Medium on desktops; DPR≥3 phones capped at 2× always — REPLACES 6a
+  ("when zoomed", same day); lite84's "Light board for older phones" setting is folded into Quality Low — REPLACED (v0.84 setting removed);
+  Quality = first card of Board & pieces.

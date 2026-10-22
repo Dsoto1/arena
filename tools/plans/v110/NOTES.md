@@ -10,3 +10,6 @@
 6a phones at DPR 3: Auto caps the board at 2× when zoomed.
 Queued inputs (known-issues/BASELINE): createImageBitmap(canvas) ≈16 ms on Safari (412 copies); Safari z1 ≈45 ms raster frames;
 phone@3 zoomed js 23–27 ms vs 3.5–5 at @2; 2× sheets ≈711 MB decoded.
+Build follow-up questions 2026-10-22, his 1a 2a 3a 4a go: (1a) on desktops Auto stops at Medium (Low only when picked) · (2a) phones with
+DPR ≥3 capped at 2× ALWAYS (REPLACES 6a's "only when zoomed") · (3a) lite84 "Light board for older phones" folded into Low (REPLACES the
+separate setting) · (4a) Quality stays the first card of Board & pieces.
