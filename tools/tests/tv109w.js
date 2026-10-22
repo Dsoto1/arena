@@ -45,7 +45,7 @@ ok(out.s1.letters.includes('wq109-1')&&out.s1.letters.includes('sr104-1')&&!out.
 out.rooms=await ev(pg,async()=>{const w=W_(),pm=me();menuHide();openManager('night');await W8(900);const r={};
   const nb=document.querySelector('.mtabs [data-mg="tab"][data-id="night"]');r.rail=nb?nb.textContent.trim():'';
   r.wq=!!document.querySelector('#mgrPane .wq109');r.old=!!document.querySelector('.po104off');r.step=(document.querySelector('.wq109')||{dataset:{}}).dataset.wq109step;
-  r.steps=document.querySelectorAll('.wq109st .wqs').length;r.k109a=!!(window.A109&&window.A109.on);r.tiles=document.querySelectorAll('.wqtiles .wqt').length;
+  r.steps=document.querySelectorAll('.wq109st .wqs').length;r.k109a=!!(window.A109&&window.A109.on);r.k109b=!!(window.V109B&&window.V109B.on);r.tiles=document.querySelectorAll('.wqtiles .wqt').length;
   /* 1 awards */
   r.seen0=!!(w.awardShow&&w.awardShow.seen);r.s1=await ROOM('awards');r.rows=document.querySelectorAll('.wqtbl tbody tr').length;r.houses=w.mgrs.filter(m=>!m.dead&&!m.sica).length;
   r.sb=[...document.querySelectorAll('.wqtbl td.sb')].filter(td=>td.textContent.trim()!=='—').length;r.aw=document.querySelectorAll('.wqaws .wqaw').length;r.awN=(w.awardShow&&w.awardShow.awards||[]).length;
@@ -62,7 +62,7 @@ out.rooms=await ev(pg,async()=>{const w=W_(),pm=me();menuHide();openManager('nig
   /* the awards tab → room 1 */
   MGR.tab='awards';MGR_REDRAW();await W8(400);r.awTab=MGR.tab+'/'+((document.querySelector('.wq109')||{dataset:{}}).dataset.wq109step);
   return r});
-const R=out.rooms;/* v1.09a (414) adds rooms 3 4 5 7 8: 10 steps; with flavius_v109aoff=1 the v1.09 five */const WQ_N=R.k109a?10:5;
+const R=out.rooms;/* v1.09a (414) adds rooms 3 4 5 7 8: 10 steps; with flavius_v109aoff=1 the v1.09 five; v1.09b (415) adds room 9 the Winter Classic */const WQ_N=(R.k109a?10:5)+(R.k109b?1:0);
 ok(/Winter Quarters/.test(R.rail)&&R.wq&&!R.old&&R.step==='over'&&R.steps===WQ_N&&R.tiles===WQ_N-1,'the tab is Winter Quarters: stepper + overview '+JSON.stringify(R));
 ok(R.s1==='awards'&&R.rows===R.houses&&R.sb>=12&&R.aw===R.awN&&R.aw>0&&R.seen&&R.me,'room 1 awards night: table, Superbus column, awards '+JSON.stringify(R));
 ok(R.s2==='books'&&R.bars.includes('wages')&&R.bars.includes('purses')&&R.sealBtn&&R.qlines>=2,'room 2 accounts: categories + the Ledger '+JSON.stringify(R));
@@ -93,8 +93,8 @@ out.re=await ev(pg,async id=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openM
 ok(out.re.coin===out.seal.coin&&out.re.coin2===out.re.coin&&out.re.sealed&&out.re.again==null&&out.re.page==='books'&&out.re.acc,'reload: same room, sealed, no second pay '+JSON.stringify(out.re));
 
 /* ---------------- ▶ Begin season 2 ---------------- */
-out.begin=await ev(pg,async()=>{const w=W_(),pm=me();await ROOM('next');let guard=0;while((w.pend||[]).length&&guard++<30){try{settlePending(0,'stay')}catch(e){w.pend.shift()}}MGR_REDRAW();await W8(300);const ql=(w.tlog||[]).filter(n=>/Quaestor/.test(n.text)).length;const b=document.querySelector('.wq109nav [data-wq109="begin"]');const r={btn:!!b,dis:b&&b.disabled,why:weekReady().why,pend:(w.pend||[]).map(p=>p.t),sp:!!(w.special&&!w.special.done)};
-  const hold=setInterval(()=>{if(CUR_MODAL)CUR_MODAL.done(null)},150);if(b)b.click();for(let i=0;i<80&&W_().season===1;i++)await W8(150);await W8(600);clearInterval(hold);
+out.begin=await ev(pg,async()=>{const w=W_(),pm=me();await ROOM('next');let guard=0;while((w.pend||[]).length&&guard++<30){try{settlePending(0,'stay')}catch(e){w.pend.shift()}}MGR_REDRAW();await W8(300);const ql=(w.tlog||[]).filter(n=>/Quaestor/.test(n.text)).length;if(window.wc109Answer){wc109Answer(w,'out');MGR_REDRAW();await W8(300)}/* v1.09b W5a: Begin needs the Winter Classic answered */const b=document.querySelector('.wq109nav [data-wq109="begin"]');const r={btn:!!b,dis:b&&b.disabled,why:weekReady().why,pend:(w.pend||[]).map(p=>p.t),sp:!!(w.special&&!w.special.done)};
+  const hold=setInterval(()=>{if(CUR_MODAL)CUR_MODAL.done(null)},150);if(b)b.click();for(let i=0;i<400&&W_().season===1;i++)await W8(150);await W8(600);clearInterval(hold);
   const w2=W_();r.season=w2.season;r.wk=wkOf(w2.week);r.ph=OFF104.phase(w2);r.qsDue=w2.qsDue;r.lp90=w2.lp90;
   MGR.tab='ludus';MGR_REDRAW();await W8(400);MGR_REDRAW();await W8(300);r.ql=(w2.tlog||[]).filter(n=>/Quaestor/.test(n.text)).length-ql;r.qsLast=w2.qsLast&&w2.qsLast.season;
   const nb=document.querySelector('.mtabs [data-mg="tab"][data-id="night"]');r.rail=nb?nb.textContent.trim():'';r.led=w2.led109&&w2.led109.s;r.h=(w2.led109h||[]).map(x=>x.s);return r});

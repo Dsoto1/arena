@@ -34,13 +34,14 @@ out.open=await ev(pg,async()=>{const w=await BOOTW();const pm=me();const fa0=fre
   return {live:wqLive(w),n:I.length,ages:I.map(g=>g.age),free:I.every(g=>!g.contract&&g.alive!==false),fa:freeAgents().length-fa0,spec:SPEC(w),
     goals:w.gl109a&&w.gl109a.s,gl:(w.gl109a&&w.gl109a.list||[]).map(x=>x.k+':'+x.t),turn:S.turn?Object.keys(S.turn).length:0,ros:rosterOf(pm).length,c104s:w.c104s,season:w.season,
     rec84:(w.letters||[]).some(x=>/^rec84-/.test(x.key)&&x.s===w.season&&x.wk===w.week),great:(w.letters||[]).some(x=>/^c104adv-/.test(x.key)),
-    steps:document.querySelectorAll('.wq109st .wqs').length,tiles:document.querySelectorAll('.wqtiles .wqt').length,order:[...document.querySelectorAll('.wq109st .wqs')].map(x=>(x.dataset.wq109||'').split('|')[1]).join(',')}});
+    wcb:window.V109B&&V109B.on?1:0,steps:document.querySelectorAll('.wq109st .wqs').length,tiles:document.querySelectorAll('.wqtiles .wqt').length,order:[...document.querySelectorAll('.wq109st .wqs')].map(x=>(x.dataset.wq109||'').split('|')[1]).join(',')}});
 const O=out.open;
 ok(O.live&&O.n>=8&&O.n<=12&&O.ages.every(a=>a>=18&&a<=20)&&O.free&&O.fa===O.n,'intake: 8–12 free agents aged 18–20 '+JSON.stringify(O).slice(0,400));
 ok(O.goals===2&&O.gl.length===3,'three Consilium goals for season 2 '+JSON.stringify(O.gl));
 ok(O.turn===O.ros&&O.c104s===O.season,'the season turn ran first and is recorded '+JSON.stringify(O).slice(0,300));
 ok(!O.rec84&&!O.great,'no Recruiter bargain / retired-great letter in that week '+JSON.stringify(O).slice(0,200));
-ok(O.steps===10&&O.tiles===9&&O.order==='over,awards,books,council,renown,fac,staff,market,camp,next','the stepper has the ten steps in order '+JSON.stringify(O));
+/* v1.09b (415) adds room 9 the Winter Classic between camp and next */const WCB=O.wcb;
+ok(O.steps===10+WCB&&O.tiles===9+WCB&&O.order===(WCB?'over,awards,books,council,renown,fac,staff,market,camp,classic,next':'over,awards,books,council,renown,fac,staff,market,camp,next'),'the stepper has the ten (eleven with v1.09b) steps in order '+JSON.stringify(O));
 
 /* ---------------- determinism: the same world → the same intake ---------------- */
 out.det=await ev(pg,async()=>{const keep=MGR.world;const w2=JSON.parse(window.__J0);MGR.world=w2;let spec=[];try{po104OffStart(w2,w2.po104);spec=SPEC(w2)}finally{MGR.world=keep}
@@ -104,8 +105,8 @@ ok(CP.again==null&&CP.f2==='wpn'&&CP.held&&CP.shown===out.rooms.ros,'camp once; 
 
 /* ---------------- ▶ Begin: week 1, the project ready, the goals counting ---------------- */
 out.begin=await ev(pg,async k=>{const w=W_(),pm=me();for(const g of rosterOf(pm))g.inj=null;let guard=0;while((w.pend||[]).length&&guard++<30){try{settlePending(0,'stay')}catch(e){w.pend.shift()}}
-  await ROOM('next');const l0=facLvl(pm,k);const hold=setInterval(()=>{if(CUR_MODAL)CUR_MODAL.done(null)},150);const b=document.querySelector('.wq109nav [data-wq109="begin"]');if(b)b.click();
-  await __W.until(()=>W_().season===2,'season 2',20000);clearInterval(hold);await MODALS();
+  if(window.wc109Answer)wc109Answer(w,'out');/* v1.09b W5a */await ROOM('next');const l0=facLvl(pm,k);const hold=setInterval(()=>{if(CUR_MODAL)CUR_MODAL.done(null)},150);const b=document.querySelector('.wq109nav [data-wq109="begin"]');if(b)b.click();
+  await __W.until(()=>W_().season===2,'season 2',60000);clearInterval(hold);await MODALS();
   const G=w.gl109a;return {season:w.season,wk:wkOf(w.week),fac:facLvl(pm,k)-l0,bp:!!pm.bp104,w0:G&&G.w0,o0:G&&G.o0?Object.keys(G.o0).length:0,camp:w.wq109a&&w.wq109a.camp&&w.wq109a.camp.f}},out.works.k);
 ok(out.begin.season===2&&out.begin.wk===1&&out.begin.fac===1&&!out.begin.bp,'Begin: week 1, the winter project is ready '+JSON.stringify(out.begin));
 ok(out.begin.w0!=null&&out.begin.o0>0&&out.begin.camp==='wpn','the goals count from week 1; the camp is not run again '+JSON.stringify(out.begin));
@@ -134,8 +135,8 @@ await p2.close();
 /* ---------------- the kill switch: v1.09 ---------------- */
 const p3=await open(1);await p3.evaluate(helpers);
 out.off=await ev(p3,async()=>{const w=await BOOTW();const n0=w.glads.length;po104OffStart(w,w.po104);await WQ();
-  return {A:window.A109&&window.A109.on,steps:document.querySelectorAll('.wq109st .wqs').length,st:!!w.wq109a,gl:!!w.gl109a,glads:w.glads.length-n0,council:!!document.querySelector('[data-wq109="go|council"]')}});
-ok(out.off.A===false&&out.off.steps===5&&!out.off.st&&!out.off.gl&&out.off.glads===0&&!out.off.council,'kill switch: v1.09 rooms only, no intake '+JSON.stringify(out.off));
+  return {A:window.A109&&window.A109.on,wcb:window.V109B&&V109B.on?1:0,steps:document.querySelectorAll('.wq109st .wqs').length,st:!!w.wq109a,gl:!!w.gl109a,glads:w.glads.length-n0,council:!!document.querySelector('[data-wq109="go|council"]')}});
+ok(out.off.A===false&&out.off.steps===5+out.off.wcb&&!out.off.st&&!out.off.gl&&out.off.glads===0&&!out.off.council,'kill switch: v1.09 rooms only, no intake '+JSON.stringify(out.off));
 await p3.close();
 
 console.log(JSON.stringify(out).slice(0,4000));
