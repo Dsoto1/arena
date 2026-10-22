@@ -46,13 +46,14 @@
     const S = THREE.DoubleSide;
     const std = (o, layer) => ({ mat: new THREE.MeshStandardMaterial(Object.assign({ roughness: 0.92, metalness: 0 }, o)), layer: layer || 'fixed' });
     const materials = () => ({
-      stone: std({ map: TEX.stone, color: '#ffffff' }, 'stone'), lion: std({ map: TEX.stone, color: '#ffffff' }, 'stone'),
+      stone: std({ map: TEX.stone, color: '#ffffff' }, 'stone'), lion: std({ map: TEX.stone, color: new THREE.Color(1.45, 1.45, 1.45) }, 'stone'),
+      stoneN: std({ map: TEX.stone, color: new THREE.Color(1.45, 1.45, 1.45) }, 'stone'), stoneF: std({ map: TEX.stone, color: new THREE.Color(1.45, 1.45, 1.45) }, 'stone'),
       bench: std({ map: TEX.bench, color: '#ffffff' }, 'bench'), cloth: std({ color: '#ffffff', side: S, roughness: 1 }, 'cloth'),
       cushion: std({ color: '#5a2f6a' }), eagle: std({ map: TEX.eagle, color: '#ffffff', alphaTest: 0.5, transparent: false, side: S, roughness: 0.5 }),
       gold: std({ color: '#d8ae52', roughness: 0.45 }), bronze: std({ color: '#8c5e30', roughness: 0.55 }), iron: std({ color: '#8b8f96', roughness: 0.5 }), ironDark: std({ color: '#4c4f55', roughness: 0.6 }),
       red: std({ color: '#a8322c', side: S }), skin: std({ color: '#c99a74' }), wood: std({ map: TEX.wood, color: '#c79a66' }), woodDark: std({ color: '#5c3d24' }),
       brick: std({ map: TEX.brick, color: '#8c7a70', side: S }), dark: std({ color: '#3a2a1e', side: S, roughness: 1 }), ground: std({ map: TEX.paveL, color: '#9a938a' }, 'stone'), pave: std({ map: TEX.paveL, color: '#ffffff' }, 'stone'),
-      crowd: std({ color: '#ffffff', roughness: 0.95 }), plaster: std({ color: '#ffffff' }, 'stone'),
+      crowd: std({ color: '#ffffff', roughness: 0.95 }), leaf: std({ color: '#3d5a2c' }), leafLt: std({ color: '#62813a' }), terra: std({ color: '#a65a3a' }), plaster: std({ color: '#ffffff' }, 'stone'),
       flame: { mat: new THREE.MeshBasicMaterial({ color: '#ff7a22' }), layer: 'fire' }, flameCore: { mat: new THREE.MeshBasicMaterial({ color: '#ffd977' }), layer: 'fire' },
       hold: { mat: new THREE.MeshBasicMaterial({ color: '#000000' }), layer: 'hold' }
     });
@@ -80,7 +81,7 @@
     } else {
       /* night = only the fires (the game's grade darkens the base; this layer is ADDED after it) */
       for (const b of R.meta.lamps || []) { const p = new THREE.PointLight('#ff9a48', (L.fire || 9) * 0.45, 2.8, 1.4); p.position.set(b.x, b.y, b.z); R.scene.add(p); }
-      for (const f of R.meta.fires) { const p = new THREE.PointLight(L.fireCol || '#ff9a48', (L.fire || 9) * f.s, 7.5 * f.s, 1.6); p.position.set(f.x, f.y, f.z); p.castShadow = false; R.scene.add(p); }
+      for (const f of R.meta.fires) { const p = new THREE.PointLight(L.fireCol || '#ff9a48', (L.fire || 9) * f.s, 7.5 * f.s, 1.6); p.position.set(f.x, f.y, f.z); p.castShadow = !!f.shadow; if (f.shadow) { p.shadow.mapSize.set(1024, 1024); p.shadow.bias = -0.002; p.shadow.camera.near = 0.05; } R.scene.add(p); }
       R.scene.add(new THREE.AmbientLight('#000000', 0));
     }
   }
@@ -121,14 +122,16 @@
     for (const layer of cfg.layers) {
       for (const m of meshes) {
         const L = m.userData.layer;
-        if (layer === 'glow') m.material = L === 'hold' ? BLACK : m.userData.mat;
+        if (layer === 'front') m.material = m.userData.front ? (m.userData.white = m.userData.white || new THREE.MeshBasicMaterial({ color: 0xffffff, map: m.userData.mat.alphaTest ? m.userData.mat.map : null, alphaTest: m.userData.mat.alphaTest || 0, side: m.userData.mat.side })) : HOLD;
+        else if (layer === 'glow') m.material = L === 'hold' ? BLACK : m.userData.mat;
         else if (layer === 'all') m.material = L === 'hold' ? HOLD : m.userData.mat;
         else m.material = (L === layer) ? m.userData.mat : (m.userData.mat.alphaTest ? (m.userData.hold = m.userData.hold || new THREE.MeshBasicMaterial({ map: m.userData.mat.map, alphaTest: m.userData.mat.alphaTest, side: m.userData.mat.side, colorWrite: false })) : HOLD);
-        m.renderOrder = (m.material === HOLD || m.material === m.userData.hold) ? -1 : 0;   /* holdouts first: depth-only can't erase colour drawn before it */
+        m.renderOrder = (m.material === HOLD || m.material === m.userData.hold) ? -1 : 0;
+        if (layer === 'front' && m.material === m.userData.white && m.userData.white.map) m.userData.white.color.set(0xffffff);   /* holdouts first: depth-only can't erase colour drawn before it */
       }
       r.setRenderTarget(rtC); r.setClearColor(0x000000, layer === 'glow' ? 1 : 0); r.clear(); r.render(R.scene, cam);
-      post.uniforms.inkA.value = layer === 'glow' || layer === 'fire' ? 0 : (cfg.inkA == null ? 0.55 : cfg.inkA);
-      post.uniforms.post.value = layer === 'glow' || layer === 'fire' ? 0 : (cfg.post || 0);
+      post.uniforms.inkA.value = layer === 'glow' || layer === 'fire' || layer === 'front' ? 0 : (cfg.inkA == null ? 0.55 : cfg.inkA);
+      post.uniforms.post.value = layer === 'glow' || layer === 'fire' || layer === 'front' ? 0 : (cfg.post || 0);
       r.setRenderTarget(null); r.setClearColor(0x000000, 0); r.clear(); r.render(qs, qc);
       out[layer] = r.domElement.toDataURL('image/png');
     }

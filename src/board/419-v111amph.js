@@ -13,16 +13,33 @@
    A vignette (darker + less saturated away from the sand) keeps the eye on the board (VISUAL POLISH RULE). NIGHT: 189's grade
    darkens it with everything else; the 'glow' layer (the few braziers' light, black elsewhere) is added after the grade.
    Skipped: the ludus (pen / exhibitions), the Light board / Quality Low (lite84On), Lighting Off. Per frame: 0 by day (the under layer
-   is cached), one blit at night. Phones (TW·dpr < 80) compose at half size (decoded memory ≈ 4 MB instead of 14).
+   is cached), one blit at night. Phones (TW·dpr < 80) compose at half size (decoded memory ≈ 5 MB instead of 17).
+   PASS 7 (his front picture, 1a 2a 3a): the near façade + grand stair; the stair's pillars + braziers painted again over the game's
+   stands corner from the cached 'deco' layer (the 'front' mask); a taller canvas for the whole stair in tall windows (see FRAMING below).
    ===================================================================== */
 const AMPH111={on:false,img:{},meta:null,comp:null,key:'',ms:0};
 try{AMPH111.on=localStorage.getItem('flavius_amph111')==='1'}catch(e){}
 if(AMPH111.on&&typeof ar91Under==='function'){
   const L5=['stone','bench','cloth','fixed','fire','glow'];
   /* the frame (tw0, xl, yt, w, h) — same numbers as assets/amph111.json (make.js writes both) */
-  AMPH111.meta={tw0:112,xl:11.5,xr:11.5,yt:3.6,yb:8.9,w:2576,h:1400};
+  AMPH111.meta={tw0:112,xl:11.5,xr:11.5,yt:3.6,yb:10.9,w:2576,h:1624,front:[1097,1172,382,302]};
+  /* PASS 7 FRAMING (his 3a): room below the board for the whole grand stair, ONLY when the window is tall enough. The board keeps
+     its place (OX/OY, TW: today's numbers — Flavius's banner already touches the canvas top, so it cannot move up); the canvas just
+     grows downward from 07-ui's height to OY + AMPH111.B·TW (the lions' plinths). Tall enough = the window's own fit budget
+     (innerHeight − fitReserve(), 07-ui's fitH, ignoring "Fit to window" off) holds that height; once on it stays on until the budget
+     drops 0.6 TW below it (no flicker as the dock grows). Never on phones (≤ 700 px wide or landscape phone), never while the bake is
+     skipped (ludus, Quality Low, Lighting Off). Kill switch: localStorage flavius_amph111frameoff=1. Nothing else moves: clicks,
+     highlights, bubbles, FX, the stands and Flavius's banner use the same OX/OY/TW; the zoomed views centre in the taller canvas. */
+  AMPH111.B=10.65;AMPH111.tall=false;AMPH111.dy=0;
+  let frameOff=false;try{frameOff=localStorage.getItem('flavius_amph111frameoff')==='1'}catch(e){}
+  if(!frameOff&&typeof ar91View==='function'){const base=ar91View;ar91View=function(mob){const v=base.apply(this,arguments);if(!v)return v;const hd0=v.hd;
+    v.hd=function(oy,fitH){const h0=hd0.apply(this,arguments);let on=false;
+      try{if(!mob&&!(typeof phoneLand==='function'&&phoneLand())&&innerWidth>700&&!skip()){const budget=Math.max(360,innerHeight-(typeof fitReserve==='function'?fitReserve():230));
+        const need=Math.ceil(oy+AMPH111.B*TW);on=budget>=need-(AMPH111.tall?TW*0.6:0);if(on){AMPH111.tall=true;AMPH111.dy=Math.max(0,need-h0);return Math.max(h0,need)}}}catch(e){}
+      AMPH111.tall=false;AMPH111.dy=0;return h0};
+    return v}}
   const img=k=>typeof ar91Img==='function'?ar91Img(ar91Asset('amph111_'+k+'.webp')):null;
-  const ready=()=>L5.every(k=>(AMPH111.img[k]=img(k)));
+  const ready=()=>L5.every(k=>(AMPH111.img[k]=img(k)))&&!!(AMPH111.img.front=img('front'));
   const skip=()=>{try{return !ar91On()||ar91Lud()||(typeof lite84On==='function'&&lite84On())||(typeof l106Mode==='function'&&l106Mode()==='off')}catch(e){return true}};
   function amphTints(){let k=6;try{k=(typeof THEME!=='undefined'&&THEME.arena99)||S.locIdx||6}catch(e){}let P=null;try{P=THEMES99.P[k]}catch(e){}
     return {stone:ar91Mat().cap,bench:(typeof THEME!=='undefined'&&(THEME.standB||THEME.standA))||'#82302a',cloth:(P&&P.ui&&P.ui.blood)||AR91RED}}
@@ -46,6 +63,14 @@ if(AMPH111.on&&typeof ar91Under==='function'){
   /* place a bake-frame image so its (xl, yt) point lands on (OX, OY) at the current TW (zoom and size follow for free) */
   function amphPlace(g,im){const M=AMPH111.meta,s=TW/M.tw0;g.drawImage(im,OX-M.xl*TW,OY-M.yt*TW,M.w*s,M.h*s)}
   {const base=ar91Under;ar91Under=function(g){try{if(!skip()&&ready())amphPlace(g,amphComp())}catch(e){console.error(e)}return base.apply(this,arguments)}}
+  /* PASS 7 FRONT: the stair's two pillars + their braziers + banners stand IN FRONT of the game's stands corner (his picture), but the
+     bake is painted under the game. So their pixels (the composite cut to the 'front' coverage mask, a 382×302 box) are painted once
+     more at the end of 192's cached 'deco' layer (after the benches, before the spectators): 0 cost per frame. */
+  function amphFront(){const M=AMPH111.meta,c=amphComp(),k=c.width/M.w,[x,y,w,h]=M.front;const key=AMPH111.key;if(AMPH111.fc&&AMPH111.fk===key)return AMPH111.fc;
+    const W=Math.max(1,Math.round(w*k)),H=Math.max(1,Math.round(h*k)),f=document.createElement('canvas');f.width=W;f.height=H;const g=f.getContext('2d');
+    g.drawImage(c,x*k,y*k,w*k,h*k,0,0,W,H);g.globalCompositeOperation='destination-in';g.drawImage(AMPH111.img.front,0,0,W,H);AMPH111.fc=f;AMPH111.fk=key;return f}
+  if(typeof ar91DecoPaint==='function'){const base=ar91DecoPaint;ar91DecoPaint=function(g){const r=base.apply(this,arguments);
+    try{if(!skip()&&ready()){const M=AMPH111.meta,s=TW/M.tw0,[x,y,w,h]=M.front;g.drawImage(amphFront(),OX-M.xl*TW+x*s,OY-M.yt*TW+y*s,w*s,h*s)}}catch(e){console.error(e)}return r}}
   /* the glow is mostly black: find the lit cells once (a 1/8 thumbnail, 16×10 grid) and add only those each night frame */
   function amphCells(){if(AMPH111.cells)return AMPH111.cells;const M=AMPH111.meta,im=AMPH111.img.glow;let out=null;
     try{const w=Math.ceil(M.w/8),h=Math.ceil(M.h/8),c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.drawImage(im,0,0,w,h);
