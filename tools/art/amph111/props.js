@@ -154,7 +154,8 @@ window.AMPH111_PROPS = function (THREE, MAT, add, T, rnd) {
   /* ---------- PASS 9 (his 1a, 2026-10-22): the far rows' crowd = OUR spectators — the live crowd's own sprites (313-v100crowd, the
      production rig92 token pre-rendered in tools/art/crowd100), seated, facing the sand — pass 9d: farL (top-left) faces down-right = sheet
      cell 0, farR (top-right) faces down-left = cell 3 (tools/art/crowd100 renders cell i at YAWS[i] = 45/135/−135/−45, and yaw 45 turns
-     the rig's +z front toward +x = screen down-right; 313's comment "0 = down-left" is the other way round),
+     the rig's +z front toward +x = screen down-right. The bake reads 313's RAW meta; in the game 321-v101board (G4) reverses
+     every cell list at load, so there 313's index 0 = down-left is right and the live stands already face the sand),
      each a quad in the camera plane anchored at the bench's front edge (9d: facing the sand the knees come over the edge and the shins
      hang down the riser to the row below, as seated people do; 9b's inset only worked while they faced along the row),
      tinted by 313's rule (tunic = robe mixed with a home-city wool). Size: f × the inner stands' seated head height (0.459 TW). Same seats

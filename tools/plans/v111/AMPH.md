@@ -210,8 +210,11 @@ Review page: scratchpad amph111-review.html, new top section "Pass 8 mock-up: fi
   come over the bench's front edge, so 9b's inset (which cut the thighs with red slab wedges) is gone: anchored at the edge (−0.02), the
   shins hang down the riser to the row below. The bake's depth ink is off for the crowd (props ink 0 writes normal-alpha 0; the post pass
   skips alpha-0 neighbours): it drew grey halos round the hanging legs; the sprites keep their own painted outline, as live.
-  Sizes: assets/amph111_* 498 KB (fixed 109 → 136: the legs). NOTE for 313 (not changed here): the inner far stands use the same cells as
-  9c (top-right 0, top-left 3; its comment says 0 = down-left), so by the rig's yaw they face along their rows too — worth a look.
+  Sizes: assets/amph111_* 498 KB (fixed 109 → 136: the legs). The live inner stands are RIGHT and stay unchanged (9e check): 321-v101board
+  (G4, test tv101e) reverses every CROWD100_META cell list at load, so in the game 313's index 0 is the sheet's cell 3 (down-left) as its
+  comment says; only the bake (which reads the raw meta from 313's source) had the mirror-image cells. The "inner stands too" fix
+  (a 421 module swapping 0/3) was NOT built: it would have turned the live crowd along its rows. Zoomed shots of all four inner
+  sections + the upper tiers, day and night (v1.11a merged): every seated spectator faces the sand, near stands show their backs.
 - Left: one size on every row (ortho bake, no per-row shrink); fans wear the class colours, not this match's fighters (a bake can't follow
   the match); no stand-ups / cheering waves up there (static).
 
