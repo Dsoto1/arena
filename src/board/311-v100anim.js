@@ -552,12 +552,12 @@ async function an100Pump(){if(AN100.qBusy)return;AN100.qBusy=true;
       if(rec&&rec.v===AN100L.VER&&rec[set]&&rec[set].b){an100Got(s,set,rec[set].b,rec[set].m,rec[set].sh);continue}
       if(!an100DevOK())continue;
       for(let w=0;w<240&&(typeof T93!=='undefined'&&(T93.busy||T93.conv));w++)await new Promise(r=>setTimeout(r,500));
-      await an100Idle();if(typeof HEADLESS!=='undefined'&&HEADLESS){(set==='move'?AN100.q:AN100.qa).unshift(it);await new Promise(r=>setTimeout(r,1000));continue}
+      await (window.an111Yield||an100Idle)();if(typeof HEADLESS!=='undefined'&&HEADLESS){(set==='move'?AN100.q:AN100.qa).unshift(it);await new Promise(r=>setTimeout(r,1000));continue}
       try{const t0=an100Now();const api=await t93Load();if(typeof T93!=='undefined'&&T93.busy){(set==='move'?AN100.q:AN100.qa).unshift(it);continue}
         api.apply({look:s.parts.look,gear:s.parts.gear,pose:api.presets[0][2],grip:s.parts.grip||{}});
         /* an act sheet gives way to a waiting move sheet (a gladiator who just lost a limb, a late seat): it starts again later */
         const LT=AN100.noLight?null:an100Light();   /* v1.06a: the same one sun + ground shadow as the printed sheets (399 LIGHT106_BAKE) */
-        const r=await AN100L.render(api,set,{pxmm:AN100_PX,ss:2,yield:an100Idle,abort:()=>set==='act'&&AN100.q.length>0,limb:s.limb||undefined,light:LT,shadow:LT?{pxmm:AN100_PX/2,ss:2}:null});
+        const r=await AN100L.render(api,set,{pxmm:AN100_PX,ss:2,yield:()=>(window.an111Yield||an100Idle)() /* v1.11 (420): a quiet board on WebKit */,abort:()=>set==='act'&&AN100.q.length>0,limb:s.limb||undefined,light:LT,shadow:LT?{pxmm:AN100_PX/2,ss:2}:null});
         const shb=r.sh?await new Promise(ok=>r.sh.canvas.toBlob(b=>ok(b),'image/webp',0.8)):null,sh=shb?{b:shb,m:r.sh.meta}:null;
         const blob=await new Promise(ok=>r.canvas.toBlob(b=>ok(b),'image/webp',0.8))||await new Promise(ok=>r.canvas.toBlob(ok,'image/png'));
         an100Got(s,set,blob,r.meta,sh);const ms=Math.round(an100Now()-t0);AN100.stats.renders++;AN100.stats.renderMs.push(ms);(AN100.stats.renderLog||(AN100.stats.renderLog=[])).push({key:s.key,set,limb:s.limb,ms});
