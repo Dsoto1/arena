@@ -412,7 +412,7 @@ function ar91Pennant(F,T1){const T0=T1*(typeof flavK==='function'?flavK():1);con
     ctx.lineTo(x+s*0.12,y-s*0.62);ctx.bezierCurveTo(x+s*0.42,y-s*0.5,x+s*0.44,y-s*0.04,x+s*0.12,y);ctx.closePath()};
   const gr=ctx.createLinearGradient(x-s*0.42,0,x+s*0.42,0);gr.addColorStop(0,lite);gr.addColorStop(.35,body);gr.addColorStop(1,dark);path();ctx.fillStyle=gr;ctx.fill();
   ctx.save();path();ctx.clip();
-  if(!(typeof lite84On==='function'&&lite84On())){let q=(Math.round(x*7)*73856093^Math.round(y*7)*19349663)>>>0;const rn=()=>{q=(q*1103515245+12345)>>>0;return (q>>>8)/16777216};
+  if(!(typeof lite84On==='function'&&lite84On())){let q=(typeof POT111D!=='undefined'&&POT111D.on)?POT111D.seed(x,y):(Math.round(x*7)*73856093^Math.round(y*7)*19349663)>>>0 /* v1.11d (425): board-space seed */;const rn=()=>{q=(q*1103515245+12345)>>>0;return (q>>>8)/16777216};
     const d=Math.max(0.7,s*0.011);for(let i=0;i<Math.min(140,s*2.2);i++){ctx.fillStyle=rn()<0.5?'rgba(255,248,236,.10)':'rgba(30,22,16,.14)';ctx.fillRect(x+(rn()-0.5)*s*0.9,y-rn()*s,d,d)}}
   ctx.strokeStyle='rgba(40,30,22,.6)';ctx.lineWidth=Math.max(0.7,s*0.018);for(const dy of [0.42,0.3]){ctx.beginPath();ctx.ellipse(x,y-s*dy,s*0.38,s*0.06,0,0.05*Math.PI,0.95*Math.PI);ctx.stroke()}
   ctx.lineWidth=Math.max(0.6,s*0.012);for(let i=-3;i<=3;i++){const xx=x+i*s*0.075;ctx.beginPath();ctx.moveTo(xx-s*0.02,y-s*0.395);ctx.lineTo(xx+s*0.02,y-s*0.33);ctx.stroke()}
