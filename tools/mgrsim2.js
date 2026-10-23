@@ -191,9 +191,9 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
     const bench=ros().filter(g=>!g.inj&&!g.loanFrom&&!used.has(g.id)&&!w.night.bouts.some(b=>b.ents.includes(g.id))).sort((a,b)=>effOvr(a)-effOvr(b));
     if(ros().length<=5)return;for(const g of bench){const B=loan102Best(w,g);if(B&&B.good&&B.fee>=6){act('loan');lendTo(g,B.m,B.fee,3);unact();break}}}catch(e){err('lend',e)}};
   /* --buy (Trades 2 study): once a week before the deadline, buy the best rival fighter the treasury can pay for through 23's own 1-for-1
-     offer (ludusClick 'tradego' with every later wrapper: 378 settling-in, 393 deadline, 426 values): give my least valuable fighter + the
+     offer (ludusClick 'tradego' with every later wrapper: 378 settling-in, 393 deadline, 426 values + its one trade-in every 4 weeks, skipped while t112Wait>0): give my least valuable fighter + the
      coin gap (need − give) × 6 + 1, computed with the game's own tradeVal (given the house: 426's 3a) / opinion / greed rule; never a settling-in fighter (426's 4a). careful keeps its reserve; spendthrift none. */
-  const buy=()=>{if(!BUY||PR.cpu)return;try{if(typeof lk106Past==='function'&&lk106Past(w))return;const mine=ros().filter(g=>!g.loanFrom&&g.contract&&g.contract.mgr===m.id&&!(typeof set105Left==='function'&&set105Left(g)>0));if(!mine.length)return;
+  const buy=()=>{if(!BUY||PR.cpu)return;try{if(typeof lk106Past==='function'&&lk106Past(w))return;if(typeof t112Wait==='function'&&t112Wait(w)>0)return;/* 426: one trade-in every 4 weeks (the button is disabled; ludusClick would refuse) */const mine=ros().filter(g=>!g.loanFrom&&g.contract&&g.contract.mgr===m.id&&!(typeof set105Left==='function'&&set105Left(g)>0));if(!mine.length)return;
       const gm=mine.slice().sort((a,b)=>tradeVal(a)-tradeVal(b))[0];const budget=m.coin-(profile==='careful'?reserve():0);if(budget<=0)return;let best=null;
       for(const x of rivals()){if(x.envoyWk===w.week)continue;const R=rosterOf(x);const top=R.slice().sort((a,b)=>effOvr(b)-effOvr(a))[0];const op=opinionOf(x).v;const mult=1.06+(op<40?.18:0)-(op>=70?.06:0)+(x.p.greed-50)/400;
         for(const gt of R){if(gt.inj||gt.loanFrom||gt.lanista||gt.alive===false)continue;if(typeof set105Left==='function'&&set105Left(gt)>0)continue;if(R.length<=2&&top&&effOvr(gt)>=effOvr(top))continue;

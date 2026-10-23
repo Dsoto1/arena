@@ -8,13 +8,14 @@
        Booked by 413's money ledger as its own category 'patron' (LED109_FN.e112Patron; led109Sheet gets a "💼 Patron" row before
        Senate & other) and one line in the ludus ledger (tnews "💼 Your patron: +N coin").
    P6 THE RIVALS' BACKER FLOOR — after 23 aiLanistaWeek, a rival house (not Sica, not dead) below 40 is topped up toward 40 by at most
-       one more stipend (22 + 0.6 × fame), and at most ONCE a season per house (m.e112top = the season it was used; old saves have none
-       → eligible, no SAVE_MIGRATIONS needed). A line in that house's log (mlog).
+       one more stipend (22 + 0.6 × fame), and at most ONCE every 4 WEEKS per house (his 2a 2026-10-23, REPLACES "once a season":
+       m.e112tw = the absolute week w.week of the last top-up; old saves have only the retired m.e112top (a season) or nothing → eligible,
+       no SAVE_MIGRATIONS needed). A line in that house's log (mlog).
    The Trades 2 fixes of the same decision (3a received-below-median at 50%, 4a settling-in main fighter) live in 426-v112trade.
    Never the dice (no rand()).
    ===================================================================== */
 const E112={on:(()=>{try{return localStorage.getItem('flavius_v112econoff')!=='1'}catch(e){return true}})(),
-  pat:{base:10,fame:0.3},floor:40,riv:{base:22,fame:0.6}};
+  pat:{base:10,fame:0.3},floor:40,gap:4,riv:{base:22,fame:0.6}};
 window.E112=E112;
 const e112Ph=w=>{try{return typeof po104Ph==='function'?po104Ph(w)||'':''}catch(e){return ''}};
 const e112Amt=m=>Math.round(E112.pat.base+((m&&m.fame)||0)*E112.pat.fame);
@@ -25,11 +26,11 @@ function e112Patron(w,pm){const n=e112Amt(pm);if(n<=0)return 0;pm.coin+=n;tnews(
 function e112PatronWeek(){const w=W_();if(!w||w.dead||w.tutorial||!w.mgrs)return 0;const pm=me();if(!pm)return 0;const ph=e112Ph(w);if(ph==='off')return 0;
   if(!e112Ready(w))return 0;const key=w.season+':'+w.week+':'+ph;if(w.e112p===key)return 0;w.e112p=key;
   try{if(typeof led109Install==='function')led109Install(w)}catch(e){}return e112Patron(w,pm)}
-/* P6: the rivals' floor, once a season */
+/* P6: the rivals' floor, once every E112.gap weeks */
 function e112RivalFloor(w){let n=0;if(!w||!w.mgrs)return 0;
-  for(const m of w.mgrs){if(!m||m.isPlayer||m.dead||m.sica)continue;if(!(m.coin<E112.floor))continue;if(m.e112top===w.season)continue;
+  for(const m of w.mgrs){if(!m||m.isPlayer||m.dead||m.sica)continue;if(!(m.coin<E112.floor))continue;if(m.e112tw!=null&&w.week-m.e112tw<E112.gap)continue;
     const add=Math.min(E112.floor-m.coin,Math.round(E112.riv.base+(m.fame||0)*E112.riv.fame));if(add<=0)continue;
-    m.coin+=add;m.e112top=w.season;n++;try{mlog(m,_T`💼 the backers topped up the treasury (+${add})`)}catch(e){}}
+    m.coin+=add;m.e112tw=w.week;n++;try{mlog(m,_T`💼 the backers topped up the treasury (+${add})`)}catch(e){}}
   return n}
 if(E112.on){
   if(typeof LED109_FN!=='undefined')LED109_FN.e112Patron='patron';

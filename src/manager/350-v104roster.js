@@ -208,6 +208,7 @@ if(V104C.on){
     e.preventDefault();e.stopImmediatePropagation();const w=W_(),pm=me();const m=mgrById(b.dataset.id);const gt=gById((document.querySelector('#trTheirs')||{}).value);const coin=Math.max(0,Math.floor(+((document.querySelector('#trCoin')||{}).value)||0));
     if(!w||!pm||!m||!gt)return;const mine=ids.map(gById).filter(g=>g&&g.contract&&g.contract.mgr===pm.id&&!g.loanFrom);
     MGR.trade={mid:m.id,mine:pid,theirs:gt.id,coin,bun:extra};const no=t=>{MGR.trade.msg=t;MGR.trade.ok=false;c104Toast('✉ '+String(t).replace(/<[^>]*>/g,''));c104Redraw()};
+    {const bl=typeof t112Block==='function'?t112Block(w):'';if(bl)return no(bl)}/* v1.12 (426): one trade-in every 4 weeks */
     if(w.tb104Wk===w.week)return no(_T('One bundle offer a week — your envoy carries the next one next week.'));
     if(m.envoyWk===w.week)return no(_T('Your envoy has already called on this house this week.'));
     if(coin>pm.coin)return no(_T('Your treasury cannot cover that sweetener.'));
@@ -224,6 +225,7 @@ if(V104C.on){
     if(a==='no'){T.done='no';c104Toast(_T('You let the counter-offer lapse.'));c104Redraw();return}
     const m=mgrById(T.mid),gt=gById(T.theirs);const mine=T.mine.map(gById).filter(g=>g&&g.alive&&g.contract&&g.contract.mgr===pm.id&&!g.loanFrom);const coin=T.coin+T.ask;
     if(!m||!gt||!gt.alive||!gt.contract||gt.contract.mgr!==m.id||mine.length!==T.mine.length){T.done='gone';c104Toast(_T('The deal is off — the fighters have moved on.'));c104Redraw();return}
+    {const bl=typeof t112Block==='function'?t112Block(w):'';if(bl){c104Toast('✉ '+bl);return}}/* v1.12 (426) */
     if(pm.coin<coin){c104Toast(_T`The treasury cannot cover ${coin}.`);return}
     if(cap104N(m)-1+mine.length>cap104(m)){T.done='cap';c104Toast(_T`${esc(m.ludus)} has no room any more.`);c104Redraw();return}
     c104Swap(w,pm,m,mine,gt,coin);T.done='yes';c104Toast(_T`🔁 Done — ${esc(gt.name)} joins ${esc(pm.ludus)}.`);c104Redraw()},true);

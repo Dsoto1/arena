@@ -35,10 +35,14 @@ out.on=await ev(pg,async()=>{const r={};const w=W_(),pm=me();
   /* once per week end; nothing while this week's bouts wait */
   const c1=pm.coin;r.once=e112PatronWeek()===0&&pm.coin===c1;w.e112p=null;r.waits=(w.night.bye||!w.night.bouts.length)||(e112PatronWeek()===0&&pm.coin===c1&&w.e112p===null);
   /* P6 the rivals' floor */
-  const R=w.mgrs.filter(m=>!m.isPlayer&&!m.sica&&!m.dead);const x=R[0];x.coin=5;delete x.e112top;const st=Math.round(22+(x.fame||0)*0.6);
-  e112RivalFloor(w);r.top=x.coin===Math.min(40,5+st)&&x.e112top===w.season;x.coin=5;e112RivalFloor(w);r.topOnce=x.coin===5;
-  const s0=w.season;w.season=s0+1;e112RivalFloor(w);r.topNext=x.coin>5;w.season=s0;
-  const y=R[1];y.coin=-30;delete y.e112top;aiLanistaWeek();r.topWrap=y.e112top===w.season;
+  const R=w.mgrs.filter(m=>!m.isPlayer&&!m.sica&&!m.dead);const x=R[0];x.coin=5;delete x.e112top;delete x.e112tw;const st=Math.round(22+(x.fame||0)*0.6);
+  e112RivalFloor(w);r.top=x.coin===Math.min(40,5+st)&&x.e112tw===w.week;x.coin=5;e112RivalFloor(w);r.topOnce=x.coin===5;
+  /* his 2a: again only after 4 weeks (not 3; a new season alone does not reopen it) */
+  const wk0=w.week,s0=w.season;w.week=wk0+3;e112RivalFloor(w);r.top3=x.coin===5;w.season=s0+1;e112RivalFloor(w);r.topSeason=x.coin===5;w.season=s0;
+  w.week=wk0+4;e112RivalFloor(w);r.topNext=x.coin>5&&x.e112tw===w.week;w.week=wk0;
+  /* an old save: only the retired e112top (a season) = eligible */
+  const oo=R[2];oo.coin=5;delete oo.e112tw;oo.e112top=w.season;e112RivalFloor(w);r.topOld=oo.coin>5&&oo.e112tw===w.week;
+  const y=R[1];y.coin=-30;delete y.e112top;delete y.e112tw;aiLanistaWeek();r.topWrap=y.e112tw===w.week;
   /* 3a received below the median = half */
   const m=R.find(h=>rosterOf(h).length>=3&&cap104N(h)+1<=cap104(h))||R[2];m.relB=80;m.rivalry=0;m.rivals={};m.envoyWk=-1;m.p.greed=50;m.coin=Math.max(m.coin,600);
   const med=t112Med(m);const weak=genGlad({ovr:30});if(!gById(weak.id))w.glads.push(weak);weak.alive=true;weak.inj=null;weak.fame=0;weak.contract={mgr:pm.id,wage:1,weeks:8,since:0};
@@ -54,6 +58,7 @@ out.on=await ev(pg,async()=>{const r={};const w=W_(),pm=me();
     q(`[data-mg="tradego"][data-id="${m.id}"]`).click();await W8(400)};
   await send(weak,cFull);r.cheapNo=gt.contract.mgr===m.id&&weak.contract.mgr===pm.id;r.cheapMsg=(MGR.trade||{}).msg;
   m.envoyWk=-1;await send(weak,cHalf);r.halfYes=gt.contract.mgr===pm.id&&weak.contract.mgr===m.id;r.coins={cFull,cHalf,need:Math.round(need)};
+  delete w.t112in; /* his 2a: the trade above was a trade-in; this part tests 4a, not the 4-week limit */
   /* 4a settling in: not the main fighter */
   const m2=R.find(h=>h!==m&&rosterOf(h).length>=3)||R[3];m2.envoyWk=-1;m2.relB=80;const mine=rosterOf(pm).filter(g=>!g.loanFrom).sort((a,b)=>effOvr(b)-effOvr(a));const S=mine[0];S.contract.since=w.week;r.wk=w.week;
   MGR.teamId=m2.id;MGR.tab='team';MGR.trade={mid:m2.id,mine:S.id,theirs:rosterOf(m2)[0].id,coin:0,bun:[]};MGR_REDRAW();await W8(400);
@@ -64,7 +69,7 @@ out.on=await ev(pg,async()=>{const r={};const w=W_(),pm=me();
   const go=document.querySelector(`[data-mg="tradego"][data-id="${m2.id}"]`);r.allSet=!!go&&go.disabled&&!!document.querySelector('.t112setw');
   for(const g of mine)g.contract.since=0;
   r.errs=typeof errNew92==='function'?errNew92(window.C_MARK).map(e=>e.kind+':'+e.msg):[];return r});
-for(const k of ['patron','news','sheet','books','once','waits','top','topOnce','topNext','topWrap','half','full','bun','cheapNo','halfYes','opt','refuse','allSet'])ok(out.on[k],k);
+for(const k of ['patron','news','sheet','books','once','waits','top','topOnce','top3','topSeason','topNext','topOld','topWrap','half','full','bun','cheapNo','halfYes','opt','refuse','allSet'])ok(out.on[k],k);
 ok(!out.on.errs.length,'no new 00c errors '+JSON.stringify(out.on.errs));
 await pg.close();
 
@@ -72,7 +77,7 @@ await pg.close();
 const pk=await open({flavius_v112econoff:'1'});
 out.off=await ev(pk,async()=>{const r={};const w=W_(),pm=me();r.ended=await __WK();const P=w.led109&&w.led109.c&&w.led109.c.patron;
   r.noPat=!P&&!(w.tlog||[]).some(x=>/Your patron/.test(x.text));
-  const y=w.mgrs.find(m=>!m.isPlayer&&!m.sica&&!m.dead);y.coin=-30;aiLanistaWeek();r.noTop=y.e112top===undefined;return r});
+  const y=w.mgrs.find(m=>!m.isPlayer&&!m.sica&&!m.dead);y.coin=-30;aiLanistaWeek();r.noTop=y.e112top===undefined&&y.e112tw===undefined;return r});
 for(const k of ['noPat','noTop'])ok(out.off[k],'kill switch '+k);
 await pk.close();
 console.log(JSON.stringify(out));console.log(miss.length?'MISS '+JSON.stringify(miss):'ALL OK');console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();

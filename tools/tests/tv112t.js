@@ -17,7 +17,7 @@ const open=async(off)=>{const pg=await b.newPage({viewport:{width:1440,height:10
     for(const m of w.mgrs)if(!m.isPlayer){m.relB=80;m.coin=Math.max(m.coin||0,600);m.rivalry=0;m.rivals={};m.envoyWk=-1;m.p.greed=50;for(const g of rosterOf(m)){g.contract.since=0;g.scout=3}}
     w.tb104Wk=-1;w.tb104=null;menuHide();openManager('roster');await W8(900);MGR.view=null;window.C_MARK=typeof ERR92!=='undefined'?ERR92.n:0;
     /* the trade panel with house m, target gt; mine = primary, extras ticked */
-    window.__P112=async(m,gt,prim,extras,coin)=>{MGR.teamId=m.id;MGR.tab='team';MGR.trade={mid:m.id,mine:prim.id,theirs:gt.id,coin:0,bun:[]};MGR_REDRAW();await W8(400);const q=s=>document.querySelector(s);
+    window.__P112=async(m,gt,prim,extras,coin)=>{if(!window.__KEEP112)delete W_().t112in;MGR.teamId=m.id;MGR.tab='team';MGR.trade={mid:m.id,mine:prim.id,theirs:gt.id,coin:0,bun:[]};MGR_REDRAW();await W8(400);const q=s=>document.querySelector(s);
       if(!q('#trMine'))return false;q('#trMine').value=prim.id;q('#trTheirs').value=gt.id;q('#trCoin').value=String(coin||0);
       for(const x of document.querySelectorAll('input[data-tb104g]'))x.checked=false;
       for(const e of extras||[]){const cb=q(`input[data-tb104g="${e.id}"]`);if(cb&&!cb.disabled){cb.checked=true;cb.dispatchEvent(new Event('change',{bubbles:true}))}}return true};
@@ -61,13 +61,37 @@ out.on=await ev(pg,async(DUMP)=>{const DF=eval('('+DUMP+')');const r={};const w=
     r.letterTxt=ln&&ln.textContent;
     /* a counter without a dud says the house's reason */
     T.sent=0;T.mine=[B1.id,B2.id];c104Counter(w);const L2=(w.letters||[]).find(x=>x.key==='tb104-'+T.id);r.letter2=!!L2&&/t112c/.test(L2.body)&&!L2.body.includes(esc(D.name)+' costs');T.done='no'}
+  /* his 2a: ONE trade-in every 4 weeks. 1-for-1, then a second within 4 weeks is refused (button disabled + refused by the click path), then allowed */
+  {window.__KEEP112=true;delete w.t112in;const hA=__H112([m,m2,m3]);hA.envoyWk=-1;const pool=rosterOf(pm).filter(g=>!g.loanFrom);const mv=[...pool].sort((a,b)=>tr106Val(b)-tr106Val(a))[0];
+   const tg=[...rosterOf(hA)].sort((a,b)=>tr106Val(a)-tr106Val(b))[0];
+   await __P112(hA,tg,mv,[],0);await __S112(hA);r.in1=tg.contract.mgr===pm.id&&w.t112in===w.week;
+   const hB=__H112([m,m2,m3,hA]);hB.envoyWk=-1;const pool2=rosterOf(pm).filter(g=>!g.loanFrom&&g!==tg);const mv2=[...pool2].sort((a,b)=>tr106Val(b)-tr106Val(a))[0];const tg2=[...rosterOf(hB)].sort((a,b)=>tr106Val(a)-tr106Val(b))[0];
+   w.week+=3;await __P112(hB,tg2,mv2,[],0);const go=document.querySelector(`[data-mg="tradego"][data-id="${hB.id}"]`);
+   r.btnOff=!!go&&go.disabled&&/One trade-in every 4 weeks — next in 1 wk/.test(go.title||'');
+   let said='';await ludusClick('tradego',hB.id,null,{redraw:()=>{},say:t=>{said=t}});r.in2no=tg2.contract.mgr===hB.id&&/next in 1 wk/.test(said)&&hB.envoyWk!==w.week;
+   /* a bundle is refused too and does not spend the weekly slot */
+   const ex=pool2.filter(g=>g!==mv2)[0];w.tb104Wk=-1;await __P112(hB,tg2,mv2,[ex],0);const cbx=document.querySelector(`input[data-tb104g="${ex.id}"]`);if(cbx){cbx.checked=true;cbx.dispatchEvent(new Event('change',{bubbles:true}))}
+   const go2=document.querySelector(`[data-mg="tradego"][data-id="${hB.id}"]`);if(go2)go2.removeAttribute('disabled');if(go2)go2.click();await W8(400);
+   r.bunNo=tg2.contract.mgr===hB.id&&w.tb104Wk===-1&&mv2.contract.mgr===pm.id&&ex.contract.mgr===pm.id;
+   /* a rival swap offer that gives a fighter: the Accept button is disabled, offerAccept refuses; a coin offer is not blocked */
+   const gv=rosterOf(pm).filter(g=>!g.loanFrom)[0];const rv=rosterOf(hB).filter(g=>g!==tg2)[0];
+   const off={id:'o112x',kind:'swap',mid:hB.id,gid:gv.id,give:[rv.id],coin:0,until:w.week+2};w.offers=[off];
+   const htm=offersHTML();r.offBtn=/data-m47="offyes" data-id="o112x" disabled/.test(htm);
+   OFFER_FAIL95='';r.offNo=offerAccept(off)===false&&/next in 1 wk/.test(OFFER_FAIL95)&&rv.contract.mgr===hB.id;
+   const off2={id:'o112y',kind:'coin',mid:hB.id,gid:gv.id,coin:5,until:w.week+2};w.offers=[off2];r.coinFree=!/offyes" data-id="o112y" disabled/.test(offersHTML());
+   /* after 4 weeks: allowed, and an accepted rival swap counts too (then a one-for-one is blocked again) */
+   w.week=w.t112in+4;w.offers=[off];r.offBtn2=!/offyes" data-id="o112x" disabled/.test(offersHTML());
+   r.offYes=offerAccept(off)===true&&rv.contract.mgr===pm.id&&w.t112in===w.week;
+   hB.envoyWk=-1;await __P112(hB,tg2,mv2,[],0);r.after=!!document.querySelector(`[data-mg="tradego"][data-id="${hB.id}"]`).disabled;
+   w.t112in=w.week-4;hB.envoyWk=-1;hB.relB=80;await __P112(hB,tg2,mv2,[],0);const go3=document.querySelector(`[data-mg="tradego"][data-id="${hB.id}"]`);r.free4=!!go3&&!go3.disabled;
+   window.__KEEP112=false;delete w.t112in}
   /* settling in: an extra signed 1 week ago can't be ticked */
   const m4=__H112([m,m2,m3]);m4.envoyWk=-1;w.tb104Wk=-1;const ros=rosterOf(pm).filter(g=>!g.loanFrom).sort((a,b)=>effOvr(b)-effOvr(a));const S=ros[ros.length-1];S.contract.since=w.week-1;
   await __P112(m4,rosterOf(m4)[0],ros[0],[S],0);const cb=document.querySelector(`input[data-tb104g="${S.id}"]`);const lb=cb&&cb.closest('label');
   r.settle=!!cb&&cb.disabled&&!cb.checked&&!!lb&&/settling in/.test(lb.textContent)&&/signed only lately/.test(lb.title||'')&&!!document.querySelector('.tb104 .t112n');
   S.contract.since=0;
   r.errs=typeof errNew92==='function'?errNew92(window.C_MARK).map(e=>e.kind+':'+e.msg):[];return r},DUMP.toString());
-for(const k of ['val1','need','bun','dumpNo','oneYes','gap','gapPaid','counter','letter','letter2','settle'])ok(out.on[k],k);ok(!out.on.errs.length,'no new 00c errors '+JSON.stringify(out.on.errs));
+for(const k of ['val1','need','bun','dumpNo','oneYes','gap','gapPaid','counter','letter','letter2','settle','in1','btnOff','in2no','bunNo','offBtn','offNo','coinFree','offBtn2','offYes','after','free4'])ok(out.on[k],k);ok(!out.on.errs.length,'no new 00c errors '+JSON.stringify(out.on.errs));
 await pg.close();
 
 /* the kill switch: the old rules, the dud counts as 0 → the same bundle is taken */
@@ -75,7 +99,12 @@ const pk=await open(true);
 out.off=await ev(pk,async(DUMP)=>{const DF=eval('('+DUMP+')');const r={};const w=W_(),pm=me();const {m,gt,A,D}=await DF();
   r.old=Math.abs(tradeVal(A)-(effOvr(A)+Math.max(0,A.pot-A.ovr)*0.6+(A.fame||0)*0.2-Math.max(0,gAge(A)-30)*1.5-A.contract.wage*0.3))<1e-9;
   await __P112(m,gt,A,[D],0);await __S112(m);r.dumpYes=gt.contract.mgr===pm.id&&A.contract.mgr===m.id&&D.contract.mgr===m.id;r.msg=(MGR.trade||{}).msg;
-  r.noNote=!document.querySelector('.t112n');return r},DUMP.toString());
-for(const k of ['old','dumpYes','noNote'])ok(out.off[k],'kill switch '+k);
+  r.noNote=!document.querySelector('.t112n');
+  /* his 2a lifted: a second trade-in right away is allowed, nothing recorded */
+  window.__KEEP112=true;const h2=__H112([m]);h2.envoyWk=-1;const mv=rosterOf(pm).filter(g=>!g.loanFrom)[0];const tg=[...rosterOf(h2)].sort((a,b)=>tr106Val(a)-tr106Val(b))[0];
+  await __P112(h2,tg,mv,[],0);const go=document.querySelector(`[data-mg="tradego"][data-id="${h2.id}"]`);r.noGate=!!go&&!go.disabled&&w.t112in==null;
+  const off={id:'o112z',kind:'swap',mid:h2.id,gid:rosterOf(pm)[0].id,give:[rosterOf(h2)[0].id],coin:0,until:w.week+2};w.t112in=w.week;r.offFree=!/disabled/.test((w.offers=[off],offersHTML()));
+  return r},DUMP.toString());
+for(const k of ['old','dumpYes','noNote','noGate','offFree'])ok(out.off[k],'kill switch '+k);
 await pk.close();
 console.log(JSON.stringify(out));console.log(miss.length?'MISS '+JSON.stringify(miss):'ALL OK');console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();

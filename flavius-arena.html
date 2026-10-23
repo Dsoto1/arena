@@ -74106,6 +74106,7 @@ if(V104C.on){
     e.preventDefault();e.stopImmediatePropagation();const w=W_(),pm=me();const m=mgrById(b.dataset.id);const gt=gById((document.querySelector('#trTheirs')||{}).value);const coin=Math.max(0,Math.floor(+((document.querySelector('#trCoin')||{}).value)||0));
     if(!w||!pm||!m||!gt)return;const mine=ids.map(gById).filter(g=>g&&g.contract&&g.contract.mgr===pm.id&&!g.loanFrom);
     MGR.trade={mid:m.id,mine:pid,theirs:gt.id,coin,bun:extra};const no=t=>{MGR.trade.msg=t;MGR.trade.ok=false;c104Toast('✉ '+String(t).replace(/<[^>]*>/g,''));c104Redraw()};
+    {const bl=typeof t112Block==='function'?t112Block(w):'';if(bl)return no(bl)}/* v1.12 (426): one trade-in every 4 weeks */
     if(w.tb104Wk===w.week)return no(_T('One bundle offer a week — your envoy carries the next one next week.'));
     if(m.envoyWk===w.week)return no(_T('Your envoy has already called on this house this week.'));
     if(coin>pm.coin)return no(_T('Your treasury cannot cover that sweetener.'));
@@ -74122,6 +74123,7 @@ if(V104C.on){
     if(a==='no'){T.done='no';c104Toast(_T('You let the counter-offer lapse.'));c104Redraw();return}
     const m=mgrById(T.mid),gt=gById(T.theirs);const mine=T.mine.map(gById).filter(g=>g&&g.alive&&g.contract&&g.contract.mgr===pm.id&&!g.loanFrom);const coin=T.coin+T.ask;
     if(!m||!gt||!gt.alive||!gt.contract||gt.contract.mgr!==m.id||mine.length!==T.mine.length){T.done='gone';c104Toast(_T('The deal is off — the fighters have moved on.'));c104Redraw();return}
+    {const bl=typeof t112Block==='function'?t112Block(w):'';if(bl){c104Toast('✉ '+bl);return}}/* v1.12 (426) */
     if(pm.coin<coin){c104Toast(_T`The treasury cannot cover ${coin}.`);return}
     if(cap104N(m)-1+mine.length>cap104(m)){T.done='cap';c104Toast(_T`${esc(m.ludus)} has no room any more.`);c104Redraw();return}
     c104Swap(w,pm,m,mine,gt,coin);T.done='yes';c104Toast(_T`🔁 Done — ${esc(gt.name)} joins ${esc(pm.ludus)}.`);c104Redraw()},true);
@@ -82425,12 +82427,24 @@ POT111D.seed=function(x,y){POT111D.hits++;
        The house = the explicit argument, else MGR.trade.mid (both offer paths set it before they value). Stops "weak tiro + coin for a star".
    4a a fighter of yours still settling in (378) can't be the MAIN fighter either: his #trMine option is disabled with 378's tag + reason as
        its tip, the selection moves to the first free one (none free → Send disabled + the reason), and 23 tradego refuses him.
+   v1.12 (his 2a, 2026-10-23) ONE TRADE-IN EVERY 4 WEEKS — the player can bring in at most ONE fighter by trade every 4 weeks: a 1-for-1 offer
+       (23 tradego), a bundle (350 §5), an accepted counter-offer, or an accepted rival swap offer (394 / 47 offerAccept) that gives a
+       fighter. Not counted: gifts, loans, free agents, recruiting, a rival buying one of yours ('coin' offers). w.t112in = the absolute
+       week (w.week) of the last trade-in, set when the deal really happens (c104Swap / tradego / offerAccept succeed); w.t112in is
+       absent in old saves = free. While blocked: the trade panel's Send button is disabled with "One trade-in every 4 weeks — next in N wk",
+       so are the rival offers' Accept buttons that would give a fighter (offersHTML), and t112Block(w) guards the click paths
+       (tradego, the bundle and counter clicks in 350 call it, offerAccept refuses with OFFER_FAIL95). The envoy / bundle slot is NOT spent
+       by a refused try. Kill switch flavius_v112tradeoff=1 lifts it.
    No save change (w.tb104 / w.tb104Wk / w.offers reused; the letter body holds the new line). Never the dice (no rand()).
    ===================================================================== */
-const T112={on:(()=>{try{return localStorage.getItem('flavius_v112tradeoff')!=='1'}catch(e){return true}})(),floor:20,k:6,recvK:0.5};
+const T112={on:(()=>{try{return localStorage.getItem('flavius_v112tradeoff')!=='1'}catch(e){return true}})(),floor:20,k:6,recvK:0.5,gap:4};
 /* the counter-offer id: one bundle a week, so week + house is unique (deterministic; used by 350 §5) */
 function t112Id(w,m){return 't'+(w?w.week:0)+'_'+(m?m.id:'')}
 const t112Live=()=>T112.on&&typeof tr106Val==='function';
+/* his 2a: weeks still to wait for the next trade-in (0 = free); the reason text */
+function t112Wait(w){if(!T112.on||!w||w.tutorial||w.t112in==null)return 0;const n=T112.gap-(w.week-w.t112in);return n>0?n:0}
+function t112Block(w){w=w||W_();const n=t112Wait(w);return n?_T`One trade-in every 4 weeks — next in ${n} wk`:''}
+const t112NoteIn=w=>{if(T112.on&&w&&!w.tutorial)w.t112in=w.week}
 /* what a house asks for one of its own fighters (394's coin floor) */
 const t112Ask=g=>Math.max(T112.floor,tr106Val(g));
 const t112Mult=m=>{const op=opinionOf(m).v;return 1.06+(op<40?.18:0)-(op>=70?.06:0)+(((m.p&&m.p.greed)||50)-50)/400};
@@ -82479,12 +82493,28 @@ if(T112.on){
         const pick=cur||first;if(pick){if(!cur){ch=true;pick.setAttribute('selected','');if(trade)trade.mine=pick.value}}
         else if(sel.querySelector('option')){ch=true;const go=t.content.querySelector('[data-mg="tradego"]');const why=_T('Every fighter of yours is still settling in; no offers yet.');
           if(go){go.setAttribute('disabled','');go.classList.add('off');go.dataset.dis=why;go.title=why;if(!t.content.querySelector('.t112setw'))go.parentNode.insertAdjacentHTML('beforebegin',`<div class="traderes no t112setw">✉ ${esc(why)}</div>`)}}}
+      /* his 2a: one trade-in every 4 weeks — Send disabled with the reason */
+      {const bl=t112Block(W_());if(bl){const go=t.content.querySelector('[data-mg="tradego"]');if(go){ch=true;go.setAttribute('disabled','');go.classList.add('off');go.dataset.dis=bl;go.title=bl;
+        if(!t.content.querySelector('.t112inw'))go.parentNode.insertAdjacentHTML('beforebegin',`<div class="traderes no t112inw">✉ ${esc(bl)}</div>`)}}}
       const box=t.content.querySelector('.tb104');if(box&&!box.querySelector('.t112n')){ch=true;box.insertAdjacentHTML('beforeend',`<span class="rc-sub t112n">${_T('Overpaid or fading fighters lower the offer; one weaker than most of theirs counts half.')}</span>`)}
       if(ch){const d=document.createElement('div');d.appendChild(t.content);h=d.innerHTML}}catch(e){console.error(e)}return h}}
   /* 4a 23 tradego: a settling-in main fighter is refused (the select can't pick him; this guards any other caller) */
-  {const base=ludusClick;ludusClick=async function(action,id,btn,ctx){try{if(action==='tradego'&&t112Live()){const el=document.querySelector('#trMine');const g=el&&gById(el.value);
+  {const base=ludusClick;ludusClick=async function(action,id,btn,ctx){let inGt=null;try{if(action==='tradego'&&T112.on){const bl=t112Block(W_());if(bl){ctx&&ctx.say&&ctx.say(bl);return true}
+      const el2=document.querySelector('#trTheirs');inGt=el2?gById(el2.value):null}}catch(e){console.error(e)}
+    try{if(action==='tradego'&&t112Live()){const el=document.querySelector('#trMine');const g=el&&gById(el.value);
       if(g&&t112Mine(g)&&t112Set(g)>0){const why=_T`${g.name} signed only lately — he is settling in for ${t112Set(g)} more weeks; no offers yet.`;ctx&&ctx.say&&ctx.say(why);return true}}}catch(e){console.error(e)}
-    return base.apply(this,arguments)}}
+    const r=await base.apply(this,arguments);
+    try{if(inGt&&r){const pm=me(),w=W_();if(pm&&inGt.contract&&inGt.contract.mgr===pm.id)t112NoteIn(w)}}catch(e){console.error(e)}
+    return r}}
+  /* bundles + accepted counters: 350's c104Swap is the one place a deal really happens */
+  if(typeof c104Swap==='function'){const base=c104Swap;c104Swap=function(w,pm,m,mine,gt){const r=base.apply(this,arguments);try{if(gt&&pm&&gt.contract&&gt.contract.mgr===pm.id)t112NoteIn(w)}catch(e){console.error(e)}return r}}
+  /* rival offers (47 / 394): a swap that gives you a fighter */
+  {const base=offerAccept;offerAccept=function(o){const gives=!!(o&&o.kind==='swap'&&(o.give||[]).length);
+    if(gives){const bl=t112Block(W_());if(bl){OFFER_FAIL95=bl;return false}}
+    const r=base.apply(this,arguments);try{if(gives&&r)t112NoteIn(W_())}catch(e){console.error(e)}return r}}
+  {const base=offersHTML;offersHTML=function(){let h=base.apply(this,arguments);try{const w=W_();const bl=t112Block(w);if(!bl||typeof h!=='string'||!h)return h;
+      for(const o of w.offers||[]){if(!(o.kind==='swap'&&(o.give||[]).length))continue;const k=`data-m47="offyes" data-id="${o.id}"`;if(!h.includes(k))continue;
+        h=h.replace(k,k+` disabled title="${esc(bl)}"`);const i=h.indexOf(k),a=h.indexOf('</div>',i);if(a>0)h=h.slice(0,a)+` <span class="rc-sub t112inw">${esc(bl)}</span>`+h.slice(a)}}catch(e){console.error(e)}return h}}
   (()=>{if(typeof document==='undefined'||document.getElementById('t112css'))return;const st=document.createElement('style');st.id='t112css';
     st.textContent=`.t112c{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin:6px 0 2px;font-size:13px}.t112c .tr106why{flex:1 1 220px;font-style:italic}
 .t112c .tr106wk{font:12px var(--mono,monospace);white-space:nowrap;border:1px solid #6b5236;border-radius:4px;padding:0 6px}.t112c .tr106wk.up{color:#ffb0a0;border-color:#8a3a2a}.t112c .tr106wk.dn{color:#a8e0a0;border-color:#3a6a3a}
@@ -82500,13 +82530,14 @@ if(T112.on){
        Booked by 413's money ledger as its own category 'patron' (LED109_FN.e112Patron; led109Sheet gets a "💼 Patron" row before
        Senate & other) and one line in the ludus ledger (tnews "💼 Your patron: +N coin").
    P6 THE RIVALS' BACKER FLOOR — after 23 aiLanistaWeek, a rival house (not Sica, not dead) below 40 is topped up toward 40 by at most
-       one more stipend (22 + 0.6 × fame), and at most ONCE a season per house (m.e112top = the season it was used; old saves have none
-       → eligible, no SAVE_MIGRATIONS needed). A line in that house's log (mlog).
+       one more stipend (22 + 0.6 × fame), and at most ONCE every 4 WEEKS per house (his 2a 2026-10-23, REPLACES "once a season":
+       m.e112tw = the absolute week w.week of the last top-up; old saves have only the retired m.e112top (a season) or nothing → eligible,
+       no SAVE_MIGRATIONS needed). A line in that house's log (mlog).
    The Trades 2 fixes of the same decision (3a received-below-median at 50%, 4a settling-in main fighter) live in 426-v112trade.
    Never the dice (no rand()).
    ===================================================================== */
 const E112={on:(()=>{try{return localStorage.getItem('flavius_v112econoff')!=='1'}catch(e){return true}})(),
-  pat:{base:10,fame:0.3},floor:40,riv:{base:22,fame:0.6}};
+  pat:{base:10,fame:0.3},floor:40,gap:4,riv:{base:22,fame:0.6}};
 window.E112=E112;
 const e112Ph=w=>{try{return typeof po104Ph==='function'?po104Ph(w)||'':''}catch(e){return ''}};
 const e112Amt=m=>Math.round(E112.pat.base+((m&&m.fame)||0)*E112.pat.fame);
@@ -82517,11 +82548,11 @@ function e112Patron(w,pm){const n=e112Amt(pm);if(n<=0)return 0;pm.coin+=n;tnews(
 function e112PatronWeek(){const w=W_();if(!w||w.dead||w.tutorial||!w.mgrs)return 0;const pm=me();if(!pm)return 0;const ph=e112Ph(w);if(ph==='off')return 0;
   if(!e112Ready(w))return 0;const key=w.season+':'+w.week+':'+ph;if(w.e112p===key)return 0;w.e112p=key;
   try{if(typeof led109Install==='function')led109Install(w)}catch(e){}return e112Patron(w,pm)}
-/* P6: the rivals' floor, once a season */
+/* P6: the rivals' floor, once every E112.gap weeks */
 function e112RivalFloor(w){let n=0;if(!w||!w.mgrs)return 0;
-  for(const m of w.mgrs){if(!m||m.isPlayer||m.dead||m.sica)continue;if(!(m.coin<E112.floor))continue;if(m.e112top===w.season)continue;
+  for(const m of w.mgrs){if(!m||m.isPlayer||m.dead||m.sica)continue;if(!(m.coin<E112.floor))continue;if(m.e112tw!=null&&w.week-m.e112tw<E112.gap)continue;
     const add=Math.min(E112.floor-m.coin,Math.round(E112.riv.base+(m.fame||0)*E112.riv.fame));if(add<=0)continue;
-    m.coin+=add;m.e112top=w.season;n++;try{mlog(m,_T`💼 the backers topped up the treasury (+${add})`)}catch(e){}}
+    m.coin+=add;m.e112tw=w.week;n++;try{mlog(m,_T`💼 the backers topped up the treasury (+${add})`)}catch(e){}}
   return n}
 if(E112.on){
   if(typeof LED109_FN!=='undefined')LED109_FN.e112Patron='patron';

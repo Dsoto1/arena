@@ -153,13 +153,14 @@ out.trade=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));co
   r.done=gt.contract.mgr===pm.id&&mine[0].contract.mgr===m.id&&mine[1].contract.mgr===m.id&&rosterOf(pm).length===n0-1;
   r.once=w.tb104Wk===w.week;if(!r.done)r.why=JSON.stringify({msg:(MGR.trade||{}).msg,tab:MGR.tab,go:!!q(`[data-mg="tradego"]`),cbs:document.querySelectorAll('input[data-tb104g]:checked').length,mine:q('#trMine')&&q('#trMine').value,cap:[cap104N(m),cap104(m)]});
   /* a second bundle this week is refused */
-  const m3=w.mgrs.find(x=>!x.isPlayer&&!x.sica&&!x.dead&&x!==m&&rosterOf(x).length>=2&&cap104N(x)+1<=cap104(x));if(m3){m3.envoyWk=-1;MGR.teamId=m3.id;MGR.trade={mid:m3.id,mine:null,theirs:rosterOf(m3)[0].id,coin:0};MGR_REDRAW();await W8(400);
+  const m3=w.mgrs.find(x=>!x.isPlayer&&!x.sica&&!x.dead&&x!==m&&rosterOf(x).length>=2&&cap104N(x)+1<=cap104(x));if(m3){delete w.t112in;/* v1.12 (426): this checks the bundle-a-week slot, not the 4-week trade-in limit */m3.envoyWk=-1;MGR.teamId=m3.id;MGR.trade={mid:m3.id,mine:null,theirs:rosterOf(m3)[0].id,coin:0};MGR_REDRAW();await W8(400);
     r.usedTxt=/spent/.test((q('.tb104')||{}).textContent||'');const t0=rosterOf(m3)[0];const ms=rosterOf(pm).filter(g=>!g.loanFrom);
     if(q('#trMine')){q('#trMine').value=ms[0].id;q('#trTheirs').value=t0.id}const x=document.querySelector(`input[data-tb104g="${ms[1].id}"]`);if(x){x.disabled=false;x.checked=true}
     q(`[data-mg="tradego"][data-id="${m3.id}"]`).click();await W8(400);r.refused=t0.contract.mgr===m3.id&&/One bundle offer a week/.test((MGR.trade||{}).msg||'')}else{r.usedTxt=r.refused='skip'}
   /* the counter-offer letter, the week after */
   const m4=m3||m;const t4=rosterOf(m4)[0];const ms4=rosterOf(pm).filter(g=>!g.loanFrom).slice(-2);
   w.tb104={id:'tX',mid:m4.id,mine:ms4.map(g=>g.id),theirs:t4.id,coin:0,ask:12,wk:w.week-1};c104Counter(w);const L=(w.letters||[]).find(x=>x.key==='tb104-tX');r.letter=!!L&&/data-tb104="yes\|tX"/.test(L.body);
+  delete w.t112in;/* v1.12 (426) */
   const btn=document.createElement('button');btn.dataset.tb104='yes|tX';document.body.appendChild(btn);const c0=pm.coin;btn.click();btn.remove();
   r.counter=w.tb104.done==='yes'&&t4.contract.mgr===pm.id&&pm.coin===c0-12;
   return r});

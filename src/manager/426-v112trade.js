@@ -23,12 +23,24 @@
        The house = the explicit argument, else MGR.trade.mid (both offer paths set it before they value). Stops "weak tiro + coin for a star".
    4a a fighter of yours still settling in (378) can't be the MAIN fighter either: his #trMine option is disabled with 378's tag + reason as
        its tip, the selection moves to the first free one (none free → Send disabled + the reason), and 23 tradego refuses him.
+   v1.12 (his 2a, 2026-10-23) ONE TRADE-IN EVERY 4 WEEKS — the player can bring in at most ONE fighter by trade every 4 weeks: a 1-for-1 offer
+       (23 tradego), a bundle (350 §5), an accepted counter-offer, or an accepted rival swap offer (394 / 47 offerAccept) that gives a
+       fighter. Not counted: gifts, loans, free agents, recruiting, a rival buying one of yours ('coin' offers). w.t112in = the absolute
+       week (w.week) of the last trade-in, set when the deal really happens (c104Swap / tradego / offerAccept succeed); w.t112in is
+       absent in old saves = free. While blocked: the trade panel's Send button is disabled with "One trade-in every 4 weeks — next in N wk",
+       so are the rival offers' Accept buttons that would give a fighter (offersHTML), and t112Block(w) guards the click paths
+       (tradego, the bundle and counter clicks in 350 call it, offerAccept refuses with OFFER_FAIL95). The envoy / bundle slot is NOT spent
+       by a refused try. Kill switch flavius_v112tradeoff=1 lifts it.
    No save change (w.tb104 / w.tb104Wk / w.offers reused; the letter body holds the new line). Never the dice (no rand()).
    ===================================================================== */
-const T112={on:(()=>{try{return localStorage.getItem('flavius_v112tradeoff')!=='1'}catch(e){return true}})(),floor:20,k:6,recvK:0.5};
+const T112={on:(()=>{try{return localStorage.getItem('flavius_v112tradeoff')!=='1'}catch(e){return true}})(),floor:20,k:6,recvK:0.5,gap:4};
 /* the counter-offer id: one bundle a week, so week + house is unique (deterministic; used by 350 §5) */
 function t112Id(w,m){return 't'+(w?w.week:0)+'_'+(m?m.id:'')}
 const t112Live=()=>T112.on&&typeof tr106Val==='function';
+/* his 2a: weeks still to wait for the next trade-in (0 = free); the reason text */
+function t112Wait(w){if(!T112.on||!w||w.tutorial||w.t112in==null)return 0;const n=T112.gap-(w.week-w.t112in);return n>0?n:0}
+function t112Block(w){w=w||W_();const n=t112Wait(w);return n?_T`One trade-in every 4 weeks — next in ${n} wk`:''}
+const t112NoteIn=w=>{if(T112.on&&w&&!w.tutorial)w.t112in=w.week}
 /* what a house asks for one of its own fighters (394's coin floor) */
 const t112Ask=g=>Math.max(T112.floor,tr106Val(g));
 const t112Mult=m=>{const op=opinionOf(m).v;return 1.06+(op<40?.18:0)-(op>=70?.06:0)+(((m.p&&m.p.greed)||50)-50)/400};
@@ -77,12 +89,28 @@ if(T112.on){
         const pick=cur||first;if(pick){if(!cur){ch=true;pick.setAttribute('selected','');if(trade)trade.mine=pick.value}}
         else if(sel.querySelector('option')){ch=true;const go=t.content.querySelector('[data-mg="tradego"]');const why=_T('Every fighter of yours is still settling in; no offers yet.');
           if(go){go.setAttribute('disabled','');go.classList.add('off');go.dataset.dis=why;go.title=why;if(!t.content.querySelector('.t112setw'))go.parentNode.insertAdjacentHTML('beforebegin',`<div class="traderes no t112setw">✉ ${esc(why)}</div>`)}}}
+      /* his 2a: one trade-in every 4 weeks — Send disabled with the reason */
+      {const bl=t112Block(W_());if(bl){const go=t.content.querySelector('[data-mg="tradego"]');if(go){ch=true;go.setAttribute('disabled','');go.classList.add('off');go.dataset.dis=bl;go.title=bl;
+        if(!t.content.querySelector('.t112inw'))go.parentNode.insertAdjacentHTML('beforebegin',`<div class="traderes no t112inw">✉ ${esc(bl)}</div>`)}}}
       const box=t.content.querySelector('.tb104');if(box&&!box.querySelector('.t112n')){ch=true;box.insertAdjacentHTML('beforeend',`<span class="rc-sub t112n">${_T('Overpaid or fading fighters lower the offer; one weaker than most of theirs counts half.')}</span>`)}
       if(ch){const d=document.createElement('div');d.appendChild(t.content);h=d.innerHTML}}catch(e){console.error(e)}return h}}
   /* 4a 23 tradego: a settling-in main fighter is refused (the select can't pick him; this guards any other caller) */
-  {const base=ludusClick;ludusClick=async function(action,id,btn,ctx){try{if(action==='tradego'&&t112Live()){const el=document.querySelector('#trMine');const g=el&&gById(el.value);
+  {const base=ludusClick;ludusClick=async function(action,id,btn,ctx){let inGt=null;try{if(action==='tradego'&&T112.on){const bl=t112Block(W_());if(bl){ctx&&ctx.say&&ctx.say(bl);return true}
+      const el2=document.querySelector('#trTheirs');inGt=el2?gById(el2.value):null}}catch(e){console.error(e)}
+    try{if(action==='tradego'&&t112Live()){const el=document.querySelector('#trMine');const g=el&&gById(el.value);
       if(g&&t112Mine(g)&&t112Set(g)>0){const why=_T`${g.name} signed only lately — he is settling in for ${t112Set(g)} more weeks; no offers yet.`;ctx&&ctx.say&&ctx.say(why);return true}}}catch(e){console.error(e)}
-    return base.apply(this,arguments)}}
+    const r=await base.apply(this,arguments);
+    try{if(inGt&&r){const pm=me(),w=W_();if(pm&&inGt.contract&&inGt.contract.mgr===pm.id)t112NoteIn(w)}}catch(e){console.error(e)}
+    return r}}
+  /* bundles + accepted counters: 350's c104Swap is the one place a deal really happens */
+  if(typeof c104Swap==='function'){const base=c104Swap;c104Swap=function(w,pm,m,mine,gt){const r=base.apply(this,arguments);try{if(gt&&pm&&gt.contract&&gt.contract.mgr===pm.id)t112NoteIn(w)}catch(e){console.error(e)}return r}}
+  /* rival offers (47 / 394): a swap that gives you a fighter */
+  {const base=offerAccept;offerAccept=function(o){const gives=!!(o&&o.kind==='swap'&&(o.give||[]).length);
+    if(gives){const bl=t112Block(W_());if(bl){OFFER_FAIL95=bl;return false}}
+    const r=base.apply(this,arguments);try{if(gives&&r)t112NoteIn(W_())}catch(e){console.error(e)}return r}}
+  {const base=offersHTML;offersHTML=function(){let h=base.apply(this,arguments);try{const w=W_();const bl=t112Block(w);if(!bl||typeof h!=='string'||!h)return h;
+      for(const o of w.offers||[]){if(!(o.kind==='swap'&&(o.give||[]).length))continue;const k=`data-m47="offyes" data-id="${o.id}"`;if(!h.includes(k))continue;
+        h=h.replace(k,k+` disabled title="${esc(bl)}"`);const i=h.indexOf(k),a=h.indexOf('</div>',i);if(a>0)h=h.slice(0,a)+` <span class="rc-sub t112inw">${esc(bl)}</span>`+h.slice(a)}}catch(e){console.error(e)}return h}}
   (()=>{if(typeof document==='undefined'||document.getElementById('t112css'))return;const st=document.createElement('style');st.id='t112css';
     st.textContent=`.t112c{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin:6px 0 2px;font-size:13px}.t112c .tr106why{flex:1 1 220px;font-style:italic}
 .t112c .tr106wk{font:12px var(--mono,monospace);white-space:nowrap;border:1px solid #6b5236;border-radius:4px;padding:0 6px}.t112c .tr106wk.up{color:#ffb0a0;border-color:#8a3a2a}.t112c .tr106wk.dn{color:#a8e0a0;border-color:#3a6a3a}

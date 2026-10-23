@@ -64,7 +64,7 @@ or decision that fixed the number (decisions.md lines win over module headers wh
 | Specials (enter any event) | the special's entry fee + a hired hand's fee (`any100Book`); refunds on a pull-out | 296-v100any | flavius_any100off | v1.0 his 1a… |
 | Over the roster cap | the fighters above the cap cost their wage again (`if(ex){pm.coin-=ex`) | 350-v104roster | flavius_v104coff | v1.04 C N5 |
 | Money loan | Sica's syndicate lends only to a house in the red (`loanSizes` 30/60/100% of 60 + 4×fame + 8×wins, 80–800), **12% a week**, minimum `max(8, 15%)`, 3 short weeks = a spear at your best fighter | 66-mgr55 | — | v0.55 |
-| Buying with coin (Trades 2) | your 1-for-1 / bundle offers: coin counts **1:1** against 394's tr106Val (rating ×2.2 + fame ×1.2 + age/career/potential − wage ×2), a house never sells under 20 × its opinion/greed factor; REPLACES coin/6 against 23's tradeVal. A fighter of yours the house receives counts **50%** when he is below the median rating of its roster (3a); a settling-in fighter can't be offered at all (4a). Before 3a: a 73-OVR star for a 44-OVR tiro + ~70 coin in week 2 (REPORT.md §5) | 426-v112trade | flavius_v112tradeoff | v1.12 T2a; 3a 4a (2026-10-23) |
+| Buying with coin (Trades 2) | your 1-for-1 / bundle offers: coin counts **1:1** against 394's tr106Val (rating ×2.2 + fame ×1.2 + age/career/potential − wage ×2), a house never sells under 20 × its opinion/greed factor; REPLACES coin/6 against 23's tradeVal. A fighter of yours the house receives counts **50%** when he is below the median rating of its roster (3a); a settling-in fighter can't be offered at all (4a). Before 3a: a 73-OVR star for a 44-OVR tiro + ~70 coin in week 2 (REPORT.md §5) | 426-v112trade | flavius_v112tradeoff | v1.12 T2a; 3a 4a (2026-10-23); **one trade-in every 4 weeks** for you (`w.t112in`; his 2a 2026-10-23) |
 | Envoys, city, misc | envoy gift 25, pact 30 (23); city bath 8, tavern 6, lupanar 10, spectator tickets (25/30); road bandits 3–8 (108); bribes (141 faith); a caught rig −40 and −12 fame (17); a poaching buy-out (`buyout`) | as listed | — | various |
 
 ## 4. Season turn and winter (what lands once a season)
@@ -83,7 +83,7 @@ or decision that fixed the number (decisions.md lines win over module headers wh
 | Flow | Rule | Module |
 |---|---|---|
 | **Patron stipend** | every rival, every week: **22 + 0.6 × fame** (≈ 30–60 a week; ≈ 750 a house a season) | 23 aiLanistaWeek |
-| **Backer floor** | after its week, a rival below **40** is topped up toward 40 by at most one more stipend (22 + 0.6 × fame), **once a season** per house (`m.e112top`) | 427-v112econ (flavius_v112econoff) |
+| **Backer floor** | after its week, a rival below **40** is topped up toward 40 by at most one more stipend (22 + 0.6 × fame), **once every 4 weeks** per house (`m.e112tw` = week of the last top-up; his 2a 2026-10-23, replaces once a season) | 427-v112econ (flavius_v112econoff) |
 | Bail-out | a rival below **−60** is bought by a new backer: treasury set to 120, −8 fame | 23 aiLanistaWeek |
 | Training | regime by Discipline (`rivalTrain`, 88): 6/15/30 a week | 88-v68 |
 | Care | Medicus/surgeon by chance (.35 + honor/300) when coin > 30/50 (318 `care101Cpu`: Medicus hours + half coin); limbs when coin > 60 + 20 a limb | 23, 17, 318 |
