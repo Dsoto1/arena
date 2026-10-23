@@ -2,6 +2,7 @@
    a wage-dump bundle (one fit fighter + an overpaid dud) is now REFUSED while the same offer without the dud is accepted; a close bundle
    leaves a counter with the deterministic id 't<week>_<house>' and an ask in coin; the counter letter shows the why line + the weekly
    wage change (394's card format); a bundled extra still settling in (378) can't be ticked (disabled, tag + reason); kill switch
+   (v1.12 3a: the gap / counter asks use t112Recv / t112Bundle(…, house) — a received fighter below the house's median counts half)
    flavius_v112tradeoff=1 → the old rules (23's tradeVal, the dud clamped to 0 → the bundle goes through). */
 const {chromium}=require('playwright');const T=require('./_wait');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const out={};
 const open=async(off)=>{const pg=await b.newPage({viewport:{width:1440,height:1000}});await pg.route(/fonts\.g/,r=>r.abort());
@@ -45,15 +46,15 @@ out.on=await ev(pg,async(DUMP)=>{const DF=eval('('+DUMP+')');const r={};const w=
   m.envoyWk=-1;await __P112(m,gt,A,[],0);await __S112(m);r.oneYes=gt.contract.mgr===pm.id&&A.contract.mgr===m.id;r.oneMsg=(MGR.trade||{}).msg;
   /* 1-for-1 coin counts 1:1: a weak fighter for their best, the gap message gives the coin */
   const m2=__H112([m]);m2.envoyWk=-1;const gb=[...rosterOf(m2)].sort((a,b)=>tr106Val(b)-tr106Val(a))[0];const weak=rosterOf(pm).filter(g=>g!==D&&!g.loanFrom).sort((a,b)=>tr106Val(a)-tr106Val(b))[0];
-  const gap=Math.ceil(c104Need(m2,gb)*6-tr106Val(weak));await __P112(m2,gb,weak,[],0);await __S112(m2);const msg=(MGR.trade||{}).msg||'';
+  const gap=Math.ceil(c104Need(m2,gb)*6-t112Recv(m2,weak)); /* v1.12 3a: a received fighter below their median counts half */await __P112(m2,gb,weak,[],0);await __S112(m2);const msg=(MGR.trade||{}).msg||'';
   r.gap=gap>0&&gb.contract.mgr===m2.id&&((()=>{const x=/About (\d+) more coin/.exec(msg);return !!x&&Math.abs(+x[1]-gap)<=1})()||(gap>pm.coin&&/better fighter/.test(msg)));r.gapMsg=msg+' gap='+gap;
   m2.envoyWk=-1;await __P112(m2,gb,weak,[],gap+1);await __S112(m2);r.gapPaid=gb.contract.mgr===pm.id&&weak.contract.mgr===m2.id;
   /* a close bundle → counter (deterministic id, ask in coin) */
   const m3=__H112([m,m2]);m3.envoyWk=-1;w.tb104Wk=-1;const g3=[...rosterOf(m3)].sort((a,b)=>tr106Val(b)-tr106Val(a))[0];
   const L=rosterOf(pm).filter(g=>g!==D&&!g.loanFrom&&tr106Val(g)>0).sort((a,b)=>tr106Val(a)-tr106Val(b));const B1=L[0],B2=L[1];
-  for(let i=0;i<60&&c104BunVal([B1,B2],0)>=c104Need(m3,g3)*0.88;i++){g3.fame=Math.min(100,(g3.fame||0)+5);if(g3.fame>=100)g3.ovr=(g3.ovr||50)+2}
-  const need3=c104Need(m3,g3)*6;const coin3=Math.max(0,Math.ceil(need3*0.9-t112Bundle([B1,B2],0)));
-  await __P112(m3,g3,B1,[B2],coin3);await __S112(m3);const T=w.tb104;r.counter=!!T&&T.id==='t'+w.week+'_'+m3.id&&Math.abs(T.ask-Math.ceil(need3-t112Bundle([B1,B2],coin3)))<=1;r.T=T&&{id:T.id,ask:T.ask,coin:T.coin,need:Math.round(need3)};
+  for(let i=0;i<60&&c104BunVal([B1,B2],0,m3)>=c104Need(m3,g3)*0.88;i++){g3.fame=Math.min(100,(g3.fame||0)+5);if(g3.fame>=100)g3.ovr=(g3.ovr||50)+2}
+  const need3=c104Need(m3,g3)*6;const coin3=Math.max(0,Math.ceil(need3*0.9-t112Bundle([B1,B2],0,m3)));
+  await __P112(m3,g3,B1,[B2],coin3);await __S112(m3);const T=w.tb104;r.counter=!!T&&T.id==='t'+w.week+'_'+m3.id&&Math.abs(T.ask-Math.ceil(need3-t112Bundle([B1,B2],coin3,m3)))<=1;r.T=T&&{id:T.id,ask:T.ask,coin:T.coin,need:Math.round(need3)};
   /* T5a the letter: why + wage change */
   if(T){T.mine=[B1.id,D.id];c104Counter(w);const Lt=(w.letters||[]).find(x=>x.key==='tb104-'+T.id);const d=document.createElement('div');d.innerHTML=Lt?Lt.body:'';const ln=d.querySelector('.t112c');
     const dw=g3.contract.wage-B1.contract.wage-D.contract.wage;r.letter=!!ln&&ln.querySelector('.tr106why').textContent.includes(D.name)&&ln.querySelector('.tr106wk').textContent===(dw>0?'+'+dw+'/wk for you':dw<0?'−'+(-dw)+'/wk for you':'same wages')&&!!d.querySelector(`[data-tb104="yes|${T.id}"]`)&&ln.nextElementSibling&&ln.nextElementSibling.classList.contains('acts');

@@ -6,7 +6,7 @@ module adds, removes or re-prices a coin flow (grep the module name in docs/modu
 
 **Kill switch** = localStorage key set to `1` (— = none; the older economy modules have no switch). **Set by** = the version + the note
 or decision that fixed the number (decisions.md lines win over module headers when they disagree). Coins are `m.coin` on a house
-(`me()` = the player). Every number below is the shipped constant at v1.11d (grep the constant to retune it).
+(`me()` = the player). Every number below is the shipped constant at v1.11d plus the v1.12 work (426, 427) (grep the constant to retune it).
 
 ## 1. The week's order (who touches the treasury, and when)
 
@@ -14,9 +14,9 @@ or decision that fixed the number (decisions.md lines win over module headers wh
    facilities, programmata, temple offerings, the road (travel), bets, special-event fees. 397 locks every bout of an AWAY week until
    the house **sets off** (35 travel paid or the deal taken, 360 `mw105Go`); after set-off Recruiting, the Yard and the Infirmary close.
 2. **Bouts** (17 `applyBout` + wrappers): appearance fees, purses, wager payouts, blood money, Superbus purses, Renown.
-3. **endWeek** (17 + ~54 wrappers): gate share (87) → wages + training regime + personal trainers (17) → walk-out if the treasury is
+3. **endWeek** (17 + ~54 wrappers): the player's patron (427, first) → gate share (87) → wages + training regime + personal trainers (17) → walk-out if the treasury is
    below 0 → rival care → facilities' income (23 facWeek) → rivals' week (17 cpuLeagueWeek, 23 aiLanistaWeek incl. their patron
-   stipend, 88 rivalTrain) → fighters' purses (28) → the syndicate loan's interest (66) → bankruptcy count → season turn (every 12th
+   stipend + 427's backer floor, 88 rivalTrain) → fighters' purses (28) → the syndicate loan's interest (66) → bankruptcy count → season turn (every 12th
    calendar week, held for the Superbus by 348) → sponsorships (150) → bye/playoff wage refunds (59/348) → loan fees (47/350).
 4. **The off-season week (Winter Quarters, 413–416)**: the Quaestor's Ledger is sealed (paid), raises are answered, the free promotion,
    the winter market, winter works, the camp, the Winter Classic + Saturnalia, rudis asks; ▶ Begin = that week's endWeek.
@@ -25,6 +25,7 @@ or decision that fixed the number (decisions.md lines win over module headers wh
 
 | Source | Rule (amount) | Module | Kill switch | Set by |
 |---|---|---|---|---|
+| **Patron stipend** | every in-season week end (not the off-season week): **+10 + 0.3 × fame** (rounded, `E112.pat`), paid at the start of endWeek (before wages); ledger category **Patron**, line "💼 Your patron: +N coin" | 427-v112econ | flavius_v112econoff | v1.12 his 1a (P1, 2026-10-23) |
 | Starting treasury | founded house: Normal 125 / Easy 250 / Hard 50 (`START_DIFF`) + 100 (`ECON.startBonus`) + 100 (`GR102.start`) = **325** on Normal; a taken-over preset: its `MGR_PRE.coin` + 200 | 70-v57, 87-v67, 339-v102gear | — / — / flavius_v102hoff | v0.57 difficulty; v0.68 ECON tuning; v1.02 H (his M11 2a) |
 | Appearance fees | per fighter entered: undercard 12 · feature 24 · main 40 (`ECON.fees`, overwrites `TIERS.fee` 4/8/15) | 17 applyBout, 87-v67 | — | v0.68 "an attentive lanista roughly breaks even without winning" |
 | Purses | winner's house: `purse × (0.5 + greed/300)` minus a tenth to the fighter's purse; purses 30 / 70 / 160 (`TIERS`); ×(upset ≤2, streak +25%/win ≤2, combined ≤3) extra (`WIN87`) | 17, 28-purses, 150-v87mgr | — | v0.36 purses; v0.87 win rewards (decisions "WIN REWARDS" 2026-10-05) |
@@ -63,7 +64,7 @@ or decision that fixed the number (decisions.md lines win over module headers wh
 | Specials (enter any event) | the special's entry fee + a hired hand's fee (`any100Book`); refunds on a pull-out | 296-v100any | flavius_any100off | v1.0 his 1a… |
 | Over the roster cap | the fighters above the cap cost their wage again (`if(ex){pm.coin-=ex`) | 350-v104roster | flavius_v104coff | v1.04 C N5 |
 | Money loan | Sica's syndicate lends only to a house in the red (`loanSizes` 30/60/100% of 60 + 4×fame + 8×wins, 80–800), **12% a week**, minimum `max(8, 15%)`, 3 short weeks = a spear at your best fighter | 66-mgr55 | — | v0.55 |
-| Buying with coin (Trades 2) | your 1-for-1 / bundle offers: coin counts **1:1** against 394's tr106Val (rating ×2.2 + fame ×1.2 + age/career/potential − wage ×2), a house never sells under 20 × its opinion/greed factor; REPLACES coin/6 against 23's tradeVal. Measured: a 73-OVR star for a 44-OVR tiro + ~70 coin in week 2 (REPORT.md §5) | 426-v112trade | flavius_v112tradeoff | v1.12 T2a (2026-10-23) |
+| Buying with coin (Trades 2) | your 1-for-1 / bundle offers: coin counts **1:1** against 394's tr106Val (rating ×2.2 + fame ×1.2 + age/career/potential − wage ×2), a house never sells under 20 × its opinion/greed factor; REPLACES coin/6 against 23's tradeVal. A fighter of yours the house receives counts **50%** when he is below the median rating of its roster (3a); a settling-in fighter can't be offered at all (4a). Before 3a: a 73-OVR star for a 44-OVR tiro + ~70 coin in week 2 (REPORT.md §5) | 426-v112trade | flavius_v112tradeoff | v1.12 T2a; 3a 4a (2026-10-23) |
 | Envoys, city, misc | envoy gift 25, pact 30 (23); city bath 8, tavern 6, lupanar 10, spectator tickets (25/30); road bandits 3–8 (108); bribes (141 faith); a caught rig −40 and −12 fame (17); a poaching buy-out (`buyout`) | as listed | — | various |
 
 ## 4. Season turn and winter (what lands once a season)
@@ -82,6 +83,7 @@ or decision that fixed the number (decisions.md lines win over module headers wh
 | Flow | Rule | Module |
 |---|---|---|
 | **Patron stipend** | every rival, every week: **22 + 0.6 × fame** (≈ 30–60 a week; ≈ 750 a house a season) | 23 aiLanistaWeek |
+| **Backer floor** | after its week, a rival below **40** is topped up toward 40 by at most one more stipend (22 + 0.6 × fame), **once a season** per house (`m.e112top`) | 427-v112econ (flavius_v112econoff) |
 | Bail-out | a rival below **−60** is bought by a new backer: treasury set to 120, −8 fame | 23 aiLanistaWeek |
 | Training | regime by Discipline (`rivalTrain`, 88): 6/15/30 a week | 88-v68 |
 | Care | Medicus/surgeon by chance (.35 + honor/300) when coin > 30/50 (318 `care101Cpu`: Medicus hours + half coin); limbs when coin > 60 + 20 a limb | 23, 17, 318 |
@@ -114,6 +116,7 @@ Rivals pay the same wages, travel nothing (the road is the player's), and earn t
 * `repairs` holds the Armory's buys (225's inner `pay`/`get` closures carry no table name; the clicked action decides).
 * `sales` holds blood money (`buyBack`, `settlePending`).
 * Paying the syndicate 50 (`loanpay`) is not in `LED109_ACT` → Senate & other (only "pay it all" is booked as Loans).
+* `patron` (v1.12, 427) holds the player's weekly patron stipend only.
 * `senate` holds the Quaestor's Ledger, the Senate's wage refunds for byes / bout-less playoff weeks, the advisors' coin and the
   Debtor's Gambit; the weekly gate share is booked as `purses`.
 

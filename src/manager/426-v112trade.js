@@ -16,9 +16,16 @@
    FIXES: the counter id is 't<week>_<house>' (t112Id; 350 line "v1.12 (426)") instead of Date.now() — an old pending one keeps its id
        and its stored ask. Bundled EXTRAS still settling in (378 set105Left > 0, signed < 4 weeks) can't be ticked: the box is disabled
        with 378's "🆕 settling in · N wk" tag and its reason as the tip (the same rule that guards their side).
+   v1.12 (his 3a 4a, 2026-10-23, after the economy re-measure tools/plans/econ111/REPORT.md §5):
+   3a RECEIVED BELOW THEIR MEDIAN = HALF — when a house judges your offer, a fighter of yours it would RECEIVE counts at T112.recvK (50%)
+       of his tr106Val when his rating (effOvr) is below the median rating of that house's current roster (he would not fight for them);
+       a negative value still counts in full. 1-for-1 (tradeVal(g, house)), bundles (c104BunVal(gs, coin, house)) and so the counter's ask.
+       The house = the explicit argument, else MGR.trade.mid (both offer paths set it before they value). Stops "weak tiro + coin for a star".
+   4a a fighter of yours still settling in (378) can't be the MAIN fighter either: his #trMine option is disabled with 378's tag + reason as
+       its tip, the selection moves to the first free one (none free → Send disabled + the reason), and 23 tradego refuses him.
    No save change (w.tb104 / w.tb104Wk / w.offers reused; the letter body holds the new line). Never the dice (no rand()).
    ===================================================================== */
-const T112={on:(()=>{try{return localStorage.getItem('flavius_v112tradeoff')!=='1'}catch(e){return true}})(),floor:20,k:6};
+const T112={on:(()=>{try{return localStorage.getItem('flavius_v112tradeoff')!=='1'}catch(e){return true}})(),floor:20,k:6,recvK:0.5};
 /* the counter-offer id: one bundle a week, so week + house is unique (deterministic; used by 350 §5) */
 function t112Id(w,m){return 't'+(w?w.week:0)+'_'+(m?m.id:'')}
 const t112Live=()=>T112.on&&typeof tr106Val==='function';
@@ -26,8 +33,13 @@ const t112Live=()=>T112.on&&typeof tr106Val==='function';
 const t112Ask=g=>Math.max(T112.floor,tr106Val(g));
 const t112Mult=m=>{const op=opinionOf(m).v;return 1.06+(op<40?.18:0)-(op>=70?.06:0)+(((m.p&&m.p.greed)||50)-50)/400};
 const t112Mine=g=>{try{const pm=me();return !!(g&&g.contract&&pm&&g.contract.mgr===pm.id)}catch(e){return false}};
-/* a bundle's worth in tr106 units (+ coin 1:1): best in full, each other 55%, negatives count against */
-function t112Bundle(gs,coin){const v=gs.map(tr106Val).sort((a,b)=>b-a);const kx=(typeof CAP104!=='undefined'&&CAP104.bundleK)||0.55;return (v[0]||0)+v.slice(1).reduce((a,x)=>a+x*kx,0)+(coin||0)}
+/* 3a: the median rating of a house's roster; what a fighter it RECEIVES is worth to it */
+function t112Med(m){const v=(m?rosterOf(m):[]).map(effOvr).sort((a,b)=>a-b);const n=v.length;if(!n)return null;return n%2?v[(n-1)/2]:(v[n/2-1]+v[n/2])/2}
+function t112Recv(m,g){const v=tr106Val(g);if(!m||m.isPlayer||!(v>0))return v;const md=t112Med(m);return md!=null&&effOvr(g)<md?v*T112.recvK:v}
+/* the house judging the offer: the argument, else the open trade panel's house */
+function t112House(m){try{if(m&&m.id)return m;const T=typeof MGR!=='undefined'&&MGR.trade;const h=T&&T.mid?mgrById(T.mid):null;return h&&!h.isPlayer?h:null}catch(e){return null}}
+/* a bundle's worth in tr106 units (+ coin 1:1): best in full, each other 55%, negatives count against; house m → 3a */
+function t112Bundle(gs,coin,m){const v=gs.map(g=>m?t112Recv(m,g):tr106Val(g)).sort((a,b)=>b-a);const kx=(typeof CAP104!=='undefined'&&CAP104.bundleK)||0.55;return (v[0]||0)+v.slice(1).reduce((a,x)=>a+x*kx,0)+(coin||0)}
 const t112Need=(m,gt)=>t112Ask(gt)*t112Mult(m);
 const t112Set=g=>{try{return typeof set105Left==='function'?set105Left(g):0}catch(e){return 0}};
 /* the counter letter's line: why + your weekly wage change */
@@ -42,23 +54,35 @@ function t112Line(w,T){const m=mgrById(T.mid),gt=gById(T.theirs);if(!m||!gt)retu
   return `<div class="tr106 t112c" data-t112="counter"><span class="tr106why">${t112Why(w,m,gt,mine)}</span><span class="tr106wk ${dw>0?'up':dw<0?'dn':''}">${wk}</span></div>`}
 if(T112.on){
   /* T2a 1-for-1 (23 tradego): tr106 value, theirs at the floor; ÷k so 23's "+ coin/6" is coin 1:1 */
-  {const base=tradeVal;tradeVal=function(g){try{if(t112Live()&&g)return (t112Mine(g)?tr106Val(g):t112Ask(g))/T112.k}catch(e){console.error(e)}return base.apply(this,arguments)}}
+  {const base=tradeVal;tradeVal=function(g,m){try{if(t112Live()&&g)return (t112Mine(g)?t112Recv(t112House(m),g):t112Ask(g))/T112.k}catch(e){console.error(e)}return base.apply(this,arguments)}}
   /* T2a + T3a bundles (350 §5) */
-  if(typeof c104BunVal==='function'){const base=c104BunVal;c104BunVal=function(gs,coin){try{if(t112Live())return t112Bundle(gs||[],coin)/T112.k}catch(e){console.error(e)}return base.apply(this,arguments)}}
+  if(typeof c104BunVal==='function'){const base=c104BunVal;c104BunVal=function(gs,coin,m){try{if(t112Live())return t112Bundle(gs||[],coin,t112House(m))/T112.k}catch(e){console.error(e)}return base.apply(this,arguments)}}
   if(typeof c104Need==='function'){const base=c104Need;c104Need=function(m,gt){try{if(t112Live()&&m&&gt)return t112Need(m,gt)/T112.k}catch(e){console.error(e)}return base.apply(this,arguments)}}
   /* T5a the counter letter */
   {const base=sendLetter;sendLetter=function(w,o){try{if(t112Live()&&w&&o&&typeof o.key==='string'&&o.key.startsWith('tb104-')&&typeof o.body==='string'&&!o.body.includes('t112c')){
       const T=w.tb104;if(T&&o.key==='tb104-'+T.id){const ln=t112Line(w,T);const i=o.body.indexOf('<div class="acts"');if(ln)o={...o,body:i>=0?o.body.slice(0,i)+ln+o.body.slice(i):o.body+ln}}}}catch(e){console.error(e)}
     return base.call(this,w,o)}}
   /* settling-in extras can't be bundled; the note that overpaid fighters count against */
-  {const base=tradeHTML;tradeHTML=function(mgr,trade){let h=base.apply(this,arguments);try{if(typeof h!=='string'||!h.includes('data-tb104g'))return h;
+  {const base=tradeHTML;tradeHTML=function(mgr,trade){let h=base.apply(this,arguments);try{if(typeof h!=='string'||!h.includes('id="trMine"'))return h;
       const t=document.createElement('template');t.innerHTML=h;let ch=false;
       for(const cb of t.content.querySelectorAll('input[data-tb104g]')){const g=gById(cb.dataset.tb104g);const n=g?t112Set(g):0;if(!n)continue;ch=true;
         cb.removeAttribute('checked');cb.setAttribute('disabled','');const lb=cb.closest('label');const why=_T`${g.name} signed only lately — he is settling in for ${n} more weeks; no offers yet.`;
         if(lb){lb.classList.add('t112set');lb.title=why;lb.insertAdjacentHTML('beforeend',` <span class="set105">${_T`🆕 settling in · ${n} wk`}</span>`)}
         if(trade&&Array.isArray(trade.bun))trade.bun=trade.bun.filter(x=>x!==g.id)}
-      const box=t.content.querySelector('.tb104');if(box&&!box.querySelector('.t112n')){ch=true;box.insertAdjacentHTML('beforeend',`<span class="rc-sub t112n">${_T('Overpaid or fading fighters lower the offer.')}</span>`)}
+      /* 4a the main fighter: settling-in options disabled, the pick moves to a free one */
+      const sel=t.content.querySelector('#trMine');if(sel){let first=null,cur=null;
+        for(const o of sel.querySelectorAll('option')){const g=gById(o.value);const n=g?t112Set(g):0;if(!n){if(!first)first=o;if(o.hasAttribute('selected'))cur=o;continue}
+          ch=true;o.setAttribute('disabled','');o.removeAttribute('selected');o.title=_T`${g.name} signed only lately — he is settling in for ${n} more weeks; no offers yet.`;
+          if(!/settling in/.test(o.textContent))o.textContent+=' · '+_T`🆕 settling in · ${n} wk`}
+        const pick=cur||first;if(pick){if(!cur){ch=true;pick.setAttribute('selected','');if(trade)trade.mine=pick.value}}
+        else if(sel.querySelector('option')){ch=true;const go=t.content.querySelector('[data-mg="tradego"]');const why=_T('Every fighter of yours is still settling in; no offers yet.');
+          if(go){go.setAttribute('disabled','');go.classList.add('off');go.dataset.dis=why;go.title=why;if(!t.content.querySelector('.t112setw'))go.parentNode.insertAdjacentHTML('beforebegin',`<div class="traderes no t112setw">✉ ${esc(why)}</div>`)}}}
+      const box=t.content.querySelector('.tb104');if(box&&!box.querySelector('.t112n')){ch=true;box.insertAdjacentHTML('beforeend',`<span class="rc-sub t112n">${_T('Overpaid or fading fighters lower the offer; one weaker than most of theirs counts half.')}</span>`)}
       if(ch){const d=document.createElement('div');d.appendChild(t.content);h=d.innerHTML}}catch(e){console.error(e)}return h}}
+  /* 4a 23 tradego: a settling-in main fighter is refused (the select can't pick him; this guards any other caller) */
+  {const base=ludusClick;ludusClick=async function(action,id,btn,ctx){try{if(action==='tradego'&&t112Live()){const el=document.querySelector('#trMine');const g=el&&gById(el.value);
+      if(g&&t112Mine(g)&&t112Set(g)>0){const why=_T`${g.name} signed only lately — he is settling in for ${t112Set(g)} more weeks; no offers yet.`;ctx&&ctx.say&&ctx.say(why);return true}}}catch(e){console.error(e)}
+    return base.apply(this,arguments)}}
   (()=>{if(typeof document==='undefined'||document.getElementById('t112css'))return;const st=document.createElement('style');st.id='t112css';
     st.textContent=`.t112c{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin:6px 0 2px;font-size:13px}.t112c .tr106why{flex:1 1 220px;font-style:italic}
 .t112c .tr106wk{font:12px var(--mono,monospace);white-space:nowrap;border:1px solid #6b5236;border-radius:4px;padding:0 6px}.t112c .tr106wk.up{color:#ffb0a0;border-color:#8a3a2a}.t112c .tr106wk.dn{color:#a8e0a0;border-color:#3a6a3a}
