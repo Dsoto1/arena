@@ -355,3 +355,6 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   (CPU speed remembered, flavius_speed111; not Pause/online/lessons), 423-v111csafari (WebKit: zoomed board caches camera-relative, sharpen in
   a Worker, aim hit masks, recorder v111c; flavius_v111cbfoff = live moving frames), Amphitheatre pass 10 (side-corner stair to the tower door,
   cream towers, no sky past the frame: 419 amphExt), 388 Yard banner chip can't wrap the row (GitHub's ubuntu-26.04 fonts). No server change.
+- **v1.11d** Steady jugs (his 1a, no beta): 425-v111dpot — drawPot's speckles seeded from the jug's BOARD position (192 direct edit marked
+  v1.11d (425), kill switch flavius_v111dpotoff) → no shimmer when the camera pans; 423's zoomed jug cache 0 → 100% while panning (WebKit).
+  tv111c's holding-camera pixel bound loosened to max ≤16 on ≤0.002% (9 px inside one jug, cause not found). Test tv111pot. No server change.
