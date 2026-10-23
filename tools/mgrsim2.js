@@ -31,7 +31,7 @@ const opt=k=>{const i=argv.indexOf('--'+k);return i>=0?argv[i+1]:null};
 const PROFILES=(opt('profiles')||'careful,spendthrift,mimic').split(',');
 const SEEDS=(()=>{const s=opt('seeds')||'1-12';const out=[];for(const part of s.split(',')){const m=part.match(/^(\d+)-(\d+)$/);if(m)for(let i=+m[1];i<=+m[2];i++)out.push(i);else out.push(+part)}return out})();
 const SEASONS=+(opt('seasons')||5),PAR=Math.max(1,Math.min(2,+(opt('par')||1))),OUT=opt('out'),START=opt('start')||'new',TAG=opt('tag')||'main';
-const LS=JSON.parse(opt('ls')||'{}'),PATCH=opt('patch')||'';const BUY=argv.includes('--buy');const REALTIME=argv.includes('--realtime');
+const LS=JSON.parse(opt('ls')||'{}'),PATCH=opt('patch')||'',SIMK=JSON.parse(opt('simk')||'{}');const BUY=argv.includes('--buy');const REALTIME=argv.includes('--realtime');
 const DONE=new Set();if(argv.includes('--skip-done')&&OUT&&fs.existsSync(OUT)){for(const l of fs.readFileSync(OUT,'utf8').split('\n')){if(!l.trim())continue;try{const r=JSON.parse(l);if(r.tag===TAG&&!r.err)DONE.add(r.profile+':'+r.seed)}catch(e){}}}
 const jobs=[];for(const p of PROFILES)for(const s of SEEDS)if(!DONE.has(p+':'+s))jobs.push({p,s});
 const outF=OUT?fs.openSync(OUT,'a'):null;const say=s=>process.stderr.write(s+'\n');
@@ -53,7 +53,7 @@ const VTIME=function(epoch){if(window.__VT)return;const VT=window.__VT={now:0,se
   window.requestAnimationFrame=fn=>add(()=>fn(VT.now),16,[],false);window.cancelAnimationFrame=del;
   window.requestIdleCallback=fn=>add(()=>fn({didTimeout:false,timeRemaining:()=>8}),1,[],false);window.cancelIdleCallback=del;
   try{P.now=()=>(VT.now+=0.002)}catch(e){}Date.now=()=>epoch+Math.floor(VT.now)};
-const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
+const SIM=async({profile,seed,SEASONS,START,PATCH,BUY,SIMK})=>{window.__SIMK=Object.assign({},SIMK||{},window.__SIMK||{});
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));const has=k=>{try{return typeof (0,eval)(k)!=='undefined'}catch(e){return false}};
   if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await sleep(300);
   window.modal=async(t,b,btns)=>{const p=(btns||[]).find(x=>x.primary)||(btns||[])[0];return p?p.value:null};window.mToast=()=>{};window.say=()=>{};
@@ -110,6 +110,13 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
   const PR={careful:{size:(window.__CSIZE||[5,6,6,6,6]),wageX:[1,1.1],bonus:0,reserveWk:6,train:'std',trainRes:8,build:12,buildOrder:['stands','stables','yard','barracks','valet','armory'],visit:false,gift:true,bets:0,specials:false,ptrain:0,renewX:1.35,lend:true,blood:'value',camp:'str',wcIn:true,classicPick:'best'},
     spendthrift:{size:[6,7,8,8,8],wageX:[1.2,1.4],bonus:10,reserveWk:0,train:'hard',trainRes:0,build:0,buildOrder:['yard','stands','armory','barracks','valet','stables'],visit:true,gift:true,bets:0.1,specials:true,ptrain:1,renewX:99,lend:false,blood:'always',camp:'wpn',wcIn:true,classicPick:'best'},
     mimic:{cpu:true,camp:'mend',wcIn:true,classicPick:'best'}}[profile];
+  /* deaths112 lanista knobs (--simk JSON, or window.__SIMK set by --patch; all unset = the econ111 behaviour):
+     blood 'value' (default: OVR >= 58 above the reserve; the CPU rule for mimic) | 'always' (whenever the coin is there) | 'smart' (any fighter
+       but the roster's worst when > 4, if coin >= price + 2 weeks' wages) | 'never' . bypass: true = also court fame-gated recruits at 17's
+       fameBypassX x ask . entFit: how far below a tier's floor a fighter may be entered (default 4 = T.lo - 4, as 17 makeNight) . entMax:
+       entries a week (default 3) . entCpu: true = enter like a rival house (17 makeNight: main first, one a night, a second 50% of the time,
+       each with p 0.62 + risk/250) . entFat: skip fighters above this fatigue . entMorale: skip at or below this morale (default 15) */
+  const K=window.__SIMK||{};if(K.reserveWk!=null&&PR&&!PR.cpu)PR.reserveWk=K.reserveWk; /* reserveWk: weeks of wages the careful house keeps (6) */
   const sIdx=()=>Math.max(0,Math.min(4,w.season-(w.startSeason||1)));
   const reserve=()=>PR.cpu?30:wagesOf(m)*(PR.reserveWk||0)+(PR.reserveWk?20:0);
   /* ------------------------------------------------ recruiting (the v1.05 paths) ------------------------------------------------ */
@@ -140,8 +147,10 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
       return}
     const key=profile==='spendthrift'?(g=>val(g)):(g=>val(g)-askWage(g)*0.9+(g.pot||0)*0.05);
     /* only recruits who would consider this house (17 offerVerdict's fame rule) */
-    const cand=L.filter(g=>m.fame>=reqFame(g)).sort((a,b)=>key(b)-key(a)).slice(0,want-ros().length+2);
+    const gated=g=>m.fame<reqFame(g);const bx=g=>gated(g)?fameBypassX(g,m):1;
+    const cand=L.filter(g=>m.fame>=reqFame(g)||(K.bypass&&askWage(g)*fameBypassX(g,m)<=Math.max(6,(m.coin-reserve())/6))).sort((a,b)=>key(b)-key(a)).slice(0,want-ros().length+2);
     for(const g of cand){if(ros().length>=want)break;scout(g);pitchOne(g);
+      if(gated(g)){const xs=[1,1.1].map(x=>x*bx(g));const wage=Math.ceil(askWage(g)*xs[1]);if(m.coin<wage*(PR.reserveWk||1)+wagesOf(m)*(PR.reserveWk||0)&&ros().length>=4)continue;if(tryOffer(g,xs,0)&&window.__DX)window.__DX.byp++;continue}
       const wage=Math.ceil(askWage(g)*PR.wageX[PR.wageX.length-1]);if(m.coin-(PR.bonus||0)<wage*(PR.reserveWk||1)+wagesOf(m)*(PR.reserveWk||0)&&ros().length>=4)continue;
       if(tryOffer(g,PR.wageX,PR.bonus))continue;
       let why='';try{why=offerVerdict(g,wage,12,PR.bonus||0,false).why||''}catch(e){}
@@ -172,6 +181,11 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
       if(PR.cpu){if(!(m.coin>30&&Math.random()<.35+m.p.honor/300))continue;if(k==='surgeon'&&m.coin<=50)continue}
       else if(profile==='careful'){if(k==='medic'&&m.coin<reserve()+MEDICUS)continue;if(k==='surgeon'&&m.coin<SURGEON)continue}
       try{if(typeof care101Do==='function'){const r=care101Do(g,k,{auto:1});if(!r||!r.ok)D.careNo=(D.careNo||0)+1}}catch(e){err('care',e)}}};
+  /* deaths112 knob fameBuy: N = buy fame toward N with 17's own Spectacle buttons (sponsor2: 18 coin +2 fame once a week; feast2: 10 coin, 2 h, +1 fame,
+     only with 6+ hours left) while coin stays above fameRes x the reserve (default 0.5) — what a player does to open the fame gate */
+  const fameBuy=()=>{const T=K.fameBuy;if(!T||PR.cpu||m.fame>=T)return;const keep=reserve()*(K.fameRes??0.5);
+    if(m.sponWk!==w.week&&m.coin>=18+keep){act('sponsor2');m.coin-=18;unact();m.sponWk=w.week;m.fame=clamp(m.fame+2,0,100);for(const m2 of w.mgrs)if(!m2.isPlayer&&Math.random()<.3)bumpRival(m2,3);D.fameBuy=(D.fameBuy||0)+18}
+    if(m.fame<T&&m.feastWk!==w.week&&w.hours>=6&&m.coin>=10+keep){act('feast2');w.hours-=2;m.coin-=10;unact();m.feastWk=w.week;m.fame=clamp(m.fame+1,0,100);D.fameBuy=(D.fameBuy||0)+10}};
   /* morale: a shared meal for the low-spirited (17 'meal', 1 h, 3 coin) */
   const morale=()=>{for(const g of ros().filter(g=>g.morale<45).slice(0,PR.cpu?1:2)){if(PR.cpu&&Math.random()>=.5)continue;if(w.hours<1||m.coin<3+(PR.cpu?20:reserve()))continue;if(g.mealWk===w.week)continue;
     act('meal');w.hours--;m.coin-=3;unact();g.mealWk=w.week;g.morale=clamp(g.morale+6,0,100);g.loyB=clamp((g.loyB||0)+2,0,25)}};
@@ -209,10 +223,12 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
     if(w.loan&&w.loan.amt>0){const need=(w.loan.due||0)-(w.loan.paid||0);const free=m.coin-wagesOf(m)*2;const pay=Math.min(w.loan.amt,free>=w.loan.amt?w.loan.amt:Math.max(need,0),Math.max(0,free));
       if(pay>0){act('loanpay');m.coin-=pay;unact();w.loan.amt-=pay;w.loan.paid=(w.loan.paid||0)+pay;if(w.loan.amt<=0){w.loan=null;w.loanDone=(w.loanDone||0)+1}}}}catch(e){err('loan',e)}};
   /* entries: my best fit fighter into each league bout it fits (replacing an unsigned entrant), as the old sim */
-  const enter=()=>{const used=new Set();for(const bo of w.night.bouts){if(bo.done||bo.po104||bo.wc109||(typeof any100Sp==='function'&&any100Sp(bo)))continue;const T=TIERS[bo.tier];if(!T)continue;
+  const enter=()=>{const used=new Set();let nEnt=0;const eMax=K.entCpu?(Math.random()<.5?2:1):(K.entMax??3);const eFit=K.entFit??4;const eMor=K.entMorale??15;const TO=['main','feature','under'];
+    for(const bo of [...w.night.bouts].sort((a,b)=>K.entCpu?TO.indexOf(a.tier)-TO.indexOf(b.tier):0)){if(bo.done||bo.po104||bo.wc109||(typeof any100Sp==='function'&&any100Sp(bo)))continue;const T=TIERS[bo.tier];if(!T)continue;
       if(bo.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===m.id})){bo.ents.forEach(id=>used.add(id));continue}
-      const g=ros().filter(g=>!g.inj&&g.morale>15&&!used.has(g.id)&&!g.loanFrom&&!bo.ents.includes(g.id)&&!(typeof r101Block==='function'&&r101Block(g))&&effOvr(g)>=T.lo-4&&effOvr(g)<=T.hi+2&&!(typeof inBed76==='function'&&inBed76(g))).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(!g)continue;
-      const out=bo.ents.map(gById).filter(x=>x&&!x.contract).sort((x,y)=>effOvr(x)-effOvr(y))[0];if(!out)continue;bo.ents[bo.ents.indexOf(out.id)]=g.id;used.add(g.id)}
+      if(nEnt>=eMax)continue;if(K.entCpu&&Math.random()>=0.62+50/250)continue;
+      const g=ros().filter(g=>!g.inj&&g.morale>eMor&&!(K.entFat!=null&&typeof gFat==='function'&&gFat(g)>K.entFat)&&!used.has(g.id)&&!g.loanFrom&&!bo.ents.includes(g.id)&&!(typeof r101Block==='function'&&r101Block(g))&&effOvr(g)>=T.lo-eFit&&effOvr(g)<=T.hi+2&&!(typeof inBed76==='function'&&inBed76(g))).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(!g)continue;
+      const out=bo.ents.map(gById).filter(x=>x&&!x.contract).sort((x,y)=>effOvr(x)-effOvr(y))[0];if(!out)continue;bo.ents[bo.ents.indexOf(out.id)]=g.id;used.add(g.id);nEnt++}
     for(const bo of w.night.bouts)for(const id of bo.ents)used.add(id);return used};
   const specials=used=>{if(!PR.specials||typeof any100Book!=='function')return;w.night.bouts.forEach((bo,bi)=>{try{if(!any100Sp(bo)||bo.done||bo.ents.some(id=>any100Own(id,m)))return;
     const g=ros().filter(g=>!used.has(g.id)&&g.morale>15&&!any100Cur(w,g.id)&&!any100Why(w,bo,g)).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(!g||m.coin<bo.any100.fee*2+20)return;
@@ -231,7 +247,10 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
   /* the pending verdicts (17 catchUpWeeks' rule; blood by profile) */
   const settle=()=>{let guard=0;while((w.pend||[]).length&&guard++<30){const P=w.pend[0];const g=gById(P.gid);try{
       if(P.t==='thumb')settlePending(0,null,{d6:1+Math.floor(Math.random()*6),d12:1+Math.floor(Math.random()*12)});
-      else if(P.t==='blood'){const pay=PR.blood==='always'?m.coin>=P.price:PR.cpu?(g&&effOvr(g)>=58&&m.coin>=P.price+20):(g&&effOvr(g)>=58&&m.coin>=P.price+reserve());settlePending(0,pay?'pay':'let')}
+      else if(P.t==='blood'){let pay=PR.blood==='always'?m.coin>=P.price:PR.cpu?(g&&effOvr(g)>=58&&m.coin>=P.price+20):(g&&effOvr(g)>=58&&m.coin>=P.price+reserve());
+        if(K.blood==='always')pay=m.coin>=P.price;else if(K.blood==='never')pay=false;
+        else if(K.blood==='smart'){const R=ros().slice().sort((a,b)=>effOvr(a)-effOvr(b));const worst=R.length>4&&R[0]===g;pay=!!g&&!worst&&m.coin>=P.price+wagesOf(m)*2}
+        settlePending(0,pay?'pay':'let')}
       else settlePending(0,'stay')}catch(e){err('pend',e);w.pend.shift()}}};
   /* ------------------------------------------------ Winter Quarters ------------------------------------------------ */
   const winter=async()=>{const r={};try{if(typeof a109Ensure==='function')a109Ensure(w)}catch(e){err('a109Ensure',e)}
@@ -258,6 +277,42 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
   const rows=[];const s0=w.season;let cur=null;const known=new Map();
   const newSeason=()=>{cur={season:w.season,start:m.coin,curve:[],wages:0,min:m.coin,red:0,deaths:0,retired:0,freed:0,walked:0,signed0:D.signed,perk0:m.perkPts||0,ent:0,fw:0,wc:null,rank:null,pts:null,winter:null,rivWk:{}}};
   newSeason();for(const g of ros())known.set(g.id,g);
+  /* ------------------------------------------------ deaths112 logging (sim-side wrappers; the game's functions still do the work) ------------------------------------------------
+     row.dx per season: fr = every league Fate call [house P/C/F, tier (under/feature/main/spec/wc), OVR, CF, final verdict, alive on the sand 0/1, rookie 0/1, morale]
+       (P verdicts settle later: p-thumb/p-blood are rewritten to spared/bought/killed) · dl = the player's deaths {wk,tier,ev,cf,path,ovr,fame,ev#,price,coin,res,why}
+       · pend = the player's thumb/blood tallies · rivD = rival deaths by path · ent = entries {P, C (all rivals), cw (rival-weeks)} · join = new fighters
+       {P:[[ovr,stars,req,houseFame,how]], C:{stars:n}} · byp = fame-gate bypass signings · rr = weekly roster rating (top-5 mean) {me, riv (mean of rivals)} */
+  const DXmk=()=>({fr:[],dl:[],pend:{thumb:0,spared:0,down:0,blood:0,pay:0,let:0,payCoin:0},rivD:{},ent:{P:0,C:0,cw:0},join:{P:[],C:{}},byp:0,rr:{me:0,riv:0,n:0},rivFame:0});
+  const DX=()=>{if(!cur.dx)cur.dx=DXmk();window.__DX=cur.dx;return cur.dx};
+  const kindOf=mg=>mg?(mg.isPlayer?'P':(mg.sica?'S':'C')):'F';
+  const PCTX=new Map();let FCTX=null;const KILLED=new Set();
+  {const base=leagueFate;leagueFate=function(glad,row,mgr,bout,boutIdx,opt){const k=kindOf(mgr);const tier=bout?(bout.wc109?'wc':(TIERS[bout.tier]?bout.tier:'spec')):'spec';
+    const c={k,tier,ev:bout?bout.ev:'',cf:(row&&row.f)||0,ovr:effOvr(glad),fame:glad.fame||0,n:(glad.rec&&glad.rec.ev)||0,mor:Math.round(glad.morale||0),wk:w.week};
+    const prev=FCTX;FCTX=c;let r;try{r=base.apply(this,arguments)}finally{FCTX=prev}
+    try{const d=DX();const i=d.fr.push([k,tier,c.ovr,c.cf,(r&&r.vd)||'',row&&row.alive===false?0:1,c.n<=3?1:0,c.mor])-1;if(k==='P'&&r&&/^p-(thumb|blood)$/.test(r.vd))PCTX.set(glad.id,{...c,fi:i,d,path:r.vd==='p-thumb'?'thumb':'cond'})}catch(e){err('dxFate',e)}
+    return r};window.leagueFate=leagueFate}
+  {const base=settlePending;settlePending=function(pi,choice,extra){const P=(w.pend||[])[pi];const g=P?gById(P.gid):null;const coin0=m.coin;const C=P&&g?PCTX.get(g.id):null;
+    const r=base.apply(this,arguments);
+    try{if(P&&g&&(P.t==='thumb'||P.t==='blood')){const d=C?C.d:DX();
+      if(P.t==='thumb'){d.pend.thumb++;const nb=(w.pend||[]).find(x=>x.t==='blood'&&x.gid===g.id);if(nb){d.pend.down++;if(C)C.path='thumb'}else{d.pend.spared++;if(C){d.fr[C.fi][4]='spared';PCTX.delete(g.id)}}}
+      else{d.pend.blood++;if(g.alive!==false){d.pend.pay++;d.pend.payCoin+=coin0-m.coin;if(C){d.fr[C.fi][4]='bought';PCTX.delete(g.id)}}
+        else{d.pend.let++;if(C){d.fr[C.fi][4]='killed';const R=ros().slice().sort((a,b)=>effOvr(a)-effOvr(b));
+          d.dl.push({wk:C.wk,tier:C.tier,ev:C.ev,cf:C.cf,path:C.path==='thumb'?'thumb':'cond',ovr:C.ovr,fame:C.fame,n:C.n,price:P.price,coin:coin0,res:Math.round(reserve()),why:choice==='pay'?'pay-refused':(coin0<P.price?'no-coin':effOvr(g)<58?'ovr<58':'reserve')});PCTX.delete(g.id)}}}}}catch(e){err('dxPend',e)}
+    return r};window.settlePending=settlePending}
+  {const base=killFighter;killFighter=function(glad,mgr){const k=kindOf(mgr);try{KILLED.add(glad.id);if(k==='C'||k==='S'){const d=DX();const t=FCTX?FCTX.tier:'other';d.rivD['bout:'+t]=(d.rivD['bout:'+t]||0)+1}}catch(e){}return base.apply(this,arguments)};window.killFighter=killFighter}
+  /* the player's signings through 17 signGlad: rating, stars, the fame gate and the house's fame at the time */
+  {const base=signGlad;signGlad=function(glad,wage){try{const d=DX();d.join.P.push([effOvr(glad),starsOf(effOvr(glad)),reqFame(glad),Math.round(m.fame||0),wage>=askWage(glad)*1.3&&m.fame<reqFame(glad)?'bypass':'sign'])}catch(e){}return base.apply(this,arguments)};window.signGlad=signGlad}
+  /* the week's snapshot: every house's roster (deaths that skip killFighter: festering wounds, flight from the infirmary, the war) */
+  let SNAP=new Map();
+  const dxWeekStart=()=>{DX();SNAP=new Map();for(const x of w.mgrs){if(x.dead)continue;for(const g of rosterOf(x))SNAP.set(g.id,{g,k:kindOf(x)})}};
+  const dxAfterBouts=()=>{try{const d=DX();const R=rivals();d.ent.cw+=R.length;for(const b of w.night.bouts){if(!b.done||b.wc109)continue;for(const id of b.ents){const g=gById(id);const c=g&&(g.contract||(g.fallen105?{mgr:g.fallen105.mgr}:null));if(!c)continue;const x=mgrById(c.mgr);if(!x)continue;const k=kindOf(x);if(k==='P')d.ent.P++;else if(k==='C')d.ent.C++}}}catch(e){err('dxEnt',e)}};
+  const pathOf=g=>{const t=((g.hist||[])[0]||{}).txt||'';return /untreated/.test(t)?'untreated':/fled the infirmary/.test(t)?'fled':/war/.test(t)?'war':/died at|condemned|Fate|·/.test(t)?'bout':'other'};
+  const dxWeekEnd=()=>{try{const d=DX();
+      for(const [id,{g,k}] of SNAP){if(g.alive!==false||g.freed2||g.retired)continue;if(KILLED.has(id))continue;
+        const p=pathOf(g);if(k==='P')d.dl.push({wk:w.week,tier:'-',path:p,ovr:effOvr(g),fame:g.fame||0,n:(g.rec&&g.rec.ev)||0});else if(k==='C')d.rivD[p]=(d.rivD[p]||0)+1}
+      KILLED.clear();
+      for(const x of w.mgrs){if(x.dead)continue;const k=kindOf(x);if(k!=='C')continue;for(const g of rosterOf(x))if(!SNAP.has(g.id)){const st=starsOf(effOvr(g));d.join.C[st]=(d.join.C[st]||0)+1}}
+      const R=rivals();if(R.length){d.rr.me+=rosterRating(m);d.rr.riv+=R.reduce((a,x)=>a+rosterRating(x),0)/R.length;d.rr.n++;d.rivFame=Math.round(R.reduce((a,x)=>a+(x.fame||0),0)/R.length)}}catch(e){err('dxEnd',e)}};
   const roll=()=>{for(const [id,g] of known){if(g.contract&&g.contract.mgr===m.id)continue;if(g.loanFrom&&g.loanFrom.mid===m.id)continue;known.delete(id);
       if(g.alive===false){if(g.freed2)cur.freed++;else if(g.retired||g.c104ret)cur.retired++;else cur.deaths++}else cur.walked++}
     for(const g of ros())known.set(g.id,g)};
@@ -265,13 +320,13 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
   while(w.season<s0+SEASONS&&k++<SEASONS*24){if(w.dead||m.dead)break;rivInstall();plInstall();try{keyedRandom((seed*7919+w.season*131+w.week*17+k)>>>0);(0,eval)('RNG=null')}catch(e){}if(DBG){DBG.cur=w.season+':'+k;DBG.wrap()}NS.n=0;if(DBG){DBG.gs=DBG.gs||{};DBG.gs[w.season+':'+k+'0']=w.glads.map(g=>[g.id,g.ovr,g.morale,g.fat,g.inj&&g.inj.until,g.contract&&[g.contract.mgr,g.contract.wage,g.contract.weeks],g.alive,Math.round((statOvr(g)||0)*100)].join(',')).join(';')}try{LED109.act=null}catch(e){}
     const ph=typeof po104Ph==='function'?po104Ph(w):'';const off=ph==='off';const label=off?'W':ph==='r1'?'P1':ph==='sf'?'P2':ph==='fin'?'P3':String(typeof wkOf==='function'?wkOf(w.week):w.week);
     if(off&&cur.rank==null){try{const L=leagueSort(w.mgrs.filter(x=>!x.dead&&!x.sica),cur.season);cur.rank=L.indexOf(m)+1;cur.houses=L.length;cur.pts=(msp(m,cur.season)||{}).pts||0}catch(e){err('rank',e)}}
-    let used=new Set();
+    let used=new Set();dxWeekStart();
     try{if(off){cur.winter=await winter()}else{
-      loan();renew();recruit();buy();care();morale();sponsors();if(typeof arm94AutoShop==='function'){/* the game's own shopping rule (the rivals' too); the careful house shops only above its reserve (225's playerReserve knob) */const pr0=ARM94.playerReserve;if(profile==='careful')ARM94.playerReserve=Math.max(pr0,reserve());act('repair');try{arm94AutoShop(w,m,{player:true})}finally{unact();ARM94.playerReserve=pr0}}yard();build();
+      loan();renew();fameBuy();recruit();buy();care();morale();sponsors();if(typeof arm94AutoShop==='function'){/* the game's own shopping rule (the rivals' too); the careful house shops only above its reserve (225's playerReserve knob) */const pr0=ARM94.playerReserve;if(profile==='careful')ARM94.playerReserve=Math.max(pr0,reserve());act('repair');try{arm94AutoShop(w,m,{player:true})}finally{unact();ARM94.playerReserve=pr0}}yard();build();
       used=enter();specials(used);lend(used);travel();bets();
       if(w.special&&!w.special.done&&typeof specAutoRun==='function'){try{await specAutoRun()}catch(e){err('spec',e)}}
       const seq=typeof any100Seq==='function'?any100Seq(w.night):w.night.bouts.map((b,i)=>i);for(const i of seq)if(!w.night.bouts[i].done){try{await runBoutSim(i)}catch(e){err('bout',e)}}
-      if(w.night.bouts.some(b=>!b.done))D.locked++;D.off=(D.off||0)+w.night.bouts.filter(b=>b.done&&!b.res).length;D.bouts=(D.bouts||0)+w.night.bouts.length;settle()}}catch(e){err('week',e)}
+      if(w.night.bouts.some(b=>!b.done))D.locked++;D.off=(D.off||0)+w.night.bouts.filter(b=>b.done&&!b.res).length;D.bouts=(D.bouts||0)+w.night.bouts.length;settle();dxAfterBouts()}}catch(e){err('week',e)}
     cur.wages+=wagesOf(m);
     {const mine=new Set(ros().map(g=>g.id));const e=w.night.bouts.filter(b=>b.done).reduce((t,b)=>t+b.ents.filter(id=>mine.has(id)).length,0);cur.ent+=e;cur.fw+=mine.size;}
     /* let the bouts' async tails unwind before the week's end (13-sim does the same between sims) */
@@ -282,7 +337,7 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
     if(DBG){DBG.fp[fpk].post=JSON.stringify({c:w.mgrs.map(x=>x.coin),n:w.glads.length,a:w.glads.filter(g=>g.alive).length,fa:freeAgents().length,ros:w.mgrs.map(x=>rosterOf(x).length)})}
     if(ok===false){settle();try{for(let i=0;i<w.night.bouts.length;i++)if(!w.night.bouts[i].done)await runBoutSim(i)}catch(e){}settle();try{ok=await endWeek()}catch(e){err('endWeek2',e)}}
     if(ok===false){fails++;D.stall++;if(fails>=3){err('stall','endWeek refused 3x at '+label+' '+JSON.stringify({pend:(w.pend||[]).map(p=>p.t),left:w.night.bouts.filter(b=>!b.done).length,spec:!!(w.special&&!w.special.done),lock:typeof bt106Locked==='function'&&bt106Locked()}));break}continue}fails=0;
-    roll();cur.curve.push([label,m.coin,ros().length]);cur.min=Math.min(cur.min,m.coin);if(m.coin<0)cur.red++;
+    roll();dxWeekEnd();cur.curve.push([label,m.coin,ros().length]);cur.min=Math.min(cur.min,m.coin);if(m.coin<0)cur.red++;
     for(const x of rivals()){const v=cur.rivWk[x.id];cur.rivWk[x.id]=v==null?x.coin:Math.min(v,x.coin)}
     {const sc=w.mgrs.find(x=>x.sica);if(sc)D.sicaMin=D.sicaMin==null?sc.coin:Math.min(D.sicaMin,sc.coin)}
     if(w.season!==cur.season||w.dead){const S=cur.season;
@@ -302,7 +357,7 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
   const worker=async wi=>{let b=await chromium.launch();try{while(jobs.length){const J=jobs.shift();const ts=Date.now();
       if(!b.isConnected()){say(`[w${wi}] browser gone, relaunching`);b=await chromium.launch()}const ctx=await b.newContext();const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const perr=[];pg.on('pageerror',e=>perr.push(e.message));
       let res;try{if(!REALTIME)await pg.addInitScript(VTIME,1790000000000+J.s*1e9);await T.boot(pg,{seed:J.s,ls:{flavius_lfpool:'0',...LS}});await pg.goto('file://'+PAGE,{timeout:120000});await T.ready(pg,120000);await pg.waitForFunction(()=>typeof CROWD_CACHE!=='undefined'&&CROWD_CACHE.length>=140,null,{timeout:15000}).catch(()=>{});
-        res=await pg.evaluate(SIM,{profile:J.p,seed:J.s,SEASONS,START,PATCH,BUY})}catch(e){res={err:String(e.message||e).slice(0,300)}}
+        res=await pg.evaluate(SIM,{profile:J.p,seed:J.s,SEASONS,START,PATCH,BUY,SIMK})}catch(e){res={err:String(e.message||e).slice(0,300)}}
       try{await ctx.close()}catch(e){say(`ctx.close: ${String(e.message||e).slice(0,120)}`)}const ms=Date.now()-ts;times.push(ms);done++;
       if(res.err||!res.rows){say(`ERR ${J.p} seed ${J.s}: ${res.err}`);if(outF)fs.writeSync(outF,JSON.stringify({tag:TAG,profile:J.p,seed:J.s,err:res.err})+'\n');continue}
       for(const r of res.rows){const row={tag:TAG,profile:J.p,seed:J.s,...r,diag:{...res.diag,perr:perr.slice(0,3)}};if(outF)fs.writeSync(outF,JSON.stringify(row)+'\n');else console.log(JSON.stringify(row))}
