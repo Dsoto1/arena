@@ -877,3 +877,8 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   agreement + flag — REPLACES "settle the moment every human has reported") R3a (opening fields checked against the room's kits; full rebuild
   later) R4a (unjudgeable = agreement + audit flag) R5a (flavius.sh asks AWS for a higher concurrency limit; verifier capped at 3) R6a (flag
   off-menu window answers; pages refuse later). Order: E → T → A → R.
+- 2026-10-23 v1.12 (his 1a 2a 3a 4a after the economy re-measure, tools/plans/econ111/REPORT.md): (1a) P1 + P6 together — a PLAYER patron
+  stipend in season (+10 + 0.3×fame a week, 87 endWeek) and rivals topped up toward 40 coin (at most one extra stipend a season, 23
+  aiLanistaWeek); (2a) next: a separate study of deaths / blood money / the fame gate on recruits (why a careful house sits near the bottom);
+  (3a) Trades 2: a house values a fighter it RECEIVES at ~50% when he would sit below its own roster's median (stops "weak tiro + coin for a
+  star"); coin stays 1:1 (REPLACES the open coin-rate question); (4a) a settling-in fighter (<4 weeks) can't be offered as the MAIN fighter either.
