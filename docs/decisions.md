@@ -865,3 +865,15 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-23 his 1b: the CPU game speed is remembered between events (last chosen speed); REPLACES 'every event begins on Slow'.
 - 2026-10-23 his 'yes' (1a): the jugs' speckles are seeded by the jug's board position, not its screen position (no shimmer when the camera pans; cacheable on Safari); one-time small change in each jug's pattern. Next release (v1.11d).
 - 2026-10-23 his 1a: ship v1.11d (steady jugs) when the full run is green, no beta.
+- 2026-10-23 v1.12+ scope (his "your recs", tools/plans/v112/NOTES.md): ECONOMY E1a (careful house stays in the black, small reserve after
+  season 1, mid-table by season 3) E2a (no rival below 0, ≤1 in 12 under 30 a season) E3a (wages 50–65% of spending) E4a (~1 perk point a month,
+  winter ≈20%) E5a (report, he approves each tuning). TRADES 2: T1b (polish only) T2a (your offers + bundles + counters use 394's wage-aware value —
+  REPLACES 23's tradeVal (v0.47) and 350's c104BunVal base (v1.04)) T3a (a bundled fighter valued below zero counts against the offer — REPLACES
+  "counts as zero") T4a (no rival bundle offers) T5a (counter letter gets the why line + weekly wage change) T6a (limits unchanged). FIGURES:
+  A1a (backlog "animated tokens" = BUILT v1.0) A2a ("Figures from turn one": device bakes off the main thread + before the match; no re-bake)
+  A3a (wait ≤3 s desktop / 6 s phone behind the briefing, then the still) A4a (Safari without the worker path: bake only before the match)
+  A5a (each device bakes its own) A6a (poser B adds miss/dodge, missio kneel, victory). RANKED (after the log month ~2026-11-14): R1a (the
+  server's replay is the result; differing reports get a strike) R2a (every Ranked match waits for the check, toast, 60 s fallback to
+  agreement + flag — REPLACES "settle the moment every human has reported") R3a (opening fields checked against the room's kits; full rebuild
+  later) R4a (unjudgeable = agreement + audit flag) R5a (flavius.sh asks AWS for a higher concurrency limit; verifier capped at 3) R6a (flag
+  off-menu window answers; pages refuse later). Order: E → T → A → R.
