@@ -20,6 +20,9 @@
    foot, three steps down to street level, fading into a dark warm haze (no night sky below the arena); the stair's light = two small
    pools on its top steps (make.js --variant ground, the default). Framing: today's in every window (the pass 7 tall-window canvas
    growth and its kill switch flavius_amph111frameoff are gone).
+   PASS 10 (v1.11c, his screenshot of the right corner + 1a 2a 3a): the side corners — the towers in the façade's cream (windows,
+   cornices, one banner), 192's corner flight carried on down to the ground and a doorway (its back part under a portal), and past the
+   frame's left/right edge the frame goes on (amphExt: its outer column easing into a haze) so no sky shows beside the towers.
    ===================================================================== */
 const AMPH111={on:false,img:{},meta:null,comp:null,key:'',ms:0};
 AMPH111.on=true;try{AMPH111.on=localStorage.getItem('flavius_amph111off')!=='1'}catch(e){}
@@ -52,7 +55,19 @@ if(AMPH111.on&&typeof ar91Under==='function'){
     g.globalCompositeOperation='destination-in';g.drawImage(a,0,0);
     AMPH111.comp=c;AMPH111.key=key;AMPH111.ms=performance.now()-t0;return c}
   /* place a bake-frame image so its (xl, yt) point lands on (OX, OY) at the current TW (zoom and size follow for free) */
-  function amphPlace(g,im){const M=AMPH111.meta,s=TW/M.tw0;g.drawImage(im,OX-M.xl*TW,OY-M.yt*TW,M.w*s,M.h*s)}
+  function amphPlace(g,im){const M=AMPH111.meta,s=TW/M.tw0,x0=OX-M.xl*TW,y0=OY-M.yt*TW,w=M.w*s,h=M.h*s;g.drawImage(im,x0,y0,w,h);
+    /* v1.11c (pass 10, his 3a): past the frame's left/right edge, the frame goes on (very wide windows; zoomed: amphOutside) */
+    try{const T=g.getTransform(),a=T.a||1,ux0=(0-T.e)/a,ux1=(g.canvas.width-T.e)/a;if(ux0<x0)amphExt(g,0,x0,y0,h,TW);if(ux1>x0+w)amphExt(g,1,x0+w,y0,h,TW)}catch(e){}}
+  /* v1.11c amphExt: beyond the frame's side edge (xe), the bake's outer column — enc's edge band made it one colour per row, so it
+     stretches with no streaks — easing over 4 TW into that column's own mean colour (a calm haze, no sky beside the towers), then that
+     on to the layer's edge. Cached per composite (2 strips 48 px wide); tw = one tile in the target's pixels. */
+  function amphExtC(){if(AMPH111.ec&&AMPH111.ek===AMPH111.key)return AMPH111.ec;const c=amphComp(),H=c.height,out=[];
+    for(const side of [0,1]){const E=document.createElement('canvas');E.width=48;E.height=H;const g=E.getContext('2d'),sx=side?c.width-1:0;g.drawImage(c,sx,0,1,H,0,0,48,H);
+      let col='42,33,25';try{const t=document.createElement('canvas');t.width=t.height=1;const tg=t.getContext('2d');tg.drawImage(c,sx,Math.round(H*0.25),1,Math.round(H*0.75),0,0,1,1);const d=tg.getImageData(0,0,1,1).data;if(d[3]>8)col=d[0]+','+d[1]+','+d[2]}catch(e){}
+      const gr=g.createLinearGradient(side?0:48,0,side?48:0,0);gr.addColorStop(0,`rgba(${col},0)`);gr.addColorStop(1,`rgba(${col},.8)`);g.globalCompositeOperation='source-atop';g.fillStyle=gr;g.fillRect(0,0,48,H);out.push(E)}
+    AMPH111.ec=out;AMPH111.ek=AMPH111.key;return out}
+  function amphExt(g,side,xe,y0,h,tw){const E=amphExtC()[side],w=4*tw,F=4000;
+    if(side){g.drawImage(E,xe-0.5,y0,w+0.5,h);g.drawImage(E,47,0,1,E.height,xe+w-0.5,y0,F,h)}else{g.drawImage(E,xe-w,y0,w+0.5,h);g.drawImage(E,0,0,1,E.height,xe-w-F,y0,F+0.5,h)}}
   /* v1.11a (419): AMPH111.under(g) = what the wrapper adds under 192's painter (tv100r: the cached layer = this + the bare 192 functions) */
   AMPH111.under=function(g){try{if(!skip()&&ready())amphPlace(g,amphComp())}catch(e){console.error(e)}};
   {const base=ar91Under;ar91Under=function(g){AMPH111.under(g);return base.apply(this,arguments)}}
@@ -72,18 +87,21 @@ if(AMPH111.on&&typeof ar91Under==='function'){
     if(typeof Z100!=='undefined'&&Z100.on&&typeof z100Scaled==='function'&&z100Scaled(L)){const s=TW/L.tw;
       return [dpr*OX-s*((L.px||0)+dpr*L.ox),dpr*OY-s*((L.py||0)+dpr*L.oy),L.cv.width*s,L.cv.height*s]}
     return [Math.round(-(L.px||0)+(L.ox==null?0:(OX-L.ox)*dpr)),Math.round(-(L.py||0)+(L.oy==null?0:(OY-L.oy)*dpr)),L.cv.width,L.cv.height]}
-  function amphOutside(L,im,bx,by,bw,bh){const W=cv.width,H=cv.height,[lx,ly,lw,lh]=amphRect(L);const x0=Math.max(0,lx),y0=Math.max(0,ly),x1=Math.min(W,lx+lw),y1=Math.min(H,ly+lh);
+  function amphOutside(L,im,bx,by,bw,bh,ext){const W=cv.width,H=cv.height,[lx,ly,lw,lh]=amphRect(L);const x0=Math.max(0,lx),y0=Math.max(0,ly),x1=Math.min(W,lx+lw),y1=Math.min(H,ly+lh);
     if(x0<=0&&y0<=0&&x1>=W&&y1>=H)return;
     const M=AMPH111.meta,dpr=window.devicePixelRatio||1,u=dpr*TW/M.tw0,X0=dpr*(OX-M.xl*TW)+bx*u,Y0=dpr*(OY-M.yt*TW)+by*u,kx=im.width/bw,ky=im.height/bh;
     const R=x1<=x0||y1<=y0?[[0,0,W,H]]:[[0,0,W,y0],[0,y1,W,H-y1],[0,y0,x0,y1-y0],[x1,y0,W-x1,y1-y0]];
     ctx.save();ctx.setTransform(1,0,0,1,0,0);
-    for(let [x,y,w,h] of R){const a=Math.max(x,X0),b=Math.max(y,Y0),c=Math.min(x+w,X0+bw*u),d=Math.min(y+h,Y0+bh*u);if(c-a<1||d-b<1)continue;
-      ctx.drawImage(im,(a-X0)/u*kx,(b-Y0)/u*ky,(c-a)/u*kx,(d-b)/u*ky,a,b,c-a,d-b)}
+    for(let [x,y,w,h] of R){const a=Math.max(x,X0),b=Math.max(y,Y0),c=Math.min(x+w,X0+bw*u),d=Math.min(y+h,Y0+bh*u);
+      if(c-a>=1&&d-b>=1)ctx.drawImage(im,(a-X0)/u*kx,(b-Y0)/u*ky,(c-a)/u*kx,(d-b)/u*ky,a,b,c-a,d-b);
+      /* v1.11c (pass 10, 3a): the whole composite only — beside it, its outer column stretched (see amphPlace) */
+      if(ext){const xr=X0+bw*u,yb=Math.max(y,Y0),ye=Math.min(y+h,Y0+bh*u);if(ye-yb>=1)for(const side of [0,1]){const p0=side?Math.max(x,xr):x,p1=side?x+w:Math.min(x+w,X0);if(p1-p0<1)continue;
+        ctx.save();ctx.beginPath();ctx.rect(p0,yb,p1-p0,ye-yb);ctx.clip();amphExt(ctx,side,side?xr:X0,Y0,bh*u,M.tw0*u);ctx.restore()}}}
     ctx.restore()}
   {const base=ar91Blit;ar91Blit=function(L,op){
     try{if(!op&&L&&L.cv&&typeof AR91!=='undefined'&&!AR91.noStatic&&(L===AR91.L.under||L===AR91.L.deco)&&!skip()&&ready()){const nm=L===AR91.L.under?'under':'deco';
       if(!(typeof LAYERS93!=='undefined'&&LAYERS93.on&&LAYERS93.dbg.has(nm))){const M=AMPH111.meta;
-        if(nm==='under')amphOutside(L,amphComp(),0,0,M.w,M.h);else{const [x,y,w,h]=M.front;amphOutside(L,amphFront(),x,y,w,h)}}}}catch(e){console.error(e)}
+        if(nm==='under')amphOutside(L,amphComp(),0,0,M.w,M.h,1);else{const [x,y,w,h]=M.front;amphOutside(L,amphFront(),x,y,w,h)}}}}catch(e){console.error(e)}
     return base.apply(this,arguments)}}
   /* the glow is mostly black: find the lit cells once (a 1/8 thumbnail, 16×10 grid) and add only those each night frame */
   function amphCells(){if(AMPH111.cells)return AMPH111.cells;const M=AMPH111.meta,im=AMPH111.img.glow;let out=null;
