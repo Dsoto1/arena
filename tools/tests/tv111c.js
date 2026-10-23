@@ -54,7 +54,7 @@ try{
     /* ---- 2 ---- */
     for(const mv of [false,true,false,true]){await pg.waitForTimeout(600);const s=await pg.evaluate(SHOT,mv);
       if(mv)ok(s.movHit>0&&s.mean<0.2&&s.over8pct<0.05&&s.max<=32,'camera moving: board-frame slide ≈ live '+JSON.stringify(s));
-      else ok(s.stillHit>0&&s.max<=8&&s.mean<0.2,'camera holding: same pixels as live '+JSON.stringify(s))}
+      else ok(s.stillHit>0&&s.max<=16&&s.over8pct<0.002&&s.mean<0.2 /* v1.11d: a handful of speckle pixels inside a jug (<=0.001% of the frame, max 15) differ in sub-pixel phase now the speckles are pinned to the jug */,'camera holding: same pixels as live '+JSON.stringify(s))}
     /* ---- 3 · worker pixels = the sync unsharp mask ---- */
     const w=await pg.evaluate(async()=>{let src=null;for(const c of AN100CC.values()){if(c.width>40&&c.height>60){src=c;break}}if(!src)return {err:'no cell'};
       const mk=()=>{const c=document.createElement('canvas');c.width=Math.round(src.width*1.3);c.height=Math.round(src.height*1.3);const g=c.getContext('2d',{willReadFrequently:true});g.imageSmoothingQuality='high';g.drawImage(src,0,0,c.width,c.height);return c};
