@@ -821,23 +821,23 @@
  },
  {
   "k": "Unknown request:",
-  "w": "server/src/routes.js:1805"
+  "w": "server/src/routes.js:1876"
  },
  {
   "k": "Too many requests — wait a moment.",
-  "w": "server/src/routes.js:1806"
+  "w": "server/src/routes.js:1877"
  },
  {
   "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1808"
+  "w": "server/src/routes.js:1879"
  },
  {
   "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1809"
+  "w": "server/src/routes.js:1880"
  },
  {
   "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1812"
+  "w": "server/src/routes.js:1883"
  },
  {
   "k": "The arena hit a snag — try again (ref {0}).",

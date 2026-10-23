@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.13',ic:'📜',t:_T('The scribes check'),hi:[_T('Online Ranked: the server replays every match and its result decides the outcome')]},
   {v:'1.12',ic:'⚖️',t:_T('Fair trades, fuller purses'),hi:[_T('Manager: your patron now pays a weekly stipend, and struggling rival houses get a backer'),_T('Trades: one fair value rule, overpaid fighters lower a bundle, one trade-in every 4 weeks')]},
   {v:'1.11d',ic:'🏺',t:_T('Steady jugs'),hi:[_T('Zoomed in, the jugs\' clay speckles stay put when the view moves (and draw faster on Safari)')]},
   {v:'1.11c',ic:'⚙️',t:_T('Settings that stay'),hi:[_T('Your settings and game speed are kept between visits and events'),_T('Safari: smoother when zoomed in'),_T('The Amphitheatre\'s side towers get real stairs and no gaps at the edges')]},
