@@ -365,3 +365,8 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   flavius_v112tradeoff) · 427-v112econ (player patron stipend 10 + 0.3×fame a week in season, ledger 'patron'; rivals below 40 topped up by one
   stipend at most every 4 weeks; flavius_v112econoff). Sim (careful ×12): bankruptcies 7/12 → 0, in the black 3/12 → 11/12; rivals <0 23% → 8%
   of seasons; still short: ≤1 rival <30 (58%) and mid-table (rank ≈10.5) → deaths study next. Tests tv112t tv112e. No server change.
+- **v1.13** The scribes check (his checklist tick, no beta; SERVER release): Ranked results are decided by the server's replay (verify
+  enforce: routes.js gated settle g112/decide112/verdict112 + sweeps, index.js H.internal, verify.js openCheck112 opening field check +
+  CHOICE112_JS choice audit, template RankedCheck default enforce + VerifyReserve 3), client 429-v112check ("⏳ The scribes check the
+  result…", flavius_check112off), flavius.sh FSH_VER 10 (lambda_quota / `quota`: asks AWS once for 1000 concurrent Lambdas). Rollback:
+  `VERIFY_MODE=log` on a server deploy (docs/backend.md). Tests verify.test.js, tonl112. Full run green on attempt 2 (tv100p/tv104h slow runner).

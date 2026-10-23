@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.12** (v1.12 shipped 2026-10-23). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.13** (v1.13 shipped 2026-10-23). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,12 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.11c** Settings that stay (no beta, "ship when green"): 422-v111set (checked save + cookie backup flavius_set111 + toast when
-  storage is full, other-tab adoption, panel shows what Auto really applies, WebKit re-bake once per match = his Lighting off/on), 424-v111speed
-  (CPU speed remembered, flavius_speed111; not Pause/online/lessons), 423-v111csafari (WebKit: zoomed board caches camera-relative, sharpen in
-  a Worker, aim hit masks, recorder v111c; flavius_v111cbfoff = live moving frames), Amphitheatre pass 10 (side-corner stair to the tower door,
-  cream towers, no sky past the frame: 419 amphExt), 388 Yard banner chip can't wrap the row (GitHub's ubuntu-26.04 fonts). No server change.
-
 - **v1.11d** Steady jugs (his 1a, no beta): 425-v111dpot — drawPot's speckles seeded from the jug's BOARD position (192 direct edit marked
   v1.11d (425), kill switch flavius_v111dpotoff) → no shimmer when the camera pans; 423's zoomed jug cache 0 → 100% while panning (WebKit).
   tv111c's holding-camera pixel bound loosened to max ≤16 on ≤0.002% (9 px inside one jug, cause not found). Test tv111pot. No server change.
@@ -217,3 +211,9 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   flavius_v112tradeoff) · 427-v112econ (player patron stipend 10 + 0.3×fame a week in season, ledger 'patron'; rivals below 40 topped up by one
   stipend at most every 4 weeks; flavius_v112econoff). Sim (careful ×12): bankruptcies 7/12 → 0, in the black 3/12 → 11/12; rivals <0 23% → 8%
   of seasons; still short: ≤1 rival <30 (58%) and mid-table (rank ≈10.5) → deaths study next. Tests tv112t tv112e. No server change.
+
+- **v1.13** The scribes check (his checklist tick, no beta; SERVER release): Ranked results are decided by the server's replay (verify
+  enforce: routes.js gated settle g112/decide112/verdict112 + sweeps, index.js H.internal, verify.js openCheck112 opening field check +
+  CHOICE112_JS choice audit, template RankedCheck default enforce + VerifyReserve 3), client 429-v112check ("⏳ The scribes check the
+  result…", flavius_check112off), flavius.sh FSH_VER 10 (lambda_quota / `quota`: asks AWS once for 1000 concurrent Lambdas). Rollback:
+  `VERIFY_MODE=log` on a server deploy (docs/backend.md). Tests verify.test.js, tonl112. Full run green on attempt 2 (tv100p/tv104h slow runner).
