@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.11d',ic:'🏺',t:_T('Steady jugs'),hi:[_T('Zoomed in, the jugs\' clay speckles stay put when the view moves (and draw faster on Safari)')]},
   {v:'1.11c',ic:'⚙️',t:_T('Settings that stay'),hi:[_T('Your settings and game speed are kept between visits and events'),_T('Safari: smoother when zoomed in'),_T('The Amphitheatre\'s side towers get real stairs and no gaps at the edges')]},
   {v:'1.11b',ic:'👥',t:_T('A fuller house'),hi:[_T('The Amphitheatre\'s upper tiers are filled with the same spectators as the stands, all facing the sand')]},
   {v:'1.11a',ic:'🏛',t:_T('The Amphitheatre'),hi:[_T('A full amphitheatre now surrounds the arena: arcades, upper tiers with a crowd, Flavius\'s box and a grand stair'),_T('Each arena wears it in its own stone and colours, by day and by night')]},
