@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.11d** (v1.11d shipped 2026-10-23). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.12** (v1.12 shipped 2026-10-23). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,11 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.11b** A fuller house (his 1a 2a, no beta): the Amphitheatre's upper tiers (pass 9d, tools/plans/v111/AMPH.md) seat 319 of OUR
-  spectators — the live crowd's sprite sheets (crowd100_s0..s5, CROWD100_META) as camera-facing cut-outs baked in amph111_fixed, tinted by 313's
-  rule, top-left rows cell 0 / top-right cell 3 (the bake reads the raw meta; 321 G4 reverses it in-game, so the inner stands were already
-  right and are unchanged). make.js --crowd sprite|prim. Assets ≈ 498 KB, no per-frame cost. No server change.
-
 - **v1.11c** Settings that stay (no beta, "ship when green"): 422-v111set (checked save + cookie backup flavius_set111 + toast when
   storage is full, other-tab adoption, panel shows what Auto really applies, WebKit re-bake once per match = his Lighting off/on), 424-v111speed
   (CPU speed remembered, flavius_speed111; not Pause/online/lessons), 423-v111csafari (WebKit: zoomed board caches camera-relative, sharpen in
@@ -214,3 +209,11 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - **v1.11d** Steady jugs (his 1a, no beta): 425-v111dpot — drawPot's speckles seeded from the jug's BOARD position (192 direct edit marked
   v1.11d (425), kill switch flavius_v111dpotoff) → no shimmer when the camera pans; 423's zoomed jug cache 0 → 100% while panning (WebKit).
   tv111c's holding-camera pixel bound loosened to max ≤16 on ≤0.002% (9 px inside one jug, cause not found). Test tv111pot. No server change.
+
+- **v1.12** Fair trades, fuller purses (tools/plans/v112/NOTES.md, his E/T picks + follow-ups, econ re-measure tools/plans/econ111/REPORT.md,
+  docs/economy.md, tools/mgrsim2.js; no beta): 426-v112trade (Trades 2: one value rule = 394's tr106Val for your offers/bundles/counters,
+  coin 1:1; a negative extra counts against a bundle; a received fighter below the house's median counts 50%; counter letter with why +
+  wage change; settling-in fighters can't be offered at all; deterministic counter id; ONE trade-in every 4 weeks w.t112in; kill switch
+  flavius_v112tradeoff) · 427-v112econ (player patron stipend 10 + 0.3×fame a week in season, ledger 'patron'; rivals below 40 topped up by one
+  stipend at most every 4 weeks; flavius_v112econoff). Sim (careful ×12): bankruptcies 7/12 → 0, in the black 3/12 → 11/12; rivals <0 23% → 8%
+  of seasons; still short: ≤1 rival <30 (58%) and mid-table (rank ≈10.5) → deaths study next. Tests tv112t tv112e. No server change.

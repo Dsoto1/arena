@@ -358,3 +358,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
 - **v1.11d** Steady jugs (his 1a, no beta): 425-v111dpot — drawPot's speckles seeded from the jug's BOARD position (192 direct edit marked
   v1.11d (425), kill switch flavius_v111dpotoff) → no shimmer when the camera pans; 423's zoomed jug cache 0 → 100% while panning (WebKit).
   tv111c's holding-camera pixel bound loosened to max ≤16 on ≤0.002% (9 px inside one jug, cause not found). Test tv111pot. No server change.
+- **v1.12** Fair trades, fuller purses (tools/plans/v112/NOTES.md, his E/T picks + follow-ups, econ re-measure tools/plans/econ111/REPORT.md,
+  docs/economy.md, tools/mgrsim2.js; no beta): 426-v112trade (Trades 2: one value rule = 394's tr106Val for your offers/bundles/counters,
+  coin 1:1; a negative extra counts against a bundle; a received fighter below the house's median counts 50%; counter letter with why +
+  wage change; settling-in fighters can't be offered at all; deterministic counter id; ONE trade-in every 4 weeks w.t112in; kill switch
+  flavius_v112tradeoff) · 427-v112econ (player patron stipend 10 + 0.3×fame a week in season, ledger 'patron'; rivals below 40 topped up by one
+  stipend at most every 4 weeks; flavius_v112econoff). Sim (careful ×12): bankruptcies 7/12 → 0, in the black 3/12 → 11/12; rivals <0 23% → 8%
+  of seasons; still short: ≤1 rival <30 (58%) and mid-table (rank ≈10.5) → deaths study next. Tests tv112t tv112e. No server change.
