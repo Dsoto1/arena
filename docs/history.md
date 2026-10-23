@@ -350,3 +350,8 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   spectators — the live crowd's sprite sheets (crowd100_s0..s5, CROWD100_META) as camera-facing cut-outs baked in amph111_fixed, tinted by 313's
   rule, top-left rows cell 0 / top-right cell 3 (the bake reads the raw meta; 321 G4 reverses it in-game, so the inner stands were already
   right and are unchanged). make.js --crowd sprite|prim. Assets ≈ 498 KB, no per-frame cost. No server change.
+- **v1.11c** Settings that stay (no beta, "ship when green"): 422-v111set (checked save + cookie backup flavius_set111 + toast when
+  storage is full, other-tab adoption, panel shows what Auto really applies, WebKit re-bake once per match = his Lighting off/on), 424-v111speed
+  (CPU speed remembered, flavius_speed111; not Pause/online/lessons), 423-v111csafari (WebKit: zoomed board caches camera-relative, sharpen in
+  a Worker, aim hit masks, recorder v111c; flavius_v111cbfoff = live moving frames), Amphitheatre pass 10 (side-corner stair to the tower door,
+  cream towers, no sky past the frame: 419 amphExt), 388 Yard banner chip can't wrap the row (GitHub's ubuntu-26.04 fonts). No server change.
