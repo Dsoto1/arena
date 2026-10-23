@@ -215,7 +215,7 @@ if(V104C.on){
     const theirs=rosterOf(m);if(theirs.length<=2&&effOvr(gt)>=effOvr([...theirs].sort((a,b)=>effOvr(b)-effOvr(a))[0]))return no(_T`“${esc(gt.name)} is the house. No.” — ${esc(m.name)}`);
     w.tb104Wk=w.week;m.envoyWk=w.week;const give=c104BunVal(mine,coin),need=c104Need(m,gt);
     if(give<need){const gap=Math.ceil((need-give)*6);mlog(m,_T`turned down a bundle offer from ${pm.ludus}`);
-      if(give>=need*CAP104.close){w.tb104={id:'t'+Date.now().toString(36),mid:m.id,mine:mine.map(g=>g.id),theirs:gt.id,coin,ask:gap,wk:w.week};return no(_T`“Close. Let me think on it.” — ${esc(m.name)}. Expect their letter next week.`)}
+      if(give>=need*CAP104.close){w.tb104={id:/* v1.12 (426): week + house, not Date.now() */(typeof t112Id==='function'?t112Id(w,m):'t'+Date.now().toString(36)),mid:m.id,mine:mine.map(g=>g.id),theirs:gt.id,coin,ask:gap,wk:w.week};return no(_T`“Close. Let me think on it.” — ${esc(m.name)}. Expect their letter next week.`)}
       return no(_T`“Not enough.” — ${esc(m.name)}. Quantity is not quality.`)}
     c104Swap(w,pm,m,mine,gt,coin);MGR.trade=null;c104Toast(_T`🔁 Done — ${esc(gt.name)} joins ${esc(pm.ludus)}.`);c104Redraw()}catch(err){console.error(err)}},true);
   /* the counter-offer letter, the week after */
