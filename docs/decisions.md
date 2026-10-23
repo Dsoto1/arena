@@ -889,3 +889,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   REPLACES the log-only month (v1.01) and the "after ~2026-11-14" timing. Picks R1a–R6a stand (replay = the result + strikes; every Ranked
   match waits for the check with a 60 s agreement fallback; opening fields checked vs kits; unjudgeable = agreement + flag; flavius.sh asks
   AWS for a concurrency raise + verifier capped at 3; off-menu window answers flagged).
+- 2026-10-23 his checklist tick (a01): ship v1.13 (Ranked check, server) when the full run is green, no beta.
