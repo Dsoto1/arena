@@ -1,0 +1,66 @@
+[
+ {
+  "k": "Fair trades, fuller purses",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: your patron now pays a weekly stipend, and struggling rival houses get a backer",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Trades: one fair value rule, overpaid fighters lower a bundle, one trade-in every 4 weeks",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "One trade-in every 4 weeks — next in {0} wk",
+  "w": "426-v112trade.js:42"
+ },
+ {
+  "k": "{0} costs {1} more than he is worth to them.",
+  "w": "426-v112trade.js:59"
+ },
+ {
+  "k": "{0} must cut wages.",
+  "w": "426-v112trade.js:61"
+ },
+ {
+  "k": "{0} needs a fighter now.",
+  "w": "426-v112trade.js:62"
+ },
+ {
+  "k": "{0} sells high.",
+  "w": "426-v112trade.js:62"
+ },
+ {
+  "k": "{0} is rebuilding.",
+  "w": "426-v112trade.js:62"
+ },
+ {
+  "k": "{0} wants a little more for {1}.",
+  "w": "426-v112trade.js:63"
+ },
+ {
+  "k": "Every fighter of yours is still settling in; no offers yet.",
+  "w": "426-v112trade.js:90"
+ },
+ {
+  "k": "Overpaid or fading fighters lower the offer; one weaker than most of theirs counts half.",
+  "w": "426-v112trade.js:95"
+ },
+ {
+  "k": "💼 Your patron: +{0} coin",
+  "w": "427-v112econ.js:25"
+ },
+ {
+  "k": "💼 the backers topped up the treasury (+{0})",
+  "w": "427-v112econ.js:33"
+ },
+ {
+  "k": "Patron",
+  "w": "427-v112econ.js:42"
+ },
+ {
+  "k": "arena · v1.12",
+  "w": "01-head.html"
+ }
+]

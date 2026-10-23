@@ -1,0 +1,18 @@
+{
+ "Fair trades, fuller purses": "Tratos justos, bolsas más llenas",
+ "Manager: your patron now pays a weekly stipend, and struggling rival houses get a backer": "Manager: tu mecenas ahora paga un estipendio semanal y las casas rivales en apuros reciben un benefactor",
+ "Trades: one fair value rule, overpaid fighters lower a bundle, one trade-in every 4 weeks": "Trueques: una regla de valor justo, los luchadores sobrepagados bajan un paquete, un canje cada 4 semanas",
+ "One trade-in every 4 weeks — next in {0} wk": "Un canje cada 4 semanas — el próximo en {0} sem",
+ "{0} costs {1} more than he is worth to them.": "{0} cuesta {1} más de lo que vale para ellos.",
+ "{0} must cut wages.": "{0} debe recortar salarios.",
+ "{0} needs a fighter now.": "{0} necesita un luchador ya.",
+ "{0} sells high.": "{0} vende caro.",
+ "{0} is rebuilding.": "{0} se está reconstruyendo.",
+ "{0} wants a little more for {1}.": "{0} quiere un poco más por {1}.",
+ "Every fighter of yours is still settling in; no offers yet.": "Todos tus luchadores aún se están adaptando; todavía no hay ofertas.",
+ "Overpaid or fading fighters lower the offer; one weaker than most of theirs counts half.": "Los luchadores sobrepagados o en declive bajan la oferta; uno más débil que la mayoría de los suyos cuenta la mitad.",
+ "💼 Your patron: +{0} coin": "💼 Tu mecenas: +{0} monedas",
+ "💼 the backers topped up the treasury (+{0})": "💼 los benefactores rellenaron el tesoro (+{0})",
+ "Patron": "Mecenas",
+ "arena · v1.12": "arena · v1.12"
+}

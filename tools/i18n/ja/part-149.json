@@ -1,0 +1,18 @@
+{
+ "Fair trades, fuller purses": "公正な取引、ふくらむ財布",
+ "Manager: your patron now pays a weekly stipend, and struggling rival houses get a backer": "Manager：後援者が毎週の手当を支払い、苦境の対抗家には支援者がつく",
+ "Trades: one fair value rule, overpaid fighters lower a bundle, one trade-in every 4 weeks": "取引：公正な価値のルールは一つ、高給すぎる闘士はまとめ取引の額を下げ、下取りは4週に1回",
+ "One trade-in every 4 weeks — next in {0} wk": "下取りは4週に1回——次まであと{0}週",
+ "{0} costs {1} more than he is worth to them.": "{0}は彼らにとっての価値より{1}高い。",
+ "{0} must cut wages.": "{0}は給金を削る必要がある。",
+ "{0} needs a fighter now.": "{0}は今すぐ闘士が必要だ。",
+ "{0} sells high.": "{0}は高く売る。",
+ "{0} is rebuilding.": "{0}は立て直し中だ。",
+ "{0} wants a little more for {1}.": "{0}は{1}にもう少し求めている。",
+ "Every fighter of yours is still settling in; no offers yet.": "あなたの闘士はまだ全員なじんでいる最中。提示はまだない。",
+ "Overpaid or fading fighters lower the offer; one weaker than most of theirs counts half.": "高給すぎる、または衰えた闘士は提示額を下げる。相手の大半より弱い者は半分と数える。",
+ "💼 Your patron: +{0} coin": "💼 あなたの後援者：+{0}コイン",
+ "💼 the backers topped up the treasury (+{0})": "💼 支援者が金庫を補充した（+{0}）",
+ "Patron": "後援者",
+ "arena · v1.12": "arena · v1.12"
+}

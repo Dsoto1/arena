@@ -1,0 +1,18 @@
+{
+ "Fair trades, fuller purses": "公平交易，钱袋更鼓",
+ "Manager: your patron now pays a weekly stipend, and struggling rival houses get a backer": "Manager：你的赞助人现在每周发放津贴，陷入困境的对手家族会得到一位资助者",
+ "Trades: one fair value rule, overpaid fighters lower a bundle, one trade-in every 4 weeks": "交易：统一公平估值规则，薪水过高的斗士会拉低整包报价，每4周只能以旧换新一次",
+ "One trade-in every 4 weeks — next in {0} wk": "每4周以旧换新一次——还需{0}周",
+ "{0} costs {1} more than he is worth to them.": "{0}比他对他们的价值贵了{1}。",
+ "{0} must cut wages.": "{0}必须削减薪水。",
+ "{0} needs a fighter now.": "{0}现在就需要一名斗士。",
+ "{0} sells high.": "{0}开价很高。",
+ "{0} is rebuilding.": "{0}正在重建。",
+ "{0} wants a little more for {1}.": "{0}想为{1}多要一点。",
+ "Every fighter of yours is still settling in; no offers yet.": "你的斗士都还在适应中；暂无报价。",
+ "Overpaid or fading fighters lower the offer; one weaker than most of theirs counts half.": "薪水过高或状态下滑的斗士会拉低报价；比对方多数人更弱的只算一半。",
+ "💼 Your patron: +{0} coin": "💼 你的赞助人：+{0}金币",
+ "💼 the backers topped up the treasury (+{0})": "💼 资助者为金库补充了资金（+{0}）",
+ "Patron": "赞助人",
+ "arena · v1.12": "arena · v1.12"
+}
