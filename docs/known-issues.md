@@ -81,6 +81,7 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - (fixed in v1.08c) tools/i18n/prep.sh wrapped code (Error text, shader, console concat, CSS/font/HTML fragments, SFX credits, home names,
   recorder keys): wrap.js now skips them and test ti18nwrap guards it. A NEW false-wrap shape → add a rule or an `i18n:skip-begin` /
   `i18n:skip-end` comment pair (or a DATA_TABLES / DEV_LITERALS entry in wrap.js for a file you must not edit) plus a case in ti18nwrap.
+- CI runners moved to ubuntu-26.04 (2026-10-23): `playwright install --with-deps` (1.56.1) cannot install its system deps there ("Cannot install dependencies for ubuntu26.04-x64"), so tests run with the runner's own fonts (wider text than here). Layout tests near a wrap edge can fail only on CI (tv105z, fixed in 388). Pinning `runs-on: ubuntu-24.04` or a newer Playwright would restore the old fonts.
 - A commit that only touches tools/deploy (e.g. release.sh's advert shot) starts no regression run · dispatch the full run by hand.
 
 ## Waiting on him

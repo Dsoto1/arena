@@ -77457,6 +77457,8 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
         one-line eyebrow + 12 px text (2 lines, not 4), the 📜 Study chip one line, the Time lines 11 px (one line each at 1440 px);
         ≥1500 px: "N of N fit fighters drill" sits on the chips' line.
    Phones: the Yard banner wraps (face + title, then the chips + Lock in), so Lock in stays in the first screen. Static DOM, no animation.
+   v1.11c fix: above 760 px the project chip (.bp104c) has flex-basis 0 + a high grow (up to max-content: full width when it fits), so a wider font (another OS, the CI
+        runner's fallback fonts) shortens the chip with an ellipsis instead of wrapping the Yard banner (title + chip + hours + ↻ + Lock in) to two rows.
    ===================================================================== */
 function cp105On(){try{return localStorage.getItem('flavius_v105compactoff')!=='1'}catch(e){return true}}
 /* Y1a + Y2a + Y3: the Yard */
@@ -77527,6 +77529,7 @@ function cp105Arm(R,hd){const pane=R.querySelector('#mgrPane')||R;const hp=pane.
 #mgrBody .roomhd.cp105ban .roomttl b{display:block;font:400 23px var(--display);letter-spacing:.05em;color:#fff3d6;text-shadow:0 2px 4px #000,0 0 12px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #mgrBody .roomhd.cp105ban .roomttl span{display:block;font-size:13px;color:#f3e3bd;text-shadow:0 1px 3px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #mgrBody .roomhd.cp105ban .bp104c{flex:0 1 auto;margin:0;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (min-width:761px){#mgrBody .roomhd.cp105ban .bp104c{flex:999 1 0;max-width:max-content}}
 #mgrBody .roomhd.cp105ban .roomstat.rm100cnt{position:relative;inset:auto;top:auto;right:auto;left:auto;transform:none;flex:none;display:grid;justify-items:end;align-content:center;gap:0;width:auto;height:auto;min-height:0;max-height:52px;box-sizing:border-box;background:#1a120de0;border:1px solid #c9a458;border-radius:6px;padding:4px 12px;margin:0 0 0 auto;text-align:right;min-width:92px;max-width:100%;box-shadow:none;cursor:default}
 #mgrBody .roomhd.cp105ban .roomstat.rm100cnt .ptbox,#mgrBody .roomhd.cp105ban .roomstat.rm100cnt .ptbox.on{all:unset;font:400 21px var(--display);color:#b9e39a!important;line-height:1.1;background:none!important;box-shadow:none!important;min-width:0;height:auto;padding:0}
 #mgrBody .roomhd.cp105ban .roomstat.rm100cnt .ptbox small{font-size:13px;color:#c9a44a}
