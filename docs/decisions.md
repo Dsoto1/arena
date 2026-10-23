@@ -884,3 +884,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   star"); coin stays 1:1 (REPLACES the open coin-rate question); (4a) a settling-in fighter (<4 weeks) can't be offered as the MAIN fighter either.
 - 2026-10-23 v1.12 follow-ups (his 1a 2a): the rival backer floor (P6) may top a house up once every 4 weeks — REPLACES "at most once a
   season" (1a above); the player can bring in at most ONE fighter by trade every 4 weeks (1-for-1 or bundle; gifts/loans/free agents not counted).
+- 2026-10-23 his 1a: ship v1.12 when the full run is green, no beta.
