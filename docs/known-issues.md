@@ -10,6 +10,11 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
   the same): tv91c (whole-ring pixel count + re-deal small crowds), tv96f (1–2 heavy software-raster draw steps allowed, hard cap 250 ms),
   tv100an (draw while the blows land; the 170 ms flash ran out). Green run 39721994919: 424 pass, flaky tv100ae — watch.
 - 2026-10-21 · flaky on the v1.09 [full] run 39680497469 (passed on the alone re-run): tv96f, tv100p — watch; fix if they repeat.
+- 2026-10-23 · v1.11c (422-v111set): his live v1.11b Safari report "retoggle all my settings each time … loads differently (shadows, etc)".
+  Not reproduced in Chromium on either path: every setting survives a reload and the applied state matches the panel (tv111set). Fixed what
+  could cause it: a refused settings write (full quota) now has a cookie copy + a toast; another tab no longer overwrites the choice; the
+  panel names Auto's lighting; on WebKit one Lighting-toggle re-bake runs after each match's load (BLIND — confirm on his Safari; if the
+  toast appears, his storage is full). Watch tv111s (flaky once under -j 2 load on this branch, passed alone ×3).
 - 2026-10-22 · v1.10 (417 5a): FIXED BLIND, confirm on his Safari — 399's l106Build now draws every static shadow layer into a FRESH canvas
   (what the Lighting off/on toggle did); kill switch flavius_l106freshoff=1. If shadows still go missing after load: the next lead is the
   W3 bitmap copies of 399's contact sprite (406, createImageBitmap of a canvas on WebKit).
