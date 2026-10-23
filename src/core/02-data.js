@@ -45,7 +45,7 @@ const FIRST_RUN = (() => {
 const $ = s => document.querySelector(s);
 const N = 13;
 const HIT_CHANCE = 0.5; // hit die: 3 hit faces, 3 miss faces
-let SPEED = 'slow'; // CPU turn pacing — every event begins on Slow so new arrivals can follow the action
+let SPEED = 'slow'; // CPU turn pacing — events begin on Slow on a first run; since v1.11c (424-v111speed) the last chosen Slow/Normal/Fast is remembered (flavius_speed111)
 /* SPEEDMUL — multiplier applied to every sleep() delay for each CPU speed setting. TWEAK: raise a value to slow that speed down, lower it to speed up (snap 0 = no waiting). */
 const SPEEDMUL = {
   step: 2.2,
