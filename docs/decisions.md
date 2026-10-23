@@ -885,3 +885,7 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-23 v1.12 follow-ups (his 1a 2a): the rival backer floor (P6) may top a house up once every 4 weeks — REPLACES "at most once a
   season" (1a above); the player can bring in at most ONE fighter by trade every 4 weeks (1-for-1 or bundle; gifts/loans/free agents not counted).
 - 2026-10-23 his 1a: ship v1.12 when the full run is green, no beta.
+- 2026-10-23 his call: Online isn't open yet (0 players), so the Ranked check is built NOW and ENFORCED at once (VerifyMode enforce) —
+  REPLACES the log-only month (v1.01) and the "after ~2026-11-14" timing. Picks R1a–R6a stand (replay = the result + strikes; every Ranked
+  match waits for the check with a 60 s agreement fallback; opening fields checked vs kits; unjudgeable = agreement + flag; flavius.sh asks
+  AWS for a concurrency raise + verifier capped at 3; off-menu window answers flagged).
