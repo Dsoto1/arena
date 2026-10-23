@@ -40,7 +40,7 @@ function fail(code,msg,extra){const e=new Error(msg);e.code=code;if(extra)e.extr
 const NEED_DOMUS=new Set(['auction.bid','offer.move','offer.buy','offer.bring','gear.repair','domus.buy','gift.open','loot.pick','market.buy','domus.follow','char.create','char.buy','char.edit','char.active','lobby.create','lobby.join','lobby.accept','lobby.quick','lobby.sit','lobby.ticket','lobby.invite','lobby.call','lobby.again','lobby.say','bet.place','party.create','party.join','forum.say','domus.move','domus.equip','lobby.pass','domus.patron']);
 /* what a guest is told when a request needs a sign-in */
 const GUEST_WHY={'forum.say':'speak in the Forum','bet.place':'wager','lobby.ticket':'buy a ticket','char.create':'raise gladiators','domus.create':'found a house','lobby.pass':'take a seat in the stands'};
-function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0,countdown=C.COUNTDOWN_MS,roomGrace=C.ROOM_GRACE,limits,verify=null}){
+function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0,countdown=C.COUNTDOWN_MS,roomGrace=C.ROOM_GRACE,limits,verify=null,verifyMode='log'}){
   const ttl=days=>Math.floor(now()/1000)+days*DAY;
   /* v0.93 a store failure caught mid-request becomes a plain line for the player (the error itself goes to the log) */
   const errOf93=e=>{if(H93.internal(e)){try{console.error('[soft93]',e&&e.stack||e)}catch(x){}return 'The arena is busy — try again in a moment.'}return e.message};if(C.setCatalog)C.setCatalog(catalog); /* v0.84: equip points (C.equipOf / gearEquip) read the catalog */
@@ -225,7 +225,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   async function settleMatch(id,M,me){
     /* one settlement, however many reports arrive at once: only the request that flips the status settles */
     if(!(await store.flip('MATCH#'+id,'META','status','live','done'))){const M2=await meta(id);return M2.outs&&M2.outs[me]?{char:strip(await liveOrLast(me)),out:M2.outs[me]}:{pending:true}}
-    let L=await getLobby(id);L.stands=L.stands||[];const A=C.agree(M.reports);M.status='done';M.doneAt=now();M.agreed=A;M.outs=M.outs||{};
+    let L=await getLobby(id);L.stands=L.stands||[];const A=M.ov112||C.agree(M.reports);delete M.ov112; /* v1.12 (the v1.12 RANKED CHECK block): a judged Ranked match brings its decided table */M.status='done';M.doneAt=now();M.agreed=A;M.outs=M.outs||{};
     for(const a of A.minority)await store.counter('ACCT#'+a,'PROFILE','strikes');
     const dseats=[];
     if(!A.void)for(const a of M.players){if((M.abandoned||{})[a])continue;const pl=L.players.find(p=>p.id===a);const row=A.table.find(r=>r.seat===M.seats[a]);if(!pl||!row)continue;let out=null,before='tiro';
@@ -1800,6 +1800,77 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
         for(const g of r.glads||[]){const c=by.get(g.id);if(c)g.lv=B.lv102(c)}r.fallen=Math.max(D.fallen|0,all.filter(c=>!c.alive&&!c.rel102).length);
         const rel=all.filter(c=>c.rel102);if(rel.length)r.released=rel.length}}catch(e){}return r}}}
   /* ══════════ end of v1.02 PROGRESSION ══════════ */
+  /* ══════════ v1.12 RANKED CHECK — ENFORCE (his picks R1a–R6a + his call 2026-10-23 "build now and enforce at once"; docs/backend.md
+     "v1.12 Ranked check"; NO protocol bump: old pages already wait on {pending:true} and the match.settled push) ══════════
+     G1 GATED SETTLE (R2a): with a verifier and verifyMode 'enforce', a Ranked match whose humans have all reported is NOT settled yet:
+        META.g112 = the time (MATCH# GATE112 = once), the verifier is called with {gate:true} and every reporter hears {pending:true, check112:1}
+        (pages from v1.12 show "⏳ The scribes check the result…"; older ones their plain waiting toast).
+     G2 THE VERDICT: the verifier writes VERIFY#<id> V and async-invokes this Lambda {verify112:'done', id} (index.js H.internal → verdict112).
+        decide112 makes ONE decision, VERIFY#<id> J (putNew: every later path — retries, sweeps, duplicate invokes — reads the same one):
+          ok / bad (R1a): the replay finished → the settlement uses the REPLAY's table; every human whose report differs from it is in the
+                minority → a strike (base settleMatch's own strike loop). 'bad' = someone differed (+ AUDIT#<id> J112).
+          forged (R3a): the host's opening differs from the room (verify.js openCheck112) → that replay proves nothing: the host gets a strike
+                (once, MATCH# STRIKE112#<acct>); the table = the agreement of the OTHER humans' reports with the host's row stripped of its
+                reward (won false, coin 0, CF 0 — his Fate as they saw it stands); no other human reported → void (refunds). AUDIT.
+          unjudged (R4a): no usable verdict — the verifier skipped (an old page without a build, the build changed mid-match, no bundle, a
+                crash), the replay did not finish, or no verdict in WAIT_MS (60 s: the verifier down, throttled or late) → today's agreement
+                of the reports + AUDIT#<id> J112. A verdict that comes later is only logged (VERIFY#).
+     G3 SWEEPS: match.result (a re-sent report), match.get, hello (the caller's own match) and prune (a gated live room in any list) settle a
+        gated match whose verdict is in or whose 60 s are up. With the gate OFF (VERIFY_MODE=log/off: the rollback) a match left gated is
+        settled by agreement at once. settleMatch settles once (its status flip) whatever calls it.
+     G4 admin.verify also counts forged / unjudged and lists the decisions (JUDGE112). */
+  let verdict112=async()=>({skipped:'off'});
+  {const MK=id=>'MATCH#'+id;const GATE=!!verify&&String(verifyMode||'').toLowerCase()==='enforce';const WAIT_MS=60000;
+    const keyT=(t,n)=>JSON.stringify(C.tableFix101(t,n));
+    async function decide112(id,M,V,why){const prev=await store.get('VERIFY#'+id,'J');if(prev)return prev;
+      let L=null;try{L=await store.get('LOBBY#'+id,'LOBBY')}catch(e){}const n=((L&&L.seats)|0)||8;const reps=M.reports||{};let d;
+      if(V&&V.forged){const host=M.host&&!/^bot/.test(M.host)?M.host:null;const hseat=host!=null?(M.seats||{})[host]:null;
+        const others={};for(const [a,r] of Object.entries(reps))if(a!==host)others[a]=r;
+        let A=Object.keys(others).length?C.agree(others):{table:null,void:true,minority:[]};
+        if(A.table&&Number.isInteger(hseat))A={...A,table:A.table.map(r=>r.seat===hseat?{...r,won:false,coin:0,f:0}:r)};
+        d={k:'forged',why:'opening',host,diff:V.openDiff||null,agree:{...A,unverified:false,v112:'forged'}}}
+      else if(V&&!V.skipped&&Array.isArray(V.table)&&V.table.length&&V.done!==false){const T=C.tableFix101(V.table,n);const t=JSON.stringify(T);
+        const minority=Object.keys(reps).filter(a=>keyT(reps[a]&&reps[a].table,n)!==t);const k=minority.length?'bad':'ok';
+        d={k,why:minority.length?'reports':'',minority,agree:{table:T,void:false,minority,unverified:false,v112:k}}}
+      else d={k:'unjudged',why:why||(V?(V.skipped||('end: '+String(V.why||'').slice(0,80))):'timeout')};
+      const rec={id,k:d.k,why:d.why,...(d.minority&&d.minority.length?{minority:d.minority}:{}),...(d.host?{host:d.host}:{}),...(d.agree?{agree:d.agree}:{}),
+        at:now(),GSI1PK:'JUDGE112',GSI1SK:now(),ttl:ttl(90)};
+      if(!(await store.putNew('VERIFY#'+id,'J',rec)))return await store.get('VERIFY#'+id,'J');
+      if(d.k!=='ok'){try{await store.put('AUDIT#'+id,'J112',{kind:'judge_'+d.k,why:d.why,...(rec.minority?{minority:rec.minority}:{}),...(d.host?{host:d.host,diff:d.diff}:{}),
+          ranked:true,humans:(M.players||[]).length,at:now(),GSI1PK:'AUDIT',GSI1SK:now(),ttl:ttl(90)});console.log('[verify112]',d.k.toUpperCase(),id,d.why)}catch(e){}}
+      return rec}
+    if(GATE){const base=settleMatch;settleMatch=async function(id,M,me){let M0=null;try{M0=await store.get(MK(id),'META')}catch(e){}
+        if(!M0||!M0.ranked||M0.status!=='live')return base.apply(this,arguments);
+        const pend={pending:true,check112:1};let J=await store.get('VERIFY#'+id,'J');
+        if(!J){if(!M0.g112){if(!(await store.putNew(MK(id),'GATE112',{at:now(),ttl:ttl(2)})))return pend;
+            /* the first time every human has reported: hold the match and ask for the check (vq101: v1.01's after-the-settle call stays quiet) */
+            await store.set(MK(id),'META',{g112:now(),vq101:now()});try{await store.set('LOBBY#'+id,'LOBBY',{g112:now()})}catch(e){}
+            let asked=true;try{await verify(id,{gate:true})}catch(e){asked=false;try{console.log('[verify112] could not start',id,String(e&&e.message||e))}catch(x){}}
+            if(asked)return pend;J=await decide112(id,M0,null,'noverify')}
+          else{const V=await store.get('VERIFY#'+id,'V');if(V)J=await decide112(id,M0,V);else if(now()-M0.g112>=WAIT_MS)J=await decide112(id,M0,null,'timeout');else return pend}}
+        /* the decision: settle with it, once */
+        const M2=await store.get(MK(id),'META');if(!M2||M2.status!=='live')return base.call(this,id,M2||M0,me);
+        if(J.k==='forged'&&J.host){try{if(await store.putNew(MK(id),'STRIKE112#'+J.host,{at:now(),ttl:ttl(2)}))await store.counter('ACCT#'+J.host,'PROFILE','strikes')}catch(e){}}
+        M2.j112={k:J.k,why:J.why||'',at:J.at};if(J.agree)M2.ov112=J.agree;
+        return base.call(this,id,M2,me)}}
+    /* a gated match ready to settle (its verdict in, its 60 s up — or the gate switched off since) */
+    async function sweep112(id){if(!id)return;try{const M=await store.get(MK(id),'META');if(!M||M.status!=='live'||!M.g112)return;
+        const due=!GATE||now()-M.g112>=WAIT_MS||!!(await store.get('VERIFY#'+id,'V'))||!!(await store.get('VERIFY#'+id,'J'));
+        if(due)await settleMatch(id,M,null)}catch(e){try{console.log('[verify112] sweep',id,String(e&&e.message||e))}catch(x){}}}
+    verdict112=async id=>{const M=await store.get(MK(id),'META');if(!M)return {skipped:'nomatch'};if(M.status!=='live')return {done:1};if(!M.g112)return {skipped:'notgated'};
+      await settleMatch(id,M,null);const M2=await store.get(MK(id),'META');return {settled:!!(M2&&M2.status==='done')}};
+    {const base=prune;prune=async function(list){try{for(const L of list||[])if(L&&L.status==='live'&&L.g112)await sweep112(L.id)}catch(e){}return base.apply(this,arguments)}}
+    {const base=R['hello'];R['hello']=async(d,ctx)=>{try{if(ctx&&ctx.acct){const A=await acctOf(ctx.acct);if(A&&A.match)await sweep112(A.match)}}catch(e){}return base(d,ctx)}}
+    {const base=R['match.get'];R['match.get']=async(d,ctx)=>{const r=await base(d,ctx);try{await sweep112(d&&d.id)}catch(e){}return r}}
+    /* the bout is over while it is held: 🚪 Abandon must not turn into a Ranked Damnatio (before v1.12 the match was already settled here) */
+    {const base=R['match.abandon'];R['match.abandon']=async(d,ctx)=>{let M=null;try{M=await store.get(MK(d&&d.id),'META')}catch(e){}
+      if(M&&M.status==='live'&&M.g112&&(M.players||[]).includes(ctx.acct)){const A=await acctOf(ctx.acct);if(A&&A.match===d.id)await store.set('ACCT#'+A.id,'PROFILE',{match:null});return {done:1,held:1}}
+      return base(d,ctx)}}
+    {const base=R['admin.verify'];R['admin.verify']=async(d,ctx)=>{const r=await base(d,ctx);const n=Math.max(1,Math.min(50,(d&&d.limit)|0||20));
+      const J=(await store.byIndex('JUDGE112',{limit:n})).map(x=>{const o={...x};for(const k of ['PK','SK','GSI1PK','GSI1SK','ttl','agree'])delete o[k];return o});
+      r.forged=r.verify.filter(x=>x.forged).length;r.bad=r.verify.filter(x=>x.ok===false&&!x.forged).length;r.unjudged=J.filter(x=>x.k==='unjudged').length;
+      r.judged=J;r.decided={ok:0,bad:0,forged:0,unjudged:0};for(const x of J)if(x.k in r.decided)r.decided[x.k]++;r.mode=GATE?'enforce':String(verifyMode||'log');return r}}}
+  /* ══════════ end of v1.12 RANKED CHECK ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=typeof t==='string'&&Object.prototype.hasOwnProperty.call(R,t)?R[t]:null; /* v1.01: own routes only (never 'constructor', '__proto__' …) */if(!f)throw fail('unknown_req','Unknown request: '+String(t).slice(0,40));
@@ -1817,7 +1888,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     /* v0.93 a paying request with a request id runs once (a replay gets the stored reply) */
     return H93.idem(store,ctx,t,d,()=>f(d||{},ctx),now)};
   /* v0.89 the handler tells the rooms when a socket opens or closes (index.js $connect / $disconnect / a gone push) */
-  route.presence=presence;route.prune=async()=>prune(await lobbies());return route}
+  route.presence=presence;route.prune=async()=>prune(await lobbies());route.verdict112=verdict112;return route}
 const TEST_GATE=new Set(['lobby.create','lobby.quick','lobby.join','lobby.accept','lobby.sit','lobby.again']);
 /* a player reconnects mid-match: their new connection goes into the match record */
 async function reconnect(store,acct,conn){const A=await store.get('ACCT#'+acct,'PROFILE');if(A&&A.match){await store.setIn('MATCH#'+A.match,'META','conns',acct,conn);await store.setIn('MATCH#'+A.match,'META','away',acct,0)}}

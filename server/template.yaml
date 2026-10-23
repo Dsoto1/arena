@@ -47,11 +47,18 @@ Parameters:
     Default: ''
     NoEcho: true
     Description: 'Comma-separated Google e-mails of online testers (admin.grant on their own house only; their houses become TEST houses, Custom only). Empty = nobody.'
-  VerifyMode:
+  # v1.12: RankedCheck replaces v1.01's VerifyMode (a stack kept VerifyMode=log across deploys; the new name starts every stack at enforce)
+  RankedCheck:
     Type: String
-    AllowedValues: ['log', 'off', 'enforce']
-    Default: log
-    Description: 'v1.01 Ranked verification: log = replay every settled Ranked match and LOG mismatches (VERIFY# / AUDIT#), never changing a result; off = no verify calls (rollback); enforce = not built yet (logs only, a TODO).'
+    AllowedValues: ['enforce', 'log', 'off']
+    Default: enforce
+    Description: 'The Ranked check (v1.12, docs/backend.md): enforce = every Ranked match waits for the server replay and settles with its result (60 s fallback to the lanistas agreement, flagged); log = settle by agreement, replay after and only log (v1.01); off = no replays (rollback). deploy.sh: VERIFY_MODE=enforce|log|off.'
+  VerifyReserve:
+    Type: Number
+    Default: 0
+    MinValue: 0
+    MaxValue: 10
+    Description: 'v1.12 (R5a): reserved concurrency for the verifier (3 = at most three replays at once, never starving the arena). 0 = none: deploy.sh sets 3 only when the account limit leaves AWS its 100 unreserved.'
   DevNames:
     Type: String
     AllowedValues: ['false', 'true']
@@ -62,6 +69,7 @@ Conditions:
   HasGoogle: !Not [!Equals [!Ref GoogleClientId, none]]
   HasCustomAuth: !And [!Not [!Equals [!Ref CustomAuthDomain, none]], !Not [!Equals [!Ref HostedZoneId, none]]]
   CustomAuthLive: !And [!Condition HasCustomAuth, !Equals [!Ref CustomAuthStage, live]]
+  HasVerifyReserve: !Not [!Equals [!Ref VerifyReserve, '0']]
 
 Resources:
   # ---------- data ----------
@@ -203,7 +211,8 @@ Resources:
           TESTERS: !Ref Testers
           REQUIRE_GOOGLE: !If [HasGoogle, 'true', 'false']   # v1.01 S4: only Google sign-ins once Google is set up
           VERIFY_FN: !Ref VerifyFn       # v1.01 wave 2: a settled Ranked match → an async invoke of the verifier
-          VERIFY_MODE: !Ref VerifyMode
+          VERIFY_MODE: !Ref RankedCheck  # v1.12: enforce = the call comes before the settlement and the arena waits for it
+          WS_ENDPOINT: !Sub 'https://${WsApi}.execute-api.${AWS::Region}.amazonaws.com/live'   # v1.12: pushes from the verifier's internal event (no socket request)
   FnLogs:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -230,6 +239,11 @@ Resources:
               - Effect: Allow
                 Action: [dynamodb:GetItem, dynamodb:PutItem, dynamodb:Query, dynamodb:UpdateItem]
                 Resource: [!GetAtt Table.Arn, !Sub '${Table.Arn}/index/*']
+              # v1.12: a gated check tells the arena its verdict is written (async invoke {verify112:'done', id}). The ARN is built from the fixed
+              # name — !GetAtt Fn.Arn would make a cycle (Fn names VerifyFn in its environment).
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:flavius-arena'
   VerifyFn:
     Type: AWS::Lambda::Function
     Properties:
@@ -241,11 +255,14 @@ Resources:
       Role: !GetAtt VerifyRole.Arn
       MemorySize: 1024
       Timeout: 120
-      # no reserved concurrency: a new AWS account (10 in all) cannot reserve any; one call per Ranked match keeps the volume small
+      # v1.12 (R5a): at most VerifyReserve replays at once (3) when the account limit allows it (deploy.sh decides; a new account's 10 cannot
+      # reserve any — flavius.sh asks AWS for a raise); without it the verifier shares the account's pool with the arena
+      ReservedConcurrentExecutions: !If [HasVerifyReserve, !Ref VerifyReserve, !Ref 'AWS::NoValue']
       Environment:
         Variables:
           TABLE: !Ref Table
-          VERIFY_MODE: !Ref VerifyMode
+          VERIFY_MODE: !Ref RankedCheck
+          ARENA_FN: flavius-arena        # v1.12: the arena function a gated check tells (Fn's fixed FunctionName)
   VerifyInvokeConfig:
     Type: AWS::Lambda::EventInvokeConfig
     Properties:
@@ -356,15 +373,17 @@ Resources:
       Role: !GetAtt SwitchRole.Arn
       MemorySize: 128
       Timeout: 10
-      Environment: {Variables: {ARENA: !Ref Fn, VERIFY: !Ref VerifyFn}}
+      Environment: {Variables: {ARENA: !Ref Fn, VERIFY: !Ref VerifyFn, VERIFY_RESERVE: !Ref VerifyReserve}}
       Code:
         ZipFile: |
           // Closes the arena (concurrency 0: it cannot run, nothing is billed, nothing is deleted) when the budget
-          // topic fires; reopens it when called with {"reopen":true} (the monthly rule, or by hand). The verifier (v1.01) closes and reopens with it.
+          // topic fires; reopens it when called with {"reopen":true} (the monthly rule, or by hand). The verifier (v1.01) closes and reopens with it
+          // (v1.12: back to its reserved VERIFY_RESERVE when it has one).
           const {LambdaClient,PutFunctionConcurrencyCommand,DeleteFunctionConcurrencyCommand}=require('@aws-sdk/client-lambda');
           const L=new LambdaClient({});
           exports.handler=async ev=>{const fn=process.env.ARENA,vf=process.env.VERIFY;
-            if(ev&&ev.reopen){await L.send(new DeleteFunctionConcurrencyCommand({FunctionName:fn}));if(vf)await L.send(new DeleteFunctionConcurrencyCommand({FunctionName:vf}));console.log('arena reopened');return 'open'}
+            if(ev&&ev.reopen){await L.send(new DeleteFunctionConcurrencyCommand({FunctionName:fn}));const rv=+process.env.VERIFY_RESERVE||0;
+              if(vf)await L.send(rv>0?new PutFunctionConcurrencyCommand({FunctionName:vf,ReservedConcurrentExecutions:rv}):new DeleteFunctionConcurrencyCommand({FunctionName:vf}));console.log('arena reopened');return 'open'}
             await L.send(new PutFunctionConcurrencyCommand({FunctionName:fn,ReservedConcurrentExecutions:0}));if(vf)await L.send(new PutFunctionConcurrencyCommand({FunctionName:vf,ReservedConcurrentExecutions:0}));console.log('arena closed: budget reached');return 'closed'};
   SwitchSub:
     Type: AWS::SNS::Subscription

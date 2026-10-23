@@ -17,13 +17,13 @@ const catalog=require('./catalog.json');
 /* v0.83 tester grants: TESTERS = comma-separated sign-in e-mails (deploy parameter → Lambda env). Only a yes/no rides on the connection;
    the e-mail itself is never stored or sent. Dev stacks/tests may pass ?email= with ?dev= (dev only). */
 const testerSet=s=>new Set(String(s||'').split(',').map(x=>x.trim().toLowerCase()).filter(x=>x&&x!=='none'));
-function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd,testers='',roomGrace,limits,log,requireGoogle=false,verifyMatch=null}){const TESTERS=testerSet(testers);let route=null;
+function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd,testers='',roomGrace,limits,log,requireGoogle=false,verifyMatch=null,verifyMode='log'}){const TESTERS=testerSet(testers);let route=null;
   /* a push to a known connection: true when the socket is gone (then the account's presence is cleared) */
   /* a push that finds the socket gone clears presence AND marks the lanista away in a live match (their $disconnect may come later and find
      nothing left to clear) — so the others can drop the seat after AWAY_MS */
   const pushConn=async(conn,t,d,acct)=>{const gone=await send(conn,{push:t,d});if(gone&&acct){if(/^guest-/.test(acct))await db.clearGuest(acct,conn);else if(await db.clearConn(acct,conn,now())){await away(db,acct,now());if(route&&route.presence)await route.presence(acct,false,now())}}return gone};
-  route=makeRoutes({store:db,catalog,dev,now,hereMs,countdown,verify:verifyMatch,...(limits!==undefined?{limits}:{}),...(rnd?{rnd}:{}),...(roomGrace!=null?{roomGrace}:{}),pushConn,push:async(acct,t,d)=>{const a=await db.get('ACCT#'+acct,'PROFILE');if(a&&a.conn)await pushConn(a.conn,t,d,acct)}});
-  return async ev=>{const rc=ev.requestContext||{};const conn=rc.connectionId;
+  route=makeRoutes({store:db,catalog,dev,now,hereMs,countdown,verify:verifyMatch,verifyMode,...(limits!==undefined?{limits}:{}),...(rnd?{rnd}:{}),...(roomGrace!=null?{roomGrace}:{}),pushConn,push:async(acct,t,d)=>{const a=await db.get('ACCT#'+acct,'PROFILE');if(a&&a.conn)await pushConn(a.conn,t,d,acct)}});
+  const H=async ev=>{const rc=ev.requestContext||{};const conn=rc.connectionId;
     if(rc.routeKey==='$connect'){const q=ev.queryStringParameters||{};if(String(q.ver)!==String(C.VER))return {statusCode:426,body:'Please reload: a new version is out.'};
       /* v0.82 a guest: looks only, 2 hours from the first connect of that guest id */
       if(q.guest&&!q.token&&!(dev&&q.dev)){const gid='guest-'+String(q.guest).replace(/[^a-z0-9_-]/gi,'').slice(0,40);if(gid.length<14)return {statusCode:401,body:'Sign in again.'};
@@ -43,16 +43,26 @@ function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),h
     const c=await db.get('CONN#'+conn,'CONN');const ctx={acct:c&&c.acct,conn,...(c&&c.tester?{tester:true}:{}),...(c&&c.guest?{guest:{id:c.guest,first:c.first}}:{})};
     try{const out=await route(m.t,m.d,ctx);if(m.t==='auth.signin'&&out&&out.id){await online(db,out.id,conn,now());await route.presence(out.id,true)}
       await send(conn,{re:m.id,ok:true,d:out})}catch(e){/* v0.93: {err (English), code, mcode + vals (the text as a stable code)}; internal failures only as a ref */await send(conn,{...H93.errReply(e,log),re:m.id,ok:false})}
-    return {statusCode:200}}}
+    return {statusCode:200}};
+  /* v1.12: an INTERNAL event (no requestContext — only an AWS principal allowed to invoke this function can send one: the verify Lambda's role):
+     {verify112:'done', id} = the Ranked check of a gated match is written → settle it now (routes.js "v1.12 RANKED CHECK"; once, however often) */
+  H.internal=async ev=>{if(ev&&ev.verify112==='done'){const id=String(ev.id||'').replace(/[^\w-]/g,'').slice(0,60);if(!id)return {skipped:'noid'};
+      try{return (await route.verdict112(id))||{}}catch(e){try{console.log('[verify112] settle failed',id,String(e&&e.stack||e).slice(0,400))}catch(x){}throw e}}
+    return {skipped:'unknown'}};
+  return H}
 /* AWS: DynamoDB + the API Gateway management API */
 let LIVE=null;
 exports.handler=async ev=>{if(!LIVE){const {ApiGatewayManagementApiClient,PostToConnectionCommand}=require('@aws-sdk/client-apigatewaymanagementapi');
-    const rc=ev.requestContext;const api=new ApiGatewayManagementApiClient({endpoint:`https://${rc.domainName}/${rc.stage}`});const db=store.dynamo(process.env.TABLE);
+    /* v1.12: an internal event (the verifier's) has no requestContext — the socket API's address comes from WS_ENDPOINT then */
+    const rc=ev.requestContext;const api=new ApiGatewayManagementApiClient({endpoint:rc&&rc.domainName?`https://${rc.domainName}/${rc.stage}`:process.env.WS_ENDPOINT});const db=store.dynamo(process.env.TABLE);
     const send=async(conn,msg)=>{try{await api.send(new PostToConnectionCommand({ConnectionId:conn,Data:Buffer.from(JSON.stringify(msg))}));return false}
       catch(e){if(e.name==='GoneException'||e.$metadata&&e.$metadata.httpStatusCode===410){await db.del('CONN#'+conn,'CONN');return true}throw e}};
-    /* v1.01 wave 2: a settled Ranked match → an ASYNC invoke of the verify Lambda (server/verify; log only). VERIFY_MODE=off or no VERIFY_FN → never called */
-    let verifyMatch=null;if(process.env.VERIFY_FN&&String(process.env.VERIFY_MODE||'log').toLowerCase()!=='off'){const {LambdaClient,InvokeCommand}=require('@aws-sdk/client-lambda');const lc=new LambdaClient({});
-      verifyMatch=async id=>{await lc.send(new InvokeCommand({FunctionName:process.env.VERIFY_FN,InvocationType:'Event',Payload:Buffer.from(JSON.stringify({id}))}))}}
-    LIVE=makeHandler({verifyMatch,db,send,hereMs:20000,dev:process.env.DEV_NAMES==='true',roomGrace:process.env.ROOM_GRACE_MS?+process.env.ROOM_GRACE_MS:undefined,verifyCfg:{region:process.env.AWS_REGION,poolId:process.env.POOL_ID,clientId:process.env.CLIENT_ID},testers:process.env.TESTERS||'',requireGoogle:process.env.REQUIRE_GOOGLE==='true'})}
+    /* v1.01 wave 2: a settled Ranked match → an ASYNC invoke of the verify Lambda (server/verify). VERIFY_MODE=off or no VERIFY_FN → never called.
+       v1.12: VERIFY_MODE=enforce (the default) → the call comes BEFORE the settlement ({id, gate:true}) and the arena waits for the verdict */
+    const vmode=String(process.env.VERIFY_MODE||'enforce').toLowerCase();
+    let verifyMatch=null;if(process.env.VERIFY_FN&&vmode!=='off'){const {LambdaClient,InvokeCommand}=require('@aws-sdk/client-lambda');const lc=new LambdaClient({});
+      verifyMatch=async(id,o)=>{await lc.send(new InvokeCommand({FunctionName:process.env.VERIFY_FN,InvocationType:'Event',Payload:Buffer.from(JSON.stringify({id,...(o&&o.gate?{gate:true}:{})}))}))}}
+    LIVE=makeHandler({verifyMatch,verifyMode:vmode,db,send,hereMs:20000,dev:process.env.DEV_NAMES==='true',roomGrace:process.env.ROOM_GRACE_MS?+process.env.ROOM_GRACE_MS:undefined,verifyCfg:{region:process.env.AWS_REGION,poolId:process.env.POOL_ID,clientId:process.env.CLIENT_ID},testers:process.env.TESTERS||'',requireGoogle:process.env.REQUIRE_GOOGLE==='true'})}
+  if(ev&&!ev.requestContext&&ev.verify112)return LIVE.internal(ev);
   return LIVE(ev)};
 exports.makeHandler=makeHandler;

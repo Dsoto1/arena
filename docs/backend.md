@@ -396,7 +396,8 @@ Shared rules: the "v1.01" section at the end of `111-onlcore`; routes: the "v1.0
   its page. Data stays: items written by the newer server (e.g. `RID#`) are ignored by the older one and expire on their own.
   A protocol bump cannot be rolled back while players hold the newer page — they would be refused until they reload.
 - Zips (`flavius-server-N.zip` + game zip) remain the fallback when GitHub is unavailable (`bash flavius.sh server …`).
-- **The Ranked verifier** (v1.01): stop it with `VERIFY_MODE=off` (see "v1.01 Ranked verification"); it is log only, so a rollback never touches a result.
+- **The Ranked check** (v1.01 verifier, v1.12 enforce): `VERIFY_MODE=log` on a server deploy settles by agreement again at once (`off` also stops the
+  replays) — see "v1.12 Ranked check". A rollback to a release before v1.12 has no gate (held matches settle by agreement).
 
 ## v1.01 domus records
 
@@ -406,7 +407,8 @@ A house keeps TWO records. RANKED = the existing top-level fields (`D.bouts/wins
 
 The server replays every settled Ranked match with the game's own rules and compares the end with what the lanistas agreed. **Policy
 (Virgilante, v1.01): LOG ONLY for the first month** — nothing here changes a settlement, payout, death, strike or refund; a mismatch is a
-record for a human to read. After the month he decides what a mismatch does (`enforce` is a documented TODO, not built).
+record for a human to read. **REPLACED in v1.12** (his call 2026-10-23, Online not open yet): the check is ENFORCED — see "v1.12 Ranked check";
+`VERIFY_MODE=log` is this section's behaviour.
 Code: `server/verify/` (`index.js` = the Lambda, `verify.js` = the replay + comparison), the "v1.01 wave 2 RANKED VERIFICATION" block in
 `routes.js`, `index.js` (`verifyMatch` → the async invoke), the page's `src/online/329-v101build.js`. Test `server/test/verify.test.js`
 (in `npm test`, ~6 s, no browser; needs the built page). **No protocol bump** (one optional field).
@@ -444,13 +446,75 @@ Code: `server/verify/` (`index.js` = the Lambda, `verify.js` = the replay + comp
   arena Lambda's stays `./src`. `flavius.sh` (cmd_gitrelease) now also fetches `tools/node`, and its server hash includes the page and `tools/node`:
   **every release that changes the game redeploys the stack**, so the verifier always holds the build the players run. A server-only zip (no page
   beside it) deploys the verifier without rules: every match `nobundle` until a release brings them.
-- **Kill switch / rollback.** `VERIFY_MODE=off sh deploy.sh …` (stack parameter `VerifyMode`, kept across deploys; `log` turns it back on) — the
+- **Kill switch / rollback.** `VERIFY_MODE=off sh deploy.sh …` (stack parameter `VerifyMode`, kept across deploys; `log` turns it back on; v1.12:
+  the parameter is `RankedCheck`, default enforce) — the
   arena then never calls the verifier. The budget switch closes and reopens the verifier with the arena. Removing it entirely = an older
   release (its stack has no VerifyFn); the VERIFY#/AUDIT# items expire on their own.
 - **Cost.** Per Ranked match: one async invoke + one run of ~2–6 s at 1 GB (cold start ≈ 2–3 s to load and compile the 9 MB script, the replay
   1–5 s; the test match: 1.6 s warm) = ~3–6 GB-s ≈ $0.00005–0.00008 on arm64 ($0.0000133/GB-s) + $0.0000002 for the request + reads (the opening
   ~15 KB and ~100–400 inputs: ~20–40 RCU strongly consistent) ≈ **under $0.0001 a match, ~$1 per 10 000 Ranked matches**. Lambda's free tier
   (400 000 GB-s a month) covers ~80 000 matches. Logs: one line a match.
+
+## v1.12 Ranked check (enforce)
+
+His picks R1a–R6a (tools/plans/v112/NOTES.md) and his call 2026-10-23: Online is not open yet, so the check is built and **enforced at once** —
+REPLACES v1.01's log-only month. Code: the "v1.12 RANKED CHECK" block in `routes.js` (+ one edit in the base `settleMatch`: `M.ov112` = a decided
+table), `index.js` (`H.internal`, `WS_ENDPOINT`), `server/verify/verify.js` (`openCheck112`, `CHOICE112_JS`, the gated path) + `server/verify/index.js`
+(`tellArena`), the page's `src/online/429-v112check.js`. Tests: `server/test/verify.test.js` (gated() + the v1.12 part of verifier(); npm test) and
+`tools/tests/tonl112.js` (the toast). **No protocol bump** — older pages already wait on `{pending:true}` and the `match.settled` push.
+
+- **The gated settle (R2a).** Stack parameter `RankedCheck` (enforce · log · off; default **enforce**; it replaces v1.01's `VerifyMode`, so every
+  stack's first v1.12 deploy starts at enforce) → Lambda env `VERIFY_MODE`. With enforce, when the last human of a Ranked match reports,
+  `settleMatch` does NOT settle: `META.g112` = the time (`MATCH#`/`GATE112` makes it once; `META.vq101` too, so v1.01's after-settle call stays quiet;
+  `LOBBY.g112` marks the room), the verifier is invoked with `{id, gate:true}`, and every reporter hears `{pending:true, check112:1}` (a v1.12 page shows
+  "⏳ The scribes check the result…", an older one its "waiting for the other lanistas"). The match stays `live` meanwhile; the lanistas' `match`
+  stays set (they cannot sit down elsewhere for that minute).
+- **The verdict (R1a).** The verifier writes `VERIFY#<id>`/V (as in v1.01, plus `gate:1`, the replay's own `table` + end hash `h`, `open` = the opening
+  check, `choice` = the audit counts; a gated replay gets 45 s) and async-invokes the arena Lambda with the INTERNAL event `{verify112:'done', id}` —
+  sent whatever happened (a skip, a crash: then `VERIFY#` `{skipped:'error'}`), and again on a retry. The arena (`index.js` → `route.verdict112`)
+  turns it into ONE decision `VERIFY#<id>`/J (putNew; GSI1PK `JUDGE112`, ttl 90 days) and settles with it — `settleMatch` itself is unchanged, so
+  pay, deaths, loot, Elo, XP, Glory, Hall, wagers, the pushes all run exactly once (its status flip), whatever path calls it:
+  - **ok** — the replay finished and every report matches it: settled with the replay's table.
+  - **bad** — the replay finished, some report differs: settled with the REPLAY's table; each human whose table differs is in the minority →
+    one strike (the base settlement's own strike loop) + `AUDIT#<id>`/J112 `judge_bad`. A report whose table matches but whose end hash
+    differs is not struck (the hash is logged in `VERIFY#`). A lone human vs CPUs is judged the same way (no more "unverified").
+  - **forged** (R3a) — the host's opening differs from the room (below): that replay proves nothing → the host gets a strike (once:
+    `MATCH#`/`STRIKE112#<acct>`), the table = the agreement of the OTHER humans' reports with the host's row stripped of its reward (won false,
+    coin 0, CF 0 — his Fate as they saw it stands); no other human reported → void (wagers, tickets and coin sent go back). `AUDIT` `judge_forged`
+    + `AUDIT#<id>`/VERIFY `verify_forged` {openDiff}.
+  - **unjudged** (R4a) — no usable verdict: the verifier skipped (`nobuild` = a page before v1.01 wave 2, `build` = the build changed mid-match
+    or the release went out during it, `nobundle`, `noopen`, `error`), the replay did not finish (`end: …`), the verifier could not be invoked
+    (`noverify`), or nothing came within **60 s** (`timeout`: the verifier down, throttled by its reserved 3, or late) → today's agreement of the
+    reports (a 2-human disagreement is still void) + `AUDIT` `judge_unjudged`. A verdict after that is only logged.
+- **Sweeps.** The 60 s deadline needs a request: a re-sent report (`match.result`), `match.get`, `hello` (the caller's own match) and every lobby
+  list (`prune` → rooms marked `g112`) settle a gated match whose verdict is in or whose 60 s are up. With the gate OFF (`VERIFY_MODE=log/off`) a
+  match left gated settles by agreement at the next of those.
+- **Opening field check (E2, R3a).** `openCheck112` rebuilds the start from `LOBBY#` (the seats' kits, event, city, seed, teams) with the page's own
+  `onlSeatsFor` + `startEvent` — not HEADLESS, like a host's page (a famous visitor's CF only happens outside rules mode) — and takes the snapshot where
+  the host sends `match.open` (113's first `beginTurn`). Compared: event, city, seed, seat count, CPU count, beasts (kind + HP), and per seat class,
+  CPU flag, name, team, start tile, stats, HP and AP per location, CF, coin, weapons, armor pieces (key + AP), items in hand, the brought kit's engine
+  keys. Checked when built: 20 rooms × 5 events, Chromium host (briefing clicked through) vs Node rebuild — identical (only the figures' facing
+  differs, not compared). ~0.5–2 s. Not a full rebuild (backlog: replay from the server's own opening).
+- **Choice audit (E3, R6a).** In the replay the outermost `modal` wrapper notes each human window's offered values (buttons + close + null) and
+  113's `onlmApply` modal path flags an answer outside them (`VERIFY#` `choice {n, open, flags}` + `AUDIT#<id>`/CHOICE `offmenu_answer`
+  {flags:[{seq, seat, kd, ds, v, offered}]}). A window with its own controls (CUR_MODAL.done / onclick / a form field / onOpen) counts as `open`
+  and is never flagged. Audit only — the verdict and the pages are unchanged (pages refusing such answers = a later release).
+- **admin.verify** (testers) also returns `forged`, `unjudged`, `decided {ok, bad, forged, unjudged}`, `judged` (the newest decisions) and `mode`;
+  `bad` now leaves out forged.
+- **Concurrency (R5a).** `VerifyReserve` (template; `VerifyFn.ReservedConcurrentExecutions` when > 0): deploy.sh sets 3 when the account's Lambda limit
+  leaves AWS its 100 unreserved, else 0 with a printed note (a new account has 10 in all). `flavius.sh` asks AWS once for a limit of 1000
+  (Service Quotas `L-B99A9384`, `lambda_quota`, before every server deploy and `bash flavius.sh quota`; an open request is never sent twice,
+  a denied one is reported) and `status` shows "ranked check". The budget switch reopens the verifier at its reserved 3. With the 3 in use a
+  4th replay waits in Lambda's async queue; its match settles unjudged at 60 s if it is not done by then.
+- **IAM / wiring.** `VerifyRole` may `lambda:InvokeFunction` the arena (`arn:…:function:flavius-arena`, the fixed name — `!GetAtt Fn.Arn` would be a
+  cycle); `VerifyFn` env `ARENA_FN`; `Fn` env `WS_ENDPOINT` (pushes from an internal event, which has no socket request). Only an AWS principal
+  allowed to invoke the function can send an internal event; API Gateway events always carry `requestContext`.
+- **Cost.** One more async invoke a Ranked match (the arena, ~10 ms) + the opening rebuild (~1 s at 1 GB ≈ $0.000013) — still well under
+  $0.0001 a match.
+- **Rollback.** `VERIFY_MODE=log` (or `off`) on the next server deploy restores settlement by agreement at once (`log` keeps replaying after the
+  settle, as v1.01); a match held at that moment settles by agreement at its next sweep. `bash flavius.sh release 1.11d` = the previous server: it
+  has no gate (its template's `VerifyMode` defaults to log); a held match there settles by agreement when a report is re-sent, or is closed
+  void after 10 minutes of nobody connected (prune). `VERIFY#`/`AUDIT#`/`J` items expire on their own (90 days).
 
 ## v1.02 progression
 

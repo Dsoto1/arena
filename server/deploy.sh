@@ -2,7 +2,7 @@
 # Deploys (or updates) the Online Arena from AWS CloudShell. Run inside the server/ folder:
 #   sh deploy.sh you@example.com                      first time, without Google (DevNames off: nobody can sign in yet)
 #   GOOGLE_ID=xxx GOOGLE_SECRET=yyy sh deploy.sh you@example.com     with Google sign-in
-# Optional: TESTERS='a@gmail.com,b@gmail.com' (online testers, see README), VERIFY_MODE=log|off (the Ranked verifier, docs/backend.md; left out = the stack keeps its setting), STACK (default flavius-arena), REGION (default us-east-1), BUDGET (default 10), AUTH_PREFIX, DEV=true (test stack only)
+# Optional: TESTERS='a@gmail.com,b@gmail.com' (online testers, see README), VERIFY_MODE=enforce|log|off (the Ranked check, docs/backend.md; left out = the stack keeps its setting — a new stack, and every stack's first v1.12 deploy, starts at enforce), STACK (default flavius-arena), REGION (default us-east-1), BUDGET (default 10), AUTH_PREFIX, DEV=true (test stack only)
 set -e
 export AWS_PAGER=""
 # pasted values can carry invisible characters (a carriage return, a tab, a space): strip them all
@@ -23,8 +23,17 @@ case "$AUTH_STAGE" in cert|live) ;; *) echo "AUTH_STAGE is cert or live."; exit 
 if [ "$AUTH_DOMAIN" != none ]; then PARENT="${AUTH_DOMAIN#*.}"; ZONE=$(aws route53 list-hosted-zones-by-name --dns-name "$PARENT" --query "HostedZones[?Name=='$PARENT.'].Id | [0]" --output text 2>/dev/null | sed 's#/hostedzone/##'); case "$ZONE" in Z*) echo "Sign-in address: https://$AUTH_DOMAIN (Route 53 zone $ZONE)";; *) echo "No Route 53 zone for $PARENT — keeping the amazoncognito.com sign-in address."; AUTH_DOMAIN=none; ZONE=none;; esac; fi
 # online testers: TESTERS='a@gmail.com,b@gmail.com' sets the list, TESTERS=none clears it; left out, the stack keeps the list it has
 TP=""; if [ -n "${TESTERS+x}" ]; then TP="Testers=$(printf '%s' "$TESTERS" | tr -d '\r\n\t ')"; fi
-# the Ranked verifier (v1.01): VERIFY_MODE=off stops the verify calls (rollback), log turns them back on; left out, the stack keeps its mode
-VP=""; if [ -n "${VERIFY_MODE:-}" ]; then case "$VERIFY_MODE" in log|off|enforce) VP="VerifyMode=$VERIFY_MODE";; *) echo "VERIFY_MODE is log, off or enforce."; exit 1;; esac; fi
+# the Ranked check (v1.01 verifier, v1.12 enforce): VERIFY_MODE=log settles by agreement again at once (the rollback; the replay only logs), off stops
+# the replays too, enforce turns the check back on; left out, the stack keeps its mode (stack parameter RankedCheck since v1.12, default enforce)
+VP=""; if [ -n "${VERIFY_MODE:-}" ]; then case "$VERIFY_MODE" in log|off|enforce) VP="RankedCheck=$VERIFY_MODE";; *) echo "VERIFY_MODE is enforce, log or off."; exit 1;; esac; fi
+# v1.12 (R5a): at most 3 replays at once — reserved concurrency 3 for the verifier, only when the account's Lambda limit leaves AWS its minimum of
+# 100 unreserved (a new account has 10 in all: then none, with a note; flavius.sh asks AWS for a raise). Closed by the budget switch (0): left alone.
+VR=""; VCC=$(aws lambda get-function-concurrency --region "$REGION" --function-name flavius-arena-verify --query ReservedConcurrentExecutions --output text 2>/dev/null || echo None)
+if [ "$VCC" = "0" ]; then echo "The verifier is closed by the budget switch: its reserved concurrency stays as it is."
+else UNRES=$(aws lambda get-account-settings --region "$REGION" --query AccountLimit.UnreservedConcurrentExecutions --output text 2>/dev/null || echo 0)
+  case "$UNRES" in ''|*[!0-9]*) UNRES=0;; esac; HAVE=0; [ "$VCC" = "3" ] && HAVE=3
+  if [ $((UNRES + HAVE - 3)) -ge 100 ]; then VR="VerifyReserve=3"; echo "Ranked check: at most 3 replays at once (reserved concurrency 3)."
+  else VR="VerifyReserve=0"; echo "Note: this account's Lambda limit leaves $UNRES unreserved (AWS keeps 100) — the verifier runs without its own 3 for now (it still works; flavius.sh has asked AWS for a higher limit)."; fi; fi
 ACCT=$(aws sts get-caller-identity --query Account --output text)
 BUCKET="flavius-arena-code-$ACCT-$REGION"
 # a first deploy that failed leaves the stack in ROLLBACK_COMPLETE, which cannot be updated: clear it first
@@ -43,6 +52,6 @@ aws cloudformation package --region "$REGION" --template-file template.yaml --s3
 GSEC=""; if [ -n "$GOOGLE_SECRET" ]; then GSEC="GoogleClientSecret=$GOOGLE_SECRET"; elif [ -z "$ST" ] || [ "$ST" = "None" ]; then GSEC="GoogleClientSecret=none"; fi
 aws cloudformation deploy --region "$REGION" --template-file packaged.yaml --stack-name "$STACK" --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset \
   --parameter-overrides AlertEmail="$EMAIL" MonthlyBudgetUSD="${BUDGET:-10}" GoogleClientId="${GOOGLE_ID:-none}" $GSEC \
-    AuthDomainPrefix="${AUTH_PREFIX:-flaviusrule-arena}" DevNames="${DEV:-false}" CustomAuthDomain="$AUTH_DOMAIN" HostedZoneId="$ZONE" CustomAuthStage="$AUTH_STAGE" $TP $VP
+    AuthDomainPrefix="${AUTH_PREFIX:-flaviusrule-arena}" DevNames="${DEV:-false}" CustomAuthDomain="$AUTH_DOMAIN" HostedZoneId="$ZONE" CustomAuthStage="$AUTH_STAGE" $TP $VP $VR
 aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].Outputs" --output table
 if [ "$AUTH_DOMAIN" != none ] && [ "$AUTH_STAGE" = cert ]; then echo "Certificate for $AUTH_DOMAIN is made. In 15 minutes, run the same deploy again with AUTH_STAGE=live to add the sign-in address."; fi

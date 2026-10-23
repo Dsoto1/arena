@@ -84,5 +84,12 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 - CI runners moved to ubuntu-26.04 (2026-10-23): `playwright install --with-deps` (1.56.1) cannot install its system deps there ("Cannot install dependencies for ubuntu26.04-x64"), so tests run with the runner's own fonts (wider text than here). Layout tests near a wrap edge can fail only on CI (tv105z, fixed in 388). Pinning `runs-on: ubuntu-24.04` or a newer Playwright would restore the old fonts.
 - A commit that only touches tools/deploy (e.g. release.sh's advert shot) starts no regression run · dispatch the full run by hand.
 
+- 2026-10-23 · Ranked check (v1.12, docs/backend.md "v1.12 Ranked check"): the opening is FIELD-checked against the room, not rebuilt (a forger can
+  still change what those fields leave out, e.g. the market or the chest — full rebuild = backlog); the 60 s fallback needs a request (a re-sent
+  report, hello, match.get or any lobby list) to fire; a replay that differs from EVERY report (≥ 2 humans agreeing) is still the result and
+  strikes them all (his R1a) — a rules bug in the bundle would look like that, so read `AUDIT judge_bad` with 2+ minority accounts first.
+- 2026-10-23 · AWS account Lambda limit: a new account runs 10 at once, so the verifier's reserved 3 is skipped (deploy.sh prints a note) until
+  AWS grants the raise flavius.sh asks for (`bash flavius.sh quota` shows where it stands).
+
 ## Waiting on him
 - Safari board sharpness (406 W1): built = cap 1.5× → 1× when slow; ANSWERED 2026-10-20 (4b): try 1.5× after the v1.08b sharper sheets, measure on his Mac. Figures fuzzy (his note 2026-10-20) → v1.08b. Safari CONFIRMED on his Mac 2026-10-20 (v1.07, Slow): 52.6 / 55 fps, p50 17 ms (was 4.5 fps); the auto-drop went to 1× (tools/plans/v107/perf/safari-v107-*).

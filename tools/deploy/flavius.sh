@@ -21,13 +21,14 @@
 #                                                           page + assets only, never the server, the download or the site
 #   bash flavius.sh update                                 this script itself, from the newest work branch on GitHub (beta does it too)
 #   bash flavius.sh status                                 what is live: game version, server, sign-in, styles
+#   bash flavius.sh quota                                  the account's Lambda limit (the Ranked check needs room for 3 replays): asks AWS once, prints where it stands
 #
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
 # Nothing is ever deleted from the bucket. DRY=1 bash flavius.sh … prints the commands instead of running them.
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=9
+FSH_VER=10
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -109,9 +110,30 @@ server_dir(){ local sd="$1" email="$2"
   local sec=""; if [ "${NEW_SECRET:-}" = 1 ]; then printf 'Paste the NEW Google client SECRET (nothing shows), then Enter: '; read -r -s sec; echo; sec=$(printf '%s' "$sec" | tr -d '\r\n\t ')
     [ ${#sec} -ge 20 ] || die "That secret is ${#sec} characters — expected about 35. Run again."; ok "new secret read (${#sec} characters)"
   else ok "Google secret: keeping the one the server already has (NEW_SECRET=1 to change it)"; fi
+  lambda_quota || true
   [ "${DRY:-}" = 1 ] || cd "$sd"; AUTH_DOMAIN="${AUTH_DOMAIN:-${LOGIN_DOMAIN:-none}}" AUTH_STAGE="${AUTH_STAGE:-${LOGIN_STAGE:-cert}}" GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
   unset sec; ok "server deployed"; }
 
+# v1.12 (R5a): the account's Lambda concurrency limit (Service Quotas L-B99A9384). A new AWS account has 10 at once — too few for the Ranked
+# check's own 3 (AWS keeps 100 unreserved). Asks AWS ONCE for 1000 (the usual default) and prints where the request stands; an open request is
+# never sent again, a denied one is reported (not re-sent). Run before every server deploy and by `bash flavius.sh quota`.
+LQ_CODE="L-B99A9384"; LQ_WANT=1000
+lambda_quota(){ local cur st dv
+  cur=$(aws service-quotas get-service-quota --service-code lambda --quota-code "$LQ_CODE" --query 'Quota.Value' --output text 2>/dev/null | cut -d. -f1 || true)
+  case "$cur" in ''|None|*[!0-9]*) cur=$(aws lambda get-account-settings --query AccountLimit.ConcurrentExecutions --output text 2>/dev/null || true);; esac
+  case "$cur" in ''|None|*[!0-9]*) printf '\033[1;33m! Lambda limit: could not read it (the Ranked check works anyway, without its own 3)\033[0m\n'; return 0;; esac
+  if [ "$cur" -ge 103 ]; then ok "Lambda limit: $cur at once (room for the Ranked check's 3)"; return 0; fi
+  read -r st dv < <(aws service-quotas list-requested-service-quota-change-history-by-quota --service-code lambda --quota-code "$LQ_CODE" \
+    --query 'reverse(sort_by(RequestedQuotas,&Created))[0].[Status,DesiredValue]' --output text 2>/dev/null || echo "None None")
+  case "${st:-None}" in
+    PENDING|CASE_OPENED) ok "Lambda limit: $cur now — AWS is reviewing the raise to ${dv%%.*} ($st; usually hours, AWS e-mails you). Nothing to do.";;
+    DENIED|NOT_APPROVED) printf '\033[1;33m! Lambda limit: %s — AWS turned the raise down (%s). The Ranked check still works, sharing the pool. Send Claude this line.\033[0m\n' "$cur" "$st";;
+    APPROVED|CASE_CLOSED) printf '\033[1;33m! Lambda limit: %s — AWS closed the request (%s) but the limit has not moved yet. Run bash flavius.sh quota again later.\033[0m\n' "$cur" "$st";;
+    *) if [ "${DRY:-}" = 1 ]; then printf '   [dry] aws service-quotas request-service-quota-increase --service-code lambda --quota-code %s --desired-value %s\n' "$LQ_CODE" "$LQ_WANT"; return 0; fi
+       if aws service-quotas request-service-quota-increase --service-code lambda --quota-code "$LQ_CODE" --desired-value "$LQ_WANT" --query 'RequestedQuota.Status' --output text >/dev/null 2>&1; then
+         ok "Lambda limit: $cur now — asked AWS for $LQ_WANT (for the Ranked check's 3 replays at once; AWS e-mails you when it is done, no click needed)"
+       else printf '\033[1;33m! Lambda limit: %s — the raise could not be asked for (permissions?). The Ranked check works anyway, sharing the pool.\033[0m\n' "$cur"; fi;;
+  esac; return 0; }
 # the own sign-in address: run once → certificate; run again 15+ minutes later → the address goes live and the game switches to it
 conf_set(){ touch "$CONF"; grep -v "^$1=" "$CONF" > "$CONF.tmp" || true; printf '%s=%q\n' "$1" "$2" >> "$CONF.tmp"; mv "$CONF.tmp" "$CONF"; }
 cmd_login(){ local dom="login.flaviusrule.com" zip; [ -f "$CONF" ] && . "$CONF"
@@ -165,6 +187,11 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
     G "server updated" "$(aws lambda get-function --function-name "$fn" --query Configuration.LastModified --output text 2>/dev/null | cut -c1-16 | tr T ' ') UTC"
     local cc; cc=$(aws lambda get-function-concurrency --function-name "$fn" --query ReservedConcurrentExecutions --output text 2>/dev/null || echo None)
     [ "$cc" = "0" ] && R "arena open?" "CLOSED by the budget switch — reopen: see the stack's ReopenCommand output" || G "arena open?" "open"
+    # v1.12 the Ranked check: its mode and its own 3 replays (reserved concurrency; a new account's limit cannot hold them yet)
+    local rc vc; rc=$(aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Parameters[?ParameterKey=='RankedCheck'].ParameterValue" --output text 2>/dev/null || true)
+    vc=$(aws lambda get-function-concurrency --function-name flavius-arena-verify --query ReservedConcurrentExecutions --output text 2>/dev/null || echo None)
+    case "$rc" in enforce) [ "$vc" = "3" ] && G "ranked check" "enforce · 3 replays at once" || Y "ranked check" "enforce · no reserved 3 yet (the account's Lambda limit — bash flavius.sh quota)";;
+      log|off) Y "ranked check" "$rc — results by agreement only (VERIFY_MODE=enforce on the next server deploy turns it back on)";; *) Y "ranked check" "not on this server yet";; esac
   else R "server updated" "the arena function was not found"; fi
   # page and server speak the same protocol? (the server answers 401 = 'sign in' when the version is right, 426 when it is not)
   local pv code; pv=$(printf '%s' "$page" | grep -oE 'C\.VER=[0-9]+' | tail -1 | cut -d= -f2); [ -n "$pv" ] || pv=$(printf '%s' "$page" | grep -o 'const VER=[0-9]*' | head -1 | cut -d= -f2)  # 111-onlcore raises its protocol with C.VER (v1.0: 8); older pages only have the first const VER
@@ -311,6 +338,6 @@ cmd_release(){ local here; here=$(pwd)
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;; quota) lambda_quota;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
   *) sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//';;
 esac
