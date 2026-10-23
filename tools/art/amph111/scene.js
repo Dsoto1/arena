@@ -20,6 +20,7 @@
 window.AMPH111_BUILD = function (THREE, TEX, opt) {
   opt = opt || {};
   const VAR = opt.variant || 'p7';                           /* pass 8 mock-up: 'p7' (approved pass 7, reproducible) | 'city' (his 1a) | 'ground' (his fallback c) */
+  const CORNER = opt.corner || 'p9';                         /* pass 10: 'p10' = the side corners rebuilt (stair to the ground, cream towers) | 'p9' = v1.11b's towers */
   const E0 = -2.45, E1 = 15.45, GX = 0.47, M = 6.5;          /* footprint (3-tier), the grand arenas' extra, the board's middle */
   const e0 = E0 - GX, e1 = E1 + GX, LH = (e1 - e0) / 2;      /* the grand outline: everything built outside it */
   const GROUND = -2.6;                                       /* the ground around the building (near side cut-away) */
@@ -48,6 +49,7 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
     let g = geom.index ? geom.toNonIndexed() : geom.clone();
     if (m) g.applyMatrix4(m);
     if (!g.attributes.normal) g.computeVertexNormals();
+    fixWinding(g, m);
     for (const k of Object.keys(g.attributes)) if (k !== 'position' && k !== 'normal') g.deleteAttribute(k);
     boxUV(g, UVS[key] || 4);
     (BK[key] = BK[key] || []).push(g);
@@ -87,6 +89,13 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
     const g = new THREE.ExtrudeGeometry(sh, { depth: y1 - y0, bevelEnabled: false });
     g.rotateX(Math.PI / 2); g.translate(0, y1, 0);           /* shape y → z, extrusion → down from y1 */
     put(g, key, F);
+  }
+  /* pass 10: a mirrored frame (det < 0, the left corner = the right one with X and Z swapped) turns every triangle inside out: put() swaps
+     two corners of each triangle back (the normals are already right) */
+  function fixWinding(g, m) {
+    if (!m || m.determinant() >= 0) return;
+    for (const k of ['position', 'normal']) { const a = g.attributes[k]; if (!a) continue; const v = a.array;
+      for (let i = 0; i < a.count; i += 3) for (let j = 0; j < 3; j++) { const p = (i + 1) * 3 + j, q = (i + 2) * 3 + j, t = v[p]; v[p] = v[q]; v[q] = t; } a.needsUpdate = true; }
   }
   /* an arched opening outline (for Shape holes): x0..x1 wide, from y0 up to the spring ys, round top */
   function archPath(x0, x1, y0, ys, seg) {
@@ -283,8 +292,84 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
       meta.pillars = meta.pillars || []; meta.pillars.push({ x: (x0 + x1) / 2, top: 0.45, z: (z0 + z1) / 2, front: z1 });
     }
   }
+  /* ================= PASS 10 (his screenshot of the right corner + 1a 2a 3a, v1.11c): THE SIDE CORNERS =================
+     Built for the RIGHT corner in world coordinates (X = u, Z = v); the left corner is the same with X and Z swapped (a mirrored frame,
+     put() fixes the winding). The tower is v1.11b's square (X 14.93..18.89, Z −5.89..−1.93 on the right; its visible faces are +Z, facing
+     down-left, and +X, facing down-right).
+     1a THE STAIR: 192 (ar91Under) draws a 5-step flight at each side corner of its outline: chevron treads round the corner vertex V, each
+        step 0.12 TW out in screen x (= 0.12 world units out along X and Z) and 0.06 TW down (0.098), arms 1.5 TW (2.68 units) along the
+        outline; it ends 0.3 TW (0.49) below the outline, its near arm's foot on the line X = V.x + 0.6 (grand arenas V = (15.92, −2.92):
+        X 16.52; 3-tier V = (15.45, −2.45): X 16.05). Ours: a landing at that level (Y −0.49) from the façade out to X 16.52 (so a 3-tier
+        flight lands on it too), then 10 steps down along the tower's +Z face (same slope as 192's: rise 0.192, run 0.24) to the ground,
+        a stepped cheek wall on the outer side like the front stair, a newel block at the foot, and the arched DOORWAY right there in a
+        one-storey annex that continues the near façade round the tower (its cornice + plinth). A paved apron (the terrace's paving) at
+        the foot, three steps down to the street.
+     2a THE TOWER: the façade's cream stone (stoneN, tinted per arena), plinth down to the street, a cornice between storeys (4 bands),
+        one arched window per storey on each visible face, ONE banner (on the +Z face, in place of the middle window), the top brazier.
+     3a the tower + annex reach past the frame's side edge; 419 extends the frame's outer column to the canvas edge (enc edge band). */
+  function buildCorners10() {
+    const S2r = Math.SQRT1_2, TX0 = e1 - 1.4 * S2r, TZ1 = e0 + 1.4 * S2r, SIDE = 2.8 * Math.SQRT2, TX1 = TX0 + SIDE, TZ0 = TZ1 - SIDE;
+    const H = Y_ATT + 1.6, BOT = GROUND - 0.9;                       /* top (as v1.11b); foot = the street (YS − 0.3), no floating base */
+    const YT = -0.49, XS = 16.52, n = 10, rise = (YT - GROUND) / (n + 1), run = 0.24, XF = XS + n * run;   /* 192's foot line (grand), our flight */
+    const ZC = -0.3, ZW = 0.3, AX1 = 21.9, DX = XF + 1.05, AWd = 1.12, AYs = GROUND + 1.02;               /* cheek wall, annex end, doorway */
+    meta.corner10 = { TX0, TX1, TZ0, TZ1, H, YT, XS, XF, n, rise, run, ZC, AX1, DX };
+    const CF = { right: new THREE.Matrix4(), left: new THREE.Matrix4().makeBasis(V3(0, 0, 1), V3(0, 1, 0), V3(1, 0, 0)) };
+    const FZ = new THREE.Matrix4().makeBasis(V3(1, 0, 0), V3(0, 1, 0), V3(0, 0, 1)).setPosition(V3(0, 0, TZ1));     /* +Z face: x = X, z out */
+    const FX = new THREE.Matrix4().makeBasis(V3(0, 0, -1), V3(0, 1, 0), V3(1, 0, 0)).setPosition(V3(TX1, 0, 0));    /* +X face: x = −Z, z out */
+    meta.cornerBanners = []; meta.towers = [];
+    for (const c of ['left', 'right']) {
+      const F = CF[c], Fz = F.clone().multiply(FZ), Fx = F.clone().multiply(FX);
+      /* ---- the tower: a solid block + bands + one window per storey ---- */
+      /* the block, with a passage in its foot where 192's flight runs back under the tower (X PA..PB, back to TZ1 − PD, up to PY):
+         the board's steps are drawn over our tower, so they read as coming out of this arch instead of sitting on a wall */
+      const PA = 15.45, PB = 18.15, PD = 2.07, PY = 2.25, PS = 2.2 - (PB - PA) / 2;   /* covers where 192's flight + landing corner lie inside the tower */
+      box(F, 'stoneN', TX0, TX1, BOT, H, TZ0, TZ1 - PD); box(F, 'stoneN', TX0, TX1, PY, H, TZ1 - PD - 0.01, TZ1);
+      box(F, 'stoneN', TX0, PA, BOT, PY + 0.01, TZ1 - PD - 0.01, TZ1); box(F, 'stoneN', PB, TX1, BOT, PY + 0.01, TZ1 - PD - 0.01, TZ1);
+      const bands = [[-0.3, -0.12, 0.2], [Y_POD + 0.6, Y_POD + 0.74, 0.18], [4.9, 5.02, 0.18], [H - 0.6, H - 0.48, 0.18], [H, H + 0.16, 0.26], [GROUND - 0.9, GROUND + 0.25, 0.12]];
+      for (const [y0, y1, d] of bands) { if (y1 < PY && y1 > YT) { box(F, 'stoneN', TX0 - d, PA, y0, y1, TZ0 - d, TZ1 + d); box(F, 'stoneN', PB, TX1 + d, y0, y1, TZ0 - d, TZ1 + d); box(F, 'stoneN', PA, PB, y0, y1, TZ0 - d, TZ1 - PD); continue; }
+        box(F, 'stoneN', TX0 - d, TX1 + d, y0, y1, TZ0 - d, TZ1 + d); }
+      archWall(Fz, 'stoneN', TX0, PA, BOT, -0.12, 0, 0.08, []); archWall(Fz, 'stoneN', PB, TX1, BOT, -0.12, 0, 0.08, []);
+      const storeys = [[-0.12, Y_POD + 0.6, 0.5, 1.5], [Y_POD + 0.74, 4.9, 3.0, 4.05], [5.02, H - 0.6, 5.5, 6.5]];   /* [y0, y1, window sill, spring] */
+      const faces = [{ M: Fz, L0: TX0, L1: TX1, wx: (PA + PB) / 2, ban: 1 }, { M: Fx, L0: -TZ1, L1: -TZ0, wx: -TZ1 + 0.85 }];  /* +X face: its visible part (the frame cuts it), window near the corner */
+      for (const f of faces) for (let si = 0; si < storeys.length; si++) {
+        const [y0, y1, ys0, ysp] = storeys[si], hw = 0.36, x = f.wx;
+        if (f.ban && si === 1) { archWall(f.M, 'stoneN', f.L0, f.L1, y0, y1, 0, 0.08, []); continue; }   /* the banner's storey */
+        const holes = [{ x0: x - hw, x1: x + hw, y0: ys0, ys: ysp }];
+        if (f.ban && si === 0) holes.splice(0, 1, { x0: PA, x1: PB, y0: y0, ys: PS });   /* the +Z face's first storey: the portal instead of the window */
+        archWall(f.M, 'stoneN', f.L0, f.L1, y0, y1, 0, 0.08, holes);
+        if (f.ban && si === 0) { box(f.M, 'stoneN', PA - 0.1, PA + 0.02, YT, PS, 0.0, 0.1); box(f.M, 'stoneN', PB - 0.02, PB + 0.1, YT, PS, 0.0, 0.1);   /* jamb faces */
+          box(f.M, 'stoneN', (PA + PB) / 2 - 0.12, (PA + PB) / 2 + 0.12, PS + (PB - PA) / 2 - 0.04, PS + (PB - PA) / 2 + 0.2, 0.08, 0.14); continue; }   /* keystone */
+        box(f.M, 'dark', x - hw - 0.02, x + hw + 0.02, ys0, ysp + hw + 0.02, 0.004, 0.02);                      /* the opening (dark) */
+        box(f.M, 'stoneN', x - hw - 0.1, x + hw + 0.1, ys0 - 0.09, ys0, 0.08, 0.16);                            /* sill */
+        box(f.M, 'stoneN', x - 0.07, x + 0.07, ysp + hw - 0.02, ysp + hw + 0.14, 0.08, 0.13);                   /* keystone */
+      }
+      meta.towers.push({ c, top: H + 0.16, z: 1.4 });
+      for (const f of faces) if (f.ban) meta.cornerBanners.push({ F: f.M, x: f.wx, y: 4.72, z: 0.1, w: 0.9, h: 1.85 });
+      /* ---- the annex: the near façade's ground storey continued round the tower, the doorway at the stair's foot ---- */
+      archWall(Fz, 'stoneN', TX1 - 0.05, AX1, BOT, 0.0, -0.45, 0, [{ x0: DX - AWd / 2, x1: DX + AWd / 2, y0: GROUND, ys: AYs }]);
+      box(F, 'stoneN', TX1 - 0.05, AX1, BOT, 0.0, TZ0, TZ1 - 1.32); box(F, 'stoneN', TX1 - 0.05, AX1, -0.2, 0.0, TZ1 - 1.33, TZ1 - 0.44);   /* body behind the doorway's bay + its roof */
+      bayInside(Fz, 'brick', DX - AWd / 2, DX + AWd / 2, GROUND, AYs, -1.25, -0.45, 'dark');
+      box(Fz, 'stoneN', TX1, AX1, -0.78, -0.62, 0, 0.12); box(Fz, 'stoneN', TX1, AX1, -0.86, -0.78, 0, 0.06);       /* the façade's cornice line */
+      box(Fz, 'stoneN', TX1, AX1, GROUND, GROUND + 0.16, 0, 0.05);
+      box(Fz, 'stoneN', TX1, AX1, 0.0, 0.3, -0.28, 0.04);                                                          /* a parapet on the annex roof */
+      { const r = AWd / 2, sh = new THREE.Shape(); sh.absarc(0, 0, r + 0.1, 0, Math.PI, false); sh.lineTo(-r, 0); sh.absarc(0, 0, r, Math.PI, 0, true); sh.lineTo(r + 0.1, 0);
+        put(new THREE.ExtrudeGeometry(sh, { depth: 0.04, bevelEnabled: false, curveSegments: 16 }), 'stoneN', Fz.clone().multiply(new THREE.Matrix4().makeTranslation(DX, AYs, 0)));
+        box(Fz, 'stoneN', DX - 0.09, DX + 0.09, AYs + r - 0.04, AYs + r + 0.16, 0, 0.06);
+        for (const sx of [-1, 1]) box(Fz, 'stoneN', DX + sx * (r + 0.05) - 0.05, DX + sx * (r + 0.05) + 0.05, GROUND + 0.16, AYs, 0, 0.04); }
+      /* ---- the stair: landing at 192's foot level, 10 steps along the tower down to the ground, the stepped cheek wall ---- */
+      box(F, 'stoneN', 15.0, XS + 0.01, BOT, YT, TZ1 - PD - 0.01, ZC + 0.01);
+      for (let k = 0; k < n; k++) { const x0 = XS + k * run; box(F, 'stoneN', x0, x0 + run + (k + 1 < n ? 0.02 : 0), BOT, YT - rise * (k + 1), x0 + run <= PB ? TZ1 - PD - 0.01 : TZ1 - 0.05, ZC + 0.01); }   /* under the portal the steps run back to its far wall */
+      box(F, 'stoneN', 15.0, XS + 0.01, BOT, YT + 0.32, ZC, ZC + ZW);
+      for (let k = 0; k < n; k++) box(F, 'stoneN', XS + k * run, XS + (k + 1) * run + 0.01, BOT, YT - rise * (k + 1) + 0.32, ZC, ZC + ZW);
+      box(F, 'stoneN', XF - 0.06, XF + 0.4, BOT, GROUND + 0.62, ZC - 0.05, ZC + ZW + 0.05);                        /* the newel block at the foot */
+      box(F, 'stoneN', XF - 0.1, XF + 0.44, GROUND + 0.62, GROUND + 0.7, ZC - 0.09, ZC + ZW + 0.09);
+      /* ---- the paved apron at the foot (the terrace's level and paving), three steps down to the street ---- */
+      for (let k = 0; k <= 3; k++) { const o = k * 0.25; box(F, 'gPave', 15.0, AX1 + 0.6 + o, GROUND - 0.25 - k * 0.2 - (k ? 0 : 0), GROUND - k * 0.2, TZ1 - 0.1, 1.0 + o); }
+    }
+  }
   /* ================= CORNER TOWERS (left and right): square, two visible faces with a gate arch + an arched window, bands, a cornice ================= */
-  for (const c of ['left', 'right']) {
+  if (CORNER === 'p10') buildCorners10();
+  else for (const c of ['left', 'right']) {
     const F = DIAG[c]; const z0 = 0.6, R = 2.0, H = Y_ATT + 1.6;
     prism(F, 'stone', [[0, z0 - R * 1.0], [R * 1.4, z0 + R * 0.4], [0, z0 + R * 1.8], [-R * 1.4, z0 + R * 0.4]], GROUND, H);
     for (const [y0, y1, k] of [[H, H + 0.16, 1.08], [-0.3, -0.12, 1.05], [Y_POD + 0.6, Y_POD + 0.74, 1.04], [H - 0.6, H - 0.48, 1.04]])
@@ -402,6 +487,8 @@ window.AMPH111_BUILD = function (THREE, TEX, opt) {
     if (p.k % 2 === 1) P.banner(p.F, p.x, -1.02, FZ + PD + 0.01, 0.46, 1.05);
     else { P.cypress(p.F, p.x + p.s * (PW + 0.38), GROUND, FZ + 0.3, 1); P.ivy(p.F, p.x, GROUND + 0.3, -0.9, FZ + PD, PW * 2); }
   }
+  /* pass 10: one banner per corner tower */
+  for (const b of meta.cornerBanners || []) P.banner(b.F, b.x, b.y, b.z, b.w, b.h, 1);
   /* the lions */
   for (const l of meta.lionAt) P.lion(DB, l.x, l.y, l.z, l.face);
   /* the guards at Flavius's box */

@@ -7,6 +7,8 @@
      node tools/art/amph111/make.js [--out DIR] [--tw 112] [--pass N] [--overview 1.6] [--assets]
      --crowd sprite | prim   (pass 9: sprite = the live crowd's own sprites on the far rows, the default; prim = pass 8's primitive figures)
        --cs '{"d":0.35,"e":0.62}' crowd light (diffuse / emissive share) · --copt '{"f":0.8,"pitch":0.4,"ink":0.5}' crowd size / spacing / ink
+     --corner p10 | p9   (pass 10: p10 = the side corners rebuilt — stair to the ground, portal, cream towers; the default; p9 = v1.11b's towers.
+       enc.py's AMPH_EDGE (TW, default 0.7; 0 = off, as v1.11b) settles the frame's side band into one colour per row for 419's extension)
      --variant ground | p7 | city   (pass 8: ground = HIS PICK (c), the default — paving + steps fading into a dark haze + the 2a stair pools; p7 = pass 7; city = his 1a ground + Roman city in the bottom
        corners + the 2a stair pools; both still reproducible)
    Writes DIR/<layer>.png (stone, bench, cloth — luminance, tinted per arena in the game — fixed, fire, glow (night, opaque black)) and
@@ -36,7 +38,7 @@ const PORT = 20000 + Math.floor(Math.random() * 20000);
     for (const night of [false, true]) {
       const ls = LAYERS.filter(l => (l === 'glow') === night); if (!ls.length) continue;
       const r = await pg.evaluate(cfg => window.AMPH111.render(cfg).then(r => ({ out: r.out, W: r.W, H: r.H, meta: r.meta, tris: r.tris })),
-        Object.assign({ tw0: TW0, ss: SS, layers: ls, night, look: LOOK, variant: opt('variant', 'ground'), crowd: opt('crowd', 'sprite'), cs: JSON.parse(opt('cs', '{}')), copt: JSON.parse(opt('copt', '{}')), overview: OVER || 0, inkA: +opt('ink', 0.55), post: +opt('post', 0) }, FR));
+        Object.assign({ tw0: TW0, ss: SS, layers: ls, night, look: LOOK, variant: opt('variant', 'ground'), corner: opt('corner', 'p10'), crowd: opt('crowd', 'sprite'), cs: JSON.parse(opt('cs', '{}')), copt: JSON.parse(opt('copt', '{}')), overview: OVER || 0, inkA: +opt('ink', 0.55), post: +opt('post', 0) }, FR));
       for (const k of Object.keys(r.out)) { fs.writeFileSync(path.join(OUT, k + '_ss.png'), Buffer.from(r.out[k].split(',')[1], 'base64')); }
       Object.assign(res, { W: r.W, H: r.H, meta: r.meta, tris: r.tris });
     }

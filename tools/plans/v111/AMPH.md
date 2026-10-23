@@ -218,6 +218,45 @@ Review page: scratchpad amph111-review.html, new top section "Pass 8 mock-up: fi
 - Left: one size on every row (ortho bake, no per-row shrink); fans wear the class colours, not this match's fighters (a bake can't follow
   the match); no stand-ups / cheering waves up there (static).
 
+## Pass 10 — the side corners (v1.11c; his screenshot of the right corner + picks 1a 2a 3a, decisions 2026-10-22 "side corners")
+His screenshot (zoomed on the right corner): 192's short corner flight runs off the paved corner landing into thin air over the tower's
+dark doorway; the tower is a flat grey block, greyer than the cream façade; a strip of sky beyond the tower at the canvas edge; the ground
+is dark. Built behind `make.js --corner p10|p9` (scene.js opt.corner; p10 = the default; p9 re-bakes v1.11b byte-identically, checked).
+- 192's flight (ar91Under, read in the page): chevron treads round the outline's side vertex V, 5 steps, each 0.12 TW out in screen x
+  (= 0.12 world units out along X and Z) and 0.06 TW down (0.098), arms 1.5 TW (2.68 units) along the outline, foot 0.3 TW (0.49) below
+  it. Grand arenas V = (15.92, −2.92) (right corner), the near arm's foot on X = 16.52; 3-tier V = (15.45, −2.45), X = 16.05.
+### 10a — first build
+- Right corner in world coordinates, the left = X and Z swapped (a mirrored frame; put() now swaps two corners of each triangle when
+  the matrix's determinant is negative — every old frame is right-handed, so nothing else changes). Tower = v1.11b's square.
+- 1a: a landing at 192's foot level (Y −0.49) from the façade to X 16.52 (a 3-tier arena's flight lands on it too), then 10 steps down
+  along the tower's +Z face to the ground (rise 0.192, run 0.24 = 192's slope), a stepped cheek wall like the front stair, a newel block
+  at the foot, a one-storey annex continuing the near façade round the tower (its cornice + plinth, a parapet) with the arched doorway
+  right at the stair's foot; a paved apron (the terrace's paving and level) with three steps down to the street; the tower and annex
+  stand on the street (no floating base).
+- 2a: stoneN (the façade's cream, tinted per arena), cornices between 4 storeys, one arched window per storey per visible face (dark
+  opening, sill, keystone), ONE banner (+Z face, middle storey), the top brazier; the medallions and the old gate arches are gone.
+- Compared with his screenshot + 9d: the stair reads (nothing hangs), the tower is cream and calm; but 192's flight still drew over the
+  tower's wall (its back part lies inside the tower: the game paints on top of the bake) and the sky still showed past the frame.
+### 10b — a portal under the board's flight + the frame goes on
+- The tower's foot opens in a wide arch (X 15.45..18.15, up to 2.2, 2.07 deep) exactly where 192's flight and corner landing lie inside
+  the tower; our steps run back under it to its far wall. The board's steps now read as coming out of the tower.
+- 3a: enc.py settles the frame's outermost band (AMPH_EDGE, in TW) into one colour per row (premultiplied, so the layers still add up);
+  419 draws that outer column past the frame's left/right edge (amphPlace in the cached layer; amphOutside when zoomed), so the tower +
+  ground haze go on to the canvas edge. First try (0.45 TW, rows blurred 0.2 TW): horizontal streaks far out.
+### 10c — final
+- Band 0.7 TW, rows blurred 0.5 TW; 419 eases the stretched column over 4 TW into its own mean colour (cached 48-px strips per
+  composite): a calm haze, no sky beside the towers at any width; sky stays above the towers' roofline (as above the far stands).
+- His "the ground is dark": the side haze is lighter up by the towers (amph111.html hz8: the sideways term × 0.55..1 by screen y < 8 TW;
+  the bottom corners as before). Most of the dark at the stair's foot is the tower's own shadow (sun upper left).
+- Checked (review page amph-corner-review.html): his view, both corners zoomed day/night, Honey raw sienna (3-tier) day/night, 1440×900
+  @2×, 1920×1080, 2560×1440, 2200×1000, 3440×1440 (canvas 1030 wide), 390 phone, landscape phone, pinch 1.1 on both phones, 3440 zoomed.
+  Unzoomed the corners sit at the canvas edge (only the stair's head shows at 1440); everything else is as shipped.
+- Sizes: assets/amph111_* 532 KB (9d: 498): stone 249 → 275, fixed 136 → 140, glow 39 → 43, bench/cloth ±1. Same frame, same memory;
+  0 per frame by day; zoomed past the frame: ≤ 2 clipped blits per uncovered strip. Night glow unchanged in shape.
+- Left: pinched to 1.1 on a phone, the lighting wash ends at the cached layers' margin, so a faint step in shade can show far out in the
+  haze (v1.11a's zoom strips have the same limit). 192's flight is drawn on top of everything of ours, by design.
+- Tests: tv111am tv100r tv100z tv91r tv92p tv66 tv101z pass (tv111s fails its call-count checks only when run in parallel — same on v1.11b).
+
 ## Method
 - Projection: an orthographic camera 30° down / 45° round = the game's 2:1 iso; world X/Z = the board's columns/rows (1 unit = 1 tile),
   so tile corner (0,0) is the game's (OX, OY) and K = TW/√2 px per view unit; heights: 1 unit = 0.612 TW. The frame is 11.5 TW either side

@@ -11,12 +11,43 @@ for kv in filter(None, os.environ.get('AMPH_Q', '').split(',')):
 meta = json.load(open(os.path.join(src, 'meta.json')))
 out = {k: meta[k] for k in ('tw0', 'xl', 'xr', 'yt', 'yb', 'w', 'h')}
 out['files'] = {}
+EDGE = float(os.environ.get('AMPH_EDGE', '0.7'))   # pass 10 (3a): the side band, in TW, that settles into a per-row profile (0 = off)
+
+
+def edge_band(im, tw0):
+    # pass 10 (his 3a): the outermost EDGE·TW columns on the left and right blend (premultiplied, so the layers still add up exactly)
+    # into one colour per row — the outer columns' mean, blurred up/down — so 419 can stretch the frame's edge column out to the canvas
+    # edge (zoomed or very wide windows) with no streaks: the tower + ground haze simply go on, no sky beside them.
+    import numpy as np
+    B = int(round(EDGE * tw0))
+    if B < 2:
+        return im
+    a = np.asarray(im).astype('float32') / 255.0
+    pm = a.copy(); pm[..., :3] *= pm[..., 3:4]
+    H, W = pm.shape[:2]
+    sig = 0.5 * tw0; k = np.exp(-0.5 * (np.arange(-3 * int(sig), 3 * int(sig) + 1) / sig) ** 2); k /= k.sum()
+    def blur(col):   # col H×4, vertical gaussian, edges clamped
+        pad = len(k) // 2; c = np.pad(col, ((pad, pad), (0, 0)), mode='edge')
+        return np.stack([np.convolve(c[:, i], k, mode='valid') for i in range(4)], 1)
+    for side in (0, 1):
+        cols = pm[:, :12] if side == 0 else pm[:, W - 12:]
+        prof = blur(cols.mean(1))
+        for j in range(B):   # j = 0 at the outermost column
+            x = j if side == 0 else W - 1 - j
+            t = 1.0 - j / B; t = t * t * (3 - 2 * t)
+            pm[:, x] = pm[:, x] * (1 - t) + prof * t
+    out = pm.copy(); al = np.maximum(out[..., 3:4], 1e-6); out[..., :3] = np.where(out[..., 3:4] > 1e-6, out[..., :3] / al, 0)
+    return Image.fromarray(np.clip(out * 255 + 0.5, 0, 255).astype('uint8'), 'RGBA')
+
+
 for L in ('stone', 'bench', 'cloth', 'fixed', 'fire', 'glow', 'front'):
     f = os.path.join(src, L + '.png')
     if not os.path.exists(f):
         continue
     im = Image.open(f)
     im = im.convert('RGB') if L == 'glow' else im.convert('RGBA')
+    if L in ('stone', 'bench', 'cloth', 'fixed', 'fire') and EDGE > 0:
+        im = edge_band(im, meta['tw0'])
     if L == 'front':
         # pass 7: only its alpha matters (the coverage of the stair's pillars + braziers, painted again over the game's stands corner)
         # cropped to its box (written to amph111.json as 'front': [x, y, w, h], copied into 419's meta)
@@ -36,6 +67,7 @@ for L in ('stone', 'bench', 'cloth', 'fixed', 'fire', 'glow', 'front'):
     im.save(p, 'WEBP', quality=Q[L], method=6)
     out['files'][L] = os.path.getsize(p)
     print(L, im.size, os.path.getsize(p))
+out['edge'] = EDGE
 out['total'] = sum(out['files'].values())
 json.dump(out, open(os.path.join(dst, 'amph111.json'), 'w'), indent=1)
 print('total', out['total'])
