@@ -3,7 +3,9 @@
    No game change: everything here is sim-side (stubs for windows/toasts, a coin tag on the rival houses, optional --patch for tuning studies).
 
    Usage: node tools/mgrsim2.js <page.html> [--profiles careful,spendthrift,mimic] [--seeds 1-12] [--seasons 5] [--out rows.jsonl]
-            [--par 2] [--start new|pre:<key>] [--ls '{"flavius_v109aoff":"1"}'] [--patch '<js run in the page before the world>'] [--tag name]
+            [--par 2] [--start new|pre:<key>] [--ls '{"flavius_v109aoff":"1"}'] [--patch '<js run in the page before the world>'] [--tag name] [--skip-done] [--buy]
+            --buy: the house also buys rival fighters with coin through 23's 1-for-1 offer (Trades 2 study)
+            --skip-done: skip (profile, seed) runs already in --out with this --tag (resume after a crash/restart)
    Fixes over mgrsim/mgrecon:
      1 AWAY WEEKS: the house sets off the game's way (35 travelState/travelClick 'travelpay' or 'traveldeal', 360 mw105Go) before any bout, so 397's
        bt106Locked never skips bouts; a week that still cannot play (no coin for the road) is counted (travelStuck) and the lock is lifted by
@@ -29,8 +31,9 @@ const opt=k=>{const i=argv.indexOf('--'+k);return i>=0?argv[i+1]:null};
 const PROFILES=(opt('profiles')||'careful,spendthrift,mimic').split(',');
 const SEEDS=(()=>{const s=opt('seeds')||'1-12';const out=[];for(const part of s.split(',')){const m=part.match(/^(\d+)-(\d+)$/);if(m)for(let i=+m[1];i<=+m[2];i++)out.push(i);else out.push(+part)}return out})();
 const SEASONS=+(opt('seasons')||5),PAR=Math.max(1,Math.min(2,+(opt('par')||1))),OUT=opt('out'),START=opt('start')||'new',TAG=opt('tag')||'main';
-const LS=JSON.parse(opt('ls')||'{}'),PATCH=opt('patch')||'';const REALTIME=argv.includes('--realtime');
-const jobs=[];for(const p of PROFILES)for(const s of SEEDS)jobs.push({p,s});
+const LS=JSON.parse(opt('ls')||'{}'),PATCH=opt('patch')||'';const BUY=argv.includes('--buy');const REALTIME=argv.includes('--realtime');
+const DONE=new Set();if(argv.includes('--skip-done')&&OUT&&fs.existsSync(OUT)){for(const l of fs.readFileSync(OUT,'utf8').split('\n')){if(!l.trim())continue;try{const r=JSON.parse(l);if(r.tag===TAG&&!r.err)DONE.add(r.profile+':'+r.seed)}catch(e){}}}
+const jobs=[];for(const p of PROFILES)for(const s of SEEDS)if(!DONE.has(p+':'+s))jobs.push({p,s});
 const outF=OUT?fs.openSync(OUT,'a'):null;const say=s=>process.stderr.write(s+'\n');
 
 /* ------------------------------------------------------------------ the page side ------------------------------------------------------------------ */
@@ -50,7 +53,7 @@ const VTIME=function(epoch){if(window.__VT)return;const VT=window.__VT={now:0,se
   window.requestAnimationFrame=fn=>add(()=>fn(VT.now),16,[],false);window.cancelAnimationFrame=del;
   window.requestIdleCallback=fn=>add(()=>fn({didTimeout:false,timeRemaining:()=>8}),1,[],false);window.cancelIdleCallback=del;
   try{P.now=()=>(VT.now+=0.002)}catch(e){}Date.now=()=>epoch+Math.floor(VT.now)};
-const SIM=async({profile,seed,SEASONS,START,PATCH})=>{
+const SIM=async({profile,seed,SEASONS,START,PATCH,BUY})=>{
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));const has=k=>{try{return typeof (0,eval)(k)!=='undefined'}catch(e){return false}};
   if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await sleep(300);
   window.modal=async(t,b,btns)=>{const p=(btns||[]).find(x=>x.primary)||(btns||[])[0];return p?p.value:null};window.mToast=()=>{};window.say=()=>{};
@@ -187,6 +190,20 @@ const SIM=async({profile,seed,SEASONS,START,PATCH})=>{
   const lend=(used)=>{if(!PR.lend)return;try{if(typeof loan102Best!=='function'||(typeof lk106Past==="function"&&lk106Past(w)))return;const out=ros().filter(g=>g.loanFrom&&g.loanFrom.mid===m.id).length;if(out>=1)return;
     const bench=ros().filter(g=>!g.inj&&!g.loanFrom&&!used.has(g.id)&&!w.night.bouts.some(b=>b.ents.includes(g.id))).sort((a,b)=>effOvr(a)-effOvr(b));
     if(ros().length<=5)return;for(const g of bench){const B=loan102Best(w,g);if(B&&B.good&&B.fee>=6){act('loan');lendTo(g,B.m,B.fee,3);unact();break}}}catch(e){err('lend',e)}};
+  /* --buy (Trades 2 study): once a week before the deadline, buy the best rival fighter the treasury can pay for through 23's own 1-for-1
+     offer (ludusClick 'tradego' with every later wrapper: 378 settling-in, 393 deadline, 426 values): give my least valuable fighter + the
+     coin gap (need − give) × 6 + 1, computed with the game's own tradeVal / opinion / greed rule. careful keeps its reserve; spendthrift none. */
+  const buy=()=>{if(!BUY||PR.cpu)return;try{if(typeof lk106Past==='function'&&lk106Past(w))return;const mine=ros().filter(g=>!g.loanFrom&&g.contract&&g.contract.mgr===m.id);if(!mine.length)return;
+      const gm=mine.slice().sort((a,b)=>tradeVal(a)-tradeVal(b))[0];const budget=m.coin-(profile==='careful'?reserve():0);if(budget<=0)return;let best=null;
+      for(const x of rivals()){if(x.envoyWk===w.week)continue;const R=rosterOf(x);const top=R.slice().sort((a,b)=>effOvr(b)-effOvr(a))[0];const op=opinionOf(x).v;const mult=1.06+(op<40?.18:0)-(op>=70?.06:0)+(x.p.greed-50)/400;
+        for(const gt of R){if(gt.inj||gt.loanFrom||gt.lanista||gt.alive===false)continue;if(typeof set105Left==='function'&&set105Left(gt)>0)continue;if(R.length<=2&&top&&effOvr(gt)>=effOvr(top))continue;
+          if(effOvr(gt)<effOvr(gm)+5)continue;const coin=Math.max(0,Math.ceil((tradeVal(gt)*mult-tradeVal(gm))*6)+1);if(coin>budget)continue;
+          const sc=effOvr(gt)*100-coin/10;if(!best||sc>best.sc)best={x,gt,coin,sc}}}
+      if(!best)return;let box=document.getElementById('sim2trade');if(!box){box=document.createElement('div');box.id='sim2trade';box.style.display='none';document.body.appendChild(box)}
+      box.innerHTML=`<select id="trMine"><option value="${gm.id}" selected></option></select><select id="trTheirs"><option value="${best.gt.id}" selected></option></select><input id="trCoin" value="${best.coin}">`;
+      const c0=m.coin,o0=effOvr(gm),o1=effOvr(best.gt),wg0=(gm.contract||{}).wage||0,wg1=(best.gt.contract||{}).wage||0;act('tradego');const p=ludusClick('tradego',best.x.id,null,{redraw:()=>{},say:()=>{}});unact();
+      Promise.resolve(p).then(()=>{const okT=best.gt.contract&&best.gt.contract.mgr===m.id;(D.buys=D.buys||[]).push({s:w.season,wk:w.week,ok:okT?1:0,coin:okT?c0-m.coin:0,ask:best.coin,in:o1,out:o0,wIn:wg1,wOut:wg0});if(okT)known.set(best.gt.id,best.gt)}).catch(e=>err('buy',e));
+      box.innerHTML=''}catch(e){err('buy',e)}};
   /* the money loan (66: Sica's syndicate, only in the red) */
   const loan=()=>{try{if(m.coin<0&&w.loanAsk&&!w.loan){const S=loanSizes(m);const amt=S.find(a=>m.coin+a>=wagesOf(m)*2)||S[S.length-1];act('loan');const L9=loanLender();w.loan={amt,base:amt,name:L9.name,kind:L9.kind,mgr:L9.mgr,wk:w.week};w.loanAsk=0;m.coin+=amt;unact();D.loans=(D.loans||0)+1}
     if(w.loan&&w.loan.amt>0){const need=(w.loan.due||0)-(w.loan.paid||0);const free=m.coin-wagesOf(m)*2;const pay=Math.min(w.loan.amt,free>=w.loan.amt?w.loan.amt:Math.max(need,0),Math.max(0,free));
@@ -250,7 +267,7 @@ const SIM=async({profile,seed,SEASONS,START,PATCH})=>{
     if(off&&cur.rank==null){try{const L=leagueSort(w.mgrs.filter(x=>!x.dead&&!x.sica),cur.season);cur.rank=L.indexOf(m)+1;cur.houses=L.length;cur.pts=(msp(m,cur.season)||{}).pts||0}catch(e){err('rank',e)}}
     let used=new Set();
     try{if(off){cur.winter=await winter()}else{
-      loan();renew();recruit();care();morale();sponsors();if(typeof arm94AutoShop==='function'){/* the game's own shopping rule (the rivals' too); the careful house shops only above its reserve (225's playerReserve knob) */const pr0=ARM94.playerReserve;if(profile==='careful')ARM94.playerReserve=Math.max(pr0,reserve());act('repair');try{arm94AutoShop(w,m,{player:true})}finally{unact();ARM94.playerReserve=pr0}}yard();build();
+      loan();renew();recruit();buy();care();morale();sponsors();if(typeof arm94AutoShop==='function'){/* the game's own shopping rule (the rivals' too); the careful house shops only above its reserve (225's playerReserve knob) */const pr0=ARM94.playerReserve;if(profile==='careful')ARM94.playerReserve=Math.max(pr0,reserve());act('repair');try{arm94AutoShop(w,m,{player:true})}finally{unact();ARM94.playerReserve=pr0}}yard();build();
       used=enter();specials(used);lend(used);travel();bets();
       if(w.special&&!w.special.done&&typeof specAutoRun==='function'){try{await specAutoRun()}catch(e){err('spec',e)}}
       const seq=typeof any100Seq==='function'?any100Seq(w.night):w.night.bouts.map((b,i)=>i);for(const i of seq)if(!w.night.bouts[i].done){try{await runBoutSim(i)}catch(e){err('bout',e)}}
@@ -282,14 +299,14 @@ const SIM=async({profile,seed,SEASONS,START,PATCH})=>{
 
 /* ------------------------------------------------------------------ the node side ------------------------------------------------------------------ */
 (async()=>{const t0=Date.now();let done=0;const times=[];
-  const worker=async wi=>{const b=await chromium.launch();try{while(jobs.length){const J=jobs.shift();const ts=Date.now();
-      const ctx=await b.newContext();const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const perr=[];pg.on('pageerror',e=>perr.push(e.message));
+  const worker=async wi=>{let b=await chromium.launch();try{while(jobs.length){const J=jobs.shift();const ts=Date.now();
+      if(!b.isConnected()){say(`[w${wi}] browser gone, relaunching`);b=await chromium.launch()}const ctx=await b.newContext();const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const perr=[];pg.on('pageerror',e=>perr.push(e.message));
       let res;try{if(!REALTIME)await pg.addInitScript(VTIME,1790000000000+J.s*1e9);await T.boot(pg,{seed:J.s,ls:{flavius_lfpool:'0',...LS}});await pg.goto('file://'+PAGE,{timeout:120000});await T.ready(pg,120000);await pg.waitForFunction(()=>typeof CROWD_CACHE!=='undefined'&&CROWD_CACHE.length>=140,null,{timeout:15000}).catch(()=>{});
-        res=await pg.evaluate(SIM,{profile:J.p,seed:J.s,SEASONS,START,PATCH})}catch(e){res={err:String(e.message||e).slice(0,300)}}
-      await ctx.close();const ms=Date.now()-ts;times.push(ms);done++;
+        res=await pg.evaluate(SIM,{profile:J.p,seed:J.s,SEASONS,START,PATCH,BUY})}catch(e){res={err:String(e.message||e).slice(0,300)}}
+      try{await ctx.close()}catch(e){say(`ctx.close: ${String(e.message||e).slice(0,120)}`)}const ms=Date.now()-ts;times.push(ms);done++;
       if(res.err||!res.rows){say(`ERR ${J.p} seed ${J.s}: ${res.err}`);if(outF)fs.writeSync(outF,JSON.stringify({tag:TAG,profile:J.p,seed:J.s,err:res.err})+'\n');continue}
       for(const r of res.rows){const row={tag:TAG,profile:J.p,seed:J.s,...r,diag:{...res.diag,perr:perr.slice(0,3)}};if(outF)fs.writeSync(outF,JSON.stringify(row)+'\n');else console.log(JSON.stringify(row))}
       const last=res.rows[res.rows.length-1]||{};say(`[w${wi}] ${done} ${J.p} seed ${J.s}: ${res.rows.length} season(s) end ${last.end} min ${Math.min(...res.rows.map(r=>r.min))} rank ${res.rows.map(r=>r.rank).join('/')} · ${(ms/1000).toFixed(0)} s · stuck ${res.diag.travelStuck} locked ${res.diag.locked} stall ${res.diag.stall} errs ${res.diag.errs.length}${res.diag.errs.length?' '+res.diag.errs[0]:''}`)}}
-    finally{await b.close()}};
+    finally{try{await b.close()}catch(e){}}};
   await Promise.all(Array.from({length:PAR},(_,i)=>worker(i)));
   say(`DONE ${done} run(s) in ${((Date.now()-t0)/60000).toFixed(1)} min · avg ${(times.reduce((a,b)=>a+b,0)/Math.max(1,times.length)/1000).toFixed(0)} s/run`);if(outF)fs.closeSync(outF)})();

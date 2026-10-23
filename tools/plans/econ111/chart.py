@@ -23,7 +23,7 @@ def stat(p,k,f):
 def q(v,x):
   v=sorted(v);i=(len(v)-1)*x;lo=int(i);hi=min(lo+1,len(v)-1);return v[lo]+(v[hi]-v[lo])*(i-lo)
 COL={'careful':'#2a78d6','spendthrift':'#eb6834','mimic':'#1baf7a'}
-W,H,L,R_,T,B=900,380,56,120,24,44
+W,H,L,R_,T,B=900,380,56,175,24,44
 allv=[stat(p,k,st.median) for p in series for k in range(N)]+[stat('careful',k,lambda v:q(v,.75)) for k in range(N)]+[stat('careful',k,lambda v:q(v,.25)) for k in range(N)]
 allv=[v for v in allv if v is not None]
 ymin=min(-100,min(allv));ymax=max(allv)*1.05
