@@ -863,3 +863,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   shows at any window width, both corners. Also v1.11c: settings that don't survive a reload (his report: panel says one thing, game loads another).
 - 2026-10-22 his call: v1.11c (settings persist on reload, Amphitheatre side corners, Safari follow-up from his v1.11b recording: zoomed cache, sharpen off the main thread, aim masks cached) ships when the full run is green, no beta.
 - 2026-10-23 his 1b: the CPU game speed is remembered between events (last chosen speed); REPLACES 'every event begins on Slow'.
+- 2026-10-23 his 'yes' (1a): the jugs' speckles are seeded by the jug's board position, not its screen position (no shimmer when the camera pans; cacheable on Safari); one-time small change in each jug's pattern. Next release (v1.11d).
