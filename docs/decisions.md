@@ -890,3 +890,8 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   match waits for the check with a 60 s agreement fallback; opening fields checked vs kits; unjudgeable = agreement + flag; flavius.sh asks
   AWS for a concurrency raise + verifier capped at 3; off-menu window answers flagged).
 - 2026-10-23 his checklist tick (a01): ship v1.13 (Ranked check, server) when the full run is green, no beta.
+- 2026-10-27 his go ("go ahead with the Cognito domain change"; asked via the ToshiroPlay session): the shared Cognito pool
+  us-east-1_VdMsuDJ59 (renamed "toshiro-players", Google through the "ToshiroPlay" OAuth client — both set in the AWS console) signs in at
+  **https://login.toshiroplay.com**. REPLACES login.flaviusrule.com (built v0.79, `flavius.sh login`, decided 2026-10-03), which was deleted.
+  Flavius keeps its app client (flavius-arena-web) and callbacks; only play/online.json "auth" moves (`bash flavius.sh signin`, FSH_VER 11;
+  `login` retired). The stack's Cognito resources are Retained and must not be edited in template.yaml any more (ToshiroPlay owns them).

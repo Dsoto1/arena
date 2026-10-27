@@ -14,9 +14,9 @@
 #   bash flavius.sh page   privacy.html                    one file at the site root (or: page file.css some/folder/file.css)
 #   bash flavius.sh server flavius-server-8.zip            the online server (asks for the Google client secret, hidden)
 #   bash flavius.sh online online.json                     play/online.json (the game's server settings)
-#   bash flavius.sh login                                  the own sign-in address login.flaviusrule.com, in two runs 15 min apart
-#                                                           (1st: certificate · 2nd: the address + play/online.json); later server
-#                                                           deploys keep it on by themselves (remembered in ~/.flavius.conf)
+#   bash flavius.sh signin                                 points the game's sign-in at the shared ToshiroPlay address (login.toshiroplay.com,
+#                                                           play/online.json "auth") and checks that it answers for Flavius
+#                                                           (`login` is retired: the sign-in address now belongs to ToshiroPlay)
 #   bash flavius.sh beta [branch]                          the work in progress → a PRIVATE test copy (its own address, its own saves):
 #                                                           page + assets only, never the server, the download or the site
 #   bash flavius.sh update                                 this script itself, from the newest work branch on GitHub (beta does it too)
@@ -28,13 +28,18 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=10
+FSH_VER=11
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
 REGION="us-east-1"
 POOL="us-east-1_VdMsuDJ59"
+# the stack's stored Google client parameter. Since 2026-10-27 the pool (now "toshiro-players") is shared with ToshiroPlay and its Google
+# sign-in, sign-in address and name are set in the AWS console, NOT by this stack: keep this value as it is, so a server deploy never
+# changes the stack's Cognito resources (an update to them would undo ToshiroPlay's settings).
 GOOGLE_ID="158703920017-qiaafniuvh2asr988n18sudlk7hkdcd4.apps.googleusercontent.com"
+# the hosted sign-in address the game uses (play/online.json "auth"), shared with ToshiroPlay since 2026-10-27
+SIGNIN="https://login.toshiroplay.com"
 SITE="https://flaviusrule.com"
 CONF="$HOME/.flavius.conf"
 export AWS_DEFAULT_REGION="$REGION"
@@ -136,26 +141,21 @@ lambda_quota(){ local cur st dv
   esac; return 0; }
 # the own sign-in address: run once → certificate; run again 15+ minutes later → the address goes live and the game switches to it
 conf_set(){ touch "$CONF"; grep -v "^$1=" "$CONF" > "$CONF.tmp" || true; printf '%s=%q\n' "$1" "$2" >> "$CONF.tmp"; mv "$CONF.tmp" "$CONF"; }
-cmd_login(){ local dom="login.flaviusrule.com" zip; [ -f "$CONF" ] && . "$CONF"
-  zip=$(ls -t "$HOME"/flavius-server-*.zip 2>/dev/null | head -1 || true); [ -n "$zip" ] || die "Upload the newest server zip first (Actions → Upload file)."
-  if [ "${LOGIN_STAGE:-}" = live ]; then say "$dom is already set up"; cmd_status; return; fi
-  if [ "${LOGIN_STAGE:-}" != cert ]; then
-    say "Step 1 of 2: the certificate for $dom (with $(basename "$zip"))"
-    AUTH_DOMAIN="$dom" AUTH_STAGE=cert cmd_server "$zip"
-    conf_set LOGIN_DOMAIN "$dom"; conf_set LOGIN_STAGE cert; conf_set LOGIN_CERT_AT "$(date +%s)"
-    ok "Certificate made. Come back in 15 minutes and run:  bash flavius.sh login"; return; fi
-  local wait=$(( ${LOGIN_CERT_AT:-0} + 900 - $(date +%s) ))
-  [ "$wait" -le 0 ] || die "Too soon — CloudFront needs time to see the certificate. Run this again in $(( (wait+59)/60 )) min."
-  say "Step 2 of 2: the sign-in address $dom"
-  AUTH_DOMAIN="$dom" AUTH_STAGE=live cmd_server "$zip"
-  local out; out=$(aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='SignInDomain'].OutputValue" --output text 2>/dev/null || true)
-  [ "$out" = "https://$dom" ] || die "The server still reports '$out' as its sign-in address — nothing else changed. Send this to Claude."
-  conf_set LOGIN_STAGE live
-  say "The game now signs in through https://$dom"
-  local oj; oj=$(curl -s -m 10 "$SITE/play/online.json?x=$RANDOM"); [ -n "$oj" ] || die "Could not read play/online.json"
-  printf '%s' "$oj" | python3 -c "import json,sys;j=json.load(sys.stdin);j['auth']='https://$dom';json.dump(j,open('online-login.json','w'),separators=(',',':'))" || die "play/online.json is not valid JSON"
-  cmd_online online-login.json
-  ok "Done. Sign in once to check: Google should now name flaviusrule.com."; }
+# the sign-in address (2026-10-27): ToshiroPlay moved the shared pool's own address from login.flaviusrule.com to login.toshiroplay.com.
+# Flavius's app client is unchanged; only play/online.json's "auth" moves. `login` (which built login.flaviusrule.com) is retired.
+signin_probe(){ # signin_probe <auth> <client> → the hosted page's answer for Flavius's client + callback (302 = it accepts them)
+  curl -s -m 15 -o /dev/null -w '%{http_code}' "$1/oauth2/authorize?identity_provider=Google&response_type=code&client_id=$2&scope=openid+email+profile&redirect_uri=$(printf '%s' "$SITE/play/" | sed 's#:#%3A#; s#/#%2F#g')" || true; }
+cmd_signin(){ local oj client code
+  oj=$(curl -s -m 10 "$SITE/play/online.json?x=$RANDOM"); [ -n "$oj" ] || die "Could not read play/online.json"
+  client=$(printf '%s' "$oj" | python3 -c "import json,sys;print(json.load(sys.stdin).get('client',''))") || die "play/online.json is not valid JSON"
+  [ -n "$client" ] || die "play/online.json has no \"client\" — send this to Claude."
+  say "Checking $SIGNIN for the Flavius app client"
+  code=$(signin_probe "$SIGNIN" "$client")
+  case "$code" in 302) ok "$SIGNIN accepts Flavius's client and $SITE/play/";; *) die "$SIGNIN answers $code (expected 302) — nothing changed. Send this line to Claude.";; esac
+  printf '%s' "$oj" | python3 -c "import json,sys;j=json.load(sys.stdin);j['auth']=sys.argv[1];json.dump(j,open('online-signin.json','w'),separators=(',',':'))" "$SIGNIN" || die "play/online.json is not valid JSON"
+  cmd_online online-signin.json; rm -f online-signin.json
+  ok "Done. Sign in once on $SITE/play/ (Online → Sign in with Google): it should come back to /play/ signed in."; }
+cmd_login(){ say "login is retired: the sign-in address now belongs to ToshiroPlay (login.toshiroplay.com)"; cmd_signin; }
 
 G(){ printf '  \033[1;32m●\033[0m %-16s %s\n' "$1" "$2"; }   # fine
 Y(){ printf '  \033[1;33m●\033[0m %-16s %s\n' "$1" "$2"; YN=$((YN+1)); }   # worth a look
@@ -178,9 +178,10 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
     *ROLLBACK*|*FAILED*|"?") R "server stack" "$st";;
     *IN_PROGRESS*) Y "server stack" "$st — a deploy is running";;
     *) G "server stack" "$st";; esac
-  local out_auth; out_auth=$(aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='SignInDomain'].OutputValue" --output text 2>/dev/null || true)
-  if [ -n "$auth" ] && [ -n "$out_auth" ] && [ "$out_auth" != "None" ]; then [ "$auth" = "$out_auth" ] && G "sign-in address" "${auth#https://}" || R "sign-in address" "online.json uses ${auth#https://} but the server's is ${out_auth#https://} — sign-in will fail"; fi
-  case "$auth" in *amazoncognito.com*) Y "sign-in look" "Google shows amazoncognito.com (login.flaviusrule.com not set up yet)";; esac
+  # the sign-in address (shared with ToshiroPlay since 2026-10-27): online.json must use it, and it must accept Flavius's client + callback
+  local client sc; client=$(printf '%s' "$oj" | sed -n 's/.*"client" *: *"\([^"]*\)".*/\1/p')
+  if [ "$auth" != "$SIGNIN" ]; then R "sign-in address" "online.json uses ${auth:-nothing} — run: bash flavius.sh signin"
+  else sc=$(signin_probe "$auth" "$client"); [ "$sc" = 302 ] && G "sign-in address" "${auth#https://} (accepts Flavius)" || R "sign-in address" "${auth#https://} answers $sc for Flavius's client (expected 302)"; fi
   # the arena Lambda: when it was updated, and whether the budget switch closed it
   local fn; fn=$(aws cloudformation describe-stack-resources --stack-name "$STACK" --logical-resource-id Fn --query 'StackResources[0].PhysicalResourceId' --output text 2>/dev/null || true)
   if [ -n "$fn" ] && [ "$fn" != "None" ]; then
@@ -199,7 +200,8 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
     case "$code" in 401|403|101) G "versions match" "page protocol $pv is accepted by the server";; 426) R "versions match" "the server refuses the page's protocol $pv — deploy the matching server zip";; *) Y "versions match" "could not tell (answer $code)";; esac; fi
   # Google sign-in settings inside Cognito
   local cid; cid=$(aws cognito-idp describe-identity-provider --user-pool-id "$POOL" --provider-name Google --query IdentityProvider.ProviderDetails.client_id --output text 2>/dev/null || echo '?')
-  [ "$cid" = "$GOOGLE_ID" ] && G "google client" "correct" || R "google client" "Cognito holds \"$cid\" — Google sign-in will fail"
+  # set by ToshiroPlay in the console since 2026-10-27 (its "ToshiroPlay" Google client): only check that one is there
+  case "$cid" in *.apps.googleusercontent.com) G "google client" "set (ToshiroPlay's, shared)";; *) R "google client" "Cognito has no Google client (\"$cid\") — Google sign-in will fail";; esac
   # this month's spend against the budget
   local acct lim spent; acct=$(aws sts get-caller-identity --query Account --output text 2>/dev/null || true)
   if [ -n "$acct" ]; then read -r lim spent < <(aws budgets describe-budget --account-id "$acct" --budget-name flavius-arena-budget --query 'Budget.[BudgetLimit.Amount,CalculatedSpend.ActualSpend.Amount]' --output text 2>/dev/null || echo "")
@@ -338,6 +340,6 @@ cmd_release(){ local here; here=$(pwd)
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;; quota) lambda_quota;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; quota) lambda_quota;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
   *) sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//';;
 esac

@@ -379,6 +379,12 @@ Shared rules: the "v1.01" section at the end of `111-onlcore`; routes: the "v1.0
 - **Rollback**: the previous server simply stops checking; `AUDIT#` items expire on their own; `AllowAdminCreateUserOnly` can stay.
 
 ## Versions, deploy, rollout, rollback
+- **Sign-in (2026-10-27).** The Cognito pool is SHARED with ToshiroPlay: its name ("toshiro-players"), its Google client ("ToshiroPlay") and its
+  own sign-in address **login.toshiroplay.com** are set in the AWS console, not by this stack (login.flaviusrule.com is deleted). The game
+  reads the address from play/online.json "auth" — set it with `bash flavius.sh signin` (checks the address accepts Flavius's client and
+  callback first; `status` checks it too). template.yaml's Cognito resources are `DeletionPolicy/UpdateReplacePolicy: Retain` and their
+  properties must stay as they are: deploys keep the stack's old parameters (flavius.sh's GOOGLE_ID, LOGIN_DOMAIN) so CloudFormation never
+  updates them; changing them would undo ToshiroPlay's settings. Never run AUTH_DOMAIN/AUTH_STAGE deploys again.
 
 - **Protocol** `ONLC.VER` (111-onlcore): `$connect` refuses another version with 426 ("reload"). Bump it only when old clients
   cannot work with the new server; most releases do not (v0.85–v0.93 kept 7; v1.0 = 8; v1.01 = 9: the question port — a lockstep

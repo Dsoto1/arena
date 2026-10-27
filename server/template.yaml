@@ -97,8 +97,13 @@ Resources:
       PointInTimeRecoverySpecification: {PointInTimeRecoveryEnabled: true}
 
   # ---------- sign-in ----------
+  # SHARED since 2026-10-27: this pool (renamed "toshiro-players" in the console) also signs in ToshiroPlay. Its name, Google client and
+  # sign-in address (login.toshiroplay.com) are set in the AWS console, not here: never change the Cognito resources' properties in this
+  # template (a stack update would undo ToshiroPlay's settings), and they are Retained so a stack delete or replacement keeps them.
   UserPool:
     Type: AWS::Cognito::UserPool
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       UserPoolName: flavius-arena-players
       UsernameAttributes: [email]
@@ -108,6 +113,8 @@ Resources:
         - {Name: name, Required: false, Mutable: true, AttributeDataType: String}
   GoogleIdP:
     Type: AWS::Cognito::UserPoolIdentityProvider
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Condition: HasGoogle
     Properties:
       UserPoolId: !Ref UserPool
@@ -120,6 +127,8 @@ Resources:
       AttributeMapping: {email: email, name: name}
   UserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       Domain: !Ref AuthDomainPrefix
       UserPoolId: !Ref UserPool
@@ -135,6 +144,8 @@ Resources:
           HostedZoneId: !Ref HostedZoneId
   CustomAuthPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Condition: CustomAuthLive
     Properties:
       Domain: !Ref CustomAuthDomain
@@ -153,6 +164,8 @@ Resources:
         HostedZoneId: Z2FDTNDATAQYW2
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       UserPoolId: !Ref UserPool
       ClientName: flavius-arena-web
