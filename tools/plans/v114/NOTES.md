@@ -15,3 +15,12 @@ budget alarm closed Online temporarily (budget switch: arena Lambda concurrency 
 3. Badge `arena · v1.14` (01-head.html), MILESTONES entry (34-notes.js). No SAVE_MIGRATIONS (world data unchanged).
 4. sh tools/release.sh 1.14 → commit [full] → full GitHub run green.
 5. BETA (2a): he runs `bash flavius.sh beta`, plays one Studio-look match in Safari + ⏺ recording → ship on his word.
+
+## Budget scope (asked 2026-10-28 after his domain + Lightsail purchase tripped Flavius's kill switch; answers 7a 8a 9a)
+- (7a) The budget counts only Flavius: tag `app=flavius` on Flavius's own resources, flavius.sh activates the tag for billing
+  (aws ce update-cost-allocation-tags-status, no console), Budget gets a CostFilter on it. REPLACES the account-wide budget (template
+  `Budget`, built with the server). First month undercounts (AWS counts a tag from activation on).
+  - Tag resource by resource, NOT as stack tags: stack tags would propagate to the Retained Cognito pool and the update would rewrite
+    ToshiroPlay's settings (HANDOFF: never edit them). The shared pool stays untagged (shared cost).
+- (8a) Ships in v1.14 → v1.14 becomes a SERVER release (stack only: budget + tags, no game/protocol change); the beta stays offline as always.
+- (9a) Online stays closed until the switch reopens it on 2026-11-01.

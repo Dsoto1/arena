@@ -897,3 +897,6 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   `login` retired). The stack's Cognito resources are Retained and must not be edited in template.yaml any more (ToshiroPlay owns them).
 - 2026-10-28 his picks 1a–6a (tools/plans/v114/NOTES.md): v1.14 = Figures from turn one alone + the ES/FR Quality "High" key fix; BETA first
   (one Studio-look match in Safari + ⏺ recording); deaths study on hold until v1.14 ships; the new Manager words stand; v1.13 is deployed.
+- 2026-10-28 his 7a 8a 9a: the money alarm counts ONLY Flavius's resources (tag app=flavius, budget CostFilter) — REPLACES the account-wide
+  budget (template `Budget`); his other apps (ToshiroPlay, Lightsail, domains) no longer close the arena. Ships in v1.14 (server stack).
+  Online stays closed until the switch reopens it on 2026-11-01.
