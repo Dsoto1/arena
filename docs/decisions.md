@@ -900,3 +900,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-28 his 7a 8a 9a: the money alarm counts ONLY Flavius's resources (tag app=flavius, budget CostFilter) — REPLACES the account-wide
   budget (template `Budget`); his other apps (ToshiroPlay, Lightsail, domains) no longer close the arena. Ships in v1.14 (server stack).
   Online stays closed until the switch reopens it on 2026-11-01.
+- 2026-10-28 his "might as well release": v1.14 ships WITHOUT the beta — REPLACES his 2a (beta first) for this release only.

@@ -7,18 +7,15 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 Last updated: 2026-10-28 (cloud session, new account).
 
 ## Live now
-- **v1.13 "The scribes check"** is the newest release: `release/v1.13` = `main` = f9aba45 (server release: Ranked results decided by
-  the server's replay, enforced). Deployed (his 6a, 2026-10-28).
+- **v1.14 "Figures from turn one"** is the newest release: `release/v1.14` = `main` (no beta, his word 2026-10-28; SERVER release: tags +
+  the Flavius-only budget). His `bash flavius.sh release` for it is NOT confirmed — ask once. After it: `status` "budget counts" turns green only
+  once billing sees the tag `app` (≤24 h); if still yellow the next day → `bash flavius.sh budget`.
+- Online is closed by the budget switch until 2026-11-01 (his 9a; it was tripped by his other apps' spend, which no longer counts after v1.14).
 - Full history: docs/history.md · newest three in CLAUDE.md §7.
 
 ## On the work branch, NOT released yet
-- **v1.14 built, [full] run 40691237980 GREEN** (attempt 2; attempt 1: tv100p, flaky on v1.13 too — docs/known-issues.md). Contents
-  (tools/plans/v114/NOTES.md, his 1a–9a): Figures from turn one (428, translated) · Quality "High" own key (4a, tv114h) · budget counts
-  only Flavius (7a: template tags + CostFilter `user:app$flavius`, flavius.sh `cost_tags`/`budget`, FSH_VER 12) = a SERVER release.
-- NEXT: his BETA (2a) — `bash flavius.sh beta`, one Studio-look match in Safari + ⏺ recording. On his ok: push release/v1.14 + main, he runs
-  `bash flavius.sh release` (server redeploys: tags + budget), then `bash flavius.sh status`; "budget counts" goes green only after billing
-  sees the tag (≤24 h) → `bash flavius.sh budget` the next day if yellow. Then CLAUDE.md §7 + docs/history.md.
-- Sign-in on login.toshiroplay.com: DONE (his word 2026-10-28). Online is closed by the budget switch until 2026-11-01 (his 9a).
+- Nothing. Next candidates: fix tv100p (flaky, docs/known-issues.md) · the deaths study (on hold until v1.14 shipped — his 3a: ask before
+  resuming) · the Settings reorganisation (backlog, mock-up first).
 
 ## Paused / parked
 - **Deaths study (Manager)**: why a careful house loses 2–3 fighters a season and sits mid-table (rank ≈10.5). It is ON HOLD at his
@@ -34,7 +31,7 @@ Last updated: 2026-10-28 (cloud session, new account).
 - Backlog: tools/plans/backlog.md (e.g. the SETTINGS REORGANISATION idea, mock-up first). Open bugs and limits: docs/known-issues.md.
 
 ## Waiting on him
-- The v1.14 beta (above). Answers 1–9 are in tools/plans/v114/NOTES.md.
+- Whether `bash flavius.sh release` for v1.14 ran (and `status`). What v1.15 is.
 
 ## His checklist (where he leaves notes between sessions)
 https://claude.ai/artifact/E6zWGfwbuCjcM3r8RmeKZt: an Artifact with a db.

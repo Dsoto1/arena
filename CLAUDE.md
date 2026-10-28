@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.13** (v1.13 shipped 2026-10-23). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.14** (v1.14 shipped 2026-10-28). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13, release/v1.14.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -200,10 +200,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.11d** Steady jugs (his 1a, no beta): 425-v111dpot — drawPot's speckles seeded from the jug's BOARD position (192 direct edit marked
-  v1.11d (425), kill switch flavius_v111dpotoff) → no shimmer when the camera pans; 423's zoomed jug cache 0 → 100% while panning (WebKit).
-  tv111c's holding-camera pixel bound loosened to max ≤16 on ≤0.002% (9 px inside one jug, cause not found). Test tv111pot. No server change.
-
 - **v1.12** Fair trades, fuller purses (tools/plans/v112/NOTES.md, his E/T picks + follow-ups, econ re-measure tools/plans/econ111/REPORT.md,
   docs/economy.md, tools/mgrsim2.js; no beta): 426-v112trade (Trades 2: one value rule = 394's tr106Val for your offers/bundles/counters,
   coin 1:1; a negative extra counts against a bundle; a received fighter below the house's median counts 50%; counter letter with why +
@@ -217,3 +213,10 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   CHOICE112_JS choice audit, template RankedCheck default enforce + VerifyReserve 3), client 429-v112check ("⏳ The scribes check the
   result…", flavius_check112off), flavius.sh FSH_VER 10 (lambda_quota / `quota`: asks AWS once for 1000 concurrent Lambdas). Rollback:
   `VERIFY_MODE=log` on a server deploy (docs/backend.md). Tests verify.test.js, tonl112. Full run green on attempt 2 (tv100p/tv104h slow runner).
+
+- **v1.14** Figures from turn one (tools/plans/v114/NOTES.md, his 1a–9a, no beta by his word; SERVER release, stack only): 428-v112fig ships
+  (Studio/Online/re-kitted fighters prepared in a Worker before the match, "Preparing the figures…" ≤3 s / 6 s phone; flavius_v112figoff,
+  flavius_v112fignowk; its Worker source kept out of i18n wrap) · 417 Quality "High" own key `High{0}` (es Alta / fr Haute; tv114h) · the
+  budget counts ONLY Flavius (7a): template tags `app=flavius` resource by resource (never the shared Cognito pool) + Budget CostFilters
+  `user:app$flavius`, flavius.sh `cost_tags` / `budget` + status "budget counts" (FSH_VER 12). Rollback of the budget: drop CostFilters.
+  [full] run green on attempt 2 (tv100p flaky, also on v1.13).

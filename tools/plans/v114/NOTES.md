@@ -24,3 +24,6 @@ budget alarm closed Online temporarily (budget switch: arena Lambda concurrency 
     ToshiroPlay's settings (HANDOFF: never edit them). The shared pool stays untagged (shared cost).
 - (8a) Ships in v1.14 → v1.14 becomes a SERVER release (stack only: budget + tags, no game/protocol change); the beta stays offline as always.
 - (9a) Online stays closed until the switch reopens it on 2026-11-01.
+
+## Shipped 2026-10-28
+- His "might as well release" (no beta, REPLACES 2a). [full] run 40691237980 green on attempt 2 (attempt 1: tv100p, flaky on v1.13 too).

@@ -370,3 +370,9 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   CHOICE112_JS choice audit, template RankedCheck default enforce + VerifyReserve 3), client 429-v112check ("⏳ The scribes check the
   result…", flavius_check112off), flavius.sh FSH_VER 10 (lambda_quota / `quota`: asks AWS once for 1000 concurrent Lambdas). Rollback:
   `VERIFY_MODE=log` on a server deploy (docs/backend.md). Tests verify.test.js, tonl112. Full run green on attempt 2 (tv100p/tv104h slow runner).
+- **v1.14** Figures from turn one (tools/plans/v114/NOTES.md, his 1a–9a, no beta by his word; SERVER release, stack only): 428-v112fig ships
+  (Studio/Online/re-kitted fighters prepared in a Worker before the match, "Preparing the figures…" ≤3 s / 6 s phone; flavius_v112figoff,
+  flavius_v112fignowk; its Worker source kept out of i18n wrap) · 417 Quality "High" own key `High{0}` (es Alta / fr Haute; tv114h) · the
+  budget counts ONLY Flavius (7a): template tags `app=flavius` resource by resource (never the shared Cognito pool) + Budget CostFilters
+  `user:app$flavius`, flavius.sh `cost_tags` / `budget` + status "budget counts" (FSH_VER 12). Rollback of the budget: drop CostFilters.
+  [full] run green on attempt 2 (tv100p flaky, also on v1.13).
