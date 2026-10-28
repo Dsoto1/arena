@@ -7,22 +7,38 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 Last updated: 2026-10-28 (cloud session, new account).
 
 ## Live now
-- **v1.14a "Behind the scenes"** is the newest release: `release/v1.14a` = `main` (deploy tooling + stack only, no beta). His `bash flavius.sh
-  release` for it is NOT confirmed — ask once. That deploy also hands the switch's log group to the stack (7 days).
-- v1.14 (Figures from turn one + Flavius-only budget) went live 2026-10-28 (his word), after the sign-in-domain deploy fix.
+- **v1.14a "Behind the scenes"** is LIVE (his `bash flavius.sh release`, 2026-10-28 18:37 UTC: server deployed, game/download/site ✓; the
+  switch's old log group handed over, now 7 days). `release/v1.14a` = `main`. CloudShell runs flavius.sh FSH_VER 15.
 - Online is closed by the budget switch until 2026-11-01 (his 9a).
-- Budget: he activated the cost allocation tags `app`, `AppName`, `Project` on 2026-10-28. A check-in (scheduled in the cloud session for
-  2026-10-29 12:45 ET) asks him for `status`'s "budget counts" + "this month" lines: expect green + real spend.
+- Budget: billing had not seen the tag `app` yet at release time ("budget counts" yellow, "this month $0 of $10"). He activates the cost
+  allocation tags `app`, `AppName`, `Project` (2026-10-28). The cloud session scheduled a check-in for 2026-10-29 12:45 ET; if you work in
+  VS Code instead, ask him then for `bash flavius.sh status`'s "budget counts" + "this month" lines (expect green + real spend; if still
+  yellow → `bash flavius.sh budget`).
 - Full history: docs/history.md · newest three in CLAUDE.md §7.
 
 ## On the work branch, NOT released yet
 - Nothing.
 
-## Waiting on him
-- `bash flavius.sh release` (v1.14a) ran? Then `bash flavius.sh audit` → paste: decide about the second `flavius-arena-Table-…` (likely a
-  leftover; nothing removed without his word) and the FR-Site resources (rule onceWeek, SNS FR-Updates, 2 CodeConnections, FR-Git-role,
-  tag Project=FR-Site — not made by this repo; tell him which look unused).
-- What v1.15 is: fix tv100p (flaky) · resume the deaths study (on hold until v1.14 shipped — ask) · Settings reorganisation (mock-up first).
+## Waiting on him (asked 2026-10-28 after his `audit` output; keep the numbering)
+Findings from `bash flavius.sh audit` and the v1.14a status:
+- status FALSE alarms: "game version" (its regex `arena · v[0-9.]*` drops the letter → reads v1.14 for v1.14a, also happened on v1.11d);
+  "versions match … answer 500" and "ranked check … no reserved 3" are only because the arena + verifier are closed (concurrency 0).
+- Tables: the second `flavius-arena-Table-…1MZ1…` was created 6 min BEFORE the stack (2026-10-03 02:07 vs 02:13), 0 items, 0 KB, no tags,
+  not in the stack = left by the failed first deploy (deploy.sh deleted the ROLLBACK_COMPLETE stack; Retain kept the table). The stack's
+  table is `…4CW5…` (54 items, tagged).
+- FR-Site = his flaviusrule.com SITE setup from 2024-10 (tag Project=FR-Site on the site bucket, CloudFront, the ACM cert, the Route 53
+  zone — LIVE, never touch). Rule `onceWeek` is active (rate 7 days, 4 runs in 30 days) → Lambda `myStatsSteam` (not this repo). Look
+  unused: SNS `FR-Updates` (0 published in 30 days, 1 e-mail subscriber), two identical GitHub CodeConnections (AVAILABLE), IAM `FR-Git-role`
+  (last used 2024-10-20, the day it was made).
+Questions (my picks first):
+1. status false alarms: a) fix in flavius.sh (letter versions; "skipped: arena closed" while the switch holds it closed) — he gets it with
+   `bash flavius.sh update`, no release (my pick) · b) leave
+2. the leftover table: a) delete via a guarded one-off `bash flavius.sh droptable` (refuses unless NOT in the stack AND 0 items) (my pick) · b) keep
+3. unused FR-Site pieces (SNS FR-Updates, both GitHub connections, FR-Git-role): a) remove via the same guarded command, each shown + y/N
+   (my pick) · b) keep
+4. onceWeek → myStatsSteam: a) keep (active, not Flavius) (my pick) · b) remove
+Then: what v1.15 is — a) fix tv100p (flaky, test only) (my pick) · b) resume the deaths study · c) Settings reorganisation (mock-up first).
+Never write account numbers / ARNs / pool / client / CloudFront ids into the repo (CLAUDE.md §6, idscan).
 
 ## Paused / parked
 - **Deaths study (Manager)**: why a careful house loses 2–3 fighters a season and sits mid-table (rank ≈10.5). It is ON HOLD at his
@@ -77,6 +93,8 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
   3. Run `sh tools/baton.sh give`. The script refuses if this file was not touched, or anything is uncommitted or unpushed.
 
 ## Last session notes
+- (cloud, 2026-10-28 afternoon) v1.14a went live; ran `audit` with him (findings + questions 1–4 above). He moved the conversation to
+  Claude Code (VS Code): baton given.
 - (cloud, NEW ACCOUNT flaviusrule, 2026-10-28) Took over from the other account via this file. Shipped v1.14 (+ the deploy fix for the
   deleted login.flaviusrule.com) and v1.14a (no AWS ids in the repo, audit, switch logs). His checklist artifact belongs to the OLD account:
   this account cannot read it unless he shares it — ask him to paste notes instead.
