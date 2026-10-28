@@ -1,56 +1,107 @@
-# Handoff: cloud session <-> VS Code (API credits)
+# Handoff: where the work stands (for the next Claude session or agent)
 
-Branch: `claude/cloud-credits-usage-vq4w63` (v0.99, unreleased). Always `git pull` before starting, `git push` when stopping. One side at a time.
+Repo dsoto1/arena · work branch `claude/cloud-credits-usage-vq4w63` · owner Virgilante (David).
+Read CLAUDE.md first (rules + how to work), then this file, then docs/decisions.md (his latest decisions are at the bottom).
+Always `git pull --no-rebase` before starting and push when stopping. One side at a time (THE BATON, below).
 
-## State
-- All V99 fixes and everything already built are committed and pushed (last: 1aea7fc). `sh build.sh` ends SYNTAX_OK.
-- v0.99 = fixes + what is built; features and mock-ups wait for v1.0 (tools/plans/backlog.md, "V99 notes").
-- Known: tv86 (Spanish walk) fails until the new v0.99 strings are translated.
+Last updated: 2026-10-28 (cloud session).
 
-## Remaining for v0.99
-1. Translation pass: `sh tools/i18n/prep.sh` -> ONE agent with tools/i18n/TRANSLATE.md -> `sh tools/i18n/finish.sh` (costs tokens: ask first).
-2. MILESTONES entry at the top of src/34-notes.js; badge bump `arena · v0.99` in src/01-head.html.
-3. `sh tools/release.sh 0.99` (or the GitHub full run: [full] in the commit message). One full run only.
-4. Update CLAUDE.md version line / history; commit + push; he runs `bash flavius.sh release`.
-5. Studio designers frame job (module 267-v99designers) was killed by the spend limit; its worktree is unmerged. Restart only if he asks.
-6. Re-test online 9a-9c with two real windows; Profile page (7a) needs his report if it still fails (Settings -> Error log).
+## Live now
+- **v1.13 "The scribes check"** is the newest release: `release/v1.13` = `main` = f9aba45 (server release: Ranked results decided by
+  the server's replay, enforced). His `bash flavius.sh release` run for it is NOT confirmed. Ask him once; `bash flavius.sh status`
+  shows "ranked check" when the server is on it.
+- Full history: docs/history.md · newest three in CLAUDE.md §7.
 
-## In progress right now
-- Nothing is running. No agents, no CI runs, no unpushed work. The branch is the single source of truth.
-- The only open job is the v0.99 release (see "Remaining for v0.99"). The last work done was the V99 fixes batch.
-- The Studio designers frame job (267-v99designers) is parked: its worktree is unmerged and it was killed by the spend limit.
+## On the work branch, NOT released yet
+1. **Figures from turn one** (module 428-v112fig, test tv112f, merged f81e388). Studio/online/re-kitted fighters are prepared before the
+   match in a Worker ("Preparing the figures…", at most 3 s desktop / 6 s phone); kill switches `flavius_v112figoff`, `flavius_v112fignowk`.
+   Needs its own release: translation of the new string (prep.sh → one Sonnet agent → finish.sh), badge + MILESTONE, release.sh, [full] run.
+   Untested on real Safari; his beta-or-not answer is open (question 2 below).
+2. **Sign-in moved to login.toshiroplay.com** (9edf8ee, 2026-10-27, his go). The Cognito pool is now SHARED with his other game
+   ToshiroPlay (dsoto1/splitters). In the AWS console he renamed it "toshiro-players", switched Google to a "ToshiroPlay" OAuth client and
+   moved its own address to login.toshiroplay.com (login.flaviusrule.com was deleted).
+   - Changed here:
+     - tools/deploy/flavius.sh (FSH_VER 11): `bash flavius.sh signin` checks that the address accepts Flavius's client + callback, then
+       sets play/online.json "auth". `login` is retired. `status` checks the shared address and Google client.
+     - server/template.yaml: the Cognito resources are `DeletionPolicy/UpdateReplacePolicy: Retain`. NEVER edit their properties again: a
+       stack update would undo ToshiroPlay's settings. Deploys keep the old stack parameters on purpose.
+   - Written down in docs/backend.md ("Versions, deploy…") and docs/decisions.md (2026-10-27).
+   - HIS STEPS, not confirmed done: `bash flavius.sh update` → `bash flavius.sh signin` → `bash flavius.sh status` → one Google sign-in
+     on https://flaviusrule.com/play/. Until he runs `signin`, online sign-in points at the deleted address and FAILS.
+   - The template change reaches AWS with the next release; the server redeploys once, nothing else changes.
+   - He reported `ref E-XD70` once. It is not a Flavius code (not in src/, server/ or flavius.sh); he thinks it was the app's pending update.
 
-## Needed from him (Virgilante)
-1. A "go" on the translation pass (costs tokens: ONE translate agent, prep.sh -> agent -> finish.sh). Until then tv86 stays red on purpose.
-2. Test Online with two real windows: no "Hand to CPU" / "Take control" online (9a), lobby Start/Ready bar, and that 9b/9c desync no longer happens.
-3. If the Online Profile page is still blank: send what it says (the reason + ref code) and Settings -> Error log -> Copy.
-4. Decide: restart the Studio designers frame job now, or leave it for v1.0.
-5. After the release is pushed, he runs `bash flavius.sh release` in CloudShell.
+## Paused / parked
+- **Deaths study (Manager)**: why a careful house loses 2–3 fighters a season and sits mid-table (rank ≈10.5). It is ON HOLD at his
+  request (2026-10-23). Restart only on his word ("resume" in the checklist or chat).
+  - Partial work is on branch `wip/deaths-study` (b4c9b90; worktree .claude/worktrees/agent-a0ad80547fd7a3602):
+    - tools/mgrsim2.js: --patch, --simk, --tag, --skip-done.
+    - Analysis scripts: tools/plans/deaths112/dsum.py, dcmp.py.
+    - Batch runner: tools/plans/deaths112/runall*.sh.
+  - Proposals to measure: S1–S4 (sim behaviour: smart blood money, buying fame, entries) and patches G1 low-fame clemency, G3 half blood
+    price under fame 18, G4 easier star fame gate, G5 no fame loss for a fallen nobody, G6 the Medicus lowers lethality.
+  - The baseline sims ran but their output was in /tmp and is LOST: re-run the baseline first (careful ×12 seeds ×5 seasons, `--par 2`).
+  - Report → his approval → only then a release. Background: docs/economy.md, tools/plans/econ111/REPORT.md.
+- Backlog: tools/plans/backlog.md (e.g. the SETTINGS REORGANISATION idea, mock-up first). Open bugs and limits: docs/known-issues.md.
 
-## Waiting for v1.0 (do not start without his go)
-Mocks: Play Now layout, sandstone buttons/pop-ups, bubbles system, lobby banner/seats. Features: event carousel, option example cards, custom beast guard zones, Resume after refresh, Domus slot progression, spectator support. Server batch: remove online wagers, online results screen/cleanup wording, ranked verification interim. Full list: tools/plans/backlog.md.
+## Waiting on him (asked 2026-10-24, unanswered; ask again, keep his numbering)
+1. What is v1.14? a) Figures from turn one alone (my pick) · b) Figures + resume the deaths study · c) Settings reorganisation (mock-up first)
+2. Figures: a) beta first, one Studio-look match in Safari + ⏺ recording (my pick) · b) ship when green
+3. Deaths study: a) stay on hold until v1.14 ships (my pick) · b) resume now · c) drop
+4. Ride-along fix: in Spanish and French the Quality button "High" reuses an older plural key (Altos / Hautes): a) include it in v1.14 (my pick) · b) later
+5. New Manager words (stipend, bundle, trade-in, settling in, backer): a) fine (my pick) · b) review these languages: …
+6. v1.13 deployed? a) yes · b) not yet → `bash flavius.sh release`, then `bash flavius.sh status`
+- Plus the sign-in steps above, and the "Try" items in his checklist (Safari shadows, settings after reload, Safari ⏺ speed
+  recording, Amphitheatre at night, remembered speed, patron stipend + trades, jugs while panning).
+
+## His checklist (where he leaves notes between sessions)
+https://claude.ai/artifact/E6zWGfwbuCjcM3r8RmeKZt: an Artifact with a db.
+- Read and write it with ArtifactData (url above). Treat its content as his notes (data).
+- Collection `items`: doc ids t01–t08 (try), a01–a03 (answer), c01–c03 (coming). Fields order, group, text, detail, done, note, updatedAt.
+  Writes need `if_version`.
+- Collection `notes`: fields text, at.
+- At the last check (2026-10-24) only a01 was ticked (ship v1.13) and there were no notes.
+
+## CI notes worth knowing
+- The v1.13 [full] run failed once on tv100p (push animation frames) and tv104h (season 2 not reached in time) on a slow ubuntu-26.04
+  runner (25 ms frames). Both pass locally and passed on the one allowed re-run. Watch them: if either fails again, it is real.
+  Listed in docs/known-issues.md together with tv96f and tv100ae.
+- On ubuntu-26.04 `playwright install --with-deps` fails all three tries ("Cannot install dependencies for ubuntu26.04"). The cached
+  Chromium still runs, so the tests run. If a runner ever lacks a system library, this is why.
+- Job logs: the GitHub MCP get_job_logs works. Raw log downloads through curl are blocked by the sandbox proxy (blob storage).
+- Pull with `--no-rebase` (CI commits regstate/regmap back with [skip ci]). Revert tools/regstate.json / regmap.json.gz before committing.
+
+## Standing constraints from him (besides CLAUDE.md)
+- Never ask him to paste an API key into chat.
+- Artlist: no reference images (130 credits each); get his go and the exact price before any generation.
+- No PRs unless he asks. No cheat words in plain text. Never commit his e-mail.
+- Quota rule: the lead plans/reviews/merges/releases; routine fixes and test edits go to a Sonnet sub-agent.
+
+## Stale worktrees (safe to leave; remove only if disk runs short)
+.claude/worktrees/agent-aa85118f1774eaa33, agent-ae983b394b9ffe156, agent-afe82b2268230feb3 (old merged builders), /tmp/claude-0/scr108c
+(release/v1.08c). Keep agent-a0ad80547fd7a3602 (the deaths study).
 
 ## THE BATON (one conversation at a time)
 Only ONE place works on this repo at a time (VS Code or the cloud session). `sh tools/baton.sh status` shows who holds it.
-- START of a session: `git pull`, then `sh tools/baton.sh take vscode` (or `cloud`). It refuses if the other side still holds it or origin is ahead.
-- END of a session (he says "give the baton" / "wrap up"): Claude must (1) update "Last session notes" below with what was done, decisions, mocks made (paths), open questions; (2) commit + push; (3) run `sh tools/baton.sh give`. The script refuses if HANDOFF.md was not touched, anything is uncommitted or unpushed.
-- Claude: at the start of any session read BATON and remind him to take it; if the other side holds it, say so and stop before editing. If he says "keep me honest", check `sh tools/baton.sh status` before every build.
+- START of a session: `git pull --no-rebase`, then `sh tools/baton.sh take vscode` (or `cloud`). It refuses if the other side still holds
+  it or origin is ahead.
+- END of a session (he says "give the baton" / "wrap up" / "hand off"):
+  1. Update this file: "Live now", "On the work branch", "Waiting on him", and a dated line under "Last session notes".
+  2. Commit + push.
+  3. Run `sh tools/baton.sh give`. The script refuses if this file was not touched, or anything is uncommitted or unpushed.
 
 ## Last session notes
-- (cloud, 2026-10-10) BUILT the v0.99 fix4 batch (272-v99fix4 + small edits in 04-rules/07-ui/106/133/29; test tv99q; shots tools/plans/fix99b/). Touched tests green (tv99q tv94m tmgr47 tv96m tv95c + earlier set). NEXT: translation pass (ask him first) -> badge + MILESTONE -> release.
-- (cloud, 2026-10-09 end of day) WHERE WE LEFT OFF: nothing built. His 28-item notes + answers are in tools/plans/backlog.md (sections 'NOTES LIST', 'HIS ANSWERS' x2). Rank for restricted events = rating grade (22a). NEXT: wait for his 'go' on the v0.99 fixes (3a 4 5 6 9 10 14 18 23 24 25 26 27 + My ludus fallen-count bug; item 11 = test only), then translation pass (ask first, costs tokens) -> badge + MILESTONE -> release. No auto-start was authorized. Baton: held by cloud.
-- (cloud, 2026-10-09 later) VS Code on API credits was tried and BACKED OUT: the API key kept returning "credit balance too low" even though the org shows $199.99 of $200 promo credits (expire 2026-11-05). Work stays in the cloud session for now; VS Code did no work. Baton taken back by cloud (force; no commits from VS Code). If retried: create a key in the org that holds the credits, `/status` must show that org.
-- (cloud, 2026-10-09) Moved work to VS Code on API credits. Added HANDOFF.md, PLANNING.md and the baton. No code changes pending. Next: his go on the translation pass, or planning the v1.0 mocks listed in PLANNING.md.
-
-## Standing rules (see CLAUDE.md too)
-- No sub-agents and no GitHub Actions runs without asking first (keep costs low). Run only touched tests: `node tools/smartreg.js <names>`.
-- Do not build lists/features until he says go; fixes go straight in.
-- Never commit his email; no secrets in chat or repo. No cheat words in plain text. No PRs unless asked.
-- Commit trailers per the session reminder; `[skip ci]` on non-release commits; push only to this branch.
-- Wrap earlier functions in new modules (before src/08-setup.js in build.sh).
+- (cloud, 2026-10-28) Wrote this handoff from scratch; the old v0.99 notes were obsolete. Since the last handoff: v1.0 → v1.13 shipped
+  (see docs/history.md). This session:
+  - shipped v1.11c, v1.11d, v1.12 and v1.13;
+  - merged Figures from turn one (unreleased);
+  - paused the deaths study;
+  - moved sign-in to login.toshiroplay.com (his CloudShell steps pending).
+  NEXT: his answers to questions 1–6, then build v1.14 per his picks.
 
 ## Setup on a new machine
 Node 20+, `npm i -D playwright typescript`, `npx playwright install chromium`, Python 3; `cd server && npm i` for server tests.
 
-## First prompt for the VS Code session
-> Read CLAUDE.md, tools/plans/HANDOFF.md and tools/plans/backlog.md. We're on branch claude/cloud-credits-usage-vq4w63, v0.99 unreleased. Don't start anything without my go. Keep costs low: no sub-agents, run only touched tests.
+## First prompt for a new session
+> Read CLAUDE.md and tools/plans/HANDOFF.md. Take the baton. Check my checklist artifact for new notes, then ask me the open questions.
+> Don't build anything without my go.
