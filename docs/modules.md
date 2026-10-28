@@ -1753,3 +1753,5 @@ their bullet at the END of the "Systems" list below (the release that ships them
   wrapped the Worker's code). Server template: every Flavius resource tagged `app=flavius` (NOT the shared Cognito pool) and the Budget filtered on
   `user:app$flavius` (his 7a: REPLACES the account-wide budget); flavius.sh `cost_tags` / `budget` (site bucket + CloudFront tagged, the key turned
   on for billing; runs after every server deploy) + status line "budget counts" (FSH_VER 12). Test tv114h.
+- **v1.14a (no new module)** — tools/idscan.js (release.sh hygiene: AWS/Google ids in tracked files); flavius.sh `dist_id`/`pool_id`/`google_id`
+  lookups (REPLACE the hardcoded ids), `audit` (read-only), the switch log hand-over in `server_dir`; template `SwitchLogs` (7 days). FSH_VER 15.

@@ -410,6 +410,12 @@ Resources:
             if(ev&&ev.reopen){await L.send(new DeleteFunctionConcurrencyCommand({FunctionName:fn}));const rv=+process.env.VERIFY_RESERVE||0;
               if(vf)await L.send(rv>0?new PutFunctionConcurrencyCommand({FunctionName:vf,ReservedConcurrentExecutions:rv}):new DeleteFunctionConcurrencyCommand({FunctionName:vf}));console.log('arena reopened');return 'open'}
             await L.send(new PutFunctionConcurrencyCommand({FunctionName:fn,ReservedConcurrentExecutions:0}));if(vf)await L.send(new PutFunctionConcurrencyCommand({FunctionName:vf,ReservedConcurrentExecutions:0}));console.log('arena closed: budget reached');return 'closed'};
+  SwitchLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/flavius-arena-switch
+      Tags: [{Key: app, Value: flavius}]   # v1.14a: the budget counts only what carries this tag
+      RetentionInDays: 7                   # v1.14a: Lambda's own group for the switch never expired
   SwitchSub:
     Type: AWS::SNS::Subscription
     Properties: {TopicArn: !Ref BudgetTopic, Protocol: lambda, Endpoint: !GetAtt Switch.Arn}

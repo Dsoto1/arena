@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.14** (v1.14 shipped 2026-10-28). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.14a** (v1.14a shipped 2026-10-28). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -182,7 +182,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13, release/v1.14.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13, release/v1.14, release/v1.14a.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -198,16 +198,10 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - flavius.sh only replaces ITSELF with a release's copy when that copy's `FSH_VER` is higher — raise FSH_VER with every flavius.sh change
   (CI checks it), so a rollback never brings back an old script.
 - Before shipping, review any new shared-Store writes and make sure no cheat word appears in plain text (release.sh greps).
+- **No AWS / Google identifiers in the repo (v1.14a):** never write an account number, ARN with an account, pool id, OAuth client id or
+  CloudFront id into any file (docs included) — write where to find it ("the stack's UserPoolId output"); flavius.sh looks them up. release.sh's idscan fails otherwise.
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.12** Fair trades, fuller purses (tools/plans/v112/NOTES.md, his E/T picks + follow-ups, econ re-measure tools/plans/econ111/REPORT.md,
-  docs/economy.md, tools/mgrsim2.js; no beta): 426-v112trade (Trades 2: one value rule = 394's tr106Val for your offers/bundles/counters,
-  coin 1:1; a negative extra counts against a bundle; a received fighter below the house's median counts 50%; counter letter with why +
-  wage change; settling-in fighters can't be offered at all; deterministic counter id; ONE trade-in every 4 weeks w.t112in; kill switch
-  flavius_v112tradeoff) · 427-v112econ (player patron stipend 10 + 0.3×fame a week in season, ledger 'patron'; rivals below 40 topped up by one
-  stipend at most every 4 weeks; flavius_v112econoff). Sim (careful ×12): bankruptcies 7/12 → 0, in the black 3/12 → 11/12; rivals <0 23% → 8%
-  of seasons; still short: ≤1 rival <30 (58%) and mid-table (rank ≈10.5) → deaths study next. Tests tv112t tv112e. No server change.
-
 - **v1.13** The scribes check (his checklist tick, no beta; SERVER release): Ranked results are decided by the server's replay (verify
   enforce: routes.js gated settle g112/decide112/verdict112 + sweeps, index.js H.internal, verify.js openCheck112 opening field check +
   CHOICE112_JS choice audit, template RankedCheck default enforce + VerifyReserve 3), client 429-v112check ("⏳ The scribes check the
@@ -222,3 +216,10 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   [full] run green on attempt 2 (tv100p flaky, also on v1.13).
   Deploy fix in the same release (FSH_VER 13): server deploys no longer pass the retired login.flaviusrule.com (conf LOGIN_*), deploy.sh
   finishes a failed rollback first.
+
+- **v1.14a** Behind the scenes (tools/plans/v114a/NOTES.md, two dashboard-session notes, his recs; no beta; deploy tooling + stack only):
+  flavius.sh looks up the CloudFront distribution (alias flaviusrule.com), the Cognito pool (stack output UserPoolId) and the Google client
+  (stack parameter GoogleClientId; a deploy refuses to run without it) at run time — no AWS ids in the public repo; tools/idscan.js in
+  release.sh fails on account ARNs / pool / OAuth client / CloudFront ids in any tracked file (docs scrubbed, history kept); `bash flavius.sh
+  audit` (read-only: the two flavius-arena-Table-* tables, the FR-Site resources); template SwitchLogs (the switch's logs 7 days, the old
+  never-expiring group handed over by the deploy). FSH_VER 15. Full run green (eef8d64) + a smart run for the audit/log commit.

@@ -539,6 +539,14 @@ table), `index.js` (`H.internal`, `WS_ENDPOINT`), `server/verify/verify.js` (`op
   (the stack drops AuthCert + AuthAlias; the Retained CustomAuthPoolDomain is only forgotten) and drops the LOGIN_* keys from the conf;
   deploy.sh waits out a busy stack and finishes an UPDATE_ROLLBACK_FAILED rollback (skipping the UPDATE_FAILED resources) before deploying.
 
+## v1.14a ids, audit, switch logs (2026-10-28)
+- flavius.sh holds no AWS ids: `dist_id` (the distribution with the flaviusrule.com alias), `pool_id` (stack output UserPoolId), `google_id`
+  (the stack's CURRENT GoogleClientId parameter, passed back on every deploy so the shared Cognito provider never changes; no value → no deploy).
+- `bash flavius.sh audit` is read-only: the flavius-arena-Table-* tables (the stack owns one; a second is likely left by a stack delete after a
+  failed first deploy, or a replacement — both Retain the table) and the FR-Site resources (not made by this repo). Output masks accounts/e-mails.
+- The switch's logs: template `SwitchLogs` (7 days). Lambda had made the group without retention; the first deploy after v1.14a deletes it just
+  before the stack creates its own (only while the stack does not own SwitchLogs).
+
 ## v1.02 progression
 
 Shared rules: the "v1.02 PROGRESSION" section at the end of `src/online/111-onlcore.js` (copied by `node tools/mkserver.js`); server: the

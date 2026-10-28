@@ -24,6 +24,8 @@
 #   bash flavius.sh budget                                 v1.14: the budget counts ONLY Flavius: tags the site bucket + CloudFront app=flavius (the
 #                                                           server's resources carry it from the stack) and turns the tag on for billing (also
 #                                                           runs after every server deploy; billing sees a new tag within ~24 h — run it again then)
+#   bash flavius.sh audit                                  v1.14a: READ-ONLY. Lists the flavius-arena-Table-* tables (which one the stack owns) and the FR-Site
+#                                                           resources (rule onceWeek, SNS FR-Updates, CodeConnections, FR-Git-role); changes nothing
 #   bash flavius.sh quota                                  the account's Lambda limit (the Ranked check needs room for 3 replays): asks AWS once, prints where it stands
 #
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
@@ -31,7 +33,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=14
+FSH_VER=15
 BUCKET="flaviusrule.com"
 STACK="flavius-arena"
 REGION="us-east-1"
@@ -137,6 +139,14 @@ server_dir(){ local sd="$1" email="$2"
   # v1.14a: keep the stack's existing Google client (looked up, never typed here); never deploy without it
   local gid; gid=$(google_id)
   [ -n "$gid" ] || die "Could not read the stack $STACK's GoogleClientId parameter (is the stack there? first deploys are not done by this script). Not deploying: it would change the shared sign-in."
+  # v1.14a: hand the switch's log group (made by Lambda, never expires) over to the stack, which now keeps it 7 days (template SwitchLogs)
+  if [ "${DRY:-}" != 1 ] && ! aws cloudformation describe-stack-resource --stack-name "$STACK" --logical-resource-id SwitchLogs >/dev/null 2>&1; then
+    local lg; lg=$(aws logs describe-log-groups --log-group-name-prefix /aws/lambda/flavius-arena-switch --query "logGroups[?logGroupName=='/aws/lambda/flavius-arena-switch'].logGroupName" --output text 2>/dev/null || true)
+    if [ "$lg" = "/aws/lambda/flavius-arena-switch" ]; then
+      run aws logs delete-log-group --log-group-name /aws/lambda/flavius-arena-switch || die "Could not delete the old switch log group /aws/lambda/flavius-arena-switch — the deploy would fail with 'already exists'. Nothing deployed."
+      ok "old switch log group removed (never expired) — the stack now keeps it 7 days"
+    fi
+  fi
   [ "${DRY:-}" = 1 ] || cd "$sd"; AUTH_DOMAIN=none AUTH_STAGE=cert GOOGLE_ID="$gid" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
   unset sec; ok "server deployed"; cost_tags || true; }
 
@@ -384,8 +394,67 @@ cmd_release(){ local here; here=$(pwd)
     ls -t "$HOME"/flavius-done/*.zip 2>/dev/null | tail -n +13 | xargs -r rm -f; fi
   cmd_status; }
 
+# v1.14a: READ-ONLY look at what else sits in the account (describe/list/get calls only). Prints no account number and no full ARN, and
+# masks subscriber endpoints, because the output is pasted into a chat.
+_mask(){ sed -E 's#arn:aws[a-z-]*:([^:]*):[^:]*:[0-9]{12}:#\1: #g; s#arn:aws[a-z-]*:([^:]*):[^:]*::#\1: #g; s#[0-9]{12}#<acct>#g'; }
+_NF="(not found or no permission)"
+cmd_audit(){ set +e +o pipefail
+  local since now; since=$(date -u -d '30 days ago' +%FT%TZ); now=$(date -u +%FT%TZ)
+  say "1. DynamoDB tables named flavius-arena-Table-*"
+  local own; own=$(aws cloudformation describe-stack-resource --stack-name "$STACK" --logical-resource-id Table --query StackResourceDetail.PhysicalResourceId --output text 2>/dev/null)
+  case "$own" in None|null) own="";; esac
+  aws cloudformation describe-stacks --stack-name "$STACK" --query 'Stacks[0].[CreationTime,LastUpdatedTime]' --output text 2>/dev/null | _mask | sed 's/^/  stack created / ; s/\t/   last updated /' || true
+  local tl; tl=$(aws dynamodb list-tables --query 'TableNames[?starts_with(@, `flavius-arena-Table-`)]' --output text 2>/dev/null)
+  if [ -z "$tl" ]; then echo "  $_NF"; fi
+  local t d arn
+  for t in $tl; do
+    echo; echo "  table: $t"
+    d=$(aws dynamodb describe-table --table-name "$t" --query 'Table.[CreationDateTime,ItemCount,TableSizeBytes,BillingModeSummary.BillingMode,DeletionProtectionEnabled,TableArn]' --output text 2>/dev/null)
+    if [ -z "$d" ]; then echo "    $_NF"; continue; fi
+    local cr ic sz bm dp; read -r cr ic sz bm dp arn <<EOF
+$d
+EOF
+    echo "    created:    $cr"
+    echo "    items:      $ic   (AWS refreshes this about every 6 hours)"
+    echo "    size:       $(awk -v b="${sz:-0}" 'BEGIN{ if(b>=1048576) printf "%.1f MB",b/1048576; else printf "%.1f KB",b/1024 }')"
+    echo "    billing:    ${bm:-PROVISIONED}"
+    echo "    deletion protection: $dp"
+    echo "    tags:       $(aws dynamodb list-tags-of-resource --resource-arn "$arn" --query 'Tags[].join(`=`,[Key,Value])' --output text 2>/dev/null | tr '\t' ' ')"
+    if [ -n "$own" ] && [ "$t" = "$own" ]; then echo "    >> OWNED BY THE STACK"; else echo "    >> NOT in the stack (leftover?)"; fi
+  done
+  [ -n "$own" ] || echo "  (could not read which table the stack owns)"
+
+  say "2. FR-Site resources (not made by this repo)"
+  echo "  EventBridge rule onceWeek:"
+  aws events describe-rule --name onceWeek --query '[State,ScheduleExpression]' --output text 2>/dev/null | _mask | sed 's/^/    state, schedule: / ; s/\t/  /' | grep . || echo "    $_NF"
+  aws events list-targets-by-rule --rule onceWeek --query 'Targets[].Arn' --output text 2>/dev/null | tr '\t' '\n' | _mask | sed 's/^/    target: /' | grep -v 'target: $' || true
+  echo "    invocations, last 30 days:    $(aws cloudwatch get-metric-statistics --namespace AWS/Events --metric-name Invocations --dimensions Name=RuleName,Value=onceWeek --start-time "$since" --end-time "$now" --period 2592000 --statistics Sum --query 'Datapoints[].Sum' --output text 2>/dev/null | tr '\t' ' ')   (blank = none recorded)"
+  echo "    TriggeredRules, last 30 days: $(aws cloudwatch get-metric-statistics --namespace AWS/Events --metric-name TriggeredRules --dimensions Name=RuleName,Value=onceWeek --start-time "$since" --end-time "$now" --period 2592000 --statistics Sum --query 'Datapoints[].Sum' --output text 2>/dev/null | tr '\t' ' ')   (blank = none recorded)"
+
+  echo; echo "  SNS topic FR-Updates:"
+  local ta; ta=$(aws sns list-topics --query 'Topics[].TopicArn' --output text 2>/dev/null | tr '\t' '\n' | grep ':FR-Updates$' | head -1)
+  if [ -z "$ta" ]; then echo "    $_NF"; else
+    local subs; subs=$(aws sns list-subscriptions-by-topic --topic-arn "$ta" --query 'Subscriptions[].[Protocol,Endpoint]' --output text 2>/dev/null)
+    echo "    subscriptions: $(printf '%s' "$subs" | grep -c .)"
+    printf '%s\n' "$subs" | while IFS=$'\t' read -r pr ep; do [ -n "$pr" ] && echo "      $pr  ${ep:0:3}…"; done
+    echo "    published, last 30 days: $(aws cloudwatch get-metric-statistics --namespace AWS/SNS --metric-name NumberOfNotificationsPublished --dimensions Name=TopicName,Value=FR-Updates --start-time "$since" --end-time "$now" --period 2592000 --statistics Sum --query 'Datapoints[].Sum' --output text 2>/dev/null | tr '\t' ' ')   (blank = none recorded)"
+  fi
+
+  echo; echo "  CodeConnections (name, provider, status):"
+  local cc; cc=$(aws codeconnections list-connections --query 'Connections[].[ConnectionName,ProviderType,ConnectionStatus]' --output text 2>/dev/null) \
+    || cc=$(aws codestar-connections list-connections --query 'Connections[].[ConnectionName,ProviderType,ConnectionStatus]' --output text 2>/dev/null)
+  if [ -n "$cc" ]; then printf '%s\n' "$cc" | _mask | sed 's/\t/  ·  /g; s/^/    /'; else echo "    $_NF"; fi
+
+  echo; echo "  IAM role FR-Git-role:"
+  aws iam get-role --role-name FR-Git-role --query 'Role.[CreateDate,RoleLastUsed.LastUsedDate,RoleLastUsed.Region]' --output text 2>/dev/null | _mask | sed 's/^/    created, last used, region: / ; s/\t/  ·  /g' | grep . || echo "    $_NF"
+
+  echo; echo "  Resources tagged Project=FR-Site:"
+  local rs; rs=$(aws resourcegroupstaggingapi get-resources --tag-filters Key=Project,Values=FR-Site --query 'ResourceTagMappingList[].ResourceARN' --output text 2>/dev/null | tr '\t' '\n' | _mask)
+  if [ -n "$rs" ]; then printf '%s\n' "$rs" | sed 's/^/    /'; else echo "    $_NF"; fi
+  echo; echo "Nothing was changed. Paste this whole output to Claude."; }
+
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; quota) lambda_quota;; budget) cost_tags;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) bd=$(dist_id); printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$bd" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; audit) cmd_audit;; quota) lambda_quota;; budget) cost_tags;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) bd=$(dist_id); printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$bd" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
   *) sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//';;
 esac

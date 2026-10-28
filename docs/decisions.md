@@ -906,3 +906,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-28 his note (dashboard session) + picks 1a–4a (tools/plans/v114a/NOTES.md): no AWS identifiers in the public repo — flavius.sh looks
   up the CloudFront distribution, the Cognito pool and the Google client id at run time (REPLACES the hardcoded values); release.sh fails on
   account ARNs / pool / OAuth client / distribution ids in any tracked file; history is not rewritten. Ships as v1.14a, no beta.
+- 2026-10-28 his 1a–4a on the second dashboard note (tools/plans/v114a/NOTES.md): `flavius.sh audit` (read-only) for the second table + the
+  FR-Site resources — nothing removed without his word; the switch's logs kept 7 days (template); all in v1.14a.
