@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.14a',ic:'🧹',t:_T('Behind the scenes'),hi:[_T('Tidier deployment tools; nothing changes in play')]},
   {v:'1.14',ic:'🗿',t:_T('Figures from turn one'),hi:[_T('Studio, Online and re-kitted fighters stand as their own figures from the first turn')]},
   {v:'1.13',ic:'📜',t:_T('The scribes check'),hi:[_T('Online Ranked: the server replays every match and its result decides the outcome')]},
   {v:'1.12',ic:'⚖️',t:_T('Fair trades, fuller purses'),hi:[_T('Manager: your patron now pays a weekly stipend, and struggling rival houses get a backer'),_T('Trades: one fair value rule, overpaid fighters lower a bundle, one trade-in every 4 weeks')]},

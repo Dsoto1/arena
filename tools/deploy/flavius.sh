@@ -31,16 +31,25 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=13
+FSH_VER=14
 BUCKET="flaviusrule.com"
-DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
 REGION="us-east-1"
-POOL="us-east-1_VdMsuDJ59"
-# the stack's stored Google client parameter. Since 2026-10-27 the pool (now "toshiro-players") is shared with ToshiroPlay and its Google
-# sign-in, sign-in address and name are set in the AWS console, NOT by this stack: keep this value as it is, so a server deploy never
-# changes the stack's Cognito resources (an update to them would undo ToshiroPlay's settings).
-GOOGLE_ID="158703920017-qiaafniuvh2asr988n18sudlk7hkdcd4.apps.googleusercontent.com"
+# v1.14a (2026-10-28): no AWS identifiers live in this public file. They are looked up when a command needs them (never at start-up, so
+# `bash flavius.sh` with no arguments and `betaurl`-style commands do not fail for unrelated reasons) and cached for the run.
+_DIST=""; _POOL=""; _GID=""
+# the CloudFront distribution whose alias is the site's domain
+dist_id(){ if [ -z "$_DIST" ]; then _DIST=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items && contains(Aliases.Items, '$BUCKET')].Id | [0]" --output text 2>/dev/null || true); fi
+  case "$_DIST" in ""|None|null) _DIST=""; die "No CloudFront distribution with the alias $BUCKET was found (check the AWS region/account and permissions).";; esac; printf '%s' "$_DIST"; }
+# the user pool of the stack (Since 2026-10-27 the pool, now "toshiro-players", is shared with ToshiroPlay). Reporting callers (status) get an
+# empty answer instead of a stop.
+pool_id(){ if [ -z "$_POOL" ]; then _POOL=$(aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='UserPoolId'].OutputValue | [0]" --output text 2>/dev/null || true)
+    case "$_POOL" in None|null) _POOL="";; esac; fi; printf '%s' "$_POOL"; }
+# the stack's CURRENT Google client parameter. Its Google sign-in, sign-in address and name are set in the AWS console by ToshiroPlay, NOT by
+# this stack: a server deploy passes this value back unchanged, so it never changes the stack's Cognito resources (an update to them would
+# undo ToshiroPlay's settings).
+google_id(){ if [ -z "$_GID" ]; then _GID=$(aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Parameters[?ParameterKey=='GoogleClientId'].ParameterValue | [0]" --output text 2>/dev/null || true)
+    case "$_GID" in None|null) _GID="";; esac; fi; printf '%s' "$_GID"; }
 # the hosted sign-in address the game uses (play/online.json "auth"), shared with ToshiroPlay since 2026-10-27
 SIGNIN="https://login.toshiroplay.com"
 SITE="https://flaviusrule.com"
@@ -63,9 +72,10 @@ put(){ # put <local file> <key in the bucket>
   run aws s3 cp "$1" "s3://$BUCKET/$2" --cache-control no-cache --content-type "$(ctype "$2")" --only-show-errors; ok "uploaded /$2"; }
 clear_cdn(){ # clear_cdn <path> [<path> …] — and wait until CloudFront is done
   say "Clearing CloudFront: $*"
-  if [ "${DRY:-}" = 1 ]; then printf '   [dry] aws cloudfront create-invalidation --distribution-id %s --paths %s\n' "$DIST" "$*"; return; fi
-  local id; id=$(aws cloudfront create-invalidation --distribution-id "$DIST" --paths "$@" --query Invalidation.Id --output text)
-  printf '   waiting (usually under a minute)…\n'; aws cloudfront wait invalidation-completed --distribution-id "$DIST" --id "$id" && ok "CloudFront cleared"; }
+  local dist; dist=$(dist_id)
+  if [ "${DRY:-}" = 1 ]; then printf '   [dry] aws cloudfront create-invalidation --distribution-id %s --paths %s\n' "$dist" "$*"; return; fi
+  local id; id=$(aws cloudfront create-invalidation --distribution-id "$dist" --paths "$@" --query Invalidation.Id --output text)
+  printf '   waiting (usually under a minute)…\n'; aws cloudfront wait invalidation-completed --distribution-id "$dist" --id "$id" && ok "CloudFront cleared"; }
 unpack(){ # unpack <zip> → prints the folder
   local d; d=$(mktemp -d "$HOME/.flavius-XXXX"); unzip -oq "$1" -d "$d"; echo "$d"; }
 
@@ -124,7 +134,10 @@ server_dir(){ local sd="$1" email="$2"
   # stack's CustomAuthPoolDomain/AuthAlias and failed reading the deleted domain. Always none now (the stack drops the cert + DNS record; the
   # Retained Cognito domain is only forgotten), and the old keys leave the conf.
   if [ -f "$CONF" ] && grep -q '^LOGIN_\(DOMAIN\|STAGE\)=' "$CONF"; then grep -v '^LOGIN_\(DOMAIN\|STAGE\)=' "$CONF" > "$CONF.tmp" || true; mv "$CONF.tmp" "$CONF"; ok "forgot the retired sign-in address settings (login.flaviusrule.com)"; fi
-  [ "${DRY:-}" = 1 ] || cd "$sd"; AUTH_DOMAIN=none AUTH_STAGE=cert GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
+  # v1.14a: keep the stack's existing Google client (looked up, never typed here); never deploy without it
+  local gid; gid=$(google_id)
+  [ -n "$gid" ] || die "Could not read the stack $STACK's GoogleClientId parameter (is the stack there? first deploys are not done by this script). Not deploying: it would change the shared sign-in."
+  [ "${DRY:-}" = 1 ] || cd "$sd"; AUTH_DOMAIN=none AUTH_STAGE=cert GOOGLE_ID="$gid" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
   unset sec; ok "server deployed"; cost_tags || true; }
 
 # v1.14 (his 7a, 2026-10-28): the budget (template Budget, CostFilters user:app$flavius) counts ONLY Flavius. The stack tags its own resources
@@ -137,7 +150,7 @@ cost_tags(){ local cur arn st
   if printf '%s' "$cur" | python3 -c "import json,sys;t=json.load(sys.stdin);sys.exit(0 if any(x['Key']=='$TAGK' and x['Value']=='$TAGV' for x in t) else 1)"; then ok "site bucket tagged $TAGK=$TAGV"
   else local ts; ts=$(printf '%s' "$cur" | python3 -c "import json,sys;t=[x for x in json.load(sys.stdin) if x['Key']!='$TAGK'];t.append({'Key':'$TAGK','Value':'$TAGV'});print(json.dumps({'TagSet':t}))")
     if run aws s3api put-bucket-tagging --bucket "$BUCKET" --tagging "$ts"; then ok "site bucket tagged $TAGK=$TAGV (its other tags kept)"; else printf '\033[1;33m! the site bucket could not be tagged (permissions?) — its cost stays outside the budget\033[0m\n'; fi; fi
-  arn=$(aws cloudfront get-distribution --id "$DIST" --query Distribution.ARN --output text 2>/dev/null || true)
+  arn=$(aws cloudfront get-distribution --id "$(dist_id)" --query Distribution.ARN --output text 2>/dev/null || true)
   if [ -n "$arn" ] && [ "$arn" != None ] && run aws cloudfront tag-resource --resource "$arn" --tags "Items=[{Key=$TAGK,Value=$TAGV}]" 2>/dev/null; then ok "CloudFront tagged $TAGK=$TAGV"
   else printf '\033[1;33m! CloudFront could not be tagged — its cost stays outside the budget\033[0m\n'; fi
   st=$(aws ce list-cost-allocation-tags --tag-keys "$TAGK" --query 'CostAllocationTags[0].Status' --output text 2>/dev/null || echo None)
@@ -229,7 +242,7 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
   if [ -n "$ws" ] && [ -n "$pv" ]; then code=$(curl -s -m 10 -o /dev/null -w '%{http_code}' -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Version: 13' -H 'Sec-WebSocket-Key: Zmxhdml1c3J1bGVfX3Rlc3Q=' "https://${ws#wss://}?ver=$pv" || true)
     case "$code" in 401|403|101) G "versions match" "page protocol $pv is accepted by the server";; 426) R "versions match" "the server refuses the page's protocol $pv — deploy the matching server zip";; *) Y "versions match" "could not tell (answer $code)";; esac; fi
   # Google sign-in settings inside Cognito
-  local cid; cid=$(aws cognito-idp describe-identity-provider --user-pool-id "$POOL" --provider-name Google --query IdentityProvider.ProviderDetails.client_id --output text 2>/dev/null || echo '?')
+  local pool cid; pool=$(pool_id); cid='?'; [ -z "$pool" ] || cid=$(aws cognito-idp describe-identity-provider --user-pool-id "$pool" --provider-name Google --query IdentityProvider.ProviderDetails.client_id --output text 2>/dev/null || echo '?')
   # set by ToshiroPlay in the console since 2026-10-27 (its "ToshiroPlay" Google client): only check that one is there
   case "$cid" in *.apps.googleusercontent.com) G "google client" "set (ToshiroPlay's, shared)";; *) R "google client" "Cognito has no Google client (\"$cid\") — Google sign-in will fail";; esac
   # v1.14: does the budget count only Flavius? (the tag must be on for billing)
@@ -339,7 +352,7 @@ cmd_beta(){ gh_token; local br="${1:-}"
   put "$SRC/flavius-arena.html" "play-beta/index.html"; put "$SRC/version.json" "play-beta/version.json"
   run aws s3 cp "s3://$BUCKET/play/online.json" "s3://$BUCKET/play-beta/online.json" --cache-control no-cache --only-show-errors || true
   clear_cdn "/play-beta/*"; rm -rf "$SRC"
-  local dom; dom=$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text 2>/dev/null || echo "?")
+  local dom; dom=$(aws cloudfront get-distribution --id "$(dist_id)" --query Distribution.DomainName --output text 2>/dev/null || echo "?")
   say "Beta ready:  https://$dom/play-beta/index.html"
   local code; code=$(curl -s -L -m 20 -o /dev/null -w '%{http_code}' "https://$dom/play-beta/index.html?x=$RANDOM" || true)
   [ "$code" = 200 ] && ok "it answers (200)" || printf '\033[1;31m✗ the beta address answers %s — send Claude this line\033[0m\n' "$code"
@@ -373,6 +386,6 @@ cmd_release(){ local here; here=$(pwd)
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; quota) lambda_quota;; budget) cost_tags;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; quota) lambda_quota;; budget) cost_tags;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) bd=$(dist_id); printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$bd" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
   *) sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//';;
 esac

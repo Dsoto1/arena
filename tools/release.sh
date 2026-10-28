@@ -32,6 +32,8 @@ for w in $WORDS; do if grep -q "$w" flavius-arena.html; then echo "cheat word in
 ALLOW='FlaviusRule@gmail.com'
 LEAK=$(grep -oE '[A-Za-z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|icloud|proton)\.(com|me)' flavius-arena.html | sort -u | grep -vixF "$ALLOW" | head -1)
 if [ -n "$LEAK" ]; then echo "an e-mail address is in the page: $LEAK"; exit 1; fi
+# v1.14a: no AWS / Google identifiers (account ARNs, Cognito pool ids, OAuth client ids, CloudFront ids) in any tracked text file
+node tools/idscan.js || exit 1
 echo "clean ($(echo $WORDS | wc -w) words checked)"
 step "4 full regression"
 # v0.95: the full suite runs on GitHub Actions (8 shards, ~15 min) when the release commit (version.json changed) is pushed —
