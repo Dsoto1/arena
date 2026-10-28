@@ -28,7 +28,8 @@ Last updated: 2026-10-28 evening (cloud session, new account).
 - Answered 2026-10-28: audit 1a·2a·3a·4a (done, see Live now) and v1.15 = a (done, no release).
 - Tomorrow (2026-10-29): `bash flavius.sh budget` — billing had not seen the tag `app` yet; expect status "budget counts" green after it.
 - Next work: nothing chosen. Open options: resume the deaths study (on his word only) · Settings reorganisation (mock-up first) · backlog.
-- Optional: the unattached policy AWSCodePipelineServiceRole-…-Git-FR-pipeline (left by droptable) — remove only if he asks.
+- He asked (2026-10-28) to remove the leftover AWSCodePipelineServiceRole-…-Git-FR-pipeline policy: droptable section 5, flavius.sh FSH_VER 17.
+  He runs `bash flavius.sh update` + `bash flavius.sh droptable`; confirm with `audit` output if he pastes it.
 
 ## Paused / parked
 - **Deaths study (Manager)**: why a careful house loses 2–3 fighters a season and sits mid-table (rank ≈10.5). It is ON HOLD at his

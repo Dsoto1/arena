@@ -547,7 +547,7 @@ table), `index.js` (`H.internal`, `WS_ENDPOINT`), `server/verify/verify.js` (`op
 - `bash flavius.sh droptable` (v1.15, his 2a/3a) is the one-off clean-up of what audit found. It re-checks everything itself and asks y/N for
   each piece: a flavius-arena-Table-* table only if it is not the stack's, belongs to no stack, scans empty and has no deletion protection; SNS
   FR-Updates only if nothing was published in 30 days; GitHub CodeConnections only if no CodePipeline uses them; IAM FR-Git-role only if unused
-  for 30 days (its policies are detached, never deleted). Never touched: the site (bucket, CloudFront, cert, zone) and onceWeek → myStatsSteam.
+  for 30 days (its policies are detached); FSH_VER 17 (his word): your own *-Git-FR-pipeline policy, only if attached to nothing. Never touched: the site (bucket, CloudFront, cert, zone) and onceWeek → myStatsSteam.
 - status (v1.15): reads letter versions (v1.14a); while the budget switch holds the arena closed, "ranked check" and "versions match" show
   "skipped: arena closed" (grey, not counted) instead of false yellows.
 - The switch's logs: template `SwitchLogs` (7 days). Lambda had made the group without retention; the first deploy after v1.14a deletes it just

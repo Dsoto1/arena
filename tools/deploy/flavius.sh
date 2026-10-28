@@ -28,7 +28,7 @@
 #                                                           resources (rule onceWeek, SNS FR-Updates, CodeConnections, FR-Git-role); changes nothing
 #   bash flavius.sh droptable                              v1.15: a guarded ONE-OFF clean-up of what audit found: the leftover table (only if not in
 #                                                           the stack AND empty), SNS FR-Updates (only if silent 30 days), GitHub CodeConnections no pipeline
-#                                                           uses, IAM FR-Git-role (only if unused 30 days) — each shown, removed only after you type y
+#                                                           uses, IAM FR-Git-role (only if unused 30 days), v1.15 also its leftover *-Git-FR-pipeline policy (only if attached to nothing) — each shown, removed only after you type y
 #   bash flavius.sh quota                                  the account's Lambda limit (the Ranked check needs room for 3 replays): asks AWS once, prints where it stands
 #
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
@@ -36,7 +36,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=16
+FSH_VER=17
 BUCKET="flaviusrule.com"
 STACK="flavius-arena"
 REGION="us-east-1"
@@ -526,6 +526,19 @@ cmd_droptable(){ set +e +o pipefail
       for x in $pr; do run aws iam remove-role-from-instance-profile --instance-profile-name "$x" --role-name FR-Git-role; done
       run aws iam delete-role --role-name FR-Git-role && ok "FR-Git-role deleted" || echo "    the delete failed"
     else echo "    kept"; fi
+  fi
+  say "5. The FR-Site pipeline policy (only your own policy *-Git-FR-pipeline, only if attached to nothing)"
+  local pl; pl=$(aws iam list-policies --scope Local --query 'Policies[?ends_with(PolicyName, `-Git-FR-pipeline`)].[Arn,PolicyName,AttachmentCount]' --output text 2>/dev/null)
+  if [ -z "$pl" ]; then echo "  not found (already gone)"; else
+    local pa pn pc v
+    while IFS=$'\t' read -r pa pn pc; do [ -n "$pa" ] || continue; echo; echo "  policy: $pn"
+      [ "$pc" = "0" ] || { echo "    kept: attached to $pc role(s)/user(s)/group(s)"; continue; }
+      echo "    attached to nothing"
+      if _yn "Delete the policy $pn?"; then
+        for v in $(aws iam list-policy-versions --policy-arn "$pa" --query 'Versions[?!IsDefaultVersion].VersionId' --output text 2>/dev/null); do run aws iam delete-policy-version --policy-arn "$pa" --version-id "$v"; done
+        run aws iam delete-policy --policy-arn "$pa" && ok "policy $pn deleted" || echo "    the delete failed"
+      else echo "    kept"; fi
+    done <<<"$pl"
   fi
   echo; echo "Kept on purpose: the site (bucket, CloudFront, certificate, Route 53 zone) and the rule onceWeek → myStatsSteam."
   echo "Run  bash flavius.sh audit  to see what is left."; }
