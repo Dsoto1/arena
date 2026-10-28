@@ -37,7 +37,8 @@ Questions (my picks first):
 3. unused FR-Site pieces (SNS FR-Updates, both GitHub connections, FR-Git-role): a) remove via the same guarded command, each shown + y/N
    (my pick) · b) keep
 4. onceWeek → myStatsSteam: a) keep (active, not Flavius) (my pick) · b) remove
-Then: what v1.15 is — a) fix tv100p (flaky, test only) (my pick) · b) resume the deaths study · c) Settings reorganisation (mock-up first).
+HIS ANSWERS (2026-10-28, cloud): 1a · 2a · 3a · 4a (docs/decisions.md). Not built yet — waits for his go.
+Still open: what v1.15 is — a) fix tv100p (flaky, test only) (my pick) · b) resume the deaths study · c) Settings reorganisation (mock-up first).
 Never write account numbers / ARNs / pool / client / CloudFront ids into the repo (CLAUDE.md §6, idscan).
 
 ## Paused / parked

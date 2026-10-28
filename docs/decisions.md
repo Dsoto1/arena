@@ -908,3 +908,8 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   account ARNs / pool / OAuth client / distribution ids in any tracked file; history is not rewritten. Ships as v1.14a, no beta.
 - 2026-10-28 his 1a–4a on the second dashboard note (tools/plans/v114a/NOTES.md): `flavius.sh audit` (read-only) for the second table + the
   FR-Site resources — nothing removed without his word; the switch's logs kept 7 days (template); all in v1.14a.
+- 2026-10-28 his 1a–4a on the `audit` findings (tools/plans/HANDOFF.md): (1) flavius.sh status reads letter versions (v1.14a) and shows
+  "skipped: arena closed" for versions-match / ranked-check while the switch holds the arena closed — via `bash flavius.sh update`, no game
+  release; (2) the leftover table (not in the stack, 0 items) deleted by a guarded one-off `flavius.sh droptable`; (3) the unused FR-Site
+  pieces (SNS FR-Updates, both GitHub CodeConnections, IAM FR-Git-role) removed by the same guarded command, each shown + y/N; the live
+  site (bucket, CloudFront, cert, zone) never touched; (4) onceWeek → myStatsSteam kept. Build waits for his go; v1.15 still open.
