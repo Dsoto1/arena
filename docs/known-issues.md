@@ -5,6 +5,10 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-28 · tv100p is FLAKY ON ITS OWN, not a v1.14 regression: failed the v1.14 [full] run 40691237980 (shard 1) and fails here on
+  the v1.13 build too (2 of 4 local runs; v1.14: 3 of 4) — checks 1c/1f count push-animation frames (mids 2–3, wants more) and lose
+  frames on a loaded machine. Fix the TEST (sample by animation progress, not frame count) in the next release. Also flaky in that run
+  (passed alone): tv88m, tv96c, tv105c, tv104h.
 - 2026-10-28 · v1.14 budget: until billing turns the tag `app` on (hours after the release tags things), the Flavius-only budget sees $0 and the
   kill switch cannot close the arena. `bash flavius.sh status` → "budget counts"; if yellow the day after: `bash flavius.sh budget`.
 - 2026-10-23 · v1.13 [full] run 39972104480 attempt 1: tv100p (4b "Fast, your own push still animates": 4 frames in 485 ms) and tv104h
