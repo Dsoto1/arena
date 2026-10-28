@@ -26,6 +26,9 @@
 #                                                           runs after every server deploy; billing sees a new tag within ~24 h — run it again then)
 #   bash flavius.sh audit                                  v1.14a: READ-ONLY. Lists the flavius-arena-Table-* tables (which one the stack owns) and the FR-Site
 #                                                           resources (rule onceWeek, SNS FR-Updates, CodeConnections, FR-Git-role); changes nothing
+#   bash flavius.sh droptable                              v1.15: a guarded ONE-OFF clean-up of what audit found: the leftover table (only if not in
+#                                                           the stack AND empty), SNS FR-Updates (only if silent 30 days), GitHub CodeConnections no pipeline
+#                                                           uses, IAM FR-Git-role (only if unused 30 days) — each shown, removed only after you type y
 #   bash flavius.sh quota                                  the account's Lambda limit (the Ranked check needs room for 3 replays): asks AWS once, prints where it stands
 #
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
@@ -33,7 +36,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=15
+FSH_VER=16
 BUCKET="flaviusrule.com"
 STACK="flavius-arena"
 REGION="us-east-1"
@@ -213,10 +216,11 @@ cmd_login(){ say "login is retired: the sign-in address now belongs to ToshiroPl
 G(){ printf '  \033[1;32m●\033[0m %-16s %s\n' "$1" "$2"; }   # fine
 Y(){ printf '  \033[1;33m●\033[0m %-16s %s\n' "$1" "$2"; YN=$((YN+1)); }   # worth a look
 R(){ printf '  \033[1;31m●\033[0m %-16s %s\n' "$1" "$2"; RN=$((RN+1)); }   # needs attention now
-cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = worth a look · red = fix now)"; YN=0; RN=0
+K(){ printf '  \033[2m○ %-16s %s\033[0m\n' "$1" "$2"; }   # v1.15: skipped (not a fault, not counted)
+cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = worth a look · red = fix now)"; YN=0; RN=0; local closed=0
   # the game page and its version
   local vj v page pver; vj=$(curl -s -m 10 "$SITE/play/version.json?x=$RANDOM" || true); v=$(printf '%s' "$vj" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p')
-  page=$(curl -s -m 20 "$SITE/play/?x=$RANDOM" || true); pver=$(printf '%s' "$page" | grep -o 'arena · v[0-9.]*' | head -1 | sed 's/.*v//')
+  page=$(curl -s -m 20 "$SITE/play/?x=$RANDOM" || true); pver=$(printf '%s' "$page" | grep -oE 'arena · v[0-9.]+[a-z]?' | head -1 | sed 's/.*v//')
   if [ -z "$v" ]; then R "game version" "play/version.json is missing or unreadable"
   elif [ -n "$pver" ] && [ "$pver" != "$v" ]; then Y "game version" "version.json says v$v but the page is v$pver (upload both, version.json last)"
   else G "game version" "v$v"; fi
@@ -240,16 +244,18 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
   if [ -n "$fn" ] && [ "$fn" != "None" ]; then
     G "server updated" "$(aws lambda get-function --function-name "$fn" --query Configuration.LastModified --output text 2>/dev/null | cut -c1-16 | tr T ' ') UTC"
     local cc; cc=$(aws lambda get-function-concurrency --function-name "$fn" --query ReservedConcurrentExecutions --output text 2>/dev/null || echo None)
-    [ "$cc" = "0" ] && R "arena open?" "CLOSED by the budget switch — reopen: see the stack's ReopenCommand output" || G "arena open?" "open"
+    [ "$cc" = "0" ] && { closed=1; R "arena open?" "CLOSED by the budget switch — reopen: see the stack's ReopenCommand output"; } || G "arena open?" "open"
     # v1.12 the Ranked check: its mode and its own 3 replays (reserved concurrency; a new account's limit cannot hold them yet)
     local rc vc; rc=$(aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Parameters[?ParameterKey=='RankedCheck'].ParameterValue" --output text 2>/dev/null || true)
     vc=$(aws lambda get-function-concurrency --function-name flavius-arena-verify --query ReservedConcurrentExecutions --output text 2>/dev/null || echo None)
+    if [ "$closed" = 1 ]; then K "ranked check" "skipped: arena closed (mode ${rc:-?})"; else
     case "$rc" in enforce) [ "$vc" = "3" ] && G "ranked check" "enforce · 3 replays at once" || Y "ranked check" "enforce · no reserved 3 yet (the account's Lambda limit — bash flavius.sh quota)";;
-      log|off) Y "ranked check" "$rc — results by agreement only (VERIFY_MODE=enforce on the next server deploy turns it back on)";; *) Y "ranked check" "not on this server yet";; esac
+      log|off) Y "ranked check" "$rc — results by agreement only (VERIFY_MODE=enforce on the next server deploy turns it back on)";; *) Y "ranked check" "not on this server yet";; esac; fi
   else R "server updated" "the arena function was not found"; fi
   # page and server speak the same protocol? (the server answers 401 = 'sign in' when the version is right, 426 when it is not)
   local pv code; pv=$(printf '%s' "$page" | grep -oE 'C\.VER=[0-9]+' | tail -1 | cut -d= -f2); [ -n "$pv" ] || pv=$(printf '%s' "$page" | grep -o 'const VER=[0-9]*' | head -1 | cut -d= -f2)  # 111-onlcore raises its protocol with C.VER (v1.0: 8); older pages only have the first const VER
-  if [ -n "$ws" ] && [ -n "$pv" ]; then code=$(curl -s -m 10 -o /dev/null -w '%{http_code}' -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Version: 13' -H 'Sec-WebSocket-Key: Zmxhdml1c3J1bGVfX3Rlc3Q=' "https://${ws#wss://}?ver=$pv" || true)
+  if [ "$closed" = 1 ]; then K "versions match" "skipped: arena closed"
+  elif [ -n "$ws" ] && [ -n "$pv" ]; then code=$(curl -s -m 10 -o /dev/null -w '%{http_code}' -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Version: 13' -H 'Sec-WebSocket-Key: Zmxhdml1c3J1bGVfX3Rlc3Q=' "https://${ws#wss://}?ver=$pv" || true)
     case "$code" in 401|403|101) G "versions match" "page protocol $pv is accepted by the server";; 426) R "versions match" "the server refuses the page's protocol $pv — deploy the matching server zip";; *) Y "versions match" "could not tell (answer $code)";; esac; fi
   # Google sign-in settings inside Cognito
   local pool cid; pool=$(pool_id); cid='?'; [ -z "$pool" ] || cid=$(aws cognito-idp describe-identity-provider --user-pool-id "$pool" --provider-name Google --query IdentityProvider.ProviderDetails.client_id --output text 2>/dev/null || echo '?')
@@ -453,8 +459,79 @@ EOF
   if [ -n "$rs" ]; then printf '%s\n' "$rs" | sed 's/^/    /'; else echo "    $_NF"; fi
   echo; echo "Nothing was changed. Paste this whole output to Claude."; }
 
+# v1.15 (his 2a + 3a, 2026-10-28): a guarded ONE-OFF clean-up of what `audit` found. Every piece is checked again here (never trusted
+# from an earlier audit), shown, and removed only after a typed y. Anything that fails a guard is left alone. The live site (bucket,
+# CloudFront, certificate, Route 53 zone), the rule onceWeek and its Lambda (his 4a: keep) are never touched. DRY=1 shows the commands only.
+_yn(){ local a; read -r -p "    $1 [y/N] " a </dev/tty || return 1; [ "${a,,}" = y ]; }
+_instack(){ aws cloudformation describe-stack-resources --physical-resource-id "$1" --query 'StackResources[0].StackName' --output text 2>/dev/null | grep -v '^None$' | grep .; }
+cmd_droptable(){ set +e +o pipefail
+  local since now; since=$(date -u -d '30 days ago' +%FT%TZ); now=$(date -u +%FT%TZ)
+  say "1. The leftover table (only if NOT in the stack AND empty)"
+  local own; own=$(aws cloudformation describe-stack-resource --stack-name "$STACK" --logical-resource-id Table --query StackResourceDetail.PhysicalResourceId --output text 2>/dev/null)
+  case "$own" in None|null) own="";; esac
+  if [ -z "$own" ]; then echo "  could not read which table the stack owns — nothing done (no table is removed without that)"; else
+    echo "  the stack's table: $own (kept)"
+    local t n dp st found=0
+    for t in $(aws dynamodb list-tables --query 'TableNames[?starts_with(@, `flavius-arena-Table-`)]' --output text 2>/dev/null); do
+      [ "$t" = "$own" ] && continue; found=1; echo; echo "  table: $t"
+      st=$(_instack "$t"); if [ -n "$st" ]; then echo "    kept: it belongs to the stack $st"; continue; fi
+      n=$(aws dynamodb scan --table-name "$t" --select COUNT --max-items 1 --query Count --output text 2>/dev/null)
+      [ "$n" = "0" ] || { echo "    kept: not empty (or not readable: ${n:-?})"; continue; }
+      dp=$(aws dynamodb describe-table --table-name "$t" --query Table.DeletionProtectionEnabled --output text 2>/dev/null)
+      [ "$dp" = "True" ] && { echo "    kept: deletion protection is on"; continue; }
+      echo "    not in any stack · 0 items (scanned now)"
+      if _yn "Delete the table $t?"; then run aws dynamodb delete-table --table-name "$t" --query TableDescription.TableStatus --output text >/dev/null \
+        && { [ "${DRY:-}" = 1 ] || aws dynamodb wait table-not-exists --table-name "$t"; } && ok "table $t deleted" || echo "    the delete failed — nothing else changed"
+      else echo "    kept"; fi
+    done
+    [ "$found" = 1 ] || echo "  no other flavius-arena-Table-* table (already gone)"
+  fi
+
+  say "2. SNS topic FR-Updates (only if nothing was published in 30 days)"
+  local ta; ta=$(aws sns list-topics --query 'Topics[].TopicArn' --output text 2>/dev/null | tr '\t' '\n' | grep ':FR-Updates$' | head -1)
+  if [ -z "$ta" ]; then echo "  not found (already gone)"; else
+    local pub subs; pub=$(aws cloudwatch get-metric-statistics --namespace AWS/SNS --metric-name NumberOfNotificationsPublished --dimensions Name=TopicName,Value=FR-Updates --start-time "$since" --end-time "$now" --period 2592000 --statistics Sum --query 'Datapoints[].Sum' --output text 2>/dev/null)
+    subs=$(aws sns list-subscriptions-by-topic --topic-arn "$ta" --query 'length(Subscriptions)' --output text 2>/dev/null)
+    if [ -n "$(_instack "$ta")" ]; then echo "  kept: it belongs to a stack"
+    elif [ -n "$pub" ] && [ "${pub%%.*}" != "0" ]; then echo "  kept: $pub published in the last 30 days"
+    else echo "  0 published in 30 days · ${subs:-?} subscriber(s) (removed with it)"
+      _yn "Delete the topic FR-Updates?" && { run aws sns delete-topic --topic-arn "$ta" && ok "FR-Updates deleted"; } || echo "    kept"; fi
+  fi
+
+  say "3. GitHub CodeConnections (only those no CodePipeline uses; each asked)"
+  local svc=codeconnections cl; cl=$(aws codeconnections list-connections --provider-type-filter GitHub --query 'Connections[].[ConnectionArn,ConnectionName,ConnectionStatus]' --output text 2>/dev/null) \
+    || { svc=codestar-connections; cl=$(aws codestar-connections list-connections --provider-type-filter GitHub --query 'Connections[].[ConnectionArn,ConnectionName,ConnectionStatus]' --output text 2>/dev/null); }
+  if [ -z "$cl" ]; then echo "  none found (already gone, or no permission)"; else
+    local used="" p
+    for p in $(aws codepipeline list-pipelines --query 'pipelines[].name' --output text 2>/dev/null); do used="$used $(aws codepipeline get-pipeline --name "$p" --output json 2>/dev/null | grep -o '"ConnectionArn": *"[^"]*"' | cut -d'"' -f4)"; done
+    local ca cn cs
+    while IFS=$'\t' read -r ca cn cs; do [ -n "$ca" ] || continue; echo; echo "  connection: $cn · GitHub · $cs"
+      case " $used " in *" $ca "*) echo "    kept: a CodePipeline uses it"; continue;; esac
+      if _yn "Delete the connection $cn?"; then run aws "$svc" delete-connection --connection-arn "$ca" >/dev/null && ok "connection $cn deleted" || echo "    the delete failed"; else echo "    kept"; fi
+    done <<<"$cl"
+  fi
+
+  say "4. IAM role FR-Git-role (only if unused for 30 days)"
+  local lu; lu=$(aws iam get-role --role-name FR-Git-role --query 'Role.RoleLastUsed.LastUsedDate' --output text 2>/dev/null)
+  if [ -z "$lu" ]; then echo "  not found (already gone)"
+  elif [ "$lu" != "None" ] && [ "$(date -u -d "$lu" +%s 2>/dev/null || echo 9999999999)" -gt "$(date -u -d "$since" +%s)" ]; then echo "  kept: used on $lu"
+  else
+    local mp ip pr x; mp=$(aws iam list-attached-role-policies --role-name FR-Git-role --query 'AttachedPolicies[].PolicyArn' --output text 2>/dev/null)
+    ip=$(aws iam list-role-policies --role-name FR-Git-role --query 'PolicyNames' --output text 2>/dev/null)
+    pr=$(aws iam list-instance-profiles-for-role --role-name FR-Git-role --query 'InstanceProfiles[].InstanceProfileName' --output text 2>/dev/null)
+    echo "  last used: ${lu/None/never} · policies: $(printf '%s ' $mp | _mask)$ip · instance profiles: ${pr:-none}"
+    if _yn "Delete the role FR-Git-role (its policies are detached, the policies themselves are kept)?"; then
+      for x in $mp; do run aws iam detach-role-policy --role-name FR-Git-role --policy-arn "$x"; done
+      for x in $ip; do run aws iam delete-role-policy --role-name FR-Git-role --policy-name "$x"; done
+      for x in $pr; do run aws iam remove-role-from-instance-profile --instance-profile-name "$x" --role-name FR-Git-role; done
+      run aws iam delete-role --role-name FR-Git-role && ok "FR-Git-role deleted" || echo "    the delete failed"
+    else echo "    kept"; fi
+  fi
+  echo; echo "Kept on purpose: the site (bucket, CloudFront, certificate, Route 53 zone) and the rule onceWeek → myStatsSteam."
+  echo "Run  bash flavius.sh audit  to see what is left."; }
+
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; audit) cmd_audit;; quota) lambda_quota;; budget) cost_tags;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) bd=$(dist_id); printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$bd" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; audit) cmd_audit;; droptable) cmd_droptable;; quota) lambda_quota;; budget) cost_tags;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) bd=$(dist_id); printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$bd" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
   *) sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//';;
 esac

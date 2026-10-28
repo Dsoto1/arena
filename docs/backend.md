@@ -544,6 +544,12 @@ table), `index.js` (`H.internal`, `WS_ENDPOINT`), `server/verify/verify.js` (`op
   (the stack's CURRENT GoogleClientId parameter, passed back on every deploy so the shared Cognito provider never changes; no value → no deploy).
 - `bash flavius.sh audit` is read-only: the flavius-arena-Table-* tables (the stack owns one; a second is likely left by a stack delete after a
   failed first deploy, or a replacement — both Retain the table) and the FR-Site resources (not made by this repo). Output masks accounts/e-mails.
+- `bash flavius.sh droptable` (v1.15, his 2a/3a) is the one-off clean-up of what audit found. It re-checks everything itself and asks y/N for
+  each piece: a flavius-arena-Table-* table only if it is not the stack's, belongs to no stack, scans empty and has no deletion protection; SNS
+  FR-Updates only if nothing was published in 30 days; GitHub CodeConnections only if no CodePipeline uses them; IAM FR-Git-role only if unused
+  for 30 days (its policies are detached, never deleted). Never touched: the site (bucket, CloudFront, cert, zone) and onceWeek → myStatsSteam.
+- status (v1.15): reads letter versions (v1.14a); while the budget switch holds the arena closed, "ranked check" and "versions match" show
+  "skipped: arena closed" (grey, not counted) instead of false yellows.
 - The switch's logs: template `SwitchLogs` (7 days). Lambda had made the group without retention; the first deploy after v1.14a deletes it just
   before the stack creates its own (only while the stack does not own SwitchLogs).
 
