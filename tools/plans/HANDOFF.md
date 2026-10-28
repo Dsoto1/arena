@@ -20,7 +20,9 @@ Last updated: 2026-10-28 (cloud session, new account).
 - Full history: docs/history.md · newest three in CLAUDE.md §7.
 
 ## On the work branch, NOT released yet
-- Nothing.
+- v1.15a (his pick a): tv100p robust on slow runners (TEST ONLY: the slide's stretch is measured from the frames it really got, ≤4 tries;
+  Reduce-motion check scales with the draw cost and demands 0 frames). Proof: dispatch run 40764544934 (tests tv100p tv100pn, repeat 10) green
+  = 10/10 each on GitHub's runners. No game change → my rec: no release/version bump; rides with the next release (asked him 2026-10-28).
 
 ## Waiting on him (asked 2026-10-28 after his `audit` output; keep the numbering)
 Findings from `bash flavius.sh audit` and the v1.14a status:
