@@ -895,3 +895,5 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   **https://login.toshiroplay.com**. REPLACES login.flaviusrule.com (built v0.79, `flavius.sh login`, decided 2026-10-03), which was deleted.
   Flavius keeps its app client (flavius-arena-web) and callbacks; only play/online.json "auth" moves (`bash flavius.sh signin`, FSH_VER 11;
   `login` retired). The stack's Cognito resources are Retained and must not be edited in template.yaml any more (ToshiroPlay owns them).
+- 2026-10-28 his picks 1a–6a (tools/plans/v114/NOTES.md): v1.14 = Figures from turn one alone + the ES/FR Quality "High" key fix; BETA first
+  (one Studio-look match in Safari + ⏺ recording); deaths study on hold until v1.14 ships; the new Manager words stand; v1.13 is deployed.

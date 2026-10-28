@@ -8,8 +8,7 @@ Last updated: 2026-10-28 (cloud session).
 
 ## Live now
 - **v1.13 "The scribes check"** is the newest release: `release/v1.13` = `main` = f9aba45 (server release: Ranked results decided by
-  the server's replay, enforced). His `bash flavius.sh release` run for it is NOT confirmed. Ask him once; `bash flavius.sh status`
-  shows "ranked check" when the server is on it.
+  the server's replay, enforced). Deployed (his 6a, 2026-10-28).
 - Full history: docs/history.md · newest three in CLAUDE.md §7.
 
 ## On the work branch, NOT released yet
@@ -26,7 +25,7 @@ Last updated: 2026-10-28 (cloud session).
      - server/template.yaml: the Cognito resources are `DeletionPolicy/UpdateReplacePolicy: Retain`. NEVER edit their properties again: a
        stack update would undo ToshiroPlay's settings. Deploys keep the old stack parameters on purpose.
    - Written down in docs/backend.md ("Versions, deploy…") and docs/decisions.md (2026-10-27).
-   - HIS STEPS, not confirmed done: `bash flavius.sh update` → `bash flavius.sh signin` → `bash flavius.sh status` → one Google sign-in
+   - HIS STEPS, DONE (his word 2026-10-28): `bash flavius.sh update` → `bash flavius.sh signin` → `bash flavius.sh status` → one Google sign-in
      on https://flaviusrule.com/play/. Until he runs `signin`, online sign-in points at the deleted address and FAILS.
    - The template change reaches AWS with the next release; the server redeploys once, nothing else changes.
    - He reported `ref E-XD70` once. It is not a Flavius code (not in src/, server/ or flavius.sh); he thinks it was the app's pending update.
