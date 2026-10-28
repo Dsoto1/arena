@@ -38,6 +38,18 @@ ACCT=$(aws sts get-caller-identity --query Account --output text)
 BUCKET="flavius-arena-code-$ACCT-$REGION"
 # a first deploy that failed leaves the stack in ROLLBACK_COMPLETE, which cannot be updated: clear it first
 ST=$(aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].StackStatus" --output text 2>/dev/null || true)
+# v1.14 fix: a deploy still running → wait; an update whose ROLLBACK failed (UPDATE_ROLLBACK_FAILED, e.g. a resource that reads something deleted
+# by hand) cannot be updated → finish the rollback, skipping the resources that failed, then deploy
+stwait(){ while :; do ST=$(aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].StackStatus" --output text 2>/dev/null || true)
+  case "$ST" in *_IN_PROGRESS) echo "The stack is busy ($ST) — waiting…"; sleep 20;; *) return 0;; esac; done; }
+stwait
+if [ "$ST" = "UPDATE_ROLLBACK_FAILED" ]; then
+  SKIP=$(aws cloudformation describe-stack-resources --region "$REGION" --stack-name "$STACK" --query "StackResources[?ResourceStatus=='UPDATE_FAILED'].LogicalResourceId" --output text)
+  echo "The last update could not be undone (UPDATE_ROLLBACK_FAILED). Finishing the rollback, skipping: ${SKIP:-nothing}"
+  if [ -n "$SKIP" ] && [ "$SKIP" != None ]; then aws cloudformation continue-update-rollback --region "$REGION" --stack-name "$STACK" --resources-to-skip $SKIP
+  else aws cloudformation continue-update-rollback --region "$REGION" --stack-name "$STACK"; fi
+  stwait; echo "Stack now: $ST"; [ "$ST" = "UPDATE_ROLLBACK_COMPLETE" ] || { echo "The rollback did not finish ($ST). Send Claude this line."; exit 1; }
+fi
 if [ "$ST" = "ROLLBACK_COMPLETE" ]; then echo "Clearing the failed first attempt…"; aws cloudformation delete-stack --region "$REGION" --stack-name "$STACK"; aws cloudformation wait stack-delete-complete --region "$REGION" --stack-name "$STACK"; ST=""; fi
 aws s3api head-bucket --bucket "$BUCKET" 2>/dev/null || aws s3 mb "s3://$BUCKET" --region "$REGION"
 # v1.01 wave 2: the Ranked verifier's package (Code ./verify): the rules of THIS build (tools/node/mkbundle.js → verify/rules.js, ~9 MB, needs node)

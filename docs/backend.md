@@ -533,6 +533,11 @@ table), `index.js` (`H.internal`, `WS_ENDPOINT`), `server/verify/verify.js` (`op
   hours after a resource first carries it. Until then the filtered budget sees $0 and the switch cannot fire. `status` shows "budget counts".
 - If his account ever joins an AWS Organization, only the management account can turn tags on: `cost_tags` then reports the refusal.
 - Rollback: delete the CostFilters line → the account-wide budget again (server deploy).
+- 2026-10-28 the first v1.14 server deploy FAILED (AuthAlias UPDATE_FAILED: "Unable to retrieve CloudFrontDistribution … Domain not found"):
+  ~/.flavius.conf still had LOGIN_DOMAIN/LOGIN_STAGE=live from the retired `login`, so the stack kept CustomAuthPoolDomain + AuthAlias for
+  login.flaviusrule.com, whose Cognito domain was deleted by hand on 2026-10-27. Fix (FSH_VER 13): server_dir always deploys AUTH_DOMAIN=none
+  (the stack drops AuthCert + AuthAlias; the Retained CustomAuthPoolDomain is only forgotten) and drops the LOGIN_* keys from the conf;
+  deploy.sh waits out a busy stack and finishes an UPDATE_ROLLBACK_FAILED rollback (skipping the UPDATE_FAILED resources) before deploying.
 
 ## v1.02 progression
 

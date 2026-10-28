@@ -376,3 +376,5 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   budget counts ONLY Flavius (7a): template tags `app=flavius` resource by resource (never the shared Cognito pool) + Budget CostFilters
   `user:app$flavius`, flavius.sh `cost_tags` / `budget` + status "budget counts" (FSH_VER 12). Rollback of the budget: drop CostFilters.
   [full] run green on attempt 2 (tv100p flaky, also on v1.13).
+  Deploy fix in the same release (FSH_VER 13): server deploys no longer pass the retired login.flaviusrule.com (conf LOGIN_*), deploy.sh
+  finishes a failed rollback first.

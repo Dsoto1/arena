@@ -31,7 +31,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=12
+FSH_VER=13
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -119,7 +119,12 @@ server_dir(){ local sd="$1" email="$2"
     [ ${#sec} -ge 20 ] || die "That secret is ${#sec} characters — expected about 35. Run again."; ok "new secret read (${#sec} characters)"
   else ok "Google secret: keeping the one the server already has (NEW_SECRET=1 to change it)"; fi
   lambda_quota || true
-  [ "${DRY:-}" = 1 ] || cd "$sd"; AUTH_DOMAIN="${AUTH_DOMAIN:-${LOGIN_DOMAIN:-none}}" AUTH_STAGE="${AUTH_STAGE:-${LOGIN_STAGE:-cert}}" GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
+  # v1.14 fix (2026-10-28): the stack's own sign-in address (login.flaviusrule.com) is GONE — deleted in the console when ToshiroPlay took the
+  # shared pool (2026-10-27). ~/.flavius.conf still held LOGIN_DOMAIN/LOGIN_STAGE=live from the retired `login`, so the v1.14 deploy kept the
+  # stack's CustomAuthPoolDomain/AuthAlias and failed reading the deleted domain. Always none now (the stack drops the cert + DNS record; the
+  # Retained Cognito domain is only forgotten), and the old keys leave the conf.
+  if [ -f "$CONF" ] && grep -q '^LOGIN_\(DOMAIN\|STAGE\)=' "$CONF"; then grep -v '^LOGIN_\(DOMAIN\|STAGE\)=' "$CONF" > "$CONF.tmp" || true; mv "$CONF.tmp" "$CONF"; ok "forgot the retired sign-in address settings (login.flaviusrule.com)"; fi
+  [ "${DRY:-}" = 1 ] || cd "$sd"; AUTH_DOMAIN=none AUTH_STAGE=cert GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
   unset sec; ok "server deployed"; cost_tags || true; }
 
 # v1.14 (his 7a, 2026-10-28): the budget (template Budget, CostFilters user:app$flavius) counts ONLY Flavius. The stack tags its own resources
