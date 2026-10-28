@@ -187,11 +187,13 @@ if(!Q110.off&&Q110.fresh&&typeof l106Build==='function'&&typeof L106!=='undefine
   l106Build=function(){const old=L106.layer;L106.layer=null;try{const r=base.apply(this,arguments);Q110.st.fresh++;return r}catch(e){if(!L106.layer)L106.layer=old;throw e}}}
 
 /* ---------- Settings → Board & pieces: Quality first, Lighting under it ---------- */
-function q110Name(t){return t==='high'?_T('High'):t==='medium'?_T('Medium'):_T('Low')}
+/* v1.14 (4a): Quality "High" has its own key 'High{0}' (value '') — the plain 'High' is the Face designer's cheekbones (es Altos, fr Hautes) */
+function Q114HI(){return _T`High${''}`}
+function q110Name(t){return t==='high'?Q114HI():t==='medium'?_T('Medium'):_T('Low')}
 function q110Desc(){const m=Q110.mode;let d=_T('High: sharpest board, full shadows and crowd. Medium: lighter shadows, calmer crowd. Low: the fastest.');
   if(m==='auto')d=_T('Auto picks for this device and adjusts while you play.')+' '+_T`Now: ${q110Name(Q110.tier)}.`;return d}
 function q110Card(){const m=Q110.mode;
-  const seg=`<div class="seg s98-seg" role="group" aria-label="${_T('Quality')}">${[['auto',_T('Auto')],['high',_T('High')],['medium',_T('Medium')],['low',_T('Low')]].map(([k,l])=>`<button type="button" data-q110="${k}" class="${m===k?'on':''}" aria-pressed="${m===k}">${l}</button>`).join('')}</div>`;
+  const seg=`<div class="seg s98-seg" role="group" aria-label="${_T('Quality')}">${[['auto',_T('Auto')],['high',Q114HI()],['medium',_T('Medium')],['low',_T('Low')]].map(([k,l])=>`<button type="button" data-q110="${k}" class="${m===k?'on':''}" aria-pressed="${m===k}">${l}</button>`).join('')}</div>`;
   let rows=set98Row(_T('Quality'),`<span id="q110d">${q110Desc()}</span>`,seg);
   if(typeof L106!=='undefined'&&!L106.kill){const own=q110LightSet(),cur=own||'q';
     const ls=`<div class="seg s98-seg" role="group" aria-label="${_T('Lighting')}">${[['q',_T('By quality')],['full',_T('Full')],['light',_T('Light')],['off',_T('Off')]].map(([k,l])=>`<button type="button" data-light106="${k}" class="${cur===k?'on':''}" aria-pressed="${cur===k}">${l}</button>`).join('')}</div>`;

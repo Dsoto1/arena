@@ -37,6 +37,7 @@ F112.on=!F112.off&&typeof AN100!=='undefined'&&typeof AN100L!=='undefined'&&type
 F112.webkit=typeof P107S!=='undefined'&&!!P107S.webkit;
 const f112Now=()=>performance.now();
 
+/* i18n:skip-begin (v1.14: the Worker source and its failure reasons are code/diagnostics, not UI) */
 /* ---------------- the Worker (one, made on first need; a Blob URL — nothing downloaded) ---------------- */
 const F112_WSRC=`const J=new Map();
 const mk=(w,h)=>new OffscreenCanvas(w,h);
@@ -87,6 +88,7 @@ function f112Probe(){const F=F112;if(F.wOK!==null)return Promise.resolve(F.wOK);
   setTimeout(()=>{if(F.wOK===null)f112WFail('probe time-out')},5000);w.postMessage({t:'probe'});return F.probe}
 function f112Msg(m){const F=F112;if(!m)return;if(m.t==='probe'){if(!m.ok){f112WFail('no OffscreenCanvas 2D in the worker');return}if(F.wOK===null)F.wOK=true;if(F.probeOk){F.probeOk(F.wOK);F.probeOk=null}return}
   const J=F.jobs.get(m.j);if(!J)return;F.jobs.delete(m.j);clearTimeout(J.tm);if(m.t==='err'){J.no(new Error('f112worker: '+m.err));return}J.ok(m)}
+/* i18n:skip-end */
 
 /* ---------------- D1 · the device render: three.js here, pixels in the Worker ---------------- */
 const F112_MM=32.5/1.85,F112_BASEH=3.2/F112_MM,F112_YAW=[0,45,90,135,180,-135,-90,-45],F112_D2R=Math.PI/180;   /* tok93.js MM_PER_M, BASE_H, MINI_YAW, D2R */

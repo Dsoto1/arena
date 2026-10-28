@@ -522,6 +522,18 @@ table), `index.js` (`H.internal`, `WS_ENDPOINT`), `server/verify/verify.js` (`op
   has no gate (its template's `VerifyMode` defaults to log); a held match there settles by agreement when a report is re-sent, or is closed
   void after 10 minutes of nobody connected (prune). `VERIFY#`/`AUDIT#`/`J` items expire on their own (90 days).
 
+## v1.14 the budget counts only Flavius (his 7a, 2026-10-28)
+- Before, the Budget (template `Budget`, `flavius-arena-budget`) had no filter: the whole AWS account counted, so his other apps (ToshiroPlay,
+  a Lightsail instance, a domain) tripped the kill switch and closed Online (2026-10-28).
+- Now `CostFilters: {TagKeyValue: ['user:app$flavius']}`. Tagged `app=flavius`: the table, the three Lambdas, both log groups, the WebSocket API +
+  stage, the budget topic (in the template, resource by resource) and the site bucket + CloudFront (flavius.sh `cost_tags`, after every server
+  deploy, or `bash flavius.sh budget`). NOT tagged: the shared Cognito pool (stack-level tags would propagate to it and the update would rewrite
+  ToshiroPlay's settings — never use stack tags), IAM, the Route 53 zone.
+- A cost allocation tag only counts once it is ON for billing (`aws ce update-cost-allocation-tags-status`), and billing only lists a key some
+  hours after a resource first carries it. Until then the filtered budget sees $0 and the switch cannot fire. `status` shows "budget counts".
+- If his account ever joins an AWS Organization, only the management account can turn tags on: `cost_tags` then reports the refusal.
+- Rollback: delete the CostFilters line → the account-wide budget again (server deploy).
+
 ## v1.02 progression
 
 Shared rules: the "v1.02 PROGRESSION" section at the end of `src/online/111-onlcore.js` (copied by `node tools/mkserver.js`); server: the

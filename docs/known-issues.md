@@ -5,11 +5,12 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-28 · v1.14 budget: until billing turns the tag `app` on (hours after the release tags things), the Flavius-only budget sees $0 and the
+  kill switch cannot close the arena. `bash flavius.sh status` → "budget counts"; if yellow the day after: `bash flavius.sh budget`.
 - 2026-10-23 · v1.13 [full] run 39972104480 attempt 1: tv100p (4b "Fast, your own push still animates": 4 frames in 485 ms) and tv104h
   (B24: season 2 not reached in time) failed on a slow ubuntu-26.04 runner (25 ms frames); both pass locally and passed on the one re-run
   (attempt 2 green). v1.13 touched neither area. Watch — if either fails again it is real. Also on ubuntu-26.04: `playwright install
   --with-deps` fails all 3 tries (cached Chromium still runs).
-- 2026-10-22 · small: the Quality button "High" reuses an older plural key (es "Altos", fr "Hautes") while Medium/Low are singular — give it its own key in the next pass.
 - 2026-10-22 · v1.09a CI round: three timing tests failed in turn on GitHub and were fixed IN THE TESTS (game unchanged, v1.08c measures
   the same): tv91c (whole-ring pixel count + re-deal small crowds), tv96f (1–2 heavy software-raster draw steps allowed, hard cap 250 ms),
   tv100an (draw while the blows land; the 170 ms flash ran out). Green run 39721994919: 424 pass, flaky tv100ae — watch.

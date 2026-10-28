@@ -21,6 +21,9 @@
 #                                                           page + assets only, never the server, the download or the site
 #   bash flavius.sh update                                 this script itself, from the newest work branch on GitHub (beta does it too)
 #   bash flavius.sh status                                 what is live: game version, server, sign-in, styles
+#   bash flavius.sh budget                                 v1.14: the budget counts ONLY Flavius: tags the site bucket + CloudFront app=flavius (the
+#                                                           server's resources carry it from the stack) and turns the tag on for billing (also
+#                                                           runs after every server deploy; billing sees a new tag within ~24 h — run it again then)
 #   bash flavius.sh quota                                  the account's Lambda limit (the Ranked check needs room for 3 replays): asks AWS once, prints where it stands
 #
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
@@ -28,7 +31,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=11
+FSH_VER=12
 BUCKET="flaviusrule.com"
 DIST="E3P6OKSHPTXJGF"
 STACK="flavius-arena"
@@ -117,7 +120,29 @@ server_dir(){ local sd="$1" email="$2"
   else ok "Google secret: keeping the one the server already has (NEW_SECRET=1 to change it)"; fi
   lambda_quota || true
   [ "${DRY:-}" = 1 ] || cd "$sd"; AUTH_DOMAIN="${AUTH_DOMAIN:-${LOGIN_DOMAIN:-none}}" AUTH_STAGE="${AUTH_STAGE:-${LOGIN_STAGE:-cert}}" GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
-  unset sec; ok "server deployed"; }
+  unset sec; ok "server deployed"; cost_tags || true; }
+
+# v1.14 (his 7a, 2026-10-28): the budget (template Budget, CostFilters user:app$flavius) counts ONLY Flavius. The stack tags its own resources
+# (Lambdas, table, logs, API, topic); this tags the site's bucket + CloudFront (not in the stack) and turns the key on as a cost allocation tag.
+# The shared Cognito pool is never tagged (ToshiroPlay owns its settings). Billing only lists a tag key some hours after a resource first
+# carries it, and counts it from then on; until it is on, the budget sees $0 and the switch cannot close the arena.
+TAGK="app"; TAGV="flavius"
+cost_tags(){ local cur arn st
+  cur=$(aws s3api get-bucket-tagging --bucket "$BUCKET" --query TagSet --output json 2>/dev/null || echo '[]')
+  if printf '%s' "$cur" | python3 -c "import json,sys;t=json.load(sys.stdin);sys.exit(0 if any(x['Key']=='$TAGK' and x['Value']=='$TAGV' for x in t) else 1)"; then ok "site bucket tagged $TAGK=$TAGV"
+  else local ts; ts=$(printf '%s' "$cur" | python3 -c "import json,sys;t=[x for x in json.load(sys.stdin) if x['Key']!='$TAGK'];t.append({'Key':'$TAGK','Value':'$TAGV'});print(json.dumps({'TagSet':t}))")
+    if run aws s3api put-bucket-tagging --bucket "$BUCKET" --tagging "$ts"; then ok "site bucket tagged $TAGK=$TAGV (its other tags kept)"; else printf '\033[1;33m! the site bucket could not be tagged (permissions?) — its cost stays outside the budget\033[0m\n'; fi; fi
+  arn=$(aws cloudfront get-distribution --id "$DIST" --query Distribution.ARN --output text 2>/dev/null || true)
+  if [ -n "$arn" ] && [ "$arn" != None ] && run aws cloudfront tag-resource --resource "$arn" --tags "Items=[{Key=$TAGK,Value=$TAGV}]" 2>/dev/null; then ok "CloudFront tagged $TAGK=$TAGV"
+  else printf '\033[1;33m! CloudFront could not be tagged — its cost stays outside the budget\033[0m\n'; fi
+  st=$(aws ce list-cost-allocation-tags --tag-keys "$TAGK" --query 'CostAllocationTags[0].Status' --output text 2>/dev/null || echo None)
+  case "$st" in
+    Active) ok "billing counts the tag $TAGK — the budget sees only Flavius";;
+    Inactive) if run aws ce update-cost-allocation-tags-status --cost-allocation-tags-status "TagKey=$TAGK,Status=Active" --query 'Errors' --output text 2>/dev/null | grep -q .; then
+        printf '\033[1;33m! billing refused to turn the tag on — send Claude this line\033[0m\n'
+      else ok "turned the tag $TAGK on for billing — the budget sees only Flavius from now on"; fi;;
+    *) printf '\033[1;33m! billing has not seen the tag %s yet (it takes up to 24 h after tagging). Until then the budget counts $0 for Flavius.\n  Tomorrow, run:  bash flavius.sh budget\033[0m\n' "$TAGK";;
+  esac; return 0; }
 
 # v1.12 (R5a): the account's Lambda concurrency limit (Service Quotas L-B99A9384). A new AWS account has 10 at once — too few for the Ranked
 # check's own 3 (AWS keeps 100 unreserved). Asks AWS ONCE for 1000 (the usual default) and prints where the request stands; an open request is
@@ -202,6 +227,9 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
   local cid; cid=$(aws cognito-idp describe-identity-provider --user-pool-id "$POOL" --provider-name Google --query IdentityProvider.ProviderDetails.client_id --output text 2>/dev/null || echo '?')
   # set by ToshiroPlay in the console since 2026-10-27 (its "ToshiroPlay" Google client): only check that one is there
   case "$cid" in *.apps.googleusercontent.com) G "google client" "set (ToshiroPlay's, shared)";; *) R "google client" "Cognito has no Google client (\"$cid\") — Google sign-in will fail";; esac
+  # v1.14: does the budget count only Flavius? (the tag must be on for billing)
+  local ts2; ts2=$(aws ce list-cost-allocation-tags --tag-keys "$TAGK" --query 'CostAllocationTags[0].Status' --output text 2>/dev/null || echo None)
+  [ "$ts2" = Active ] && G "budget counts" "Flavius only (tag $TAGK=$TAGV)" || Y "budget counts" "nothing yet: the tag $TAGK is not on for billing — run: bash flavius.sh budget"
   # this month's spend against the budget
   local acct lim spent; acct=$(aws sts get-caller-identity --query Account --output text 2>/dev/null || true)
   if [ -n "$acct" ]; then read -r lim spent < <(aws budgets describe-budget --account-id "$acct" --budget-name flavius-arena-budget --query 'Budget.[BudgetLimit.Amount,CalculatedSpend.ActualSpend.Amount]' --output text 2>/dev/null || echo "")
@@ -340,6 +368,6 @@ cmd_release(){ local here; here=$(pwd)
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; quota) lambda_quota;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; quota) lambda_quota;; budget) cost_tags;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
   *) sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//';;
 esac
