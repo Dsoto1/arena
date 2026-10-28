@@ -64,7 +64,15 @@ await pg.evaluate(()=>{
 /* ---- 1 + 2 Normal, ON ---- */
 /* load calibration: on a busy machine a frame (one board draw) is long, so the traced slide is stretched to ~10 draws */
 const DRAW=await pg.evaluate(async()=>{const fr=()=>new Promise(r=>requestAnimationFrame(r));await fr();const t=performance.now();for(let i=0;i<5;i++){draw();await fr()}return (performance.now()-t)/5});
-const A=await pg.evaluate(async D=>{__restore();SPEED='normal';SETTINGS.calm=false;const keep=PUSH100.ms;PUSH100.ms=Math.max(keep,Math.round(D*16));try{return await __run({trace:true})}finally{PUSH100.ms=keep}},DRAW);
+/* a frame of the animation (draw + the pieces' offsets + fx + one rAF) costs a few times DRAW, and that factor moves with the machine's load:
+   so the stretch is MEASURED, not assumed — run, count the frames the slide really got, and if it got fewer than 12 stretch it to ~16 frames
+   at the cost seen and run again from the snapshot (same state each time; <=4 tries, the last run is judged). */
+await pg.evaluate(()=>{window.__stretch=async(opt,speed,D)=>{const keep=PUSH100.ms;let ms=Math.max(keep,Math.round(D*16)),out;
+  try{for(let i=0;i<4;i++){__restore();SPEED=speed;PUSH100.ms=ms;out=await __run(opt);const f=out.pushes[0].frames,t=out.pushes[0].ms;
+      if(f>=12||t>=30000)break;ms=Math.min(30000,Math.round(Math.max(ms,t)*16/Math.max(f,1)))}}
+  finally{SPEED='normal';PUSH100.ms=keep}
+  return out}});
+const A=await pg.evaluate(async D=>{SETTINGS.calm=false;return await __stretch({trace:true},'normal',D)},DRAW);
 const p1=A.pushes[0]||{};const tr=(p1.trace||[]).filter(x=>x.role==='pushed');const trP=(p1.trace||[]).filter(x=>x.role==='pusher');
 const mids=new Set(tr.filter(x=>x.k>0.02&&x.k<0.98).map(x=>Math.round(x.x)+','+Math.round(x.y)));
 let mono=true;for(let i=1;i<tr.length;i++)if(tr[i].k<tr[i-1].k)mono=false;
@@ -79,11 +87,11 @@ ok(A.pl&&A.pushes[1]&&A.pushes[1].anims===1&&JSON.stringify(A.pushes[1].pl)==='[
 
 /* ---- 3 Reduce motion = the jump ---- */
 const R=await pg.evaluate(async()=>{__restore();SPEED='normal';SETTINGS.calm=true;try{return await __run({one:true})}finally{SETTINGS.calm=false}});
-ok(R.pushes[0].anims===0&&R.pushes[0].ms<150&&JSON.stringify(R.pushes[0].Q)==='[6,4]','3 Reduce motion: the instant jump '+JSON.stringify({a:R.pushes[0].anims,ms:R.pushes[0].ms}));
+ok(R.pushes[0].anims===0&&R.pushes[0].frames===0&&R.pushes[0].ms<Math.max(150,DRAW*3)&&JSON.stringify(R.pushes[0].Q)==='[6,4]','3 Reduce motion: the instant jump '+JSON.stringify({a:R.pushes[0].anims,ms:R.pushes[0].ms}));
 /* ---- 4 Fast: a CPU's push = one paced frame; your own push still plays (his SPEED × ANIMATION pick a) ---- */
 const F=await pg.evaluate(async()=>{__restore();SPEED='fast';try{return await __run({one:true,cpu:true})}finally{SPEED='normal'}});
 ok(F.pushes[0].anims===1&&F.pushes[0].frames===1&&F.pushes[0].ms<Math.max(300,DRAW*4)&&JSON.stringify(F.pushes[0].Q)==='[6,4]','4a Fast, CPU pusher: one frame '+JSON.stringify({a:F.pushes[0].anims,f:F.pushes[0].frames,ms:F.pushes[0].ms}));
-const F2=await pg.evaluate(async D=>{__restore();SPEED='fast';const keep=PUSH100.ms;PUSH100.ms=Math.max(keep,Math.round(D*16));try{return await __run({one:true})}finally{SPEED='normal';PUSH100.ms=keep}},DRAW);
+const F2=await pg.evaluate(async D=>__stretch({one:true},'fast',D),DRAW);
 ok(F2.pushes[0].anims===1&&F2.pushes[0].frames>=5&&JSON.stringify(F2.pushes[0].Q)==='[6,4]','4b Fast, your own push still animates '+JSON.stringify({a:F2.pushes[0].anims,f:F2.pushes[0].frames,ms:F2.pushes[0].ms}));
 
 /* ---- 5 ON vs OFF from the same snapshot: log, dice, state ---- */

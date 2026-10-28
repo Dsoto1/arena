@@ -5,10 +5,11 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
-- 2026-10-28 · tv100p is FLAKY ON ITS OWN, not a v1.14 regression: failed the v1.14 [full] run 40691237980 (shard 1) and fails here on
-  the v1.13 build too (2 of 4 local runs; v1.14: 3 of 4) — checks 1c/1f count push-animation frames (mids 2–3, wants more) and lose
-  frames on a loaded machine. Fix the TEST (sample by animation progress, not frame count) in the next release. Also flaky in that run
-  (passed alone): tv88m, tv96c, tv105c, tv104h.
+- 2026-10-28 · tv100p FIXED in v1.15 (test only, game unchanged): the test stretched the slide to 16 x the idle draw cost (DRAW), but a real
+  animation frame (draw + piece offsets + fx + rAF) costs 2-3 x DRAW and that factor moves with load, so a slow runner got 4-5 frames
+  (checks 1b/1c/4b want >=5 frames / >=4 mid points). Now `__stretch` measures the frames the slide really got and re-runs from the
+  snapshot with a longer slide until it has >=12 (<=4 tries); the Reduce-motion check also judges frames===0 and scales its ms limit with DRAW.
+  Passes 5/5 normal and 5/5 under CDP CPU throttling x4. Also flaky in the v1.14 run (passed alone): tv88m, tv96c, tv105c, tv104h.
 - 2026-10-28 · v1.14 budget: until billing turns the tag `app` on (hours after the release tags things), the Flavius-only budget sees $0 and the
   kill switch cannot close the arena. `bash flavius.sh status` → "budget counts"; if yellow the day after: `bash flavius.sh budget`.
 - 2026-10-23 · v1.13 [full] run 39972104480 attempt 1: tv100p (4b "Fast, your own push still animates": 4 frames in 485 ms) and tv104h
