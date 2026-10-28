@@ -4,7 +4,7 @@ Repo dsoto1/arena · work branch `claude/cloud-credits-usage-vq4w63` · owner Vi
 Read CLAUDE.md first (rules + how to work), then this file, then docs/decisions.md (his latest decisions are at the bottom).
 Always `git pull --no-rebase` before starting and push when stopping. One side at a time (THE BATON, below).
 
-Last updated: 2026-10-28 (cloud session, new account).
+Last updated: 2026-10-28 evening (cloud session, new account).
 
 ## Live now
 - **v1.14a "Behind the scenes"** is LIVE (his `bash flavius.sh release`, 2026-10-28 18:37 UTC: server deployed, game/download/site ✓; the
@@ -22,29 +22,13 @@ Last updated: 2026-10-28 (cloud session, new account).
 ## On the work branch, NOT released yet
 - v1.15a (his pick a): tv100p robust on slow runners (TEST ONLY: the slide's stretch is measured from the frames it really got, ≤4 tries;
   Reduce-motion check scales with the draw cost and demands 0 frames). Proof: dispatch run 40764544934 (tests tv100p tv100pn, repeat 10) green
-  = 10/10 each on GitHub's runners. No game change → my rec: no release/version bump; rides with the next release (asked him 2026-10-28).
+  = 10/10 each on GitHub's runners. No game change → my rec: no release/version bump; rides with the next release — HE AGREED 2026-10-28 (no release).
 
-## Waiting on him (asked 2026-10-28 after his `audit` output; keep the numbering)
-Findings from `bash flavius.sh audit` and the v1.14a status:
-- status FALSE alarms: "game version" (its regex `arena · v[0-9.]*` drops the letter → reads v1.14 for v1.14a, also happened on v1.11d);
-  "versions match … answer 500" and "ranked check … no reserved 3" are only because the arena + verifier are closed (concurrency 0).
-- Tables: the second `flavius-arena-Table-…1MZ1…` was created 6 min BEFORE the stack (2026-10-03 02:07 vs 02:13), 0 items, 0 KB, no tags,
-  not in the stack = left by the failed first deploy (deploy.sh deleted the ROLLBACK_COMPLETE stack; Retain kept the table). The stack's
-  table is `…4CW5…` (54 items, tagged).
-- FR-Site = his flaviusrule.com SITE setup from 2024-10 (tag Project=FR-Site on the site bucket, CloudFront, the ACM cert, the Route 53
-  zone — LIVE, never touch). Rule `onceWeek` is active (rate 7 days, 4 runs in 30 days) → Lambda `myStatsSteam` (not this repo). Look
-  unused: SNS `FR-Updates` (0 published in 30 days, 1 e-mail subscriber), two identical GitHub CodeConnections (AVAILABLE), IAM `FR-Git-role`
-  (last used 2024-10-20, the day it was made).
-Questions (my picks first):
-1. status false alarms: a) fix in flavius.sh (letter versions; "skipped: arena closed" while the switch holds it closed) — he gets it with
-   `bash flavius.sh update`, no release (my pick) · b) leave
-2. the leftover table: a) delete via a guarded one-off `bash flavius.sh droptable` (refuses unless NOT in the stack AND 0 items) (my pick) · b) keep
-3. unused FR-Site pieces (SNS FR-Updates, both GitHub connections, FR-Git-role): a) remove via the same guarded command, each shown + y/N
-   (my pick) · b) keep
-4. onceWeek → myStatsSteam: a) keep (active, not Flavius) (my pick) · b) remove
-HIS ANSWERS (2026-10-28, cloud): 1a · 2a · 3a · 4a (docs/decisions.md). Not built yet — waits for his go.
-Still open: what v1.15 is — a) fix tv100p (flaky, test only) (my pick) · b) resume the deaths study · c) Settings reorganisation (mock-up first).
-Never write account numbers / ARNs / pool / client / CloudFront ids into the repo (CLAUDE.md §6, idscan).
+## Waiting on him
+- Answered 2026-10-28: audit 1a·2a·3a·4a (done, see Live now) and v1.15 = a (done, no release).
+- Tomorrow (2026-10-29): `bash flavius.sh budget` — billing had not seen the tag `app` yet; expect status "budget counts" green after it.
+- Next work: nothing chosen. Open options: resume the deaths study (on his word only) · Settings reorganisation (mock-up first) · backlog.
+- Optional: the unattached policy AWSCodePipelineServiceRole-…-Git-FR-pipeline (left by droptable) — remove only if he asks.
 
 ## Paused / parked
 - **Deaths study (Manager)**: why a careful house loses 2–3 fighters a season and sits mid-table (rank ≈10.5). It is ON HOLD at his
@@ -58,9 +42,6 @@ Never write account numbers / ARNs / pool / client / CloudFront ids into the rep
   - The baseline sims ran but their output was in /tmp and is LOST: re-run the baseline first (careful ×12 seeds ×5 seasons, `--par 2`).
   - Report → his approval → only then a release. Background: docs/economy.md, tools/plans/econ111/REPORT.md.
 - Backlog: tools/plans/backlog.md (e.g. the SETTINGS REORGANISATION idea, mock-up first). Open bugs and limits: docs/known-issues.md.
-
-## Waiting on him
-- Whether `bash flavius.sh release` for v1.14 ran (and `status`). What v1.15 is.
 
 ## His checklist (where he leaves notes between sessions)
 https://claude.ai/artifact/E6zWGfwbuCjcM3r8RmeKZt: an Artifact with a db.
@@ -99,6 +80,9 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
   3. Run `sh tools/baton.sh give`. The script refuses if this file was not touched, or anything is uncommitted or unpushed.
 
 ## Last session notes
+- (cloud, 2026-10-28 evening) Took the baton; his 1a–4a: flavius.sh FSH_VER 16 (status letter versions + "skipped: arena closed";
+  guarded `droptable`) — he ran it: leftover table, SNS FR-Updates, both GitHub connections, FR-Git-role deleted. v1.15a tv100p fix (Sonnet
+  builder, merged, CI repeat 10 green); no release by his word. Baton given.
 - (cloud, 2026-10-28 afternoon) v1.14a went live; ran `audit` with him (findings + questions 1–4 above). He moved the conversation to
   Claude Code (VS Code): baton given.
 - (cloud, NEW ACCOUNT flaviusrule, 2026-10-28) Took over from the other account via this file. Shipped v1.14 (+ the deploy fix for the
