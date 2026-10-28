@@ -4,7 +4,7 @@ Repo dsoto1/arena · work branch `claude/cloud-credits-usage-vq4w63` · owner Vi
 Read CLAUDE.md first (rules + how to work), then this file, then docs/decisions.md (his latest decisions are at the bottom).
 Always `git pull --no-rebase` before starting and push when stopping. One side at a time (THE BATON, below).
 
-Last updated: 2026-10-28 (cloud session).
+Last updated: 2026-10-28 (cloud session, new account).
 
 ## Live now
 - **v1.13 "The scribes check"** is the newest release: `release/v1.13` = `main` = f9aba45 (server release: Ranked results decided by
@@ -12,23 +12,13 @@ Last updated: 2026-10-28 (cloud session).
 - Full history: docs/history.md · newest three in CLAUDE.md §7.
 
 ## On the work branch, NOT released yet
-1. **Figures from turn one** (module 428-v112fig, test tv112f, merged f81e388). Studio/online/re-kitted fighters are prepared before the
-   match in a Worker ("Preparing the figures…", at most 3 s desktop / 6 s phone); kill switches `flavius_v112figoff`, `flavius_v112fignowk`.
-   Needs its own release: translation of the new string (prep.sh → one Sonnet agent → finish.sh), badge + MILESTONE, release.sh, [full] run.
-   Untested on real Safari; his beta-or-not answer is open (question 2 below).
-2. **Sign-in moved to login.toshiroplay.com** (9edf8ee, 2026-10-27, his go). The Cognito pool is now SHARED with his other game
-   ToshiroPlay (dsoto1/splitters). In the AWS console he renamed it "toshiro-players", switched Google to a "ToshiroPlay" OAuth client and
-   moved its own address to login.toshiroplay.com (login.flaviusrule.com was deleted).
-   - Changed here:
-     - tools/deploy/flavius.sh (FSH_VER 11): `bash flavius.sh signin` checks that the address accepts Flavius's client + callback, then
-       sets play/online.json "auth". `login` is retired. `status` checks the shared address and Google client.
-     - server/template.yaml: the Cognito resources are `DeletionPolicy/UpdateReplacePolicy: Retain`. NEVER edit their properties again: a
-       stack update would undo ToshiroPlay's settings. Deploys keep the old stack parameters on purpose.
-   - Written down in docs/backend.md ("Versions, deploy…") and docs/decisions.md (2026-10-27).
-   - HIS STEPS, DONE (his word 2026-10-28): `bash flavius.sh update` → `bash flavius.sh signin` → `bash flavius.sh status` → one Google sign-in
-     on https://flaviusrule.com/play/. Until he runs `signin`, online sign-in points at the deleted address and FAILS.
-   - The template change reaches AWS with the next release; the server redeploys once, nothing else changes.
-   - He reported `ref E-XD70` once. It is not a Flavius code (not in src/, server/ or flavius.sh); he thinks it was the app's pending update.
+- **v1.14 built, [full] run 40691237980 GREEN** (attempt 2; attempt 1: tv100p, flaky on v1.13 too — docs/known-issues.md). Contents
+  (tools/plans/v114/NOTES.md, his 1a–9a): Figures from turn one (428, translated) · Quality "High" own key (4a, tv114h) · budget counts
+  only Flavius (7a: template tags + CostFilter `user:app$flavius`, flavius.sh `cost_tags`/`budget`, FSH_VER 12) = a SERVER release.
+- NEXT: his BETA (2a) — `bash flavius.sh beta`, one Studio-look match in Safari + ⏺ recording. On his ok: push release/v1.14 + main, he runs
+  `bash flavius.sh release` (server redeploys: tags + budget), then `bash flavius.sh status`; "budget counts" goes green only after billing
+  sees the tag (≤24 h) → `bash flavius.sh budget` the next day if yellow. Then CLAUDE.md §7 + docs/history.md.
+- Sign-in on login.toshiroplay.com: DONE (his word 2026-10-28). Online is closed by the budget switch until 2026-11-01 (his 9a).
 
 ## Paused / parked
 - **Deaths study (Manager)**: why a careful house loses 2–3 fighters a season and sits mid-table (rank ≈10.5). It is ON HOLD at his
@@ -43,15 +33,8 @@ Last updated: 2026-10-28 (cloud session).
   - Report → his approval → only then a release. Background: docs/economy.md, tools/plans/econ111/REPORT.md.
 - Backlog: tools/plans/backlog.md (e.g. the SETTINGS REORGANISATION idea, mock-up first). Open bugs and limits: docs/known-issues.md.
 
-## Waiting on him (asked 2026-10-24, unanswered; ask again, keep his numbering)
-1. What is v1.14? a) Figures from turn one alone (my pick) · b) Figures + resume the deaths study · c) Settings reorganisation (mock-up first)
-2. Figures: a) beta first, one Studio-look match in Safari + ⏺ recording (my pick) · b) ship when green
-3. Deaths study: a) stay on hold until v1.14 ships (my pick) · b) resume now · c) drop
-4. Ride-along fix: in Spanish and French the Quality button "High" reuses an older plural key (Altos / Hautes): a) include it in v1.14 (my pick) · b) later
-5. New Manager words (stipend, bundle, trade-in, settling in, backer): a) fine (my pick) · b) review these languages: …
-6. v1.13 deployed? a) yes · b) not yet → `bash flavius.sh release`, then `bash flavius.sh status`
-- Plus the sign-in steps above, and the "Try" items in his checklist (Safari shadows, settings after reload, Safari ⏺ speed
-  recording, Amphitheatre at night, remembered speed, patron stipend + trades, jugs while panning).
+## Waiting on him
+- The v1.14 beta (above). Answers 1–9 are in tools/plans/v114/NOTES.md.
 
 ## His checklist (where he leaves notes between sessions)
 https://claude.ai/artifact/E6zWGfwbuCjcM3r8RmeKZt: an Artifact with a db.
