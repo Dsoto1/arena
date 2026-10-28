@@ -10,6 +10,9 @@ Last updated: 2026-10-28 (cloud session, new account).
 - **v1.14a "Behind the scenes"** is LIVE (his `bash flavius.sh release`, 2026-10-28 18:37 UTC: server deployed, game/download/site ✓; the
   switch's old log group handed over, now 7 days). `release/v1.14a` = `main`. CloudShell runs flavius.sh FSH_VER 15.
 - Online is closed by the budget switch until 2026-11-01 (his 9a).
+- flavius.sh FSH_VER 16 (his 1a–3a, 2026-10-28, via `update`, no release): status reads letter versions + "skipped: arena closed"; he ran
+  `droptable`: the leftover table, SNS FR-Updates, both GitHub connections (AWSFR-GH-connect ×2) and FR-Git-role are DELETED; audit confirms.
+  Left: the now-unattached customer policy AWSCodePipelineServiceRole-…-Git-FR-pipeline (harmless; remove only on his word). onceWeek kept (4a).
 - Budget: billing had not seen the tag `app` yet at release time ("budget counts" yellow, "this month $0 of $10"). He activates the cost
   allocation tags `app`, `AppName`, `Project` (2026-10-28). The cloud session scheduled a check-in for 2026-10-29 12:45 ET; if you work in
   VS Code instead, ask him then for `bash flavius.sh status`'s "budget counts" + "this month" lines (expect green + real spend; if still
