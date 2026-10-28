@@ -7,15 +7,22 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 Last updated: 2026-10-28 (cloud session, new account).
 
 ## Live now
-- **v1.14 "Figures from turn one"** is the newest release: `release/v1.14` = `main` (no beta, his word 2026-10-28; SERVER release: tags +
-  the Flavius-only budget). His `bash flavius.sh release` for it is NOT confirmed — ask once. After it: `status` "budget counts" turns green only
-  once billing sees the tag `app` (≤24 h); if still yellow the next day → `bash flavius.sh budget`.
-- Online is closed by the budget switch until 2026-11-01 (his 9a; it was tripped by his other apps' spend, which no longer counts after v1.14).
+- **v1.14a "Behind the scenes"** is the newest release: `release/v1.14a` = `main` (deploy tooling + stack only, no beta). His `bash flavius.sh
+  release` for it is NOT confirmed — ask once. That deploy also hands the switch's log group to the stack (7 days).
+- v1.14 (Figures from turn one + Flavius-only budget) went live 2026-10-28 (his word), after the sign-in-domain deploy fix.
+- Online is closed by the budget switch until 2026-11-01 (his 9a).
+- Budget: he activated the cost allocation tags `app`, `AppName`, `Project` on 2026-10-28. A check-in (scheduled in the cloud session for
+  2026-10-29 12:45 ET) asks him for `status`'s "budget counts" + "this month" lines: expect green + real spend.
 - Full history: docs/history.md · newest three in CLAUDE.md §7.
 
 ## On the work branch, NOT released yet
-- Nothing. Next candidates: fix tv100p (flaky, docs/known-issues.md) · the deaths study (on hold until v1.14 shipped — his 3a: ask before
-  resuming) · the Settings reorganisation (backlog, mock-up first).
+- Nothing.
+
+## Waiting on him
+- `bash flavius.sh release` (v1.14a) ran? Then `bash flavius.sh audit` → paste: decide about the second `flavius-arena-Table-…` (likely a
+  leftover; nothing removed without his word) and the FR-Site resources (rule onceWeek, SNS FR-Updates, 2 CodeConnections, FR-Git-role,
+  tag Project=FR-Site — not made by this repo; tell him which look unused).
+- What v1.15 is: fix tv100p (flaky) · resume the deaths study (on hold until v1.14 shipped — ask) · Settings reorganisation (mock-up first).
 
 ## Paused / parked
 - **Deaths study (Manager)**: why a careful house loses 2–3 fighters a season and sits mid-table (rank ≈10.5). It is ON HOLD at his
@@ -70,6 +77,9 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
   3. Run `sh tools/baton.sh give`. The script refuses if this file was not touched, or anything is uncommitted or unpushed.
 
 ## Last session notes
+- (cloud, NEW ACCOUNT flaviusrule, 2026-10-28) Took over from the other account via this file. Shipped v1.14 (+ the deploy fix for the
+  deleted login.flaviusrule.com) and v1.14a (no AWS ids in the repo, audit, switch logs). His checklist artifact belongs to the OLD account:
+  this account cannot read it unless he shares it — ask him to paste notes instead.
 - (cloud, 2026-10-28) Wrote this handoff from scratch; the old v0.99 notes were obsolete. Since the last handoff: v1.0 → v1.13 shipped
   (see docs/history.md). This session:
   - shipped v1.11c, v1.11d, v1.12 and v1.13;
