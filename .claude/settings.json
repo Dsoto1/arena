@@ -1,13 +1,13 @@
 {
   "hooks": {
     "SessionStart": [
-      { "matcher": "startup|resume", "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.control-center/hooks/cc-hook.mjs\" start", "timeout": 10 }] }
+      { "matcher": "startup|resume", "hooks": [{ "type": "command", "command": "NODE_USE_ENV_PROXY=1 node \"$CLAUDE_PROJECT_DIR/.control-center/hooks/cc-hook.mjs\" start", "timeout": 10 }] }
     ],
     "Stop": [
-      { "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.control-center/hooks/cc-hook.mjs\" stop", "timeout": 10 }] }
+      { "hooks": [{ "type": "command", "command": "NODE_USE_ENV_PROXY=1 node \"$CLAUDE_PROJECT_DIR/.control-center/hooks/cc-hook.mjs\" stop", "timeout": 10 }] }
     ],
     "SessionEnd": [
-      { "hooks": [{ "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.control-center/hooks/cc-hook.mjs\" end", "timeout": 60 }] }
+      { "hooks": [{ "type": "command", "command": "NODE_USE_ENV_PROXY=1 node \"$CLAUDE_PROJECT_DIR/.control-center/hooks/cc-hook.mjs\" end", "timeout": 60 }] }
     ]
   }
 }
