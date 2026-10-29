@@ -6,7 +6,9 @@ tools/tests/*.png
 share39.png
 tools/reg/
 .regpage.html
-.claude/
+.claude/*
+!.claude/settings.json
+.control-center/session-summary.json
 mm35_frozen.png
 ar_*.png
 tools/art/spikes83/scene_mask.npy
