@@ -7,6 +7,9 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 Last updated: 2026-10-28 evening (cloud session, new account).
 
 ## Live now
+- **v1.14b** is LIVE (his `bash flavius.sh release` + `bash flavius.sh budget`, 2026-10-29): cost tag AppName=FlaviusRule on the stack,
+  site bucket and CloudFront (app=flavius removed); the budget filters on it. release/v1.14b = main = e8fcef62. CloudShell runs FSH_VER 18.
+  Next check: in a day, `bash flavius.sh status` "budget counts" green and Cost Control showing Flavius's own spend.
 - **v1.14a "Behind the scenes"** is LIVE (his `bash flavius.sh release`, 2026-10-28 18:37 UTC: server deployed, game/download/site ✓; the
   switch's old log group handed over, now 7 days). `release/v1.14a` = `main`. CloudShell runs flavius.sh FSH_VER 15.
 - Online is closed by the budget switch until 2026-11-01 (his 9a).
@@ -28,11 +31,6 @@ Last updated: 2026-10-28 evening (cloud session, new account).
 - Cloud sessions: Node's fetch ignores the sandbox proxy → the hook failed silently ("fetch failed"). Fixed 2026-10-29: the hook commands
   run with NODE_USE_ENV_PROXY=1 (on main too). The dashboard repo's own copy has the same problem — fix it there in a dashboard session.
 - End of every session: write .control-center/session-summary.json (gitignored; the SessionEnd hook sends and deletes it).
-
-## v1.14b pushed, waiting for his deploy (2026-10-29)
-- release/v1.14b = main = e8fcef62 (cost tag AppName=FlaviusRule REPLACES app=flavius; includes his .mcp.json). Smart run 40894561854 green
-  (server job too). He runs `bash flavius.sh release` (server deploy for the tags) then `bash flavius.sh budget`; expect status "budget counts"
-  green once billing counts AppName (can take a day). Cost Control shows Flavius only after that.
 
 ## On the work branch, NOT released yet
 - v1.15a (his pick a): tv100p robust on slow runners (TEST ONLY: the slide's stretch is measured from the frames it really got, ≤4 tries;

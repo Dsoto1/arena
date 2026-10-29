@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.14b** (v1.14b built 2026-10-29). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.14b** (v1.14b shipped 2026-10-29). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
