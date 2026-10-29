@@ -29,6 +29,11 @@ Last updated: 2026-10-28 evening (cloud session, new account).
   run with NODE_USE_ENV_PROXY=1 (on main too). The dashboard repo's own copy has the same problem — fix it there in a dashboard session.
 - End of every session: write .control-center/session-summary.json (gitignored; the SessionEnd hook sends and deletes it).
 
+## v1.14b pushed, waiting for his deploy (2026-10-29)
+- release/v1.14b = main = e8fcef62 (cost tag AppName=FlaviusRule REPLACES app=flavius; includes his .mcp.json). Smart run 40894561854 green
+  (server job too). He runs `bash flavius.sh release` (server deploy for the tags) then `bash flavius.sh budget`; expect status "budget counts"
+  green once billing counts AppName (can take a day). Cost Control shows Flavius only after that.
+
 ## On the work branch, NOT released yet
 - v1.15a (his pick a): tv100p robust on slow runners (TEST ONLY: the slide's stretch is measured from the frames it really got, ≤4 tries;
   Reduce-motion check scales with the draw cost and demands 0 frames). Proof: dispatch run 40764544934 (tests tv100p tv100pn, repeat 10) green
@@ -90,6 +95,7 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
   3. Run `sh tools/baton.sh give`. The script refuses if this file was not touched, or anything is uncommitted or unpushed.
 
 ## Last session notes
+- (cloud, 2026-10-29) v1.14b built + pushed (his 1a 2a); docs/history.md restored (v1.14a had overwritten it). Baton given.
 - (cloud, 2026-10-29) Control Center hooks added (work branch + main 18c49db4). Baton given.
 - (cloud, 2026-10-29) He switched the GitHub default branch to main (the session proxy cannot change repo settings). Nothing depends on it.
 - (cloud, 2026-10-28 evening) Took the baton; his 1a–4a: flavius.sh FSH_VER 16 (status letter versions + "skipped: arena closed";
