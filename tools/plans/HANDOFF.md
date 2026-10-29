@@ -19,6 +19,14 @@ Last updated: 2026-10-28 evening (cloud session, new account).
   yellow → `bash flavius.sh budget`).
 - Full history: docs/history.md · newest three in CLAUDE.md §7.
 
+## Project Control Center (2026-10-29)
+- Session hooks committed (dashboard repo docs/AGENT_ACCESS.md): .control-center/hooks/cc-hook.mjs, .claude/settings.json (SessionStart/Stop/
+  SessionEnd), .control-center/project.json (slug flavius-arena), .gitignore, CLAUDE.md §1 session-summary line. He already has arena as a
+  project in control.toshiroplay.com; the environment has CONTROL_CENTER_URL/KEY and the host allowed.
+- ON MAIN too (his request): main = release/v1.14a + 18c49db4 (only those 5 files); merged back into the work branch, so the next release
+  still fast-forwards main. release/v1.14a itself is unchanged (rollbacks unaffected).
+- End of every session: write .control-center/session-summary.json (gitignored; the SessionEnd hook sends and deletes it).
+
 ## On the work branch, NOT released yet
 - v1.15a (his pick a): tv100p robust on slow runners (TEST ONLY: the slide's stretch is measured from the frames it really got, ≤4 tries;
   Reduce-motion check scales with the draw cost and demands 0 frames). Proof: dispatch run 40764544934 (tests tv100p tv100pn, repeat 10) green
@@ -80,6 +88,7 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
   3. Run `sh tools/baton.sh give`. The script refuses if this file was not touched, or anything is uncommitted or unpushed.
 
 ## Last session notes
+- (cloud, 2026-10-29) Control Center hooks added (work branch + main 18c49db4). Baton given.
 - (cloud, 2026-10-29) He switched the GitHub default branch to main (the session proxy cannot change repo settings). Nothing depends on it.
 - (cloud, 2026-10-28 evening) Took the baton; his 1a–4a: flavius.sh FSH_VER 16 (status letter versions + "skipped: arena closed";
   guarded `droptable`) — he ran it: leftover table, SNS FR-Updates, both GitHub connections, FR-Git-role deleted. v1.15a tv100p fix (Sonnet
