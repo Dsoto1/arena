@@ -49,6 +49,9 @@ Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly c
   draw cost (tv91r, tv92p), clarity (tv91r), FRAME TARGET 60 fps mid-range laptop / 30+ fps mid-range phone at Normal speed, zoomed and not (≈16 ms a
   frame; over that is a bug), phones (tv66/tv88, 390 px), languages (tv86/tv87l), saves (SAVE_MIGRATIONS + guards), the dice (trng92), online lockstep
   (tonl*), Reduce motion / Animations Off (a new effect gets an Off path).
+- **Project Control Center (2026-10-29):** at the end of a session, write `.control-center/session-summary.json` in the docs/MEMORY_IMPORT.md
+  format of the dashboard repo (title, summary, decisions, tasks; no secrets). The session hook (`.control-center/hooks/cc-hook.mjs`, wired in
+  `.claude/settings.json`) sends it to the Project Control Center; without CONTROL_CENTER_URL/KEY in the environment it does nothing.
 - **Deploy tools:** never give him console click-through steps — fix flavius.sh / release.sh instead. CloudShell commands one per line.
 
 ## 2. Layout & build

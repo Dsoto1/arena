@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "name": "Flavius Rule Arena",
+  "slug": "flavius-arena",
+  "description": "Browser adaptation of the board game Flavius Rule: gladiators in a 13x13 isometric arena, with Manager mode and Online play.",
+  "kind": "game",
+  "status": "active",
+  "platforms": ["web", "server"],
+  "websites": [
+    { "url": "https://flaviusrule.com", "environment": "production", "label": "Site" },
+    { "url": "https://flaviusrule.com/play/", "environment": "production", "label": "Game" }
+  ],
+  "workflows": { "tests": "regression.yml" },
+  "deploy": { "method": "cloudshell-script", "notes": "tools/deploy/flavius.sh, run by the owner in CloudShell (release, beta, status)" },
+  "aws": { "uses": true, "costTag": "app=flavius", "regions": ["us-east-1"] },
+  "tags": ["game"],
+  "handoffFiles": ["CLAUDE.md", "tools/plans/HANDOFF.md", "docs/decisions.md", "docs/known-issues.md"]
+}
