@@ -81,6 +81,7 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
   3. Run `sh tools/baton.sh give`. The script refuses if this file was not touched, or anything is uncommitted or unpushed.
 
 ## Last session notes
+- (cloud, 2026-10-29) He switched the GitHub default branch to main (the session proxy cannot change repo settings). Nothing depends on it.
 - (cloud, 2026-10-28 evening) Took the baton; his 1a–4a: flavius.sh FSH_VER 16 (status letter versions + "skipped: arena closed";
   guarded `droptable`) — he ran it: leftover table, SNS FR-Updates, both GitHub connections, FR-Git-role deleted. v1.15a tv100p fix (Sonnet
   builder, merged, CI repeat 10 green); no release by his word. Baton given.
@@ -101,5 +102,7 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
 Node 20+, `npm i -D playwright typescript`, `npx playwright install chromium`, Python 3; `cd server && npm i` for server tests.
 
 ## First prompt for a new session
-> Read CLAUDE.md and tools/plans/HANDOFF.md. Take the baton. Check my checklist artifact for new notes, then ask me the open questions.
+(Since 2026-10-29 the repo's DEFAULT branch is `main` (= the newest release). A new session checks out main: name the work branch in the
+prompt and `git checkout claude/cloud-credits-usage-vq4w63 && git pull --no-rebase` before anything else.)
+> Read CLAUDE.md and tools/plans/HANDOFF.md. Work on the branch claude/cloud-credits-usage-vq4w63 (git pull --no-rebase). Take the baton. Check my checklist artifact for new notes, then ask me the open questions.
 > Don't build anything without my go.
