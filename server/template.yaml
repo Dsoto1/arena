@@ -95,7 +95,7 @@ Resources:
           Projection: {ProjectionType: ALL}
       TimeToLiveSpecification: {AttributeName: ttl, Enabled: true}
       PointInTimeRecoverySpecification: {PointInTimeRecoveryEnabled: true}
-      Tags: [{Key: app, Value: flavius}]   # v1.14: the budget counts only what carries this tag
+      Tags: [{Key: AppName, Value: FlaviusRule}]   # v1.14b: the budget counts only what carries this tag
 
   # ---------- sign-in ----------
   # SHARED since 2026-10-27: this pool (renamed "toshiro-players" in the console) also signs in ToshiroPlay. Its name, Google client and
@@ -209,7 +209,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: flavius-arena
-      Tags: [{Key: app, Value: flavius}]   # v1.14: the budget counts only what carries this tag
+      Tags: [{Key: AppName, Value: FlaviusRule}]   # v1.14b: the budget counts only what carries this tag
       Runtime: nodejs24.x
       Architectures: [arm64]
       Handler: index.handler
@@ -232,7 +232,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: /aws/lambda/flavius-arena
-      Tags: [{Key: app, Value: flavius}]   # v1.14: the budget counts only what carries this tag
+      Tags: [{Key: AppName, Value: FlaviusRule}]   # v1.14b: the budget counts only what carries this tag
       RetentionInDays: 7
 
   # ---------- v1.01 wave 2: the verifier (replays each settled Ranked match with this build's rules; LOG ONLY) ----------
@@ -264,7 +264,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: flavius-arena-verify
-      Tags: [{Key: app, Value: flavius}]   # v1.14: the budget counts only what carries this tag
+      Tags: [{Key: AppName, Value: FlaviusRule}]   # v1.14b: the budget counts only what carries this tag
       Runtime: nodejs24.x
       Architectures: [arm64]
       Handler: index.handler
@@ -291,7 +291,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: /aws/lambda/flavius-arena-verify
-      Tags: [{Key: app, Value: flavius}]   # v1.14: the budget counts only what carries this tag
+      Tags: [{Key: AppName, Value: FlaviusRule}]   # v1.14b: the budget counts only what carries this tag
       RetentionInDays: 30
 
   WsApi:
@@ -300,7 +300,7 @@ Resources:
       Name: flavius-arena
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: '$request.body.t'
-      Tags: {app: flavius}   # v1.14: the budget counts only what carries this tag
+      Tags: {AppName: FlaviusRule}   # v1.14b: the budget counts only what carries this tag
   WsIntegration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
@@ -323,7 +323,7 @@ Resources:
       StageName: live
       AutoDeploy: true
       DefaultRouteSettings: {ThrottlingBurstLimit: 200, ThrottlingRateLimit: 100}
-      Tags: {app: flavius}   # v1.14: the budget counts only what carries this tag
+      Tags: {AppName: FlaviusRule}   # v1.14b: the budget counts only what carries this tag
   WsInvoke:
     Type: AWS::Lambda::Permission
     Properties:
@@ -341,10 +341,10 @@ Resources:
         BudgetType: COST
         TimeUnit: MONTHLY
         BudgetLimit: {Amount: !Ref MonthlyBudgetUSD, Unit: USD}
-        # v1.14 (his 7a): count ONLY Flavius's own resources (tag app=flavius above + the site bucket/CloudFront, tagged by flavius.sh, which
+        # v1.14 (his 7a): count ONLY Flavius's own resources (v1.14b: tag AppName=FlaviusRule, the Control Center's key; REPLACES app=flavius; above + the site bucket/CloudFront, tagged by flavius.sh, which
         # also turns the tag on for billing). Before, the whole account counted, so his other apps' spend closed the arena. The shared Cognito pool
         # is NOT tagged here: stack tags or a Tags edit on it would rewrite ToshiroPlay's settings (Retained, never edited).
-        CostFilters: {TagKeyValue: ['user:app$flavius']}
+        CostFilters: {TagKeyValue: ['user:AppName$FlaviusRule']}
       NotificationsWithSubscribers:
         - Notification: {NotificationType: FORECASTED, ComparisonOperator: GREATER_THAN, Threshold: 100, ThresholdType: PERCENTAGE}
           Subscribers: [{SubscriptionType: EMAIL, Address: !Ref AlertEmail}]
@@ -359,7 +359,7 @@ Resources:
   # ---------- the kill switch ----------
   BudgetTopic:
     Type: AWS::SNS::Topic
-    Properties: {TopicName: flavius-arena-budget, Tags: [{Key: app, Value: flavius}]}
+    Properties: {TopicName: flavius-arena-budget, Tags: [{Key: AppName, Value: FlaviusRule}]}
   BudgetTopicPolicy:
     Type: AWS::SNS::TopicPolicy
     Properties:
@@ -391,7 +391,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: flavius-arena-switch
-      Tags: [{Key: app, Value: flavius}]   # v1.14: the budget counts only what carries this tag
+      Tags: [{Key: AppName, Value: FlaviusRule}]   # v1.14b: the budget counts only what carries this tag
       Runtime: nodejs24.x
       Architectures: [arm64]
       Handler: index.handler
@@ -414,7 +414,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: /aws/lambda/flavius-arena-switch
-      Tags: [{Key: app, Value: flavius}]   # v1.14a: the budget counts only what carries this tag
+      Tags: [{Key: AppName, Value: FlaviusRule}]   # v1.14b: the budget counts only what carries this tag
       RetentionInDays: 7                   # v1.14a: Lambda's own group for the switch never expired
   SwitchSub:
     Type: AWS::SNS::Subscription

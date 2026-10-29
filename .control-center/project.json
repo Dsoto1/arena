@@ -12,7 +12,7 @@
   ],
   "workflows": { "tests": "regression.yml" },
   "deploy": { "method": "cloudshell-script", "notes": "tools/deploy/flavius.sh, run by the owner in CloudShell (release, beta, status)" },
-  "aws": { "uses": true, "costTag": "app=flavius", "regions": ["us-east-1"] },
+  "aws": { "uses": true, "costTag": "AppName=FlaviusRule", "regions": ["us-east-1"] },
   "tags": ["game"],
   "handoffFiles": ["CLAUDE.md", "tools/plans/HANDOFF.md", "docs/decisions.md", "docs/known-issues.md"]
 }

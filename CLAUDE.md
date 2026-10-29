@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.14a** (v1.14a shipped 2026-10-28). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.14b** (v1.14b built 2026-10-29). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -185,7 +185,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13, release/v1.14, release/v1.14a.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13, release/v1.14, release/v1.14a, release/v1.14b.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -205,12 +205,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   CloudFront id into any file (docs included) — write where to find it ("the stack's UserPoolId output"); flavius.sh looks them up. release.sh's idscan fails otherwise.
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.13** The scribes check (his checklist tick, no beta; SERVER release): Ranked results are decided by the server's replay (verify
-  enforce: routes.js gated settle g112/decide112/verdict112 + sweeps, index.js H.internal, verify.js openCheck112 opening field check +
-  CHOICE112_JS choice audit, template RankedCheck default enforce + VerifyReserve 3), client 429-v112check ("⏳ The scribes check the
-  result…", flavius_check112off), flavius.sh FSH_VER 10 (lambda_quota / `quota`: asks AWS once for 1000 concurrent Lambdas). Rollback:
-  `VERIFY_MODE=log` on a server deploy (docs/backend.md). Tests verify.test.js, tonl112. Full run green on attempt 2 (tv100p/tv104h slow runner).
-
 - **v1.14** Figures from turn one (tools/plans/v114/NOTES.md, his 1a–9a, no beta by his word; SERVER release, stack only): 428-v112fig ships
   (Studio/Online/re-kitted fighters prepared in a Worker before the match, "Preparing the figures…" ≤3 s / 6 s phone; flavius_v112figoff,
   flavius_v112fignowk; its Worker source kept out of i18n wrap) · 417 Quality "High" own key `High{0}` (es Alta / fr Haute; tv114h) · the
@@ -226,3 +220,7 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   release.sh fails on account ARNs / pool / OAuth client / CloudFront ids in any tracked file (docs scrubbed, history kept); `bash flavius.sh
   audit` (read-only: the two flavius-arena-Table-* tables, the FR-Site resources); template SwitchLogs (the switch's logs 7 days, the old
   never-expiring group handed over by the deploy). FSH_VER 15. Full run green (eef8d64) + a smart run for the audit/log commit.
+
+- **v1.14b** The Control Center's cost tag (tools/plans/v114b/NOTES.md, his 1a 2a; no beta; SERVER deploy for the tags only): `AppName=FlaviusRule`
+  REPLACES `app=flavius` — template Tags + Budget CostFilters `user:AppName$FlaviusRule`, flavius.sh FSH_VER 18 (bucket + CloudFront retagged,
+  old key removed), manifest costTag. docs/history.md restored (v1.14a had overwritten it).

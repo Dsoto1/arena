@@ -1755,3 +1755,5 @@ their bullet at the END of the "Systems" list below (the release that ships them
   on for billing; runs after every server deploy) + status line "budget counts" (FSH_VER 12). Test tv114h.
 - **v1.14a (no new module)** — tools/idscan.js (release.sh hygiene: AWS/Google ids in tracked files); flavius.sh `dist_id`/`pool_id`/`google_id`
   lookups (REPLACE the hardcoded ids), `audit` (read-only), the switch log hand-over in `server_dir`; template `SwitchLogs` (7 days). FSH_VER 15.
+- **v1.14b** (no module): cost tag AppName=FlaviusRule REPLACES app=flavius — server/template.yaml Tags + Budget CostFilters
+  `user:AppName$FlaviusRule`, flavius.sh FSH_VER 18 `TAGK/TAGV` + `OLDK` (old key taken off the bucket + CloudFront), .control-center/project.json costTag.

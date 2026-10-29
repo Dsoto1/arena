@@ -21,7 +21,7 @@
 #                                                           page + assets only, never the server, the download or the site
 #   bash flavius.sh update                                 this script itself, from the newest work branch on GitHub (beta does it too)
 #   bash flavius.sh status                                 what is live: game version, server, sign-in, styles
-#   bash flavius.sh budget                                 v1.14: the budget counts ONLY Flavius: tags the site bucket + CloudFront app=flavius (the
+#   bash flavius.sh budget                                 v1.14: the budget counts ONLY Flavius: tags the site bucket + CloudFront AppName=FlaviusRule (the
 #                                                           server's resources carry it from the stack) and turns the tag on for billing (also
 #                                                           runs after every server deploy; billing sees a new tag within ~24 h — run it again then)
 #   bash flavius.sh audit                                  v1.14a: READ-ONLY. Lists the flavius-arena-Table-* tables (which one the stack owns) and the FR-Site
@@ -36,7 +36,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=17
+FSH_VER=18
 BUCKET="flaviusrule.com"
 STACK="flavius-arena"
 REGION="us-east-1"
@@ -153,19 +153,23 @@ server_dir(){ local sd="$1" email="$2"
   [ "${DRY:-}" = 1 ] || cd "$sd"; AUTH_DOMAIN=none AUTH_STAGE=cert GOOGLE_ID="$gid" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
   unset sec; ok "server deployed"; cost_tags || true; }
 
-# v1.14 (his 7a, 2026-10-28): the budget (template Budget, CostFilters user:app$flavius) counts ONLY Flavius. The stack tags its own resources
+# v1.14 (his 7a, 2026-10-28): the budget (template Budget, CostFilters user:AppName$FlaviusRule since v1.14b) counts ONLY Flavius. The stack tags its own resources
 # (Lambdas, table, logs, API, topic); this tags the site's bucket + CloudFront (not in the stack) and turns the key on as a cost allocation tag.
 # The shared Cognito pool is never tagged (ToshiroPlay owns its settings). Billing only lists a tag key some hours after a resource first
 # carries it, and counts it from then on; until it is on, the budget sees $0 and the switch cannot close the arena.
-TAGK="app"; TAGV="flavius"
+TAGK="AppName"; TAGV="FlaviusRule"
+# v1.14b (his 1a, 2026-10-29): the Control Center's AppName=FlaviusRule REPLACES app=flavius; the old key is taken off the bucket + CloudFront
+OLDK="app"
 cost_tags(){ local cur arn st
   cur=$(aws s3api get-bucket-tagging --bucket "$BUCKET" --query TagSet --output json 2>/dev/null || echo '[]')
-  if printf '%s' "$cur" | python3 -c "import json,sys;t=json.load(sys.stdin);sys.exit(0 if any(x['Key']=='$TAGK' and x['Value']=='$TAGV' for x in t) else 1)"; then ok "site bucket tagged $TAGK=$TAGV"
-  else local ts; ts=$(printf '%s' "$cur" | python3 -c "import json,sys;t=[x for x in json.load(sys.stdin) if x['Key']!='$TAGK'];t.append({'Key':'$TAGK','Value':'$TAGV'});print(json.dumps({'TagSet':t}))")
+  if printf '%s' "$cur" | python3 -c "import json,sys;t=json.load(sys.stdin);sys.exit(0 if any(x['Key']=='$TAGK' and x['Value']=='$TAGV' for x in t) and not any(x['Key']=='$OLDK' for x in t) else 1)"; then ok "site bucket tagged $TAGK=$TAGV"
+  else local ts; ts=$(printf '%s' "$cur" | python3 -c "import json,sys;t=[x for x in json.load(sys.stdin) if x['Key'] not in ('$TAGK','$OLDK')];t.append({'Key':'$TAGK','Value':'$TAGV'});print(json.dumps({'TagSet':t}))")
     if run aws s3api put-bucket-tagging --bucket "$BUCKET" --tagging "$ts"; then ok "site bucket tagged $TAGK=$TAGV (its other tags kept)"; else printf '\033[1;33m! the site bucket could not be tagged (permissions?) — its cost stays outside the budget\033[0m\n'; fi; fi
   arn=$(aws cloudfront get-distribution --id "$(dist_id)" --query Distribution.ARN --output text 2>/dev/null || true)
   if [ -n "$arn" ] && [ "$arn" != None ] && run aws cloudfront tag-resource --resource "$arn" --tags "Items=[{Key=$TAGK,Value=$TAGV}]" 2>/dev/null; then ok "CloudFront tagged $TAGK=$TAGV"
   else printf '\033[1;33m! CloudFront could not be tagged — its cost stays outside the budget\033[0m\n'; fi
+  if [ -n "$arn" ] && [ "$arn" != None ] && aws cloudfront list-tags-for-resource --resource "$arn" --query "Tags.Items[?Key=='$OLDK'].Key" --output text 2>/dev/null | grep -q .; then
+    run aws cloudfront untag-resource --resource "$arn" --tag-keys "Items=$OLDK" && ok "CloudFront: old tag $OLDK removed"; fi
   st=$(aws ce list-cost-allocation-tags --tag-keys "$TAGK" --query 'CostAllocationTags[0].Status' --output text 2>/dev/null || echo None)
   case "$st" in
     Active) ok "billing counts the tag $TAGK — the budget sees only Flavius";;

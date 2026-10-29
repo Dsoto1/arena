@@ -529,6 +529,9 @@ table), `index.js` (`H.internal`, `WS_ENDPOINT`), `server/verify/verify.js` (`op
   stage, the budget topic (in the template, resource by resource) and the site bucket + CloudFront (flavius.sh `cost_tags`, after every server
   deploy, or `bash flavius.sh budget`). NOT tagged: the shared Cognito pool (stack-level tags would propagate to it and the update would rewrite
   ToshiroPlay's settings — never use stack tags), IAM, the Route 53 zone.
+- **v1.14b (his 1a, 2026-10-29): the tag is now `AppName=FlaviusRule`** (the Project Control Center's key, one per project) — REPLACES
+  `app=flavius` above: template resources, `CostFilters: {TagKeyValue: ['user:AppName$FlaviusRule']}`, flavius.sh `TAGK/TAGV` (cost_tags also
+  removes the old `app` key from the bucket + CloudFront). Stack tags are updated in place by the server deploy (no resource replaced).
 - A cost allocation tag only counts once it is ON for billing (`aws ce update-cost-allocation-tags-status`), and billing only lists a key some
   hours after a resource first carries it. Until then the filtered budget sees $0 and the switch cannot fire. `status` shows "budget counts".
 - If his account ever joins an AWS Organization, only the management account can turn tags on: `cost_tags` then reports the refusal.
