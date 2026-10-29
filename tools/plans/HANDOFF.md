@@ -25,6 +25,8 @@ Last updated: 2026-10-28 evening (cloud session, new account).
   project in control.toshiroplay.com; the environment has CONTROL_CENTER_URL/KEY and the host allowed.
 - ON MAIN too (his request): main = release/v1.14a + 18c49db4 (only those 5 files); merged back into the work branch, so the next release
   still fast-forwards main. release/v1.14a itself is unchanged (rollbacks unaffected).
+- Cloud sessions: Node's fetch ignores the sandbox proxy → the hook failed silently ("fetch failed"). Fixed 2026-10-29: the hook commands
+  run with NODE_USE_ENV_PROXY=1 (on main too). The dashboard repo's own copy has the same problem — fix it there in a dashboard session.
 - End of every session: write .control-center/session-summary.json (gitignored; the SessionEnd hook sends and deletes it).
 
 ## On the work branch, NOT released yet
