@@ -1,0 +1,15 @@
+(node:7913) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[w1] 1 careful seed 2: 5 season(s) end 177 min -8 rank 9/10/12/4/12 · 96 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 2 careful seed 1: 5 season(s) end 147 min -3 rank 7/13/13/13/8 · 104 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 3 careful seed 3: 5 season(s) end 142 min -40 rank 11/13/13/13/13 · 117 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 4 careful seed 4: 5 season(s) end 167 min -8 rank 6/12/8/12/13 · 145 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 5 careful seed 5: 5 season(s) end 155 min -35 rank 5/13/13/13/11 · 112 s · stuck 2 locked 0 stall 0 errs 0
+[w0] 6 careful seed 6: 5 season(s) end 143 min -9 rank 12/11/13/13/13 · 109 s · stuck 1 locked 0 stall 0 errs 0
+[w1] 7 careful seed 7: 5 season(s) end 627 min -4 rank 13/13/13/11/3 · 95 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 8 careful seed 8: 5 season(s) end 159 min 24 rank 13/4/12/5/13 · 124 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 9 careful seed 9: 5 season(s) end 127 min -45 rank 6/13/13/13/13 · 96 s · stuck 2 locked 0 stall 0 errs 0
+[w0] 10 careful seed 10: 5 season(s) end 151 min -40 rank 11/8/13/13/9 · 106 s · stuck 2 locked 0 stall 0 errs 0
+[w1] 11 careful seed 11: 5 season(s) end 131 min -8 rank 7/9/5/13/13 · 91 s · stuck 1 locked 0 stall 0 errs 0
+[w0] 12 careful seed 12: 5 season(s) end 140 min -38 rank 2/13/13/13/13 · 86 s · stuck 3 locked 0 stall 0 errs 0
+DONE 12 run(s) in 11.2 min · avg 107 s/run
