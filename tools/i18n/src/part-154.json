@@ -1,0 +1,170 @@
+[
+ {
+  "k": "Graphics",
+  "w": "430-v115set.js:36"
+ },
+ {
+  "k": "Crowd & voices",
+  "w": "430-v115set.js:36"
+ },
+ {
+  "k": "Access",
+  "w": "430-v115set.js:37"
+ },
+ {
+  "k": "Data",
+  "w": "430-v115set.js:38"
+ },
+ {
+  "k": "Data & saves",
+  "w": "430-v115set.js:38"
+ },
+ {
+  "k": "Full: your fights in full, others faint. Mine: only your fights. Quiet: only your fighter’s body. Off: no numbers; board animations and the clean-up crew stop too.",
+  "w": "430-v115set.js:72"
+ },
+ {
+  "k": "Game terms (class names, CF, the Fate, Missio) stay English. Switching reloads the page.",
+  "w": "430-v115set.js:76"
+ },
+ {
+  "k": "Fade pillars in front of what you look at. X toggles.",
+  "w": "430-v115set.js:80"
+ },
+ {
+  "k": "Confirm attacks",
+  "w": "430-v115set.js:82"
+ },
+ {
+  "k": "Asks “Strike …?” before each attack. Not online.",
+  "w": "430-v115set.js:82"
+ },
+ {
+  "k": "Same as the arena bar; kept between events. Step waits after each CPU action.",
+  "w": "430-v115set.js:83"
+ },
+ {
+  "k": "Flying stones and spears, the clean-up crew, market rolls. Quick halves them.",
+  "w": "430-v115set.js:84"
+ },
+ {
+  "k": "Camera",
+  "w": "430-v115set.js:85"
+ },
+ {
+  "k": "Asks when you still have moves or attacks left.",
+  "w": "430-v115set.js:86"
+ },
+ {
+  "k": "How a match plays.",
+  "w": "430-v115set.js:88"
+ },
+ {
+  "k": "The newest log lines over the arena corner. 📌 does the same.",
+  "w": "430-v115set.js:96"
+ },
+ {
+  "k": "What the game tells you.",
+  "w": "430-v115set.js:97"
+ },
+ {
+  "k": "Full: sun and torch shadows, sand grain, depth. Light: soft shadows at the feet. Off: the flat board, fastest.",
+  "w": "430-v115set.js:102"
+ },
+ {
+  "k": "Light and shade on faces. Light and Off are plainer and faster.",
+  "w": "430-v115set.js:105"
+ },
+ {
+  "k": "Frames per second in a corner. Keeps the page awake while shown.",
+  "w": "430-v115set.js:106"
+ },
+ {
+  "k": "The round base under gladiators and beasts.",
+  "w": "430-v115set.js:107"
+ },
+ {
+  "k": "The metal of the spike caps.",
+  "w": "430-v115set.js:110"
+ },
+ {
+  "k": "How the arena and its pieces are drawn.",
+  "w": "430-v115set.js:111"
+ },
+ {
+  "k": "Editor reacts",
+  "w": "430-v115set.js:115"
+ },
+ {
+  "k": "Cheers, insults, the odd tear from the box.",
+  "w": "430-v115set.js:115"
+ },
+ {
+  "k": "Who sits in each city’s box. Win there to unlock its editor.",
+  "w": "430-v115set.js:117"
+ },
+ {
+  "k": "{0} / {1} cities won",
+  "w": "430-v115set.js:118"
+ },
+ {
+  "k": "Voices",
+  "w": "430-v115set.js:120"
+ },
+ {
+  "k": "Who watches, who talks.",
+  "w": "430-v115set.js:122"
+ },
+ {
+  "k": "Saves & backups",
+  "w": "430-v115set.js:127"
+ },
+ {
+  "k": "Game saves, match saves and backup files.",
+  "w": "430-v115set.js:127"
+ },
+ {
+  "k": "Open 💾 Saves",
+  "w": "430-v115set.js:127"
+ },
+ {
+  "k": "Settings storage",
+  "w": "430-v115set.js:128"
+ },
+ {
+  "k": "This browser refused a save: your settings are kept in a backup cookie.",
+  "w": "430-v115set.js:128"
+ },
+ {
+  "k": "Restore all defaults",
+  "w": "430-v115set.js:130"
+ },
+ {
+  "k": "Settings and theme. Saves stay.",
+  "w": "430-v115set.js:130"
+ },
+ {
+  "k": "↺ Restore",
+  "w": "430-v115set.js:130"
+ },
+ {
+  "k": "Your saves, backups and bug reports.",
+  "w": "430-v115set.js:131"
+ },
+ {
+  "k": "Help us fix it",
+  "w": "430-v115set.js:132"
+ },
+ {
+  "k": "Reset",
+  "w": "430-v115set.js:132"
+ },
+ {
+  "k": "Panels, log and windows. The arena keeps its size.",
+  "w": "430-v115set.js:136"
+ },
+ {
+  "k": "arena · v1.14b",
+  "w": "01-head.html"
+ }
+]
