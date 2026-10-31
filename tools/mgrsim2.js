@@ -115,7 +115,8 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY,SIMK})=>{window.__SIMK=Obj
        but the roster's worst when > 4, if coin >= price + 2 weeks' wages) | 'never' . bypass: true = also court fame-gated recruits at 17's
        fameBypassX x ask . entFit: how far below a tier's floor a fighter may be entered (default 4 = T.lo - 4, as 17 makeNight) . entMax:
        entries a week (default 3) . entCpu: true = enter like a rival house (17 makeNight: main first, one a night, a second 50% of the time,
-       each with p 0.62 + risk/250) . entFat: skip fighters above this fatigue . entMorale: skip at or below this morale (default 15) */
+       each with p 0.62 + risk/250) . entFat: skip fighters above this fatigue . entMorale: skip at or below this morale (default 15)
+     strength115: train = 'light'|'std'|'hard' runs that regime whenever the coin covers it + one week's wages (no reserve rule) */
   const K=window.__SIMK||{};if(K.reserveWk!=null&&PR&&!PR.cpu)PR.reserveWk=K.reserveWk; /* reserveWk: weeks of wages the careful house keeps (6) */
   const sIdx=()=>Math.max(0,Math.min(4,w.season-(w.startSeason||1)));
   const reserve=()=>PR.cpu?30:wagesOf(m)*(PR.reserveWk||0)+(PR.reserveWk?20:0);
@@ -190,7 +191,7 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY,SIMK})=>{window.__SIMK=Obj
   const morale=()=>{for(const g of ros().filter(g=>g.morale<45).slice(0,PR.cpu?1:2)){if(PR.cpu&&Math.random()>=.5)continue;if(w.hours<1||m.coin<3+(PR.cpu?20:reserve()))continue;if(g.mealWk===w.week)continue;
     act('meal');w.hours--;m.coin-=3;unact();g.mealWk=w.week;g.morale=clamp(g.morale+6,0,100);g.loyB=clamp((g.loyB||0)+2,0,25)}};
   /* the yard */
-  const yard=()=>{let reg;if(PR.cpu)reg=m.p.discipline>70?'hard':m.p.discipline>45?'std':'light';else{const R=TRAIN_REGIMES[PR.train];reg=m.coin>=R.c+reserve()+wagesOf(m)*(PR.trainRes?1:0)?PR.train:m.coin>=6+reserve()?'light':'off'}
+  const yard=()=>{let reg;if(PR.cpu)reg=m.p.discipline>70?'hard':m.p.discipline>45?'std':'light';else if(K.train&&TRAIN_REGIMES[K.train]){reg=m.coin>=TRAIN_REGIMES[K.train].c+wagesOf(m)?K.train:'off'}else{const R=TRAIN_REGIMES[PR.train];reg=m.coin>=R.c+reserve()+wagesOf(m)*(PR.trainRes?1:0)?PR.train:m.coin>=6+reserve()?'light':'off'}
     w.train=reg;try{const P=thPlan(w);let left=thLeft(w);for(const g of ros().filter(g=>!g.inj).sort((a,b)=>gFat(a)-gFat(b))){if(gFat(g)>60){g.restWk=w.week;continue}
       for(const k2 of ['str','spd']){const h=Math.min(2,left);if(h<=0)break;P.g[g.id]=P.g[g.id]||{};P.g[g.id][k2]=(P.g[g.id][k2]||0)+h;left-=h}}}catch(e){err('yard',e)}
     if(PR.ptrain)for(const g of ros().slice().sort((a,b)=>effOvr(b)-effOvr(a)).slice(0,PR.ptrain))if(m.coin>PTRAIN_COST+20)g.ptrain=1};
@@ -318,7 +319,7 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY,SIMK})=>{window.__SIMK=Obj
        · gb = growth by start band {P,C}{band:[fw, d growth]} · jn = joins {P,C}: [OVR, stars, src fa|new|house, pot headroom, age]
        · ex = exits {P,C}: [cause dead|freed|retired|released|expired|walkout|poached|moved|gone, weeks with the house, growth rating at join, at exit, bouts with the house]
        · mm = league entries (under/feature/main) [kind, tier, own OVR, opp mean OVR, opp max OVR, won, place, CF, alive after, rival-house opps, free-agent opps]
-       · reg = regime fighter-weeks {P:{std:n},C:{..}} · yard = yard levels summed per week {P,C,n} · disc = rival discipline mean */
+       · reg = regime fighter-weeks {P:{std:n},C:{..}} · yard = yard levels summed per week {P,C,n} · disc = rival discipline mean · fa = free agents summed per week {n weeks, s[stars], gen = fight-night fillers (17 fillNight, g.debut), g64 = fillers rated 64+} */
   const SXK=x=>x?(x.isPlayer?'P':(x.sica?'S':'C')):'F';const gv=g=>(g.ovr||0)+(typeof statOvr==='function'?statOvr(g):0);
   let SX0=new Map(),SXFA=new Set(),SXPRE=null;const SXJ=new Map();let SXwk=0;const FOUGHT=new Set();
   const SX=()=>{if(!cur.sx)cur.sx={g:{P:[0,0,0,0,0,0],C:[0,0,0,0,0,0]},gb:{P:{},C:{}},jn:{P:[],C:[]},ex:{P:[],C:[]},mm:[],reg:{P:{},C:{}},yard:{P:0,C:0,n:0},disc:0};return cur.sx};
@@ -336,7 +337,7 @@ const SIM=async({profile,seed,SEASONS,START,PATCH,BUY,SIMK})=>{window.__SIMK=Obj
         const J=SXJ.get(id)||{wk:SXwk,v:a.v,b:a.b};d.ex[a.k].push([cause,SXwk-J.wk+1,J.v,a.v,Math.max(0,((g&&g.rec&&g.rec.ev)||a.b)-J.b)]);SXJ.delete(id)}
       for(const [id,n] of now){const a=SX0.get(id);if(a&&a.mid===n.mid)continue;const g=n.g;const e=effOvr(g);d.jn[n.k].push([e,starsOf(e),a?'house':SXFA.has(id)?'fa':'new',Math.max(0,(g.pot||0)-(g.ovr||0)),typeof gAge==='function'?gAge(g):0]);SXJ.set(id,{wk:SXwk,v:gv(g),b:(g.rec&&g.rec.ev)||0})}
       FOUGHT.clear();const R=rivals();const rp=d.reg.P;rp[w.train||'off']=(rp[w.train||'off']||0)+ros().length;for(const x of R){const rc=d.reg.C;rc[x.train||'?']=(rc[x.train||'?']||0)+rosterOf(x).length}
-      d.yard.P+=facLvl(m,'yard');d.yard.C+=R.length?R.reduce((a,x)=>a+facLvl(x,'yard'),0)/R.length:0;d.yard.n++;d.disc=R.length?Math.round(R.reduce((a,x)=>a+((x.p&&x.p.discipline)||50),0)/R.length):0}catch(e){err('sxEnd',e)}};
+      {const F=d.fa=d.fa||{n:0,s:[0,0,0,0,0,0],gen:0,g64:0};F.n++;for(const g of freeAgents()){const e=effOvr(g);F.s[starsOf(e)]++;if(g.debut&&!g.wq109a){F.gen++;if(e>=64)F.g64++}}}d.yard.P+=facLvl(m,'yard');d.yard.C+=R.length?R.reduce((a,x)=>a+facLvl(x,'yard'),0)/R.length:0;d.yard.n++;d.disc=R.length?Math.round(R.reduce((a,x)=>a+((x.p&&x.p.discipline)||50),0)/R.length):0}catch(e){err('sxEnd',e)}};
   const roll=()=>{for(const [id,g] of known){if(g.contract&&g.contract.mgr===m.id)continue;if(g.loanFrom&&g.loanFrom.mid===m.id)continue;known.delete(id);
       if(g.alive===false){if(g.freed2)cur.freed++;else if(g.retired||g.c104ret)cur.retired++;else cur.deaths++}else cur.walked++}
     for(const g of ros())known.set(g.id,g)};
