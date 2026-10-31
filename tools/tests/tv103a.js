@@ -8,7 +8,7 @@ const boot=async(thr)=>{const ctx=await b.newContext({viewport:{width:1440,heigh
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
   const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message));
   if(thr){const c=await ctx.newCDPSession(pg);await c.send('Emulation.setCPUThrottlingRate',{rate:thr})}
-  await pg.goto('file://'+page);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:90000});return pg};
+  await pg.goto('file://'+page,{timeout:thr?120000:30000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:90000});return pg};
 const start=(pg,ev,spect)=>pg.evaluate(async([ev,spect])=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}try{menuHide()}catch(e){}
   SETTINGS.briefing=false;SPEED='fast';const seats=['soldier','hero','royalty','venatore'].map((c,i)=>({cls:c,cpu:i!==0}));
   startEvent({ev,loc:6,seats,opts:{spect}});
@@ -117,6 +117,8 @@ await pg.context().close();
 for(const kind of ['d','w']){
   const p3=await boot(5);
   await p3.waitForTimeout(800);
+  /* pin the challenge day: G3 needs a challenge that opens straight on its briefing (some days' events open on a Draft first, e.g. 2026-10-31 ludus) */
+  await p3.evaluate(()=>{DC100.t=Date.UTC(2026,9,29,15)});
   await p3.evaluate(()=>{window.__menu=[];const ms=menuShow;menuShow=function(){__menu.push(performance.now());return ms.apply(this,arguments)};
     const pm=[...document.querySelectorAll('#mainMenu button')].find(x=>/Play Now/i.test(x.textContent));pm&&pm.click()});
   await p3.waitForFunction(()=>CUR_MODAL&&/Play now/i.test(document.getElementById('mTitle').textContent),null,{timeout:30000,polling:100});

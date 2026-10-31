@@ -5,6 +5,9 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-10-31 · tv103a FIXED in v1.15 (test only): G3 used the real day's daily challenge and assumed it opens on its briefing; on days whose event
+  opens on a Draft first (2026-10-31: ludus) G3a/G3c failed on every build. G3 now pins the day (DC100.t = 2026-10-29); the 5x-throttled page load
+  gets 120 s (the v1.15 [full] run 41248555142 timed out at 30 s). Game unchanged.
 - 2026-10-28 · tv100p FIXED in v1.15 (test only, game unchanged): the test stretched the slide to 16 x the idle draw cost (DRAW), but a real
   animation frame (draw + piece offsets + fx + rAF) costs 2-3 x DRAW and that factor moves with load, so a slow runner got 4-5 frames
   (checks 1b/1c/4b want >=5 frames / >=4 mid points). Now `__stretch` measures the frames the slide really got and re-runs from the
