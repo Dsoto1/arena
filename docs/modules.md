@@ -1765,3 +1765,4 @@ their bullet at the END of the "Systems" list below (the release that ships them
   Accessibility; Confirm End turn only in Play; Restore + Saves + Error log + 422's storage line (only after a refused save) on Data & saves,
   setRestore84 returns to the page; 400's s98-edpair unused; phones: short pill labels (data-s115), segmented rows wrap (Pause no longer
   clipped). Unknown rows a later module adds stay on their page ("More"). Kill switch flavius_v115setoff=1 = v1.14b. Test tv115s.
+- **431-v115adeath** (v1.15a Deaths fix, his 1a 2a 5a): blood money at half price for any house under fame 18 (51-v49's newcomer price stays, never halved twice; min 5), a death costs no fame while the house is under fame 18 (17 killFighter's −2), and the pending-verdict card says "half price — a small house". No save change. Kill switch flavius_v115adeathoff=1 = v1.15. Test tv115d.
