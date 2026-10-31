@@ -12,7 +12,7 @@ for(const [w,h] of [[1440,900],[390,780]]){
   ok(a.def&&!a.el&&a.raf===0&&!a.on,w+' off by default '+JSON.stringify(a));
   /* the Settings switch */
   const s=await pg.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(null);await W(100)}
-    openSettings();await W(700);const i=document.querySelector('#setBody input[data-set="fps100"]');const o={has:!!i,tip:!!(i&&i.dataset.tip)};
+    openSettings('pieces'); /* v1.15 (430): the frame meter lives in Graphics → Quality */await W(700);const i=document.querySelector('#setBody input[data-set="fps100"]');const o={has:!!i,tip:!!(i&&i.dataset.tip)};
     if(i){i.click();await W(1500)}o.on=!!SETTINGS.fps100;o.el=!!document.getElementById('fps100');o.raf=window.__raf;return o});
   ok(s.has&&s.tip&&s.on&&s.el&&s.raf>0,w+' switch on '+JSON.stringify(s));
   await pg.evaluate(async()=>{while(CUR_MODAL){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,100))}});await W8(1500);

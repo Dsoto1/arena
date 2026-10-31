@@ -28,14 +28,14 @@ await p.evaluate(()=>openSettings('general'));await W8(p,600);
 /* v0.98: Settings full screen with a rail (246-v98ui): Language first on General; text size / colour-blind / confirm on Accessibility; Quality (was Light board) on Board & pieces */
 o.gen=await p.evaluate(async()=>{const box=document.getElementById('setBody');const first=box.querySelector('.s98-main').querySelector('.s98-lang');
   const pg=async k=>{box.querySelector(`[data-stab="${k}"]`).click();await new Promise(r=>setTimeout(r,250))};const lang=first?[...first.querySelectorAll('select[data-lang84] option')].map(x=>x.value):[],langTxt=first?first.textContent:'';
-  const tabs=[...box.querySelectorAll('[data-stab]')].map(x=>x.dataset.stab);const lessons=!!box.querySelector('[data-lessonsmenu]');const rst=!!box.querySelector('[data-rst84]');
-  await pg('access');const acc={ts:box.querySelectorAll('[data-ts98]').length>=3,tsOld:box.querySelectorAll('[data-tscale],[data-ts84]').length,cvdSel:!!box.querySelector('select[data-cvd84]'),cvdBox:!!box.querySelector('[data-set="cvd"]'),ce:!!box.querySelector('[data-set="confirmEnd"]')&&!SETTINGS.confirmEnd};
-  await pg('pieces');const lite=!!box.querySelector('[data-lite84]');await pg('access');
-  return {tabs,first:first&&first.className,lang,langTxt,lessons,...acc,rst,lite}});
-ok(JSON.stringify(o.gen.tabs)===JSON.stringify(['general','help','pieces','themes','audio','access']),'the rail: no Profiles, no Saves '+JSON.stringify(o.gen.tabs));
-ok(/s98-lang/.test(o.gen.first||'')&&o.gen.lang[0]==='en'&&o.gen.lang.includes('es')&&/stay English in every language/.test(o.gen.langTxt),'🌐 Language row first (English, then the built-in languages) '+JSON.stringify(o.gen.lang));
+  const tabs=[...box.querySelectorAll('[data-stab]')].map(x=>x.dataset.stab);const lessons=!!box.querySelector('[data-lessonsmenu]');const ce=!!box.querySelector('[data-set="confirmEnd"]')&&!SETTINGS.confirmEnd; /* v1.15 (430): Confirm End turn only in Play */
+  await pg('access');const acc={ts:box.querySelectorAll('[data-ts98]').length>=3,tsOld:box.querySelectorAll('[data-tscale],[data-ts84]').length,cvdSel:!!box.querySelector('select[data-cvd84]'),cvdBox:!!box.querySelector('[data-set="cvd"]'),ceAcc:!!box.querySelector('[data-set="confirmEnd"]')};
+  await pg('pieces');const lite=!!box.querySelector('[data-lite84]');await pg('data');const rst=!!box.querySelector('.s98-main [data-rst84]'); /* v1.15 (430): Restore lives on Data & saves */await pg('access');
+  return {tabs,first:first&&first.className,lang,langTxt,lessons,...acc,ce,rst,lite}});
+ok(JSON.stringify(o.gen.tabs)===JSON.stringify(['general','help','pieces','crowd','themes','audio','access','data']),'the rail (v1.15: + Crowd & voices, Data & saves): no Profiles, no Saves '+JSON.stringify(o.gen.tabs));
+ok(/s98-lang/.test(o.gen.first||'')&&o.gen.lang[0]==='en'&&o.gen.lang.includes('es')&&/stay English/.test(o.gen.langTxt),'🌐 Language row first (English, then the built-in languages) '+JSON.stringify(o.gen.lang));
 ok(!o.gen.lessons,'no lesson-buttons row');ok(o.gen.ts&&o.gen.tsOld===0,'one text-size control (100 / 115 / 130)');ok(o.gen.cvdSel&&!o.gen.cvdBox,'colour-blind is a select');
-ok(o.gen.ce,'Confirm before End turn (off by default)');ok(o.gen.rst,'Restore all defaults');ok(!o.gen.lite,'Light board setting is gone (folded into Quality Low, v1.10)');
+ok(o.gen.ce&&!o.gen.ceAcc,'Confirm before End turn (off by default), in Play only (v1.15)');ok(o.gen.rst,'Restore all defaults');ok(!o.gen.lite,'Light board setting is gone (folded into Quality Low, v1.10)');
 await shot(p,'set_general');
 /* text size */
 o.ts=await p.evaluate(async()=>{document.querySelector('[data-ts98="115"]').click();await new Promise(r=>setTimeout(r,250));const on=document.querySelector('[data-ts98].on');
@@ -74,9 +74,10 @@ await p.click('#setBody [data-stab="pieces"]');await W8(p,300);
 o.tok=await p.evaluate(()=>{const box=document.getElementById('setBody');return {arm:!!box.querySelector('[data-sarmor]'),txt:/🛡 Armor/.test(box.textContent),rows:box.querySelectorAll('[data-tokstyle]').length}});
 ok(!o.tok.arm&&!o.tok.txt&&o.tok.rows===0,'Board & pieces: no Armor section, no token-style choice (v1.07: one 3D look) '+JSON.stringify(o.tok));await shot(p,'set_tokens');
 for(const t of ['help','audio']){await p.click(`#setBody [data-stab="${t}"]`);await W8(p,300);await shot(p,'set_'+t)}
-/* Saves: no tab any more (v0.98) — the footer line's 💾 Saves → the Saves window; Backups → the shelf */
-o.sv=await p.evaluate(()=>({btn:!!document.querySelector('#setBody .s98-foot [data-sv84]'),shelf:!!document.querySelector('#setBody #saveName'),tab:!!document.querySelector('#setBody [data-stab="saves"]')}));
-ok(o.sv.btn&&!o.sv.shelf&&!o.sv.tab,'no Saves tab; the footer opens 💾 Saves');
+/* Saves: no tab any more (v0.98) — v1.15 (430): Data & saves → Open 💾 Saves → the Saves window; Backups → the shelf */
+await p.click('#setBody [data-stab="data"]');await W8(p,250);
+o.sv=await p.evaluate(()=>({btn:!!document.querySelector('#setBody .s98-main [data-sv84]'),shelf:!!document.querySelector('#setBody #saveName'),tab:!!document.querySelector('#setBody [data-stab="saves"]')}));
+ok(o.sv.btn&&!o.sv.shelf&&!o.sv.tab,'no Saves tab; Data & saves opens 💾 Saves');
 await p.evaluate(()=>{window.__mm=[];const iv=setInterval(()=>{__mm.push(!document.getElementById('mainMenu').hidden&&document.getElementById('modal').hidden)},15);setTimeout(()=>clearInterval(iv),1500)});
 await p.click('#setBody [data-sv84]');await W8(p,1600);
 o.hub=await p.evaluate(()=>({hub:!!document.getElementById('hub76'),tab:(document.querySelector('#hub76 [data-hub76].on')||{}).dataset?.hub76,set:!!document.getElementById('setBody'),bare:__mm.some(x=>x)}));
@@ -84,11 +85,11 @@ ok(o.hub.hub&&o.hub.tab==='backups'&&!o.hub.set,'the button opens the Saves wind
 await p.click('#hub76 [data-hubbk="manage"]');await W8(p,900);
 o.shelf=await p.evaluate(()=>({shelf:!!document.querySelector('#setBody #saveName')&&!!document.querySelector('#setBody #saveList'),tab:(document.querySelector('#s98')||{dataset:{}}).dataset.page}));
 ok(o.shelf.shelf&&o.shelf.tab==='saves','Backups → manage → the game-save shelf '+JSON.stringify(o.shelf));
-await p.click('#setBody [data-stab="general"]');await W8(p,200);
-ok(await p.evaluate(()=>!!document.querySelector('#setBody [data-sv84]')&&!document.querySelector('#setBody #saveName')),'leaving the shelf: the footer link again');
+await p.click('#setBody [data-stab="data"]');await W8(p,200);
+ok(await p.evaluate(()=>!!document.querySelector('#setBody [data-sv84]')&&!document.querySelector('#setBody #saveName')),'leaving the shelf: the Saves button again');
 /* Restore all defaults (asks first; saves stay) */
 await p.evaluate(async()=>{await Store.put('customChars','c84u',{name:'Kept Kaeso',custom:true});SETTINGS.gore=false;SETTINGS.tscale=130;SETTINGS.confirmEnd=true;applySettings();applyTheme({...THEME_PRESETS.imperial.v})});
-await p.click('#setBody [data-stab="general"]');await W8(p,200);await p.click('#setBody [data-rst84]');await W8(p,300);
+await p.click('#setBody [data-stab="data"]');await W8(p,200);await p.click('#setBody [data-rst84]');await W8(p,300);
 o.ask=await p.evaluate(()=>({ask:!!document.querySelector('.ask76bg'),gore:SETTINGS.gore}));
 await p.click('.ask76bg [data-ask76="1"]');await W8(p,500);
 o.rst=await p.evaluate(async()=>({gore:SETTINGS.gore,ts:SETTINGS.tscale,ce:!!SETTINGS.confirmEnd,ink:THEME.ink===BASE_THEME.ink,body:/tsz84/.test(document.body.className),kept:(await Store.list('customChars')).some(x=>x.id==='c84u'),saved:JSON.parse(localStorage.getItem('flavius_settings')).gore,ui:!!document.querySelector('#setBody [data-rst84]')}));

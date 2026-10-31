@@ -55,7 +55,7 @@ const pk=await pg.evaluate(()=>[...document.querySelectorAll('#mBtns > button')]
 ok(pk.length&&pk.every(s=>!/sd100/.test(s)||!/true$/.test(s)),'card-art pick windows keep their look '+JSON.stringify(pk));
 await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await pg.waitForTimeout(250);
 /* ---- 4 · Settings: Restore all defaults = carbon ---- */
-await pg.evaluate(()=>openSettings());await until(pg,()=>document.querySelector('[data-rst84]'));await pg.waitForTimeout(400);
+await pg.evaluate(()=>openSettings('data')); /* v1.15 (430): Restore all defaults lives in Data & saves */await until(pg,()=>document.querySelector('[data-rst84]'));await pg.waitForTimeout(400);
 const R=await pg.evaluate(()=>__slab(document.querySelector('[data-rst84]')));ok(/repeating-linear-gradient/.test(R.bg),'Settings ↺ Restore all defaults = carbon '+JSON.stringify(R));
 await pg.evaluate(()=>{for(let i=0;i<3&&CUR_MODAL;i++)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null)});await pg.waitForTimeout(500);
 /* ---- 5 · Manager: End the week + Simulate Match Week ---- */
