@@ -924,3 +924,7 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   default changes. REPLACES: v0.84 Saves/Restore in the header · v0.88 General grouping · v0.90 "Settings → On the board" placements ·
   v0.98 "Board & pieces = old Tokens + Editors merged", its footer Saves link and the Accessibility copy of Confirm End turn · v1.07 editors
   beside Blessings (400 s98-edpair) · the one-row cards of 263/277/288/321 · 2026-10-20 "Lighting description stays as is".
+- 2026-10-31 · Deaths study (tools/plans/deaths112/REPORT.md) — his 1a 2a 3a 4a 5a: (1a) half-price blood money for any house under fame 18,
+  besides 51-v49's newcomer price — REPLACES "half price only for a newcomer house (≤ 2 fighters, < 120 coin)" (v0.49) as the only rule;
+  (2a) a death costs no fame under fame 18 — REPLACES "−2 fame for every death" (17 killFighter, docs/economy.md); (3a) STAR_FAME unchanged;
+  (4a) a strength study next (roster 45 vs 67); (5a) 1a + 2a ship as v1.15a right after v1.15. tools/plans/v115a/NOTES.md.
