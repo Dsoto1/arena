@@ -43,7 +43,7 @@ else echo "on GitHub Actions: push the release commit, then wait for the 'regres
 step "4b advert shot (play.html)"
 mkdir -p share && node tools/siteshot.js "$PWD/flavius-arena.html" share/arena_shot.png | tail -1
 node tools/sitewhatsnew.js || true
-python3 -c "from PIL import Image;im=Image.open('share/arena_shot.png').convert('RGB');im=im.resize((1200,round(im.height*1200/im.width)),Image.LANCZOS);im.save('share/arena_shot.webp',quality=82,method=6)" && rm -f share/arena_shot.png
+python3 -c "from PIL import Image;im=Image.open('share/arena_shot.png').convert('RGB');im=im.resize((1200,round(im.height*1200/im.width)),Image.LANCZOS);im.save('share/arena_shot.webp',quality=82,method=6)" 2>/dev/null || node tools/png2webp.js share/arena_shot.png share/arena_shot.webp; [ -s share/arena_shot.webp ] && rm -f share/arena_shot.png
 echo "share/arena_shot.webp → the game zip's play/arena_shot.webp (flavius.sh game uploads it; play.html shows it)"
 cp share/arena_shot.webp tools/deploy/arena_shot.webp   # committed: flavius.sh release fetches it from GitHub
 # v0.95: the standalone is built by flavius.sh in CloudShell (mkshare from GitHub); zips are only a fallback → off unless SHARE=1
