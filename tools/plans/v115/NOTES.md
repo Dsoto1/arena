@@ -8,3 +8,6 @@ His picks 2026-10-31 ("ab") on "next work":
 
 Both run as background builders; results land in tools/plans/deaths112/REPORT.md and tools/plans/v115/SETTINGS.md (+ mock page).
 Not yet released on the work branch: the tv100p test fix (rides with the next release, his ok 2026-10-28).
+
+His answers 2026-10-31 on the Settings mock-up: 1a 2a 3a 4a 5a 6a 7a 8a (all my picks; see SETTINGS.md §7 and docs/decisions.md).
+→ BUILD the Settings reorganisation as its own release (v1.15). Beta question at ship time (CLAUDE.md: each release is played on the beta).

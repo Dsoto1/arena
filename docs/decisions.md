@@ -794,7 +794,7 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - Decided 2026-10-20 (his 1a–8a on the v1.08 mock-up, tools/plans/v108/MOCKUP.md): night torches as shown (pools + flames flicker, shadows
   still, phones pools only), night/moon as today, sand grain only, metal by a sheet re-bake (not a runtime pass), depth as shown.
 - Decided 2026-10-20 (his 1a 2a on the v1.08 build): Lighting Off = the v1.07 board (torches, sand grain, planks, depth all off); the
-  Lighting description stays as is. His idea: Settings due for a reorganisation (tab contents moved to where they belong) → backlog.
+  Lighting description stays as is [REPLACED 2026-10-31: v1.15 Settings (his 6a) — Lighting names the torchlight]. His idea: Settings due for a reorganisation (tab contents moved to where they belong) → backlog.
 - Decided 2026-10-20 (his 1b 2a 3a 4b 5a, tools/plans/v108b/NOTES.md): v1.08b = one figure re-bake (metal + 2× sheets for big screens,
   1× for phones; the download keeps 1×); Safari board 1.5× trial after v1.08b — REPLACES the open 406 sharpness question (shipped with a).
 - 2026-10-20: v1.08 SHIPPED (his "OK ship"): release/v1.08 + main at 0d12773; he runs bash flavius.sh release. Next: v1.08a sounds beta.
@@ -916,3 +916,11 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
 - 2026-10-29 his 1a 2a: Flavius's cost tag is AppName=FlaviusRule (the Project Control Center's convention) — REPLACES app=flavius (v1.14 7a):
   stack resources, site bucket + CloudFront, the budget's filter, status, the manifest; the old key removed. Ships now as v1.14b (no beta, no
   game change; server deploy for the tags).
+- 2026-10-31 his 1a–8a on the v1.15 Settings mock-up (tools/plans/v115/SETTINGS.md, settings-mock.html): tabs Play · Hints · Graphics ·
+  Crowd & voices · Themes · Audio · Accessibility · Data & saves; Crowd & voices its own tab (editor reacts + city picks + voices); Data &
+  saves a tab (saves, error log, Restore defaults; storage line only after a refused save); "Floating combat numbers" folds into Hit feedback
+  as "Off" with today's exact effect (text says so); Confirm End turn only in Play; one Quality card (Quality, Lighting, Portrait detail,
+  frame meter; Lighting stays its own row); phones keep the bottom pill row, shorter labels, Pause no longer clipped. No settings key or
+  default changes. REPLACES: v0.84 Saves/Restore in the header · v0.88 General grouping · v0.90 "Settings → On the board" placements ·
+  v0.98 "Board & pieces = old Tokens + Editors merged", its footer Saves link and the Accessibility copy of Confirm End turn · v1.07 editors
+  beside Blessings (400 s98-edpair) · the one-row cards of 263/277/288/321 · 2026-10-20 "Lighting description stays as is".
