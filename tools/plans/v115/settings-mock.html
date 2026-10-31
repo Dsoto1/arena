@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Settings Reorganisation</title>
+<!-- v1.15 SETTINGS REORGANISATION mock-up (tools/plans/v115/SETTINGS.md). Static, self-contained, no external scripts.
+     OLD = what v1.14b shows today (audited in the real window). NEW = the proposal. Markers: moved / renamed / merged / fixed / removed / new. -->
+<style>
+:root{--ink:#16100b;--panel:#241a12;--panel2:#2c2117;--line2:#4a3826;--gold:#c9a24a;--gold2:#e8c877;--bone:#efe3cc;--muted:#b8a78c;--dim:#8a7a62;
+ --mv:#5aa7e6;--rn:#d9a441;--mg:#b47be0;--fx:#5fc48a;--rm:#e0605a;--nw:#e8c877}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--bone);font:15px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header.top{padding:14px 16px;border-bottom:1px solid var(--line2);display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+header.top h1{font:400 22px Georgia,serif;color:var(--gold2);margin:0;letter-spacing:.04em}
+header.top .sub{color:var(--muted);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.mk{display:inline-flex;align-items:center;gap:4px;font:600 11px/1 ui-monospace,Menlo,monospace;padding:3px 6px;border-radius:4px;border:1px solid;white-space:nowrap}
+.mk.mv{color:var(--mv);border-color:var(--mv)}.mk.rn{color:var(--rn);border-color:var(--rn)}.mk.mg{color:var(--mg);border-color:var(--mg)}
+.mk.fx{color:var(--fx);border-color:var(--fx)}.mk.rm{color:var(--rm);border-color:var(--rm)}.mk.nw{color:var(--nw);border-color:var(--nw)}
+.ctl{display:flex;gap:8px;padding:10px 16px;flex-wrap:wrap;align-items:center;border-bottom:1px solid #00000060}
+.ctl span{color:var(--muted);font-size:13px}
+/* sandstone + carbon buttons, loosely the game's */
+.btn{font:600 13px system-ui,sans-serif;color:#2b1d0e;background:linear-gradient(#e6d3a8,#c7ab72);border:1px solid #8a6b3a;border-radius:6px;padding:7px 12px;cursor:pointer;
+ box-shadow:inset 0 1px 0 #fff6,0 2px 0 #5a4220}
+.btn.carbon{color:var(--bone);background:repeating-linear-gradient(45deg,#2a2a2a 0 3px,#1f1f1f 3px 6px);border-color:#555;box-shadow:inset 0 1px 0 #ffffff22,0 2px 0 #000}
+.btn.on{outline:2px solid var(--gold2)}
+.wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px}
+.wrap.solo{grid-template-columns:minmax(0,1fr)}.pane{min-width:0}
+.pane>h2{font:400 18px Georgia,serif;color:var(--gold2);margin:0 0 8px;letter-spacing:.05em}
+.pane>h2 small{font:12px system-ui;color:var(--muted);letter-spacing:0;margin-left:8px}
+.win{border:1px solid var(--line2);border-radius:10px;background:#1b130d;overflow:hidden}
+.whd{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line2)}
+.whd b{font:400 20px Georgia,serif;color:var(--gold2)}.whd .sp{flex:1}
+.wbody{display:grid;grid-template-columns:176px minmax(0,1fr);min-height:520px}
+.rail{padding:10px;border-right:1px solid var(--line2);display:flex;flex-direction:column;gap:2px}
+.rail .grp{font:600 10px ui-monospace,monospace;letter-spacing:.14em;color:var(--dim);padding:8px 8px 4px;text-transform:uppercase}
+.rail button{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;color:var(--bone);font-size:15px}
+.rail button:hover{background:#ffffff0c}.rail button.on{background:#3a2a18;color:var(--gold2);box-shadow:inset 3px 0 0 var(--gold)}
+.rail button .mk{margin-left:auto;font-size:9px;padding:2px 4px}
+.main{padding:12px 14px;min-width:0}
+.sec h3{font:400 18px Georgia,serif;color:var(--gold2);margin:0 0 2px}.sec p{margin:0 0 10px;color:var(--muted);font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line2);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+.card>h4{font:400 15px Georgia,serif;color:var(--gold2);margin:0 0 6px;letter-spacing:.05em;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.card>h4 small{font:11px ui-monospace,monospace;color:var(--dim);margin-left:auto}
+.rows{display:grid;gap:1px;background:#00000040;border:1px solid #3a2c1e;border-radius:6px;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--panel2);min-width:0}
+.row .t{flex:1;min-width:0}.row .t b{display:block;font-size:15px}.row .t .d{display:block;color:var(--muted);font-size:13px;margin-top:1px}
+.row .t .mk{margin:3px 4px 0 0}
+.row .t .was{display:block;color:var(--dim);font-size:12px;margin-top:2px;font-style:italic}
+.row.rm{opacity:.55;background:repeating-linear-gradient(135deg,#2c2117 0 8px,#33221a 8px 16px)}.row.rm .t b{text-decoration:line-through}
+.row.raw .t b{font:13px system-ui;font-weight:600}
+.seg{display:inline-flex;border:1px solid #6b5333;border-radius:5px;overflow:hidden;flex-shrink:0}
+.seg i{font-style:normal;font-size:12px;padding:5px 8px;border-left:1px solid #6b5333;color:var(--bone);white-space:nowrap}.seg i:first-child{border-left:0}
+.seg i.on{background:#3d2c16;color:var(--gold2);box-shadow:inset 0 -2px 0 var(--gold)}
+.sw{width:34px;height:18px;border-radius:9px;background:#6b5a3a;position:relative;flex-shrink:0}.sw::after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--gold2)}
+.sw.off{background:#3a3128}.sw.off::after{left:2px;right:auto;background:#7a6a55}
+.ck{width:13px;height:13px;border:1px solid #999;background:#eee;flex-shrink:0}
+.pill{font-size:12px;color:var(--bone);border:1px solid #6b5333;border-radius:5px;padding:4px 8px;white-space:nowrap;flex-shrink:0}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.grid span{font-size:11px;background:var(--panel2);border:1px solid #3a2c1e;border-radius:4px;padding:5px;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.wfoot{border-top:1px solid var(--line2);padding:8px 14px;color:var(--muted);font-size:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.note{color:var(--muted);font-size:12px;margin:4px 0 0}
+/* phone frame */
+.phone .win{width:390px;max-width:100%;margin:0 auto}
+.phone .wbody{grid-template-columns:minmax(0,1fr);min-height:0}.wbody>*{min-width:0}
+.phone .rail{order:2;flex-direction:row;overflow-x:auto;border-right:0;border-top:1px solid var(--line2);gap:6px;padding:8px}
+.phone .rail .grp{display:none}.phone .rail button{border:1px solid #6b5333;border-radius:16px;padding:6px 10px;font-size:13px;white-space:nowrap;flex-shrink:0}
+.phone .rail button.on{box-shadow:none;border-color:var(--gold)}
+.phone .row{flex-wrap:wrap}.phone .row:has(.seg) .t{flex-basis:100%}
+.phone .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}}
+@media (max-width:600px){.wrap{padding:16px 8px}.wbody{grid-template-columns:minmax(0,1fr)}.rail{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line2)}.rail .grp{display:none}
+ .rail button{white-space:nowrap;flex-shrink:0}.row{flex-wrap:wrap}.row:has(.seg) .t{flex-basis:100%}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.legend{margin-left:0}}
+</style></head>
+<body>
+<header class="top"><h1>⚙ Settings — old vs new</h1><span class="sub">v1.15 proposal · mock-up only · OLD = v1.14b as audited</span>
+<div class="legend"><span class="mk mv">↪ moved</span><span class="mk rn">✎ renamed</span><span class="mk mg">⊕ merged</span><span class="mk fx">✓ fixed text</span><span class="mk rm">✕ removed</span><span class="mk nw">＋ new tab</span></div></header>
+<div class="ctl"><span>View:</span><button class="btn on" data-view="both">Old + new</button><button class="btn" data-view="new">New only</button><button class="btn carbon" data-view="phone">New at 390 px</button>
+<span id="cnt"></span></div>
+<div class="wrap" id="wrap"></div>
+<script>
+/* row = [title, desc, control, opts]; control: 'sw' | 'sw0' | 'ck' | ['seg', ...labels, on index] | 'pill:Text' | 'grid' | 'pics' | 'text:..'
+   opts: {m:[['mv','from General']], was:'old label', rm:1} */
+const SEG=(...a)=>['seg',...a];
+const OLD={ver:'v1.14',rail:[['Play',[['general','🎛','General'],['help','💡','Hints & board']]],['Look',[['pieces','🗿','Board & pieces'],['themes','🎨','Themes']]],['Sound & access',[['audio','🔊','Audio'],['access','♿','Accessibility']]]],
+ head:'<button class="btn carbon">↺ Restore all defaults</button>',foot:'💾 Saves and backups live in <u>💾 Saves</u> on the main menu.',
+ pages:{
+ general:['General','How the game plays and talks to you.',[
+  ['🌐 Language',[['Language','Game terms — class names, CF, the Fate, Missio — stay English in every language. Switching reloads the page (asks first during a match).','pill:🇺🇸 English ▾']]],
+  ['🎲 Gameplay',[['CPU speed','Same switch as the arena bar. Step waits after each CPU action.',SEG('❚❚ Pause','Step','Slow','Normal','Fast',2)],
+   ['Animations','Flying stones and spears, the clean-up crew, market peeks.',SEG('Full','Quick','Off',0)],
+   ['Confirm before End turn','Asks once when you still have moves or attacks left.','sw0'],['Follow camera',"When zoomed in, the view follows whoever's turn it is.",'sw'],
+   ['Event briefing','The rounds, the rules and who fights, when the horns sound.','sw'],['Context menus','Right-click or long-press anything on the sand for its actions.','sw'],
+   ['⚔ Confirm attacks ⓘ','(old-style checkbox, text only in a tooltip; offline only)','ck',{raw:1}],
+   ['Famous visitors','Now and then an emperor, a poet or a legend takes a seat.','sw']]],
+  ['',[['🐞 Error log','If something misbehaves, copy this into your bug report.','pill:Open (0)']]],
+  ['📈 Performance',[['Show frame meter','Frames per second, the slowest frame and the draw layers, in a corner. The meter keeps the page awake while shown.','sw0']]]]],
+ help:['Hints & board','What the game tells you, and what shows on the sand.',[
+  ['💡 Hints & help <small>H toggles all</small>',[['Hints — master switch','Every hint at once. Never in Ranked online matches.','sw'],['🧭 Strategy panel','The hint box under your actions.','sw'],
+   ['📖 Rule popups','A short window the first time a rule comes up.','sw'],['✨ Turn hints','One suggested move glows gold, with a line on why.','sw'],
+   ['📜 Rule hints','Hovering a tile or button adds what the rules say.','sw'],['📰 Turn recap','What happened since your last turn.','sw']]],
+  ['🎯 On the board',[['Floating combat numbers','Damage, healing, CF and coin rise from the board.','sw'],['Card reveals','Drawn and played cards show in the arena corner.','sw'],
+   ['Log on the arena','The newest log lines over the arena corner.','sw0'],['Screen shake on big hits','6+ damage or a fall.','sw'],
+   ['Blood & severed limbs','Off hides the red; lost limbs still count.','sw'],['See-through','Fade pillars in front of what you look at (X).',SEG('auto','on','off',0)],
+   ['Hot seat: turn the board',"Each player's corner turns to the bottom on their turn.",'sw0']]],
+  ['🗣 Voices & bubbles',[['Spectator shouts','"Bread and blood!", "Murderer!" and the rest.','sw'],['The editor in the box','Flavius reacts — cheers, insults, the odd tear.','sw'],
+   ['CPU thought bubbles','CPU gladiators speak their minds.','sw'],['City-square chatter',"Townsfolk gossip in the Manager's forum.",'sw']]]]],
+ pieces:['Board & pieces','How gladiators, Blessings and the editor in the box look.',[
+  ['⚙ Quality',[['Quality','Auto picks for this device and adjusts while you play. Now: High.',SEG('Auto','High','Medium','Low',0)],
+   ['Lighting','By quality: Full. Full: the sun casts shadows from pillars, gladiators and beasts. Light: soft shadows at their feet only. Off: flat, the fastest.',SEG('By quality','Full','Light','Off',0)]]],
+  ['🏺 Blessings on pillars',[['Clay pots · Token rounds','Two picture cards.','pics'],['Floor spikes','The metal of the 3D spike caps.',SEG('Iron','Bronze',0)]]],
+  ['🎭 Editors in the box <small>0 / 12 cities won</small>',[['12 cities','One editor pick per city (unlocked by winning there).','grid']]],
+  ['🧑 Portraits',[['Portrait detail','Light and shade on every face. Light and Off draw them plainer and faster.',SEG('Full','Light','Off',0)]]],
+  ['🎯 Hits',[['Hit feedback','Full: your fights in full, the rest as faint marks. Mine: only your fights. Quiet: only your fighter’s body.',SEG('Full','Mine','Quiet',0)]]],
+  ['⭕ Token bases',[['Show token bases','The round base under each gladiator and beast. Off: they stand straight on the sand.','sw']]]]],
+ themes:['Themes','One click changes the whole palette. Your board and your panels follow.',[
+  ['🎨 Swatches',[['Themes · Roman · Accessibility · Arenas','Preset swatch grid.','grid']]],
+  ['✦ Tune it',[['Highlight strength','','text:50%'],['Outside-zone shade','','text:50%'],['Board brightness','','text:0'],['Location flavours','Each arena tints sand and stone its own way.','sw']]],
+  ['💾 Save this look',[['Name + Save · saved looks','Apply / delete.','pill:Save']]],
+  ['🖌 Custom colours (folded)',[['Interface · Board · Arena furniture','Colour pickers + Reset to default.','pill:▸']]]]],
+ audio:['Audio','Every arena has its own theme, unlocked by winning there.',[
+  ['🔊 Sound',[['Sound','M mutes everything.','sw'],['Arena music','Grows with the rounds.','sw'],['Sound effects','Hits, coin, cards, fanfares.','sw'],['Music between events',"Roma's theme, softly.",'sw'],
+   ['Music volume','','text:20'],['Effects volume','','text:55'],['Try it','',SEG('Hit','Coin','CF','Fall','Victory',-1)]]],
+  ['🎶 The music <small>1 of 17 themes yours</small>',[['Theme list','Locked ones folded.','pill:▸']]]]],
+ access:['Accessibility','Bigger text, calmer motion, colours you can tell apart.',[
+  ['👁 Reading & motion',[['Text size','Panels, log and windows. The arena itself keeps its size.',SEG('100%','115%','130%',0)],
+   ['Reduce motion','No pulses, glows or camera eases. Every effect has a still version.','sw0'],
+   ['Colour-blind colours','Okabe–Ito class colours, a class letter on every token, blue/orange signals.','pill:Off ▾'],
+   ['Confirm before End turn','Also in General.','sw0']]],
+  ['◐ Preview · 📜 Text sample · ⌨ Keyboard note',[['Live preview','Class chips, signals, a log sample at the chosen size.','pill:—']]]]]}};
+
+const NEW={ver:'v1.15',rail:[['Play',[['general','⚔','Play',['rn','was General']],['help','💡','Hints',['rn','was Hints & board']]]],
+  ['Look',[['pieces','🖥','Graphics',['rn','was Board & pieces']],['crowd','🏟','Crowd & voices',['nw','new']],['themes','🎨','Themes']]],
+  ['Sound & access',[['audio','🔊','Audio'],['access','♿','Accessibility']]],['Data',[['data','💾','Data & saves',['nw','new']]]]],
+ head:'',foot:'Saved in this browser · changes apply at once',
+ pages:{
+ general:['Play','How a match plays.',[
+  ['🌐 Language',[['Language','Game terms (class names, CF, the Fate, Missio) stay English. Switching reloads the page.','pill:🇺🇸 English ▾',{m:[['fx','shorter']]}]]],
+  ['⏱ Pace',[['CPU speed','Same as the arena bar; kept between events. Step waits after each CPU action.',SEG('❚❚ Pause','Step','Slow','Normal','Fast',2),{m:[['fx','says it is remembered (v1.11c)']]}],
+   ['Animations','Flying stones and spears, the clean-up crew, market rolls. Quick halves them.',SEG('Full','Quick','Off',0),{m:[['fx','']]}]]],
+  ['🎲 Turns',[['Confirm before End turn','Asks when you still have moves or attacks left.','sw0'],
+   ['Confirm attacks','Asks “Strike …?” before each attack. Not online.','sw0',{m:[['fx','was a raw checkbox + tooltip']]}],
+   ['Event briefing','The rounds, the rules and who fights, when the horns sound.','sw'],
+   ['Context menus','Right-click or long-press anything on the sand for its actions.','sw'],
+   ['Hot seat: turn the board',"Each player's corner turns to the bottom on their turn.",'sw0',{m:[['mv','from Hints & board']]}]]],
+  ['🎥 Camera',[['Follow camera',"When zoomed in, the view follows whoever's turn it is.",'sw'],
+   ['See-through','Fade pillars in front of what you look at. X toggles.',SEG('Auto','On','Off',0),{m:[['mv','from Hints & board'],['fx','buttons were lower-case, untranslated']]}]]]]],
+ help:['Hints','What the game tells you.',[
+  ['💡 Hints & help <small>H toggles all</small>',[['Hints — master switch','Every hint at once. Never in Ranked online matches.','sw'],['🧭 Strategy panel','The hint box under your actions.','sw'],
+   ['📖 Rule popups','A short window the first time a rule comes up.','sw'],['✨ Turn hints','One suggested move glows gold, with a line on why.','sw'],
+   ['📜 Rule hints','Hovering a tile or button adds what the rules say.','sw'],['📰 Turn recap','What happened since your last turn.','sw']]],
+  ['📣 On the board',[['Hit feedback','Full: your fights in full, others faint. Mine: only your fights. Quiet: only your fighter’s body. Off: no numbers.',SEG('Full','Mine','Quiet','Off',0),{m:[['mv','from Board & pieces → Hits'],['mg','+ Floating combat numbers = Off']],was:'Floating combat numbers (switch) + Hit feedback'}],
+   ['Card reveals','Drawn and played cards show in the arena corner.','sw'],
+   ['Log on the arena','The newest log lines over the arena corner. 📌 does the same.','sw0']]]]],
+ pieces:['Graphics','How the arena and its pieces are drawn.',[
+  ['⚙ Quality',[['Quality','Auto picks for this device and adjusts while you play. Now: High.',SEG('Auto','High','Medium','Low',0)],
+   ['Lighting','By quality: Full. Full: sun and torch shadows, sand grain, depth. Light: soft shadows at the feet. Off: the flat board, fastest.',SEG('By quality','Full','Light','Off',0),{m:[['fx','names the v1.08 torchlight']]}],
+   ['Portrait detail','Light and shade on faces. Light and Off are plainer and faster.',SEG('Full','Light','Off',0),{m:[['mv','from its own Portraits card']]}],
+   ['Show frame meter','Frames per second in a corner. Keeps the page awake while shown.','sw0',{m:[['mv','from General → Performance']]}]]],
+  ['🗿 Pieces',[['Show token bases','The round base under gladiators and beasts.','sw',{m:[['mv','own card → here']]}],
+   ['Blood & severed limbs','Off hides the red; lost limbs still count.','sw',{m:[['mv','from Hints & board']]}]]],
+  ['🏺 Blessings on pillars',[['Clay pots · Token rounds','Two picture cards (unchanged).','pics'],['Floor spikes','The metal of the spike caps.',SEG('Iron','Bronze',0)]]]]],
+ crowd:['Crowd & voices','Who watches, who talks.',[
+  ['🎭 Editors in the box <small>0 / 12 cities won</small>',[['Editor reacts','Cheers, insults, the odd tear from the box.','sw',{m:[['mv','from Hints & board → Voices'],['rn','']],was:'The editor in the box'}],
+   ['12 cities','Who sits in each city’s box. Win there to unlock its editor.','grid',{m:[['mv','from Board & pieces']]}]]],
+  ['🗣 Voices',[['Spectator shouts','"Bread and blood!", "Murderer!" and the rest.','sw',{m:[['mv','from Hints & board']]}],
+   ['CPU thought bubbles','CPU gladiators speak their minds.','sw',{m:[['mv','from Hints & board']]}],
+   ['City-square chatter',"Townsfolk gossip in the Manager's forum.",'sw',{m:[['mv','from Hints & board']]}],
+   ['Famous visitors','Now and then an emperor, a poet or a legend takes a seat.','sw',{m:[['mv','from General']]}]]]]],
+ themes:['Themes','One click changes the whole palette.',[
+  ['🎨 Swatches',[['Themes · Roman · Accessibility · Arenas','Preset swatch grid (unchanged).','grid']]],
+  ['✦ Tune it',[['Highlight strength','','text:50%'],['Outside-zone shade','','text:50%'],['Board brightness','','text:0'],['Location flavours','Each arena tints sand and stone its own way.','sw']]],
+  ['💾 Save this look',[['Name + Save · saved looks','Apply / delete.','pill:Save']]],
+  ['🖌 Custom colours (folded)',[['Interface · Board · Arena furniture','Colour pickers + Reset to default.','pill:▸']]]]],
+ audio:['Audio','Every arena has its own theme, unlocked by winning there.',[
+  ['🔊 Sound',[['Sound','M mutes everything.','sw'],['Arena music','Grows with the rounds.','sw'],['Sound effects','Hits, coin, cards, fanfares.','sw'],['Music between events',"Roma's theme, softly.",'sw'],
+   ['Music volume','','text:20'],['Effects volume','','text:55'],['Try it','',SEG('Hit','Coin','CF','Fall','Victory',-1)]]],
+  ['🎶 The music <small>1 of 17 themes yours</small>',[['Theme list','Locked ones folded.','pill:▸']]]]],
+ access:['Accessibility','Bigger text, calmer motion, colours you can tell apart.',[
+  ['👁 Reading & motion',[['Text size','Panels, log and windows. The arena keeps its size.',SEG('100%','115%','130%',0)],
+   ['Reduce motion','No pulses, glows or camera eases. Every effect has a still version.','sw0'],
+   ['Screen shake on big hits','6+ damage or a fall.','sw',{m:[['mv','from Hints & board']]}],
+   ['Colour-blind colours','Okabe–Ito class colours, a class letter on every token, blue/orange signals.','pill:Off ▾'],
+   ['Confirm before End turn','—','sw0',{rm:1,m:[['rm','duplicate; stays in Play']]}]]],
+  ['◐ Preview · 📜 Text sample · ⌨ Keyboard note',[['Live preview','Unchanged.','pill:—']]]]],
+ data:['Data & saves','Your saves, backups and bug reports.',[
+  ['💾 Saves',[['Saves & backups','Game saves, match saves and backup files.','pill:Open 💾 Saves',{m:[['mv','was the footer link']]}],
+   ['Settings storage','Saved in this browser. Shown only when the browser refused a save: “Kept in a backup cookie.”','text:✓',{m:[['nw','422 status, read-only']]}]]],
+  ['🛠 Help us fix it',[['🐞 Error log','If something misbehaves, copy this into your bug report.','pill:Open (0)',{m:[['mv','from General']]}]]],
+  ['↺ Reset',[['Restore all defaults','Settings and theme. Saves stay.','pill:↺ Restore',{m:[['mv','from the window header']]}]]]]]}};
+
+const esc=s=>String(s);
+function ctl(c){if(Array.isArray(c)){const on=c[c.length-1];return `<span class="seg">${c.slice(1,-1).map((l,i)=>`<i class="${i===on?'on':''}">${l}</i>`).join('')}</span>`}
+ if(c==='sw')return '<span class="sw"></span>';if(c==='sw0')return '<span class="sw off"></span>';if(c==='ck')return '<span class="ck"></span>';
+ if(c==='grid')return '';if(c==='pics')return '<span class="pill">🏺 ◉ ｜ 🪙 ○</span>';
+ if(c.startsWith('pill:'))return `<span class="pill">${c.slice(5)}</span>`;if(c.startsWith('text:'))return `<span class="pill">${c.slice(5)}</span>`;return ''}
+const MK={mv:'↪',rn:'✎',mg:'⊕',fx:'✓',rm:'✕',nw:'＋'};
+function row([t,d,c,o={}]){const marks=(o.m||[]).map(([k,txt])=>`<span class="mk ${k}">${MK[k]} ${txt||({mv:'moved',rn:'renamed',mg:'merged',fx:'text fixed',rm:'removed',nw:'new'})[k]}</span>`).join('');
+ const grid=c==='grid'?`<div class="grid">${['Syracusae','Verona','Arles','Capua','Thysdrus','Roma','Nemausus','Pompeii','Leptis Magna','Uthina','Pola','Puteoli'].map(x=>`<span>${x}</span>`).join('')}</div>`:'';
+ return `<div class="row${o.rm?' rm':''}${o.raw?' raw':''}"><span class="t"><b>${t}</b>${d?`<span class="d">${d}</span>`:''}${o.was?`<span class="was">was: ${o.was}</span>`:''}${marks?`<span>${marks}</span>`:''}${grid}</span>${ctl(c)}</div>`}
+function page(P,k){const [h,p,cards]=P.pages[k];return `<div class="sec"><h3>${h}</h3><p>${p}</p></div>`+cards.map(([ct,rows])=>`<section class="card">${ct?`<h4>${ct}</h4>`:''}<div class="rows">${rows.map(row).join('')}</div></section>`).join('')}
+function win(P,id,cur){const rail=P.rail.map(([g,list])=>`<div class="grp">${g}</div>`+list.map(([k,ic,l,m])=>`<button data-w="${id}" data-k="${k}" class="${k===cur?'on':''}"><span>${ic}</span>${l}${m?`<span class="mk ${m[0]}" title="${m[1]}">${MK[m[0]]}</span>`:''}</button>`).join('')).join('');
+ return `<div class="win"><div class="whd"><span>⚙</span><b>Settings</b><span class="sp"></span>${P.head}<button class="btn">✕</button></div>
+  <div class="wbody"><nav class="rail">${rail}</nav><div class="main" id="m-${id}">${page(P,cur)}</div></div><div class="wfoot">${P.foot}<span style="margin-left:auto">arena · ${P.ver}</span></div></div>`}
+const st={view:'both',old:'general',nw:'general'};
+function render(){const W=document.getElementById('wrap');W.className='wrap'+(st.view!=='both'?' solo':'')+(st.view==='phone'?' phone':'');
+ W.innerHTML=(st.view==='both'?`<div class="pane"><h2>OLD <small>v1.14b · 6 tabs, as the player sees it</small></h2>${win(OLD,'old',st.old)}</div>`:'')+
+  `<div class="pane"><h2>NEW <small>proposal · 8 tabs${st.view==='phone'?' · 390 px, bottom pill row':''}</small></h2>${win(NEW,'nw',st.nw)}</div>`;
+ document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===st.view));
+ let n={mv:0,rn:0,mg:0,fx:0,rm:0,nw:0};for(const k in NEW.pages)for(const [,rows] of NEW.pages[k][2])for(const r of rows)for(const [m] of (r[3]&&r[3].m)||[])n[m]++;
+ document.getElementById('cnt').textContent=`New layout: ${n.mv} moved · ${n.rn} renamed · ${n.mg} merged · ${n.fx} text fixed · ${n.rm} removed`}
+document.addEventListener('click',e=>{const v=e.target.closest('[data-view]');if(v){st.view=v.dataset.view;render();return}
+ const b=e.target.closest('.rail button');if(b){const id=b.dataset.w,k=b.dataset.k;if(id==='old')st.old=k;else{st.nw=k;
+  /* follow along: the old tab that held most of this page */
+  const map={general:'general',help:'help',pieces:'pieces',crowd:'help',themes:'themes',audio:'audio',access:'access',data:'general'};if(st.view==='both')st.old=map[k]||st.old}
+  render()}});
+render();
+</script>
+</body></html>
