@@ -1,0 +1,2 @@
+/* G1 low-fame clemency: a house under fame 18 gets the editor's clemency 40% instead of 20% (rules.death 80 -> 60 for its fighters' Fates) */
+{const base=leagueFate;leagueFate=function(glad,row,mgr){const w=W_();if(!(mgr&&(mgr.fame||0)<18&&w&&w.rules))return base.apply(this,arguments);const d0=w.rules.death;w.rules.death=Math.round((d0??80)*0.75);try{return base.apply(this,arguments)}finally{w.rules.death=d0}}}
