@@ -7,10 +7,12 @@ const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 /* v0.98 (246-v98ui): the groups are cards on their rail pages — Gameplay on General, Hints & help + On the board on Hints & board, voices there too */
 const g=await pg.evaluate(async()=>{openSettings('general');await new Promise(r=>setTimeout(r,500));const B=document.getElementById('mBody');
   const cardOf=sel=>{const e=B.querySelector(sel);const c=e&&e.closest('.s98-card');return c?c.querySelector('h3').textContent.trim():''};
-  const gp=['[data-sspeed]','[data-anim88]','[data-set="confirmEnd"]','[data-set="cam88"]','[data-set="briefing"]','[data-set="ctxMenu"]'].map(cardOf);
+  const gp=['[data-sspeed]','[data-anim88]','[data-set="confirmEnd"]','[data-set="cam88"]','[data-set="briefing"]','[data-set="ctxMenu"]','[data-sxray]'].map(cardOf);
   B.querySelector('[data-stab="help"]').click();await new Promise(r=>setTimeout(r,300));
-  const hp=[cardOf('[data-set="hints"]'),cardOf('[data-set="fx"]'),cardOf('[data-sxray]')];const hs=[gp[0],hp[0],hp[1]];
-  const r={hs,order:gp.every(x=>/Gameplay/.test(x))&&/Hints/.test(hp[0])&&/On the board/.test(hp[1])&&/On the board/.test(hp[2]),voices:!!B.querySelector('[data-set="thoughts"]')};
+  const hp=[cardOf('[data-set="hints"]'),cardOf('[data-hit115]')];const hs=[gp[0],hp[0],hp[1]];
+  /* v1.15 (430): Play = Pace · Turns · Camera (See-through moved here); fx = Hit feedback Off on the board; the voices on Crowd & voices */
+  const r={hs,order:/Pace/.test(gp[0])&&/Pace/.test(gp[1])&&/Turns/.test(gp[2])&&/Camera/.test(gp[3])&&/Turns/.test(gp[4])&&/Turns/.test(gp[5])&&/Camera/.test(gp[6])&&/Hints/.test(hp[0])&&/On the board/.test(hp[1])};
+  B.querySelector('[data-stab="crowd"]').click();await new Promise(r=>setTimeout(r,300));r.voices=!!B.querySelector('[data-set="thoughts"]');
   B.querySelector('[data-stab="general"]').click();await new Promise(r=>setTimeout(r,300));
   B.querySelector('[data-anim88="off"]').click();r.off=SETTINGS.anim88==='off';const _S=window.S;window.S={};r.animOff=!animOn();window.S=_S;
   B.querySelector('[data-anim88="full"]').click();
@@ -19,7 +21,7 @@ const g=await pg.evaluate(async()=>{openSettings('general');await new Promise(r=
   const s=document.querySelectorAll('#mBody .s98-range input[type=range][data-audv]');r.sliders=s.length;r.sw=s.length?s[0].getBoundingClientRect().width:0;
   r.fold=!!document.querySelector('#mBody details.lk88');r.rows=document.querySelectorAll('#audTracks .trackrow').length;try{audListRefresh()}catch(e){r.err=e.message}r.rows2=document.querySelectorAll('#audTracks .trackrow').length;
   CUR_MODAL.done(null);return r});
-ok(/Gameplay/.test(g.hs[0])&&/Hints/.test(g.hs[1])&&/On the board/.test(g.hs[2]),'groups as cards '+g.hs);
+ok(/Pace/.test(g.hs[0])&&/Hints/.test(g.hs[1])&&/On the board/.test(g.hs[2]),'groups as cards '+g.hs);
 ok(g.order&&g.voices,'rows sit under their groups '+JSON.stringify(g));
 ok(g.off&&g.animOff,'Animations Off → no animations');ok(g.camOff&&g.camOn,'Follow camera switch');
 ok(g.sliders===2&&g.sw>150,'volume sliders full width '+g.sw);ok(g.fold&&g.rows===g.rows2&&!g.err,'locked themes folded, refresh keeps rows');

@@ -29,7 +29,7 @@ const setUI=(pg,cl)=>pg.evaluate(async cl=>{const W8=ms=>new Promise(r=>setTimeo
   try{CUR_MODAL&&CUR_MODAL.done(null)}catch(e){}await W8(100);return miss},cl);
 /* what the panel shows: the pressed button of each group, every switch */
 const PANEL=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};openSettings();await W8(250);
-  for(const p of ['general','help','pieces','themes','access']){const t=document.querySelector(`[data-stab="${p}"]`);if(t)t.click();await W8(120);
+  for(const p of ['general','help','pieces','crowd','themes','access']){const t=document.querySelector(`[data-stab="${p}"]`);if(t)t.click();await W8(120);
     document.querySelectorAll('#s98 button.on').forEach(e=>{for(const k of Object.keys(e.dataset))if(!/^(en84|tip|stab|sspeed)$/.test(k))o[k]=e.dataset[k]});
     document.querySelectorAll('#s98 input[type=checkbox][data-set]').forEach(e=>o['cb.'+e.dataset.set]=e.checked);
     if(p==='pieces'){const n=document.getElementById('l111now'),d=document.getElementById('q110d');o.note=n&&!n.hidden?n.textContent:'';o.qd=d?d.textContent:''}}
@@ -42,9 +42,11 @@ const start=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,m
   for(let i=0;i<20;i++){if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(100)}SPEED='pause';return !!S});
 const same=(a,b,keys)=>keys.filter(k=>JSON.stringify(a[k])!==JSON.stringify(b[k])).map(k=>k+':'+JSON.stringify(a[k])+'≠'+JSON.stringify(b[k]));
 /* scenario A: everything off its default */
-const CL_A=[['pieces','[data-q110=medium]'],['pieces','[data-light106=full]'],['general','[data-anim88=quick]'],['help','[data-sxray=off]'],['pieces','[data-face99=light]'],
-  ['pieces','[data-hit100=quiet]'],['pieces','[data-spike98=bronze]'],['access','[data-ts98="115"]'],['help','[data-set=fx]'],['help','[data-set=shake]'],['help','[data-set=gore]'],
-  ['help','[data-set=flavius]'],['help','[data-set=thoughts]'],['general','[data-set=cam88]'],['pieces','[data-set=bases101]'],['general','[data-set=famous]'],['access','[data-set=calm]'],['help','[data-set=reveals]']];
+/* v1.15 (430): the rows' new tabs — See-through → Play, Hit feedback → Hints (fx = its "Off"), Screen shake → Accessibility, Blood → Graphics,
+   Editor reacts / thought bubbles / famous visitors → Crowd & voices; the keys are the same */
+const CL_A=[['pieces','[data-q110=medium]'],['pieces','[data-light106=full]'],['general','[data-anim88=quick]'],['general','[data-sxray=off]'],['pieces','[data-face99=light]'],
+  ['help','[data-hit100=quiet]'],['pieces','[data-spike98=bronze]'],['access','[data-ts98="115"]'],['help','[data-hit115=off]'],['access','[data-set=shake]'],['pieces','[data-set=gore]'],
+  ['crowd','[data-set=flavius]'],['crowd','[data-set=thoughts]'],['general','[data-set=cam88]'],['pieces','[data-set=bases101]'],['crowd','[data-set=famous]'],['access','[data-set=calm]'],['help','[data-set=reveals]']];
 const WANT_A={mode:'medium',n:'medium',pref:'full',anim:'quick',xray:'off',calm:true,spike:'#9a6a32',tscale:115,face:'light',hit:'quiet',fx:false,shake:false,gore:false,flavius:false,thoughts:false,cam:false,bases:false,famous:false,reveals:false};
 const CL_B=[['pieces','[data-q110=low]'],['pieces','[data-light106=q]']];
 const WANT_B={mode:'low',n:'low',pref:'off'};

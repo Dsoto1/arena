@@ -29,7 +29,7 @@ const s1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
       const v1=!!audSet()[a];get().click();await W8(120);((v1===!c0)&&(!!audSet()[a]===c0)?o.flip:o.bad).push('aud:'+a)}}
   /* segmented switches */
   await go('general');const a0=SETTINGS.anim88||'full';box().querySelector('[data-anim88="quick"]').click();await W8(100);o.anim=SETTINGS.anim88==='quick';box().querySelector(`[data-anim88="${a0}"]`).click();
-  await go('help');const x0=SETTINGS.xray||'auto';box().querySelector('[data-sxray="off"]').click();await W8(250);o.xray=SETTINGS.xray==='off';box().querySelector(`[data-sxray="${x0}"]`).click();await W8(250);
+  await go('general'); /* v1.15 (430): See-through lives in Play → Camera */const x0=SETTINGS.xray||'auto';box().querySelector('[data-sxray="off"]').click();await W8(250);o.xray=SETTINGS.xray==='off';box().querySelector(`[data-sxray="${x0}"]`).click();await W8(250);
   await go('pieces');o.pots=[];for(const v of ['tokens','pots']){box().querySelector(`[data-pots90="${v}"]`).click();await W8(150);o.pots.push(SETTINGS.pots90===v||(v==='pots'&&SETTINGS.pots90!=='tokens'))}
   o.potImgs=[...box().querySelectorAll('.s98-pic img')].map(i=>i.complete&&i.naturalWidth>0);
   box().querySelector('[data-spike98="bronze"]').click();await W8(250);o.bronze=String(THEME.spike).toLowerCase()===SET98_SPIKE.bronze&&!!box().querySelector('[data-spike98="bronze"].on');
@@ -37,7 +37,8 @@ const s1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   const q0=SETTINGS.quality110||'auto';box().querySelector('[data-q110="low"]').click();await W8(100);o.lite=SETTINGS.lite84==='on'&&!box().querySelector('[data-lite84]');box().querySelector(`[data-q110="${q0}"]`).click();
   const st0=(box().querySelector('.s98-tok.on')||{dataset:{}}).dataset.tokstyle;const other=[...box().querySelectorAll('[data-tokstyle]')].map(x=>x.dataset.tokstyle).find(x=>x!==st0);
   if(other){box().querySelector(`[data-tokstyle="${other}"]`).click();await W8(300);o.tok=!!box().querySelector(`.s98-tok.on[data-tokstyle="${other}"]`)&&(SETTINGS.tokenStyle===other||!!SETTINGS.mini3d===(other==='mini3d'));box().querySelector(`[data-tokstyle="${st0}"]`).click();await W8(300)}else o.tok=!box().querySelector('[data-tokstyle]')&&tokenStyle()==='figure'; /* v1.07 (400): the token-style choice is retired — one 3D look */
-  o.eds=box().querySelectorAll('.s98-eds select[data-spcity]').length;
+  await go('crowd'); /* v1.15 (430): the Editors grid lives in Crowd & voices */o.eds=box().querySelectorAll('.s98-eds select[data-spcity]').length;
+  /* v1.15 (430): Floating combat numbers = Hit feedback Off (SETTINGS.fx) */await go('help');{const h0=SETTINGS.hit100||'full',f0=SETTINGS.fx;box().querySelector('[data-hit115="off"]').click();await W8(150);const v1=SETTINGS.fx;box().querySelector(`[data-hit100="${h0}"]`).click();await W8(150);o.fx=v1===false&&SETTINGS.fx===true&&SETTINGS.hit100===h0;if(f0===false){box().querySelector('[data-hit115="off"]').click();await W8(150)}}
   await go('access');box().querySelector('[data-ts98="130"]').click();await W8(250);o.ts=SETTINGS.tscale===130&&document.body.classList.contains('ts130');box().querySelector('[data-ts98="100"]').click();await W8(250);o.ts=o.ts&&SETTINGS.tscale===100;
   const sel=box().querySelector('select[data-cvd84]');sel.value='rg';sel.dispatchEvent(new Event('change',{bubbles:true}));await W8(250);o.cvd=SETTINGS.cvdMode==='rg'&&SETTINGS.cvd===true;
   const sel2=box().querySelector('select[data-cvd84]');sel2.value='off';sel2.dispatchEvent(new Event('change',{bubbles:true}));await W8(250);o.cvd=o.cvd&&SETTINGS.cvdMode==='off';
@@ -52,13 +53,13 @@ const s1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   o.flag=!!dd.querySelector('svg.flag91');o.select=!!box().querySelector('select[data-lang84][hidden]');
   document.activeElement.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await W8(100);o.l2=menu.hidden;
   dd.click();await W8(100);document.body.click();await W8(100);o.l3=box().querySelector('.s98-menu').hidden;
-  o.foot=!!box().querySelector('.s98-foot [data-sv84]');o.rst=!!box().querySelector('.s98-hd [data-rst84]');
+  await go('data');o.foot=!!box().querySelector('.s98-main [data-sv84]')&&!box().querySelector('.s98-foot [data-sv84]');o.rst=!!box().querySelector('.s98-main [data-rst84]')&&!box().querySelector('.s98-hd [data-rst84]');
   while(CUR_MODAL){CUR_MODAL.done(null);await W8(100)}return o});
 ok(s1.full&&s1.close,'Settings opens full screen with the ✕ '+JSON.stringify([s1.full,s1.close]));
-ok(JSON.stringify(s1.rail)===JSON.stringify(['general','help','pieces','themes','audio','access'])&&s1.grp===3,'the rail: Play · Look · Sound & access '+JSON.stringify(s1.rail));
+ok(JSON.stringify(s1.rail)===JSON.stringify(['general','help','pieces','crowd','themes','audio','access','data'])&&s1.grp===4,'the rail: Play · Look · Sound & access · Data (v1.15) '+JSON.stringify(s1.rail));
 ok(!s1.removed.length,'Saves tab, home-city banners, spectator emotes, the armor style are gone '+JSON.stringify(s1.removed));
-ok(!s1.bad.length&&s1.flip.length>=24,'every switch flips its setting and back '+JSON.stringify({bad:s1.bad,n:s1.flip.length}));
-ok(['briefing','ctxMenu','cam88','confirmEnd','famous','fx','reveals','capFeed','shake','gore','hsTurn90','shoutsSpect','flavius','thoughts','cityChatter','hintDock','rulePops','turnHints','ruleHints','turnRecap','calm','locFlavor','aud:on','aud:sfx'].every(k=>s1.flip.includes(k)),'all the known switches are there '+JSON.stringify(s1.flip));
+ok(!s1.bad.length&&s1.flip.length>=23&&s1.fx,'every switch flips its setting and back (fx through Hit feedback Off, v1.15) '+JSON.stringify({bad:s1.bad,n:s1.flip.length,fx:s1.fx}));
+ok(['briefing','ctxMenu','cam88','confirmEnd','famous','reveals','capFeed','shake','gore','hsTurn90','shoutsSpect','flavius','thoughts','cityChatter','hintDock','rulePops','turnHints','ruleHints','turnRecap','calm','locFlavor','aud:on','aud:sfx'].every(k=>s1.flip.includes(k)),'all the known switches are there '+JSON.stringify(s1.flip));
 ok(s1.anim&&s1.xray&&s1.lite&&s1.tok&&s1.pots.every(Boolean),'segments + picture cards set their keys '+JSON.stringify([s1.anim,s1.xray,s1.lite,s1.tok,s1.pots]));
 ok(s1.potImgs.length===2&&s1.potImgs.every(Boolean),'the Blessings pictures load '+JSON.stringify(s1.potImgs));
 ok(s1.bronze&&s1.iron,'Floor spikes Iron / Bronze set THEME.spike');ok(s1.eds>=12,'the Editors grid has every city '+s1.eds);
@@ -66,7 +67,7 @@ ok(s1.ts&&s1.cvd,'text size + colour-blind on Accessibility '+JSON.stringify([s1
 ok(s1.sw>=15&&s1.swH>=20&&s1.preset&&s1.sliders===3&&s1.look&&s1.cust>=10,'Themes: swatches, Tune it, Save this look, custom colours '+JSON.stringify([s1.sw,s1.swH,s1.preset,s1.sliders,s1.look,s1.cust]));
 ok(s1.vol===2&&s1.tracks&&s1.tryit===5,'Audio: volumes, the music, Try it');
 ok(s1.l0&&s1.l1&&s1.items.length>=9&&s1.items[0]==='en'&&s1.items.includes('es')&&s1.cur==='en'&&s1.flag&&s1.select&&s1.l2&&s1.l3,'language: one dropdown with the flag, every language, Esc / outside click close '+JSON.stringify([s1.l0,s1.l1,s1.items,s1.cur,s1.flag,s1.select,s1.l2,s1.l3]));
-ok(s1.foot&&s1.rst,'footer → 💾 Saves; Restore all defaults in the header');
+ok(s1.foot&&s1.rst,'Data & saves → 💾 Saves and Restore all defaults (v1.15: out of the footer and header)');
 
 /* ── 2 · Tactics ── */
 const t1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};showRules();await W8(700);const root=document.getElementById('tac98');
@@ -116,7 +117,7 @@ const ph=await mk(390,844);
 const p1=await ph.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const side=()=>document.documentElement.scrollWidth>innerWidth+1||document.body.scrollWidth>innerWidth+1;const o={bad:[]};
   while(CUR_MODAL){CUR_MODAL.done(null);await W8(100)}await W8(600);if(side())o.bad.push('menu');
   openSettings();await W8(700);const rail=document.querySelector('.s98-rail');o.rail=!!rail&&getComputedStyle(rail).flexDirection==='row'&&rail.getBoundingClientRect().bottom>innerHeight-80;
-  for(const k of ['general','help','pieces','themes','audio','access']){document.querySelector(`#setBody [data-stab="${k}"]`).click();await W8(250);if(side())o.bad.push('set:'+k);
+  for(const k of ['general','help','pieces','crowd','themes','audio','access','data']){document.querySelector(`#setBody [data-stab="${k}"]`).click();await W8(250);if(side())o.bad.push('set:'+k);
     const main=document.querySelector('.s98-main');for(const el of main.querySelectorAll('.s98-row,.s98-card,.s98-lang'))if(el.getBoundingClientRect().right>innerWidth+1){o.bad.push('wide:'+k+':'+el.className);break}
     const sw=main.querySelector('input.s98-sw');if(sw&&sw.getBoundingClientRect().width<40)o.bad.push('sw:'+k)}
   CUR_MODAL&&CUR_MODAL.done(null);await W8(300);showRules();await W8(700);

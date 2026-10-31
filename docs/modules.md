@@ -1757,3 +1757,11 @@ their bullet at the END of the "Systems" list below (the release that ships them
   lookups (REPLACE the hardcoded ids), `audit` (read-only), the switch log hand-over in `server_dir`; template `SwitchLogs` (7 days). FSH_VER 15.
 - **v1.14b** (no module): cost tag AppName=FlaviusRule REPLACES app=flavius — server/template.yaml Tags + Budget CostFilters
   `user:AppName$FlaviusRule`, flavius.sh FSH_VER 18 `TAGK/TAGV` + `OLDK` (old key taken off the bucket + CloudFront), .control-center/project.json costTag.
+- **430-v115set** (v1.15, src/ui) SETTINGS REORGANISATION (his 1a–8a 2026-10-31, tools/plans/v115/SETTINGS.md + settings-mock.html): wraps
+  settingsHTML last and re-sorts the finished v0.98 pages by their controls (no key / default changes). Rail Play (`general`) · Hints (`help`) ·
+  Graphics (`pieces`) · Crowd & voices (`crowd`, new) · Themes · Audio · Accessibility · Data & saves (`data`, new); sponsors → crowd, saves → data.
+  Hit feedback gains "Off" = SETTINGS.fx=false (the old Floating combat numbers switch, same effect); one Quality card (Quality, Lighting with
+  the torchlight text, Portrait detail, frame meter); Confirm attacks a normal row; See-through Auto/On/Off translated; Screen shake →
+  Accessibility; Confirm End turn only in Play; Restore + Saves + Error log + 422's storage line (only after a refused save) on Data & saves,
+  setRestore84 returns to the page; 400's s98-edpair unused; phones: short pill labels (data-s115), segmented rows wrap (Pause no longer
+  clipped). Unknown rows a later module adds stay on their page ("More"). Kill switch flavius_v115setoff=1 = v1.14b. Test tv115s.

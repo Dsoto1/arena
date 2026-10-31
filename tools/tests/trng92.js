@@ -26,7 +26,7 @@ ok(A.phase===B.phase&&A.cur===B.cur,'still the same turn and phase '+JSON.string
 ok(done.every(d=>!d.includes('!')),'every screen opened: '+done.join(', '));
 /* the log itself works */
 const L=await pg.evaluate(async()=>{const m=ERR92.n;setTimeout(()=>{throw new Error('trng92 probe')},0);await new Promise(r=>setTimeout(r,100));try{null.x}catch(e){console.error(e)}
-  openSettings('general');await new Promise(r=>setTimeout(r,500));const b=document.querySelector('[data-err92o]');const o={got:errNew92(m).map(e=>e.kind+':'+e.msg),btn:b&&b.textContent};if(b)b.click();await new Promise(r=>setTimeout(r,200));
+  openSettings('data'); /* v1.15 (430): the Error log lives in Data & saves */await new Promise(r=>setTimeout(r,500));const b=document.querySelector('[data-err92o]');const o={got:errNew92(m).map(e=>e.kind+':'+e.msg),btn:b&&b.textContent};if(b)b.click();await new Promise(r=>setTimeout(r,200));
   o.pop=document.querySelectorAll('#err92pop .err92e').length;o.stored=JSON.parse(localStorage.getItem('flavius_errlog92')||'[]').length;document.querySelector('[data-err92x]').click();return o});
 ok(L.got.some(x=>/error:.*trng92 probe/.test(x))&&L.got.some(x=>/^caught:/.test(x)),'the log catches thrown + console.error '+JSON.stringify(L.got));ok(/Open \(\d+\)/.test(L.btn||'')&&L.pop>=2&&L.stored>=2,'Settings → Error log lists them and keeps them '+JSON.stringify(L));
 console.log(JSON.stringify({A,B,done,L}));console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs.filter(x=>!/trng92 probe/.test(x))));await b.close();process.exit(miss.length||errs.filter(x=>!/trng92 probe/.test(x)).length?1:0)})();
