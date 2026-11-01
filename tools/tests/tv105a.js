@@ -22,7 +22,12 @@ const ev=async(pg,f,a)=>{try{return await pg.evaluate(f,a)}catch(e){console.log(
 
 const pg=await open(false);await mgr(pg);
 /* an away week with fighters on the card (the road paid, not yet set off) */
-out.prep=await ev(pg,async()=>{const w=W_();let g=0;const away=()=>{const t=travelState(w);return t&&t.cost>0&&t.paid&&!t.gone&&!w.night.bye&&!w.night.selfBye&&w.night.bouts.some(b=>b.ents.some(id=>{const x=gById(id);return x&&x.contract&&x.contract.mgr===me().id}))};
+/* v1.15b: a strong preset house's starters are no longer auto-entered into a bout outside their band (Undercard <= 60), so the test gives the house a fighter
+   who fits the first bout (its weakest, rated down to 50) and enters him through the game's own entry path (any100Classic = the Match Week 'enter' button) */
+const ENTSRC=`()=>{const w=W_(),pm=me(),n=w.night;if(!n||n.bye||n.selfBye||!n.bouts||n.bouts[mw105Seq(n)[0]].ents.some(id=>any100Own(id,pm)))return;
+  const g=rosterOf(pm).filter(x=>!x.inj).sort((x,y)=>effOvr(x)-effOvr(y))[0];if(!g)return;g.inj=null;for(let i=0;i<90&&effOvr(g)>50;i++)g.ovr--;const bi=mw105Seq(n)[0];const f=genGlad({ovr:40});w.glads.push(f);n.bouts[bi].ents[0]=f.id /* the Undercard is full of rivals: a free-agent filler holds a seat, which an entry may take */;any100Classic(bi,g.id)}`;
+await ev(pg,s=>{window.ENT=eval(s)},ENTSRC);
+out.prep=await ev(pg,async()=>{const w=W_();let g=0;const away=()=>{ENT();const t=travelState(w);return t&&t.cost>0&&t.paid&&!t.gone&&!w.night.bye&&!w.night.selfBye&&w.night.bouts.some(b=>b.ents.some(id=>{const x=gById(id);return x&&x.contract&&x.contract.mgr===me().id}))};
   while(!away()&&g++<6)await PW();w.pend=[];await NIGHT();return {away:away(),wk:wkOf(w.week),need:mw105NeedOff(w)}});
 ok(out.prep.away&&out.prep.need,'an away week, not set off '+JSON.stringify(out.prep));
 

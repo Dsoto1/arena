@@ -6,6 +6,10 @@ await pg.evaluate(()=>{newWorld({type:'pre',key:MGR_PRE[0].key});openManager()})
 /* each step keeps its old pause, then polls for the state it needs (the regression runs 3 tests at once: timers stretch) */
 const until=async(fn,ms=30000)=>{const t0=Date.now();while(Date.now()-t0<ms){if(await pg.evaluate(fn).catch(()=>false))return true;await pg.waitForTimeout(200)}return false};
 await pg.waitForTimeout(600);await until(()=>!!document.querySelector('#mgrBody'));
+/* v1.15b: a strong preset house's starters sit in the Feature now (they are no longer auto-entered into the Undercard, which takes <= 60), so the first
+   bout, the one the Watch button opens, has none of them. The test rates the house's weakest down to 50 and enters him in the first bout through the
+   game's own entry path (any100Classic = the Match Week 'enter' button) */
+await pg.evaluate(()=>{const w=W_(),pm=me(),n=w.night,bi=mw105Seq(n)[0];if(!n.bouts[bi].ents.some(id=>any100Own(id,pm))){const g=rosterOf(pm).filter(x=>!x.inj).sort((x,y)=>effOvr(x)-effOvr(y))[0];for(let i=0;i<90&&effOvr(g)>50;i++)g.ovr--;const f=genGlad({ovr:40});w.glads.push(f);n.bouts[bi].ents[0]=f.id /* a free-agent filler holds a seat, which an entry may take */;any100Classic(bi,g.id)}});
 await pg.evaluate(()=>{MGR.tab='night';MGR_REDRAW()});await pg.waitForTimeout(300);await until(()=>!!document.querySelector('#mgrBody [data-mg="watch"]'));
 await pg.evaluate(()=>{const b2=[...document.querySelectorAll('#mgrBody [data-mg="watch"]')][0];b2.click()});
 await pg.waitForTimeout(1500);await until(()=>typeof S!=='undefined'&&!!S&&!!S.players&&!!S.mgrCtx);await pg.evaluate(()=>{window.__spd0=SPEED;SPEED='pause'});
