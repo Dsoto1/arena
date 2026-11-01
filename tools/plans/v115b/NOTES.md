@@ -9,3 +9,4 @@ Source: tools/plans/strength115/REPORT.md. His answers 2026-11-01: "your recs fo
 4. **4a** accept deaths 0.50 → 0.82 a season (more Feature bouts; still far below the 2.4 before v1.15a).
 5. **5a** its own release v1.15b after v1.15a, played on the beta first.
 6. **6a** (v1.15a) the "half price — a small house" note shows for newcomer houses too (as built).
+8. **8a** (2026-11-01) 319's Undercard refusal reads "takes up to 60" instead of "-6–60" (a fix; new _T key, translated with the release).
