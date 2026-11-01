@@ -15,7 +15,8 @@ await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));let sd
 /* ---- 8a · starters: three slots, one bout each, the week is filled from them ---- */
 const r8=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};const R=rosterOf(m);
   o.n=R.length;o.starters=R.filter(g=>g.slot95).length;o.slots=R.filter(g=>g.slot95).map(g=>g.slot95).sort().join('');o.flag=R.every(g=>!!g.bench===!g.slot95);
-  o.filled=R.filter(g=>g.slot95).every(g=>w.night.bouts[g.slot95-1].ents.includes(g.id));o.sbye=sbyeOK76(w)[0]===true&&(w.night.auto95||[]).length===3;
+  /* v1.15b fix: a starter outside his bout's rating band is not auto-entered (432) */const fit=R.filter(g=>{if(!g.slot95)return false;const T=TIERS[w.night.bouts[g.slot95-1].tier],q=effOvr(g);return !(q<T.lo-6||q>T.hi+6)});
+  o.filled=fit.every(g=>w.night.bouts[g.slot95-1].ents.includes(g.id));o.sbye=sbyeOK76(w)[0]===true&&(w.night.auto95||[]).length===fit.length;
   /* v1.04 (350): the roster page is one list in groups (First team 4 = Bouts I–III + a reserve · Second team 4 · Rostered); the moves live in
      each row's ⋯ menu and the selected fighter's team control ([data-r104a="team|id|slot"]) — REPLACES the slot tablets + Promote/Bench buttons */
   const menu=async id=>{document.querySelector(`[data-r104m="${id}"]`).click();await W8(250);return document.querySelector('.r104pop')};

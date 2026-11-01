@@ -65,4 +65,27 @@ ok(f.pat[0]===10&&f.pat[1]===0.3,'off: E112.pat 10/0.3');ok(f.riv[0]===22&&f.riv
 ok(f.ended!==false&&f.booked===Math.round(10+f.fame*0.3),'off: patron 10 + 0.3 × fame: '+f.booked+' fame '+f.fame);
 ok(f.rivUnder.length>0&&Math.max(...f.rivUnder)<=64,'off: rival Undercard entries ≤ 64 '+JSON.stringify(f.rivUnder));
 await pk.close();
+
+/* the fill respects the bout's band: starters 80/76/73 */
+const fillProbe=pg=>ev(pg,async()=>{const r={};const w=W_(),pm=me();const R=rosterOf(pm);
+  const setR=(g,v)=>{g.inj=null;g.severed=[];delete g.restWk;g.morale=80;for(let i=0;i<60&&effOvr(g)!==v;i++)g.ovr+=v-effOvr(g)};
+  const tgt=[80,76,73];while(R.length<4){const q=genGlad({ovr:50});q.contract={mgr:pm.id,weeks:6,since:0};w.glads.push(q);R.push(q)}
+  R.slice(0,3).forEach((g,i)=>setR(g,tgt[i]));setR(R[3],50);for(const g of R.slice(4))setR(g,45);
+  const run=(starters)=>{for(const g of rosterOf(pm))delete g.slot95;starters.forEach(([g,s])=>g.slot95=s);for(const g of rosterOf(pm)){g.bench=!g.slot95}
+    w.pend=[];makeNight();w.night.auto95=[];for(const b of w.night.bouts.slice(0,3))for(const id of b.ents.slice()){const f=genGlad({ovr:50});w.glads.push(f);b.ents[b.ents.indexOf(id)]=f.id}
+    w.fill95=null;st95Ensure(w,pm);const n=st95Fill(w,pm,true);const where={};for(const g of R.slice(0,4)){const i=w.night.bouts.findIndex(b=>b.ents.includes(g.id));where[effOvr(g)]=i<0?-1:i}return {n,where,tiers:w.night.bouts.map(b=>b.tier)}};
+  r.a=run([[R[2],1],[R[1],2],[R[0],3]]);
+  r.b=run([[R[3],1],[R[1],2],[R[0],3]]);
+  for(const g of rosterOf(pm))delete g.slot95;w.pend=[];makeNight();const u=w.night.bouts[0];u.ents[0]=R[2].id;w.night.auto95=[R[2].id];
+  const c=v115bClean();r.clean={k:c,on:u.ents.includes(R[2].id),auto:w.night.auto95.length};
+  w.night.auto95=[];u.ents[0]=R[2].id;r.manual=v115bClean();r.manualOn=u.ents.includes(R[2].id);
+  return r});
+{const pf=await open();const f1=await fillProbe(pf);out.fill=f1;
+  ok(f1.a.where[73]===-1,'73 not auto-entered on the Undercard: '+JSON.stringify(f1.a.where));ok(f1.a.where[76]===1&&f1.a.where[80]===2,'Feature/Main starters enter where they fit: '+JSON.stringify(f1.a.where));
+  ok(f1.b.where[50]===0,'a 50 Undercard starter still auto-enters: '+JSON.stringify(f1.b.where));
+  ok(f1.clean.k===1&&!f1.clean.on&&f1.clean.auto===0,'saved card: out-of-band auto entry taken off '+JSON.stringify(f1.clean));ok(f1.manual===0&&f1.manualOn,'a manual entry is left alone');
+  await pf.close();
+  const pq=await open({flavius_v115bfilloff:'1'});const f2=await fillProbe(pq);out.fillOff=f2;
+  ok(f2.a.where[73]===0,'fill switch off: the 73 is entered (old behaviour): '+JSON.stringify(f2.a.where));ok(f2.clean.k===0,'fill switch off: no cleanup');await pq.close();
+  const ps=await open({flavius_v115bstroff:'1'});const f3=await fillProbe(ps);ok(f3.a.where[73]===-1,'fix applies with 432 switch off too: '+JSON.stringify(f3.a.where));await ps.close()}
 console.log(JSON.stringify(out));console.log(miss.length?'MISS '+JSON.stringify(miss):'ALL OK');console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
