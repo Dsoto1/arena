@@ -878,7 +878,7 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   later) R4a (unjudgeable = agreement + audit flag) R5a (flavius.sh asks AWS for a higher concurrency limit; verifier capped at 3) R6a (flag
   off-menu window answers; pages refuse later). Order: E → T → A → R.
 - 2026-10-23 v1.12 (his 1a 2a 3a 4a after the economy re-measure, tools/plans/econ111/REPORT.md): (1a) P1 + P6 together — a PLAYER patron
-  stipend in season (+10 + 0.3×fame a week, 87 endWeek) and rivals topped up toward 40 coin (at most one extra stipend a season, 23
+  stipend in season (+10 + 0.3×fame a week, 87 endWeek — REPLACED 2026-11-01 by 22 + 0.6×fame, strength study 3a) and rivals topped up toward 40 coin (at most one extra stipend a season, 23
   aiLanistaWeek); (2a) next: a separate study of deaths / blood money / the fame gate on recruits (why a careful house sits near the bottom);
   (3a) Trades 2: a house values a fighter it RECEIVES at ~50% when he would sit below its own roster's median (stops "weak tiro + coin for a
   star"); coin stays 1:1 (REPLACES the open coin-rate question); (4a) a settling-in fighter (<4 weeks) can't be offered as the MAIN fighter either.
@@ -928,3 +928,8 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   besides 51-v49's newcomer price — REPLACES "half price only for a newcomer house (≤ 2 fighters, < 120 coin)" (v0.49) as the only rule;
   (2a) a death costs no fame under fame 18 — REPLACES "−2 fame for every death" (17 killFighter, docs/economy.md); (3a) STAR_FAME unchanged;
   (4a) a strength study next (roster 45 vs 67); (5a) 1a + 2a ship as v1.15a right after v1.15. tools/plans/v115a/NOTES.md.
+- 2026-11-01 · Strength study (tools/plans/strength115/REPORT.md) — his 1a–6a ("your recs"): (1a) F13 = F1 + F3 ships; (2a) the Undercard's
+  top rating 62 → 54 (17 TIERS.under.hi; entry checks, fillers, the slot label move with it) — REPLACES the early-league 62; (3a) the player's
+  patron pays the rivals' formula 22 + 0.6×fame a week — REPLACES v1.12 P1 (10 + 0.3×fame, 2026-10-23 1a); (4a) accept deaths 0.50 → 0.82 a
+  season (more Feature bouts); (5a) its own release (v1.15b) after v1.15a, beta first; (6a) v1.15a's "half price — a small house" note shows
+  for newcomer houses too. tools/plans/v115b/NOTES.md.
