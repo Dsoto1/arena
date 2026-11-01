@@ -83070,7 +83070,9 @@ function v115dSmall(m){try{return !V115D.off&&!!m&&((m.fame||0)<V115D.fame||newc
       73-rated starter sat in the Undercard (manual entry takes T.lo-6...T.hi+6 = up to 60). Now a starter outside his bout's band (the 319
       r101WhyNot test; special 'spc100' bouts excepted) is not auto-entered; st95Ensure's slot choice and the rivals are untouched. A card
       already drawn and not yet started is cleaned once: an out-of-band AUTO-entered fighter comes off an unfought bout (st95Out puts a
-      filler back); manual entries stay. Own switch flavius_v115bfilloff=1 restores the old fill; it works with flavius_v115bstroff on or off. */
+      filler back); manual entries stay. Own switch flavius_v115bfilloff=1 restores the old fill; it works with flavius_v115bstroff on or off.
+      Also 350's reserve cover (tm104 A, no slot): a reserve placed in a bout outside his band is taken out again and the next reserve tries
+      (reserves are recorded in night.auto95 + cov104, so v115bClean covers a saved card too). */
 const V115B={off:(()=>{try{return localStorage.getItem('flavius_v115bstroff')==='1'}catch(e){return false}})(),underHi:54,pat:{base:22,fame:0.6}};
 window.V115B=V115B;
 if(!V115B.off){
@@ -83084,7 +83086,14 @@ window.V115BF=V115BF;
 function v115bOut(g,b){const T=b&&TIERS[b.tier];if(!T||b.tier==='spc100')return false;const o=effOvr(g);return o<T.lo-6||o>T.hi+6}
 {const base=st95Fill;st95Fill=function(w,pm){const hold=[];
   try{if(!V115BF.off&&w&&pm&&w.night&&w.night.bouts)for(const g of st95Pool(w,pm))if(g.slot95&&v115bOut(g,w.night.bouts[g.slot95-1])){hold.push([g,g.slot95,g.tm104]);g.slot95=0;delete g.tm104 /* 350's reserve cover would else put him in as a 'reserve' */}}catch(e){console.error(e)}
-  try{return base.apply(this,arguments)}finally{for(const [g,s,t] of hold){g.slot95=s;if(t!==undefined)g.tm104=t}}}}
+  const hid=[];
+  try{let r=base.apply(this,arguments);
+    /* 350's reserve cover: a reserve (tm104 A, no slot) put in a bout outside his band comes out again (filler back) and the next reserve tries */
+    if(!V115BF.off&&w&&pm&&w.night&&w.night.bouts)for(let i=0;i<3;i++){const nt=w.night;let bad=0;
+      for(const b of nt.bouts)for(const id of b.ents.slice()){if(!(nt.cov104||[]).includes(id))continue;const g=gById(id);if(g&&g.contract&&g.contract.mgr===pm.id&&!b.done&&v115bOut(g,b)){st95Out(b,id);nt.auto95=(nt.auto95||[]).filter(x=>x!==id);nt.cov104=nt.cov104.filter(x=>x!==id);hid.push([g,g.tm104]);delete g.tm104;bad++}}
+      if(!bad)break;r=base.apply(this,arguments)}
+    return r}
+  finally{for(const [g,t] of hid)if(t!==undefined)g.tm104=t;for(const [g,s,t] of hold){g.slot95=s;if(t!==undefined)g.tm104=t}}}}
 /* a card already drawn (a saved world): an auto-entered fighter outside his bout's band comes off it, only while no bout is done */
 function v115bClean(){try{if(V115BF.off)return 0;const w=W_(),pm=me(),n=w&&w.night;if(!w||!pm||w.dead||w.tutorial||!n||n.bye||!n.bouts||!(n.auto95||[]).length)return 0;
   if(n.bouts.some(b=>b.done)||(typeof S!=='undefined'&&S&&!S.over&&(S.mgrCtx||S.exhibCtx||S.pen76)))return 0;let k=0;

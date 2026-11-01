@@ -68,7 +68,7 @@ out.team=await ev(pg,async()=>{const r={};const w=W_(),pm=me();st95Ensure(w,pm);
   /* the reserve covers a hurt starter's bout */
   const s1=P.find(g=>g.slot95===1);const rs=P.find(g=>team104(g,pm)==='A'&&!g.slot95);r.cover='skip';
   if(s1&&rs&&w.night&&w.night.bouts&&w.night.bouts[0]&&!w.night.bye){for(const bo of w.night.bouts)for(const id of [s1.id,rs.id])if(bo.ents.includes(id)&&!bo.done)st95Out(bo,id);
-    s1.inj={until:w.week+2,label:'a cut',pen:1};const bo=w.night.bouts[0];st95Fill(w,pm,true);r.cover=bo.done||(bo.wd||0)>=2?'skip':bo.ents.includes(rs.id);
+    s1.inj={until:w.week+2,label:'a cut',pen:1};const bo=w.night.bouts[0];/* v1.15b: a reserve outside the bout's band is not placed (432), so the fixture reserve is rated for the Undercard */for(let i=0;i<60&&effOvr(rs)!==50;i++)rs.ovr+=50-effOvr(rs);st95Fill(w,pm,true);r.cover=bo.done||(bo.wd||0)>=2?'skip':bo.ents.includes(rs.id);
     if(r.cover===false)r.coverWhy=JSON.stringify({blk:typeof r101Block==='function'?r101Block(rs):'',rest:rs.restWk,wk:w.week,ents:bo.ents.map(id=>{const x=gById(id);return x?(x.contract?(x.contract.mgr===pm.id?'ME:'+x.id:'c'):'free'):'?'}),rs:rs.id,s1:s1.id});s1.inj=null}
   /* rivals: First team = their best four */
   const rv=w.mgrs.find(m=>!m.isPlayer&&!m.sica&&rosterOf(m).length>=5);r.rivalDepth=!rv||depthOf(rv).starters.length===4;

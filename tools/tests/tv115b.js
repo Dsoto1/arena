@@ -88,4 +88,14 @@ const fillProbe=pg=>ev(pg,async()=>{const r={};const w=W_(),pm=me();const R=rost
   const pq=await open({flavius_v115bfilloff:'1'});const f2=await fillProbe(pq);out.fillOff=f2;
   ok(f2.a.where[73]===0,'fill switch off: the 73 is entered (old behaviour): '+JSON.stringify(f2.a.where));ok(f2.clean.k===0,'fill switch off: no cleanup');await pq.close();
   const ps=await open({flavius_v115bstroff:'1'});const f3=await fillProbe(ps);ok(f3.a.where[73]===-1,'fix applies with 432 switch off too: '+JSON.stringify(f3.a.where));await ps.close()}
+
+/* the reserve cover (350): an out-of-band reserve is not placed, an in-band one still covers */
+const resProbe=pg=>ev(pg,async()=>{const w=W_(),pm=me();const R=rosterOf(pm);const r={};
+  const setR=(g,v)=>{g.inj=null;g.severed=[];delete g.restWk;g.morale=80;for(let i=0;i<60&&effOvr(g)!==v;i++)g.ovr+=v-effOvr(g)};
+  const go=(rv)=>{for(const g of R){delete g.slot95;delete g.tm104}const st=R[0];st.slot95=1;st.tm104='A';st.inj={w:3,pen:0,war:0};setR(R[1],rv);R[1].tm104='A';delete R[1].slot95;
+    w.pend=[];makeNight();w.night.auto95=[];w.night.cov104=[];for(const b of w.night.bouts.slice(0,3))for(const id of b.ents.slice()){const f=genGlad({ovr:50});w.glads.push(f);b.ents[b.ents.indexOf(id)]=f.id}
+    st95Fill(w,pm,false);const i=w.night.bouts.findIndex(b=>b.ents.includes(R[1].id));st.inj=null;return i};
+  setR(R[0],50);r.high=go(73);r.low=go(50);return r});
+{const pr=await open();const q=await resProbe(pr);out.res=q;ok(q.high===-1,'an out-of-band reserve (73) is not placed in the Undercard: '+q.high);ok(q.low===0,'an in-band reserve (50) still covers: '+q.low);await pr.close();
+  const po=await open({flavius_v115bfilloff:'1'});const q2=await resProbe(po);ok(q2.high===0,'fill switch off: the 73 reserve is placed (old behaviour): '+q2.high);await po.close()}
 console.log(JSON.stringify(out));console.log(miss.length?'MISS '+JSON.stringify(miss):'ALL OK');console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
