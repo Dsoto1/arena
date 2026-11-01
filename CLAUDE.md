@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.14b** (v1.14b shipped 2026-10-29). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.15** (v1.15 shipped 2026-11-01). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -185,7 +185,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13, release/v1.14, release/v1.14a, release/v1.14b.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13, release/v1.14, release/v1.14a, release/v1.14b, release/v1.15.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -205,15 +205,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   CloudFront id into any file (docs included) — write where to find it ("the stack's UserPoolId output"); flavius.sh looks them up. release.sh's idscan fails otherwise.
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.14** Figures from turn one (tools/plans/v114/NOTES.md, his 1a–9a, no beta by his word; SERVER release, stack only): 428-v112fig ships
-  (Studio/Online/re-kitted fighters prepared in a Worker before the match, "Preparing the figures…" ≤3 s / 6 s phone; flavius_v112figoff,
-  flavius_v112fignowk; its Worker source kept out of i18n wrap) · 417 Quality "High" own key `High{0}` (es Alta / fr Haute; tv114h) · the
-  budget counts ONLY Flavius (7a): template tags `app=flavius` resource by resource (never the shared Cognito pool) + Budget CostFilters
-  `user:app$flavius`, flavius.sh `cost_tags` / `budget` + status "budget counts" (FSH_VER 12). Rollback of the budget: drop CostFilters.
-  [full] run green on attempt 2 (tv100p flaky, also on v1.13).
-  Deploy fix in the same release (FSH_VER 13): server deploys no longer pass the retired login.flaviusrule.com (conf LOGIN_*), deploy.sh
-  finishes a failed rollback first.
-
 - **v1.14a** Behind the scenes (tools/plans/v114a/NOTES.md, two dashboard-session notes, his recs; no beta; deploy tooling + stack only):
   flavius.sh looks up the CloudFront distribution (alias flaviusrule.com), the Cognito pool (stack output UserPoolId) and the Google client
   (stack parameter GoogleClientId; a deploy refuses to run without it) at run time — no AWS ids in the public repo; tools/idscan.js in
@@ -224,3 +215,9 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
 - **v1.14b** The Control Center's cost tag (tools/plans/v114b/NOTES.md, his 1a 2a; no beta; SERVER deploy for the tags only): `AppName=FlaviusRule`
   REPLACES `app=flavius` — template Tags + Budget CostFilters `user:AppName$FlaviusRule`, flavius.sh FSH_VER 18 (bucket + CloudFront retagged,
   old key removed), manifest costTag. docs/history.md restored (v1.14a had overwritten it).
+
+- **v1.15** Settings, sorted (tools/plans/v115/NOTES.md + SETTINGS.md, his 1a–8a; beta first; shipped 2026-11-01): 430-v115set rebuilds
+  the Settings window into 8 tabs (Play · Hints · Graphics · Crowd & voices · Themes · Audio · Accessibility · Data & saves) from the v0.98
+  pages' own controls — no settings key/default change; Hit feedback Off = the old fx switch; phones 8 pills, Pause no longer clipped;
+  kill switch flavius_v115setoff (test tv115s). Also tv100p robust, tv103a pinned to a fixed challenge day (test only), release.sh webp
+  fallback through Chromium (tools/png2webp.js). Full run green on the one re-run (tv100bb flaky once).

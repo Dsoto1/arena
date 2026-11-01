@@ -390,3 +390,14 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   Flavius's cost tag is `AppName=FlaviusRule` — REPLACES `app=flavius` (v1.14 7a): server/template.yaml Tags on every Flavius resource +
   Budget CostFilters `user:AppName$FlaviusRule`; flavius.sh FSH_VER 18 tags the site bucket + CloudFront with it and takes the old `app` key
   off; .control-center/project.json costTag. Also restored this file (the v1.14a commit had overwritten the older entries).
+
+- **v1.15** Settings, sorted (2026-11-01; tools/plans/v115/NOTES.md, SETTINGS.md, settings-mock.html; his 1a–8a of 2026-10-31; beta first):
+  430-v115set wraps settingsHTML last and rebuilds the window into 8 tabs — ⚔ Play (Language, Pace, Turns, Camera with See-through Auto/On/Off),
+  💡 Hints (Hints & help; On the board: Hit feedback Full/Mine/Quiet/Off — Off writes SETTINGS.fx=false, today's exact effect), 🖥 Graphics
+  (one Quality card, Pieces, Blessings), 🏟 Crowd & voices (editors in the box + voices), 🎨 Themes, 🔊 Audio, ♿ Accessibility (Screen shake
+  moved here; the copy of Confirm End turn gone), 💾 Data & saves (Saves, Error log, Restore all defaults; storage line only on 422's cookie
+  fallback). Old tab keys still land; no settings key, localStorage key or default changed. Phones: 8 pills, short labels, segmented rows
+  wrap. Kill switch flavius_v115setoff=1; test tv115s; tv98a tv84u tv88s tv111set tv100fps tv90b trng92 tv100sb tb4 tlive36 updated on purpose.
+  Also: tv100p robust on slow runners (test only); tv103a G3 pinned to 2026-10-29's challenge (the 2026-10-31 daily opens on a Draft);
+  release.sh falls back to tools/png2webp.js (Chromium) when PIL is broken. Full runs 41248555142 (tv103a, fixed) and 41252211297 (green on
+  the re-run; tv100bb zoom_p95 gate once).
