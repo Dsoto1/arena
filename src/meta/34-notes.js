@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.15a',ic:'⚱',t:_T('Mercy for small houses'),hi:[_T('Manager: a house under fame 18 buys back a condemned fighter at half price, and a death costs it no fame')]},
   {v:'1.15',ic:'⚙',t:_T('Settings, sorted'),hi:[_T('Settings regrouped into eight clear tabs: Play, Hints, Graphics, Crowd & voices, Themes, Audio, Accessibility, Data & saves'),_T('Every choice keeps its value; phones get all eight tabs')]},
   {v:'1.14b',ic:'🧹',t:_T('Behind the scenes'),hi:[_T('Tidier deployment tools; nothing changes in play')]},
   {v:'1.14a',ic:'🧹',t:_T('Behind the scenes'),hi:[_T('Tidier deployment tools; nothing changes in play')]},
