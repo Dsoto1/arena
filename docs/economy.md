@@ -59,7 +59,7 @@ or decision that fixed the number (decisions.md lines win over module headers wh
 | Care | Medicus 10 · surgeon 18 · Hygeia (a limb) 20 · bath 5 · Asclepius 25, since v1.01 **half coin + Medicus hours** (4 + 3/Valetudinarium level); a serious wound needs a bed first (108 beds76); cures close at the week's end (341) | 318-v101ward, 341-v102care, 108-v76 | flavius_v101boff / flavius_v102joff | v1.01 B1 (his 5a); v1.02 J |
 | Gear | Armory buys (weapons 12/30/60/150 by level, armor by piece), repairs (⅕ of the price), 339's Issued kit (free) + upgrades (`g102Upgrade`), city kits; the CPU shopping rule `arm94AutoShop` keeps `ARM94.playerReserve` 60 for the player | 225-v94armory, 339-v102gear, 25-city | flavius_v102hoff | v0.94; v1.02 H (M11 2a) |
 | Travel | away weeks: `3 + distance × 24`, clamped 3–15, −15% a Stables level (`travelCost`); a deal (another house pays) repaid **double** if its fighter does not fight; Rivalry Week's trip is free (383); bouts locked until set-off (397) | 35-travel, 383-v105riv, 389-v105sq, 397-v106b1 | flavius_v105rivoff / flavius_v105sqoff / flavius_v106b1off | v0.42; v1.05 B62/B74; v1.06 G1 |
-| Blood money | `bloodPrice` = (30 Damnatio / 22 Fatal Charades / 18) + OVR×0.35 + fame×0.2 to buy back a condemned fighter | 17 buyBack | — | v0.18 Fates |
+| Blood money | `bloodPrice` = (30 Damnatio / 22 Fatal Charades / 18) + OVR×0.35 + fame×0.2 to buy back a condemned fighter; **half price (min 5) for a newcomer house (51-v49: ≤ 2 fighters, < 120 coin) OR any house under fame 18 (431, v1.15a; never halved twice)**, the card says "half price — a small house" | 17 buyBack, 51-v49, 431-v115adeath | flavius_v115adeathoff | v0.18 Fates; v1.15a his 1a |
 | Morale & promotion | meal 3 · win bonus `giftCost` · family tickets 4 · feast for the city 10 (+1 fame) · sponsor the games 18 (+2 fame) · criers 6 · programmata 8 a city a week (140) · temple offerings 6–8 (108/172, −25% a shrine level) | 17, 140-v84prog, 108-v76, 172 | — | v0.33–v0.89 |
 | Specials (enter any event) | the special's entry fee + a hired hand's fee (`any100Book`); refunds on a pull-out | 296-v100any | flavius_any100off | v1.0 his 1a… |
 | Over the roster cap | the fighters above the cap cost their wage again (`if(ex){pm.coin-=ex`) | 350-v104roster | flavius_v104coff | v1.04 C N5 |
@@ -105,7 +105,7 @@ Rivals pay the same wages, travel nothing (the road is the player's), and earn t
   the final table podium 50 / 35 / 20 · **Winter Classic Cup 20** (415) · **Consilium goals** 20 (top N) / 15 (wins) / 20 (a fighter
   +4 OVR) / 20 (a tiro wins) (414 `A109_GREN`, paid when the next Winter Quarters open). Renown is muted inside Classic bouts.
 * **Fame** (gates recruits' interest `reqFame`, the gate share, the Quaestor's cap, rivals' patrons): +2/4/8 a win by tier (× show),
-  Superbus 2/4/10, league 1st +5, feeds/sponsoring +1/+2, a death −2, a caught rig −12; ×0.92 at every season turn.
+  Superbus 2/4/10, league 1st +5, feeds/sponsoring +1/+2, a death −2 (**none while the house is under fame 18**, 431 v1.15a his 2a), a caught rig −12; ×0.92 at every season turn.
 
 ## 7. The ledger (413, w.led109) — what its categories really hold
 
