@@ -10,3 +10,4 @@ Source: tools/plans/strength115/REPORT.md. His answers 2026-11-01: "your recs fo
 5. **5a** its own release v1.15b after v1.15a, played on the beta first.
 6. **6a** (v1.15a) the "half price — a small house" note shows for newcomer houses too (as built).
 8. **8a** (2026-11-01) 319's Undercard refusal reads "takes up to 60" instead of "-6–60" (a fix; new _T key, translated with the release).
+9. (beta 2026-11-01, his screenshot) FIX: Match Week's auto-fill put a 73-rated starter into the Undercard (≤ 54, entry ≤ 60) — st95Fill and 350's reserve cover never checked the bout's rating band (since v0.95). Now an out-of-band starter/reserve is not auto-entered (next fitting reserve covers, else the filler); a saved card not yet fought is cleaned. Switch flavius_v115bfilloff=1. Tests tv115b, tv95c, tv104c.
