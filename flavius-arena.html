@@ -68397,7 +68397,7 @@ function r101WhyNot(w,b,g){const T=TIERS[b.tier];const n=w.night;
   const cur=n.bouts.findIndex(x=>x.ents.includes(g.id));if(cur>=0&&n.bouts[cur]!==b)return _T`is already entered in the ${TIERS[n.bouts[cur].tier].n}`;
   if(b.ents.includes(g.id))return _T('is entered here');
   if((b.wd||0)>=2)return _T('cannot enter: this bout is closed to your house after two withdrawals');
-  const o=effOvr(g);if(T&&(o<T.lo-6||o>T.hi+6))return _T`is rated ${o}; the ${T.n} takes ${T.lo-6}–${T.hi+6}`;
+  const o=effOvr(g);if(T&&(o<T.lo-6||o>T.hi+6))return T.lo-6<=0?_T`is rated ${o}; the ${T.n} takes up to ${T.hi+6}`:_T`is rated ${o}; the ${T.n} takes ${T.lo-6}–${T.hi+6}`;
   if(g.morale!=null&&g.morale<=15)return _T`is too low in spirit (morale ${Math.round(g.morale)})`;
   return ''}
 {const base=nightHTML;nightHTML=function(){const h=base.apply(this,arguments);try{if(r101Off()||typeof h!=='string')return h;const w=W_(),pm=me();if(!w||!w.night||w.night.bye||!pm)return h;
@@ -83053,6 +83053,24 @@ function v115dSmall(m){try{return !V115D.off&&!!m&&((m.fame||0)<V115D.fame||newc
 {const base=pendingHTML;pendingHTML=function(){let h=base.apply(this,arguments);if(V115D.off||!h)return h;
   try{const m=me();if(v115dSmall(m)){const note=`<p class="rc-sub" data-v115d="small" style="margin:4px 0">${_T('half price — a small house')}</p>`;
     h=h.replace(/<div class="acts"><button class="btn primary" type="button" data-mg="pblood" data-id="\d+\|pay"/g,s=>note+s)}}catch(e){}return h}}
+/* 432-v115bstr — v1.15b "Stronger small houses" (his 1a 2a 3a, tools/plans/v115b/NOTES.md; study tools/plans/strength115/REPORT.md F13 =
+   sim patches F1under + F3patron). Manager only. Kill switch localStorage flavius_v115bstroff=1 restores v1.15a's behaviour exactly.
+   F1 A TIRONES' UNDERCARD: 17 TIERS.under.hi 62 → 54 (the 1★ line). REPLACES the early-league 62. Every reader takes T.hi live, so this one
+      value moves them all: 17 makeNight (rival entries T.lo−4…T.hi+2 → ≤ 56), 17 fillNight (free-agent fillers ≤ 57; new fillers stay 40),
+      the player's entry checks (296 any100Why / 319 r101WhyNot / 17 nightHTML: T.hi+6 → ≤ 60), the replacements of 141/183/229/319
+      (T.hi+3), 229's depth-chart slot label ("≤ " + T.hi → "≤ 54"), 145's road-deal tier pick and 22's poster billing (T.hi+6).
+      The Feature (56–77) is unchanged, so a rival's 55–62 fighter goes up a tier.
+   F3 PATRON PARITY: the player's in-season patron pays the rivals' formula (23 aiLanistaWeek) 22 + 0.6 × fame a week. REPLACES 427's P1
+      10 + 0.3 × fame (v1.12). 427 still pays it (same week, same ledger 'patron' row and "💼 Your patron: +N coin" line, both read
+      E112.pat through e112Amt), so only the two numbers change. 427's own kill switch flavius_v112econoff still stops the stipend.
+   Set at load, before any world is built. No save shape change: a save keeps only bouts' tier keys (never lo/hi) and no stipend amount;
+   entries already on a loaded world's card stay, the next card is drawn with the new band. Never the dice (no rand()). Test tv115b. */
+const V115B={off:(()=>{try{return localStorage.getItem('flavius_v115bstroff')==='1'}catch(e){return false}})(),underHi:54,pat:{base:22,fame:0.6}};
+window.V115B=V115B;
+if(!V115B.off){
+  try{if(typeof TIERS!=='undefined'&&TIERS.under)TIERS.under.hi=V115B.underHi}catch(e){console.error(e)}
+  try{if(typeof E112!=='undefined'&&E112.pat){E112.pat.base=V115B.pat.base;E112.pat.fame=V115B.pat.fame}}catch(e){console.error(e)}
+}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

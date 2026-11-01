@@ -1,5 +1,5 @@
 /* tv112e — v1.12 ECONOMY TUNING (427-v112econ P1 + P6, his 1a) + the Trades 2 fixes in 426 (his 3a 4a):
-   P1 a real week's end pays the player's patron +round(10 + 0.3 × fame), booked in 413's ledger as 'patron' (the Accounts room shows a
+   P1 a real week's end pays the player's patron +round(E112.pat: 10 + 0.3 × fame in v1.12; 22 + 0.6 × fame since v1.15b, 432), booked in 413's ledger as 'patron' (the Accounts room shows a
    "Patron" bar) with a "Your patron: +N coin" line in the ludus ledger; never twice for one week end, nothing while bouts are unplayed;
    P6 a rival below 40 is topped up toward 40 (≤ one stipend) at most once a season, also through aiLanistaWeek;
    3a a fighter the house RECEIVES below its roster's median rating counts 50% of tr106Val (1-for-1 + bundles): weak tiro + the coin gap
@@ -27,7 +27,7 @@ const pg=await open();
 out.on=await ev(pg,async()=>{const r={};const w=W_(),pm=me();
   /* P1 a real week end */
   const L0=(w.led109&&w.led109.c&&w.led109.c.patron)||{i:0};const i0=L0.i||0;
-  let amt=null;{const b=endWeek;endWeek=async function(){amt=Math.round(10+(me().fame||0)*0.3);return b.apply(this,arguments)};try{r.ended=await __WK()}finally{endWeek=b}}
+  let amt=null;{const b=endWeek;endWeek=async function(){amt=Math.round(E112.pat.base+(me().fame||0)*E112.pat.fame) /* v1.15b: 432 sets E112.pat to 22 + 0.6 (tv115b checks the numbers) */;return b.apply(this,arguments)};try{r.ended=await __WK()}finally{endWeek=b}}
   const P=(w.led109.c.patron)||{i:0};r.amt=amt;r.booked=P.i-i0;r.patron=r.ended!==false&&amt>0&&r.booked===amt;
   r.news=(w.tlog||[]).some(x=>x.text.includes('Your patron: +'+amt+' coin'));
   const X=led109Sheet(w,pm);const row=X.rows.find(x=>x[0]==='patron');r.sheet=!!row&&row[3]===P.i&&X.rows.findIndex(x=>x[0]==='patron')===X.rows.findIndex(x=>x[0]==='senate')-1;

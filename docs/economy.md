@@ -25,9 +25,10 @@ or decision that fixed the number (decisions.md lines win over module headers wh
 
 | Source | Rule (amount) | Module | Kill switch | Set by |
 |---|---|---|---|---|
-| **Patron stipend** | every in-season week end (not the off-season week): **+10 + 0.3 × fame** (rounded, `E112.pat`), paid at the start of endWeek (before wages); ledger category **Patron**, line "💼 Your patron: +N coin" | 427-v112econ | flavius_v112econoff | v1.12 his 1a (P1, 2026-10-23) |
+| **Patron stipend** | every in-season week end (not the off-season week): **+22 + 0.6 × fame** (rounded, `E112.pat`; the rivals' own formula, 23 aiLanistaWeek), paid at the start of endWeek (before wages); ledger category **Patron**, line "💼 Your patron: +N coin". Was +10 + 0.3 × fame (v1.12 P1) — REPLACED | 427-v112econ pays it, 432-v115bstr sets the numbers | flavius_v112econoff (no stipend) / flavius_v115bstroff (back to 10 + 0.3) | v1.12 his 1a (P1, 2026-10-23); v1.15b his 3a (strength study F3, 2026-11-01) |
 | Starting treasury | founded house: Normal 125 / Easy 250 / Hard 50 (`START_DIFF`) + 100 (`ECON.startBonus`) + 100 (`GR102.start`) = **325** on Normal; a taken-over preset: its `MGR_PRE.coin` + 200 | 70-v57, 87-v67, 339-v102gear | — / — / flavius_v102hoff | v0.57 difficulty; v0.68 ECON tuning; v1.02 H (his M11 2a) |
 | Appearance fees | per fighter entered: undercard 12 · feature 24 · main 40 (`ECON.fees`, overwrites `TIERS.fee` 4/8/15) | 17 applyBout, 87-v67 | — | v0.68 "an attentive lanista roughly breaks even without winning" |
+| (Tier bands) | who may enter (`TIERS` lo–hi): Undercard **up to 54** (v1.15b 432, was 62; rivals enter ≤ 56 = hi+2, the player ≤ 60 = hi+6, fillers ≤ 57) · Feature 56–77 · Main 70+ | 17, 432-v115bstr | flavius_v115bstroff (62) | v1.15b his 2a (strength study F1, 2026-11-01) |
 | Purses | winner's house: `purse × (0.5 + greed/300)` minus a tenth to the fighter's purse; purses 30 / 70 / 160 (`TIERS`); ×(upset ≤2, streak +25%/win ≤2, combined ≤3) extra (`WIN87`) | 17, 28-purses, 150-v87mgr | — | v0.36 purses; v0.87 win rewards (decisions "WIN REWARDS" 2026-10-05) |
 | Gate share | every house every week: `5 + fame/4`, max 30 (`ECON.gateBase/gatePerFame/gateMax`); none on a self-bye | 87-v67 | — | v0.68 ECON |
 | Practice stands | +10 a week per Stands level (`facWeek`) | 23-ludus | — | v0.28 facilities |
