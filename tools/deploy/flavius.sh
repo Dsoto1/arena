@@ -29,6 +29,8 @@
 #   bash flavius.sh droptable                              v1.15: a guarded ONE-OFF clean-up of what audit found: the leftover table (only if not in
 #                                                           the stack AND empty), SNS FR-Updates (only if silent 30 days), GitHub CodeConnections no pipeline
 #                                                           uses, IAM FR-Git-role (only if unused 30 days), v1.15 also its leftover *-Git-FR-pipeline policy (only if attached to nothing) — each shown, removed only after you type y
+#   bash flavius.sh reopen                                 v1.15: reopens the online arena after the budget switch closed it (the switch reopens it
+#                                                           by itself on the 1st at 00:05 UTC; this is the same call by hand), then shows whether it is open
 #   bash flavius.sh quota                                  the account's Lambda limit (the Ranked check needs room for 3 replays): asks AWS once, prints where it stands
 #
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
@@ -36,7 +38,7 @@
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=18
+FSH_VER=19
 BUCKET="flaviusrule.com"
 STACK="flavius-arena"
 REGION="us-east-1"
@@ -248,7 +250,7 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
   if [ -n "$fn" ] && [ "$fn" != "None" ]; then
     G "server updated" "$(aws lambda get-function --function-name "$fn" --query Configuration.LastModified --output text 2>/dev/null | cut -c1-16 | tr T ' ') UTC"
     local cc; cc=$(aws lambda get-function-concurrency --function-name "$fn" --query ReservedConcurrentExecutions --output text 2>/dev/null || echo None)
-    [ "$cc" = "0" ] && { closed=1; R "arena open?" "CLOSED by the budget switch — reopen: see the stack's ReopenCommand output"; } || G "arena open?" "open"
+    [ "$cc" = "0" ] && { closed=1; R "arena open?" "CLOSED by the budget switch — reopen: bash flavius.sh reopen"; } || G "arena open?" "open"
     # v1.12 the Ranked check: its mode and its own 3 replays (reserved concurrency; a new account's limit cannot hold them yet)
     local rc vc; rc=$(aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Parameters[?ParameterKey=='RankedCheck'].ParameterValue" --output text 2>/dev/null || true)
     vc=$(aws lambda get-function-concurrency --function-name flavius-arena-verify --query ReservedConcurrentExecutions --output text 2>/dev/null || echo None)
@@ -408,6 +410,24 @@ cmd_release(){ local here; here=$(pwd)
 # masks subscriber endpoints, because the output is pasted into a chat.
 _mask(){ sed -E 's#arn:aws[a-z-]*:([^:]*):[^:]*:[0-9]{12}:#\1: #g; s#arn:aws[a-z-]*:([^:]*):[^:]*::#\1: #g; s#[0-9]{12}#<acct>#g'; }
 _NF="(not found or no permission)"
+# v1.15: the budget switch's reopen, by hand (the same {"reopen":true} call its monthly rule makes on the 1st)
+cmd_reopen(){
+  local sw fn cc
+  sw=$(aws cloudformation describe-stack-resources --stack-name "$STACK" --logical-resource-id Switch --query 'StackResources[0].PhysicalResourceId' --output text 2>/dev/null || true)
+  { [ -n "$sw" ] && [ "$sw" != "None" ]; } || die "No budget switch found in the stack $STACK — is the server deployed?"
+  fn=$(aws cloudformation describe-stack-resources --stack-name "$STACK" --logical-resource-id Fn --query 'StackResources[0].PhysicalResourceId' --output text 2>/dev/null || true)
+  if [ "${DRY:-}" != 1 ] && [ -n "$fn" ] && [ "$fn" != "None" ]; then
+    cc=$(aws lambda get-function-concurrency --function-name "$fn" --query ReservedConcurrentExecutions --output text 2>/dev/null || echo None)
+    [ "$cc" = "0" ] || { ok "The arena is already open — nothing to do."; return 0; }
+  fi
+  say "Reopening the online arena"
+  run aws lambda invoke --function-name "$sw" --cli-binary-format raw-in-base64-out --payload '{"reopen":true}' /tmp/flavius-reopen.json >/dev/null || die "The switch did not answer — try again in a minute."
+  [ "${DRY:-}" = 1 ] && return 0
+  cc=$(aws lambda get-function-concurrency --function-name "$fn" --query ReservedConcurrentExecutions --output text 2>/dev/null || echo None)
+  [ "$cc" = "0" ] && die "Still closed. If this month's spend already passed the budget, the switch closes it again — run: bash flavius.sh status"
+  ok "The arena is open."
+  echo "If this month's real spend passes the budget again, the switch closes it until the 1st."; }
+
 cmd_audit(){ set +e +o pipefail
   local since now; since=$(date -u -d '30 days ago' +%FT%TZ); now=$(date -u +%FT%TZ)
   say "1. DynamoDB tables named flavius-arena-Table-*"
@@ -549,6 +569,6 @@ cmd_droptable(){ set +e +o pipefail
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; audit) cmd_audit;; droptable) cmd_droptable;; quota) lambda_quota;; budget) cost_tags;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) bd=$(dist_id); printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$bd" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; signin) cmd_signin;; server) cmd_server "$@";; status) cmd_status;; audit) cmd_audit;; reopen) cmd_reopen;; droptable) cmd_droptable;; quota) lambda_quota;; budget) cost_tags;; beta) cmd_beta "$@";; update) cmd_update;; betaurl) bd=$(dist_id); printf 'https://%s/play-beta/index.html\n' "$(aws cloudfront get-distribution --id "$bd" --query Distribution.DomainName --output text)";; clean) cmd_clean;;
   *) sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//';;
 esac

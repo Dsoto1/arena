@@ -587,3 +587,4 @@ routes and new optional fields only (an older page simply never asks for them). 
 - **Deploy.** Server code changed → `bash flavius.sh release` redeploys it (no stack/template change). New server texts have codes in
   `server/src/texts93.json` (`node tools/i18n/srvtext93.js`). Rollback = the previous release; the new CHAR fields are ignored by older code
   (an older server would grow ratings again and allow class changes).
+- reopen (v1.15, FSH_VER 19): `bash flavius.sh reopen` makes the budget switch's {"reopen":true} call by hand (the same as its monthly rule on the 1st at 00:05 UTC), says if it was already open, and checks the arena's concurrency afterwards; status's red "arena open?" now points at it.
