@@ -5,6 +5,8 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-11-01 · tv100bb flaky on the v1.15 full run 41252211297 attempt 1: 9 zoom_p95 (gate) ON 10 ms vs OFF 8.6 ms (allowed 9.6) on a
+  GitHub runner; passes locally (9.2/9.9, 9.1/8.5), passed on run 41248555142 and on the one re-run; v1.15 does not touch the bubbles. Watch: if it repeats, it is real.
 - 2026-10-31 · tv103a FIXED in v1.15 (test only): G3 used the real day's daily challenge and assumed it opens on its briefing; on days whose event
   opens on a Draft first (2026-10-31: ludus) G3a/G3c failed on every build. G3 now pins the day (DC100.t = 2026-10-29); the 5x-throttled page load
   gets 120 s (the v1.15 [full] run 41248555142 timed out at 30 s). Game unchanged.
