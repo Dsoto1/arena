@@ -401,3 +401,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   Also: tv100p robust on slow runners (test only); tv103a G3 pinned to 2026-10-29's challenge (the 2026-10-31 daily opens on a Draft);
   release.sh falls back to tools/png2webp.js (Chromium) when PIL is broken. Full runs 41248555142 (tv103a, fixed) and 41252211297 (green on
   the re-run; tv100bb zoom_p95 gate once).
+
+- **v1.15a** Mercy for small houses (2026-11-01; tools/plans/v115a/NOTES.md; his 1a 2a 3a 4a 5a on tools/plans/deaths112/REPORT.md; beta first):
+  431-v115adeath wraps bloodPrice (half price, min 5, for a house under fame 18 unless 51-v49's newcomerHouse already halves it) and
+  killFighter (no −2 fame under fame 18; deaths still counted), and pendingHTML (the note "half price — a small house", newcomers too, his 6a).
+  REPLACES the newcomer-only half price (v0.49) and −2 fame for every death. STAR_FAME unchanged (3a). Sim (12 seeds × 5 seasons): deaths
+  2.37 → 0.47 a season, fame 6 → 13, ≈77 coin a season on blood money, rivals unchanged, rank unchanged (the strength study followed: v1.15b).
+  Kill switch flavius_v115adeathoff=1; test tv115d. Full run 41261604631 green.
