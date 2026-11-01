@@ -1,0 +1,27 @@
+(node:27693) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[w1] 1 careful seed 2: 5 season(s) end 454 min 41 rank 10/13/8/12/12 · 98 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 2 careful seed 1: 5 season(s) end 120 min -1 rank 11/12/13/11/11 · 102 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 3 careful seed 4: 5 season(s) end 144 min -9 rank 11/12/13/13/7 · 95 s · stuck 3 locked 0 stall 0 errs 0
+[w1] 4 careful seed 3: 5 season(s) end 125 min -10 rank 10/12/13/6/13 · 114 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 5 careful seed 6: 5 season(s) end 389 min 50 rank 13/5/10/9/6 · 85 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 6 careful seed 5: 5 season(s) end 162 min 4 rank 12/12/11/10/11 · 110 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 7 careful seed 7: 5 season(s) end 302 min 51 rank 6/10/13/13/8 · 88 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 8 careful seed 8: 5 season(s) end 240 min -4 rank 13/10/10/9/8 · 88 s · stuck 1 locked 0 stall 0 errs 0
+[w1] 9 careful seed 9: 5 season(s) end 177 min -2 rank 13/5/13/12/9 · 88 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 10 careful seed 10: 5 season(s) end 177 min -8 rank 11/12/6/13/12 · 89 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 11 careful seed 11: 5 season(s) end -8 min -21 rank 9/13/10/13/ · 95 s · stuck 3 locked 0 stall 0 errs 0
+[w0] 12 careful seed 12: 5 season(s) end 221 min 25 rank 12/12/13/13/8 · 108 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 13 careful seed 13: 5 season(s) end 433 min -12 rank 13/13/13/13/10 · 111 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 14 careful seed 14: 5 season(s) end 155 min -14 rank 13/13/11/7/10 · 88 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 15 careful seed 15: 5 season(s) end 232 min 31 rank 10/3/13/4/13 · 103 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 16 careful seed 16: 5 season(s) end 201 min 1 rank 10/13/12/13/10 · 107 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 17 careful seed 17: 5 season(s) end 307 min 25 rank 12/9/3/9/13 · 95 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 18 careful seed 18: 5 season(s) end 126 min 7 rank 13/4/11/7/12 · 108 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 19 careful seed 19: 5 season(s) end 662 min 72 rank 13/7/6/11/6 · 80 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 20 careful seed 20: 5 season(s) end 153 min -1 rank 7/9/13/10/10 · 100 s · stuck 1 locked 0 stall 0 errs 0
+[w1] 21 careful seed 21: 5 season(s) end 138 min 4 rank 12/13/5/13/8 · 97 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 22 careful seed 22: 5 season(s) end 880 min 42 rank 13/10/13/3/3 · 81 s · stuck 0 locked 0 stall 0 errs 0
+[w1] 23 careful seed 23: 5 season(s) end 340 min 44 rank 13/11/10/8/8 · 96 s · stuck 0 locked 0 stall 0 errs 0
+[w0] 24 careful seed 24: 5 season(s) end 254 min 83 rank 10/8/13/5/13 · 100 s · stuck 0 locked 0 stall 0 errs 0
+DONE 24 run(s) in 19.6 min · avg 97 s/run
