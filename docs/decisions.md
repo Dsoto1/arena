@@ -933,3 +933,4 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   patron pays the rivals' formula 22 + 0.6×fame a week — REPLACES v1.12 P1 (10 + 0.3×fame, 2026-10-23 1a); (4a) accept deaths 0.50 → 0.82 a
   season (more Feature bouts); (5a) its own release (v1.15b) after v1.15a, beta first; (6a) v1.15a's "half price — a small house" note shows
   for newcomer houses too. tools/plans/v115b/NOTES.md.
+- 2026-11-01 · v1.15c wheel zoom (tools/plans/v115c/NOTES.md) — his 1a–6a: mouse wheel / trackpad pinch over the arena zooms CAM.z 1–2.4 in ≈10% steps, centred by the follow camera, page never scrolls over the arena, always on (kill switch only); own release after v1.15b. Reuses 86-v66's pinch zoom (v0.66), replaces nothing.
