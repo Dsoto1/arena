@@ -68397,7 +68397,7 @@ function r101WhyNot(w,b,g){const T=TIERS[b.tier];const n=w.night;
   const cur=n.bouts.findIndex(x=>x.ents.includes(g.id));if(cur>=0&&n.bouts[cur]!==b)return _T`is already entered in the ${TIERS[n.bouts[cur].tier].n}`;
   if(b.ents.includes(g.id))return _T('is entered here');
   if((b.wd||0)>=2)return _T('cannot enter: this bout is closed to your house after two withdrawals');
-  const o=effOvr(g);if(T&&(o<T.lo-6||o>T.hi+6))return _T`is rated ${o}; the ${T.n} takes ${T.lo-6}–${T.hi+6}`;
+  const o=effOvr(g);if(T&&(o<T.lo-6||o>T.hi+6))return T.lo-6<=0?_T`is rated ${o}; the ${T.n} takes up to ${T.hi+6}`:_T`is rated ${o}; the ${T.n} takes ${T.lo-6}–${T.hi+6}`;
   if(g.morale!=null&&g.morale<=15)return _T`is too low in spirit (morale ${Math.round(g.morale)})`;
   return ''}
 {const base=nightHTML;nightHTML=function(){const h=base.apply(this,arguments);try{if(r101Off()||typeof h!=='string')return h;const w=W_(),pm=me();if(!w||!w.night||w.night.bye||!pm)return h;

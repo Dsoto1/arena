@@ -49,7 +49,7 @@ const probe=pg=>ev(pg,async()=>{const r={};const w=W_(),pm=me();
 const pg=await open();const o=await probe(pg);out.on=o;
 ok(o.hi===54,'undercard hi 54 ('+o.hi+')');ok(o.featLo===56,'feature lo stays 56');
 ok(o.at===60&&!o.why60&&!/outside this bout/.test(o.any60||''),'player 60 accepted: '+o.why60+' / '+o.any60);
-ok(o.at2===61&&/takes/.test(o.why61)&&/outside this bout/.test(o.any61||''),'player 61 refused: '+o.why61+' / '+o.any61);
+ok(/takes up to 60$/.test(o.why61)&&!/-\d/.test(o.why61),'refusal reads "takes up to 60" (no negative range): '+o.why61);ok(o.at2===61&&/takes/.test(o.why61)&&/outside this bout/.test(o.any61||''),'player 61 refused: '+o.why61+' / '+o.any61);
 ok(o.label.includes('≤ 54')&&!o.label.includes('62'),'slot label ≤ 54: '+o.label);
 ok(o.ended!==false&&o.booked===Math.round(22+o.fame*0.6)&&o.booked>0,'patron 22 + 0.6 × fame: '+o.booked+' fame '+o.fame);
 ok(o.news.includes('+'+o.booked+' coin'),'ledger line shows the new amount: '+o.news);
