@@ -408,3 +408,13 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   REPLACES the newcomer-only half price (v0.49) and −2 fame for every death. STAR_FAME unchanged (3a). Sim (12 seeds × 5 seasons): deaths
   2.37 → 0.47 a season, fame 6 → 13, ≈77 coin a season on blood money, rivals unchanged, rank unchanged (the strength study followed: v1.15b).
   Kill switch flavius_v115adeathoff=1; test tv115d. Full run 41261604631 green.
+
+- **v1.15b** Stronger small houses (2026-11-03; tools/plans/v115b/NOTES.md; his 1a–6a + 8a on tools/plans/strength115/REPORT.md; beta first):
+  432-v115bstr sets TIERS.under.hi 62 → 54 at load (every T.hi reader follows: makeNight rivals ≤ 56, fillNight, the player's entry checks
+  ≤ 60, 229's "≤ 54" label, 145, 22) and E112.pat to 22 + 0.6×fame (the rivals' stipend; REPLACES v1.12 P1). 319's refusal reads "takes up
+  to 60" (no negative range, 8a). Sim (F13): rank 10.3 → 8.0, roster 45 → 56, fame 9 → 23, deaths 0.50 → 0.82 a season (accepted, 4a).
+  Beta report (his screenshot): Match Week's auto-fill put a 73 in the Undercard — st95Fill and 350's reserve cover never checked the bout's
+  rating band (since v0.95); now an out-of-band starter/reserve is not auto-entered (next fitting reserve, else the filler) and an unfought
+  saved card is cleaned (v115bClean). Kill switches flavius_v115bstroff=1, flavius_v115bfilloff=1. Tests tv115b; tv112e, tv95c, tv104c,
+  tlive, tv105a updated on purpose. Full runs: ba4e9818 green; 5ae42b19 red (tlive/tv105a assumed a strong starter in the Undercard) →
+  41310916016 green.
