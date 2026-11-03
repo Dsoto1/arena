@@ -418,3 +418,10 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   saved card is cleaned (v115bClean). Kill switches flavius_v115bstroff=1, flavius_v115bfilloff=1. Tests tv115b; tv112e, tv95c, tv104c,
   tlive, tv105a updated on purpose. Full runs: ba4e9818 green; 5ae42b19 red (tlive/tv105a assumed a strong starter in the Undercard) →
   41310916016 green.
+
+- **v1.15c** Zoom with the wheel (2026-11-03; tools/plans/v115c/NOTES.md; his note of 2026-11-01 + 1a–6a; beta first): 433-v115czoom listens
+  for wheel on #cv ({passive:false}, preventDefault while a live board shows and no modal is open): deltaY accumulated ~100 units a step
+  (line/page modes scaled), CAM.z ×/÷ ≈1.1 within 1–CAM_MAX 2.4, S.zoomIn / CAM.z=null under 1.03 / duelUI as the v0.66 pinch; ctrl+wheel (Mac
+  trackpad pinch) too; duel/pen76/exhibition cameras untouched; redraw coalesced to one per animation frame. Replaces nothing (reuses the pinch
+  zoom and 🔍). First builder interrupted (session restart) — its WIP saved on wip/v115c-zoom and finished by a second builder (tv115z removes
+  the event title card before wheeling). Kill switch flavius_v115czoomoff=1; test tv115z. Full run 41623129499 green.
