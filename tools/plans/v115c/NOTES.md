@@ -11,3 +11,5 @@ His answers 2026-11-01: **1a 2a 3a 4a 5a 6a**
 4. 4a over the arena the wheel never scrolls the page (preventDefault on the board canvas).
 5. 5a Mac trackpad pinch (ctrl+wheel) zooms too.
 6. 6a always on; kill switch only (flavius_v115czoomoff=1), no new setting.
+
+Built 2026-11-03: 433-v115czoom (first builder interrupted; WIP finished + verified by a second builder). The event title card (#evIntro, ~3.4 s) is not the canvas: the wheel over it scrolls as before (spec: canvas only).
