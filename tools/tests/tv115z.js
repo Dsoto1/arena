@@ -11,7 +11,7 @@ const open=async(ls)=>{const cx=await b.newContext({viewport:{width:1440,height:
 const start=(pg,seed)=>pg.evaluate(async seed=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}menuHide()
   SETTINGS.briefing=false;SPEED='pause';startEvent({ev:'democritus',loc:6,seed,seats:['hero','soldier','royalty','venatore'].map(c=>({cls:c,cpu:true})),opts:{spect:0}});
   for(let i=0;i<120;i++){await W8(100);if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);else if(S&&S.phase!=='setup'&&i>5)break}
-  SPEED='pause';await W8(300);CAM.z=null;S.zoomIn=false;return !!S},seed);
+  SPEED='pause';await W8(300);const ei=document.getElementById('evIntro');if(ei)ei.remove();CAM.z=null;S.zoomIn=false;return !!S},seed);
 const st=pg=>pg.evaluate(()=>({z:CAM.z,zi:S.zoomIn,sy:scrollY,vs:window.visualViewport?window.visualViewport.scale:1}));
 const fr=pg=>pg.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 const hover=async pg=>{const bx=await pg.evaluate(()=>{const r=cv.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+Math.min(r.height/2,300)}});await pg.mouse.move(bx.x,bx.y)};

@@ -83079,6 +83079,27 @@ if(!V115B.off){
   try{if(typeof TIERS!=='undefined'&&TIERS.under)TIERS.under.hi=V115B.underHi}catch(e){console.error(e)}
   try{if(typeof E112!=='undefined'&&E112.pat){E112.pat.base=V115B.pat.base;E112.pat.fame=V115B.pat.fame}}catch(e){console.error(e)}
 }
+
+/* 432 fix - the starters' auto-fill respects the bout's rating band (own switch, independent of V115B.off) */
+const V115BF={off:(()=>{try{return localStorage.getItem('flavius_v115bfilloff')==='1'}catch(e){return false}})()};
+window.V115BF=V115BF;
+function v115bOut(g,b){const T=b&&TIERS[b.tier];if(!T||b.tier==='spc100')return false;const o=effOvr(g);return o<T.lo-6||o>T.hi+6}
+{const base=st95Fill;st95Fill=function(w,pm){const hold=[];
+  try{if(!V115BF.off&&w&&pm&&w.night&&w.night.bouts)for(const g of st95Pool(w,pm))if(g.slot95&&v115bOut(g,w.night.bouts[g.slot95-1])){hold.push([g,g.slot95,g.tm104]);g.slot95=0;delete g.tm104 /* 350's reserve cover would else put him in as a 'reserve' */}}catch(e){console.error(e)}
+  const hid=[];
+  try{let r=base.apply(this,arguments);
+    /* 350's reserve cover: a reserve (tm104 A, no slot) put in a bout outside his band comes out again (filler back) and the next reserve tries */
+    if(!V115BF.off&&w&&pm&&w.night&&w.night.bouts)for(let i=0;i<3;i++){const nt=w.night;let bad=0;
+      for(const b of nt.bouts)for(const id of b.ents.slice()){if(!(nt.cov104||[]).includes(id))continue;const g=gById(id);if(g&&g.contract&&g.contract.mgr===pm.id&&!b.done&&v115bOut(g,b)){st95Out(b,id);nt.auto95=(nt.auto95||[]).filter(x=>x!==id);nt.cov104=nt.cov104.filter(x=>x!==id);hid.push([g,g.tm104]);delete g.tm104;bad++}}
+      if(!bad)break;r=base.apply(this,arguments)}
+    return r}
+  finally{for(const [g,t] of hid)if(t!==undefined)g.tm104=t;for(const [g,s,t] of hold){g.slot95=s;if(t!==undefined)g.tm104=t}}}}
+/* a card already drawn (a saved world): an auto-entered fighter outside his bout's band comes off it, only while no bout is done */
+function v115bClean(){try{if(V115BF.off)return 0;const w=W_(),pm=me(),n=w&&w.night;if(!w||!pm||w.dead||w.tutorial||!n||n.bye||!n.bouts||!(n.auto95||[]).length)return 0;
+  if(n.bouts.some(b=>b.done)||(typeof S!=='undefined'&&S&&!S.over&&(S.mgrCtx||S.exhibCtx||S.pen76)))return 0;let k=0;
+  for(const b of n.bouts)for(const id of b.ents.slice()){if(!n.auto95.includes(id))continue;const g=gById(id);if(g&&g.contract&&g.contract.mgr===pm.id&&v115bOut(g,b)){st95Out(b,id);n.auto95=n.auto95.filter(x=>x!==id);k++}}
+  if(k)saveWorld();return k}catch(e){console.error(e);return 0}}
+{const base=mgrHTML;mgrHTML=function(){v115bClean();return base.apply(this,arguments)}}
 /* v1.15c WHEEL ZOOM (433-v115czoom): the mouse wheel over the arena canvas (#cv) zooms like the phone pinch (86-v66): wheel up = in,
    down = out, ~10% a notch (deltaY accumulated, ~100 units a step, so a trackpad's many small events stay gentle; line/page modes scaled),
    range 1-CAM_MAX. It sets CAM.z / S.zoomIn exactly as the pinch does and the follow camera (camFocus) keeps centring on the active
@@ -83103,27 +83124,6 @@ if(!off&&typeof cv!=='undefined'&&cv&&typeof CAM!=='undefined'&&!HEADLESS){
     if(!W115.raf)W115.raf=requestAnimationFrame(flush);
   },{passive:false});
 }}
-
-/* 432 fix - the starters' auto-fill respects the bout's rating band (own switch, independent of V115B.off) */
-const V115BF={off:(()=>{try{return localStorage.getItem('flavius_v115bfilloff')==='1'}catch(e){return false}})()};
-window.V115BF=V115BF;
-function v115bOut(g,b){const T=b&&TIERS[b.tier];if(!T||b.tier==='spc100')return false;const o=effOvr(g);return o<T.lo-6||o>T.hi+6}
-{const base=st95Fill;st95Fill=function(w,pm){const hold=[];
-  try{if(!V115BF.off&&w&&pm&&w.night&&w.night.bouts)for(const g of st95Pool(w,pm))if(g.slot95&&v115bOut(g,w.night.bouts[g.slot95-1])){hold.push([g,g.slot95,g.tm104]);g.slot95=0;delete g.tm104 /* 350's reserve cover would else put him in as a 'reserve' */}}catch(e){console.error(e)}
-  const hid=[];
-  try{let r=base.apply(this,arguments);
-    /* 350's reserve cover: a reserve (tm104 A, no slot) put in a bout outside his band comes out again (filler back) and the next reserve tries */
-    if(!V115BF.off&&w&&pm&&w.night&&w.night.bouts)for(let i=0;i<3;i++){const nt=w.night;let bad=0;
-      for(const b of nt.bouts)for(const id of b.ents.slice()){if(!(nt.cov104||[]).includes(id))continue;const g=gById(id);if(g&&g.contract&&g.contract.mgr===pm.id&&!b.done&&v115bOut(g,b)){st95Out(b,id);nt.auto95=(nt.auto95||[]).filter(x=>x!==id);nt.cov104=nt.cov104.filter(x=>x!==id);hid.push([g,g.tm104]);delete g.tm104;bad++}}
-      if(!bad)break;r=base.apply(this,arguments)}
-    return r}
-  finally{for(const [g,t] of hid)if(t!==undefined)g.tm104=t;for(const [g,s,t] of hold){g.slot95=s;if(t!==undefined)g.tm104=t}}}}
-/* a card already drawn (a saved world): an auto-entered fighter outside his bout's band comes off it, only while no bout is done */
-function v115bClean(){try{if(V115BF.off)return 0;const w=W_(),pm=me(),n=w&&w.night;if(!w||!pm||w.dead||w.tutorial||!n||n.bye||!n.bouts||!(n.auto95||[]).length)return 0;
-  if(n.bouts.some(b=>b.done)||(typeof S!=='undefined'&&S&&!S.over&&(S.mgrCtx||S.exhibCtx||S.pen76)))return 0;let k=0;
-  for(const b of n.bouts)for(const id of b.ents.slice()){if(!n.auto95.includes(id))continue;const g=gById(id);if(g&&g.contract&&g.contract.mgr===pm.id&&v115bOut(g,b)){st95Out(b,id);n.auto95=n.auto95.filter(x=>x!==id);k++}}
-  if(k)saveWorld();return k}catch(e){console.error(e);return 0}}
-{const base=mgrHTML;mgrHTML=function(){v115bClean();return base.apply(this,arguments)}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
