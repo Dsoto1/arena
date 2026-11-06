@@ -6,6 +6,15 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 
 Last updated: 2026-11-06 (cloud session).
 
+## v1.16 in flight (2026-11-06, cloud session) — read tools/plans/v116/NOTES.md
+- Built and merged on the work branch: N1–N3 housekeeping, C1 WebKit CI job (webkit.yml + tools/ci/webkit.txt + tools/tests/_browser.js),
+  C2 tv116load (time-to-menu on a phone profile: 28 s on Slow 4G → his 3b decision: Brotli + loading bar first = v1.16a, then the build split
+  = v1.17 beta first), C3 tools/wrapped.js + docs/architecture.md table. No game change in v1.16.
+- CI was BROKEN by the runner image (ubuntu-26.04 + Playwright 1.56.1 = no browser): pinned to ubuntu-24.04 in 3b808f9 (docs/known-issues.md).
+  The first green smart run + the first WebKit run after that pin are the proof v1.16 needs; then `sh tools/release.sh 1.16` + [full] run,
+  no beta (tooling only), ship when green.
+- His checklist Artifact is unreachable from the cloud account (404) — ask him to paste notes.
+
 ## Live now
 - **v1.15c "Zoom with the wheel"** is LIVE (he confirmed 2026-11-06). release/v1.15c = main = ccf6a70; full CI run 41623129499 green first time.
   v1.15, v1.15a, v1.15b and v1.15c all shipped 2026-11-01..03 (docs/history.md; newest three in CLAUDE.md §7).

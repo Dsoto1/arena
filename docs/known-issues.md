@@ -66,6 +66,11 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
   re-measured with docs/economy.md after v1.05 ships (his E2a).
 
 ## Tests + tooling
+- 2026-11-06 · CI RUNNERS: `ubuntu-latest` became ubuntu-26.04 and Playwright 1.56.1 refuses to install ANY browser there ("Playwright does
+  not support chromium/webkit on ubuntu26.04-x64"); every run since 2026-10-23 lived off the actions cache `pw-1.56.1-chromium`, and when that
+  expired (2026-11-06, runs 42219587445 / 42220079428) all 96 tests failed with "Executable doesn't exist". Fix 3b808f9: regression.yml,
+  webkit.yml and webkit-bench.yml pinned to `ubuntu-24.04`. REPLACES the 2026-10-23 line below ("the cached Chromium still runs"). Revisit
+  when Playwright is upgraded past 1.56 (then 26.04 may be supported and the pin can go).
 - 2026-10-28 · flaky once in the v1.14 full run (passed alone): tv88m, tv96c, tv105c, tv104h · watch; real if it repeats.
 - 2026-10-21 · v1.08c builder A: the flaky set (tv106d tv100z tv104d tv104e tv105o tv95c tv85f tv85r tv76 tv96g tv101c tv98d tv91n tv59
   tv93a) rewritten with tools/tests/_wait.js (seeded worlds + semantic waits); local proof (smartreg -j 2, first try only): 12 of 15 at 20/20,
