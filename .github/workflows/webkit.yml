@@ -23,7 +23,7 @@ permissions:
 jobs:
   webkit:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,17 +33,16 @@ jobs:
           path: ~/.cache/ms-playwright
           key: pw-1.56.1-webkit
       - name: tools
-        timeout-minutes: 6
+        timeout-minutes: 12
         run: |
-          npm i --no-save --prefix /tmp/ci playwright@1.56.1 >/dev/null 2>&1
+          npm i --no-save --prefix /tmp/ci playwright@1.56.1 typescript@5 >/dev/null 2>&1
           # same bounded 3-try pattern as regression.yml; the last tries fall back to install-deps + a plain install
           ok=0
-          for i in 1 2 3; do
-            if [ "$i" = 1 ]; then timeout 240 npx --prefix /tmp/ci playwright install --with-deps webkit >/dev/null && { ok=1; break; }
-            else (timeout 120 npx --prefix /tmp/ci playwright install-deps webkit >/dev/null || true); timeout 240 npx --prefix /tmp/ci playwright install webkit >/tmp/pwi.log 2>&1 && { ok=1; break; }; echo "plain webkit install failed:"; tail -25 /tmp/pwi.log
-            fi
-            echo "playwright webkit install try $i failed"; sleep 5
-          done
+          # Run 42222057691 (ubuntu-24.04): --with-deps hit the 240 s bound in apt and left a dpkg lock behind; the plain download alone took
+          # seconds. So: plain download FIRST (cached across runs), then ONE bounded install-deps for WebKit's libraries (failure tolerated —
+          # a missing library shows up as a launch error in the tests, which is the real signal).
+          for i in 1 2 3; do timeout 240 npx --prefix /tmp/ci playwright install webkit >/tmp/pwi.log 2>&1 && { ok=1; break; }; echo "playwright webkit install try $i failed:"; tail -25 /tmp/pwi.log; sleep 5; done
+          timeout 420 sudo -E npx --prefix /tmp/ci playwright install-deps webkit >/tmp/pwd.log 2>&1 || { echo "install-deps webkit did not finish (exit $?) — continuing:"; tail -15 /tmp/pwd.log; }
           [ "$ok" = 1 ] || { echo "WebKit could not be installed"; exit 1; }
       - name: build
         run: sh build.sh | tail -1
