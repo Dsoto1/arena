@@ -40,7 +40,7 @@ jobs:
           ok=0
           for i in 1 2 3; do
             if [ "$i" = 1 ]; then timeout 240 npx --prefix /tmp/ci playwright install --with-deps webkit >/dev/null && { ok=1; break; }
-            else (timeout 120 npx --prefix /tmp/ci playwright install-deps webkit >/dev/null || true); timeout 240 npx --prefix /tmp/ci playwright install webkit >/dev/null && { ok=1; break; }
+            else (timeout 120 npx --prefix /tmp/ci playwright install-deps webkit >/dev/null || true); timeout 240 npx --prefix /tmp/ci playwright install webkit >/tmp/pwi.log 2>&1 && { ok=1; break; }; echo "plain webkit install failed:"; tail -25 /tmp/pwi.log
             fi
             echo "playwright webkit install try $i failed"; sleep 5
           done

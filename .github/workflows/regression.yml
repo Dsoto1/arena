@@ -72,7 +72,7 @@ jobs:
           # apt inside --with-deps has hung for 40 min on some runners: bound each try, retry twice
           for i in 1 2 3; do timeout 240 npx --prefix /tmp/ci playwright install --with-deps chromium >/dev/null && break; echo "playwright install try $i failed"; sleep 5; done
           # ubuntu-26.04: --with-deps aborts BEFORE the download ("Cannot install dependencies"); with a cold cache that left no browser at all (run 42219587445). Plain download as the fallback; the runner's own libraries suffice.
-          for i in 1 2 3; do timeout 240 npx --prefix /tmp/ci playwright install chromium >/dev/null && break; echo "playwright plain install try $i failed"; sleep 5; done
+          for i in 1 2 3; do timeout 240 npx --prefix /tmp/ci playwright install chromium >/tmp/pwi.log 2>&1 && break; echo "playwright plain install try $i failed (exit $?):"; tail -25 /tmp/pwi.log; sleep 5; done
           (cd server && npm i --no-audit --no-fund >/dev/null 2>&1 || true)
       - name: build
         run: sh build.sh | tail -1
