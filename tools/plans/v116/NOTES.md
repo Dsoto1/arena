@@ -79,3 +79,9 @@ v1.16 = 2a + 3a + 5a + 7 (no game change except the measuring test) → no beta 
 ## His answer 2026-11-06 on 3b: "I'll take your recs" = 3b-b first (Brotli + loading bar), then 3b-a (build split) as its own release, beta first.
 Shape: v1.16 = this tooling release (no game change) · v1.16a = 3b-b (Brotli = flavius.sh deploy/CloudFront, loading bar = 01-head boot cover;
 needs a full run, no beta) · v1.17 = 3b-a build split (beta first). Nothing of 3b built yet; v1.16 goes first.
+- CI RUNNER BUG, real cause (2026-11-06 13:00): `ubuntu-latest` = ubuntu-26.04 and Playwright 1.56.1 says "does not support chromium/webkit
+  on ubuntu26.04-x64" for ANY install → the old runs lived off the actions cache. Fix 3b808f9: regression.yml / webkit.yml / webkit-bench.yml
+  pinned to ubuntu-24.04. Smart run 42222057749 on the pin: GREEN (the first clean run on this branch). Known-issues line written.
+- WebKit job on the pin: download + deps now 34 s (plain download first, bounded install-deps). First test run (42223229945) HUNG 8.6 min
+  under smartreg -j 2 with no output → the step now runs one test at a time, bounded 200 s, printing each result (6975a2a); dispatched
+  with tv91r tv101z to see whether the page boots on Linux WebKit at all. Result pending.
