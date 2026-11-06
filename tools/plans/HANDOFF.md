@@ -8,9 +8,11 @@ Last updated: 2026-11-06 (cloud session).
 
 ## v1.16 "Behind the scenes" — RELEASE COMMIT PUSHED, waiting for CI (2026-11-06 13:48 UTC, cloud session; next agent takes it from here)
 Read tools/plans/v116/NOTES.md (his answers, the build log, the CI story). Work branch claude/flavius-game-improvements-yg8qx0.
-- Release commit 8f589b9 "[full]" is pushed → the FULL regression run is in progress (≈25 min). Also in progress: the first full 8-test
-  WebKit run (webkit.yml dispatch, ≈25 min; the two-test probe 42227120761 passed tv91r and failed tv101z only on 2 anti-aliased pixels,
-  now tolerated on WebKit only).
+- Release commit 8f589b9 "[full]" is pushed → FULL regression run 42228473552: at 14:18 UTC the server job and 7 of 8 shards were GREEN,
+  shard 1 still running (its 30-min bound ends ≈14:20) — read its result first.
+- First full 8-test WebKit run 42228304630 DONE (18 min): PASS tv91r tv100p tv101z tv106f · FAIL tv100an (timeout, bound now 400 s),
+  tv106d (touch tap never selects on WebKit — CANDIDATE REAL Safari/iPad bug), tv108x + tv110a (Chromium expectations where WebKit is
+  capped by design → split the checks). All four sorted in docs/known-issues.md "FIRST WEBKIT CI RUN". The job works end to end.
 - NEXT AGENT: (1) read both runs (GitHub MCP actions_list / get_job_logs). Full run green → §6 step 4 SHIP on his word: push HEAD to
   refs/heads/release/v1.16 and refs/heads/main, then HE runs `bash flavius.sh release`. No beta needed (tooling only, no game behaviour
   change) unless he wants one. A flaky test: one confirming re-run only (docs/known-issues.md). (2) after shipping: CLAUDE.md §7 (newest
