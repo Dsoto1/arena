@@ -27,7 +27,7 @@ permissions:
   actions: read
 jobs:
   plan:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
       mode: ${{ steps.p.outputs.mode }}
@@ -52,7 +52,7 @@ jobs:
   test:
     needs: plan
     if: needs.plan.outputs.mode != 'skip'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     strategy:
       fail-fast: false
@@ -107,7 +107,7 @@ jobs:
   server:
     needs: plan
     if: needs.plan.outputs.mode == 'full'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -117,7 +117,7 @@ jobs:
   report:
     needs: [plan, test]
     if: always() && needs.plan.outputs.mode != 'skip'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -129,7 +129,7 @@ jobs:
     # Re-applied on the branch's newest commit and retried, so it never overwrites a concurrent push.
     needs: [plan, test]
     if: always() && needs.plan.outputs.mode == 'full' && needs.test.result != 'cancelled' && github.ref_type == 'branch' && startsWith(github.ref_name, 'claude/')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: write
