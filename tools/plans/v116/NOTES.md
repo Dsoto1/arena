@@ -88,3 +88,8 @@ needs a full run, no beta) · v1.17 = 3b-a build split (beta first). Nothing of 
 - WebKit probe 42225921373 (deps skipped): the per-test loop works; both tests fail at LAUNCH — the 24.04 image lacks ~40 WebKit libraries
   (libgst*, libflite*, libGLESv2, libx264 …) → install-deps is required (default again, bounded 600 s; apt took 34 s once, >420 s once).
   Next probe: tv91r tv101z with deps.
+- WebKit probe 42227120761 (deps installed, 47 s): tv91r PASS (175 s); tv101z FAIL only on check 4: 2 of 592 670 px differ >24 levels =
+  WebKit canvas anti-aliasing, not a layer bug → tv101z tolerates ≤ 8 such px when PW_BROWSER=webkit (8caaca1), Chromium stays at 0.
+  ≈3 min a test on Linux WebKit → job 35 min / tests step 26 min. Full 8-test dispatch started 13:47; result in HANDOFF when read.
+- RELEASE: `sh tools/release.sh 1.16` clean (hygiene, idscan, site line, advert shot); commit 8f589b9 "[full]" pushed 13:48 → full run.
+  The SHIP step (release/v1.16 + main, then his `bash flavius.sh release`) is left to the next agent on his word.
