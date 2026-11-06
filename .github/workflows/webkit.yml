@@ -13,6 +13,9 @@ on:
       tests:
         description: 'space-separated test names (default: tools/ci/webkit.txt)'
         default: ''
+      deps:
+        description: "'yes' = also run playwright install-deps webkit (apt, slow); default: the image's own libraries"
+        default: 'no'
   schedule:
     - cron: '0 6 * * 1'   # Monday 06:00 UTC
 concurrency:
@@ -34,6 +37,8 @@ jobs:
           key: pw-1.56.1-webkit
       - name: tools
         timeout-minutes: 12
+        env:
+          INPUT_DEPS: ${{ github.event.inputs.deps }}
         run: |
           npm i --no-save --prefix /tmp/ci playwright@1.56.1 typescript@5 >/dev/null 2>&1
           # same bounded 3-try pattern as regression.yml; the last tries fall back to install-deps + a plain install
@@ -42,7 +47,9 @@ jobs:
           # seconds. So: plain download FIRST (cached across runs), then ONE bounded install-deps for WebKit's libraries (failure tolerated —
           # a missing library shows up as a launch error in the tests, which is the real signal).
           for i in 1 2 3; do timeout 240 npx --prefix /tmp/ci playwright install webkit >/tmp/pwi.log 2>&1 && { ok=1; break; }; echo "playwright webkit install try $i failed:"; tail -25 /tmp/pwi.log; sleep 5; done
-          timeout 420 sudo -E npx --prefix /tmp/ci playwright install-deps webkit >/tmp/pwd.log 2>&1 || { echo "install-deps webkit did not finish (exit $?) — continuing:"; tail -15 /tmp/pwd.log; }
+          # apt on the runners is unpredictable (34 s one run, >420 s the next: 42224590088). Run 42223229945 launched WebKit
+          # (MiniBrowser + WPEWebProcess) with the image's own libraries, so install-deps is OPT-IN (dispatch input deps=yes).
+          if [ "$INPUT_DEPS" = "yes" ]; then timeout 600 sudo -E env "PATH=$PATH" npx --prefix /tmp/ci playwright install-deps webkit >/tmp/pwd.log 2>&1 || { echo "install-deps webkit did not finish (exit $?) — continuing:"; tail -15 /tmp/pwd.log; }; fi
           [ "$ok" = 1 ] || { echo "WebKit could not be installed"; exit 1; }
       - name: build
         run: sh build.sh | tail -1
@@ -56,6 +63,7 @@ jobs:
           REGSHARE: '0'    # the shared-browser server is Chromium-only
           INPUT_TESTS: ${{ github.event.inputs.tests }}
         run: |
+          set +e   # bash -e killed the loop at the first failing test with no output (run 42224590088)
           T="$INPUT_TESTS"; [ -n "$T" ] || T=$(tr '\n' ' ' < tools/ci/webkit.txt)
           echo "WebKit tests: $T"
           # One test at a time, each bounded, output shown as it finishes (run 42223229945: smartreg -j 2 hung 8.6 min with no
