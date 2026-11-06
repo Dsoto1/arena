@@ -6,14 +6,28 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 
 Last updated: 2026-11-06 (cloud session).
 
-## v1.16 in flight (2026-11-06, cloud session) — read tools/plans/v116/NOTES.md
-- Built and merged on the work branch: N1–N3 housekeeping, C1 WebKit CI job (webkit.yml + tools/ci/webkit.txt + tools/tests/_browser.js),
-  C2 tv116load (time-to-menu on a phone profile: 28 s on Slow 4G → his 3b decision: Brotli + loading bar first = v1.16a, then the build split
-  = v1.17 beta first), C3 tools/wrapped.js + docs/architecture.md table. No game change in v1.16.
-- CI was BROKEN by the runner image (ubuntu-26.04 + Playwright 1.56.1 = no browser): pinned to ubuntu-24.04 in 3b808f9 (docs/known-issues.md).
-  The first green smart run + the first WebKit run after that pin are the proof v1.16 needs; then `sh tools/release.sh 1.16` + [full] run,
-  no beta (tooling only), ship when green.
-- His checklist Artifact is unreachable from the cloud account (404) — ask him to paste notes.
+## v1.16 "Behind the scenes" — RELEASE COMMIT PUSHED, waiting for CI (2026-11-06 13:48 UTC, cloud session; next agent takes it from here)
+Read tools/plans/v116/NOTES.md (his answers, the build log, the CI story). Work branch claude/flavius-game-improvements-yg8qx0.
+- Release commit 8f589b9 "[full]" is pushed → the FULL regression run is in progress (≈25 min). Also in progress: the first full 8-test
+  WebKit run (webkit.yml dispatch, ≈25 min; the two-test probe 42227120761 passed tv91r and failed tv101z only on 2 anti-aliased pixels,
+  now tolerated on WebKit only).
+- NEXT AGENT: (1) read both runs (GitHub MCP actions_list / get_job_logs). Full run green → §6 step 4 SHIP on his word: push HEAD to
+  refs/heads/release/v1.16 and refs/heads/main, then HE runs `bash flavius.sh release`. No beta needed (tooling only, no game behaviour
+  change) unless he wants one. A flaky test: one confirming re-run only (docs/known-issues.md). (2) after shipping: CLAUDE.md §7 (newest
+  three → v1.15b, v1.15c, v1.16), docs/history.md entry, docs/modules.md has nothing new (no game module). (3) WebKit run: every test that
+  fails on WebKit but passes on Chromium is a POSSIBLE real Safari bug → docs/known-issues.md, never a blind fix; a pixel-tolerance failure
+  like tv101z's is a test tolerance, fixed WebKit-only (see 8caaca1).
+- What v1.16 contains (no game change): CLAUDE.md/HANDOFF/known-issues housekeeping · tools/tests/tv116load.js (time to menu on a 390 px
+  Slow-4G CPU×4 profile: 28 s; slow test, ~30 s a run) · tools/wrapped.js + docs/architecture.md most-wrapped table · .github/workflows/
+  webkit.yml + tools/ci/webkit.txt + tools/tests/_browser.js (PW_BROWSER env; 8 tests switched to it, Chromium path identical) ·
+  runners pinned to ubuntu-24.04 in regression.yml / webkit.yml / webkit-bench.yml (Playwright 1.56.1 installs NO browser on ubuntu-26.04;
+  all runs since 2026-10-23 lived off the actions cache — docs/known-issues.md) · MILESTONES v1.16 + part-159 translations.
+- HIS DECISIONS TODAY (docs/decisions.md 2026-11-06): 1 testers NOT YET · 2a WebKit CI · 3a measure → 3b "my recs" = v1.16a Brotli +
+  loading bar FIRST, then v1.17 build split (core + lazy Manager/Studio/Online chunks, beta first) · 5a one module per feature (CLAUDE.md §4)
+  · 6a online feature work PARKED + a share-a-link lobby invite · 7 housekeeping. Point 4 VOID (animated tokens 311-v100anim and any-event
+  entry 296-v100any both shipped in v1.0; stale backlog lines marked BUILT).
+- His checklist Artifact E6zWGfwbuCjcM3r8RmeKZt is unreachable from the cloud account (404) — ask him to paste notes.
+- Baton: `sh tools/baton.sh give` is run at the end of this session; take it before editing.
 
 ## Live now
 - **v1.15c "Zoom with the wheel"** is LIVE (he confirmed 2026-11-06). release/v1.15c = main = ccf6a70; full CI run 41623129499 green first time.
