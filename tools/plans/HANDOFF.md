@@ -32,7 +32,7 @@ Last updated: 2026-11-06 (cloud session).
 
 ## Waiting on him
 - v1.16 release shape (lead's proposal in NOTES.md): v1.16 = WebKit shard + load-time measurement + debt rule + housekeeping, no beta.
-- Point 4 of the v1.16 notes: no pick yet (4b any-event entry already exists as 296-v100any; 4a animated tokens already exist as 311-v100anim; still-parked v1.0 look items are listed there).
+- Point 4 of the v1.16 notes is VOID (4a animated tokens = 311-v100anim, 4b any-event entry = 296-v100any, both v1.0); told him 2026-11-06. No feature in v1.16. The still-parked v1.0 look items are listed in the notes if he wants one later.
 - 6a: the "play a friend" link (`#join=<room>`) = v1.16a (server change) or rides with a later release; Online feature work is parked until the arena has players.
 - Next work otherwise: resume the deaths study only on his word · backlog.
 

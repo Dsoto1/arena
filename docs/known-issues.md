@@ -66,6 +66,7 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
   re-measured with docs/economy.md after v1.05 ships (his E2a).
 
 ## Tests + tooling
+- 2026-10-28 · flaky once in the v1.14 full run (passed alone): tv88m, tv96c, tv105c, tv104h · watch; real if it repeats.
 - 2026-10-21 · v1.08c builder A: the flaky set (tv106d tv100z tv104d tv104e tv105o tv95c tv85f tv85r tv76 tv96g tv101c tv98d tv91n tv59
   tv93a) rewritten with tools/tests/_wait.js (seeded worlds + semantic waits); local proof (smartreg -j 2, first try only): 12 of 15 at 20/20,
   tv93a 19/20 → fixed → 20/20 + 8/8, tv95c 17/20 (+18/20) → fixed → 8/8 so far, tv100z 19/20 (the one miss = smartreg's 400 s kill under
