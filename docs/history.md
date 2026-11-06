@@ -426,3 +426,16 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   Always on, no setting (6a). The event title card (#evIntro, ~3.4 s) is not the canvas: the wheel over it scrolls as before (spec: canvas
   only). First builder interrupted; the WIP was finished and verified by a second one. Kill switch flavius_v115czoomoff=1; test tv115z.
   Full run 41623129499 green first time; release/v1.15c = main = ccf6a70.
+
+- **v1.16** Behind the scenes (2026-11-06; tools/plans/v116/NOTES.md; his answers 1 not yet · 2a · 3a → 3b "my recs" · 5a · 6a · 7 on the
+  lead's improvement assessment; no game behaviour change; no beta): the CI runner bug found and fixed (`ubuntu-latest` = 26.04, where
+  Playwright 1.56.1 refuses every browser install; regression.yml / webkit.yml / webkit-bench.yml pinned to ubuntu-24.04); the WebKit job
+  webkit.yml (dispatch · Monday cron · board/gear/stands pushes; install-deps required; ≈3 min a test, bounded 400 s, one at a time; first
+  full run 42228304630: tv91r tv100p tv101z tv106f pass; tv100an timeout; tv106d touch tap never selects = candidate real Safari bug;
+  tv108x / tv110a Chromium-only expectations — docs/known-issues.md); tools/tests/_browser.js (PW_BROWSER; Chromium path identical) in
+  the 8 listed tests; tv101z tolerates ≤ 8 anti-aliased px on WebKit only; tv116load (390 px, CPU ×4, Slow 4G, gzip served: menu 28 s,
+  ready 30 s; un-throttled 1.6 / 4.6 s; page 10.6 MB / 3.86 MB gz); tools/wrapped.js + docs/architecture.md top-25 (mgrHTML 73, endWeek 55,
+  modal 36); housekeeping (v1.15c step 5, HANDOFF, known-issues, backlog lines for 311-v100anim / 296-v100any marked BUILT); MILESTONES
+  card + part-159 translations. Decisions: online feature work parked + a share-a-link lobby invite (6a); one module per feature (5a);
+  v1.16a Brotli + loading bar, then v1.17 build split beta first (3b). Full run 42228473552: attempt 1 server + 7 shards green, shard 1
+  hung at 40 min (no log); the one confirming re-run green (19 min); flaky tv104a tv100an passed alone. release/v1.16 = main = e661843.

@@ -6,33 +6,22 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 
 Last updated: 2026-11-06 (cloud session).
 
-## v1.16 "Behind the scenes" — RELEASE COMMIT PUSHED, waiting for CI (2026-11-06 13:48 UTC, cloud session; next agent takes it from here)
-Read tools/plans/v116/NOTES.md (his answers, the build log, the CI story). Work branch claude/flavius-game-improvements-yg8qx0.
-- Release commit 8f589b9 "[full]" → FULL run 42228473552 attempt 1: server + 7 of 8 shards GREEN (388 pass, 0 fail, 2 flaky passed
-  alone: tv104a tv100an); shard 1 HUNG (≈57 tests incl. tv100bb tv96f tv86 tv115s; no log; job cancelled at 40 min, like the v1.08c
-  shard-6 hang). The ONE allowed confirming re-run of shard 1 is RUNNING (attempt 2, started 14:37 UTC, ≤ 40 min). FIRST THING: read it
-  (actions_get get_workflow_run 42228473552 → conclusion; get_job_logs failed_only). Green → v1.16 is green → ship on his word. Hung or
-  red again → real: read which test, fix or docs/known-issues.md, no third re-run.
-- First full 8-test WebKit run 42228304630 DONE (18 min): PASS tv91r tv100p tv101z tv106f · FAIL tv100an (timeout, bound now 400 s),
-  tv106d (touch tap never selects on WebKit — CANDIDATE REAL Safari/iPad bug), tv108x + tv110a (Chromium expectations where WebKit is
-  capped by design → split the checks). All four sorted in docs/known-issues.md "FIRST WEBKIT CI RUN". The job works end to end.
-- NEXT AGENT: (1) read both runs (GitHub MCP actions_list / get_job_logs). Full run green → §6 step 4 SHIP on his word: push HEAD to
-  refs/heads/release/v1.16 and refs/heads/main, then HE runs `bash flavius.sh release`. No beta needed (tooling only, no game behaviour
-  change) unless he wants one. A flaky test: one confirming re-run only (docs/known-issues.md). (2) after shipping: CLAUDE.md §7 (newest
-  three → v1.15b, v1.15c, v1.16), docs/history.md entry, docs/modules.md has nothing new (no game module). (3) WebKit run: every test that
-  fails on WebKit but passes on Chromium is a POSSIBLE real Safari bug → docs/known-issues.md, never a blind fix; a pixel-tolerance failure
-  like tv101z's is a test tolerance, fixed WebKit-only (see 8caaca1).
-- What v1.16 contains (no game change): CLAUDE.md/HANDOFF/known-issues housekeeping · tools/tests/tv116load.js (time to menu on a 390 px
-  Slow-4G CPU×4 profile: 28 s; slow test, ~30 s a run) · tools/wrapped.js + docs/architecture.md most-wrapped table · .github/workflows/
-  webkit.yml + tools/ci/webkit.txt + tools/tests/_browser.js (PW_BROWSER env; 8 tests switched to it, Chromium path identical) ·
-  runners pinned to ubuntu-24.04 in regression.yml / webkit.yml / webkit-bench.yml (Playwright 1.56.1 installs NO browser on ubuntu-26.04;
-  all runs since 2026-10-23 lived off the actions cache — docs/known-issues.md) · MILESTONES v1.16 + part-159 translations.
-- HIS DECISIONS TODAY (docs/decisions.md 2026-11-06): 1 testers NOT YET · 2a WebKit CI · 3a measure → 3b "my recs" = v1.16a Brotli +
-  loading bar FIRST, then v1.17 build split (core + lazy Manager/Studio/Online chunks, beta first) · 5a one module per feature (CLAUDE.md §4)
-  · 6a online feature work PARKED + a share-a-link lobby invite · 7 housekeeping. Point 4 VOID (animated tokens 311-v100anim and any-event
-  entry 296-v100any both shipped in v1.0; stale backlog lines marked BUILT).
+## v1.16 "Behind the scenes" SHIPPED to release/v1.16 + main (2026-11-06 15:20 UTC, cloud session) — HE STILL RUNS `bash flavius.sh release`
+- Full run 42228473552 GREEN (attempt 1: server + 7/8 shards; shard 1 hung at the 40-min limit with no log; the one confirming re-run
+  green in 19 min; flaky tv104a tv100an passed alone). release/v1.16 = main = e661843 (includes CI's regstate commit + the baton line).
+- HIS STEP: `bash flavius.sh release` in CloudShell (no server change in v1.16 → game → download → site → status). No beta was needed
+  (tooling only). Then `bash flavius.sh status`.
+- Step 5 done: CLAUDE.md header + §7 (newest three v1.15b, v1.15c, v1.16) + §6 release list; docs/history.md v1.16 entry. docs/modules.md
+  unchanged (no game module in v1.16).
+- NEXT WORK (his picks, docs/decisions.md 2026-11-06): v1.16a = Brotli on CloudFront (flavius.sh deploy; FSH_VER up) + a loading bar in
+  the game's own art while the 3.9 MB script downloads (01-head boot cover; Off path = today's cover) → full run, no beta; then v1.17 =
+  the build split (core first; Manager / Creator Studio / Online / lessons as chunks loaded on their menu button; build.sh + mkshare.py +
+  flavius.sh; chunks keep build order) → beta first. Also: the share-a-link lobby invite (#join=<room>; server change → beta skips online).
+- WebKit follow-ups (docs/known-issues.md "FIRST WEBKIT CI RUN"): tv106d touch tap never selects on WebKit → reproduce on his iPad / Mac
+  Safari before any fix (candidate real bug); tv108x / tv110a: split the WebKit branch of the Chromium-only checks; re-dispatch webkit.yml
+  (deps=yes) after each; keep its runs rare (≈25–30 min of GitHub minutes each).
 - His checklist Artifact E6zWGfwbuCjcM3r8RmeKZt is unreachable from the cloud account (404) — ask him to paste notes.
-- Baton: `sh tools/baton.sh give` is run at the end of this session; take it before editing.
+- Baton: given at the end of this session; take it before editing.
 
 ## Live now
 - **v1.15c "Zoom with the wheel"** is LIVE (he confirmed 2026-11-06). release/v1.15c = main = ccf6a70; full CI run 41623129499 green first time.
