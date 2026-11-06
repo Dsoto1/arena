@@ -62,3 +62,16 @@ v1.16 = 2a + 3a + 5a + 7 (no game change except the measuring test) → no beta 
 - His checklist Artifact (E6zWGfwbuCjcM3r8RmeKZt) is not reachable from this account (404) → his notes there unread; ask him to paste.
 - Project Control Center brain still says patron stipend 10 + 0.3×fame (REPLACED by v1.15b 22 + 0.6×fame) → session summary proposes the fix.
 - Work branch for this session: claude/flavius-game-improvements-yg8qx0 (branched from main = v1.15c).
+
+## Build log 2026-11-06 (his go: N, C1 C2 C3; 4 void — 4a = 311-v100anim, 4b = 296-v100any, both v1.0)
+- N1–N3 merged (a0ffd87 + fixes): v1.15c step 5 done, HANDOFF rewritten, known-issues cleaned, backlog lines 4a/4b marked BUILT.
+- C2 tv116load (390 px, CPU ×4, Slow 4G 1.6 Mbit/s, gzip served): menu 27.5–28.7 s, ready 29.7–30.8 s (4 runs); un-throttled menu 1.6 s,
+  ready 4.6 s. Page 10.6 MB / 3.86 MB gz. → QUESTION 3b to him (a split the build · b Brotli + loading bar first · c accept). Lead's pick 3b-a.
+  tv116load is slow (≈30 s a run): keep it out of the smart shards unless its own file changes (check tools/ci/plan.js).
+- C3 tools/wrapped.js + docs/architecture.md table: 2 444 wraps of 968 functions; top mgrHTML 73, endWeek 55, modal 36, render 26, applyBout 25.
+- C1 .github/workflows/webkit.yml (own job, dispatch + paths + Monday cron, ≤15 min), tools/ci/webkit.txt (8: tv91r tv100p tv100an tv101z
+  tv106d tv106f tv108x tv110a), tools/tests/_browser.js (PW_BROWSER env; Chromium path byte-identical), docs/testing.md "Running on WebKit".
+  WebKit could not be installed in the sandbox (cdn.playwright.dev blocked) → first proof = GitHub run 42219983348.
+- CI INFRA BUG found by the first smart run (42219587445, 96 fails "Executable doesn't exist"): the Chromium cache key pw-1.56.1-chromium had
+  expired and `playwright install --with-deps chromium` aborts on ubuntu-26.04 BEFORE downloading, so a cold cache = no browser. Fix a83b8a4:
+  a plain `playwright install chromium` fallback loop. Known-issues line to add once the fixed run is green.
