@@ -53,3 +53,12 @@ My pick: **4b first** (cheap, Manager depth, measurable with mgrsim2), **4a as i
 ## Release shape (lead's proposal, waiting on him)
 v1.16 = 2a + 3a + 5a + 7 (no game change except the measuring test) → no beta needed; ships with the next full run.
 6a's invite link = v1.16a (server change) or rides with 4b. 4a / 4b: his pick.
+
+## Catch-up 2026-11-06 (lead, after his "get caught up" ask)
+- v1.15c (wheel zoom, 433) : full run 41623129499 GREEN 2026-11-03; release/v1.15c and main both at ccf6a70 → shipped (step 4 done), but
+  step 5 never ran: no v1.15c entry in CLAUDE.md §7 / docs/history.md (CLAUDE.md still says "current v1.15b"). Whether he ran
+  `bash flavius.sh release` for it is not visible from the repo → ASK.
+- tools/plans/HANDOFF.md is stale (2026-10-28: v1.14b live, old work branch). docs/known-issues.md carries FIXED items under "open".
+- His checklist Artifact (E6zWGfwbuCjcM3r8RmeKZt) is not reachable from this account (404) → his notes there unread; ask him to paste.
+- Project Control Center brain still says patron stipend 10 + 0.3×fame (REPLACED by v1.15b 22 + 0.6×fame) → session summary proposes the fix.
+- Work branch for this session: claude/flavius-game-improvements-yg8qx0 (branched from main = v1.15c).
