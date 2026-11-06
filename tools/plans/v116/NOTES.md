@@ -75,3 +75,7 @@ v1.16 = 2a + 3a + 5a + 7 (no game change except the measuring test) → no beta 
 - CI INFRA BUG found by the first smart run (42219587445, 96 fails "Executable doesn't exist"): the Chromium cache key pw-1.56.1-chromium had
   expired and `playwright install --with-deps chromium` aborts on ubuntu-26.04 BEFORE downloading, so a cold cache = no browser. Fix a83b8a4:
   a plain `playwright install chromium` fallback loop. Known-issues line to add once the fixed run is green.
+
+## His answer 2026-11-06 on 3b: "I'll take your recs" = 3b-b first (Brotli + loading bar), then 3b-a (build split) as its own release, beta first.
+Shape: v1.16 = this tooling release (no game change) · v1.16a = 3b-b (Brotli = flavius.sh deploy/CloudFront, loading bar = 01-head boot cover;
+needs a full run, no beta) · v1.17 = 3b-a build split (beta first). Nothing of 3b built yet; v1.16 goes first.

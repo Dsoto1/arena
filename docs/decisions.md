@@ -940,3 +940,8 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   6a ONLINE FEATURE WORK PARKED until the arena has players — REPLACES the live backlog items "Online: Stakes matches, referee replay, more
   events, reclaim a seat" and "Online Ludus: real per-lanista draft" (they stay in the backlog, marked parked) — plus one share-a-link invite
   (#join=<room>) into the existing lobby; 7 HANDOFF + known-issues housekeeping. 4 (animated tokens vs any-event entry) explained, no pick yet.
+- 2026-11-06 his "I'll take your recs" on question 3b (tools/plans/v116/NOTES.md, time-to-menu 28 s on a Slow-4G 390 px phone): 3b-b FIRST
+  (Brotli on CloudFront + a loading bar in the game's art while the script downloads; a day, no beta needed beyond the full run) THEN 3b-a as its
+  own release, beta first: the build split into a core (engine, menu, Play Now, settings) loaded first and Manager / Creator Studio / Online /
+  lessons as chunks loaded when their button is pressed (build.sh, mkshare.py, flavius.sh deploy; chunks keep build order). Replaces nothing
+  (the single-file page stays the share build). Point 4 of the assessment is VOID (4a/4b both shipped in v1.0).
