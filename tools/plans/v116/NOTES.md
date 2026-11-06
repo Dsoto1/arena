@@ -85,3 +85,6 @@ needs a full run, no beta) · v1.17 = 3b-a build split (beta first). Nothing of 
 - WebKit job on the pin: download + deps now 34 s (plain download first, bounded install-deps). First test run (42223229945) HUNG 8.6 min
   under smartreg -j 2 with no output → the step now runs one test at a time, bounded 200 s, printing each result (6975a2a); dispatched
   with tv91r tv101z to see whether the page boots on Linux WebKit at all. Result pending.
+- WebKit probe 42225921373 (deps skipped): the per-test loop works; both tests fail at LAUNCH — the 24.04 image lacks ~40 WebKit libraries
+  (libgst*, libflite*, libGLESv2, libx264 …) → install-deps is required (default again, bounded 600 s; apt took 34 s once, >420 s once).
+  Next probe: tv91r tv101z with deps.

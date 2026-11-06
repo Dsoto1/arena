@@ -14,8 +14,8 @@ on:
         description: 'space-separated test names (default: tools/ci/webkit.txt)'
         default: ''
       deps:
-        description: "'yes' = also run playwright install-deps webkit (apt, slow); default: the image's own libraries"
-        default: 'no'
+        description: "'no' skips playwright install-deps webkit (apt, 1–8 min). Run 42225921373: WITHOUT it WebKit cannot launch (libgst*, libflite*, libGLESv2 … missing), so the default installs"
+        default: 'yes'
   schedule:
     - cron: '0 6 * * 1'   # Monday 06:00 UTC
 concurrency:
@@ -48,8 +48,9 @@ jobs:
           # a missing library shows up as a launch error in the tests, which is the real signal).
           for i in 1 2 3; do timeout 240 npx --prefix /tmp/ci playwright install webkit >/tmp/pwi.log 2>&1 && { ok=1; break; }; echo "playwright webkit install try $i failed:"; tail -25 /tmp/pwi.log; sleep 5; done
           # apt on the runners is unpredictable (34 s one run, >420 s the next: 42224590088). Run 42223229945 launched WebKit
-          # (MiniBrowser + WPEWebProcess) with the image's own libraries, so install-deps is OPT-IN (dispatch input deps=yes).
-          if [ "$INPUT_DEPS" = "yes" ]; then timeout 600 sudo -E env "PATH=$PATH" npx --prefix /tmp/ci playwright install-deps webkit >/tmp/pwd.log 2>&1 || { echo "install-deps webkit did not finish (exit $?) — continuing:"; tail -15 /tmp/pwd.log; }; fi
+          # (MiniBrowser + WPEWebProcess) only AFTER install-deps; run 42225921373 without it: launch error, 40 libraries missing. So deps
+          # are installed unless dispatch input deps=no; bounded 600 s, failure tolerated (the launch error names what is missing).
+          if [ "$INPUT_DEPS" != "no" ]; then timeout 600 sudo -E env "PATH=$PATH" npx --prefix /tmp/ci playwright install-deps webkit >/tmp/pwd.log 2>&1 || { echo "install-deps webkit did not finish (exit $?) — continuing:"; tail -15 /tmp/pwd.log; }; fi
           [ "$ok" = 1 ] || { echo "WebKit could not be installed"; exit 1; }
       - name: build
         run: sh build.sh | tail -1
