@@ -26,7 +26,7 @@ permissions:
 jobs:
   webkit:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -55,7 +55,7 @@ jobs:
       - name: build
         run: sh build.sh | tail -1
       - name: tests (WebKit)
-        timeout-minutes: 9
+        timeout-minutes: 26   # run 42227120761: ≈3 min a test on Linux WebKit (tv91r 175 s); 8 tests ≈ 25 min. Runs are rare (Monday cron, board/gear/stands pushes, dispatch).
         env:
           NODE_PATH: /tmp/ci/node_modules
           PW_BROWSER: webkit

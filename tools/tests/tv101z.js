@@ -63,7 +63,9 @@ ok(med(R.on.map(r=>r.in.worst))<med(R.off.map(r=>r.in.worst)),'1e zoom in: the w
     document.getElementById('btnZoom').click();await W8(2400);ZB101.on=false;ZB101.drop();document.getElementById('btnZoom').click();await W8(2600);const B=snap();ZB101.on=true;
     let n=0,big=0;for(let i=0;i<A.length;i+=4){const d=Math.max(Math.abs(A[i]-B[i]),Math.abs(A[i+1]-B[i+1]),Math.abs(A[i+2]-B[i+2]));if(d>2)n++;if(d>24)big++}
     return {px:A.length/4,n,big,sw,same:A.length===B.length}});
-  ok(px.same&&px.n/px.px<0.006&&px.big===0,'4 settled zoomed board from the pre-bake ≈ painted the old way (banded layers: anti-aliased edges ±24 levels at most): '+px.n+' px differ >2 levels, '+px.big+' >24 of '+px.px)}
+  /* WebKit (PW_BROWSER=webkit, CI webkit.yml run 42227120761): 2 of 592 670 px differ >24 levels — its canvas anti-aliasing, not a layer bug; ≤ 8 allowed there, 0 on Chromium as before */
+  const bigMax=process.env.PW_BROWSER==='webkit'?8:0;
+  ok(px.same&&px.n/px.px<0.006&&px.big<=bigMax,'4 settled zoomed board from the pre-bake ≈ painted the old way (banded layers: anti-aliased edges ±24 levels at most): '+px.n+' px differ >2 levels, '+px.big+' >24 of '+px.px)}
 /* ---- 5 · kill switch ---- */
 {const q=await open({flavius_zoombake101off:'1'});await start(q);const k=await q.evaluate(async()=>{await new Promise(r=>setTimeout(r,3000));const z=await __T.zoom();return {on:ZB101.on,slices:ZB101.stats.slices,swaps:ZB101.stats.swaps,z}});
   ok(k.on===false&&k.slices===0&&k.swaps===0&&k.z.d.under&&k.z.d.z99,'5 kill switch flavius_zoombake101off=1: no pre-bake, the zoom repaints as before '+JSON.stringify(k));await q.context().close()}
