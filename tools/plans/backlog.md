@@ -19,7 +19,7 @@ Each line: idea · where it came from · date.
 
 - **Trade bundles (his note 2026-10-08, parked q4a):** from a rival's team page offer 2+ of yours for 1 of theirs; once a week; a declined offer with interest comes back as a counter-offer letter the next week.
 - Online Ludus: real per-lanista draft over the network before the horns (his pick C, v0.98) — Ludus is kept out of online until then · 2026-10-08 → **PARKED until the arena has players (his 6a, 2026-11-06)**
-- **Animated tokens in the arena (his 8a: next release):** walk / attack / hit / die poses rendered from the rig92 token like the clean-up crew
+- ~~Animated tokens in the arena~~ **BUILT in v1.0 (311-v100anim: 8 printed classes + Studio/online tokens rendered on the device; walk, attack, block, hit, limp, cower, push, topple, knock, fall, sever). Line kept for the record (2026-11-06).** Original note: walk / attack / hit / die poses rendered from the rig92 token like the clean-up crew
   (238-v96clean: flat sheets rendered ONCE, one row per pose × 8 MINI_YAW cells), a per-token sheet per character (Studio + online 3D tokens;
   made beside the v0.93 minis8 sheet, cached by the look + pose hash, uploaded like 226's pictures online), frames picked by the board's
   move/attack/hurt/eliminate moments; perf budget (one drawImage per piece as today, decode once, ≤ ~150 KB a sheet, tv91r draw time + tv92p idle

@@ -26,7 +26,15 @@ on a fast machine, 450 tests, 5 Safari-only open reports (all fixed blind since 
 7. **Housekeeping (go):** HANDOFF.md re-written to today's state (v1.15c built, release state, the right branch); docs/known-issues.md: the
    FIXED items under "Game — open" move to docs/history.md. Sonnet agent, ~1 hour, no game change.
 
-## Point 4 explained (for his pick)
+## CORRECTION 2026-11-06 — 4a already exists
+The lead's assessment read a stale backlog line: animated gladiator tokens SHIPPED in v1.0 (311-v100anim): idle, walk, attack, block, hit,
+limp, cower, push, topple, knock, fall, sever for the 8 printed classes (pre-rendered sheets) and for Studio / online tokens (rendered on the
+device, cached in IndexedDB), figure + standee styles, Off path for Animations Off / Reduce motion / Fast CPUs. Slice shown to him from the
+live v1.15c build (walk + attack frames, scratch only). Backlog line marked BUILT. So point 4 = **4b only** (any-event entry) or 4c, unless he
+wants one of the still-parked v1.0 look items: 3D armor/weapons on the tokens (16/17), gem/dud signing (13), Fortuna's Bounty (8), spiders
+(15), 3D spectators (20), rete throw — each has look-test pictures in tools/plans/look100/.
+
+## Point 4 explained (for his pick) — as first written
 The parked v1.0 list (tools/plans/backlog.md) has two candidates with a visible payoff:
 - **a) Animated tokens in the arena** (his 8a of 2026-10-08, never built): today a figure slides from tile to tile and flashes on a hit. The plan
   renders walk / attack / hit / die poses from the rig92 3D token ONCE into a flat sheet per character (like 238-v96clean's clean-up crew),
