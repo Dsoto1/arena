@@ -5,6 +5,7 @@
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'1.16',ic:'🧪',t:_T('Behind the scenes'),hi:[_T('Testing tools: Safari-style checks run on every build; nothing changes in play')]},
   {v:'1.15c',ic:'🔍',t:_T('Zoom with the wheel'),hi:[_T('Scroll over the arena to zoom in and out (a trackpad pinch works too)')]},
   {v:'1.15b',ic:'🏛',t:_T('Stronger small houses'),hi:[_T('Manager: the Undercard is a tirones\u2019 card (fighters up to 54)'),_T('Your patron pays as generously as the rivals\u2019')]},
   {v:'1.15a',ic:'⚱',t:_T('Mercy for small houses'),hi:[_T('Manager: a house under fame 18 buys back a condemned fighter at half price, and a death costs it no fame')]},
