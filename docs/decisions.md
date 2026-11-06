@@ -934,3 +934,9 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   season (more Feature bouts); (5a) its own release (v1.15b) after v1.15a, beta first; (6a) v1.15a's "half price — a small house" note shows
   for newcomer houses too. tools/plans/v115b/NOTES.md.
 - 2026-11-01 · v1.15c wheel zoom (tools/plans/v115c/NOTES.md) — his 1a–6a: mouse wheel / trackpad pinch over the arena zooms CAM.z 1–2.4 in ≈10% steps, centred by the follow camera, page never scrolls over the arena, always on (kill switch only); own release after v1.15b. Reuses 86-v66's pinch zoom (v0.66), replaces nothing.
+- 2026-11-06 his answers to the lead's improvement assessment (tools/plans/v116/NOTES.md): 1 outside testers + feedback button NOT YET;
+  2a a WebKit shard in CI for the Safari-only board reports (no more blind Safari fixes); 3a measure time-to-menu on a throttled 390 px profile
+  before any build split; 5a new work = one module per feature on the bus, no more cross-topic fix-round modules (CLAUDE.md §4);
+  6a ONLINE FEATURE WORK PARKED until the arena has players — REPLACES the live backlog items "Online: Stakes matches, referee replay, more
+  events, reclaim a seat" and "Online Ludus: real per-lanista draft" (they stay in the backlog, marked parked) — plus one share-a-link invite
+  (#join=<room>) into the existing lobby; 7 HANDOFF + known-issues housekeeping. 4 (animated tokens vs any-event entry) explained, no pick yet.

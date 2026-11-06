@@ -144,6 +144,8 @@ One global script; files are concatenated in order. Later modules patch earlier 
 
 ## 4. Conventions & gotchas
 - Never put code after a `//` comment on the same line — use `/* */` (build.sh guard).
+- **One module per feature (his 5a, 2026-11-06):** new work goes in ONE module in its topic folder and listens on the bus; no more
+  cross-topic fix-round files in batches/. docs/architecture.md lists the most-wrapped functions — start a bug hunt there.
 - Avoid broad find/replace across files (once turned `fonts.gstatic.com` into `fonts.gtileic.com`).
 - Prefer wrapping in a new module over editing old modules; small direct edits are fine when wrapping is impossible
   (template literals, const arrows). When editing templates with Python, assert the old string exists first.
