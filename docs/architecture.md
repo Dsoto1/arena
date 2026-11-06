@@ -108,3 +108,35 @@ Math.random is a seeded stream (cosmetic only). Nothing in src/ knows about Node
 - **Phase E (v1.01 wave 2):** the verify Lambda (`server/verify/`) runs that bundle on the server to replay every settled Ranked match and log
   mismatches — docs/backend.md "v1.01 Ranked verification".
 
+
+## Most-wrapped functions (his 5a, 2026-11-06; regenerate with `node tools/wrapped.js --md 25`)
+
+A bug in one of these is usually in the LAST wrapper installed, so start there (third column; `x2` = wrapped twice in one module). The idiom count is 2444 of the 2472 `const base=` lines a plain grep finds; the other 28 are `const base=` lines that are not the `{const base=NAME;NAME=function` shape.
+
+| function | wraps | last wrapper (start here) | all wrapping modules, in build order |
+|---|---|---|---|
+| `mgrHTML` | 73 | 432-v115bstr | 50-v48, 51-v49 x2, 52-v50 … 415-v109b, 416-v109c, 432-v115bstr |
+| `endWeek` | 55 | 427-v112econ | 47-mgr47, 50-v48 x2, 51-v49 … 415-v109b, 416-v109c, 427-v112econ |
+| `modal` | 36 | 391-v105b5a | 60-v53, 62-rules53, 113-onlmatch x2 … 347-v103beta, 368-v105pnrow, 391-v105b5a |
+| `render` | 26 | 346-v103board | 54-v51, 56-v52, 60-v53 … 321-v101board, 344-v103gen, 346-v103board |
+| `applyBout` | 25 | 416-v109c | 64-v54, 66-mgr55, 77-rivalry … 413-v109wq, 415-v109b, 416-v109c |
+| `nightHTML` | 25 | 383-v105riv | 59-bye, 63-empire53, 66-mgr55 x2 … 360-v105mw, 380-v105rudis, 383-v105riv |
+| `draw` | 23 | 423-v111csafari | 108-v76, 138-v84, 168-v89rotate … 417-v110auto, 420-v111safari, 423-v111csafari |
+| `gameOver` | 23 | 428-v112fig | 70-v57, 108-v76, 112-online … 337-v102resume, 416-v109c, 428-v112fig |
+| `weekChecklist` | 23 | 416-v109c | 95-v73, 108-v76, 141-v85faith … 413-v109wq, 415-v109b, 416-v109c |
+| `beginTurn` | 22 | 337-v102resume | 51-v49, 52-v50, 54-v51 … 309-v100replay, 325-v101replay0, 337-v102resume |
+| `detailHTML` | 21 | 378-v105rec | 66-mgr55, 87-v67, 95-v73 … 353-v104fixl, 357-v104fixm, 378-v105rec |
+| `newWorld` | 19 | 413-v109wq | 39-sotonium, 44-studio, 50-v48 … 348-v104season, 365-v105cal, 413-v109wq |
+| `drawPlayer` | 18 | 418-v110b | 76-chariot59, 78-v60, 82-access … 396-v106aim, 398-v106b1b, 418-v110b |
+| `startEvent` | 18 | 338-v102draft | 44-studio, 48-arena47 x2, 51-v49 … 309-v100replay, 337-v102resume, 338-v102draft |
+| `menuShow` | 17 | 367-v105menu | 48-arena47, 56-v52, 108-v76 x2 … 309-v100replay, 337-v102resume, 367-v105menu |
+| `settingsHTML` | 17 | 430-v115set | 82-access, 94-v72, 103-v74 … 396-v106aim, 400-v107tok, 430-v115set |
+| `applySettings` | 15 | 422-v111set | 54-v51, 56-v52, 82-access … 410-v108x2, 417-v110auto, 422-v111set |
+| `drawLayers93` | 14 | 423-v111csafari | 219-v93layers, 233-v96bar, 235-v96fast … 398-v106b1b, 420-v111safari, 423-v111csafari |
+| `newState` | 14 | 310-v100daily | 51-v49, 52-v50 x2, 64-v54 … 191-v91fix, 224-v94designer, 310-v100daily |
+| `onlRedraw` | 13 | 340-v102prog | 116-onl79, 118-onl80, 121-onl80fix … 307-v100tituli, 334-v102fix, 340-v102prog |
+| `onlRoomHTML80` | 13 | 340-v102prog | 127-v82onl, 137-v83onlui, 171-v89onl … 290-v100tt, 302-v100lobby, 340-v102prog |
+| `log` | 12 | 321-v101board | 54-v51, 56-v52, 60-v53 … 220-v93a11y, 233-v96bar, 321-v101board |
+| `mkPlayer` | 12 | 292-v100srvA | 65-stats55, 80-aitiers x2, 112-online … 183-v90ward, 225-v94armory, 292-v100srvA |
+| `onlPlayHTML` | 12 | 287-v100who | 116-onl79, 118-onl80, 127-v82onl … 252-v98onl, 264-v99fix2, 287-v100who |
+| `setupBody` | 12 | 321-v101board | 51-v49, 52-v50, 106-v75 … 300-v100pn, 310-v100daily, 321-v101board |
