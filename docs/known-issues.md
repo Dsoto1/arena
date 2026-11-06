@@ -74,6 +74,10 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
   re-measured with docs/economy.md after v1.05 ships (his E2a).
 
 ## Tests + tooling
+- 2026-11-06 · v1.16 [full] run 42228473552: shard 1 hung (tests step never ended, smartreg's 1800 s bound did not fire, job cancelled at
+  40 min, log unreachable) while the other 7 shards were green (388 pass, flaky tv104a tv100an). Same shape as the v1.08c shard-6 hang
+  below. One confirming re-run started 14:37 UTC. If a shard hangs again: the bound inside the step is `timeout -s TERM 1800` — a child
+  that ignores TERM (flock / a browser) keeps the step alive; consider `timeout -k 60 -s TERM 1800` so KILL follows.
 - 2026-11-06 · CI RUNNERS: `ubuntu-latest` became ubuntu-26.04 and Playwright 1.56.1 refuses to install ANY browser there ("Playwright does
   not support chromium/webkit on ubuntu26.04-x64"); every run since 2026-10-23 lived off the actions cache `pw-1.56.1-chromium`, and when that
   expired (2026-11-06, runs 42219587445 / 42220079428) all 96 tests failed with "Executable doesn't exist". Fix 3b808f9: regression.yml,

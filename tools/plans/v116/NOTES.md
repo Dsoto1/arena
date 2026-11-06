@@ -97,3 +97,9 @@ needs a full run, no beta) · v1.17 = 3b-a build split (beta first). Nothing of 
   needs ~400) · tv106d (touch tap never selects on WebKit: aim figs/tmap empty — CANDIDATE REAL Safari/iPad bug) · tv108x · tv110a (both
   expect Chromium's immediate 2× / dpr 2 where WebKit is capped by design → test expectations to split). Written to docs/known-issues.md.
   Bound raised to 400 s a test (job 45 min). The job itself works end to end: this is the first Safari-side signal without his Mac.
+- FULL RUN 42228473552 attempt 1 (release commit 8f589b9): server + 7 of 8 shards GREEN — 388 pass, 0 fail, 2 flaky (tv104a, tv100an:
+  passed alone). Shard 1 (tv102g tv100dc tonl100tt tv100bb tv95l tv86 tv91n tv98c tv89j tv96f tv115s tv100sb tonl8… ≈57 tests) HUNG: its
+  tests step never ended (not even smartreg's own 1800 s bound fired) and the job was cancelled at the 40-min limit, no log reachable —
+  the same shape as the v1.08c shard-6 hang (docs/known-issues.md 2026-10-21). The ONE confirming re-run of the failed job was started at
+  14:37 UTC (rerun_failed_jobs → attempt 2 of the same run). Its verdict decides v1.16: green → ship (§6 step 4); a second hang or a
+  real failure = real (docs/known-issues.md rule).

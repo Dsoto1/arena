@@ -8,8 +8,11 @@ Last updated: 2026-11-06 (cloud session).
 
 ## v1.16 "Behind the scenes" — RELEASE COMMIT PUSHED, waiting for CI (2026-11-06 13:48 UTC, cloud session; next agent takes it from here)
 Read tools/plans/v116/NOTES.md (his answers, the build log, the CI story). Work branch claude/flavius-game-improvements-yg8qx0.
-- Release commit 8f589b9 "[full]" is pushed → FULL regression run 42228473552: at 14:18 UTC the server job and 7 of 8 shards were GREEN,
-  shard 1 still running (its 30-min bound ends ≈14:20) — read its result first.
+- Release commit 8f589b9 "[full]" → FULL run 42228473552 attempt 1: server + 7 of 8 shards GREEN (388 pass, 0 fail, 2 flaky passed
+  alone: tv104a tv100an); shard 1 HUNG (≈57 tests incl. tv100bb tv96f tv86 tv115s; no log; job cancelled at 40 min, like the v1.08c
+  shard-6 hang). The ONE allowed confirming re-run of shard 1 is RUNNING (attempt 2, started 14:37 UTC, ≤ 40 min). FIRST THING: read it
+  (actions_get get_workflow_run 42228473552 → conclusion; get_job_logs failed_only). Green → v1.16 is green → ship on his word. Hung or
+  red again → real: read which test, fix or docs/known-issues.md, no third re-run.
 - First full 8-test WebKit run 42228304630 DONE (18 min): PASS tv91r tv100p tv101z tv106f · FAIL tv100an (timeout, bound now 400 s),
   tv106d (touch tap never selects on WebKit — CANDIDATE REAL Safari/iPad bug), tv108x + tv110a (Chromium expectations where WebKit is
   capped by design → split the checks). All four sorted in docs/known-issues.md "FIRST WEBKIT CI RUN". The job works end to end.
