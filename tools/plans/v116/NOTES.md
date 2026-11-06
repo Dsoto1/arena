@@ -93,3 +93,7 @@ needs a full run, no beta) · v1.17 = 3b-a build split (beta first). Nothing of 
   ≈3 min a test on Linux WebKit → job 35 min / tests step 26 min. Full 8-test dispatch started 13:47; result in HANDOFF when read.
 - RELEASE: `sh tools/release.sh 1.16` clean (hygiene, idscan, site line, advert shot); commit 8f589b9 "[full]" pushed 13:48 → full run.
   The SHIP step (release/v1.16 + main, then his `bash flavius.sh release`) is left to the next agent on his word.
+- FULL WEBKIT RUN 42228304630 (8 tests, 18 min): PASS tv91r 187 s · tv100p 45 s · tv101z 148 s · tv106f 113 s. FAIL tv100an (200 s bound,
+  needs ~400) · tv106d (touch tap never selects on WebKit: aim figs/tmap empty — CANDIDATE REAL Safari/iPad bug) · tv108x · tv110a (both
+  expect Chromium's immediate 2× / dpr 2 where WebKit is capped by design → test expectations to split). Written to docs/known-issues.md.
+  Bound raised to 400 s a test (job 45 min). The job itself works end to end: this is the first Safari-side signal without his Mac.

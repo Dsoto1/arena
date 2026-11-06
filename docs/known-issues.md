@@ -5,6 +5,14 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-11-06 · FIRST WEBKIT CI RUN (webkit.yml dispatch 42228304630, Linux WebKit = Playwright 1.56.1, ubuntu-24.04): pass tv91r tv100p
+  tv101z tv106f · fail 4, sorted: (a) tv100an TIMEOUT at 200 s (217 s on Chromium) → bound raised to 400 s, re-run needed; (b) tv106d
+  5a/5b/5c "first tap selects A": on WebKit AIM106.figs and tmap stay EMPTY (figs 0, tmap 0, lastPT touch) so a touch tap never selects —
+  CANDIDATE REAL iPad/Safari bug (the aim overlay never builds there); reproduce on his iPad / Mac Safari with a touch screen before fixing;
+  (c) tv108x 1/2/6 expect the 2× sheets at once on a DPR-2 desktop, but on WebKit 417 (v1.10 4a) starts on 1× and promotes after 30 s of
+  on-time frames by design → TEST EXPECTATION (make tv108x skip or wait on WebKit); (d) tv110a 1b/2a/2c/3/4b-4d/6/7 expect Chromium ratios
+  (dpr 2 / 1.5) where WebKit is capped at 1.5× / 1× by design (406 W1, 417) and the hysteresis timings differ → TEST EXPECTATION, split the
+  WebKit branch of each check (5a/5b already pass as the WebKit path). None of (c)/(d) is a game bug; (b) is the one to chase.
 - 2026-11-01 · tv100bb flaky on the v1.15 full run 41252211297 attempt 1: 9 zoom_p95 (gate) ON 10 ms vs OFF 8.6 ms (allowed 9.6) on a
   GitHub runner; passes locally (9.2/9.9, 9.1/8.5), passed on run 41248555142 and on the one re-run; v1.15 does not touch the bubbles. Watch: if it repeats, it is real.
 - 2026-10-23 · v1.13 [full] run 39972104480 attempt 1: tv100p (4b "Fast, your own push still animates": 4 frames in 485 ms) and tv104h

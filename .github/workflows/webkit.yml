@@ -26,7 +26,7 @@ permissions:
 jobs:
   webkit:
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -55,7 +55,7 @@ jobs:
       - name: build
         run: sh build.sh | tail -1
       - name: tests (WebKit)
-        timeout-minutes: 26   # run 42227120761: ≈3 min a test on Linux WebKit (tv91r 175 s); 8 tests ≈ 25 min. Runs are rare (Monday cron, board/gear/stands pushes, dispatch).
+        timeout-minutes: 38   # run 42228304630: tv100an needs >200 s on WebKit (217 s even on Chromium) → 400 s a test; run 42227120761: ≈3 min a test on Linux WebKit (tv91r 175 s); 8 tests ≈ 25 min. Runs are rare (Monday cron, board/gear/stands pushes, dispatch).
         env:
           NODE_PATH: /tmp/ci/node_modules
           PW_BROWSER: webkit
@@ -71,7 +71,7 @@ jobs:
           # partial output). No regstate/coverage here — WebKit results are a report, not the Chromium plan's input.
           rc=0; pass=0; fail=0
           for t in $T; do
-            s=$(date +%s); timeout -s TERM 200 node tools/tests/$t.js flavius-arena.html >/tmp/wk_$t.log 2>&1; e=$?; d=$(( $(date +%s) - s ))
+            s=$(date +%s); timeout -s TERM 400 node tools/tests/$t.js flavius-arena.html >/tmp/wk_$t.log 2>&1; e=$?; d=$(( $(date +%s) - s ))
             if [ "$e" = 0 ] && ! grep -q 'ERRS \[[^]]' /tmp/wk_$t.log; then pass=$((pass+1)); echo "== $t == PASS ${d}s"; tail -3 /tmp/wk_$t.log
             else fail=$((fail+1)); rc=1; echo "== $t == FAIL exit=$e ${d}s"; tail -40 /tmp/wk_$t.log; fi
           done
