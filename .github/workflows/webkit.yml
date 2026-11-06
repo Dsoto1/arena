@@ -58,9 +58,13 @@ jobs:
         run: |
           T="$INPUT_TESTS"; [ -n "$T" ] || T=$(tr '\n' ' ' < tools/ci/webkit.txt)
           echo "WebKit tests: $T"
-          rc=0
-          timeout -s TERM 520 node tools/smartreg.js -j 2 $T || rc=$?
-          if [ "$rc" = 124 ]; then echo "HUNG: partial results:"; grep -E '^(== |exit=)' tools/reg.txt | tail -20; fi
-          awk '/^== /{b=$0"\n";next}{b=b $0"\n"}/^exit=/{if($0!="exit=0"||b~/ERRS \[[^\]]/)printf "%s",b}' tools/reg.txt | tail -c 20000
-          grep -E '^(FLAKY|SUMMARY)' tools/reg.txt || true
+          # One test at a time, each bounded, output shown as it finishes (run 42223229945: smartreg -j 2 hung 8.6 min with no
+          # partial output). No regstate/coverage here — WebKit results are a report, not the Chromium plan's input.
+          rc=0; pass=0; fail=0
+          for t in $T; do
+            s=$(date +%s); timeout -s TERM 200 node tools/tests/$t.js flavius-arena.html >/tmp/wk_$t.log 2>&1; e=$?; d=$(( $(date +%s) - s ))
+            if [ "$e" = 0 ] && ! grep -q 'ERRS \[[^]]' /tmp/wk_$t.log; then pass=$((pass+1)); echo "== $t == PASS ${d}s"; tail -3 /tmp/wk_$t.log
+            else fail=$((fail+1)); rc=1; echo "== $t == FAIL exit=$e ${d}s"; tail -40 /tmp/wk_$t.log; fi
+          done
+          echo "WEBKIT SUMMARY pass $pass · fail $fail"
           exit $rc
