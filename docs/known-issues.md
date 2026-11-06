@@ -7,16 +7,6 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
 ## Game — open
 - 2026-11-01 · tv100bb flaky on the v1.15 full run 41252211297 attempt 1: 9 zoom_p95 (gate) ON 10 ms vs OFF 8.6 ms (allowed 9.6) on a
   GitHub runner; passes locally (9.2/9.9, 9.1/8.5), passed on run 41248555142 and on the one re-run; v1.15 does not touch the bubbles. Watch: if it repeats, it is real.
-- 2026-10-31 · tv103a FIXED in v1.15 (test only): G3 used the real day's daily challenge and assumed it opens on its briefing; on days whose event
-  opens on a Draft first (2026-10-31: ludus) G3a/G3c failed on every build. G3 now pins the day (DC100.t = 2026-10-29); the 5x-throttled page load
-  gets 120 s (the v1.15 [full] run 41248555142 timed out at 30 s). Game unchanged.
-- 2026-10-28 · tv100p FIXED in v1.15 (test only, game unchanged): the test stretched the slide to 16 x the idle draw cost (DRAW), but a real
-  animation frame (draw + piece offsets + fx + rAF) costs 2-3 x DRAW and that factor moves with load, so a slow runner got 4-5 frames
-  (checks 1b/1c/4b want >=5 frames / >=4 mid points). Now `__stretch` measures the frames the slide really got and re-runs from the
-  snapshot with a longer slide until it has >=12 (<=4 tries); the Reduce-motion check also judges frames===0 and scales its ms limit with DRAW.
-  Passes 5/5 normal and 5/5 under CDP CPU throttling x4. Also flaky in the v1.14 run (passed alone): tv88m, tv96c, tv105c, tv104h.
-- 2026-10-28 · v1.14 budget: until billing turns the tag `app` on (hours after the release tags things), the Flavius-only budget sees $0 and the
-  kill switch cannot close the arena. `bash flavius.sh status` → "budget counts"; if yellow the day after: `bash flavius.sh budget`.
 - 2026-10-23 · v1.13 [full] run 39972104480 attempt 1: tv100p (4b "Fast, your own push still animates": 4 frames in 485 ms) and tv104h
   (B24: season 2 not reached in time) failed on a slow ubuntu-26.04 runner (25 ms frames); both pass locally and passed on the one re-run
   (attempt 2 green). v1.13 touched neither area. Watch — if either fails again it is real. Also on ubuntu-26.04: `playwright install

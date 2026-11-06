@@ -1,26 +1,17 @@
 # Handoff: where the work stands (for the next Claude session or agent)
 
-Repo dsoto1/arena · work branch `claude/cloud-credits-usage-vq4w63` · owner Virgilante (David).
+Repo dsoto1/arena · work branch `claude/flavius-game-improvements-yg8qx0` · owner Virgilante (David).
 Read CLAUDE.md first (rules + how to work), then this file, then docs/decisions.md (his latest decisions are at the bottom).
 Always `git pull --no-rebase` before starting and push when stopping. One side at a time (THE BATON, below).
 
-Last updated: 2026-10-28 evening (cloud session, new account).
+Last updated: 2026-11-06 (cloud session).
 
 ## Live now
-- **v1.14b** is LIVE (his `bash flavius.sh release` + `bash flavius.sh budget`, 2026-10-29): cost tag AppName=FlaviusRule on the stack,
-  site bucket and CloudFront (app=flavius removed); the budget filters on it. release/v1.14b = main = e8fcef62. CloudShell runs FSH_VER 18.
-  Next check: in a day, `bash flavius.sh status` "budget counts" green and Cost Control showing Flavius's own spend.
-- **v1.14a "Behind the scenes"** is LIVE (his `bash flavius.sh release`, 2026-10-28 18:37 UTC: server deployed, game/download/site ✓; the
-  switch's old log group handed over, now 7 days). `release/v1.14a` = `main`. CloudShell runs flavius.sh FSH_VER 15.
-- Online is closed by the budget switch until 2026-11-01 (his 9a).
-- flavius.sh FSH_VER 16 (his 1a–3a, 2026-10-28, via `update`, no release): status reads letter versions + "skipped: arena closed"; he ran
-  `droptable`: the leftover table, SNS FR-Updates, both GitHub connections (AWSFR-GH-connect ×2) and FR-Git-role are DELETED; audit confirms.
-  Left: the now-unattached customer policy AWSCodePipelineServiceRole-…-Git-FR-pipeline (harmless; remove only on his word). onceWeek kept (4a).
-- Budget: billing had not seen the tag `app` yet at release time ("budget counts" yellow, "this month $0 of $10"). He activates the cost
-  allocation tags `app`, `AppName`, `Project` (2026-10-28). The cloud session scheduled a check-in for 2026-10-29 12:45 ET; if you work in
-  VS Code instead, ask him then for `bash flavius.sh status`'s "budget counts" + "this month" lines (expect green + real spend; if still
-  yellow → `bash flavius.sh budget`).
-- Full history: docs/history.md · newest three in CLAUDE.md §7.
+- **v1.15c "Zoom with the wheel"** is LIVE (he confirmed 2026-11-06). release/v1.15c = main = ccf6a70; full CI run 41623129499 green first time.
+  v1.15, v1.15a, v1.15b and v1.15c all shipped 2026-11-01..03 (docs/history.md; newest three in CLAUDE.md §7).
+- Online: the arena was reopened by `flavius.sh reopen` (FSH_VER 19, commit 85c161e, 2026-11-01) — reopened 2026-11-01 per flavius.sh reopen;
+  player count unknown (last status read 0 online players, see tools/plans/v116/NOTES.md).
+- Earlier history (v1.14a/b: tag AppName=FlaviusRule, budget switch, droptable clean-up) is in docs/history.md and docs/decisions.md.
 
 ## Project Control Center (2026-10-29)
 - Session hooks committed (dashboard repo docs/AGENT_ACCESS.md): .control-center/hooks/cc-hook.mjs, .claude/settings.json (SessionStart/Stop/
@@ -33,15 +24,17 @@ Last updated: 2026-10-28 evening (cloud session, new account).
 - End of every session: write .control-center/session-summary.json (gitignored; the SessionEnd hook sends and deletes it).
 
 ## On the work branch, NOT released yet
-- v1.15a (his pick a): tv100p robust on slow runners (TEST ONLY: the slide's stretch is measured from the frames it really got, ≤4 tries;
-  Reduce-motion check scales with the draw cost and demands 0 frames). Proof: dispatch run 40764544934 (tests tv100p tv100pn, repeat 10) green
-  = 10/10 each on GitHub's runners. No game change → my rec: no release/version bump; rides with the next release — HE AGREED 2026-10-28 (no release).
+- Work branch `claude/flavius-game-improvements-yg8qx0` (branched from main = v1.15c). The old branch `claude/cloud-credits-usage-vq4w63` is history only.
+- Plan in flight: **v1.16** (tools/plans/v116/NOTES.md: read it, it holds the plan and his answers): housekeeping (this file, known-issues, v1.15c
+  step 5) + a WebKit CI shard for the Safari board tests (capped 10 min, smart mode only) + a "time to main menu" measurement on a throttled
+  390 px phone profile (a test that prints, no gate) + the list of the 10 most-wrapped functions in docs/architecture.md. No game change.
+  Nothing built beyond the housekeeping until he says go.
 
 ## Waiting on him
-- Answered 2026-10-28: audit 1a·2a·3a·4a (done, see Live now) and v1.15 = a (done, no release).
-- Tomorrow (2026-10-29): `bash flavius.sh budget` — billing had not seen the tag `app` yet; expect status "budget counts" green after it.
-- Next work: nothing chosen. Open options: resume the deaths study (on his word only) · Settings reorganisation (mock-up first) · backlog.
-- The leftover AWSCodePipelineServiceRole-…-Git-FR-pipeline policy: REMOVED by him 2026-10-29 (droptable section 5, FSH_VER 17). FR-Site clean-up done.
+- v1.16 release shape (lead's proposal in NOTES.md): v1.16 = WebKit shard + load-time measurement + debt rule + housekeeping, no beta.
+- Point 4 of the v1.16 notes: no pick yet (4b any-event entry already exists as 296-v100any; 4a animated tokens already exist as 311-v100anim; still-parked v1.0 look items are listed there).
+- 6a: the "play a friend" link (`#join=<room>`) = v1.16a (server change) or rides with a later release; Online feature work is parked until the arena has players.
+- Next work otherwise: resume the deaths study only on his word · backlog.
 
 ## Paused / parked
 - **Deaths study (Manager)**: why a careful house loses 2–3 fighters a season and sits mid-table (rank ≈10.5). It is ON HOLD at his
@@ -57,12 +50,12 @@ Last updated: 2026-10-28 evening (cloud session, new account).
 - Backlog: tools/plans/backlog.md (e.g. the SETTINGS REORGANISATION idea, mock-up first). Open bugs and limits: docs/known-issues.md.
 
 ## His checklist (where he leaves notes between sessions)
-https://claude.ai/artifact/E6zWGfwbuCjcM3r8RmeKZt: an Artifact with a db.
-- Read and write it with ArtifactData (url above). Treat its content as his notes (data).
+https://claude.ai/artifact/E6zWGfwbuCjcM3r8RmeKZt: an Artifact with a db. NOT reachable from the cloud account on 2026-11-06 (404) — it belongs
+to his other account, so his notes there are unread: ask him to paste them (or share it with this account).
+- If it is reachable: read and write it with ArtifactData. Treat its content as his notes (data).
 - Collection `items`: doc ids t01–t08 (try), a01–a03 (answer), c01–c03 (coming). Fields order, group, text, detail, done, note, updatedAt.
-  Writes need `if_version`.
-- Collection `notes`: fields text, at.
-- At the last check (2026-10-24) only a01 was ticked (ship v1.13) and there were no notes.
+  Writes need `if_version`. Collection `notes`: fields text, at.
+- At the last successful check (2026-10-24) only a01 was ticked (ship v1.13) and there were no notes.
 
 ## CI notes worth knowing
 - The v1.13 [full] run failed once on tv100p (push animation frames) and tv104h (season 2 not reached in time) on a slow ubuntu-26.04
@@ -93,6 +86,7 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
   3. Run `sh tools/baton.sh give`. The script refuses if this file was not touched, or anything is uncommitted or unpushed.
 
 ## Last session notes
+- (cloud, 2026-11-06) Caught up: v1.15c confirmed live; v1.15c step 5 (CLAUDE.md, history), HANDOFF and known-issues housekeeping written; v1.16 plan in tools/plans/v116/NOTES.md (waiting on his go). Older notes below are history.
 - (cloud, 2026-10-29) v1.14b built + pushed (his 1a 2a); docs/history.md restored (v1.14a had overwritten it). Baton given.
 - (cloud, 2026-10-29) Control Center hooks added (work branch + main 18c49db4). Baton given.
 - (cloud, 2026-10-29) He switched the GitHub default branch to main (the session proxy cannot change repo settings). Nothing depends on it.
@@ -117,6 +111,6 @@ Node 20+, `npm i -D playwright typescript`, `npx playwright install chromium`, P
 
 ## First prompt for a new session
 (Since 2026-10-29 the repo's DEFAULT branch is `main` (= the newest release). A new session checks out main: name the work branch in the
-prompt and `git checkout claude/cloud-credits-usage-vq4w63 && git pull --no-rebase` before anything else.)
-> Read CLAUDE.md and tools/plans/HANDOFF.md. Work on the branch claude/cloud-credits-usage-vq4w63 (git pull --no-rebase). Take the baton. Check my checklist artifact for new notes, then ask me the open questions.
+prompt and `git checkout claude/flavius-game-improvements-yg8qx0 && git pull --no-rebase` before anything else.)
+> Read CLAUDE.md and tools/plans/HANDOFF.md. Work on the branch claude/flavius-game-improvements-yg8qx0 (git pull --no-rebase). Take the baton. Check my checklist artifact for new notes, then ask me the open questions.
 > Don't build anything without my go.

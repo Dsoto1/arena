@@ -106,8 +106,7 @@ Built: 3a 3 3b 3c 4 5 6 7 9 10 11(test) 12 14 18 21 22(Triumviratus undercard-on
 Notes: 10 = his TTS Zora was already the 3D-minis render (same bundle); the figure styles used the old crop → assets/zora99.webp. 2b: city stalls stock
 per city/week (Roma/Capua carry all levels; over the weeks every printed L1-3 piece shows up there) — no change made. Welcome scroll skips headless test
 browsers unless localStorage flavius_welc99on=1.
-STILL v1.0 (not built): 22 "enter your gladiator into ANY event" + occasional rank-restricted events (rank = rating grade, 22a) — needs a design for how
-the card offers special events; 8 Fortuna's Bounty animation, 13 gem/dud signing celebration, 15 spiders, 16/17 3D armor + weapons, 19 expressive animation,
+STILL v1.0 (not built): ~~22 "enter your gladiator into ANY event" + occasional rank-restricted events (rank = rating grade, 22a)~~ **BUILT in v1.0 (296-v100any: headline specials on Match Week, entry fee, rank-restricted events). Kept for the record (2026-11-06).** 8 Fortuna's Bounty animation, 13 gem/dud signing celebration, 15 spiders, 16/17 3D armor + weapons, 19 expressive animation,
 20 3D spectators; Fight Night rename + My ludus mock layout; server security pass + real ranked verification.
 
 ## v1.0 MOCKS round 1 answers (2026-10-10; mocks in tools/plans/mock100/)

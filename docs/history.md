@@ -418,3 +418,11 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   saved card is cleaned (v115bClean). Kill switches flavius_v115bstroff=1, flavius_v115bfilloff=1. Tests tv115b; tv112e, tv95c, tv104c,
   tlive, tv105a updated on purpose. Full runs: ba4e9818 green; 5ae42b19 red (tlive/tv105a assumed a strong starter in the Undercard) →
   41310916016 green.
+
+- **v1.15c** Zoom with the wheel (2026-11-03; tools/plans/v115c/NOTES.md; his 1a–6a of 2026-11-01; built without a beta):
+  433-v115czoom makes the mouse wheel over #cv zoom like the pinch of 86-v66 (CAM.z / S.zoomIn, range 1–CAM_MAX 2.4, ~10% a notch with
+  deltaY accumulated; ctrl+wheel = Mac trackpad pinch zooms too; preventDefault so the page never scrolls or zooms over the sand; one draw per
+  frame, duelUI when it rests; the follow camera centres on the active fighter, not the pointer). Only with a live board and no modal.
+  Always on, no setting (6a). The event title card (#evIntro, ~3.4 s) is not the canvas: the wheel over it scrolls as before (spec: canvas
+  only). First builder interrupted; the WIP was finished and verified by a second one. Kill switch flavius_v115czoomoff=1; test tv115z.
+  Full run 41623129499 green first time; release/v1.15c = main = ccf6a70.
