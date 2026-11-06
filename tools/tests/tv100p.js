@@ -3,7 +3,7 @@
    pick) animates the same way; 2 the spike damage lands AFTER the slide; 3 Reduce motion = the instant jump; 4 Fast = one paced frame for a CPU, the full shove for your own;
    5 the same three pushes (gladiator onto a spike, pillar, beast) from one snapshot with the module on and off: same log, same dice,
    same state; 6 a pillar push; no new errors. */
-const {chromium}=require('playwright');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');
+const {chromium}=require('./_browser');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');
 (async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};pg.on('pageerror',e=>errs.push(e.message));
 await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});

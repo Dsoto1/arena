@@ -5,7 +5,7 @@
    stand-ins vs today's tokens in one page; 8 the kill switch = today's drawing, no sheet requested; 9 the same seeded dice + log with the
    module on vs off (fresh browsers, Normal speed); 10 the on-device cache (IndexedDB) round-trips; 11 severed sets (arm / leg swap, loaded only then, two limbs → today's token);
    12 gear-true figures: a non-kit seat renders on the device keyed by its loadout, kit seats don't, severed with real gear; no new errors. SHOT=dir → shots. */
-const {chromium}=require('playwright');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');
+const {chromium}=require('./_browser');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');
 (async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};pg.on('pageerror',e=>errs.push(e.message));
 await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});

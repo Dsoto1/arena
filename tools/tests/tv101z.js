@@ -9,7 +9,7 @@
    5 kill switch localStorage flavius_zoombake101off=1: no slices, the zoom repaints as before (old behaviour);
    6 the Lobby Browser's ↻ Refresh carries the sandstone class + look (306), keeps data-lb96r and still re-reads the list; 1440 and 390 px;
    no page errors, no new error-log entries. SHOT=<dir> saves lb101_1440.png / lb101_390.png. */
-const {chromium}=require('playwright');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');const SHOT=process.env.SHOT||'';
+const {chromium}=require('./_browser');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');const SHOT=process.env.SHOT||'';
 (async()=>{const b=await chromium.launch();const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m);else console.log('ok',m.slice(0,200))};
 const serve=require(path.join(__dirname,'..','perf95','serve.js'));const URL0=await serve(page);
 const open=async(ls,vp)=>{const cx=await b.newContext({viewport:vp||{width:1440,height:900}});const q=await cx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());

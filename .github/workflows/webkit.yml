@@ -1,0 +1,67 @@
+# WebKit run (v1.16, his 2a 2026-11-06): the open board bugs in docs/known-issues.md are Safari-only; this runs the board tests listed in
+# tools/ci/webkit.txt on Playwright's WebKit (PW_BROWSER=webkit, tools/tests/_browser.js). A SEPARATE workflow on purpose: a WebKit
+# problem never blocks the Chromium shards of regression.yml. One job, <= 15 min, about 10 GitHub minutes a run.
+# A test that fails here but passes on Chromium is a candidate real Safari bug: read the job log (do NOT "fix" the test to go green).
+# workflow_dispatch: tests = space-separated names (default: tools/ci/webkit.txt).
+name: webkit
+on:
+  push:
+    branches: ['claude/**', 'main']
+    paths: ['src/board/**', 'src/gear/**', 'src/stands/**', 'tools/ci/webkit.txt', '.github/workflows/webkit.yml', 'tools/tests/_browser.js']
+  workflow_dispatch:
+    inputs:
+      tests:
+        description: 'space-separated test names (default: tools/ci/webkit.txt)'
+        default: ''
+  schedule:
+    - cron: '0 6 * * 1'   # Monday 06:00 UTC
+concurrency:
+  group: webkit-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-1.56.1-webkit
+      - name: tools
+        timeout-minutes: 6
+        run: |
+          npm i --no-save --prefix /tmp/ci playwright@1.56.1 >/dev/null 2>&1
+          # same bounded 3-try pattern as regression.yml; the last tries fall back to install-deps + a plain install
+          ok=0
+          for i in 1 2 3; do
+            if [ "$i" = 1 ]; then timeout 240 npx --prefix /tmp/ci playwright install --with-deps webkit >/dev/null && { ok=1; break; }
+            else (timeout 120 npx --prefix /tmp/ci playwright install-deps webkit >/dev/null || true); timeout 240 npx --prefix /tmp/ci playwright install webkit >/dev/null && { ok=1; break; }
+            fi
+            echo "playwright webkit install try $i failed"; sleep 5
+          done
+          [ "$ok" = 1 ] || { echo "WebKit could not be installed"; exit 1; }
+      - name: build
+        run: sh build.sh | tail -1
+      - name: tests (WebKit)
+        timeout-minutes: 9
+        env:
+          NODE_PATH: /tmp/ci/node_modules
+          PW_BROWSER: webkit
+          REGNOEXPAND: '1'
+          REGSLOTS: '0'    # one runner: its own -j is the limit
+          REGSHARE: '0'    # the shared-browser server is Chromium-only
+          INPUT_TESTS: ${{ github.event.inputs.tests }}
+        run: |
+          T="$INPUT_TESTS"; [ -n "$T" ] || T=$(tr '\n' ' ' < tools/ci/webkit.txt)
+          echo "WebKit tests: $T"
+          rc=0
+          timeout -s TERM 520 node tools/smartreg.js -j 2 $T || rc=$?
+          if [ "$rc" = 124 ]; then echo "HUNG: partial results:"; grep -E '^(== |exit=)' tools/reg.txt | tail -20; fi
+          awk '/^== /{b=$0"\n";next}{b=b $0"\n"}/^exit=/{if($0!="exit=0"||b~/ERRS \[[^\]]/)printf "%s",b}' tools/reg.txt | tail -c 20000
+          grep -E '^(FLAKY|SUMMARY)' tools/reg.txt || true
+          exit $rc
