@@ -42,3 +42,7 @@ WebKit proof = webkit.yml dispatch tv106d. Still worth his one tap on the iPad a
   "Opening the arena…" in the saved language (flavius_lang; no browser-language guess: the game never picks a language from the browser).
   120-v80fix's lift (menu up, or 8 s after the main script starts) unchanged. Test tv116b.
 - MILESTONES "Quicker to open" + part-160 (7 languages). release.sh clean. BETA FIRST (his phone): the cover on a slow load + the tap on iPad.
+
+## LIVE 2026-11-13 — his `bash flavius.sh status`: game v1.16a · page on the wire 2.8 MB (br) · arena open · ranked check enforce ·
+server updated 14:05 UTC (redeployed with the release) · this month $0.156 of $10 · all green. The Brotli upload is proven on AWS.
+Whether the page was uncompressed before stays unmeasured (his earlier curl got no body).
