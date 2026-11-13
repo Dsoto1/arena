@@ -6,7 +6,7 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 
 Last updated: 2026-11-06 (cloud session).
 
-## v1.16a "Quicker to open" SHIPPED to release/v1.16a + main (2026-11-13; beta played, his "good, ship it") — HE RUNS `bash flavius.sh release`
+## v1.16a "Quicker to open" LIVE (2026-11-13: beta played, his "good, ship it"; he ran `bash flavius.sh release` and confirmed "we are live with v16a")
 - After it: `bash flavius.sh status` should show "page on the wire … MB (br)" green. Step 5 done (CLAUDE.md, history).
 - His order 2026-11-13: 3 · 1 · 4 · 2 · 5. 3 + 1 = v1.16a (done). NEXT:
   - 4 WebKit test clean-up (tooling, Sonnet): split tv108x / tv110a's Chromium-only expectations for WebKit's by-design caps; add tv116b
