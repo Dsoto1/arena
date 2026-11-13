@@ -26,6 +26,46 @@ one list in build.sh, and module names stay unique across folders (tools/srcpath
 `sh build.sh` concatenates the files in the fixed order in `build.sh`, then runs `node --check` on the script and prints
 `SYNTAX_OK`. It also trips a guard when code follows a `//` comment on the same line (use `/* */`).
 
+### Build: minified per module (v1.17)
+
+Why: the page went out at 10.6 MB (Brotli 2.84 MB); a third of the script is comments, indentation and blanks. Since v1.17
+`flavius-arena.html` — what the tests run, what is committed and what flavius.sh ships — is the same page with every module's code
+minified **on its own**, in the same order (10.6 → 8.7 MB, Brotli 2.29 MB, build ≈ 2 s). `build.sh` writes three files:
+
+| file | what | git |
+|---|---|---|
+| `flavius-arena.src.html` | the readable page (plain concatenation, `window.BUILD_MIN=0`) — line numbers are the sources' | ignored |
+| `flavius-arena.html` | the minified page (`window.BUILD_MIN=1` on the script's first line) | committed |
+| `flavius-arena.mods.json` | where each module sits in the minified script (`[file, start, end, minified]`, + why a module is raw) | ignored |
+
+How (`tools/minbuild.js`, its header is the reference): esbuild `transform`, **whitespace only** — comments, blanks and line breaks go;
+no global is renamed, no statement is rewritten or dropped (esbuild's syntax pass was measured: 0.2% smaller on the wire, but it
+inlines top-level `const` values into functions and drops dead branches, so it stays off). What does change in a minified module:
+string quotes become `"`, numbers are reprinted (`1000000` → `1e6`), a local variable may get a number (`e` → `e3`) where esbuild
+keeps two same-named locals apart. So **never match a function's source text** (`fn.toString()`) on quotes, spaces or local names —
+00b-perf's `PERF92_SWEEPS` pieces are the one place that does, and it folds quotes.
+
+A module stays **raw** (byte for byte as written; the build prints the list) when its minified text is not provably the same
+program: a function declared inside a top-level `{ }` / `if` / `try` (esbuild rewrites it into `let name2=function…;var name=name2`
+— 29 modules today, mostly v1.02–v1.11 Manager modules; declare functions at the top level of a new module and it is minified),
+an esbuild helper, `</script` / `<!--` in the output, or a module that continues the last statement of the one before.
+Test `tv117min` re-checks every build with a real parser (same top-level names and function count per module, no statement across a
+module border, the same timer sweeps, the same `window` globals in both pages, the browser parsed the script char for char).
+
+esbuild: exactly the version `node tools/minbuild.js --pin` prints (the committed page must come out the same everywhere). Looked up
+on `NODE_PATH`, in `tools/.esb` (here or in a parent checkout — worktrees share the main one's), in `/tmp/ci`; if it is nowhere,
+`build.sh` installs it once into `tools/.esb` with npm. Still nothing → the page is built readable and a loud yellow line says
+`NOT MINIFIED (esbuild missing)`; with `BUILD_REQUIRE_MIN=1` (release.sh, the GitHub workflows, tools/ci/merge.sh) the build fails
+instead. Never commit a `BUILD_MIN=0` page.
+
+Debugging:
+- `sh build.sh --readable` → `flavius-arena.html` is the readable page (local only; `sh build.sh` again before a commit).
+- or just open `flavius-arena.src.html` — it is always there beside the minified page.
+- an error log line from a player (`build: min` in the report's first line; each entry carries `build`) has an "at" position in
+  minified code: `node tools/minbuild.js --where LINE:COL` names the module and the source line (the page must be that build:
+  `git checkout release/vX.YY -- flavius-arena.html`, `sh build.sh` on that commit).
+- `node tools/minbuild.js --sizes` prints raw / gzip -9 / Brotli q11 of both pages (≈ 40 s).
+
 The page needs `assets/` beside it (images, `lang_<l>.js` dictionaries). `tools/mkshare.py` makes the standalone copy
 (`share/flavius-rule-arena-vX.YY.html`, every asset inlined as a data URI).
 

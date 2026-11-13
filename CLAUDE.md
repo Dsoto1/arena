@@ -60,8 +60,8 @@ Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly c
 
 ```
 flavius/   (repo root; build.sh and tools/*.py resolve paths from their own location)
-  build.sh              concatenates src/ in a fixed order into flavius-arena.html, then node --check → prints SYNTAX_OK
-  flavius-arena.html    the built game (references assets/ relatively)
+  build.sh              concatenates src/ in a fixed order (flavius-arena.src.html), minifies per module (tools/minbuild.js) into flavius-arena.html, then node --check → prints SYNTAX_OK
+  flavius-arena.html    the built game, minified (references assets/ relatively)
   assets/               ~35 image assets (armor2/chtok are .webp since v0.57; cr_* credits art since v0.59) (arena.jpg card sheet, classes.jpg, weapons.jpg, armor2.png, avatar.png,
                         blessing.png, tunnel_open.jpg / tunnel_door.jpg, rtok.webp, logo.png, map.jpg, …)
   src/<topic>/          ~330 modules in topic folders (see "src/ layout" below; the build order is build.sh's one list)
@@ -79,6 +79,10 @@ flavius/   (repo root; build.sh and tools/*.py resolve paths from their own loca
 
 - **docs/** explains (this file stays the hand-off): [architecture](docs/architecture.md) · [backend](docs/backend.md) (run/test/extend the server, data, deploy + rollback) · [i18n](docs/i18n.md) · [testing](docs/testing.md).
 - Build: `sh build.sh` (must end with `SYNTAX_OK`; it also trips a guard if code follows a `//` comment on one line).
+- **The built page is MINIFIED per module (v1.17, tools/minbuild.js, esbuild pinned; whitespace only, names/order kept):** `flavius-arena.html`
+  (BUILD_MIN=1) is what is tested, committed and shipped; the readable page is `flavius-arena.src.html` (gitignored; `sh build.sh --readable`
+  for debugging, never committed). No esbuild = a loud "NOT MINIFIED" line (release.sh / CI / merge.sh fail). Never match `fn.toString()` on
+  quotes, spaces or local names; a function declared inside a top-level block keeps its module raw. docs/architecture.md "Build: minified per module".
 - **When adding a module**, put it in its topic folder (`src/<topic>/NN-name.js`) and insert it in build.sh *before*
   `src/core/08-setup.js` (08-setup must stay last). The folders never change the build order; module NAMES stay unique across
   folders, so notes keep naming modules by name. Tools find a module by name with `tools/srcpath.js` (`rel/abs/order/all`).

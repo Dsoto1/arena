@@ -7,7 +7,7 @@ name: webkit
 on:
   push:
     branches: ['claude/**', 'main']
-    paths: ['src/board/**', 'src/gear/**', 'src/stands/**', 'tools/ci/webkit.txt', '.github/workflows/webkit.yml', 'tools/tests/_browser.js']
+    paths: ['src/board/**', 'src/gear/**', 'src/stands/**', 'tools/ci/webkit.txt', '.github/workflows/webkit.yml', 'tools/tests/_browser.js', 'tools/minbuild.js']   # minbuild: a change of the minifier is a change of every module's text
   workflow_dispatch:
     inputs:
       tests:
@@ -40,7 +40,7 @@ jobs:
         env:
           INPUT_DEPS: ${{ github.event.inputs.deps }}
         run: |
-          npm i --no-save --prefix /tmp/ci playwright@1.56.1 typescript@5 >/dev/null 2>&1
+          npm i --no-save --prefix /tmp/ci playwright@1.56.1 typescript@5 "esbuild@$(node tools/minbuild.js --pin)" >/dev/null 2>&1
           # same bounded 3-try pattern as regression.yml; the last tries fall back to install-deps + a plain install
           ok=0
           # Run 42222057691 (ubuntu-24.04): --with-deps hit the 240 s bound in apt and left a dpkg lock behind; the plain download alone took
@@ -53,7 +53,8 @@ jobs:
           if [ "$INPUT_DEPS" != "no" ]; then timeout 600 sudo -E env "PATH=$PATH" npx --prefix /tmp/ci playwright install-deps webkit >/tmp/pwd.log 2>&1 || { echo "install-deps webkit did not finish (exit $?) — continuing:"; tail -15 /tmp/pwd.log; }; fi
           [ "$ok" = 1 ] || { echo "WebKit could not be installed"; exit 1; }
       - name: build
-        run: sh build.sh | tail -1
+        env: { NODE_PATH: /tmp/ci/node_modules, BUILD_REQUIRE_MIN: '1' }   # v1.17: the minified page (tools/minbuild.js)
+        run: sh build.sh > /tmp/build.log 2>&1 || { cat /tmp/build.log; exit 1; }; tail -3 /tmp/build.log
       - name: tests (WebKit)
         timeout-minutes: 43   # 9 tests since 2026-11-13 (tv116b added; about 1 min, it only opens the page); run 42228304630: tv100an needs >200 s on WebKit (217 s even on Chromium) → 400 s a test; run 42227120761: ≈3 min a test on Linux WebKit (tv91r 175 s); 9 tests ≈ 28 min. Runs are rare (Monday cron, board/gear/stands pushes, dispatch).
         env:

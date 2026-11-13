@@ -11,7 +11,7 @@ git merge --no-edit "$B" >/dev/null 2>&1 || true
 # a refused merge (dirty files) left nothing to resolve: stop instead of committing an empty merge
 git merge-base --is-ancestor "$B" HEAD 2>/dev/null || [ -f .git/MERGE_HEAD ] || [ -n "$(git rev-parse -q --verify MERGE_HEAD)" ] || { echo "MERGE REFUSED: $B is not merged (dirty working tree?) — git status"; exit 1; }
 C=$(git diff --name-only --diff-filter=U)
-[ -z "$C" ] && { sh build.sh | tail -1; git add -A flavius-arena.html 2>/dev/null; git commit -qm "Merge $B [skip ci]" --allow-empty >/dev/null 2>&1 || true; echo "merged $B (no conflicts)"; exit 0; }
+[ -z "$C" ] && { OUT=$(BUILD_REQUIRE_MIN=1 sh build.sh | tail -1); echo "$OUT"; [ "$OUT" = "SYNTAX_OK" ] || { echo "build failed after merge (v1.17: the committed page is the minified one — esbuild missing? node tools/minbuild.js)"; exit 1; }; git add -A flavius-arena.html 2>/dev/null; git commit -qm "Merge $B [skip ci]" --allow-empty >/dev/null 2>&1 || true; echo "merged $B (no conflicts)"; exit 0; }
 python3 - "$B" <<'PY'
 import os,re,subprocess,sys
 B=sys.argv[1]
@@ -47,7 +47,7 @@ for f in files:
   left.append(f)
 if left:print('HAND MERGE NEEDED:',' '.join(left));sys.exit(3)
 PY
-OUT=$(sh build.sh | tail -1); echo "$OUT"; [ "$OUT" = "SYNTAX_OK" ] || { echo "build failed after merge"; exit 1; }
+OUT=$(BUILD_REQUIRE_MIN=1 sh build.sh | tail -1); echo "$OUT"; [ "$OUT" = "SYNTAX_OK" ] || { echo "build failed after merge (v1.17: the committed page is the minified one — esbuild missing? node tools/minbuild.js)"; exit 1; }
 git add -A build.sh tools/runreg.sh CLAUDE.md tools/regstate.json flavius-arena.html
 for f in tools/regmap.json.gz tools/regmap.json; do git add -A "$f" 2>/dev/null || true; done
 git commit -qm "Merge $B [skip ci]" && echo "merged $B"

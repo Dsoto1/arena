@@ -3,6 +3,7 @@
 # Usage: sh tools/release.sh 0.63        (from anywhere; stops at the first failure)
 #   1. the badge in src/core/01-head.html must read "arena · v<ver>" and the first MILESTONES entry must be v:'<ver>'
 #   2. node tools/srvstamp.js (server version stamp), sh build.sh → SYNTAX_OK, swallowed-statement guard quiet
+#      (v1.17: the page must come out MINIFIED — BUILD_REQUIRE_MIN=1, and BUILD_MIN=1 is checked in the page)
 #   3. page hygiene: no cheat word (from CLAUDE.md "Current words") and no e-mail address in plain text
 #   4. FULL regression (tools/smartreg.js --full — releases never skip a test)
 #   4b. the advert shot for flaviusrule.com/play.html (tools/siteshot.js → share/arena_shot.webp → the game zip's play/arena_shot.webp)
@@ -21,8 +22,11 @@ step "2 build"
 node tools/i18n/srvtext93.js   # v0.93 server texts → stable codes (server/src/texts93.json + src/lang/223a-v93srvtext.js)
 node tools/i18n/check93.js || echo "⚠ i18n check over its ceilings (see above)"
 node tools/srvstamp.js   # the online server's version (server/src/build.json + src/online/195-v91srvexp.js) — only changes when the server code did
-OUT=$(sh build.sh); echo "$OUT" | tail -1
+# v1.17: a release is ALWAYS the minified page (tools/minbuild.js; esbuild missing = stop here, never a readable release)
+OUT=$(BUILD_REQUIRE_MIN=1 sh build.sh) || { echo "$OUT" | tail -4; echo "build failed (a release needs the minified page: esbuild $(node tools/minbuild.js --pin), see docs/architecture.md)"; exit 1; }
+echo "$OUT" | grep -E "^minified |not minified" | cut -c1-240; echo "$OUT" | tail -1
 echo "$OUT" | grep -q SYNTAX_OK || { echo "build failed"; exit 1; }
+grep -q '^window.BUILD_MIN=1;$' flavius-arena.html || { echo "flavius-arena.html is not minified (BUILD_MIN is not 1) — a release never ships the readable page"; exit 1; }
 echo "$OUT" | grep -q "GUARD TRIPPED" && { echo "swallowed-statement guard tripped"; exit 1; }
 printf '{"v":"%s"}\n' "$V" > version.json; echo "version.json → v$V (upload it to play/ with index.html)"
 step "3 page hygiene"

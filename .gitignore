@@ -6,6 +6,10 @@ tools/tests/*.png
 share39.png
 tools/reg/
 .regpage.html
+# v1.17: the readable page + the module table beside the minified flavius-arena.html (tools/minbuild.js), and its esbuild
+flavius-arena.src.html
+flavius-arena.mods.json
+tools/.esb/
 .claude/*
 !.claude/settings.json
 .control-center/session-summary.json

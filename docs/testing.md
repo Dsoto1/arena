@@ -19,6 +19,13 @@ sh tools/runreg.sh                         # the plain full runner (the lead, at
   only when there is no .gz). A CI FULL run commits both back to the branch ("regression state from run N [skip ci]", the absorb
   job + tools/ci/absorb.js), so pull before your next push; locally, `git checkout tools/regstate.json tools/regmap.json.gz` before
   a commit.
+- **The tested page is the minified one (v1.17).** `sh build.sh` writes `flavius-arena.html` (minified per module, tools/minbuild.js)
+  + `flavius-arena.mods.json` (where each module sits in the script). smartreg maps a test's V8 coverage (function start offsets in the
+  page's script) to src files through that table, and hashes the MINIFIED text of functions and top levels — so a comment-only edit
+  reaches no test. A page without its table, or a table of another build, is never guessed at: smartreg stops with `NO PLAN: … run sh
+  build.sh` (tools/ci/plan.js then plans every test). The workflows build before the plan and before the tests, with
+  `BUILD_REQUIRE_MIN=1`. Test `tv117min` proves the minified page is the readable one (docs/architecture.md "Build: minified per module").
+  A test must not depend on how a function's source is printed (quotes, spaces, local names); global names are never changed.
 - `--dry` prints the plan, why a test runs (`changed by: …` names the file), and `FULL because: …` when a plan run would be full
   (no full run recorded, no coverage map, a src file removed, the build order of existing files changed — nothing else). A test not
   run for 7+ days is `stale` (the oldest few join a run); it no longer turns every run into a full one. build.sh and smartreg.js are
