@@ -6,6 +6,23 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 
 Last updated: 2026-11-06 (cloud session).
 
+## PAUSED at his request (2026-11-13) — state for whoever resumes
+- LIVE: v1.16a (his `flavius.sh status` all green: page on the wire 2.8 MB (br), arena open). Nothing waits on him.
+- ON THE WORK BRANCH, NOT RELEASED: v1.17 "minify" (his pick B; tools/plans/v117/NOTES.md has the builder's BUILT section):
+  build.sh → tools/minbuild.js minifies PER MODULE with esbuild 0.27.7 (WHITESPACE ONLY — the syntax pass inlines top-level consts and
+  drops functions; 29 modules with functions declared inside a top-level block stay raw), page 10.62 → 8.74 MB raw, Brotli 2.84 → 2.29 MB,
+  tv116load menu 28 → 24.4 s; BUILD_MIN marker + "build: min" in the error log; flavius-arena.src.html / .mods.json gitignored;
+  smartreg reads module bounds from the mods table; release.sh / merge.sh require the minified page; `sh build.sh --readable` to debug;
+  test tv117min. No inline image moved (all pixel-read; safe set < 0.15 MB). The merge commit was pushed with [full] → the full run
+  regenerates the coverage maps (pull --no-rebase afterwards). webkit.yml also runs on that push (its file changed).
+- TO RESUME v1.17: read that full run → green: badge v1.17, MILESTONES, translations, `sh tools/release.sh 1.17`, [full] run, his BETA
+  (every byte of the script changed), ship. Red: fix first. Optional later win: hoist the block-level function declarations in the 29
+  raw modules (≈45 KB Brotli) — a source change, needs care.
+- OPEN, NOT STARTED (his order 3 · 1 · 4 · 2 · 5): item 4's WebKit follow-ups (docs/known-issues.md 2026-11-13: two page CRASHES tv100an /
+  tv101z = suspect memory; tv108x promotion fetches only 1× files = candidate game gap in 417/410; tv116b stall-server cases on WebKit) ·
+  v1.18 safe split (≈25%, needs the proving tool; beta) · item 5 share-a-link lobby invite.
+- Add FLAVIUS_NOBR=1 to flavius.sh put_page when it is next touched (no switch turns the Brotli upload off today).
+
 ## v1.16a "Quicker to open" LIVE (2026-11-13: beta played, his "good, ship it"; he ran `bash flavius.sh release` and confirmed "we are live with v16a")
 - After it: `bash flavius.sh status` should show "page on the wire … MB (br)" green. Step 5 done (CLAUDE.md, history).
 - His order 2026-11-13: 3 · 1 · 4 · 2 · 5. 3 + 1 = v1.16a (done). NEXT:
