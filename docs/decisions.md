@@ -945,3 +945,8 @@ Release-specific notes live in tools/plans/vX.YY/NOTES.md; parked ideas in tools
   own release, beta first: the build split into a core (engine, menu, Play Now, settings) loaded first and Manager / Creator Studio / Online /
   lessons as chunks loaded when their button is pressed (build.sh, mkshare.py, flavius.sh deploy; chunks keep build order). Replaces nothing
   (the single-file page stays the share build). Point 4 of the assessment is VOID (4a/4b both shipped in v1.0).
+- 2026-11-13 his order 3 · 1 · 4 · 2 · 5 and answers (tools/plans/v116a/NOTES.md, v117/NOTES.md): v1.16a = Brotli page upload by flavius.sh
+  (1a) + boot cover until ready, "Opening the arena…", no fake bar (2a 3a) + the Safari first-tap fix; shipped after his beta. BUILD SPLIT:
+  his pick B — v1.17 = minify + inline images out, v1.18 = the SAFE split only (≈25% that moves without changing wrapper order) —
+  REPLACES 2026-11-06 3b's "v1.17 build split core + lazy Manager/Studio/Online chunks" (112 wrapper-order swaps make the full split risky).
+

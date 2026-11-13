@@ -19,3 +19,10 @@ A. v1.17 = minify + move inline images out (days, low risk): ≈ 2.84 → ≈ 2.
 B. v1.17 = A, then v1.18 = SAFE split: only the 25% that moves without changing any wrapper order (mostly Manager), found by a tool that
    proves it (wrap order + top-level references), loaded when Manager / Online / Studio is opened, with a real progress bar. Beta first.
 C. Full topic split (49%): needs the 112 order swaps reviewed one by one. Weeks, real regression risk. Not recommended now.
+
+## His pick 2026-11-13: **B** — v1.17 = minify + inline images out (no split); then v1.18 = the SAFE split (the ~25% a tool proves
+moves without a wrapper-order change; loaded when Manager / Online / Studio opens; real progress bar; beta first).
+REPLACES the 2026-11-06 plan "v1.17 = core + lazy Manager/Studio/Online chunks" (docs/decisions.md) — the modes are only partly separable.
+Lead's design for v1.17 (build): minify PER MODULE inside build.sh (esbuild transform, whitespace + syntax, names kept), so the built page
+= what is tested = what ships, module boundaries stay (smartreg's maps), a missing esbuild = unminified build + release.sh refuses;
+the error log names the build; inline images move to assets/ only where the canvas never reads their pixels (file:// taint).
