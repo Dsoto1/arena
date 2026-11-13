@@ -20,7 +20,7 @@
 #   bash flavius.sh beta [branch]                          the work in progress → a PRIVATE test copy (its own address, its own saves):
 #                                                           page + assets only, never the server, the download or the site
 #   bash flavius.sh update                                 this script itself, from the newest work branch on GitHub (beta does it too)
-#   bash flavius.sh status                                 what is live: game version, server, sign-in, styles
+#   bash flavius.sh status                                 what is live: game version, page size on the wire (v1.16a), server, sign-in, styles
 #   bash flavius.sh budget                                 v1.14: the budget counts ONLY Flavius: tags the site bucket + CloudFront AppName=FlaviusRule (the
 #                                                           server's resources carry it from the stack) and turns the tag on for billing (also
 #                                                           runs after every server deploy; billing sees a new tag within ~24 h — run it again then)
@@ -33,12 +33,14 @@
 #                                                           by itself on the 1st at 00:05 UTC; this is the same call by hand), then shows whether it is open
 #   bash flavius.sh quota                                  the account's Lambda limit (the Ranked check needs room for 3 replays): asks AWS once, prints where it stands
 #
+# v1.16a: the game page (play/index.html, play-beta/index.html) is ~10.6 MB — over CloudFront's 10 000 000-byte automatic-compression limit, so it was
+# served uncompressed. put_page compresses it HERE (Brotli q11 via node's zlib, ~25 s; gzip -9 fallback) and uploads it with Content-Encoding.
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
 # Nothing is ever deleted from the bucket. DRY=1 bash flavius.sh … prints the commands instead of running them.
 # Your alert e-mail is asked once and kept in ~/.flavius.conf (never in this file).
 set -euo pipefail
 # this script's own version: a release only swaps in its copy when that copy is NEWER (a rollback never brings back an old script)
-FSH_VER=19
+FSH_VER=20
 BUCKET="flaviusrule.com"
 STACK="flavius-arena"
 REGION="us-east-1"
@@ -77,6 +79,19 @@ ctype(){ case "${1,,}" in
   *) echo "application/octet-stream";; esac; }
 put(){ # put <local file> <key in the bucket>
   run aws s3 cp "$1" "s3://$BUCKET/$2" --cache-control no-cache --content-type "$(ctype "$2")" --only-show-errors; ok "uploaded /$2"; }
+mb(){ awk -v b="$1" 'BEGIN{printf "%.1f", b/1000000}'; }
+put_page(){ # put_page <local html> <key in the bucket> — Brotli (or gzip) + Content-Encoding; CloudFront only auto-compresses objects under 10 MB
+  local f="$1" key="$2" t enc="" n o
+  if [ "${DRY:-}" = 1 ]; then printf '   [dry] compress %s (Brotli q11) → aws s3 cp … s3://%s/%s --content-encoding br\n' "$f" "$BUCKET" "$key"; return 0; fi
+  t=$(mktemp "$HOME/.flavius-page-XXXX"); o=$(wc -c < "$f" | tr -d ' ')
+  say "compressing the page (Brotli)…"
+  if command -v node >/dev/null 2>&1 && node -e 'const z=require("zlib"),fs=require("fs");const b=fs.readFileSync(process.argv[1]);fs.writeFileSync(process.argv[2],z.brotliCompressSync(b,{params:{[z.constants.BROTLI_PARAM_QUALITY]:11,[z.constants.BROTLI_PARAM_LGWIN]:24,[z.constants.BROTLI_PARAM_SIZE_HINT]:b.length}}))' "$f" "$t.br" 2>/dev/null; then
+    n=$(wc -c < "$t.br" | tr -d ' '); if [ "$n" -gt 0 ] && [ "$n" -lt "$o" ]; then enc=br; t="$t.br"; fi; fi
+  if [ -z "$enc" ]; then rm -f "$t.br"; printf '   Brotli not possible here — trying gzip\n'
+    if gzip -9 -c "$f" > "$t.gz" 2>/dev/null; then n=$(wc -c < "$t.gz" | tr -d ' '); if [ "$n" -gt 0 ] && [ "$n" -lt "$o" ]; then enc=gzip; t="$t.gz"; fi; fi; fi
+  if [ -z "$enc" ]; then rm -f "$t" "$t.gz"; printf '\033[1;33m! could not compress the page — uploading it plain (CloudFront will not compress it over 10 MB)\033[0m\n'; put "$f" "$key"; return 0; fi
+  aws s3 cp "$t" "s3://$BUCKET/$key" --cache-control no-cache --content-type "$(ctype "$key")" --content-encoding "$enc" --only-show-errors || { rm -f "$t"; die "uploading /$key failed"; }
+  rm -f "$t" "${t%.*}"; ok "uploaded /$key — $(mb "$o") MB → $(mb "$n") MB ($enc)"; }
 clear_cdn(){ # clear_cdn <path> [<path> …] — and wait until CloudFront is done
   say "Clearing CloudFront: $*"
   local dist; dist=$(dist_id)
@@ -98,7 +113,7 @@ game_dir(){ local p="$1"
   [ -f "$p/index.html" ] && [ -f "$p/version.json" ] || die "That zip has no play/index.html + play/version.json — is it a game update?"
   local v; v=$(sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p' "$p/version.json"); say "Game update v$v"
   if [ -d "$p/assets" ]; then say "New art first (old files are kept)"; run aws s3 sync "$p/assets" "s3://$BUCKET/play/assets/" --only-show-errors; ok "play/assets synced"; fi
-  put "$p/index.html" "play/index.html"
+  put_page "$p/index.html" "play/index.html"
   [ -f "$p/flavius-rule-arena.zip" ] && put "$p/flavius-rule-arena.zip" "play/flavius-rule-arena.zip"
   [ -f "$p/arena_shot.webp" ] && put "$p/arena_shot.webp" "play/arena_shot.webp"   # the advert shot on play.html, retaken every release
   put "$p/version.json" "play/version.json"
@@ -223,13 +238,24 @@ G(){ printf '  \033[1;32m●\033[0m %-16s %s\n' "$1" "$2"; }   # fine
 Y(){ printf '  \033[1;33m●\033[0m %-16s %s\n' "$1" "$2"; YN=$((YN+1)); }   # worth a look
 R(){ printf '  \033[1;31m●\033[0m %-16s %s\n' "$1" "$2"; RN=$((RN+1)); }   # needs attention now
 K(){ printf '  \033[2m○ %-16s %s\033[0m\n' "$1" "$2"; }   # v1.15: skipped (not a fault, not counted)
+page_text(){ # the game page as text: v1.16a stores it Brotli-compressed (Content-Encoding br); curl without brotli support would print the raw bytes
+  local t; t=$(mktemp "$HOME/.flavius-pt-XXXX"); curl -s -m 60 --compressed -H 'Accept-Encoding: br, gzip' "$1" -o "$t" || true
+  if [ -s "$t" ] && ! head -c 400 "$t" | grep -aq '<'; then
+    node -e 'const z=require("zlib"),fs=require("fs");const b=fs.readFileSync(process.argv[1]);let r;try{r=z.brotliDecompressSync(b)}catch(e){try{r=z.gunzipSync(b)}catch(e2){r=b}}process.stdout.write(r)' "$t" 2>/dev/null || cat "$t"
+  else cat "$t"; fi; rm -f "$t"; }
 cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = worth a look · red = fix now)"; YN=0; RN=0; local closed=0
   # the game page and its version
   local vj v page pver; vj=$(curl -s -m 10 "$SITE/play/version.json?x=$RANDOM" || true); v=$(printf '%s' "$vj" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p')
-  page=$(curl -s -m 20 "$SITE/play/?x=$RANDOM" || true); pver=$(printf '%s' "$page" | grep -oE 'arena · v[0-9.]+[a-z]?' | head -1 | sed 's/.*v//')
+  page=$(page_text "$SITE/play/?x=$RANDOM"); pver=$(printf '%s' "$page" | grep -oE 'arena · v[0-9.]+[a-z]?' | head -1 | sed 's/.*v//')
   if [ -z "$v" ]; then R "game version" "play/version.json is missing or unreadable"
   elif [ -n "$pver" ] && [ "$pver" != "$v" ]; then Y "game version" "version.json says v$v but the page is v$pver (upload both, version.json last)"
   else G "game version" "v$v"; fi
+  # v1.16a: is the page really compressed on the wire? (CloudFront's own compression stops at 10 MB; flavius.sh uploads it Brotli since FSH_VER 20)
+  local pw pwc pws pwe; pw=$(curl -sS -m 90 -L -H 'Accept-Encoding: br, gzip' -o /dev/null -w '%{http_code} %{size_download} %header{content-encoding}' "$SITE/play/index.html?x=$RANDOM" 2>/dev/null || true)
+  read -r pwc pws pwe <<< "$pw"; pws=${pws:-0}
+  case "$pws" in *[!0-9]*) pws=0;; esac
+  if [ "$pwc" = 200 ] && { [ "$pwe" = br ] || [ "$pwe" = gzip ]; } && [ "$pws" -lt 5000000 ]; then G "page on the wire" "$(mb "$pws") MB ($pwe)"
+  else Y "page on the wire" "${pwc:-?}: $(mb "$pws") MB, encoding '${pwe:-none}' — run: bash flavius.sh release"; fi
   # online.json → the server address and the sign-in address the page uses
   local oj ws auth; oj=$(curl -s -m 10 "$SITE/play/online.json?x=$RANDOM" || true)
   ws=$(printf '%s' "$oj" | sed -n 's/.*"ws" *: *"\([^"]*\)".*/\1/p'); auth=$(printf '%s' "$oj" | sed -n 's/.*"auth" *: *"\([^"]*\)".*/\1/p')
@@ -371,7 +397,7 @@ cmd_beta(){ gh_token; local br="${1:-}"
   if [ -z "${FLAVIUS_BETA_OK:-}" ] && fsh_newer "$SRC/tools/deploy/flavius.sh"; then cp "$SRC/tools/deploy/flavius.sh" "$0"; ok "flavius.sh updated — continuing with the new one"; FLAVIUS_BETA_OK=1 exec bash "$0" beta "$br"; fi
   say "Beta: page + assets → play-beta/ (the live game, the server and the site are not touched)"
   run aws s3 sync "$SRC/assets" "s3://$BUCKET/play-beta/assets/" --only-show-errors
-  put "$SRC/flavius-arena.html" "play-beta/index.html"; put "$SRC/version.json" "play-beta/version.json"
+  put_page "$SRC/flavius-arena.html" "play-beta/index.html"; put "$SRC/version.json" "play-beta/version.json"
   run aws s3 cp "s3://$BUCKET/play/online.json" "s3://$BUCKET/play-beta/online.json" --cache-control no-cache --only-show-errors || true
   clear_cdn "/play-beta/*"; rm -rf "$SRC"
   local dom; dom=$(aws cloudfront get-distribution --id "$(dist_id)" --query Distribution.DomainName --output text 2>/dev/null || echo "?")
