@@ -71,14 +71,24 @@ const runreg = fs.readFileSync(path.join(__dirname, 'runreg.sh'), 'utf8');
 const ALL = [...new Set(runreg.match(/DEFAULT="([^"]+)"/)[1].trim().split(/\s+/))];
 const ORDER = fs.readFileSync(path.join(ROOT, 'build.sh'), 'utf8').match(/\bcat (src\/[\w\/.-]+\.js [^;]+);/)[1].trim().split(/\s+/);
 /* the built script, parsed: every function's text hash by start offset, and each src file's top-level "shape" (its text with
-   every function cut out) — the script is "\n" followed by the src files in build order, so offsets map back to files */
+   every function cut out). v1.17: the page is minified per module, so where each src file sits in the script comes from
+   flavius-arena.mods.json (tools/minbuild.js writes it with the page: [file, start, end] + the script's hash). A page without its
+   table (not built here, or built from other sources) is never guessed at: the run stops and says "sh build.sh" — tools/ci/plan.js
+   reads a missing plan as "every test". Hashes and shapes are those of the MINIFIED text: a comment-only edit reaches no test. */
 const ts = require('typescript');
 const sha = t => crypto.createHash('sha1').update(t).digest('hex').slice(0, 10);
 const BUILD = (() => {
   const html = fs.readFileSync(fs.existsSync(PAGE) && !process.argv.includes('--dry') ? PAGE : BUILT, 'utf8'), a = html.indexOf('<script>') + 8, src = html.slice(a, html.lastIndexOf('</script>'));
-  let o = 1;
-  const bounds = ORDER.map(f => { const n = fs.readFileSync(path.join(ROOT, f), 'utf8').length; const b = [o, o + n, f]; o += n; return b; });
-  if (o !== src.length) console.log(`WARNING: flavius-arena.html is not built from the current src (${o} vs ${src.length}) — run sh build.sh`);
+  const M = readJ(path.join(ROOT, 'flavius-arena.mods.json'), null);
+  const stop = why => { console.log(`NO PLAN: ${why} — run sh build.sh, then again`); process.exit(2); };
+  if (!M || !Array.isArray(M.mods)) stop('flavius-arena.mods.json is missing (the page was not built here)');
+  if (M.sha !== crypto.createHash('sha1').update(src).digest('hex').slice(0, 16)) stop('flavius-arena.mods.json does not belong to flavius-arena.html');
+  if (M.mods.map(m => m[0]).join(' ') !== ORDER.join(' ')) stop('flavius-arena.html was built from another module list than build.sh has now');
+  const bounds = M.mods.map(m => [m[1], m[2], m[0]]);
+  if (!M.min) console.log('WARNING: flavius-arena.html is the READABLE page (no esbuild, or sh build.sh --readable) — CI and releases test the minified one');
+  { let pt = 0; try { pt = fs.statSync(BUILT).mtimeMs; } catch (e) {}
+    const newer = ORDER.filter(f => { try { return fs.statSync(path.join(ROOT, f)).mtimeMs > pt + 1000; } catch (e) { return true; } });
+    if (newer.length) console.log(`WARNING: ${newer.length} src file(s) are newer than flavius-arena.html (${newer.slice(0, 3).map(f => path.basename(f)).join(' ')}) — run sh build.sh`); }
   const sf = ts.createSourceFile('x.js', src, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS), K = ts.SyntaxKind;
   const FK = new Set([K.FunctionDeclaration, K.FunctionExpression, K.ArrowFunction, K.MethodDeclaration, K.GetAccessor, K.SetAccessor, K.Constructor]);
   const fn = new Map(), fname = new Map(), outer = [], tops = [];

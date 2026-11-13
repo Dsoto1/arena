@@ -26,3 +26,20 @@ REPLACES the 2026-11-06 plan "v1.17 = core + lazy Manager/Studio/Online chunks" 
 Lead's design for v1.17 (build): minify PER MODULE inside build.sh (esbuild transform, whitespace + syntax, names kept), so the built page
 = what is tested = what ships, module boundaries stay (smartreg's maps), a missing esbuild = unminified build + release.sh refuses;
 the error log names the build; inline images move to assets/ only where the canvas never reads their pixels (file:// taint).
+
+## BUILT 2026-11-13 (builder; step 1 of B — the lead does the badge / MILESTONES / release)
+- tools/minbuild.js + build.sh: `flavius-arena.html` = every module minified on its own (esbuild 0.27.7 pinned), `window.BUILD_MIN=1`;
+  readable copy `flavius-arena.src.html` + module table `flavius-arena.mods.json` (both gitignored). 10.62 → 8.74 MB, gzip -9 3.85 → 3.12,
+  Brotli q11 2.84 → 2.29 MB (−19%); build 0.6 → 1.7 s; phone Slow-4G profile (tv116load, gzip): menu 28.2 → 24.4 s.
+- WHITESPACE ONLY, not "whitespace + syntax" (the design above): esbuild's syntax pass inlines top-level `const` values into functions
+  (AVHIT_MS → 1300), drops dead code (function counts change in 15-custom, 43-beasts, 290-v100world) and rewrites statements — for
+  0.2% on the wire (Brotli 2.242 vs 2.246 MB, all modules). One constant (SYNTAX in tools/minbuild.js) if he ever wants it; tv117min
+  then shows what breaks first (2 timer sweeps).
+- 29 modules stay raw (616 KB of source, ≈ 45 KB of Brotli): a function declared inside a top-level block — esbuild rewrites it
+  (`let name2=function…;var name=name2`). Moving those declarations to the top level of their module would let them minify (v1.18?).
+- Found and fixed: 00b-perf matched 4 timer sweeps on single-quoted source text (onlCry80, rb82Fit, srInfo73, tutlock66) — quotes fold now.
+- IMAGES: nothing moved. 29 inline images = 0.64 MB: 18 standees + zoraMini (0.59 MB) are drawn on the board, whose pixels are read
+  (396/423 aim alpha, 403 silhouettes, 321 bases — each has a "tainted (file://)" fallback that behaves differently); 9 weapon icons
+  WICO75 (45 KB: SVG `<image href>`, `<img>`, and 277's hit line on the canvas) and PTOK81_HERO (12 KB, canvas-processed) → the safe set
+  is under 0.15 MB. Idea for v1.18 (it is a "load later" change): ship the standees as a script asset (data URIs inside assets/standees.js,
+  like the language packs) — no taint, cached apart, mkshare already inlines .js assets.

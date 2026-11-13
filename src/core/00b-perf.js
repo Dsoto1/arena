@@ -20,6 +20,8 @@ var PERF92={off:false,tasks:[],byId:new Map(),nextId:1e9,seq:1,lastAct:0,lastInp
 try{PERF92.off=localStorage.getItem('flavius_perf92off')==='1'}catch(e){}
 PERF92.lastAct=PERF92.lastInput=performance.now();
 /* [name, a piece of the callback source that only that sweep has]. Delay must be 250–1000 ms. When in doubt a timer is NOT listed. */
+/* v1.17: the page is minified per module (tools/minbuild.js: comments and blanks go, quotes become ", local names may get a number).
+   A piece must read the same in both pages: no spaces outside a string, no local variable names. Test tv117min compares the two pages. */
 const PERF92_SWEEPS=[
   ['penOff76','penOffSync76()'],                       /* 108 beast pen: Call it off button */
   ['onlBar79','onlBarSync()'],                         /* 116 online top bar buttons */
@@ -52,8 +54,8 @@ const PERF92_SWEEPS=[
 ];
 if(!PERF92.off){
   window.setInterval=function(f,d,...a){
-    if(typeof f==='function'&&d>=250&&d<=1000){let src='';try{src=Function.prototype.toString.call(f)}catch(e){}
-      const hit=PERF92_SWEEPS.find(s=>src.includes(s[1]));
+    if(typeof f==='function'&&d>=250&&d<=1000){let src='';try{src=Function.prototype.toString.call(f).replace(/"/g,"'")}catch(e){}
+      const hit=PERF92_SWEEPS.find(s=>src.includes(s[1].replace(/"/g,"'"))); /* v1.17: the minified page prints 'x' as "x" — quotes compare as one */
       if(hit){const id=PERF92.nextId++;const t={id,name:hit[0],f,a,d,last:performance.now(),seq:0,runs:0};PERF92.tasks.push(t);PERF92.byId.set(id,t);return id}}
     return PERF92.real.setInterval(f,d,...a)};
   const unmanage=id=>{const t=PERF92.byId.get(id);if(!t)return false;PERF92.byId.delete(id);const i=PERF92.tasks.indexOf(t);if(i>=0)PERF92.tasks.splice(i,1);t.dead=true;return true};

@@ -7,7 +7,7 @@
       failed connect, falls back to a real launch.
    2. COVERAGE (REGCOV=<out.json>): every page records V8 function coverage (CDP Profiler); on browser.close() it writes the
       start offsets of every function that ran inside the game's inline <script> (plus the script length) to REGCOV.
-      smartreg.js maps those offsets back to src/ files (the script is "\n" + the src files in build.sh order). */
+      smartreg.js maps those offsets back to src/ files (flavius-arena.mods.json, written by tools/minbuild.js, says where each sits). */
 const out = process.env.REGCOV, ws = process.env.REGWS;
 if (out || ws) {
   const pw = require('playwright');
@@ -26,7 +26,7 @@ if (out || ws) {
         const { result } = await c.send('Profiler.takePreciseCoverage');
         for (const e of result) {
           const top = e.functions.reduce((m, f) => Math.max(m, f.ranges[0].endOffset), 0);
-          if (!/\.html/.test(e.url) || top < 1e6) continue; /* only the game script (the one big inline script) */
+          if (!/\.html/.test(e.url) || top < 1e6 || /flavius-arena\.src\.html/.test(e.url)) continue; /* only the game script (the one big inline script) of the tested page — never the readable copy tv117min opens beside it (other offsets) */
           len = top;
           for (const f of e.functions) {
             const r = f.ranges[0];

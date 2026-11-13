@@ -5,13 +5,16 @@
    216-v92errui. Tests read window.ERR92 (errNew92(since) = entries after a mark). Nothing is ever sent anywhere. */
 const ERR92={list:[],max:50,seen:{},n:0};
 try{const s=localStorage.getItem('flavius_errlog92');if(s){const a=JSON.parse(s);if(Array.isArray(a))ERR92.list=a.slice(-ERR92.max)}}catch(e){}
+/* v1.17: which page logged it — 'min' (the shipped, minified page: an "at" position is in minified code; node tools/minbuild.js --where
+   LINE:COL names the module and source line) or 'readable' (sh build.sh --readable / flavius-arena.src.html). build.sh sets BUILD_MIN. */
+function err92Build(){return window.BUILD_MIN?'min':'readable'}
 function err92Where(){try{if(typeof S!=='undefined'&&S&&!S.over&&S.phase&&S.phase!=='setup')return 'event:'+(S.evKey||'')+(S.onl?':online':'');
   if(document.getElementById('mgrBody'))return 'manager';if(document.getElementById('onl'))return 'online';if(document.getElementById('stBody')||document.getElementById('studio'))return 'studio';
   const mm=document.getElementById('mainMenu');if(mm&&!mm.hidden)return 'menu'}catch(e){}return ''}
 function err92Add(kind,msg,at){try{msg=String(msg||'').slice(0,400);at=String(at||'').slice(0,240);const k=kind+'|'+msg+'|'+at;const now=Date.now();
   if(ERR92.seen[k]&&now-ERR92.seen[k]<10000)return;ERR92.seen[k]=now;ERR92.n++;
   let ver='';try{const m=/v(\d+\.\d+)/.exec((document.querySelector('.brand .ed')||{}).textContent||'');ver=m?m[1]:''}catch(e){}
-  ERR92.list.push({t:new Date(now).toISOString().slice(0,19).replace('T',' '),kind,msg,at,where:err92Where(),ver:ver.slice(0,24)});if(ERR92.list.length>ERR92.max)ERR92.list.splice(0,ERR92.list.length-ERR92.max);
+  ERR92.list.push({t:new Date(now).toISOString().slice(0,19).replace('T',' '),kind,msg,at,where:err92Where(),ver:ver.slice(0,24),build:err92Build()});if(ERR92.list.length>ERR92.max)ERR92.list.splice(0,ERR92.list.length-ERR92.max);
   clearTimeout(ERR92.tm);ERR92.tm=setTimeout(()=>{try{localStorage.setItem('flavius_errlog92',JSON.stringify(ERR92.list))}catch(e){}},300)}catch(e){}}
 const err92Stack=e=>{try{const L=String(e&&e.stack||'').split('\n').map(s=>s.trim()).filter(s=>/^at /.test(s));return (L[0]||'').replace(/\(?(file|https?):\/\/[^\s)]*\/([^\s/)]+)\)?/,'$2')}catch(x){return ''}};
 window.addEventListener('error',e=>{if(!e)return;const er=e.error;err92Add('error',er&&er.message||e.message,er?err92Stack(er):`${e.filename||''}:${e.lineno||''}`)});
@@ -27,7 +30,7 @@ const ERR_RAW93=/\b(TypeError|ReferenceError|SyntaxError|RangeError|EvalError|is
 function errSafe92(e,m){if(!m||typeof m!=='string')return false;if(e&&typeof e==='object'&&!e.extra&&e instanceof Error&&e.constructor!==Error)return false;return !ERR_RAW93.test(m)}
 function errRef92(e,kind){let ref='E-';try{ref+=Math.random().toString(36).slice(2,6).toUpperCase().padEnd(4,'0')}catch(x){ref+='0000'}
   try{const m=e&&typeof e==='object'?String(e.message||e.name||e):String(e);const now=Date.now();ERR92.n++;
-    ERR92.list.push({t:new Date(now).toISOString().slice(0,19).replace('T',' '),kind:kind||'shown',msg:('['+ref+'] '+m).slice(0,400),at:e&&e.stack?err92Stack(e):'',where:err92Where(),ver:''});
+    ERR92.list.push({t:new Date(now).toISOString().slice(0,19).replace('T',' '),kind:kind||'shown',msg:('['+ref+'] '+m).slice(0,400),at:e&&e.stack?err92Stack(e):'',where:err92Where(),ver:'',build:err92Build()});
     if(ERR92.list.length>ERR92.max)ERR92.list.splice(0,ERR92.list.length-ERR92.max);clearTimeout(ERR92.tm);ERR92.tm=setTimeout(()=>{try{localStorage.setItem('flavius_errlog92',JSON.stringify(ERR92.list))}catch(x){}},300)}catch(x){}
   return ref}
 function errText92(e,fallback){const m=e==null?'':typeof e==='object'?String(e.message||''):String(e);if(errSafe92(e,m))return m;
