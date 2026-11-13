@@ -19,3 +19,16 @@ His pick 2026-11-06 (3b "my recs"): Brotli + a loading bar first, then the build
 2. Boot cover: stays until the game is really up; the 12 s auto-hide becomes a 90 s last resort + hide on a script error (window.onerror).
    One line under the logo ("Opening the arena…", translated). Replaces the 12 s safety (01-head, v0.9x).
 3. No fake percentage bar; the real bar comes with v1.17's chunks.
+
+## His answers 2026-11-13: **1a 2a 3a** (go)
+1a the deploy compresses the page itself with Brotli (Content-Encoding: br), game + beta; `status` prints the size on the wire.
+2a the boot cover stays until the game is up (90 s last resort, hide on a script error) + one line "Opening the arena…". 3a no fake bar.
+His curl line (CloudShell, 2026-11-13) printed "0 bytes, encoding:" = no body (a redirect or an error status; the line did not follow
+redirects or print the status) → inconclusive; the `status` check built in 1a answers it properly.
+
+## Item 3 of his order — the Safari touch tap: CAUSE FOUND + FIXED (396-v106aim, one line)
+Probe tools/ci/wkprobe.js on webkit.yml (run 43424100538): after ONE touch tap WebKit delivers pointerdown/up with pointerType 'touch' but
+the CLICK is a PointerEvent with pointerType 'mouse' (Chromium: 'touch'). 396's capture click read `e.pointerType||AIM106.lastPT` → 'mouse'
+→ not a touch → the board's own click struck at once. So on Safari / iPad the first tap ATTACKED instead of selecting (u2a: tap = select,
+same target again = strike). Fix: the pointerdown just before decides (`AIM106.lastPT||e.pointerType`). tv106d + tv106g green on Chromium;
+WebKit proof = webkit.yml dispatch tv106d. Still worth his one tap on the iPad after the release.

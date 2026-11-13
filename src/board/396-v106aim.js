@@ -193,7 +193,7 @@ if(typeof cv!=='undefined'&&cv&&!AIM106.off){
       if(aim106SetHov(a))draw()}catch(err){console.error(err)}})});
   cv.addEventListener('pointerleave',()=>{if(aim106SetHov(null))draw()});
   /* touch: tap = select, tap the same target again = strike, tap elsewhere = cancel. Runs before 07-ui's click (window, capture). */
-  window.addEventListener('click',e=>{try{if(e.target!==cv||!aim106Live())return;const pt=e.pointerType||AIM106.lastPT;if(pt!=='touch')return;
+  window.addEventListener('click',e=>{try{if(e.target!==cv||!aim106Live())return;/* v1.16a: the pointerdown just before decides. WebKit's click after a TOUCH tap says pointerType 'mouse' (probe tools/ci/wkprobe.js, run 43424100538), so the first tap struck at once on Safari; Chromium says 'touch'. */const pt=AIM106.lastPT||e.pointerType;if(pt!=='touch')return;
     const a=AIM106.tmap.size?aim106At(e,(()=>{const b=cv.getBoundingClientRect();return aim106Tile(e.clientX-b.left,e.clientY-b.top)})()):null;
     if(a){e.stopImmediatePropagation();e.preventDefault();
       if(aim106Same(a,AIM106.sel)){AIM106.sel=null;aim106Cursor(false);hoverTile={r:a.r,c:a.c};onTile(a.r,a.c);draw();return}
