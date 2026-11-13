@@ -26,7 +26,7 @@ permissions:
 jobs:
   webkit:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -55,7 +55,7 @@ jobs:
       - name: build
         run: sh build.sh | tail -1
       - name: tests (WebKit)
-        timeout-minutes: 38   # run 42228304630: tv100an needs >200 s on WebKit (217 s even on Chromium) → 400 s a test; run 42227120761: ≈3 min a test on Linux WebKit (tv91r 175 s); 8 tests ≈ 25 min. Runs are rare (Monday cron, board/gear/stands pushes, dispatch).
+        timeout-minutes: 43   # 9 tests since 2026-11-13 (tv116b added; about 1 min, it only opens the page); run 42228304630: tv100an needs >200 s on WebKit (217 s even on Chromium) → 400 s a test; run 42227120761: ≈3 min a test on Linux WebKit (tv91r 175 s); 9 tests ≈ 28 min. Runs are rare (Monday cron, board/gear/stands pushes, dispatch).
         env:
           NODE_PATH: /tmp/ci/node_modules
           PW_BROWSER: webkit

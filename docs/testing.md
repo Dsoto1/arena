@@ -145,11 +145,13 @@ visual-polish rule (CLAUDE.md §1) lists the tests every visual change must keep
 ## Running on WebKit (v1.16, his 2a)
 
 The open board bugs (docs/known-issues.md) are Safari-only, so the board tests in `tools/ci/webkit.txt` (tv91r, tv100p, tv100an, tv101z, tv106d,
-tv106f, tv108x, tv110a) can run on Playwright's WebKit. Those tests take their browser from `tools/tests/_browser.js`: `PW_BROWSER=webkit`
+tv106f, tv108x, tv110a, tv116b) can run on Playwright's WebKit. Those tests take their browser from `tools/tests/_browser.js`: `PW_BROWSER=webkit`
 makes `chromium.launch()` launch WebKit; unset, it is the same Chromium object as before. Locally: `npx playwright install webkit`, then
 `PW_BROWSER=webkit REGSHARE=0 REGSLOTS=0 node tools/smartreg.js -j 2 tv91r` (REGSHARE=0: the shared-browser server is Chromium-only; smartreg
 records the run in tools/regstate.json, so restore that file afterwards, never commit it). In CI: `.github/workflows/webkit.yml`, a SEPARATE
 workflow (never blocks the Chromium shards): push on claude/** or main touching src/board, src/gear, src/stands, the list or the workflow; a
-manual run (`tests` = names); Mondays 06:00 UTC; one job at most 15 min (about 10 GitHub minutes). A test failing on WebKit but passing on
+manual run (`tests` = names); Mondays 06:00 UTC; one job at most 50 min (about 30 GitHub minutes). A test failing on WebKit but passing on
 Chromium is a candidate Safari bug: read the job log, do not edit the test to go green. To put another test on the list, change its
 `require('playwright')` line to `require('./_browser')` (only if it has no CDP / Chromium-only calls) and add its name to webkit.txt.
+Probe a question on WebKit without a new test: `gh workflow run webkit.yml -f tests="../ci/wkprobe"` (the name may be a path under tools/tests/; tools/ci/wkprobe.js is the kept probe, its output is in the job log).
+Browser-aware expectations: `const WK=process.env.PW_BROWSER==='webkit'` and assert the designed WebKit value (`WK?1.5:2`), skipping or feeding a check with a printed line, never deleting it; the Chromium assertion stays unchanged (pattern: tv101z, tv108x, tv110a).
