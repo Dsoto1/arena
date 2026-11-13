@@ -5,6 +5,16 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-11-13 · WEBKIT 9-TEST RUN 43440000712 (after the item-4 expectation split): PASS tv91r tv100p tv106d (the v1.16a tap fix) tv106f
+  tv110a (split OK; read its NOTE lines for 4b–4d in the job log when next touched). FAIL 4: (1) tv100an "page.goto: Page crashed" on a
+  later reload inside the test (247 s in) and (2) tv101z "page closed" at its first evaluate — tv101z PASSED on 2026-11-06, so these are
+  WebKit web-process CRASHES, not assertions: suspect memory on the runner (the same family as the open Safari 2× sheet memory item
+  below) → next step: log `ps`/RSS around the crash, run each alone, and try once with flavius_x2off=1; a crash that follows the sheets =
+  real Safari memory signal. (3) tv108x: check 0 passes (Auto promotes: x2ok true, want true, state x2:2) but check 1/2 still see k 0
+  and only 1× files fetched → either the promotion does not reload sheets already requested (then real Safari never gets 2× for figures
+  loaded before the 30 s mark — CANDIDATE GAME GAP in 417/410) or the test must start the event after promoting; read 410 `x108Want`
+  users before touching the test. (4) tv116b "not ready ja/es/zh/fr" (en fine): the stalled-http-server cases never reach ready on
+  WebKit → test harness (the stall server + WebKit's loader), not the cover. All four: test/infra follow-up, no blind game change.
 - 2026-11-13 · v1.16a (396): on WebKit the click after a TOUCH tap carries pointerType 'mouse' (Chromium 'touch'; probe tools/ci/wkprobe.js,
   run 43424100538), so on Safari / iPad the first tap STRUCK instead of selecting. Fixed: the pointerdown before the click decides. tv106d
   green on WebKit (run 43425609837). Still to confirm by him on a real iPad after the release (Linux WebKit ≠ iOS Safari in every detail).
