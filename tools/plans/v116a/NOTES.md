@@ -32,3 +32,13 @@ the CLICK is a PointerEvent with pointerType 'mouse' (Chromium: 'touch'). 396's 
 → not a touch → the board's own click struck at once. So on Safari / iPad the first tap ATTACKED instead of selecting (u2a: tap = select,
 same target again = strike). Fix: the pointerdown just before decides (`AIM106.lastPT||e.pointerType`). tv106d + tv106g green on Chromium;
 WebKit proof = webkit.yml dispatch tv106d. Still worth his one tap on the iPad after the release.
+
+## Built 2026-11-13 (release commit 376d55a "[full]")
+- 396 tap fix: tv106d green on WebKit (webkit.yml run 43425609837) and Chromium.
+- flavius.sh FSH_VER 20: put_page (Brotli q11 via node zlib → Content-Encoding br; gzip fallback; plain + warning last), used for
+  play/index.html and play-beta/index.html; status "page on the wire" + page_text() (status read the page as text for versions-match).
+  Stubbed run: 10.6 MB → 2.8 MB. NOT proven against AWS → his `bash flavius.sh beta` is the first real upload.
+- Boot cover (01-head direct edit, kill switch flavius_v116abootoff): 90 s last resort, hide 1.5 s after a script error, line
+  "Opening the arena…" in the saved language (flavius_lang; no browser-language guess: the game never picks a language from the browser).
+  120-v80fix's lift (menu up, or 8 s after the main script starts) unchanged. Test tv116b.
+- MILESTONES "Quicker to open" + part-160 (7 languages). release.sh clean. BETA FIRST (his phone): the cover on a slow load + the tap on iPad.

@@ -5,8 +5,11 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-11-13 · v1.16a (396): on WebKit the click after a TOUCH tap carries pointerType 'mouse' (Chromium 'touch'; probe tools/ci/wkprobe.js,
+  run 43424100538), so on Safari / iPad the first tap STRUCK instead of selecting. Fixed: the pointerdown before the click decides. tv106d
+  green on WebKit (run 43425609837). Still to confirm by him on a real iPad after the release (Linux WebKit ≠ iOS Safari in every detail).
 - 2026-11-06 · FIRST WEBKIT CI RUN (webkit.yml dispatch 42228304630, Linux WebKit = Playwright 1.56.1, ubuntu-24.04): pass tv91r tv100p
-  tv101z tv106f · fail 4, sorted: (a) tv100an TIMEOUT at 200 s (217 s on Chromium) → bound raised to 400 s, re-run needed; (b) tv106d
+  tv101z tv106f · fail 4, sorted: (a) tv100an TIMEOUT at 200 s (217 s on Chromium) → bound raised to 400 s, re-run needed; (b) FIXED in v1.16a — (b) tv106d
   5a/5b/5c "first tap selects A": on WebKit AIM106.figs and tmap stay EMPTY (figs 0, tmap 0, lastPT touch) so a touch tap never selects —
   CANDIDATE REAL iPad/Safari bug (the aim overlay never builds there); reproduce on his iPad / Mac Safari with a touch screen before fixing;
   (c) tv108x 1/2/6 expect the 2× sheets at once on a DPR-2 desktop, but on WebKit 417 (v1.10 4a) starts on 1× and promotes after 30 s of

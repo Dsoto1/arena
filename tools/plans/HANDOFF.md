@@ -6,6 +6,16 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 
 Last updated: 2026-11-06 (cloud session).
 
+## v1.16a "Quicker to open" — release commit 376d55a pushed 2026-11-13, FULL RUN PENDING, then BETA (tools/plans/v116a/NOTES.md)
+- His order 2026-11-13: 3 (Safari tap) · 1 (v1.16a) · 4 (WebKit test clean-up) · 2 (v1.17 build split) · 5 (lobby invite link).
+- 3 DONE inside v1.16a (396 one-line fix, WebKit-proven). 1 BUILT: Brotli page upload in flavius.sh (FSH_VER 20) + boot cover + status line.
+- NEXT: full run green → he runs `bash flavius.sh beta` (FIRST real Brotli upload: watch "uploaded … 10.6 MB → 2.8 MB (br)" and that the
+  beta page opens) and plays once on his phone / iPad (cover stays until the menu; first tap selects, second strikes) → on his ok push
+  release/v1.16a + main, he runs `bash flavius.sh release`, then `status` must show "page on the wire … (br)" green. Then CLAUDE.md §7 +
+  history. If the br page fails to open anywhere: `bash flavius.sh release 1.16` (FSH 20 stays, it would still compress — so the true
+  rollback of the compression is the kill in put_page: none yet → add `FLAVIUS_NOBR=1` if ever needed).
+- Then 4: split tv108x / tv110a WebKit expectations, add tv116b to tools/ci/webkit.txt. Then 2 and 5.
+
 ## v1.16 "Behind the scenes" SHIPPED to release/v1.16 + main (2026-11-06 15:20 UTC, cloud session) — HE STILL RUNS `bash flavius.sh release`
 - Full run 42228473552 GREEN (attempt 1: server + 7/8 shards; shard 1 hung at the 40-min limit with no log; the one confirming re-run
   green in 19 min; flaky tv104a tv100an passed alone). release/v1.16 = main = e661843 (includes CI's regstate commit + the baton line).
