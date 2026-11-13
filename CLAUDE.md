@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v1.16** (v1.16 shipped 2026-11-06). Owner: Virgilante. Repo dsoto1/arena.
+arena, Roman-themed). Current version: **v1.16a** (v1.16a shipped 2026-11-13). Owner: Virgilante. Repo dsoto1/arena.
 
 Modes: **Play Now** (single events, festival, missio, tournament, daily/weekly challenges), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers), **Hot seat**, **Online** (AWS server in server/), lessons, Annals/Hall, Imperium.
@@ -187,7 +187,7 @@ One global script; files are concatenated in order. Later modules patch earlier 
 ## 6. Release workflow (from v1.03)
 **Branches:** work happens on the session branch (claude/…). A RELEASE is the branch `release/vX.YY` (GitHub here refuses tag pushes, so
 release branches stand in for tags) plus `main` moved to it. `flavius.sh release` deploys the NEWEST `release/v*`; `bash flavius.sh release 1.01`
-deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13, release/v1.14, release/v1.14a, release/v1.14b, release/v1.15, release/v1.15a, release/v1.15b, release/v1.15c, release/v1.16.
+deploys that one = ROLLBACK (the server too, if its code differs). Existing: release/v1.0, release/v1.01, release/v1.02, release/v1.03, release/v1.04, release/v1.05, release/v1.06, release/v1.07, release/v1.08, release/v1.08a, release/v1.08b, release/v1.08c, release/v1.09, release/v1.09a, release/v1.09b, release/v1.09c, release/v1.10, release/v1.10a, release/v1.11, release/v1.11a, release/v1.11b, release/v1.11c, release/v1.11d, release/v1.12, release/v1.13, release/v1.14, release/v1.14a, release/v1.14b, release/v1.15, release/v1.15a, release/v1.15b, release/v1.15c, release/v1.16, release/v1.16a.
 
 1. Build the release on the work branch: version badge in `src/core/01-head.html` (`arena · vX.YY` = `GAME_VER`), a `MILESTONES` entry at the
    top of `src/meta/34-notes.js` (short), `SAVE_MIGRATIONS` if world data changed shape, translations (`sh tools/i18n/prep.sh` → one Sonnet agent
@@ -207,12 +207,6 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   CloudFront id into any file (docs included) — write where to find it ("the stack's UserPoolId output"); flavius.sh looks them up. release.sh's idscan fails otherwise.
 
 ## 7. Version history (newest three; all: docs/history.md)
-- **v1.15b** Stronger small houses (tools/plans/v115b/NOTES.md, the strength study tools/plans/strength115/REPORT.md, his 1a–8a; beta first;
-  shipped 2026-11-03): 432-v115bstr — the Undercard tops out at 54 (TIERS.under.hi 62 → 54; rivals ≤ 56, player entry ≤ 60, label "≤ 54") and
-  the player's patron pays 22 + 0.6×fame a week (REPLACES v1.12 P1 10 + 0.3×fame); refusal reads "takes up to 60". Beta fix: Match Week's
-  auto-fill + 350's reserve cover respect the bout's rating band (since v0.95 a strong starter could land in the Undercard; saved unfought
-  cards cleaned). Switches flavius_v115bstroff / flavius_v115bfilloff; tests tv115b, tv95c, tv104c, tlive, tv105a updated.
-
 - **v1.15c** Zoom with the wheel (tools/plans/v115c/NOTES.md, his 1a–6a; shipped 2026-11-03): 433-v115czoom — the mouse wheel (and Mac trackpad
   pinch = ctrl+wheel) over the arena zooms like the phone pinch (CAM.z 1–2.4, ~10% a notch, centred on the active fighter); the page never
   scrolls over the sand; always on, no setting. The #evIntro title card is not the canvas (wheel there scrolls as before). Kill switch
@@ -226,3 +220,11 @@ deploys that one = ROLLBACK (the server too, if its code differs). Existing: rel
   bar first, then the build split); tools/wrapped.js + the most-wrapped table in docs/architecture.md; CLAUDE.md §4 one-module-per-feature
   rule; stale backlog lines (animated tokens, any-event entry: both v1.0) marked BUILT. Full run 42228473552 green on the one re-run of a
   hung shard (flaky tv104a tv100an).
+
+- **v1.16a** Quicker to open (tools/plans/v116a/NOTES.md, his 1a 2a 3a; beta first; shipped 2026-11-13): flavius.sh FSH_VER 20 uploads the
+  game page Brotli-compressed itself (`put_page`: node zlib q11 → Content-Encoding br, gzip fallback; 10.6 → 2.8 MB) — CloudFront only
+  auto-compresses objects under 10 MB, so the page went out uncompressed; `status` prints "page on the wire". Boot cover (01-head, direct
+  edit): stays until the menu is up, "Opening the arena…" in the saved language, hides 1.5 s after a script error, 90 s last resort
+  (REPLACES the 12 s auto-hide); kill switch flavius_v116abootoff; test tv116b. 396: on Safari / iPad the first touch tap struck instead
+  of selecting (WebKit's click after a touch says pointerType 'mouse') → the pointerdown before the click decides; found by webkit.yml
+  (probe tools/ci/wkprobe.js). Full run 43426908172 green first time.

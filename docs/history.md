@@ -439,3 +439,16 @@ One entry per release, oldest first. The newest three are also in CLAUDE.md §7.
   card + part-159 translations. Decisions: online feature work parked + a share-a-link lobby invite (6a); one module per feature (5a);
   v1.16a Brotli + loading bar, then v1.17 build split beta first (3b). Full run 42228473552: attempt 1 server + 7 shards green, shard 1
   hung at 40 min (no log); the one confirming re-run green (19 min); flaky tv104a tv100an passed alone. release/v1.16 = main = e661843.
+
+- **v1.16a** Quicker to open (2026-11-13; tools/plans/v116a/NOTES.md; his order 3 · 1 · 4 · 2 · 5 and answers 1a 2a 3a; beta first, his
+  "good, ship it"): (1) flavius.sh FSH_VER 20 `put_page` — the game page (play/ and play-beta/) is compressed with Brotli q11 by node's zlib
+  and uploaded with Content-Encoding br (gzip, then plain + a warning, as fallbacks); cause: CloudFront's automatic compression stops at
+  10 000 000 bytes and the page is 10 618 634, so it was served uncompressed; `status` gains "page on the wire" and reads the page through
+  `page_text()`. 10.6 MB → 2.8 MB. (2) Boot cover, a direct edit of 01-head: `bootgone` 12 s → 90 s, a tiny separate script before the main
+  one sets "Opening the arena…" from `flavius_lang` (8 languages; no browser-language guess) and hides the cover 1.5 s after a window script
+  error before FLAVIUS_READY; 120-v80fix's lift unchanged; kill switch flavius_v116abootoff; test tv116b. No percentage bar (3a: a true
+  one needs v1.17's chunks). (3) 396-v106aim: WebKit's click after a touch tap is a PointerEvent with pointerType 'mouse' (Chromium
+  'touch'; probe tools/ci/wkprobe.js on webkit.yml run 43424100538) → the capture click took it for a mouse and the board struck on the
+  first tap; now `AIM106.lastPT||e.pointerType`; tv106d green on WebKit (43425609837). MILESTONES + part-160. Full run 43426908172 green
+  first time. release/v1.16a = main = 4111c70.
+

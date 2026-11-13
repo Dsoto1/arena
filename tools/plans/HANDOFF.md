@@ -6,15 +6,16 @@ Always `git pull --no-rebase` before starting and push when stopping. One side a
 
 Last updated: 2026-11-06 (cloud session).
 
-## v1.16a "Quicker to open" — release commit 376d55a pushed 2026-11-13, FULL RUN PENDING, then BETA (tools/plans/v116a/NOTES.md)
-- His order 2026-11-13: 3 (Safari tap) · 1 (v1.16a) · 4 (WebKit test clean-up) · 2 (v1.17 build split) · 5 (lobby invite link).
-- 3 DONE inside v1.16a (396 one-line fix, WebKit-proven). 1 BUILT: Brotli page upload in flavius.sh (FSH_VER 20) + boot cover + status line.
-- NEXT: full run green → he runs `bash flavius.sh beta` (FIRST real Brotli upload: watch "uploaded … 10.6 MB → 2.8 MB (br)" and that the
-  beta page opens) and plays once on his phone / iPad (cover stays until the menu; first tap selects, second strikes) → on his ok push
-  release/v1.16a + main, he runs `bash flavius.sh release`, then `status` must show "page on the wire … (br)" green. Then CLAUDE.md §7 +
-  history. If the br page fails to open anywhere: `bash flavius.sh release 1.16` (FSH 20 stays, it would still compress — so the true
-  rollback of the compression is the kill in put_page: none yet → add `FLAVIUS_NOBR=1` if ever needed).
-- Then 4: split tv108x / tv110a WebKit expectations, add tv116b to tools/ci/webkit.txt. Then 2 and 5.
+## v1.16a "Quicker to open" SHIPPED to release/v1.16a + main (2026-11-13; beta played, his "good, ship it") — HE RUNS `bash flavius.sh release`
+- After it: `bash flavius.sh status` should show "page on the wire … MB (br)" green. Step 5 done (CLAUDE.md, history).
+- His order 2026-11-13: 3 · 1 · 4 · 2 · 5. 3 + 1 = v1.16a (done). NEXT:
+  - 4 WebKit test clean-up (tooling, Sonnet): split tv108x / tv110a's Chromium-only expectations for WebKit's by-design caps; add tv116b
+    to tools/ci/webkit.txt; re-dispatch webkit.yml (deps=yes) until the list is green.
+  - 2 v1.17 build split (core first; Manager / Creator Studio / Online / lessons as chunks loaded on their menu button; build.sh +
+    mkshare.py + flavius.sh put_page per chunk; a real progress bar on the cover becomes possible) — design questions to him first, beta.
+  - 5 share-a-link lobby invite (#join=<room>; server change → beta skips online).
+- No switch yet turns the Brotli upload off (rollback = an older flavius.sh, but FSH never downgrades itself) → add FLAVIUS_NOBR=1 to
+  put_page when flavius.sh is next touched (v1.17 touches it).
 
 ## v1.16 "Behind the scenes" SHIPPED to release/v1.16 + main (2026-11-06 15:20 UTC, cloud session) — HE STILL RUNS `bash flavius.sh release`
 - Full run 42228473552 GREEN (attempt 1: server + 7/8 shards; shard 1 hung at the 40-min limit with no log; the one confirming re-run
