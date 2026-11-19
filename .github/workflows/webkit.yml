@@ -84,3 +84,10 @@ jobs:
           done
           echo "WEBKIT SUMMARY pass $pass · fail $fail"
           exit $rc
+      - name: screenshots (boardprobe)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: webkit-shots
+          path: /tmp/wkshots
+          if-no-files-found: ignore
