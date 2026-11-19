@@ -69,8 +69,8 @@ jobs:
           INPUT_TESTS: ${{ github.event.inputs.tests }}
           INPUT_HTTP: ${{ github.event.inputs.http }}
         run: |
-          set +e
-          if [ "$INPUT_HTTP" = "yes" ]; then (python3 -m http.server 8099 --bind 127.0.0.1 >/tmp/http.log 2>&1 &); export PW_HTTP=http://127.0.0.1:8099; sleep 1; echo "serving over $PW_HTTP"; fi   # bash -e killed the loop at the first failing test with no output (run 42224590088)
+          set +e   # bash -e killed the loop at the first failing test with no output (run 42224590088)
+          if [ "$INPUT_HTTP" = "yes" ]; then (python3 -m http.server 8099 --bind 127.0.0.1 >/tmp/http.log 2>&1 &); export PW_HTTP=http://127.0.0.1:8099; sleep 1; echo "serving over $PW_HTTP"; fi
           T="$INPUT_TESTS"; [ -n "$T" ] || T=$(tr '\n' ' ' < tools/ci/webkit.txt)
           echo "WebKit tests: $T"
           # One test at a time, each bounded, output shown as it finishes (run 42223229945: smartreg -j 2 hung 8.6 min with no
