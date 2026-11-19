@@ -16,6 +16,9 @@ on:
       deps:
         description: "'no' skips playwright install-deps webkit (apt, 1–8 min). Run 42225921373: WITHOUT it WebKit cannot launch (libgst*, libflite*, libGLESv2 … missing), so the default installs"
         default: 'yes'
+      http:
+        description: "'yes' serves the repo root over http://127.0.0.1:8099 (python3 -m http.server) and the tests load the page from there (PW_HTTP, tools/tests/_browser.js) instead of file:// — tests whether IndexedDB (tv100an checks 10 / 12c) needs a real origin on WebKit"
+        default: 'no'
   schedule:
     - cron: '0 6 * * 1'   # Monday 06:00 UTC
 concurrency:
@@ -64,8 +67,10 @@ jobs:
           REGSLOTS: '0'    # one runner: its own -j is the limit
           REGSHARE: '0'    # the shared-browser server is Chromium-only
           INPUT_TESTS: ${{ github.event.inputs.tests }}
+          INPUT_HTTP: ${{ github.event.inputs.http }}
         run: |
-          set +e   # bash -e killed the loop at the first failing test with no output (run 42224590088)
+          set +e
+          if [ "$INPUT_HTTP" = "yes" ]; then (python3 -m http.server 8099 --bind 127.0.0.1 >/tmp/http.log 2>&1 &); export PW_HTTP=http://127.0.0.1:8099; sleep 1; echo "serving over $PW_HTTP"; fi   # bash -e killed the loop at the first failing test with no output (run 42224590088)
           T="$INPUT_TESTS"; [ -n "$T" ] || T=$(tr '\n' ' ' < tools/ci/webkit.txt)
           echo "WebKit tests: $T"
           # One test at a time, each bounded, output shown as it finishes (run 42223229945: smartreg -j 2 hung 8.6 min with no

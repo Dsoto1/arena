@@ -10,6 +10,7 @@ const {chromium,engine}=require('./_browser');const path=require('path');const p
    the test is NOT made green. It records the page 'crash' / 'close' and the browser 'disconnected' events with the seconds since start and the current STEP, prints
    the memory figures it can get (performance.memory on Chromium, the RSS of the browser processes via ps where available), and a page that died inside a step ends
    as "FAIL <step> page crashed during step … (crash event at N s)" + the usual MISS / ERRS lines, exit 1 — never an uncaught promise. */
+const QUIET=new WeakSet(),bye=async cx=>{for(const p of cx.pages())QUIET.add(p);await cx.close()};/* the test's own cx.close() is expected: not logged as a death */
 const T0=Date.now(),SEC=()=>((Date.now()-T0)/1000).toFixed(1);let STEP='boot',DONE=false;const DEAD=[],MISS0=[],ERRS0=[];
 const rss=()=>{try{const o=require('child_process').execSync('ps -eo rss=,comm=',{encoding:'utf8',timeout:5000}).split('\n').map(l=>l.trim().match(/^(\d+)\s+(.*)$/)).filter(m=>m&&/webkit|WebKit|MiniBrowser|chrom|headless_shell|firefox/i.test(m[2]));
   return Math.round(o.reduce((t,m)=>t+ +m[1],0)/1024)+' MB RSS over '+o.length+' browser processes'}catch(e){return 'rss n/a'}};
@@ -19,7 +20,7 @@ const finish=(why)=>{console.log('MISS',JSON.stringify(MISS0));console.log('ERRS
 const crashFail=(e)=>{const dead=DEAD.length||/closed|crash/i.test(String(e&&e.message||e));const line='FAIL '+(dead?'page crashed':'uncaught error')+' during step "'+STEP+'" ('+(DEAD.length?DEAD.map(d=>d.what+' event at '+d.t+' s').join(', '):'no crash event seen yet')+'; error: '+String(e&&e.message||e).split('\n')[0].slice(0,160)+'; '+rss()+')';
   console.log(line);MISS0.push(line);finish()};
 const watch=(p,label)=>{p.on('crash',()=>{DEAD.push({what:label+' crash',t:SEC(),step:STEP});console.log('EVENT '+label+' page CRASH at '+SEC()+' s in step "'+STEP+'" ('+rss()+')')});
-  p.on('close',()=>{if(DONE)return;DEAD.push({what:label+' close',t:SEC(),step:STEP});console.log('EVENT '+label+' page CLOSE at '+SEC()+' s in step "'+STEP+'"')});
+  p.on('close',()=>{if(DONE||QUIET.has(p))return;DEAD.push({what:label+' close',t:SEC(),step:STEP});console.log('EVENT '+label+' page CLOSE at '+SEC()+' s in step "'+STEP+'"')});
   const ev=p.evaluate.bind(p);p.evaluate=async(...a)=>{try{return await ev(...a)}catch(e){if(DEAD.length||/closed|crash/i.test(String(e&&e.message)))crashFail(e);throw e}};return p};
 (async()=>{const b=await chromium.launch();b.on('disconnected',()=>{if(DONE)return;DEAD.push({what:'browser disconnected',t:SEC(),step:STEP});console.log('EVENT browser DISCONNECTED at '+SEC()+' s in step "'+STEP+'"')});
 const nc=b.newContext.bind(b);b.newContext=async(...a)=>{const cx=await nc(...a);let n=0;cx.on('page',p=>watch(p,'ctx-page'+(++n)));return cx};
@@ -95,8 +96,10 @@ STEP='5 Fast: CPU still flash only, own animates';
 /* ---- 5 Fast: CPU still (flash only), own animates ---- */
 const s5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const P=S.players[0],Q=S.players[1];SPEED='fast';AN100.trace=[];
   /* the hit flash lasts 170 ms from the blow: the board is drawn by hand WHILE the blows land (a loaded machine used to let the flash run out before the first sample) */
+  /* v1.16: the board is ALSO drawn synchronously inside the 'hit' event (our listener runs after the module's, which has set the flash), so even a WebKit frame that takes >170 ms cannot skip the flash window */
+  const offHit=BUS.on('hit',()=>{try{draw()}catch(e){}});
   let hd=false;const hs=(async()=>{await hurt(Q,'chest',1,{type:'env'},'Test');await hurt(P,'chest',1,{type:'env'},'Test');hd=true})();
-  while(!hd){draw();await W8(10)}await hs;await __samp(900);
+  while(!hd){draw();await W8(10)}await hs;offHit();await __samp(900);
   const q=__poses(Q.id,AN100.trace),p=__poses(P.id,AN100.trace),fl=AN100.trace.some(x=>x.id===Q.id&&x.flash);AN100.trace=null;SPEED='normal';
   return {cpu:[...new Set(q)],own:[...new Set(p)].filter(x=>!/^idle/.test(x)).length,fl}});
 ok(s5.cpu.length&&s5.cpu.every(x=>x==='idle:0')&&s5.fl,'5a Fast: the CPU stays on its still cell, with the hit flash '+JSON.stringify(s5));
@@ -164,7 +167,7 @@ STEP='8 kill switch';
     SETTINGS.briefing=false;SPEED='pause';startEvent({ev:'democritus',loc:6,seed:777,seats:['soldier','hero','royalty','venatore'].map(c=>({cls:c,cpu:true})),opts:{spect:0}});
     for(let i=0;i<20;i++){await W8(150);if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);draw()}
     return {on:AN100.on,draws:AN100.stats.draws,req:performance.getEntriesByType('resource').filter(e=>/anim100_/.test(e.name)).length}});
-  ok(!k.on&&k.draws===0&&k.req===0,'8 kill switch: today\'s drawing, no sheet requested '+JSON.stringify(k));await cx.close()}
+  ok(!k.on&&k.draws===0&&k.req===0,'8 kill switch: today\'s drawing, no sheet requested '+JSON.stringify(k));await bye(cx)}
 
 STEP='9 the same seeded dice + log, module on vs off';
 /* ---- 9 the same seeded dice + log, module on vs off, Normal speed, fresh browsers ---- */
@@ -183,7 +186,7 @@ const fresh=async on=>{const cx=await b.newContext({viewport:{width:1440,height:
   await q.addInitScript(([st,on])=>{if(sessionStorage.getItem('tv100an'))return;sessionStorage.setItem('tv100an','1');Object.defineProperty(navigator,'webdriver',{get:()=>false});
     for(const k in st)localStorage.setItem(k,st[k]);if(!on)localStorage.setItem('flavius_anim100off','1');else localStorage.removeItem('flavius_anim100off')},[store,on]);
   await q.goto('file://'+page,{timeout:180000});await q.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:180000});
-  const r=await run9(q);await cx.close();return r};
+  const r=await run9(q);await bye(cx);return r};
 const A=await fresh(true),B=await fresh(false);
 const fl=x=>x.L.filter(l=>!/seed \d|seed <b>/.test(l));
 ok(A.R.length>=4&&A.on&&!B.on&&A.draws>0&&A.frames>0&&B.draws===0,'9a both seeded runs played, animated vs not '+JSON.stringify({a:A.R.length,b:B.R.length,ta:A.turn,tb:B.turn,A:[A.on,A.draws,A.frames],B:[B.on,B.draws]}));
@@ -212,7 +215,7 @@ let s12={};{const cx=await b.newContext({viewport:{width:1440,height:900}});cons
     const sSrc=[...new Set(AN100.trace.filter(x=>x.id===P.id&&x.src).map(x=>x.src))];AN100.trace=null;
     const rec=await an100DBGet([...AN100.dev.keys()].find(k=>/:rarm$/.test(k)));
     return {kit:g.kit,wR:g.gear&&g.gear.wR,kits,keys0,devKeys:[...AN100.dev.keys()],tMove,pSrc,tSev,sSrc,cached:!!(rec&&rec.move&&rec.move.b),log:AN100.stats.renderLog,aborts:AN100.stats.aborts||0,fail:AN100.devFail}});
-  await cx.close()}
+  await bye(cx)}
 ok(s12.kit===false&&s12.wR&&s12.kits.every(x=>x)&&s12.keys0.length===1,'12a a non-kit loadout is noted and queued for a device render; kit seats are not '+JSON.stringify(s12).slice(0,600));
 ok(!s12.fail&&s12.pSrc.length===1&&/^d:/.test(s12.pSrc[0]),'12b the non-kit seat wears its device-rendered sheet (keyed by its loadout) '+JSON.stringify(s12).slice(0,600));
 ok(s12.sSrc.length>=1&&/^d:.*:rarm$/.test(s12.sSrc[s12.sSrc.length-1])&&s12.sSrc.every(k=>/^d:[^:]+(:rarm)?$/.test(k))&&s12.cached,'12c v1.01 (G8): the whole figure until decoded, then a lost limb with real gear: a device-rendered severed set, cached '+JSON.stringify(s12).slice(0,800));
