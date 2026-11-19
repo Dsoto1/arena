@@ -5,6 +5,12 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-11-19 · CAUSE FOUND for tv100an 10/12c on WebKit (probe tools/ci/idbprobe.js, run 44545211173): WebKit refuses to store a Blob in
+  IndexedDB in an EPHEMERAL session ("UnknownError: Error preparing Blob/File data to be stored in object store"); objects and ArrayBuffers
+  store fine, and a persistent profile stores Blobs fine. Playwright's b.newContext() is ephemeral = Safari Private Browsing. Same result over
+  http (run 44543221342), so not file://. Real-world effect: in Safari PRIVATE windows 311's figure cache (an100DBPut stores Blobs) never
+  saves, silently (tx.onerror → ok), so device-rendered figures are rebuilt every visit; normal Safari windows are fine. Over http also: 5a
+  passes (BUS 'hit' draw), expected-close noise gone; new flake 2b walk row (walk 1 < 2, 1 of 2 runs). Waiting on his pick (test + game).
 - 2026-11-19 · WebKit dispatch 44536060087 (branch, tests tv108x tv110a tv100an×3): tv108x PASS, tv110a PASS (the WebKit branches work).
   tv100an: NO crash in 3 runs (step 7 passed; 146 MB RSS before it) — the 11-16 crash did not repeat. It fails on: 10 + 12c the IndexedDB
   cache (got:false / cached:false, all 3 runs; devOK:true because WebKit's UA is not HeadlessChrome) — likely IndexedDB on a file:// page in
