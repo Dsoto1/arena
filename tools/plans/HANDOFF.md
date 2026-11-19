@@ -4,7 +4,38 @@ Repo dsoto1/arena · work branch `claude/flavius-game-improvements-yg8qx0` · ow
 Read CLAUDE.md first (rules + how to work), then this file, then docs/decisions.md (his latest decisions are at the bottom).
 Always `git pull --no-rebase` before starting and push when stopping. One side at a time (THE BATON, below).
 
-Last updated: 2026-11-06 (cloud session).
+Last updated: 2026-11-19 evening (cloud session). START WITH "SATURDAY 2026-11-22" BELOW.
+
+## SATURDAY 2026-11-22 — where everything stands (written 2026-11-19, cloud session; his "no new work, notes for Saturday")
+LIVE: v1.16a (unchanged). Nothing deployed today. Monday's scheduled webkit.yml on `main` will stay red until v1.17 moves main (main has the
+old WebKit tests).
+
+A. v1.17 (work branch `claude/flavius-game-improvements-yg8qx0`, NOT released) = minify (built 11-13) + 434-v117idb (today):
+   - 434-v117idb: the figure cache stores ArrayBuffers (Safari PRIVATE windows refused Blobs in IndexedDB, found by tools/ci/idbprobe.js run
+     44545211173), reads old Blob records, logs a failed write once; kill switch flavius_v117idboff; test tv117idb (on WebKit list, PASS there).
+   - **BLOCKER: tv109w fails on the MINIFIED build only** (readable build passes; also fails on 0dbbe8c5, i.e. caused by the 11-13 minify).
+     Manager winter-quarters ledger books wages / senate / patron = 0. FIRST JOB: find the module minbuild breaks (minify modules selectively /
+     bisect), fix, re-run tv109w; then a smart run. Details: docs/known-issues.md top.
+   - Then the release steps (CLAUDE.md §6): badge v1.17, MILESTONES (+ translations), release.sh 1.17, [full] run, BETA for him, ship.
+   - Smart run 44548722472 otherwise: 445 pass, flaky tv102j tv100ae.
+B. v1.17a "saves never fail silently" (his F1 F2 F3 F5, tools/plans/v117a/NOTES.md; audit tools/plans/v117/AUDIT-saves.md):
+   BUILT by a builder on branch **`wip/v117a-saves` (4f99752d), NOT merged, NOT lead-reviewed** — merge only AFTER release/v1.17 is cut.
+   Module src/meta/435-v117asave.js (kill switch flavius_v117asaveoff), one direct edit in 11-extra gladiatorRecord, test tv117asave (in runreg
+   DEFAULT), 5 new _T strings. Lead's REVIEW POINTS before merging: (1) its mToast filter drops "saved" toasts by an ENGLISH regex — breaks in the
+   7 other languages, needs a flag instead; (2) snapshotAll's refusal throws → the Settings "Save now"/download buttons end in an unhandled
+   rejection; (3) it patches Storage.prototype.setItem page-wide — check perf/side effects; (4) tv117asave flaked once in a parallel run.
+   The branch is based on an older tip: merge the work branch into it (or it into the branch after the v1.17 cut).
+C. WebKit (item 3 of his list): board probe tools/ci/boardprobe.js built + run (WebKit run 44554828946, screenshots = artifact webkit-shots):
+   corpses NORMAL on Chromium and WebKit at 1× (WebKit never promoted to 2× in the probe). His screenshot (11-19) shows corpses cut from the
+   WRONG PART of the sheet (snake with a stray head piece / chopped base) and blown up — lead's HYPOTHESIS: the mid-visit 1×→2× promotion on
+   Safari (417 4a) with corpse cells cached before the swap. NEXT (needs his go): a probe step that forces the promotion (tv108x promote()) with
+   corpses around the swap; then a fix on his pick. Also open: WebKit DPR 2 corpse lines missing from the probe log; WebKit full list: tv108x
+   (reopen timeout), tv101z (page closed), tv116b (not ready) — likely WebKit dying/stalling under load (decoded memory?), unproven.
+D. Done today: tv108x/tv110a WebKit branches (PASS on WebKit), tv100an crash report + saved profile + 5a/2b sampling (PASS on WebKit),
+   webkit.yml optional http serving (dispatch input http=yes; changed nothing for IndexedDB) + screenshot upload, tools/ci/idbprobe.js.
+E. Waiting on him: nothing blocking except his go for C's next step. His remaining list item 4–6 (CI reliability, Manager balance re-run,
+   housekeeping) were NOT picked.
+Stale worktrees from today (safe to delete): .claude/worktrees/agent-a* of today's builders; the scratch worktree at the session scratchpad.
 
 ## PAUSED at his request (2026-11-13) — state for whoever resumes
 - LIVE: v1.16a (his `flavius.sh status` all green: page on the wire 2.8 MB (br), arena open). Nothing waits on him.
@@ -131,6 +162,8 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
   3. Run `sh tools/baton.sh give`. The script refuses if this file was not touched, or anything is uncommitted or unpushed.
 
 ## Last session notes
+- (cloud, 2026-11-19) WebKit test fixes, Safari Private-window cache fix (434), save-failure audit + v1.17a builder (wip/v117a-saves,
+  unmerged), board probe + corpse hypothesis; found the minify blocker (tv109w). See "SATURDAY 2026-11-22" at the top. Baton given.
 - (cloud, 2026-11-06) Caught up: v1.15c confirmed live; v1.15c step 5 (CLAUDE.md, history), HANDOFF and known-issues housekeeping written; v1.16 plan in tools/plans/v116/NOTES.md (waiting on his go). Older notes below are history.
 - (cloud, 2026-10-29) v1.14b built + pushed (his 1a 2a); docs/history.md restored (v1.14a had overwritten it). Baton given.
 - (cloud, 2026-10-29) Control Center hooks added (work branch + main 18c49db4). Baton given.
