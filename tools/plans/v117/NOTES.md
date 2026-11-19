@@ -43,3 +43,14 @@ the error log names the build; inline images move to assets/ only where the canv
   WICO75 (45 KB: SVG `<image href>`, `<img>`, and 277's hit line on the canvas) and PTOK81_HERO (12 KB, canvas-processed) → the safe set
   is under 0.15 MB. Idea for v1.18 (it is a "load later" change): ship the standees as a script asset (data URIs inside assets/standees.js,
   like the language packs) — no taint, cached apart, mkshare already inlines .js assets.
+
+## Added 2026-11-19 — WebKit findings (cloud session; his picks)
+Facts: tools/ci/idbprobe.js on WebKit (run 44545211173): an EPHEMERAL session (Playwright b.newContext = Safari Private Browsing) refuses to
+store a Blob in IndexedDB ("Error preparing Blob/File data to be stored in object store"); objects + ArrayBuffers store fine; a persistent
+profile stores Blobs. 311's figure cache stores Blobs and swallows the error → in Safari PRIVATE windows device-rendered figures are rebuilt
+every visit. tv100an 10/12c failed on WebKit for this reason (same over http: run 44543221342). 5a fixed (BUS 'hit' draw); 2b flaked once.
+His picks:
+1. a) tv100an on WebKit runs steps 10/12 in a SAVED profile (launchPersistentContext = a normal Safari window); Chromium unchanged.
+2. a) GAME FIX in v1.17: the figure cache stores ArrayBuffers (works in every WebKit session), reads old Blob records too; a failed write is
+   logged once (no more silent tx.onerror → ok). One new module (CLAUDE.md §4), kill switch.
+3. a) http stays an opt-in dispatch input (file:// default); tv100an 2b samples the walk like 5a; one more WebKit run of tv100an to confirm.
