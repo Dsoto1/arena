@@ -5,6 +5,11 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-11-19 · WebKit dispatch 44536060087 (branch, tests tv108x tv110a tv100an×3): tv108x PASS, tv110a PASS (the WebKit branches work).
+  tv100an: NO crash in 3 runs (step 7 passed; 146 MB RSS before it) — the 11-16 crash did not repeat. It fails on: 10 + 12c the IndexedDB
+  cache (got:false / cached:false, all 3 runs; devOK:true because WebKit's UA is not HeadlessChrome) — likely IndexedDB on a file:// page in
+  Playwright WebKit, not proven for Safari on https; 5a the hit flash (fl:false, 2 of 3: the 170 ms flash vs slow WebKit frames = timing).
+  The 'CLOSE' event lines are the test closing its own contexts (noise). Next: his pick on how to treat 10/12c/5a on WebKit.
 - 2026-11-19 · WEBKIT 2026-11-16 run: tv108x / tv110a / tv100an failed again. Items (c) and (d) of the 2026-11-06 list below: TEST BRANCHED FOR WEBKIT
   (2026-11-19, tests only, game unchanged). tv108x: the 2× checks first feed Auto its on-time frames AND set Q110.sheets=false (417 q110Sheets swaps
   loaded sheets only when the choice changes between two event starts; before the first event it is null, so the 1× sheets loaded at boot stayed —
