@@ -5,6 +5,28 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-11-19 · **v1.17 RELEASE BLOCKER — tv109w fails on the MINIFIED build only** (smart run 44548722472; reproduced here; also on 0dbbe8c5,
+  before today's work): "wages out and purses in are booked" {senate [1183,0], patron [1100,0], wages [197,0] …} — the Manager winter-quarters
+  ledger books 0. The SAME test on `sh build.sh --readable` (flavius-arena.src.html) passes (MISS []). So tools/minbuild.js breaks something
+  in the ledger path (47's Ledger / 413-v109wq / the categories) — likely code matching function source text or names (like the 00b-perf
+  quote case of 11-13). Next: find the module by minifying modules selectively (minbuild skip list or bisect by halves), fix, re-run tv109w.
+  Same run: flaky tv102j, tv100ae (passed alone); everything else 445 pass.
+- 2026-11-19 · WebKit full list on v1.17 + 434 (run 44548010390): PASS tv91r tv100p tv100an tv106d tv106f tv110a tv117idb (the Private-window
+  cache fix works on WebKit) · FAIL tv108x (its WebKit checks 0/1/3/6 now PASS; then "page not ready" 90 s timeout reopening for the kill-switch
+  step), tv101z ("Target page … closed" right after the start = a WebKit page death), tv116b ("not ready ja/zh", "no ready 1440"). All three look
+  like WebKit dying / stalling under load, not wrong checks; lead: decoded-memory (see boardprobe MEMORY) — unproven.
+- 2026-11-19 · BOARD PROBE (tools/ci/boardprobe.js) — Chromium (local) and WebKit (run 44554828946; screenshots = artifact webkit-shots on that
+  run; the first try 44552256669 died on a runner apt flake: libwayland-server missing). Corpses NORMAL on both engines: every beast via 404's d3
+  path, dead ≈ living size (bears/wolves/snakes 0.8–0.9 tile); only Tholo 1.5 t / Commodus 1.3 t flagged = their own lying die frames (404 size
+  check 1.01). WebKit stayed on 1× sheets the whole probe (Q110 "start: webkit", x2ok false, never promoted); decoded ≈284 MB (Chromium ≈1.5–2 GB
+  estimate, 2× on). The WebKit DPR 2 corpse lines are MISSING from the log (only its SHADOW lines printed) — check why. Shadows: ring-luma ratios
+  similar on both engines (hero/zora/soldier darkest ~0.55–0.68) — no WebKit-only disc found.
+  HIS NEW EVIDENCE (2026-11-19 screenshot, live v1.16a, probably Mac Safari DPR 2, zoomed): snake corpses drawn from the WRONG PART of the
+  sheet (a coil with a stray head piece + a vertical strip; a base chopped with a staircase edge) and a corpse blown up ~2 tiles and soft.
+  HYPOTHESIS (lead, unproven): a corpse cut/meta from one sheet drawn with the other — Safari starts 1× and PROMOTES to 2× mid-visit (417 4a,
+  at the next event start); a corpse cell cached before the swap and drawn after it gives exactly these pictures; Chromium starts 2× and never
+  swaps (why it never reproduced). The 10-21 lead ruled out only the bases-toggle swap. NEXT: probe step that forces the 1×→2× promotion
+  (tv108x's promote()) with corpses on the board / killed around the swap, comparing each corpse's source rect against its sheet.
 - 2026-11-19 · CAUSE FOUND for tv100an 10/12c on WebKit (probe tools/ci/idbprobe.js, run 44545211173): WebKit refuses to store a Blob in
   IndexedDB in an EPHEMERAL session ("UnknownError: Error preparing Blob/File data to be stored in object store"); objects and ArrayBuffers
   store fine, and a persistent profile stores Blobs fine. Playwright's b.newContext() is ephemeral = Safari Private Browsing. Same result over
