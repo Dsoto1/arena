@@ -393,7 +393,7 @@ async function saveGladiator(row){
     const cut=[...LUDUS_CACHE].filter(glad=>!gladActive(glad)).sort((a,b)=>(a.cf||0)-(b.cf||0))[0];
     if(cut){await Store.del('gladiators',cut.id).catch(()=>{});LUDUS_CACHE=LUDUS_CACHE.filter(glad=>glad.id!==cut.id);
       log(_T`The Ludus rolls are full: ${esc(cut.name)}'s old record (${cut.status}) is cleared to make room.`)}}
-  rec.id=id;await Store.put('gladiators',id,rec);row.p.saved=id;await loadLudus();return rec;
+  rec.id=id;const _t117=Date.now();await Store.put('gladiators',id,rec);if(!(Store.lastError&&Store.lastError.at>=_t117))row.p.saved=id; /* v1.17a: only when the write held */await loadLudus();return rec;
 }
 /* markFallen — strikes a summoned gladiator who fell short: their record is kept as fallen. */
 async function markFallen(player,row){ // a saved gladiator who returns and falls short of the Ludus dies
