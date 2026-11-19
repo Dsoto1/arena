@@ -16,7 +16,7 @@ const rss=()=>{try{const o=require('child_process').execSync('ps -eo rss=,comm='
 const memNote=async(pg,tag)=>{let m='performance.memory n/a';try{m=await pg.evaluate(()=>performance.memory?'js heap '+Math.round(performance.memory.usedJSHeapSize/1048576)+' MB of '+Math.round(performance.memory.jsHeapSizeLimit/1048576):'performance.memory n/a')}catch(e){m='page gone'}
   console.log('MEM '+tag+' ('+engine+', '+SEC()+' s): '+m+'; '+rss())};
 const finish=(why)=>{console.log('MISS',JSON.stringify(MISS0));console.log('ERRS',JSON.stringify(ERRS0));process.exit(1)};
-const crashFail=(e)=>{const m='7' ;const line='FAIL page crashed during step "'+STEP+'" ('+(DEAD.length?DEAD.map(d=>d.what+' event at '+d.t+' s').join(', '):'no crash event seen yet')+'; error: '+String(e&&e.message||e).split('\n')[0].slice(0,160)+'; '+rss()+')';
+const crashFail=(e)=>{const dead=DEAD.length||/closed|crash/i.test(String(e&&e.message||e));const line='FAIL '+(dead?'page crashed':'uncaught error')+' during step "'+STEP+'" ('+(DEAD.length?DEAD.map(d=>d.what+' event at '+d.t+' s').join(', '):'no crash event seen yet')+'; error: '+String(e&&e.message||e).split('\n')[0].slice(0,160)+'; '+rss()+')';
   console.log(line);MISS0.push(line);finish()};
 const watch=(p,label)=>{p.on('crash',()=>{DEAD.push({what:label+' crash',t:SEC(),step:STEP});console.log('EVENT '+label+' page CRASH at '+SEC()+' s in step "'+STEP+'" ('+rss()+')')});
   p.on('close',()=>{if(DONE)return;DEAD.push({what:label+' close',t:SEC(),step:STEP});console.log('EVENT '+label+' page CLOSE at '+SEC()+' s in step "'+STEP+'"')});
@@ -108,7 +108,7 @@ const s6=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   if(free)await movePlayer(P,[free[0]*N+free[1]]);await __samp(600);const tr=AN100.trace;AN100.trace=null;SETTINGS.calm=false;
   return {poses:[...new Set(tr.filter(x=>x.pose).map(x=>x.pose))],glide:tr.filter(x=>x.glide).length,flash:tr.some(x=>x.flash),moved:!!free}});
 ok(s6.poses.length&&s6.poses.every(x=>x==='idle:0')&&!s6.glide&&!s6.flash,'6 Reduce motion: the still cell, no glide, no flash '+JSON.stringify(s6));
-STEP='7 perf: board draw ON vs OFF same page, alternating';
+STEP='7 perf: board draw ON vs OFF';
 /* ---- 7 perf: board draw ON vs OFF (same page, alternating blocks) ---- */
 /* the first use of an action decodes its rows (idle meanwhile): from here on they are warm */
 await memNote(pg,'before step 7');
@@ -116,12 +116,12 @@ const s7=await pg.evaluate(async()=>{const fr=()=>new Promise(r=>requestAnimatio
   for(let blk=0;blk<6;blk++){const on=blk%2===0;AN100.on=on;for(let i=0;i<10;i++){await fr();const t=performance.now();draw();T[on?'on':'off'].push(performance.now()-t)}}
   AN100.on=true;AN100.poseMs=120;SPEED='normal';const med=a=>{a=a.slice().sort((x,y)=>x-y);return +a[a.length>>1].toFixed(2)};return {on:med(T.on),off:med(T.off)}});
 ok(s7.on<=s7.off*1.35+3,'7 a board draw with the stand-ins costs about today\'s '+JSON.stringify(s7));
-STEP='10 the on-device cache round-trips no 3D render her';
+STEP='10 the on-device cache round-trips';
 /* ---- 10 the on-device cache round-trips (no 3D render here: headless keeps the converter off) ---- */
 const s10=await pg.evaluate(async()=>{const blob=new Blob([new Uint8Array([1,2,3])],{type:'image/webp'});await an100DBPut({key:'tv100an',v:AN100L.VER,at:Date.now(),move:{b:blob,m:{rows:{}}},act:{b:blob,m:{rows:{}}}});
   const r=await an100DBGet('tv100an');return {got:!!(r&&r.move&&r.move.b&&r.move.b.size===3),devOK:an100DevOK()}});
 ok(s10.got&&!s10.devOK,'10 IndexedDB cache round-trips; no on-device 3D in a headless browser '+JSON.stringify(s10));
-STEP='11 SEVERED sets kit seats  the prebuilt per-class';
+STEP='11 severed sets';
 /* ---- 11 SEVERED sets (kit seats = the prebuilt per-class severed sheets): a lost arm / leg swaps to its own set, loaded only then; two limbs → today's token ---- */
 const s11=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));SPEED='normal';const P=S.players[0],Q=S.players[1];
   const req=re=>performance.getEntriesByType('resource').map(e=>e.name).filter(n=>re.test(n)).length;
@@ -166,7 +166,7 @@ STEP='8 kill switch';
     return {on:AN100.on,draws:AN100.stats.draws,req:performance.getEntriesByType('resource').filter(e=>/anim100_/.test(e.name)).length}});
   ok(!k.on&&k.draws===0&&k.req===0,'8 kill switch: today\'s drawing, no sheet requested '+JSON.stringify(k));await cx.close()}
 
-STEP='9 the same seeded dice + log, module on vs off, Norm';
+STEP='9 the same seeded dice + log, module on vs off';
 /* ---- 9 the same seeded dice + log, module on vs off, Normal speed, fresh browsers ---- */
 const run9=async(q)=>{await q.evaluate(async seed=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}try{menuHide()}catch(e){}
     SETTINGS.briefing=false;SPEED='pause';startEvent({ev:'democritus',loc:6,seed,seats:['hero','soldier','royalty','venatore'].map(c=>({cls:c,cpu:true})),opts:{spect:0}});
@@ -189,7 +189,7 @@ const fl=x=>x.L.filter(l=>!/seed \d|seed <b>/.test(l));
 ok(A.R.length>=4&&A.on&&!B.on&&A.draws>0&&A.frames>0&&B.draws===0,'9a both seeded runs played, animated vs not '+JSON.stringify({a:A.R.length,b:B.R.length,ta:A.turn,tb:B.turn,A:[A.on,A.draws,A.frames],B:[B.on,B.draws]}));
 ok(JSON.stringify(A.R)===JSON.stringify(B.R),'9b same dice at every turn ON vs OFF '+JSON.stringify({A:A.R.slice(0,4),B:B.R.slice(0,4)}));
 {const a=fl(A),b2=fl(B);let k=0;while(k<a.length&&a[k]===b2[k])k++;ok(a.length===b2.length&&k===a.length,'9c same log ON vs OFF (first difference at '+k+'/'+a.length+': '+JSON.stringify([a[k],b2[k]])+')')}
-STEP='12 GEAR-TRUE figures on the device flaviusanim100d';
+STEP='12 gear-true figures on the device';
 /* ---- 12 GEAR-TRUE figures on the device (flavius_anim100dev=1): a seat in other gear than its class kit gets its own render keyed by
    its loadout (the stand-in meanwhile); kit seats none; a lost limb with real gear = a device-rendered severed set ---- */
 let s12={};{const cx=await b.newContext({viewport:{width:1440,height:900}});const q=await cx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
