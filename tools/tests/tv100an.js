@@ -5,7 +5,7 @@
    stand-ins vs today's tokens in one page; 8 the kill switch = today's drawing, no sheet requested; 9 the same seeded dice + log with the
    module on vs off (fresh browsers, Normal speed); 10 the on-device cache (IndexedDB) round-trips; 11 severed sets (arm / leg swap, loaded only then, two limbs → today's token);
    12 gear-true figures: a non-kit seat renders on the device keyed by its loadout, kit seats don't, severed with real gear; no new errors. SHOT=dir → shots. */
-const {chromium,engine}=require('./_browser');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');
+const {chromium,engine,url}=require('./_browser');const path=require('path'),os=require('os'),fs=require('fs');const page=path.resolve(process.argv[2]||'flavius-arena.html');
 /* v1.16 CRASH REPORT (WebKit CI: step 7 died after ~75 s with "Target page, context or browser has been closed", 2026-11-13 "Page crashed" on a later reload):
    the test is NOT made green. It records the page 'crash' / 'close' and the browser 'disconnected' events with the seconds since start and the current STEP, prints
    the memory figures it can get (performance.memory on Chromium, the RSS of the browser processes via ps where available), and a page that died inside a step ends
@@ -22,6 +22,12 @@ const crashFail=(e)=>{const dead=DEAD.length||/closed|crash/i.test(String(e&&e.m
 const watch=(p,label)=>{p.on('crash',()=>{DEAD.push({what:label+' crash',t:SEC(),step:STEP});console.log('EVENT '+label+' page CRASH at '+SEC()+' s in step "'+STEP+'" ('+rss()+')')});
   p.on('close',()=>{if(DONE||QUIET.has(p))return;DEAD.push({what:label+' close',t:SEC(),step:STEP});console.log('EVENT '+label+' page CLOSE at '+SEC()+' s in step "'+STEP+'"')});
   const ev=p.evaluate.bind(p);p.evaluate=async(...a)=>{try{return await ev(...a)}catch(e){if(DEAD.length||/closed|crash/i.test(String(e&&e.message)))crashFail(e);throw e}};return p};
+/* v1.17 (his 1a): WebKit refuses a Blob in IndexedDB in an EPHEMERAL session (b.newContext = Safari Private Browsing). The game now stores ArrayBuffers (434-v117idb,
+   test tv117idb); the cache steps 10 and 12 still run in a SAVED profile on WebKit (launchPersistentContext = a normal Safari window; a page there goes through
+   _browser's url() so PW_HTTP still applies, since only launch() is wrapped); Chromium keeps b.newContext. mkCx returns {cx, dir}; bye() closes it, rmDir drops the profile. */
+const mkCx=async(b,opt,saved)=>{if(saved&&engine==='webkit'){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'tv100an-'));const cx=await chromium.launchPersistentContext(dir,opt);let n=0;cx.on('page',p=>watch(p,'saved-page'+(++n)));return {cx,dir}}
+  return {cx:await b.newContext(opt),dir:null}};
+const rmDir=d=>{try{if(d)fs.rmSync(d,{recursive:true,force:true})}catch(e){}};
 (async()=>{const b=await chromium.launch();b.on('disconnected',()=>{if(DONE)return;DEAD.push({what:'browser disconnected',t:SEC(),step:STEP});console.log('EVENT browser DISCONNECTED at '+SEC()+' s in step "'+STEP+'"')});
 const nc=b.newContext.bind(b);b.newContext=async(...a)=>{const cx=await nc(...a);let n=0;cx.on('page',p=>watch(p,'ctx-page'+(++n)));return cx};
 const pg=watch(await b.newPage({viewport:{width:1440,height:900}}),'main');const errs=ERRS0,miss=MISS0;const ok=(c,m)=>{if(!c)miss.push(m)};pg.on('pageerror',e=>errs.push(e.message));
@@ -68,7 +74,7 @@ await pg.evaluate(()=>{window.__lay=()=>{const P=S.players[0],Q=S.players[1];con
 STEP='2 a move glides and walks';
 /* ---- 2 a move glides and walks ---- */
 const s2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const {P}=__lay();await W8(300);SPEED='normal';AN100.trace=[];
-  SPEED='slow';P.mv=8;const mv=movePlayer(P,[6*N+3,7*N+3,7*N+4]);let dn=false;mv.then(()=>dn=true);while(!dn){draw();await W8(20)}await __samp(700);SPEED='normal';const tr=AN100.trace;AN100.trace=null;
+  SPEED='slow';P.mv=8;/* v1.17: draw on every movePlayer beat (like 5a's BUS 'hit' draw) so a slow WebKit frame loop still registers each tile's glide + walk frames */const offB=BUS.on('beat',e=>{if(e&&e.kind==='movePlayer'){try{draw()}catch(x){}}});const mv=movePlayer(P,[6*N+3,7*N+3,7*N+4]);let dn=false;mv.then(()=>dn=true);while(!dn){draw();await W8(20)}offB();await __samp(700);SPEED='normal';const tr=AN100.trace;AN100.trace=null;
   const gl=tr.filter(x=>x.id===P.id&&x.glide).map(x=>x.glide.join(','));const ps=__poses(P.id,tr);
   return {at:[P.r,P.c],glides:new Set(gl).size,walk:new Set(ps.filter(x=>/^walk/.test(x))).size,last:ps[ps.length-1]}});
 ok(s2.at.join()==='7,4'&&s2.glides>=3,'2a the move glides through several intermediate points '+JSON.stringify(s2));
@@ -121,9 +127,14 @@ const s7=await pg.evaluate(async()=>{const fr=()=>new Promise(r=>requestAnimatio
 ok(s7.on<=s7.off*1.35+3,'7 a board draw with the stand-ins costs about today\'s '+JSON.stringify(s7));
 STEP='10 the on-device cache round-trips';
 /* ---- 10 the on-device cache round-trips (no 3D render here: headless keeps the converter off) ---- */
-const s10=await pg.evaluate(async()=>{const blob=new Blob([new Uint8Array([1,2,3])],{type:'image/webp'});await an100DBPut({key:'tv100an',v:AN100L.VER,at:Date.now(),move:{b:blob,m:{rows:{}}},act:{b:blob,m:{rows:{}}}});
-  const r=await an100DBGet('tv100an');return {got:!!(r&&r.move&&r.move.b&&r.move.b.size===3),devOK:an100DevOK()}});
-ok(s10.got&&!s10.devOK,'10 IndexedDB cache round-trips; no on-device 3D in a headless browser '+JSON.stringify(s10));
+const ev10=async()=>{const blob=new Blob([new Uint8Array([1,2,3])],{type:'image/webp'});await an100DBPut({key:'tv100an',v:AN100L.VER,at:Date.now(),move:{b:blob,m:{rows:{}}},act:{b:blob,m:{rows:{}}}});
+  const r=await an100DBGet('tv100an');return {got:!!(r&&r.move&&r.move.b&&r.move.b.size===3),devOK:an100DevOK()}};
+let s10;if(engine==='webkit'){const m=await mkCx(b,{viewport:{width:1440,height:900}},true);const q=await m.cx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+  await q.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+  await q.goto(url('file://'+page),{timeout:180000});await q.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:180000});s10=await q.evaluate(ev10);await bye(m.cx);rmDir(m.dir)}
+else s10=await pg.evaluate(ev10);
+/* a headless Chromium has no on-device 3D (HeadlessChrome UA); WebKit's UA is not HeadlessChrome, so devOK is true there and only the round trip is asserted */
+ok(s10.got&&(engine==='webkit'||!s10.devOK),'10 IndexedDB cache round-trips; no on-device 3D in a headless browser '+JSON.stringify(s10));
 STEP='11 severed sets';
 /* ---- 11 SEVERED sets (kit seats = the prebuilt per-class severed sheets): a lost arm / leg swaps to its own set, loaded only then; two limbs → today's token ---- */
 const s11=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));SPEED='normal';const P=S.players[0],Q=S.players[1];
@@ -195,9 +206,9 @@ ok(JSON.stringify(A.R)===JSON.stringify(B.R),'9b same dice at every turn ON vs O
 STEP='12 gear-true figures on the device';
 /* ---- 12 GEAR-TRUE figures on the device (flavius_anim100dev=1): a seat in other gear than its class kit gets its own render keyed by
    its loadout (the stand-in meanwhile); kit seats none; a lost limb with real gear = a device-rendered severed set ---- */
-let s12={};{const cx=await b.newContext({viewport:{width:1440,height:900}});const q=await cx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+let s12={},dir12=null;{const m12=await mkCx(b,{viewport:{width:1440,height:900}},true);const cx=m12.cx;dir12=m12.dir;const q=await cx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
   await q.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_anim100dev','1')});
-  await q.goto('file://'+page,{timeout:180000});await q.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:180000});
+  await q.goto(url('file://'+page),{timeout:180000});await q.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:180000});
   s12=await q.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}try{menuHide()}catch(e){}
     /* seat 0 (a soldier) walks in with a trident instead of his gladius — like a Manager fighter in owned gear */
     const gl=giveLoadout;giveLoadout=function(p){const r=gl.apply(this,arguments);try{if(p&&p.id===0)p.wR=mkW('trident')}catch(e){}return r};
@@ -215,7 +226,7 @@ let s12={};{const cx=await b.newContext({viewport:{width:1440,height:900}});cons
     const sSrc=[...new Set(AN100.trace.filter(x=>x.id===P.id&&x.src).map(x=>x.src))];AN100.trace=null;
     const rec=await an100DBGet([...AN100.dev.keys()].find(k=>/:rarm$/.test(k)));
     return {kit:g.kit,wR:g.gear&&g.gear.wR,kits,keys0,devKeys:[...AN100.dev.keys()],tMove,pSrc,tSev,sSrc,cached:!!(rec&&rec.move&&rec.move.b),log:AN100.stats.renderLog,aborts:AN100.stats.aborts||0,fail:AN100.devFail}});
-  await bye(cx)}
+  await bye(cx);rmDir(dir12)}
 ok(s12.kit===false&&s12.wR&&s12.kits.every(x=>x)&&s12.keys0.length===1,'12a a non-kit loadout is noted and queued for a device render; kit seats are not '+JSON.stringify(s12).slice(0,600));
 ok(!s12.fail&&s12.pSrc.length===1&&/^d:/.test(s12.pSrc[0]),'12b the non-kit seat wears its device-rendered sheet (keyed by its loadout) '+JSON.stringify(s12).slice(0,600));
 ok(s12.sSrc.length>=1&&/^d:.*:rarm$/.test(s12.sSrc[s12.sSrc.length-1])&&s12.sSrc.every(k=>/^d:[^:]+(:rarm)?$/.test(k))&&s12.cached,'12c v1.01 (G8): the whole figure until decoded, then a lost limb with real gear: a device-rendered severed set, cached '+JSON.stringify(s12).slice(0,800));
