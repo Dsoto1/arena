@@ -54,3 +54,11 @@ His picks:
 2. a) GAME FIX in v1.17: the figure cache stores ArrayBuffers (works in every WebKit session), reads old Blob records too; a failed write is
    logged once (no more silent tx.onerror → ok). One new module (CLAUDE.md §4), kill switch.
 3. a) http stays an opt-in dispatch input (file:// default); tv100an 2b samples the walk like 5a; one more WebKit run of tv100an to confirm.
+
+## His go 2026-11-19 on the lead's improvement list (1, 2, 3)
+1. Ship v1.17 (minify + the Private-window cache fix) — release steps, [full] run, beta first.
+2. Silent-failure audit (READ-ONLY first, list to him): every place a failed save/write is swallowed (Store, Manager saves, backups,
+   caches, settings), ranked by what a player could lose. Fixes only after his picks.
+3. WebKit probe for the live Safari board bugs: oversized/blurry beast corpses (2026-10-21 Safari 26.6; AGAIN in his screenshot
+   2026-11-19: a big blurry corpse with bone shards around two fighters, a red smear, a striped corpse top right), the dark round shadow
+   discs, and the 2× sheets' memory on Safari (no deviceMemory, ≈711 MB). Measure on WebKit, report, then fix on his pick.
