@@ -5,8 +5,25 @@
    stand-ins vs today's tokens in one page; 8 the kill switch = today's drawing, no sheet requested; 9 the same seeded dice + log with the
    module on vs off (fresh browsers, Normal speed); 10 the on-device cache (IndexedDB) round-trips; 11 severed sets (arm / leg swap, loaded only then, two limbs → today's token);
    12 gear-true figures: a non-kit seat renders on the device keyed by its loadout, kit seats don't, severed with real gear; no new errors. SHOT=dir → shots. */
-const {chromium}=require('./_browser');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');
-(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};pg.on('pageerror',e=>errs.push(e.message));
+const {chromium,engine}=require('./_browser');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');
+/* v1.16 CRASH REPORT (WebKit CI: step 7 died after ~75 s with "Target page, context or browser has been closed", 2026-11-13 "Page crashed" on a later reload):
+   the test is NOT made green. It records the page 'crash' / 'close' and the browser 'disconnected' events with the seconds since start and the current STEP, prints
+   the memory figures it can get (performance.memory on Chromium, the RSS of the browser processes via ps where available), and a page that died inside a step ends
+   as "FAIL <step> page crashed during step … (crash event at N s)" + the usual MISS / ERRS lines, exit 1 — never an uncaught promise. */
+const T0=Date.now(),SEC=()=>((Date.now()-T0)/1000).toFixed(1);let STEP='boot',DONE=false;const DEAD=[],MISS0=[],ERRS0=[];
+const rss=()=>{try{const o=require('child_process').execSync('ps -eo rss=,comm=',{encoding:'utf8',timeout:5000}).split('\n').map(l=>l.trim().match(/^(\d+)\s+(.*)$/)).filter(m=>m&&/webkit|WebKit|MiniBrowser|chrom|headless_shell|firefox/i.test(m[2]));
+  return Math.round(o.reduce((t,m)=>t+ +m[1],0)/1024)+' MB RSS over '+o.length+' browser processes'}catch(e){return 'rss n/a'}};
+const memNote=async(pg,tag)=>{let m='performance.memory n/a';try{m=await pg.evaluate(()=>performance.memory?'js heap '+Math.round(performance.memory.usedJSHeapSize/1048576)+' MB of '+Math.round(performance.memory.jsHeapSizeLimit/1048576):'performance.memory n/a')}catch(e){m='page gone'}
+  console.log('MEM '+tag+' ('+engine+', '+SEC()+' s): '+m+'; '+rss())};
+const finish=(why)=>{console.log('MISS',JSON.stringify(MISS0));console.log('ERRS',JSON.stringify(ERRS0));process.exit(1)};
+const crashFail=(e)=>{const m='7' ;const line='FAIL page crashed during step "'+STEP+'" ('+(DEAD.length?DEAD.map(d=>d.what+' event at '+d.t+' s').join(', '):'no crash event seen yet')+'; error: '+String(e&&e.message||e).split('\n')[0].slice(0,160)+'; '+rss()+')';
+  console.log(line);MISS0.push(line);finish()};
+const watch=(p,label)=>{p.on('crash',()=>{DEAD.push({what:label+' crash',t:SEC(),step:STEP});console.log('EVENT '+label+' page CRASH at '+SEC()+' s in step "'+STEP+'" ('+rss()+')')});
+  p.on('close',()=>{if(DONE)return;DEAD.push({what:label+' close',t:SEC(),step:STEP});console.log('EVENT '+label+' page CLOSE at '+SEC()+' s in step "'+STEP+'"')});
+  const ev=p.evaluate.bind(p);p.evaluate=async(...a)=>{try{return await ev(...a)}catch(e){if(DEAD.length||/closed|crash/i.test(String(e&&e.message)))crashFail(e);throw e}};return p};
+(async()=>{const b=await chromium.launch();b.on('disconnected',()=>{if(DONE)return;DEAD.push({what:'browser disconnected',t:SEC(),step:STEP});console.log('EVENT browser DISCONNECTED at '+SEC()+' s in step "'+STEP+'"')});
+const nc=b.newContext.bind(b);b.newContext=async(...a)=>{const cx=await nc(...a);let n=0;cx.on('page',p=>watch(p,'ctx-page'+(++n)));return cx};
+const pg=watch(await b.newPage({viewport:{width:1440,height:900}}),'main');const errs=ERRS0,miss=MISS0;const ok=(c,m)=>{if(!c)miss.push(m)};pg.on('pageerror',e=>errs.push(e.message));
 await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
 await pg.goto('file://'+page,{timeout:180000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:180000});
@@ -25,6 +42,7 @@ const st=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   return {phase:S.phase,human:humanTurn(),on:AN100.on,ready:ready(),meta:Object.keys(ANIM100_META).length}});
 ok(st.human&&st.phase==='action'&&st.on,'0 the human is to act, module on '+JSON.stringify(st));
 ok(st.ready&&st.meta===8,'1a the 8 classes have sheets; the four on the board are decoded '+JSON.stringify(st));
+STEP='1 sheets drawn act rows decoded only when used';
 /* ---- 1 sheets drawn; act rows decoded only when used ---- */
 const s1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const d0=AN100.stats.draws;draw();const so=AN100.src.get('p:soldier');
   const actBm=Object.keys(so.act.bm);const fr=()=>new Promise(r=>requestAnimationFrame(r));await W8(600);
@@ -46,6 +64,7 @@ await pg.evaluate(()=>{window.__lay=()=>{const P=S.players[0],Q=S.players[1];con
   window.__samp=async ms=>{const end=performance.now()+ms;while(performance.now()<end){draw();await new Promise(r=>setTimeout(r,20))}};
   /* slower clock for the test (a loaded machine still sees every pose) */
   AN100.poseMs=240});
+STEP='2 a move glides and walks';
 /* ---- 2 a move glides and walks ---- */
 const s2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const {P}=__lay();await W8(300);SPEED='normal';AN100.trace=[];
   SPEED='slow';P.mv=8;const mv=movePlayer(P,[6*N+3,7*N+3,7*N+4]);let dn=false;mv.then(()=>dn=true);while(!dn){draw();await W8(20)}await __samp(700);SPEED='normal';const tr=AN100.trace;AN100.trace=null;
@@ -53,6 +72,7 @@ const s2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   return {at:[P.r,P.c],glides:new Set(gl).size,walk:new Set(ps.filter(x=>/^walk/.test(x))).size,last:ps[ps.length-1]}});
 ok(s2.at.join()==='7,4'&&s2.glides>=3,'2a the move glides through several intermediate points '+JSON.stringify(s2));
 ok(s2.walk>=2&&/^idle/.test(s2.last||''),'2b the walk row steps, then back to idle '+JSON.stringify(s2));
+STEP='3 attack + hit';
 /* ---- 3 attack + hit ---- */
 const s3=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const P=S.players[0],Q=S.players[1];
   /* the first use of an action decodes its rows (idle meanwhile): warm attack / hit / block once, then trace */
@@ -66,10 +86,12 @@ const s3=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
 ok(s3.atk&&s3.attack>=2,'3a an attack steps an attack row (v1.01: slash / sweep / thrust for a blade) '+JSON.stringify(s3));
 ok(s3.hit>=2&&s3.fl,'3b a blow steps hit / block on the target, with a flash '+JSON.stringify(s3));
 ok(s3.bm.length>=1&&s3.bm.length<=3,'3c only the used action rows got decoded '+JSON.stringify(s3.bm));
+STEP='4 elimination: the fall row where he fell';
 /* ---- 4 elimination: the fall row where he fell ---- */
 const s4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const R=S.players[2];AN100.trace=[];eliminate(R,{type:'retire'});await __samp(1500);
   const g=AN100.trace.filter(x=>x.id===R.id&&x.ghost).map(x=>x.ghost);AN100.trace=null;return {alive:R.alive,fall:new Set(g).size,ghosts:AN100.ghosts.length}});
 ok(!s4.alive&&s4.fall>=2,'4 the fallen gladiator plays the fall row '+JSON.stringify(s4));
+STEP='5 Fast: CPU still flash only, own animates';
 /* ---- 5 Fast: CPU still (flash only), own animates ---- */
 const s5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const P=S.players[0],Q=S.players[1];SPEED='fast';AN100.trace=[];
   /* the hit flash lasts 170 ms from the blow: the board is drawn by hand WHILE the blows land (a loaded machine used to let the flash run out before the first sample) */
@@ -79,22 +101,27 @@ const s5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   return {cpu:[...new Set(q)],own:[...new Set(p)].filter(x=>!/^idle/.test(x)).length,fl}});
 ok(s5.cpu.length&&s5.cpu.every(x=>x==='idle:0')&&s5.fl,'5a Fast: the CPU stays on its still cell, with the hit flash '+JSON.stringify(s5));
 ok(s5.own>=2,'5b Fast: your own gladiator still animates '+JSON.stringify(s5));
+STEP='6 Reduce motion';
 /* ---- 6 Reduce motion ---- */
 const s6=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const P=S.players[0],Q=S.players[1];SETTINGS.calm=true;AN100.trace=[];
   await hurt(Q,'chest',1,{type:'env'},'Test');P.mv=4;const free=[[5,3],[7,3],[5,2],[7,2]].find(([r,c])=>!S.players.some(p=>p.alive&&p.r===r&&p.c===c)&&!S.npcs.some(n=>n.alive&&n.r===r&&n.c===c)&&!S.pillars.some(x=>x.r===r&&x.c===c));
   if(free)await movePlayer(P,[free[0]*N+free[1]]);await __samp(600);const tr=AN100.trace;AN100.trace=null;SETTINGS.calm=false;
   return {poses:[...new Set(tr.filter(x=>x.pose).map(x=>x.pose))],glide:tr.filter(x=>x.glide).length,flash:tr.some(x=>x.flash),moved:!!free}});
 ok(s6.poses.length&&s6.poses.every(x=>x==='idle:0')&&!s6.glide&&!s6.flash,'6 Reduce motion: the still cell, no glide, no flash '+JSON.stringify(s6));
+STEP='7 perf: board draw ON vs OFF same page, alternating';
 /* ---- 7 perf: board draw ON vs OFF (same page, alternating blocks) ---- */
 /* the first use of an action decodes its rows (idle meanwhile): from here on they are warm */
+await memNote(pg,'before step 7');
 const s7=await pg.evaluate(async()=>{const fr=()=>new Promise(r=>requestAnimationFrame(r));const T={on:[],off:[]};SPEED='pause';
   for(let blk=0;blk<6;blk++){const on=blk%2===0;AN100.on=on;for(let i=0;i<10;i++){await fr();const t=performance.now();draw();T[on?'on':'off'].push(performance.now()-t)}}
   AN100.on=true;AN100.poseMs=120;SPEED='normal';const med=a=>{a=a.slice().sort((x,y)=>x-y);return +a[a.length>>1].toFixed(2)};return {on:med(T.on),off:med(T.off)}});
 ok(s7.on<=s7.off*1.35+3,'7 a board draw with the stand-ins costs about today\'s '+JSON.stringify(s7));
+STEP='10 the on-device cache round-trips no 3D render her';
 /* ---- 10 the on-device cache round-trips (no 3D render here: headless keeps the converter off) ---- */
 const s10=await pg.evaluate(async()=>{const blob=new Blob([new Uint8Array([1,2,3])],{type:'image/webp'});await an100DBPut({key:'tv100an',v:AN100L.VER,at:Date.now(),move:{b:blob,m:{rows:{}}},act:{b:blob,m:{rows:{}}}});
   const r=await an100DBGet('tv100an');return {got:!!(r&&r.move&&r.move.b&&r.move.b.size===3),devOK:an100DevOK()}});
 ok(s10.got&&!s10.devOK,'10 IndexedDB cache round-trips; no on-device 3D in a headless browser '+JSON.stringify(s10));
+STEP='11 SEVERED sets kit seats  the prebuilt per-class';
 /* ---- 11 SEVERED sets (kit seats = the prebuilt per-class severed sheets): a lost arm / leg swaps to its own set, loaded only then; two limbs → today's token ---- */
 const s11=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));SPEED='normal';const P=S.players[0],Q=S.players[1];
   const req=re=>performance.getEntriesByType('resource').map(e=>e.name).filter(n=>re.test(n)).length;
@@ -128,6 +155,7 @@ if(process.env.SHOT){const fs=require('fs');fs.mkdirSync(process.env.SHOT,{recur
 const newErr=await pg.evaluate(m=>typeof errNew92==='function'?errNew92(m):[],mark).catch(()=>[]);
 ok(!newErr.length,'no new errors logged '+JSON.stringify(newErr).slice(0,300));
 
+STEP='8 kill switch';
 /* ---- 8 kill switch ---- */
 {const cx=await b.newContext({viewport:{width:1440,height:900}});const q=await cx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
   await q.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_anim100off','1')});
@@ -138,6 +166,7 @@ ok(!newErr.length,'no new errors logged '+JSON.stringify(newErr).slice(0,300));
     return {on:AN100.on,draws:AN100.stats.draws,req:performance.getEntriesByType('resource').filter(e=>/anim100_/.test(e.name)).length}});
   ok(!k.on&&k.draws===0&&k.req===0,'8 kill switch: today\'s drawing, no sheet requested '+JSON.stringify(k));await cx.close()}
 
+STEP='9 the same seeded dice + log, module on vs off, Norm';
 /* ---- 9 the same seeded dice + log, module on vs off, Normal speed, fresh browsers ---- */
 const run9=async(q)=>{await q.evaluate(async seed=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}try{menuHide()}catch(e){}
     SETTINGS.briefing=false;SPEED='pause';startEvent({ev:'democritus',loc:6,seed,seats:['hero','soldier','royalty','venatore'].map(c=>({cls:c,cpu:true})),opts:{spect:0}});
@@ -160,6 +189,7 @@ const fl=x=>x.L.filter(l=>!/seed \d|seed <b>/.test(l));
 ok(A.R.length>=4&&A.on&&!B.on&&A.draws>0&&A.frames>0&&B.draws===0,'9a both seeded runs played, animated vs not '+JSON.stringify({a:A.R.length,b:B.R.length,ta:A.turn,tb:B.turn,A:[A.on,A.draws,A.frames],B:[B.on,B.draws]}));
 ok(JSON.stringify(A.R)===JSON.stringify(B.R),'9b same dice at every turn ON vs OFF '+JSON.stringify({A:A.R.slice(0,4),B:B.R.slice(0,4)}));
 {const a=fl(A),b2=fl(B);let k=0;while(k<a.length&&a[k]===b2[k])k++;ok(a.length===b2.length&&k===a.length,'9c same log ON vs OFF (first difference at '+k+'/'+a.length+': '+JSON.stringify([a[k],b2[k]])+')')}
+STEP='12 GEAR-TRUE figures on the device flaviusanim100d';
 /* ---- 12 GEAR-TRUE figures on the device (flavius_anim100dev=1): a seat in other gear than its class kit gets its own render keyed by
    its loadout (the stand-in meanwhile); kit seats none; a lost limb with real gear = a device-rendered severed set ---- */
 let s12={};{const cx=await b.newContext({viewport:{width:1440,height:900}});const q=await cx.newPage();q.on('pageerror',e=>errs.push(e.message));await q.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
@@ -187,4 +217,4 @@ ok(s12.kit===false&&s12.wR&&s12.kits.every(x=>x)&&s12.keys0.length===1,'12a a no
 ok(!s12.fail&&s12.pSrc.length===1&&/^d:/.test(s12.pSrc[0]),'12b the non-kit seat wears its device-rendered sheet (keyed by its loadout) '+JSON.stringify(s12).slice(0,600));
 ok(s12.sSrc.length>=1&&/^d:.*:rarm$/.test(s12.sSrc[s12.sSrc.length-1])&&s12.sSrc.every(k=>/^d:[^:]+(:rarm)?$/.test(k))&&s12.cached,'12c v1.01 (G8): the whole figure until decoded, then a lost limb with real gear: a device-rendered severed set, cached '+JSON.stringify(s12).slice(0,800));
 console.log(JSON.stringify({s1,s2,s3,s4,s5,s6,s7,s10,s11,s12}));
-console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
+console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));DONE=true;await b.close();process.exit(miss.length||errs.length?1:0)})().catch(e=>crashFail(e));

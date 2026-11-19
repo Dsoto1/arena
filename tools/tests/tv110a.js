@@ -51,6 +51,10 @@ try{
     t.querySelector('[data-light106="q"]').click();const c=l106Pref(),gone=!('light106' in SETTINGS);t.querySelector('[data-q110="auto"]').click();t.remove();return {a,b,dpr,c,gone}});
   ok(d3.a==='light'&&d3.b==='full'&&d3.dpr===(WK?1:1.5)&&d3.c==='light'&&d3.gone,'3 Lighting Full overrides Medium (the ratio stays Medium); By quality clears it '+JSON.stringify(d3));
   /* ---- 4 · Auto steps on stubbed frame times ---- */
+  /* WebKit: its user agent is not 'HeadlessChrome', so Q110.run is TRUE there (headless Chromium: false) and every real draw samples two real rAF frames into
+     q110Feed with the real clock — slow software-raster frames set Q110.tLast / buckets / a real 'slow frames' pend between the harness's fake-time feeds
+     (4b {"to":2,"why":"slow frames (100% late)"}, 4c/4d timings). Switch the live sampler off for 4 / 11 on WebKit: the same state Chromium runs in. */
+  if(WK){await pg.evaluate(async()=>{Q110.run=false;await new Promise(r=>setTimeout(r,400));Q110.pend=null});console.log('note WebKit: live Auto sampling (Q110.run) switched off for 4 and 11, as on headless Chromium')}
   await start(pg);
   const d4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const K=Q110K;let t=1e7;const feed=(dt,ms,step)=>{const end=t+ms;for(;t<end;t+=step)Q110.feed(dt,t)};
     const o={};Q110.rung=0;Q110.refresh();Q110.lastStep=-1e9;Q110.quietUntil=0;Q110.bk=[];Q110.downs=[0,0,0];Q110.pend=null;
@@ -64,11 +68,8 @@ try{
     t+=K.settle;feed(16.7,K.upWin+K.gap+2000,100);o.notYet=Q110.pend;
     feed(16.7,K.upWin+2000,100);o.later=Q110.pend&&Q110.pend.to;Q110.commit();o.up2=Q110.n;o.steps=Q110.steps.filter(s=>s.to).map(s=>s.from+'>'+s.to);return o});
   ok(d4.fastPend===null&&d4.slowPend===1&&d4.before==='high'&&d4.after==='high-light'&&d4.light==='light','4a sustained slow frames → one rung down (Light), committed on a quiet frame '+JSON.stringify(d4));
-  /* WebKit: 4b-4d. The numbers are Q110's own (417, same code on both engines); the harness feeds fake times (t from 1e7) while real frames also call Q110.feed
-     and reset Q110.tLast (the commit's lastStep) to the real clock, which only slower WebKit frames can race into the poll gap. Until a WebKit run
-     says otherwise this is NOTED with the observed values, not asserted (candidate: harness race, else a real timing difference). */
-  const hy=(c,n,v)=>{if(WK&&!c)console.log('NOTE WebKit '+n+' differs from Chromium (observed: '+JSON.stringify(v)+') — not asserted, see tv110a header');else ok(c,n+' '+JSON.stringify(v))};
-  const W4=WK?hy:(c,n,v)=>ok(c,n+' '+JSON.stringify(v));
+  /* 4b-4d: asserted on WebKit too (with the live sampler off above); if a WebKit run still differs, the values are printed with the FAIL line */
+  const W4=(c,n,v)=>ok(c,n+' '+JSON.stringify(v));
   W4(d4.inGap===null,'4b no second step inside the gap',d4.inGap);
   W4(d4.upPend===0&&d4.up==='high','4c sustained headroom → back up',d4);
   W4(d4.down2==='high-light'&&d4.downs[0]===2&&d4.notYet===null&&d4.later===0&&d4.up2==='high','4d hysteresis: after a second drop the climb waits twice as long',d4);

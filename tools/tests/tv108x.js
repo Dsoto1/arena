@@ -20,7 +20,7 @@ const open=async(view,ls)=>{const c=await b.newContext(view);await c.route(/font
   await pg.evaluate(async()=>{for(let i=0;i<6&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,250))}try{menuHide()}catch(e){}});return pg};
 /* WebKit (417 4a, v1.10): the game starts on the 1× sheets and promotes to 2× only after Q110K.x2Win ms of on-time frames at rung 0, so on WebKit
    the 2× checks first feed Auto those frames (the same hook as tv110a 5b) — then the sheets are the 2× ones from the next event start on */
-const promote=async pg=>{if(!WK)return;const r=await pg.evaluate(()=>{let t=2e7;Q110.lastStep=-1e9;Q110.quietUntil=0;Q110.bk=[];for(const e=t+Q110K.x2Win+2000;t<e;t+=100)Q110.feed(16.7,t);return {x2ok:Q110.x2ok,want:!!x108Want(),webkit:Q110.webkit}});
+const promote=async pg=>{if(!WK)return;const r=await pg.evaluate(()=>{/* 417 q110Sheets swaps the loaded sheets only when the choice CHANGES between two event starts; before the first event Q110.sheets is null and the 1× sheets loaded at boot stay. Model 'an earlier event started on 1×' so the next startEvent swaps them to 2× (what a second match on Safari does) */if(Q110.sheets===null)Q110.sheets=false;Q110.run=false;let t=2e7;Q110.lastStep=-1e9;Q110.quietUntil=0;Q110.bk=[];for(const e=t+Q110K.x2Win+2000;t<e;t+=100)Q110.feed(16.7,t);return {x2ok:Q110.x2ok,want:!!x108Want(),webkit:Q110.webkit}});
   console.log('note WebKit: 2× promoted by fed on-time frames (417 4a) '+JSON.stringify(r));ok(r.x2ok&&r.want,'0 WebKit: Auto promotes to the 2× sheets after on-time frames '+JSON.stringify(r))};
 const DESK={viewport:{width:1600,height:1000},deviceScaleFactor:2};
 const PHONE={viewport:{width:390,height:844},deviceScaleFactor:3,isMobile:true,hasTouch:true};
@@ -65,7 +65,8 @@ const sizes=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,m
 /* ---- 1 · desktop DPR 2: the 2× sheets; 3 · the aim outline on a 2× figure ---- */
 let pg=await open(DESK);await promote(pg);const P=await aim(pg);
 ok(!P.err&&P.st.on===true&&P.st.why==='big'&&P.st.k===2&&P.st.bmK===2&&P.st.x2>=1,'1 desktop 1600×1000 DPR 2: the 2× sheets, rows cut at k 2 '+JSON.stringify(P.st));
-ok(pg._req.some(u=>/^anim100x2_hero_move\.webp/.test(u))&&!pg._req.some(u=>/^anim100_hero_move\.webp/.test(u)),'1 the 2× file is fetched, not the 1× one '+JSON.stringify(pg._req.slice(0,12)));
+if(WK)ok(pg._req.some(u=>/^anim100x2_hero_move\.webp/.test(u))&&pg._req.indexOf('anim100_hero_move.webp')<pg._req.findIndex(u=>/^anim100x2_hero_move\.webp/.test(u)),'1 WebKit (417 4a, by design): the 1× file came first at the start, the 2× file is fetched after the promotion swap '+JSON.stringify(pg._req.filter(u=>/hero_move/.test(u))));
+else ok(pg._req.some(u=>/^anim100x2_hero_move\.webp/.test(u))&&!pg._req.some(u=>/^anim100_hero_move\.webp/.test(u)),'1 the 2× file is fetched, not the 1× one '+JSON.stringify(pg._req.slice(0,12)));
 if(!P.err){await pg.mouse.move(P.x,P.y,{steps:3});await W(400);const m=await measure(pg);const lim=1.5*2+1.6;
   ok(!m.err&&m.red>20&&m.built>=1,'3a the 403 outline is drawn on a 2× figure '+JSON.stringify(m));
   ok(!m.err&&m.maxD<=lim&&m.far===0&&m.onSolid<=m.red*0.02,'3b it hugs the body (every red pixel within '+lim+' device px, none on the solid body) '+JSON.stringify(m))}

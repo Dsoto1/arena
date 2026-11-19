@@ -5,6 +5,19 @@ Keep it current every release: a fixed item moves to docs/history.md with the re
 Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.md); his decisions are in docs/decisions.md.
 
 ## Game — open
+- 2026-11-19 · WEBKIT 2026-11-16 run: tv108x / tv110a / tv100an failed again. Items (c) and (d) of the 2026-11-06 list below: TEST BRANCHED FOR WEBKIT
+  (2026-11-19, tests only, game unchanged). tv108x: the 2× checks first feed Auto its on-time frames AND set Q110.sheets=false (417 q110Sheets swaps
+  loaded sheets only when the choice changes between two event starts; before the first event it is null, so the 1× sheets loaded at boot stayed —
+  that was the "k 0 / only 1× files" of 2026-11-13; it is by design, a second match on Safari gets the swap); check 1b on WebKit asserts "1× first,
+  2× after the swap". tv110a: on WebKit Q110.run is true (its UA is not HeadlessChrome), so real draws fed slow software-raster frames into the
+  harness's fake-time feeds (4b {"to":2,"why":"slow frames (100% late)"}); 4/11 now switch the live sampler off there and ASSERT 4b–4d on both
+  engines (the 2026-11-13 NOTE-only branch is gone). The 16 Nov failure list matched the pre-split expectations (dpr 2 / x2 at once), i.e. probably an
+  older checkout of the tests: re-check on the next webkit.yml dispatch from this branch. Simulated on Chromium with the WebKit branches forced
+  (flavius_v107safariforce=1): both pass. OPEN: tv100an step 7 perf dies on WebKit (~75 s in, "Target page, context or browser has been closed";
+  2026-11-13 "Page crashed" on a reload) = a web-process crash, not an assertion. The test now logs `EVENT … page CRASH/CLOSE at N s in step "…"`,
+  `EVENT browser DISCONNECTED`, `MEM before step 7 (…)` (performance.memory where it exists, browser RSS via ps) and ends with `FAIL page crashed during
+  step "7 perf…" (… event at N s; … RSS)` + MISS/ERRS, exit 1. Read those lines in the next WebKit job log: a crash right after the MEM figure that
+  keeps growing = memory; a crash at the same second in every run = a draw loop; next try flavius_x2off=1 and running the step alone.
 - 2026-11-13 · WEBKIT 9-TEST RUN 43440000712 (after the item-4 expectation split): PASS tv91r tv100p tv106d (the v1.16a tap fix) tv106f
   tv110a (split OK; read its NOTE lines for 4b–4d in the job log when next touched). FAIL 4: (1) tv100an "page.goto: Page crashed" on a
   later reload inside the test (247 s in) and (2) tv101z "page closed" at its first evaluate — tv101z PASSED on 2026-11-06, so these are
@@ -23,8 +36,8 @@ Planned FEATURES are not here (tools/plans/vX.YY/NOTES.md, tools/plans/backlog.m
   5a/5b/5c "first tap selects A": on WebKit AIM106.figs and tmap stay EMPTY (figs 0, tmap 0, lastPT touch) so a touch tap never selects —
   CANDIDATE REAL iPad/Safari bug (the aim overlay never builds there); reproduce on his iPad / Mac Safari with a touch screen before fixing;
   (c) tv108x 1/2/6 expect the 2× sheets at once on a DPR-2 desktop, but on WebKit 417 (v1.10 4a) starts on 1× and promotes after 30 s of
-  on-time frames by design → TEST EXPECTATION: expectations split 2026-11-13 (test only; tv108x feeds Auto the on-time frames first) — WebKit proof = the next webkit.yml dispatch; (d) tv110a 1b/2a/2c/3/4b-4d/6/7 expect Chromium ratios
-  (dpr 2 / 1.5) where WebKit is capped at 1.5× / 1× by design (406 W1, 417) and the hysteresis timings differ → TEST EXPECTATION: expectations split 2026-11-13 (test only; 4b-4d only NOTE the
+  on-time frames by design → TEST EXPECTATION: test branched for WebKit (2026-11-19; first split 2026-11-13; tv108x feeds Auto the on-time frames first) — WebKit proof = the next webkit.yml dispatch; (d) tv110a 1b/2a/2c/3/4b-4d/6/7 expect Chromium ratios
+  (dpr 2 / 1.5) where WebKit is capped at 1.5× / 1× by design (406 W1, 417) and the hysteresis timings differ → TEST EXPECTATION: test branched for WebKit (2026-11-19; first split 2026-11-13; 4b-4d used to only NOTE the
   observed values on WebKit) — WebKit proof = the next webkit.yml dispatch (5a/5b already pass as the WebKit path). None of (c)/(d) is a game bug; (b) is the one to chase.
 - 2026-11-01 · tv100bb flaky on the v1.15 full run 41252211297 attempt 1: 9 zoom_p95 (gate) ON 10 ms vs OFF 8.6 ms (allowed 9.6) on a
   GitHub runner; passes locally (9.2/9.9, 9.1/8.5), passed on run 41248555142 and on the one re-run; v1.15 does not touch the bubbles. Watch: if it repeats, it is real.
